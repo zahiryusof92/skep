@@ -9,23 +9,164 @@ class PrintController extends BaseController {
         $start = $data['start'];
         $end = $data['end'];
 
-        if (!empty($start) && !empty($end)) {
-            if ($start == $end) {
-                $audit_trail = AuditTrail::where('created_at', 'LIKE', $start . '%')->orderBy('id', 'desc')->get();
+        if (!Auth::user()->getAdmin()) {
+            if (!empty($start) && !empty($end)) {
+                if ($start == $end) {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->where('audit_trail.created_at', 'LIKE', $start . '%')
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                } else {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->whereBetween('audit_trail.created_at', [$start, $end])
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                }
+            } else if (!empty($start)) {
+                $end = date('Y-m-d');
+                if ($start == $end) {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->where('audit_trail.created_at', 'LIKE', $start . '%')
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                } else {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->whereBetween('audit_trail.created_at', [$start, $end])
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                }
+            } else if (!empty($end)) {
+                $audit_trail = DB::table('audit_trail')
+                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->select('audit_trail.*', 'users.full_name as name')
+                        ->where('users.company_id', Auth::user()->company_id)
+                        ->where('audit_trail.created_at', 'LIKE', $end . '%')
+                        ->orderBy('audit_trail.id', 'desc')
+                        ->get();
             } else {
-                $audit_trail = AuditTrail::whereBetween('created_at', [$start, $end])->orderBy('id', 'desc')->get();
+                $audit_trail = DB::table('audit_trail')
+                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->select('audit_trail.*', 'users.full_name as name')
+                        ->where('users.company_id', Auth::user()->company_id)
+                        ->orderBy('audit_trail.id', 'desc')
+                        ->get();
             }
-        } else if (!empty($start)) {
-            $end = date('Y-m-d');
-            if ($start == $end) {
-                $audit_trail = AuditTrail::where('created_at', 'LIKE', $start . '%')->orderBy('id', 'desc')->get();
-            } else {
-                $audit_trail = AuditTrail::whereBetween('created_at', [$start, $end])->orderBy('id', 'desc')->get();
-            }
-        } else if (!empty($end)) {
-            $audit_trail = AuditTrail::where('created_at', 'LIKE', $end . '%')->orderBy('id', 'desc')->get();
         } else {
-            $audit_trail = AuditTrail::orderBy('id', 'desc')->get();
+            if (empty(Session::get('admin_cob'))) {
+                if (!empty($start) && !empty($end)) {
+                    if ($start == $end) {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('audit_trail.created_at', 'LIKE', $start . '%')
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    } else {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->whereBetween('audit_trail.created_at', [$start, $end])
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    }
+                } else if (!empty($start)) {
+                    $end = date('Y-m-d');
+                    if ($start == $end) {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('audit_trail.created_at', 'LIKE', $start . '%')
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    } else {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->whereBetween('audit_trail.created_at', [$start, $end])
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    }
+                } else if (!empty($end)) {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('audit_trail.created_at', 'LIKE', $end . '%')
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                } else {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                }
+            } else {
+                if (!empty($start) && !empty($end)) {
+                    if ($start == $end) {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->where('audit_trail.created_at', 'LIKE', $start . '%')
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    } else {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->whereBetween('audit_trail.created_at', [$start, $end])
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    }
+                } else if (!empty($start)) {
+                    $end = date('Y-m-d');
+                    if ($start == $end) {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->where('audit_trail.created_at', 'LIKE', $start . '%')
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    } else {
+                        $audit_trail = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->whereBetween('audit_trail.created_at', [$start, $end])
+                                ->orderBy('audit_trail.id', 'desc')
+                                ->get();
+                    }
+                } else if (!empty($end)) {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Session::get('admin_cob'))
+                            ->where('audit_trail.created_at', 'LIKE', $end . '%')
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                } else {
+                    $audit_trail = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Session::get('admin_cob'))
+                            ->orderBy('audit_trail.id', 'desc')
+                            ->get();
+                }
+            }
         }
 
         $viewData = array(
@@ -524,4 +665,5 @@ class PrintController extends BaseController {
             return View::make('404_en', $viewData);
         }
     }
+
 }

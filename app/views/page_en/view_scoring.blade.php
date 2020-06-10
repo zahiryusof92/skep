@@ -918,7 +918,7 @@ foreach ($user_permission as $permission) {
             "order": [[ 0, "desc" ]],
             "autoWidth": true,
             "scrollX": true,
-            "fixedColumns": true
+            "responsive": false
         });
     });
 

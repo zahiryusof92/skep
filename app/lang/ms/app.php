@@ -427,6 +427,8 @@ return array(
         "indian_composition" => "Komposisi India",
         "others_composition" => "Komposisi Lain-Lain",
         "foreigner_composition" => "Komposisi Orang Asing",
+        "housing_scheme" => "Skim Perumahan",
+        "count" => "Bil",
         "strata_title" => "Strata Title",
         "floor" => "Tingkat",
         "total_share_unit" => "Jumlah Share Unit",

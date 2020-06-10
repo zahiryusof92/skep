@@ -22,7 +22,7 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.agm') }}</h4>
                     <div>
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab">{{ trans('app.forms.agm_reminder') }}</a>
                             </li>
@@ -111,7 +111,7 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.designation') }}</h4>
                     <div>
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tabDesignation1" role="tab">{{ trans('app.forms.designation_reminder') }}</a>
                             </li>

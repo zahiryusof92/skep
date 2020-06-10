@@ -5,3 +5,4 @@ composer.lock
 .env.*.php
 .env.php
 Thumbs.db
+/nbproject/

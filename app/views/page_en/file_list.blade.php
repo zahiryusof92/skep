@@ -240,7 +240,6 @@ foreach ($user_permission as $permission) {
                 [2, "asc"]
             ],
             "scrollX": true,
-            "fixedColumns": true,
             "responsive": false
         });
 

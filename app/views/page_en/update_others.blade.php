@@ -52,245 +52,296 @@ foreach ($user_permission as $permission) {
                             <div class="tab-pane active" id="others_tab" role="tabpanel">
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <h4>{{ trans('app.forms.detail') }}</h4>
-                                        <!-- Form -->
-                                        <form id="others">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.name') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="other_details_name" value="{{($other_details ? $other_details->name : '')}}">
-                                                    </div>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <h4>{{ trans('app.forms.detail') }}</h4>
                                             </div>
-                                        </form>
-                                        <form id="upload_others_image" enctype="multipart/form-data" method="post" action="{{url('uploadOthersImage')}}" autocomplete="off">
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.photo') }}</label>
-                                                        <br />
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                                        <button type="button" id="clear_image" data-toggle="tooltip" data-placement="top" title="Clear" class="btn btn-xs btn-danger" onclick="clearImage()" style="display: none;"><i class="fa fa-times"></i></button>
-                                                        &nbsp;
-                                                        <input type="file" name="image" id="image" />
-                                                        <br />
-                                                        <small class="text-danger">File uploaded should be below 2MB</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @if ($other_details && $other_details->image_url != "")
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <div id="others_image_output">
-                                                            <a href="{{asset($other_details->image_url)}}" target="_blank"><img src="{{asset($other_details->image_url)}}" style="width:50%; cursor: pointer;"/></a>
-                                                            <?php if ($update_permission == 1) { ?>
-                                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="right" title="Delete" onclick="deleteImageOthers('{{$other_details->id}}')"><i class="fa fa-times"></i></button>
-                                                            <?php } ?>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <!-- Form -->
+                                                <form id="others">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.name') }}</label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="other_details_name" value="{{($other_details ? $other_details->name : '')}}">
+                                                            </div>
                                                         </div>
-                                                        <div id="validation-errors"></div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @else
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <div id="others_image_output"></div>
-                                                        <div id="validation-errors"></div>
+                                                </form>
+                                                <form id="upload_others_image" enctype="multipart/form-data" method="post" action="{{url('uploadOthersImage')}}" autocomplete="off">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.photo') }}</label>
+                                                                <br />
+                                                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                                <button type="button" id="clear_image" data-toggle="tooltip" data-placement="top" title="Clear" class="btn btn-xs btn-danger" onclick="clearImage()" style="display: none;"><i class="fa fa-times"></i></button>
+                                                                &nbsp;
+                                                                <input type="file" name="image" id="image" />
+                                                                <br />
+                                                                <small class="text-danger">File uploaded should be below 2MB</small>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                        </form>
-                                        <form id="others">
-                                            @if ($other_details && $other_details->latitude != "0")
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.latitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" value="{{$other_details->latitude}}">
+                                                    @if ($other_details && $other_details->image_url != "")
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <div id="others_image_output">
+                                                                    <a href="{{asset($other_details->image_url)}}" target="_blank"><img src="{{asset($other_details->image_url)}}" style="width:50%; cursor: pointer;"/></a>
+                                                                    <?php if ($update_permission == 1) { ?>
+                                                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="right" title="Delete" onclick="deleteImageOthers('{{$other_details->id}}')"><i class="fa fa-times"></i></button>
+                                                                    <?php } ?>
+                                                                </div>
+                                                                <div id="validation-errors"></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @else
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.latitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" value="{{$other_details->latitude}}">
+                                                    @else
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <div id="others_image_output"></div>
+                                                                <div id="validation-errors"></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if ($other_details && $other_details->longitude != "0")
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.longitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" value="{{$other_details->longitude}}">
+                                                    @endif
+                                                </form>
+                                                <form id="others">
+                                                    @if ($other_details && $other_details->latitude != "0")
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.latitude') }} </label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" value="{{$other_details->latitude}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @else
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.longitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" value="{{$other_details->longitude}}">
+                                                    @else
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.latitude') }} </label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" value="{{$other_details->latitude}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @if ($other_details)
-                                            @if ($other_details->latitude != "0" && $other_details->longitude != "0")
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <a href="https://www.google.com.my/maps/preview?q={{$other_details->latitude}},{{$other_details->longitude}}" target="_blank">
-                                                            <button type="button" class="btn btn-success">
-                                                                <i class="fa fa-map-marker"> {{ trans('app.forms.view_map') }}</i>
-                                                            </button>
-                                                        </a>
+                                                    @endif
+                                                    @if ($other_details && $other_details->longitude != "0")
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.longitude') }} </label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" value="{{$other_details->longitude}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            @endif
-                                            @endif
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.description') }}</label>
-                                                        <textarea class="form-control" rows="3" id="other_details_description" placeholder="{{ trans('app.forms.description') }}">{{($other_details ? $other_details->description : '')}}</textarea>
+                                                    @else
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.longitude') }} </label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" value="{{$other_details->longitude}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.pms_system') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.pms_system') }}" id="pms_system" value="{{($other_details ? $other_details->pms_system : '')}}">
+                                                    @endif
+                                                    @if ($other_details)
+                                                    @if ($other_details->latitude != "0" && $other_details->longitude != "0")
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <a href="https://www.google.com.my/maps/preview?q={{$other_details->latitude}},{{$other_details->longitude}}" target="_blank">
+                                                                    <button type="button" class="btn btn-success">
+                                                                        <i class="fa fa-map-marker"> {{ trans('app.forms.view_map') }}</i>
+                                                                    </button>
+                                                                </a>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.owner_occupied') }}</label>
-                                                        <select id="owner_occupied" class="form-control">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="1" {{ ($other_details && $other_details->owner_occupied == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
-                                                            <option value="0" {{ ($other_details && $other_details->owner_occupied == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
-                                                        </select>
+                                                    @endif
+                                                    @endif
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.description') }}</label>
+                                                                <textarea class="form-control" rows="4" id="other_details_description" placeholder="{{ trans('app.forms.description') }}">{{($other_details ? $other_details->description : '')}}</textarea>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </form>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.rented') }}</label>
-                                                        <select id="rented" class="form-control">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="1" {{ ($other_details && $other_details->rented == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
-                                                            <option value="0" {{ ($other_details && $other_details->rented == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
-                                                        </select>
+                                            <div class="col-lg-4">
+                                                <form>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.pms_system') }}</label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.pms_system') }}" id="pms_system" value="{{($other_details ? $other_details->pms_system : '')}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.lphs_donation') }}</label>
-                                                        <select id="bantuan_lphs" class="form-control">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="1" {{ ($other_details && $other_details->bantuan_lphs == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
-                                                            <option value="0" {{ ($other_details && $other_details->bantuan_lphs == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
-                                                        </select>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.owner_occupied') }}</label>
+                                                                <select id="owner_occupied" class="form-control">
+                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                    <option value="1" {{ ($other_details && $other_details->owner_occupied == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
+                                                                    <option value="0" {{ ($other_details && $other_details->owner_occupied == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.other_donation') }}</label>
-                                                        <select id="bantuan_others" class="form-control">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="1" {{ ($other_details && $other_details->bantuan_others == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
-                                                            <option value="0" {{ ($other_details && $other_details->bantuan_others == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
-                                                        </select>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.rented') }}</label>
+                                                                <select id="rented" class="form-control">
+                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                    <option value="1" {{ ($other_details && $other_details->rented == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
+                                                                    <option value="0" {{ ($other_details && $other_details->rented == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.rumah_selangorku') }}</label>
-                                                        <select id="rsku" class="form-control">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="none" {{ ($other_details && $other_details->rsku == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
-                                                            <option value="< 42,000" {{ ($other_details && $other_details->rsku == '< 42,000' ? " selected" : "") }}>< 42,000</option>
-                                                            <option value="< 100,000" {{ ($other_details && $other_details->rsku == '< 100,000' ? " selected" : "") }}>< 100,000</option>
-                                                            <option value="< 180,000" {{ ($other_details && $other_details->rsku == '< 180,000' ? " selected" : "") }}>< 180,000</option>
-                                                            <option value="< 250,000" {{ ($other_details && $other_details->rsku == '< 250,000' ? " selected" : "") }}>< 250,000</option>
-                                                        </select>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.lphs_donation') }}</label>
+                                                                <select id="bantuan_lphs" class="form-control">
+                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                    <option value="1" {{ ($other_details && $other_details->bantuan_lphs == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
+                                                                    <option value="0" {{ ($other_details && $other_details->bantuan_lphs == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.water_meter') }}</label>
-                                                        <select id="water_meter" class="form-control">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="none" {{ ($other_details && $other_details->water_meter == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
-                                                            <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
-                                                            <option value="INDIVIDUAL" {{ ($other_details && $other_details->water_meter == 'INDIVIDUAL' ? " selected" : "") }}>{{ trans('app.forms.individual') }}</option>
-                                                        </select>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.other_donation') }}</label>
+                                                                <select id="bantuan_others" class="form-control">
+                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                    <option value="1" {{ ($other_details && $other_details->bantuan_others == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
+                                                                    <option value="0" {{ ($other_details && $other_details->bantuan_others == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.malay_composition') }}</label>
-                                                        <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" id="malay_composition" value="{{$other_details ? $other_details->malay_composition : ''}}">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.rumah_selangorku') }}</label>
+                                                                <select id="rsku" class="form-control select2">
+                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                    <option value="none" {{ ($other_details && $other_details->rsku == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
+                                                                    <option value="< 42,000" {{ ($other_details && $other_details->rsku == '< 42,000' ? " selected" : "") }}>< 42,000</option>
+                                                                    <option value="< 100,000" {{ ($other_details && $other_details->rsku == '< 100,000' ? " selected" : "") }}>< 100,000</option>
+                                                                    <option value="< 180,000" {{ ($other_details && $other_details->rsku == '< 180,000' ? " selected" : "") }}>< 180,000</option>
+                                                                    <option value="< 250,000" {{ ($other_details && $other_details->rsku == '< 250,000' ? " selected" : "") }}>< 250,000</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </form>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.chinese_composition') }}</label>
-                                                        <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.chinese_composition') }}" id="chinese_composition" value="{{$other_details ? $other_details->chinese_composition : ''}}">
+                                            <div class="col-lg-4">
+                                                <form>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.water_meter') }}</label>
+                                                                <select id="water_meter" class="form-control">
+                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                    <option value="none" {{ ($other_details && $other_details->water_meter == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
+                                                                    <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
+                                                                    <option value="INDIVIDUAL" {{ ($other_details && $other_details->water_meter == 'INDIVIDUAL' ? " selected" : "") }}>{{ trans('app.forms.individual') }}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.indian_composition') }}</label>
-                                                        <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.indian_composition') }}" id="indian_composition" value="{{$other_details ? $other_details->indian_composition : ''}}">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.malay_composition') }}</label>
+                                                                <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" id="malay_composition" value="{{$other_details ? $other_details->malay_composition : ''}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.others_composition') }}</label>
-                                                        <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.others_composition') }}" id="others_composition" value="{{$other_details ? $other_details->others_composition : ''}}">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.chinese_composition') }}</label>
+                                                                <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.chinese_composition') }}" id="chinese_composition" value="{{$other_details ? $other_details->chinese_composition : ''}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.foreigner_composition') }}</label>
-                                                        <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.foreigner_composition') }}" id="foreigner_composition" value="{{$other_details ? $other_details->foreigner_composition : ''}}">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.indian_composition') }}</label>
+                                                                <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.indian_composition') }}" id="indian_composition" value="{{$other_details ? $other_details->indian_composition : ''}}">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.others_composition') }}</label>
+                                                                <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.others_composition') }}" id="others_composition" value="{{$other_details ? $other_details->others_composition : ''}}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.foreigner_composition') }}</label>
+                                                                <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.foreigner_composition') }}" id="foreigner_composition" value="{{$other_details ? $other_details->foreigner_composition : ''}}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
+                                        </div>
 
+                                        <hr/>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <h4>{{ trans('app.forms.housing_scheme') }}</h4>
+                                                        <div class="table-responsive">
+                                                            <?php if ($update_permission == 1) { ?>
+                                                                <button type="button" class="btn btn-primary margin-bottom-25" onclick="">
+                                                                    {{ trans('app.forms.add_user') }}
+                                                                </button>
+                                                            <?php } ?>
+                                                            <table class="table table-hover nowrap" id="housing_scheme_list" width="100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:5%;text-align: center !important;">{{ trans('app.forms.count') }}</th>
+                                                                        <th style="width:45%;">{{ trans('app.forms.name') }}</th>
+                                                                        <th style="width:40%;">{{ trans('app.forms.name') }}</th>
+                                                                        <?php if ($update_permission == 1) { ?>
+                                                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                                                        <?php } ?>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <form>
                                             <div class="form-actions">
                                                 <input type="hidden" id="others_image_url" value="{{$other_details ? $other_details->image_url : ''}}"/>
                                                 <?php if ($update_permission == 1) { ?>
@@ -317,7 +368,6 @@ foreach ($user_permission as $permission) {
 </div>
 
 <!-- Page Scripts -->
-
  <script>
      var changes = false;
     $('input, textarea, select').on('keypress change input', function () {
@@ -514,6 +564,21 @@ foreach ($user_permission as $permission) {
 
     $(function () {
         $("[data-toggle=tooltip]").tooltip();
+    });
+    
+    $(document).ready(function () {
+        $('#housing_scheme_list').DataTable({
+            "sAjaxSource": "",
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "order": [[0, "asc"]],
+            "responsive": true,
+            "aoColumnDefs": [
+                {
+                    "bSortable": false,
+                    "aTargets": [-1]
+                }
+            ]
+        });
     });
 </script>
 

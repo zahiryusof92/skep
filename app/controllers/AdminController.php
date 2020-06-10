@@ -127,7 +127,7 @@ class AdminController extends BaseController {
                 if (count($agm_remainder) > 0) {
                     if ($agm_remainder->agm_date <= date('Y-m-d', $oneyear) && $agm_remainder->agm_date != "0000-00-00") {
                         $button = "";
-                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">'.trans('app.forms.view').'</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
@@ -176,7 +176,7 @@ class AdminController extends BaseController {
                 $never_agm = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
 
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">'.trans('app.forms.view').'</button>&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                 if (count($never_agm) > 0) {
                     if ($never_agm->agm_date == "0000-00-00") {
                         $data_raw = array(
@@ -237,7 +237,7 @@ class AdminController extends BaseController {
                 if (count($agm_more12months) > 0) {
                     if ($agm_more12months->agm_date <= date('Y-m-d', $twelveMonths) && $agm_more12months->agm_date != "0000-00-00") {
                         $button = "";
-                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">'.trans('app.forms.view').'</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
@@ -289,7 +289,7 @@ class AdminController extends BaseController {
                 if (count($agm_more15months) > 0) {
                     if ($agm_more15months->agm_date <= date('Y-m-d', $fifthteenMonths) && $agm_more15months->agm_date != "0000-00-00") {
                         $button = "";
-                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">'.trans('app.forms.view').'</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
@@ -324,7 +324,7 @@ class AdminController extends BaseController {
             $data = Array();
             foreach ($memo as $memos) {
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . $memos->id . '\')">'.trans('app.forms.view').'</button>&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . $memos->id . '\')">' . trans('app.forms.view') . '</button>&nbsp;';
                 $data_raw = array(
                     $memos->subject,
                     date('d-M-Y', strtotime($memos->memo_date)),
@@ -468,10 +468,10 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($fileprefixs->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveFilePrefix(\'' . $fileprefixs->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveFilePrefix(\'' . $fileprefixs->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFilePrefix(\'' . $fileprefixs->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFilePrefix(\'' . $fileprefixs->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateFilePrefix', $fileprefixs->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFilePrefix(\'' . $fileprefixs->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -807,14 +807,14 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($files->is_active == 1) {
                     $is_active = trans('app.forms.yes');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $files->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $files->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $is_active = trans('app.forms.no');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
 //                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $files->id) . '\'">View <i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">'.trans('app.forms.delete').' <i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $files->id) . "'>" . $files->file_no . "</a>",
@@ -896,14 +896,14 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($files->is_active == 1) {
                     $is_active = trans('app.forms.yes');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $files->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $files->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $is_active = trans('app.forms.no');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
 //                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $files->id) . '\'">View <i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">'.trans('app.forms.delete').' <i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $files->id) . "'>" . $files->file_no . "</a>",
@@ -1298,7 +1298,7 @@ class AdminController extends BaseController {
             $parliament_id = $data['parliament_id'];
             $dun = Dun::where('is_deleted', 0)->where('parliament', $parliament_id)->orderBy('description', 'asc')->get();
             if (count($dun) > 0) {
-                $result = "<option value=''>".trans('app.forms.please_select')."</option>";
+                $result = "<option value=''>" . trans('app.forms.please_select') . "</option>";
 
                 foreach ($dun as $duns) {
                     $result .= "<option value='" . $duns->id . "'>" . $duns->description . "</option>";
@@ -1306,7 +1306,7 @@ class AdminController extends BaseController {
 
                 print $result;
             } else {
-                print "<option value=''>".trans('app.forms.please_select')."</option>";
+                print "<option value=''>" . trans('app.forms.please_select') . "</option>";
             }
         }
     }
@@ -1318,14 +1318,14 @@ class AdminController extends BaseController {
             $dun_id = $data['dun_id'];
             $park = Park::where('is_deleted', 0)->where('dun', $dun_id)->orderBy('description', 'asc')->get();
             if (count($park) > 0) {
-                $result = "<option value=''>".trans('app.forms.please_select')."</option>";
+                $result = "<option value=''>" . trans('app.forms.please_select') . "</option>";
 
                 foreach ($park as $parks) {
                     $result .= "<option value='" . $parks->id . "'>" . $parks->description . "</option>";
                 }
                 print $result;
             } else {
-                print "<option value=''>".trans('app.forms.please_select')."</option>";
+                print "<option value=''>" . trans('app.forms.please_select') . "</option>";
             }
         }
     }
@@ -1676,6 +1676,7 @@ class AdminController extends BaseController {
             //mc
             $is_mc = $data['is_mc'];
             $mc_date_formed = $data['mc_date_formed'];
+            $mc_certificate_no = $data['mc_certificate_no'];
             $mc_first_agm = $data['mc_first_agm'];
             $mc_name = $data['mc_name'];
             $mc_address1 = $data['mc_address1'];
@@ -1770,6 +1771,7 @@ class AdminController extends BaseController {
                     $new_mc->file_id = $file_id;
                     $new_mc->management_id = $management->id;
                     $new_mc->date_formed = $mc_date_formed;
+                    $new_mc->certificate_no = $mc_certificate_no;
                     $new_mc->first_agm = $mc_first_agm;
                     $new_mc->name = $mc_name;
                     $new_mc->address1 = $mc_address1;
@@ -2056,86 +2058,86 @@ class AdminController extends BaseController {
             if (count($agm) > 0) {
                 $result .= '<form>';
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.annual_general_meeting').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.annual_general_meeting') . '</label></div>';
                 if ($agm->agm == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="1" checked> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="0"> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="1" checked> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="0"> ' . trans('app.forms.no') . '</div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="1"> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="0" checked> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="1"> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" class="agm_edit" id="agm_edit" name="agm_edit" value="0" checked> ' . trans('app.forms.no') . '</div>';
                 }
                 $result .= '</div>';
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.extra_general_meeting').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.extra_general_meeting') . '</label></div>';
                 if ($agm->egm == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="1" checked> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="0"> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="1" checked> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="0"> ' . trans('app.forms.no') . '</div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="1"> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="0" checked> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="1"> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="egm_edit" name="egm_edit" value="0" checked> ' . trans('app.forms.no') . '</div>';
                 }
                 $result .= '</div>';
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.meeting_minutes').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.meeting_minutes') . '</label></div>';
                 if ($agm->minit_meeting == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="1" checked> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="0"> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="1" checked> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="0"> ' . trans('app.forms.no') . '</div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="1"> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="0" checked> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="1"> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="minit_meeting_edit" name="minit_meeting_edit" value="0" checked> ' . trans('app.forms.no') . '</div>';
                 }
                 $result .= '</div>';
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.jmc_spa_copy').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.jmc_spa_copy') . '</label></div>';
                 if ($agm->jmc_spa == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="1" checked>'.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="0">'.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="1" checked>' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="0">' . trans('app.forms.no') . '</div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="1">'.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="0" checked>'.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="1">' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="jmc_copy_edit" name="jmc_copy_edit" value="0" checked>' . trans('app.forms.no') . '</div>';
                 }
                 $result .= '</div>';
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.identity_card_list').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.identity_card_list') . '</label></div>';
                 if ($agm->identity_card == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="1" checked> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="0"> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="1" checked> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="0"> ' . trans('app.forms.no') . '</div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="1"> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="0" checked> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="1"> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="ic_list_edit" name="ic_list_edit" value="0" checked> ' . trans('app.forms.no') . '</div>';
                 }
                 $result .= '</div>';
 
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.attendance_list').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.attendance_list') . '</label></div>';
                 if ($agm->attendance == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="1" checked> '.trans('app.forms.yes').' </div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="0"> '.trans('app.forms.no').' </div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="1" checked> ' . trans('app.forms.yes') . ' </div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="0"> ' . trans('app.forms.no') . ' </div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="1"> '.trans('app.forms.yes').' </div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="0" checked> '.trans('app.forms.no').' </div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="1"> ' . trans('app.forms.yes') . ' </div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="attendance_list_edit" name="attendance_list_edit" value="0" checked> ' . trans('app.forms.no') . ' </div>';
                 }
                 $result .= '</div>';
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.audited_financial_report').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.audited_financial_report') . '</label></div>';
                 if ($agm->financial_report == 1) {
-                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="1" checked> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="0"> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="1" checked> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="0"> ' . trans('app.forms.no') . '</div>';
                 } else {
-                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="1"> '.trans('app.forms.yes').'</div>';
-                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="0" checked> '.trans('app.forms.no').'</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="1"> ' . trans('app.forms.yes') . '</div>';
+                    $result .= '<div class="col-md-2"><input type="radio" id="audited_financial_report_edit" name="audited_financial_report_edit" value="0" checked> ' . trans('app.forms.no') . '</div>';
                 }
                 $result .= '</div>';
 
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.financial_audit_report').'</label></div>';
-                $result .= '<div class="col-md-6"><input type="text" class="form-control" placeholder="'.trans('app.forms.financial_audit_report').'" id="audit_report_edit" value=' . "$agm->audit_report" . '></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.financial_audit_report') . '</label></div>';
+                $result .= '<div class="col-md-6"><input type="text" class="form-control" placeholder="' . trans('app.forms.financial_audit_report') . '" id="audit_report_edit" value=' . "$agm->audit_report" . '></div>';
                 $result .= '</div>';
 
                 $result .= '</form>';
@@ -2148,7 +2150,7 @@ class AdminController extends BaseController {
                 $result .= '<input type="file" name="audit_report_file_edit" id="audit_report_file_edit">';
                 $result .= '<div id="validation-errors_audit_report_file_edit"></div><div id="view_audit_report_file_edit"></div>';
                 if ($agm->audit_report_url != "") {
-                    $result .= '<div id="report_edit"><a href="' . asset($agm->audit_report_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> '.trans('app.forms.download').'</button></a>&nbsp;';
+                    $result .= '<div id="report_edit"><a href="' . asset($agm->audit_report_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
                     $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditReport(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result .= '</div>';
@@ -2157,13 +2159,13 @@ class AdminController extends BaseController {
 
                 $result .= '<form id="upload_letter_integrity_edit" enctype="multipart/form-data" method="post" action="' . url("uploadLetterIntegrityEdit") . '" autocomplete="off">';
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.pledge_letter_of_integrity').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.pledge_letter_of_integrity') . '</label></div>';
                 $result .= '<div class="col-md-6">';
                 $result .= '<button type="button" id="clear_letter_integrity_edit" class="btn btn-xs btn-danger" onclick="clearLetterIntegrityEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
                 $result .= '<input type="file" name="letter_integrity_edit" id="letter_integrity_edit">';
                 $result .= '<div id="validation-errors_letter_integrity_edit"></div>';
                 if ($agm->letter_integrity_url != "") {
-                    $result .= '<div id="integrity_edit"><a href="' . asset($agm->letter_integrity_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> '.trans('app.forms.download').'</button></a>&nbsp;';
+                    $result .= '<div id="integrity_edit"><a href="' . asset($agm->letter_integrity_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
                     $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterIntegrity(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result .= '</div>';
@@ -2172,13 +2174,13 @@ class AdminController extends BaseController {
 
                 $result .= '<form id="upload_letter_bankruptcy_edit" enctype="multipart/form-data" method="post" action="' . url("uploadLetterBankruptcyEdit") . '" autocomplete="off">';
                 $result .= '<div class="form-group row">';
-                $result .= '<div class="col-md-6"><label class="form-control-label">'.trans('app.forms.declaration_letter_of_non_bankruptcy').'</label></div>';
+                $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.declaration_letter_of_non_bankruptcy') . '</label></div>';
                 $result .= '<div class="col-md-6">';
                 $result .= '<button type="button" id="clear_letter_bankruptcy_edit" class="btn btn-xs btn-danger" onclick="clearLetterBankruptcyEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
                 $result .= '<input type="file" name="letter_bankruptcy_edit" id="letter_bankruptcy_edit">';
                 $result .= '<div id="validation-errors_letter_bankruptcy_edit"></div>';
                 if ($agm->letter_bankruptcy_url != "") {
-                    $result .= '<div id="bankruptcy_edit"><a href="' . asset($agm->letter_bankruptcy_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> '.trans('app.forms.download').'</button></a>&nbsp;';
+                    $result .= '<div id="bankruptcy_edit"><a href="' . asset($agm->letter_bankruptcy_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
                     $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterBankruptcy(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result .= '</div>';
@@ -2277,19 +2279,19 @@ class AdminController extends BaseController {
 
                 $data_raw = array(
                     $date_agm,
-                    trans('app.forms.annual_general_meeting').'<br/>'
-                    . trans('app.forms.extra_general_meeting').'<br/>'
-                    . trans('app.forms.meeting_minutes').'<br/>'
-                    . trans('app.forms.pledge_letter_of_integrity').'<br>'
+                    trans('app.forms.annual_general_meeting') . '<br/>'
+                    . trans('app.forms.extra_general_meeting') . '<br/>'
+                    . trans('app.forms.meeting_minutes') . '<br/>'
+                    . trans('app.forms.pledge_letter_of_integrity') . '<br>'
                     . trans('app.forms.declaration_letter_of_non_bankruptcy'),
                     $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
-                    trans('app.forms.jmc_spa_copy').'<br/>'
-                    . trans('app.forms.identity_card_list').'<br/>'
+                    trans('app.forms.jmc_spa_copy') . '<br/>'
+                    . trans('app.forms.identity_card_list') . '<br/>'
                     . trans('app.forms.attendance_list'),
                     $status6 . '<br/>' . $status7 . '<br/>' . $status8,
-                    trans('app.forms.audited_financial_report').'<br/>'
-                    . trans('app.forms.financial_audit_start_date').'<br/>'
-                    . trans('app.forms.financial_audit_end_date').'<br/>'
+                    trans('app.forms.audited_financial_report') . '<br/>'
+                    . trans('app.forms.financial_audit_start_date') . '<br/>'
+                    . trans('app.forms.financial_audit_end_date') . '<br/>'
                     . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
                     $button
@@ -3945,14 +3947,14 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($companies->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveCompany(\'' . $companies->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveCompany(\'' . $companies->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCompany(\'' . $companies->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCompany(\'' . $companies->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@editCompany', $companies->id) . '\'">'.trans('app.forms.edit').' <i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteCompany(\'' . $companies->id . '\')">'.trans('app.forms.delete').' <i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@editCompany', $companies->id) . '\'">' . trans('app.forms.edit') . ' <i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteCompany(\'' . $companies->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $companies->name,
@@ -4400,10 +4402,10 @@ class AdminController extends BaseController {
 
                 if ($accessgroups->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAccessGroup(\'' . $accessgroups->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAccessGroup(\'' . $accessgroups->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAccessGroup(\'' . $accessgroups->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAccessGroup(\'' . $accessgroups->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateAccessGroup', $accessgroups->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteAccessGroup(\'' . $accessgroups->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -4824,12 +4826,12 @@ class AdminController extends BaseController {
                 if ($users->is_active == 1) {
                     $is_active = trans('app.forms.yes');
                     if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . $users->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . $users->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                     }
                 } else {
                     $is_active = trans('app.forms.no');
                     if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . $users->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . $users->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                     }
                 }
 
@@ -5017,7 +5019,7 @@ class AdminController extends BaseController {
                 }
 
                 if ($files) {
-                    $result = "<option value=''>".trans('app.forms.please_select')."</option>";
+                    $result = "<option value=''>" . trans('app.forms.please_select') . "</option>";
 
                     foreach ($files as $file) {
                         $result .= "<option value='" . $file->id . "'>" . $file->file_no . "</option>";
@@ -5025,10 +5027,10 @@ class AdminController extends BaseController {
 
                     print $result;
                 } else {
-                    print "<option value=''>".trans('app.forms.please_select')."</option>";
+                    print "<option value=''>" . trans('app.forms.please_select') . "</option>";
                 }
             } else {
-                print "<option value=''>".trans('app.forms.please_select')."</option>";
+                print "<option value=''>" . trans('app.forms.please_select') . "</option>";
             }
         }
     }
@@ -5227,10 +5229,10 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($memos->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemo(\'' . $memos->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemo(\'' . $memos->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemo(\'' . $memos->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemo(\'' . $memos->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateMemo', $memos->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemo(\'' . $memos->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -5806,14 +5808,14 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($forms->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveForm(\'' . $forms->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveForm(\'' . $forms->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeForm(\'' . $forms->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeForm(\'' . $forms->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateForm', $forms->id) . '\'">'.trans('app.forms.edit').' <i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteForm(\'' . $forms->id . '\')">'.trans('app.forms.delete').' <i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateForm', $forms->id) . '\'">' . trans('app.forms.edit') . ' <i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteForm(\'' . $forms->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     ($forms->company ? $forms->company->short_name : '<i>(not set)</i>'),
@@ -6099,9 +6101,23 @@ class AdminController extends BaseController {
             3 => 'users.full_name'
         );
 
-        $totalData = DB::table('audit_trail')
-                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                ->count();
+        if (!Auth::user()->getAdmin()) {
+            $totalData = DB::table('audit_trail')
+                    ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                    ->where('users.company_id', Auth::user()->company_id)
+                    ->count();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $totalData = DB::table('audit_trail')
+                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->count();
+            } else {
+                $totalData = DB::table('audit_trail')
+                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->where('users.company_id', Session::get('admin_cob'))
+                        ->count();
+            }
+        }
 
         $limit = $requestData['length'];
         $start = $requestData['start'];
@@ -6136,89 +6152,281 @@ class AdminController extends BaseController {
             }
         }
 
-        if (empty($search)) {
-            if (!empty($new_from_date) && !empty($new_to_date)) {
-                $posts = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->select('audit_trail.*', 'users.full_name as name')
-                        ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                        ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                        ->offset($start)
-                        ->limit($limit)
-                        ->orderBy($order, $dir)
-                        ->get();
+        if (!Auth::user()->getAdmin()) {
+            if (empty($search)) {
+                if (!empty($new_from_date) && !empty($new_to_date)) {
+                    $posts = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order, $dir)
+                            ->get();
 
-                $totalFiltered = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                        ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                        ->count();
+                    $totalFiltered = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->count();
+                } else {
+                    $posts = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order, $dir)
+                            ->get();
+
+                    $totalFiltered = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->count();
+                }
             } else {
-                $posts = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->select('audit_trail.*', 'users.full_name as name')
-                        ->offset($start)
-                        ->limit($limit)
-                        ->orderBy($order, $dir)
-                        ->get();
+                if (!empty($new_from_date) && !empty($new_to_date)) {
+                    $posts = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->where(function($query) use ($search) {
+                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            })
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order, $dir)
+                            ->get();
 
-                $totalFiltered = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->count();
+                    $totalFiltered = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->where(function($query) use ($search) {
+                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            })
+                            ->count();
+                } else {
+                    $posts = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->select('audit_trail.*', 'users.full_name as name')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->where(function($query) use ($search) {
+                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            })
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order, $dir)
+                            ->get();
+
+                    $totalFiltered = DB::table('audit_trail')
+                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->where('users.company_id', Auth::user()->company_id)
+                            ->where(function($query) use ($search) {
+                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            })
+                            ->count();
+                }
             }
         } else {
-            if (!empty($new_from_date) && !empty($new_to_date)) {
-                $posts = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->select('audit_trail.*', 'users.full_name as name')
-                        ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                        ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                        ->where(function($query) use ($search) {
-                            $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                            ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                        })
-                        ->offset($start)
-                        ->limit($limit)
-                        ->orderBy($order, $dir)
-                        ->get();
+            if (empty(Session::get('admin_cob'))) {
+                if (empty($search)) {
+                    if (!empty($new_from_date) && !empty($new_to_date)) {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
 
-                $totalFiltered = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                        ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                        ->where(function($query) use ($search) {
-                            $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                            ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                        })
-                        ->count();
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->count();
+                    } else {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->count();
+                    }
+                } else {
+                    if (!empty($new_from_date) && !empty($new_to_date)) {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->count();
+                    } else {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->count();
+                    }
+                }
             } else {
-                $posts = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->select('audit_trail.*', 'users.full_name as name')
-                        ->where(function($query) use ($search) {
-                            $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                            ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                        })
-                        ->offset($start)
-                        ->limit($limit)
-                        ->orderBy($order, $dir)
-                        ->get();
+                if (empty($search)) {
+                    if (!empty($new_from_date) && !empty($new_to_date)) {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
 
-                $totalFiltered = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->where(function($query) use ($search) {
-                            $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                            ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                            ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                        })
-                        ->count();
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->count();
+                    } else {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->count();
+                    }
+                } else {
+                    if (!empty($new_from_date) && !empty($new_to_date)) {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
+                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->count();
+                    } else {
+                        $posts = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->select('audit_trail.*', 'users.full_name as name')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->offset($start)
+                                ->limit($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+
+                        $totalFiltered = DB::table('audit_trail')
+                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->where('users.company_id', Session::get('admin_cob'))
+                                ->where(function($query) use ($search) {
+                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
+                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                                })
+                                ->count();
+                    }
+                }
             }
         }
 
@@ -6699,4 +6907,5 @@ class AdminController extends BaseController {
 
         return View::make('form_en.index', $viewData);
     }
+
 }

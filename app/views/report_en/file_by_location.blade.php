@@ -72,8 +72,8 @@ $company = Company::find(Auth::user()->company_id);
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "pageLength": 50,
             "order": [[0, "asc"]],
-            "scrollX": false,
-            "fixedColumns": true
+            "scrollX": true,
+            "responsive": false
         });
     });
 
