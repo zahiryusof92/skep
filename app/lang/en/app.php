@@ -333,6 +333,8 @@ return array(
         "insert" => "Insert",
         "update" => "Update",
         "housing_scheme" => "Housing Scheme",
+        "add_housing_scheme" => "Add User",
+        "user" => "User",
         "count" => "No",
         "developed_area" => "Developed Area (STRATA)",
         "management" => "Management",

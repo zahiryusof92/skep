@@ -2770,6 +2770,7 @@ class AdminController extends BaseController {
         $file = Files::find($id);
         $other_details = OtherDetails::where('file_id', $file->id)->first();
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $users = User::where('company_id', $file->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -2778,6 +2779,7 @@ class AdminController extends BaseController {
             'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
             'user_permission' => $user_permission,
             'file' => $file,
+            'users' => $users,
             'other_details' => $other_details,
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
@@ -2845,6 +2847,95 @@ class AdminController extends BaseController {
                     $auditTrail->audit_by = Auth::user()->id;
                     $auditTrail->save();
 
+                    print "true";
+                } else {
+                    print "false";
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function submitAddHousingScheme() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $file_id = $data['file_id'];
+            $housing_scheme = $data['housing_scheme'];
+
+            if (!empty($file_id)) {
+                $check_exist = HousingSchemeUser::where('user_id', $housing_scheme)->where('is_deleted', 0)->count();
+                if ($check_exist > 0) {
+                    print "data_exist";
+                } else {
+                    $hs_user = new HousingSchemeUser();
+                    $hs_user->file_id = $file_id;
+                    $hs_user->user_id = $housing_scheme;
+                    $hs_user->is_deleted = 0;
+                    $success = $hs_user->save();
+
+                    if ($success) {
+                        print "true";
+                    } else {
+                        print "false";
+                    }
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function getHousingScheme($file_id) {
+        $user = HousingSchemeUser::where('file_id', $file_id)->where('is_deleted', 0)->get();
+
+        if (count($user) > 0) {
+            $data = Array();
+            foreach ($user as $users) {
+                $hs_user = User::find($users->user_id);
+
+                if ($hs_user) {
+                    $button = "";
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteHousingScheme(\'' . $users->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+
+                    $data_raw = array(
+                        $hs_user->full_name,
+                        $hs_user->phone_no,
+                        $hs_user->email,
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+            }
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function deleteHousingScheme() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = $data['id'];
+            $hs_user = HousingSchemeUser::find($id);
+
+            if ($hs_user) {
+                $hs_user->is_deleted = 1;
+                $success = $hs_user->save();
+
+                if ($success) {
                     print "true";
                 } else {
                     print "false";

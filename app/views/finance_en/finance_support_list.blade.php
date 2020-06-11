@@ -24,7 +24,7 @@ foreach ($user_permission as $permission) {
                         {{ trans('app.buttons.add_finance_support') }}
                     </button>
                     <br/><br/>
-                    <table class="table table-hover nowrap" id="filelist" width="100%">
+                    <table class="table table-hover nowrap" id="filelist" width="100%" style="font-size: 13px;">
                         <thead>
                             <tr>
                                 <th style="width:30%;">{{ trans('app.forms.file_no') }}.</th>
@@ -52,7 +52,8 @@ foreach ($user_permission as $permission) {
             "sAjaxSource": "{{URL::action('FinanceController@getFinanceSupportList')}}",
             "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
             "order": [[0, "asc"]],
-            responsive: true
+            "scrollX": true,
+            "responsive": false
         });
     });
 

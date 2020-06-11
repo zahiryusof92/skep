@@ -8,7 +8,7 @@ $prefix = 'sum_';
         <h6>{{ trans("app.forms.summary") }}</h6>
 
             <div class="row">
-                <table class="table table-sm" style="font-size: 12px;">
+                <table class="table table-sm" style="font-size: 12px;" style="width: 100%">
                     <tbody>
                         <?php
                         $no = 1;
@@ -17,10 +17,11 @@ $prefix = 'sum_';
                         @foreach ($summary as $summaries)
                         <?php $total_all += $summaries['amount']; ?>
                         <tr>
-                            <td width="5%" class="padding-table text-center"><input type="hidden" name="{{ $prefix }}summary_key[]" value="{{ $summaries->summary_key }}">{{ $summaries->sort_no }}</td>
-                            <td width="85%" class="padding-table"><input type="hidden" name="{{ $prefix }}name[]" value="{{ $summaries->name }}">{{ $summaries->name }}</td>
-                            <td width="10%"><input type="number" step="0.01" oninput="calculateSummaryTotal()" class="form-control form-control-sm text-right" id="{{$prefix.$summaries->summary_key}}" name="{{ $prefix }}amount[]" value="{{ $summaries->amount }}"></td>
+                            <td width="5%" class="padding-table text-center"><input type="hidden" name="{{ $prefix }}summary_key[]" value="{{ $summaries->summary_key }}">{{ $no }}</td>
+                            <td width="80%" class="padding-table"><input type="hidden" name="{{ $prefix }}name[]" value="{{ $summaries->name }}">{{ $summaries->name }}</td>
+                            <td width="15%"><input type="number" step="0.01" oninput="calculateSummaryTotal()" class="form-control form-control-sm text-right" id="{{$prefix.$summaries->summary_key}}" name="{{ $prefix }}amount[]" value="{{ $summaries->amount }}"></td>
                         </tr>
+						<?php $no++; ?>
                         @endforeach
                         <tr>
                             <td>&nbsp;</td>

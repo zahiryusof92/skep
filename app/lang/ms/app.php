@@ -333,6 +333,8 @@ return array(
         "insert" => "Masukkan",
         "update" => "Kemas Kini",
         "housing_scheme" => "Skim Perumahan",
+        "add_housing_scheme" => "Tambah Pengguna",
+        "user" => "Pengguna",
         "developed_area" => "Kawasan Pemajuan (STRATA)",
         "management" => "Pengurusan",
         "monitoring" => "Pemantauan",

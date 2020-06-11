@@ -146,6 +146,9 @@ Route::get('/updateFile/others/{id}', 'AdminController@others')->before('authMem
 Route::post('/submitUpdateOtherDetails', 'AdminController@submitUpdateOtherDetails')->before('authMember');
 Route::post('/uploadOthersImage', 'ImageController@uploadOthersImage');
 Route::post('/deleteImageOthers/{id}', 'AdminController@deleteImageOthers')->before('authMember');
+Route::get('/getHousingScheme/{file_id}', 'AdminController@getHousingScheme')->before('authMember');
+Route::post('/submitAddHousingScheme', 'AdminController@submitAddHousingScheme')->before('authMember');
+Route::post('/deleteHousingScheme', 'AdminController@deleteHousingScheme')->before('authMember');
 
 //scoring
 Route::get('/view/scoring/{id}', 'AdminController@viewScoring')->before('authMember');

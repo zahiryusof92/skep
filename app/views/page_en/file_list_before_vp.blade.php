@@ -197,7 +197,7 @@ foreach ($user_permission as $permission) {
 
             <div class="row">
                 <div class="col-lg-12">
-                    <table class="table table-hover nowrap" id="filelist" width="100%">
+                    <table class="table table-hover nowrap" id="filelist" width="100%" style="font-size: 13px;">
                         <thead>
                             <tr>
                                 <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
