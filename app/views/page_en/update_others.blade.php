@@ -406,7 +406,7 @@ foreach ($user_permission as $permission) {
 
                                                                                 if (data.trim() === "true") {
                                                                                     $("#houseSchemeForm").modal("hide");
-                                                                                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.import_successfully') }}</span>", function () {
+                                                                                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
                                                                                         window.location.reload();
                                                                                     });
                                                                                 } else if (data.trim() === "data_exist") {
