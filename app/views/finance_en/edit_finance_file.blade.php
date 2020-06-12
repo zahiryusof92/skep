@@ -66,6 +66,8 @@ $finance_file_id = $financefiledata->id;
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    <br/>
+                                    <span style="font-weight: bold; color: red; font-style: italic; display: none;" id="check_mandatory_fields">* {{ trans('app.forms.check_mandatory_fields') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -179,6 +181,7 @@ $finance_file_id = $financefiledata->id;
                 $("#date_err").css("display", "none");
                 $("#position_err").css("display", "none");
                 $("#is_active_err").css("display", "none");
+                $("#check_mandatory_fields").css("display", "none");
 
                 var error = 0;
 
@@ -233,6 +236,7 @@ $finance_file_id = $financefiledata->id;
                 } else {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
+                    $("#check_mandatory_fields").css("display", "block");
                 }
             }
         });

@@ -183,7 +183,8 @@ return array(
         "change_cob" => "Tukar COB",
     ),
     "forms" => array(
-        "mandatory_fields" => "Borang Wajib",
+        "mandatory_fields" => "Medan Wajib",
+        "check_mandatory_fields" => "Sila pastikan semua maklumat medan wajib telah dimasukkan. Semak semua tabs.",
         "please_select" => "Sila Pilih",
         "company_name" => "Nama Syarikat",
         "tenant_name" => "Nama Penyewa",

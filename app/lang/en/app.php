@@ -184,6 +184,7 @@ return array(
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
+        "check_mandatory_fields" => "Please make sure all mandatory fields already key-in. Check all tabs.",
         "please_select" => "Please Select",
         "company_name" => "Company Name",
         "tenant_name" => "Tenant Name",
