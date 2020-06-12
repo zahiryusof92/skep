@@ -168,70 +168,74 @@ $finance_file_id = $financefiledata->id;
     });
 
     $("#updateFinanceFile").submit(function (e) {
-        changes = false;
         e.preventDefault();
+        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
+            if (result) {
+                changes = false;                
 
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#name_err").css("display", "none");
-        $("#date_err").css("display", "none");
-        $("#position_err").css("display", "none");
-        $("#is_active_err").css("display", "none");
+                $("#loading").css("display", "inline-block");
+                $("#submit_button").attr("disabled", "disabled");
+                $("#name_err").css("display", "none");
+                $("#date_err").css("display", "none");
+                $("#position_err").css("display", "none");
+                $("#is_active_err").css("display", "none");
 
-        var error = 0;
+                var error = 0;
 
-        if ($("#name").val().trim() == "") {
-            $("#name_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-            $("#name_err").css("display", "block");
-            error = 1;
-        }
+                if ($("#name").val().trim() == "") {
+                    $("#name_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
+                    $("#name_err").css("display", "block");
+                    error = 1;
+                }
 
-        if ($("#mirror_date").val().trim() == "") {
-            $("#date_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Date"]) }}</span>');
-            $("#date_err").css("display", "block");
-            error = 1;
-        }
+                if ($("#mirror_date").val().trim() == "") {
+                    $("#date_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Date"]) }}</span>');
+                    $("#date_err").css("display", "block");
+                    error = 1;
+                }
 
-        if ($("#position").val().trim() == "") {
-            $("#position_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Position"]) }}</span>');
-            $("#position_err").css("display", "block");
-            error = 1;
-        }
+                if ($("#position").val().trim() == "") {
+                    $("#position_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Position"]) }}</span>');
+                    $("#position_err").css("display", "block");
+                    error = 1;
+                }
 
-        if ($("#is_active").val().trim() == "") {
-            $("#is_active_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Status"]) }}</span>');
-            $("#is_active_err").css("display", "block");
-            error = 1;
-        }
+                if ($("#is_active").val().trim() == "") {
+                    $("#is_active_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Status"]) }}</span>');
+                    $("#is_active_err").css("display", "block");
+                    error = 1;
+                }
 
-        if (error == 0) {
-            $.ajax({
-                method: "POST",
-                url: "{{ URL::action('FinanceController@updateFinanceFile') }}",
-                data: $(this).serialize(),
-                success: function (response) {
+                if (error == 0) {
+                    $.ajax({
+                        method: "POST",
+                        url: "{{ URL::action('FinanceController@updateFinanceFile') }}",
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            $("#loading").css("display", "none");
+                            $("#submit_button").removeAttr("disabled");
+
+                            if (response.trim() == "true") {
+                                $.notify({
+                                    message: '<p style="text-align: center; margin-bottom: 0px;">{{ trans("app.successes.saved_successfully") }}</p>',
+                                }, {
+                                    type: 'success',
+                                    placement: {
+                                        align: "center"
+                                    }
+                                });
+                                location = '{{URL::action("FinanceController@editFinanceFileList", $finance_file_id) }}';
+                            } else {
+                                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                            }
+                        }
+                    });
+                } else {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
-
-                    if (response.trim() == "true") {
-                        $.notify({
-                            message: '<p style="text-align: center; margin-bottom: 0px;">{{ trans("app.successes.saved_successfully") }}</p>',
-                        }, {
-                            type: 'success',
-                            placement: {
-                                align: "center"
-                            }
-                        });
-                        location = '{{URL::action("FinanceController@editFinanceFileList", $finance_file_id) }}';
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                    }
                 }
-            });
-        } else {
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-        }
+            }
+        });
     });
 
     $(function () {

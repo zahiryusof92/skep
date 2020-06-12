@@ -712,6 +712,7 @@ return array(
     "confirmation" => array(
         "are_you_sure" => "Adakah anda pasti?",
         "are_you_sure_delete_file" => "Adakah anda pasti mahu memadamkan fail ini?",
+        "are_you_sure_submit" => "Adakah anda pasti mahu menghantar data ini?",
         "no_recover_file" => "Anda tidak akan dapat memulihkan fail ini!",
         "want_to_leave" => "Data yang anda masukkan mungkin tidak disimpan, adakah anda mahu keluar?"
     ),
