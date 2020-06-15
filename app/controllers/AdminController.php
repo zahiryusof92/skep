@@ -1081,6 +1081,8 @@ class AdminController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        
+        $users = User::where('company_id', $file->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -1094,6 +1096,7 @@ class AdminController extends BaseController {
             'country' => $country,
             'state' => $state,
             'file' => $file,
+            'users' => $users,
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
 
@@ -2770,8 +2773,7 @@ class AdminController extends BaseController {
         $file = Files::find($id);
         $other_details = OtherDetails::where('file_id', $file->id)->first();
         $image = OtherDetails::where('file_id', $file->id)->first();
-        $users = User::where('company_id', $file->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
-
+        
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2779,7 +2781,6 @@ class AdminController extends BaseController {
             'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
             'user_permission' => $user_permission,
             'file' => $file,
-            'users' => $users,
             'other_details' => $other_details,
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
@@ -2865,7 +2866,7 @@ class AdminController extends BaseController {
             $housing_scheme = $data['housing_scheme'];
 
             if (!empty($file_id)) {
-                $check_exist = HousingSchemeUser::where('user_id', $housing_scheme)->where('is_deleted', 0)->count();
+                $check_exist = HousingSchemeUser::where('file_id', $file_id)->where('user_id', $housing_scheme)->where('is_deleted', 0)->count();
                 if ($check_exist > 0) {
                     print "data_exist";
                 } else {
