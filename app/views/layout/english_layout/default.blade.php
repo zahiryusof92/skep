@@ -104,6 +104,9 @@
 
         <!-- Dynamic Form -->
         <script src="{{ asset('assets/common/js/dynamic-form.js')}}"></script>
+        
+        <!-- BlockUI -->
+        <script src="{{ asset('assets/common/js/blockUI/blockUI.js')}}"></script>
 
     </head>
 

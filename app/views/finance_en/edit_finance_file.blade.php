@@ -12,8 +12,6 @@ foreach ($user_permission as $permission) {
         $update_permission = $permission->update_permission;
     }
 }
-
-$finance_file_id = $financefiledata->id;
 ?>
 
 <style>
@@ -145,7 +143,7 @@ $finance_file_id = $financefiledata->id;
                 </div>
                 <?php if ($update_permission == 1) { ?>
                     <div class="form-actions">
-                        <input type="hidden" name="finance_file_id" value="{{ $finance_file_id }}">
+                        <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
                         <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
                         <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                     </div>
@@ -171,9 +169,11 @@ $finance_file_id = $financefiledata->id;
 
     $("#updateFinanceFile").submit(function (e) {
         e.preventDefault();
+
+        var data = $(this).serialize();
         bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
             if (result) {
-                changes = false;                
+                changes = false;
 
                 $("#loading").css("display", "inline-block");
                 $("#submit_button").attr("disabled", "disabled");
@@ -210,11 +210,14 @@ $finance_file_id = $financefiledata->id;
                 }
 
                 if (error == 0) {
+                    $.blockUI({ message: '{{ trans("app.confirmation.please_wait") }}' }); 
+                    
                     $.ajax({
                         method: "POST",
                         url: "{{ URL::action('FinanceController@updateFinanceFile') }}",
-                        data: $(this).serialize(),
+                        data: data,
                         success: function (response) {
+                            $.unblockUI();
                             $("#loading").css("display", "none");
                             $("#submit_button").removeAttr("disabled");
 
@@ -227,7 +230,7 @@ $finance_file_id = $financefiledata->id;
                                         align: "center"
                                     }
                                 });
-                                location = '{{URL::action("FinanceController@editFinanceFileList", $finance_file_id) }}';
+                                location = '{{URL::action("FinanceController@editFinanceFileList", $financefiledata->id) }}';
                             } else {
                                 bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                             }

@@ -15,16 +15,19 @@
 
         <!-- Vendors Styles -->
         <!-- v1.0.0 -->
-        {{HTML::style("assets/vendors/bootstrap/dist/css/bootstrap.min.css")}}
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/bootstrap/dist/css/bootstrap.min.css') }}">
 
         <!-- Clean UI Styles -->
-        {{HTML::style("assets/common/css/source/main.css")}}
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/common/css/source/main.css') }}">
 
         <!-- Vendors Scripts -->
         <!-- v1.0.0 -->
-        {{HTML::script("assets/vendors/jquery/jquery.min.js")}}
-        {{HTML::script("assets/vendors/autosize/dist/autosize.min.js")}}
-        {{HTML::script("assets/vendors/bootstrap-show-password/bootstrap-show-password.min.js")}}
+        <script src="{{ asset('assets/vendors/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/vendors/autosize/dist/autosize.min.js') }}"></script>
+        <script src="{{ asset('assets/vendors/bootstrap-show-password/bootstrap-show-password.min.js') }}"></script>
+        
+        <!-- BlockUI -->
+        <script src="{{ asset('assets/common/js/blockUI/blockUI.js')}}"></script>
 
     </head>
 

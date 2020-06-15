@@ -82,7 +82,7 @@ if (isset($cob) && !empty($cob)) {
                 </div>
                 <div class="form-actions text-center">
                     <input type="hidden" name="cob" value="{{ $cob }}"/>
-                    <button type="submit" class="btn btn-primary width-150">{{ trans('app.forms.login') }}</button>
+                    <button type="submit" class="btn btn-primary width-150" id="login_button">{{ trans('app.forms.login') }}</button>
                 </div>
 
                 {{Form::close()}}
@@ -98,6 +98,10 @@ if (isset($cob) && !empty($cob)) {
 <!-- Page Scripts -->
 <script>
     $(function () {
+        $('#login_button').click(function() { 
+            $.blockUI({ message: '{{ trans("app.confirmation.please_wait") }}' }); 
+        }); 
+        
         // Add class to body for change layout settings
         $('body').addClass('single-page single-page-inverse');
 
@@ -113,7 +117,6 @@ if (isset($cob) && !empty($cob)) {
 
             $('.blur-placeholder').css('background-image', imgUrl);
         }
-        ;
 
         function changeImgPositon() {
             var width = $(window).width(),

@@ -715,7 +715,8 @@ return array(
         "are_you_sure_delete_file" => "Are you sure want to delete this file?",
         "are_you_sure_submit" => "Are you sure want to submit this data?",
         "no_recover_file" => "Your will not be able to recover this file!",
-        "want_to_leave" => "Data you have entered may not be saved, do you really want to leave?"
+        "want_to_leave" => "Data you have entered may not be saved, do you really want to leave?",
+        "please_wait" => "Please wait..."
     ),
     "buttons" => array(
         "add_company" => "Add Company",
