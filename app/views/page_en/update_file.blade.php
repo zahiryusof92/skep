@@ -846,7 +846,7 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="checkbox" name="is_jmb" id="is_jmb"/>
-                                            <label><h4> {{ trans('app.forms.joint_management_boby') }}</h4></label>
+                                            <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
                                             <!-- jmb Form -->
                                             <div id="jmb_form" style="display:none">
                                                 <div class="row">
@@ -964,7 +964,7 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="checkbox" name="is_jmb" id="is_jmb" {{($management->is_jmb == 1 ? " checked" : "")}}/>
-                                            <label><h4> {{ trans('app.forms.joint_management_boby') }}</h4></label>
+                                            <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
                                             <!-- jmb Form -->
                                             <div id="jmb_form">
                                                 <div class="row">
@@ -1084,7 +1084,7 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="checkbox" name="is_mc" id="is_mc"/>
-                                            <label><h4> {{ trans('app.forms.management_committee') }}</h4></label>
+                                            <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
                                             <!-- jmb Form -->
                                             <div id="mc_form" style="display:none">
                                                 <div class="row">
@@ -1207,7 +1207,7 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="checkbox" name="is_mc" id="is_mc" {{($management->is_mc == 1 ? " checked" : "")}}/>
-                                            <label><h4> {{ trans('app.forms.management_committee') }}</h4></label>
+                                            <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
                                             <!-- mc Form -->
                                             <div id="mc_form">
                                                 <div class="row">
@@ -1338,11 +1338,13 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label>{{ trans('app.forms.selected_by') }}</label>
+                                                            <label>{{ trans('app.forms.appointed_by') }}</label>
                                                             <select class="form-control" id="agent_selected_by">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 <option value="developer">{{ trans('app.forms.developer') }}</option>
                                                                 <option value="cob">{{ trans('app.forms.cob') }}</option>
+                                                                <option value="jmb">{{ trans('app.forms.jmb') }}</option>
+                                                                <option value="mc">{{ trans('app.forms.mc') }}</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -1452,11 +1454,13 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label>{{ trans('app.forms.selected_by') }}</label>
+                                                            <label>{{ trans('app.forms.appointed_by') }}</label>
                                                             <select class="form-control" id="agent_selected_by">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 <option value="developer" {{($management_agent->selected_by == "developer" ? " selected" : "")}}>{{ trans('app.forms.developer') }}</option>
                                                                 <option value="cob" {{($management_agent->selected_by == "cob" ? " selected" : "")}}>{{ trans('app.forms.cob') }}</option>
+                                                                <option value="jmb" {{($management_agent->selected_by == "jmb" ? " selected" : "")}}>{{ trans('app.forms.jmb') }}</option>
+                                                                <option value="mc" {{($management_agent->selected_by == "mc" ? " selected" : "")}}>{{ trans('app.forms.mc') }}</option>
                                                             </select>
                                                         </div>
                                                     </div>
