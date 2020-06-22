@@ -813,6 +813,10 @@ class AdminController extends BaseController {
                     $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
+                if (Auth::user()->role == 1) {
+                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $files->id . '" data-file_no="' . $files->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                }
+
 //                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $files->id) . '\'">View <i class="fa fa-eye"></i></button>&nbsp;';
                 $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
@@ -1040,6 +1044,39 @@ class AdminController extends BaseController {
         }
     }
 
+    public function updateFileNo() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['file_id'];
+            $file_no = $data['file_no'];
+
+            $check_exist = Files::where('file_no', $file_no)->where('id', '!=', $id)->where('is_deleted', 0)->count();
+            if ($check_exist <= 0) {
+                $files = Files::find($id);
+                if ($files) {
+                    $files->file_no = $data['file_no'];
+                    $updated = $files->save();
+                    if ($updated) {
+                        # Audit Trail
+                        $remarks = $files->file_no . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+
+                        print "true";
+                    } else {
+                        print "false";
+                    }
+                }
+            } else {
+                print "exist";
+            }
+        }
+    }
+
     public function viewHouse($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -1081,7 +1118,7 @@ class AdminController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
-        
+
         $users = User::where('company_id', $file->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
 
         $viewData = array(
@@ -2773,7 +2810,7 @@ class AdminController extends BaseController {
         $file = Files::find($id);
         $other_details = OtherDetails::where('file_id', $file->id)->first();
         $image = OtherDetails::where('file_id', $file->id)->first();
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',

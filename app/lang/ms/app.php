@@ -185,6 +185,7 @@ return array(
     "forms" => array(
         "mandatory_fields" => "Medan Wajib",
         "check_mandatory_fields" => "Sila pastikan semua maklumat medan wajib telah dimasukkan. Semak semua tabs.",
+        "update_file_no" => "Edit No Fail",
         "please_select" => "Sila Pilih",
         "company_name" => "Nama Syarikat",
         "tenant_name" => "Nama Penyewa",

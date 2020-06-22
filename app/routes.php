@@ -81,6 +81,8 @@ Route::post('/activeFileList', 'AdminController@activeFileList')->before('authMe
 Route::post('/inactiveFileList', 'AdminController@inactiveFileList')->before('authMember');
 Route::post('/deleteFileList', 'AdminController@deleteFileList')->before('authMember');
 
+Route::post('/updateFileNo', 'AdminController@updateFileNo')->before('authMember');
+
 //house scheme
 Route::get('/view/house/{id}', 'AdminController@viewHouse')->before('authMember');
 Route::get('/update/house/{id}', 'AdminController@house')->before('authMember');
