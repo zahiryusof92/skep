@@ -261,7 +261,7 @@ foreach ($user_permission as $permission) {
             success: function (data) {
                 if (data.trim() == "true") {
                     bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function () {
-                        window.location = "{{URL::action('AdminController@fileList')}}";
+                        window.location.reload();
                     });
                 } else {
                     bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
@@ -280,7 +280,7 @@ foreach ($user_permission as $permission) {
             success: function (data) {
                 if (data.trim() == "true") {
                     bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function () {
-                        window.location = "{{URL::action('AdminController@fileList')}}";
+                        window.location.reload();
                     });
                 } else {
                     bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
@@ -301,7 +301,7 @@ foreach ($user_permission as $permission) {
                     success: function (data) {
                         if (data.trim() == "true") {
                             bootbox.alert("<span style='color:green;'>{{ trans('app.successes.deleted_successfully') }}</span>", function () {
-                                window.location = "{{URL::action('AdminController@fileList')}}";
+                                window.location.reload();
                             });
                         } else {
                             bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

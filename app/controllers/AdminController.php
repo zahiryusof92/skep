@@ -905,6 +905,10 @@ class AdminController extends BaseController {
                     $is_active = trans('app.forms.no');
                     $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
+                
+                if (Auth::user()->role == 1) {
+                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $files->id . '" data-file_no="' . $files->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                }
 
 //                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $files->id) . '\'">View <i class="fa fa-eye"></i></button>&nbsp;';
                 $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';

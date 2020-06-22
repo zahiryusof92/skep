@@ -313,4 +313,116 @@ foreach ($user_permission as $permission) {
     }
 </script>
 
+@if (Auth::user()->role == 1)
+<div class="modal fade" id="updateFileNoForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <form id="form_update_file_no" class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ trans('app.forms.update_file_no') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label><span style="color: red;">*</span> {{ trans('app.forms.update_file_no') }}</label>
+                                <input type="text" name="file_no" id="file_no" class="form-control"/>
+                                <div id="file_no_error" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="file_id" id="file_id"/>
+                    <img id="loading_update_file_no" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                    <button id="submit_button_update_file_no" class="btn btn-primary" type="submit">
+                        {{ trans('app.forms.submit') }}
+                    </button>
+                    <button data-dismiss="modal" id="cancel_button_update_file_no" class="btn btn-default" type="button">
+                        {{ trans('app.forms.cancel') }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".modal-update-file-no", function () {
+        $("#file_no_error").css("display", "none");
+        
+        var fileNo = $(this).data('file_no'),
+                fileID = $(this).data('id');
+
+        $(".modal-body #file_no").val(fileNo);
+        $(".modal-footer #file_id").val(fileID);
+
+    });
+    
+    $("#form_update_file_no").on('submit', (function (e) {
+        e.preventDefault();
+
+        $('#loading_update_file_no').css("display", "inline-block");
+        $("#submit_button_update_file_no").attr("disabled", "disabled");
+        $("#cancel_button_update_file_no").attr("disabled", "disabled");
+        $("#file_no_error").css("display", "none");
+
+        var file_no = $("#file_no").val();
+
+        var error = 0;
+
+        if (file_no.trim() == "") {
+            $("#file_no_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"File No"]) }}</span>');
+            $("#file_no_error").css("display", "block");
+            error = 1;
+        }
+
+        if (error == 0) {
+            var formData = new FormData(this);
+            $.ajax({
+                url: "{{ URL::action('AdminController@updateFileNo') }}",
+                type: "POST",
+                data: formData,
+                async: true,
+                contentType: false, // The content type used when sending data to the server.
+                cache: false, // To unable request pages to be cached
+                processData: false,
+                success: function (data) { //function to be called if request succeeds
+                    $('#loading_update_file_no').css("display", "none");
+                    $("#submit_button_update_file_no").removeAttr("disabled");
+                    $("#cancel_button_update_file_no").removeAttr("disabled");
+
+                    if (data.trim() === "true") {
+                        $("#updateFileNoForm").modal("hide");
+                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                            window.location.reload();
+                        });
+                    } else if (data.trim() === "exist") {
+                        $("#file_no_error").html("<span style='color:red;font-style:italic;font-size:13px;'>{{ trans('app.errors.exist2', ['attribute'=>'File No']) }}</span>");
+                        $("#file_no_error").css("display", "block");
+                    } else {
+                        $("#updateFileNoForm").modal("hide");
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>", function () {
+                            window.location.reload();
+                        });
+                    }
+                }
+            });
+        } else {
+            $("#file_no").focus();
+            $('#loading_update_file_no').css("display", "none");
+            $("#submit_button_update_file_no").removeAttr("disabled");
+            $("#cancel_button_update_file_no").removeAttr("disabled");
+        }
+    }));
+</script>
+@endif
+
 @stop
