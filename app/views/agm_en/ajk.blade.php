@@ -132,7 +132,7 @@ foreach ($user_permission as $permission) {
             oTable.columns(4).search(this.value).draw();
         });
         $('#file_no').on('change', function () {
-            oTable.columns(0).search(this.value).draw();
+            oTable.columns(1).search(this.value).draw();
         });
         $('#month').on('change', function () {
             oTable.columns(5).search(this.value).draw();

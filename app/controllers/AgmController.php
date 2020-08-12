@@ -195,7 +195,11 @@ class AgmController extends BaseController {
     }
 
     public function getAJK() {
-        $ajk_detail = AJKDetails::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        if (!empty(Auth::user()->file_id)) {
+            $ajk_detail = AJKDetails::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $ajk_detail = AJKDetails::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
 
         if (count($ajk_detail) > 0) {
             $data = Array();
@@ -474,7 +478,12 @@ class AgmController extends BaseController {
     }
 
     public function getPurchaser() {
-        $buyer_list = Buyer::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+        if (!empty(Auth::user()->file_id)) {
+            $buyer_list = Buyer::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $buyer_list = Buyer::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
 
         if (count($buyer_list) > 0) {
             $data = Array();
@@ -519,7 +528,21 @@ class AgmController extends BaseController {
     public function addPurchaser() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
+
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
 
@@ -595,7 +618,21 @@ class AgmController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $buyer = Buyer::find($id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
+
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
 
@@ -819,7 +856,20 @@ class AgmController extends BaseController {
     public function tenant() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.tenant'),
@@ -837,7 +887,11 @@ class AgmController extends BaseController {
     }
 
     public function getTenant() {
-        $tenant_list = Tenant::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        if (!empty(Auth::user()->file_id)) {
+            $tenant_list = Tenant::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $tenant_list = Tenant::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
 
         if (count($tenant_list) > 0) {
             $data = Array();
@@ -881,7 +935,21 @@ class AgmController extends BaseController {
     public function addTenant() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
+
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
 
@@ -955,7 +1023,21 @@ class AgmController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $tenant = Tenant::find($id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
+
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
 
@@ -1197,7 +1279,20 @@ class AgmController extends BaseController {
     public function minutes() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.upload_of_minutes'),
@@ -1213,7 +1308,11 @@ class AgmController extends BaseController {
     }
 
     public function getMinutes() {
-        $agm_detail = MeetingDocument::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        if (!empty(Auth::user()->file_id)) {
+            $agm_detail = MeetingDocument::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $agm_detail = MeetingDocument::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
 
         if (count($agm_detail) > 0) {
             $data = Array();
@@ -1290,19 +1389,19 @@ class AgmController extends BaseController {
 
                 $data_raw = array(
                     $date_agm,
-                    trans('app.forms.annual_general_meeting').'<br/>'
-                    . trans('app.forms.extra_general_meeting').'<br/>'
-                    . trans('app.forms.meeting_minutes').'<br/>'
-                    . trans('app.forms.pledge_letter_of_integrity').'<br>'
+                    trans('app.forms.annual_general_meeting') . '<br/>'
+                    . trans('app.forms.extra_general_meeting') . '<br/>'
+                    . trans('app.forms.meeting_minutes') . '<br/>'
+                    . trans('app.forms.pledge_letter_of_integrity') . '<br>'
                     . trans('app.forms.declaration_letter_of_non_bankruptcy'),
                     $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
-                    trans('app.forms.jmc_spa_copy').'<br/>'
-                    . trans('app.forms.identity_card_list').'<br/>'
+                    trans('app.forms.jmc_spa_copy') . '<br/>'
+                    . trans('app.forms.identity_card_list') . '<br/>'
                     . trans('app.forms.attendance_list'),
                     $status6 . '<br/>' . $status7 . '<br/>' . $status8,
-                    trans('app.forms.audited_financial_report').'<br/>'
-                    . trans('app.forms.financial_audit_start_date').'<br/>'
-                    . trans('app.forms.financial_audit_end_date').'<br/>'
+                    trans('app.forms.audited_financial_report') . '<br/>'
+                    . trans('app.forms.financial_audit_start_date') . '<br/>'
+                    . trans('app.forms.financial_audit_end_date') . '<br/>'
                     . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
                     $button
@@ -1329,7 +1428,20 @@ class AgmController extends BaseController {
     public function addMinutes() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_minutes'),
@@ -1440,7 +1552,19 @@ class AgmController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $meeting_doc = MeetingDocument::find($id);
         if ($meeting_doc) {
-            $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                } else {
+                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                } else {
+                    $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                }
+            }
 
             $viewData = array(
                 'title' => trans('app.menus.agm.edit_minutes'),
@@ -1600,7 +1724,12 @@ class AgmController extends BaseController {
     }
 
     public function getDocument() {
-        $document = Document::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        if (!empty(Auth::user()->file_id)) {
+            $document = Document::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $document = Document::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
+
         if (count($document) > 0) {
             $data = Array();
             foreach ($document as $documents) {
@@ -2321,4 +2450,5 @@ class AgmController extends BaseController {
             }
         }
     }
+
 }
