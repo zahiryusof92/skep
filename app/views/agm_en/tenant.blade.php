@@ -28,7 +28,7 @@ foreach ($user_permission as $permission) {
                         </button>
                         &nbsp;
 
-                        @if (strtoupper(Auth::user()->getRole->name) != 'JMB')
+                        @if (strtoupper(Auth::user()->getRole->name) != 'JMB' || strtoupper(Auth::user()->getRole->name) != 'MC')
                         <button onclick="window.location = '{{ URL::action('AgmController@importTenant') }}'" type="button" class="btn btn-primary">
                             {{ trans('app.forms.import_csv_file') }}
                         </button>
