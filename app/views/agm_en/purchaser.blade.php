@@ -29,6 +29,7 @@ foreach ($user_permission as $permission) {
                         &nbsp;
 
                         @if (strtoupper(Auth::user()->getRole->name) != 'JMB')
+                        @if (strtoupper(Auth::user()->getRole->name) != 'MC')
                         <button onclick="window.location = '{{ URL::action('AgmController@importPurchaser') }}'" type="button" class="btn btn-primary">
                             {{ trans('app.forms.import_csv_file') }}
                         </button>
@@ -38,6 +39,7 @@ foreach ($user_permission as $permission) {
                                 {{ trans('app.forms.download_csv_template') }}
                             </button>
                         </a>
+                        @endif
                         @endif
 
                         <br/><br/>
@@ -70,19 +72,18 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
-        $('#purchaser').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getPurchaser')}}",
+    $('#purchaser').DataTable({
+    "sAjaxSource": "{{URL::action('AgmController@getPurchaser')}}",
             "order": [[0, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
+            {
+            "bSortable": false,
+                    "aTargets": [ - 1]
+            }
             ]
-        });
     });
-
+    });
     function deletePurchaser(id) {
     swal({
     title: "{{ trans('app.confirmation.are_you_sure') }}",
