@@ -28,7 +28,8 @@ foreach ($user_permission as $permission) {
                         </button>
                         &nbsp;
 
-                        @if (strtoupper(Auth::user()->getRole->name) != 'JMB' || strtoupper(Auth::user()->getRole->name) != 'MC')
+                        @if (strtoupper(Auth::user()->getRole->name) != 'JMB')
+                        @if (strtoupper(Auth::user()->getRole->name) != 'MC')
                         <button onclick="window.location = '{{ URL::action('AgmController@importTenant') }}'" type="button" class="btn btn-primary">
                             {{ trans('app.forms.import_csv_file') }}
                         </button>
@@ -38,6 +39,7 @@ foreach ($user_permission as $permission) {
                                 {{ trans('app.forms.download_csv_template') }}
                             </button>
                         </a>
+                        @endif
                         @endif
 
                         <br/><br/>
@@ -69,22 +71,21 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
-        $('#tenant').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getTenant')}}",
+    $('#tenant').DataTable({
+    "sAjaxSource": "{{URL::action('AgmController@getTenant')}}",
             "order": [[0, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
+            {
+            "bSortable": false,
+                    "aTargets": [ - 1]
+            }
             ]
-        });
     });
-
+    });
     function deleteTenant(id) {
-        swal({
-            title: "{{ trans('app.confirmation.are_you_sure') }}",
+    swal({
+    title: "{{ trans('app.confirmation.are_you_sure') }}",
             text: "{{ trans('app.confirmation.no_recover_file') }}",
             type: "warning",
             showCancelButton: true,
@@ -92,30 +93,30 @@ foreach ($user_permission as $permission) {
             cancelButtonClass: "btn-default",
             confirmButtonText: "Delete",
             closeOnConfirm: true
-        }, function () {
-            $.ajax({
-                url: "{{ URL::action('AgmController@deleteTenant') }}",
-                type: "POST",
-                data: {
-                    id: id
-                },
-                success: function (data) {
-                    if (data.trim() == "true") {
-                        $.notify({
-                            message: '<p style="text-align: center; margin-bottom: 0px;">{{ trans("app.successes.deleted_successfully") }}</p>'
-                        }, {
-                            type: 'success',
-                            placement: {
-                                align: "center"
-                            }
-                        });
-                        location.reload();
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+    }, function () {
+    $.ajax({
+    url: "{{ URL::action('AgmController@deleteTenant') }}",
+            type: "POST",
+            data: {
+            id: id
+            },
+            success: function (data) {
+            if (data.trim() == "true") {
+            $.notify({
+            message: '<p style="text-align: center; margin-bottom: 0px;">{{ trans("app.successes.deleted_successfully") }}</p>'
+            }, {
+            type: 'success',
+                    placement: {
+                    align: "center"
                     }
-                }
             });
-        });
+            location.reload();
+            } else {
+            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+            }
+            }
+    });
+    });
     }
 </script>
 <!-- End Page Scripts-->
