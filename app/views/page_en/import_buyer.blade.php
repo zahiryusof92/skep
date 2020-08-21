@@ -53,7 +53,7 @@ foreach ($user_permission as $permission) {
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <!-- Buyer Form -->
-                                        {{ Form::open( array('url' => 'uploadBuyerCSVAction/'.$files->id, 'files' => true, 'class' => 'form-horizontal', 'role' => 'form') ) }}
+                                        {{ Form::open( array('id' => 'import_buyer_form', 'url' => 'uploadBuyerCSVAction/'.$files->id, 'files' => true, 'class' => 'form-horizontal', 'role' => 'form') ) }}
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <div class="form-group">
@@ -68,9 +68,9 @@ foreach ($user_permission as $permission) {
                                             <div class="col-md-8">
                                                 <div class="form-group">
                                                     <?php if ($update_permission == 1) { ?>
-                                                    <button type="submit" class="btn btn-primary" id="upload_button">
-                                                        {{ trans('app.forms.upload') }}
-                                                    </button>
+                                                        <button type="submit" class="btn btn-primary" id="upload_button">
+                                                            {{ trans('app.forms.upload') }}
+                                                        </button>
                                                     <?php } ?>
                                                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@buyer', $files->id)}}'">
                                                         {{ trans('app.forms.cancel') }}
@@ -122,9 +122,9 @@ foreach ($user_permission as $permission) {
                                             </table>
                                         </div>
                                         <?php if ($update_permission == 1) { ?>
-                                        <br/>
-                                        <button id="submit_buyer_button" type="button" class="btn btn-primary" onclick="submitUploadBuyer()">{{ trans('app.forms.submit') }}</button>
-                                        <img id="loading" src="{{ asset('assets/common/img/input-spinner.gif') }}" style="display:none;"/>
+                                            <br/>
+                                            <button id="submit_buyer_button" type="button" class="btn btn-primary" onclick="submitUploadBuyer()">{{ trans('app.forms.submit') }}</button>
+                                            <img id="loading" src="{{ asset('assets/common/img/input-spinner.gif') }}" style="display:none;"/>
                                         <?php } ?>
                                         @endif
                                         @else
@@ -160,10 +160,14 @@ foreach ($user_permission as $permission) {
             return "Data you have entered may not be saved, do you really want to leave?";
         }
     });
-    
+
     var oTable;
-    $(function(){
+    $(function () {
         oTable = $('#buyerList').editableTableWidget();
+    });
+
+    $("#import_buyer_form").submit(function () {
+        changes = false;
     });
 
     function submitUploadBuyer() {
@@ -182,7 +186,6 @@ foreach ($user_permission as $permission) {
             getAllBuyer.push(cols);
         });
 
-
         $.ajax({
             url: "{{ URL::action('AdminController@submitUploadBuyer', $files->id) }}",
             type: "POST",
@@ -190,11 +193,10 @@ foreach ($user_permission as $permission) {
                 getAllBuyer: getAllBuyer
             },
             success: function (data) {
-                console.log(data);
                 if (data.trim() == "true") {
                     $.notify({
                         message: '<p style="text-align: center; margin-bottom: 0px;">{{ trans("app.successes.saved_successfully") }}</p>',
-                    },{
+                    }, {
                         type: 'success',
                         placement: {
                             align: "center"

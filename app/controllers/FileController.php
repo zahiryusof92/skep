@@ -96,14 +96,16 @@ class FileController extends BaseController {
                 if ($file->move('files', $filename)) {
                     if (($handle = fopen(url('/') . '/files/' . $filename, "r")) !== FALSE) {
                         while (($data = fgetcsv($handle, 200000, ",")) !== FALSE) {
-                            $file_check = Files::where('file_no', $data[0])->where('id', $files->id)->get();
-                            if (count($file_check) > 0) {
-                                array_push($data, "Success");
-                                $csvData[] = $data;
-                            } else {
-                                array_push($data, "Error");
-                                $csvData[] = "";
-                            }
+                            if (!empty($data[0])) {                                
+                                $file_check = Files::where('file_no', $data[0])->where('id', $files->id)->get();
+                                if (count($file_check) > 0) {
+                                    array_push($data, "Success");
+                                    $csvData[] = $data;
+                                } else {
+                                    array_push($data, "Error");
+                                    $csvData[] = "";
+                                }
+                            }                            
                         }
                         fclose($handle);
                     }
@@ -479,4 +481,5 @@ class FileController extends BaseController {
             return Response::json(['success' => false, 'msg' => trans('app.errors.please_upload_valid_file')]);
         }
     }
+
 }

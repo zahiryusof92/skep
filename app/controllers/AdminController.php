@@ -905,7 +905,7 @@ class AdminController extends BaseController {
                     $is_active = trans('app.forms.no');
                     $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                
+
                 if (Auth::user()->role == 1) {
                     $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $files->id . '" data-file_no="' . $files->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
                 }
@@ -3647,90 +3647,101 @@ class AdminController extends BaseController {
             if ($files) {
                 $getAllBuyer = $data['getAllBuyer'];
 
-                foreach ($getAllBuyer as $buyerList) {
+                if (!empty($getAllBuyer)) {
+                    foreach ($getAllBuyer as $buyerList) {
 
-                    $check_file_id = Files::where('file_no', $buyerList[0])->where('id', $files->id)->first();
-                    if ($check_file_id) {
-                        $files_id = $check_file_id->id;
+                        // 1. File No.
+                        $file_no = '';
+                        if (isset($buyerList[0]) && !empty($buyerList[0])) {
+                            $file_no = trim($buyerList[0]);
+                        }
 
-                        $check_buyer = Buyer::where('file_id', $files_id)->where('unit_no', $buyerList[1])->where('is_deleted', 0)->first();
-                        if ($check_buyer) {
-                            $race = '';
-                            if (isset($buyerList[8]) && !empty($buyerList[8])) {
-                                $race_raw = trim($buyerList[8]);
+                        if (!empty($file_no)) {
+                            $check_file_id = Files::where('file_no', $file_no)->where('id', $files->id)->first();
+                            if ($check_file_id) {
+                                $files_id = $check_file_id->id;
 
-                                if (!empty($race_raw)) {
-                                    $race_query = Race::where('name', $race_raw)->where('is_deleted', 0)->first();
-                                    if ($race_query) {
-                                        $race = $race_query->id;
-                                    } else {
-                                        $race_query = new Race();
-                                        $race_query->name = $race_raw;
-                                        $race_query->is_active = 1;
-                                        $race_query->save();
+                                // 2. Unit No.
+                                $unit_no = '';
+                                if (isset($buyerList[1]) && !empty($buyerList[1])) {
+                                    $unit_no = trim($buyerList[1]);
+                                }
 
-                                        $race = $race_query->id;
+                                if (!empty($unit_no)) {
+                                    $check_buyer = Buyer::where('file_id', $files_id)->where('unit_no', $unit_no)->where('is_deleted', 0)->first();
+                                    if (!$check_buyer) {
+                                        $race = '';
+                                        if (isset($buyerList[8]) && !empty($buyerList[8])) {
+                                            $race_raw = trim($buyerList[8]);
+
+                                            if (!empty($race_raw)) {
+                                                $race_query = Race::where('name', $race_raw)->where('is_deleted', 0)->first();
+                                                if ($race_query) {
+                                                    $race = $race_query->id;
+                                                } else {
+                                                    $race_query = new Race();
+                                                    $race_query->name = $race_raw;
+                                                    $race_query->is_active = 1;
+                                                    $race_query->save();
+
+                                                    $race = $race_query->id;
+                                                }
+                                            }
+                                        }
+
+                                        $nationality = '';
+                                        if (isset($buyerList[9]) && !empty($buyerList[9])) {
+                                            $nationality_raw = trim($buyerList[9]);
+
+                                            if (!empty($nationality_raw)) {
+                                                $nationality_query = Nationality::where('name', $nationality_raw)->where('is_deleted', 0)->first();
+                                                if ($nationality_query) {
+                                                    $nationality = $nationality_query->id;
+                                                } else {
+                                                    $nationality_query = new Nationality();
+                                                    $nationality_query->name = $nationality_raw;
+                                                    $nationality_query->is_active = 1;
+                                                    $nationality_query->save();
+
+                                                    $nationality = $nationality_query->id;
+                                                }
+                                            }
+                                        }
+
+                                        $buyer = new Buyer();
+                                        $buyer->file_id = $files_id;
+                                        $buyer->unit_no = $unit_no;
+                                        $buyer->unit_share = $buyerList[2];
+                                        $buyer->owner_name = $buyerList[3];
+                                        $buyer->ic_company_no = $buyerList[4];
+                                        $buyer->address = $buyerList[5];
+                                        $buyer->phone_no = $buyerList[6];
+                                        $buyer->email = $buyerList[7];
+                                        $buyer->race_id = $race;
+                                        $buyer->nationality_id = $nationality;
+                                        $buyer->remarks = $buyerList[10];
+                                        $success = $buyer->save();
+
+                                        if ($success) {
+                                            # Audit Trail
+                                            $file_name = Files::find($buyer->file_id);
+                                            $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been inserted.';
+                                            $auditTrail = new AuditTrail();
+                                            $auditTrail->module = "COB File";
+                                            $auditTrail->remarks = $remarks;
+                                            $auditTrail->audit_by = Auth::user()->id;
+                                            $auditTrail->save();
+                                        }
                                     }
                                 }
-                            }
-
-                            $nationality = '';
-                            if (isset($buyerList[9]) && !empty($buyerList[9])) {
-                                $nationality_raw = trim($buyerList[9]);
-
-                                if (!empty($nationality_raw)) {
-                                    $nationality_query = Nationality::where('name', $nationality_raw)->where('is_deleted', 0)->first();
-                                    if ($nationality_query) {
-                                        $nationality = $nationality_query->id;
-                                    } else {
-                                        $nationality_query = new Nationality();
-                                        $nationality_query->name = $nationality_raw;
-                                        $nationality_query->is_active = 1;
-                                        $nationality_query->save();
-
-                                        $nationality = $nationality_query->id;
-                                    }
-                                }
-                            }
-
-                            $buyer = new Buyer();
-                            $buyer->file_id = $files_id;
-                            $buyer->unit_no = $buyerList[1];
-                            $buyer->unit_share = $buyerList[2];
-                            $buyer->owner_name = $buyerList[3];
-                            $buyer->ic_company_no = $buyerList[4];
-                            $buyer->address = $buyerList[5];
-                            $buyer->phone_no = $buyerList[6];
-                            $buyer->email = $buyerList[7];
-                            $buyer->race_id = $race;
-                            $buyer->nationality_id = $nationality;
-                            $buyer->remarks = $buyerList[10];
-                            $success = $buyer->save();
-
-                            if ($success) {
-                                # Audit Trail
-                                $file_name = Files::find($buyer->file_id);
-                                $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been inserted.';
-                                $auditTrail = new AuditTrail();
-                                $auditTrail->module = "COB File";
-                                $auditTrail->remarks = $remarks;
-                                $auditTrail->audit_by = Auth::user()->id;
-                                $auditTrail->save();
                             }
                         }
                     }
+
+                    print "true";
+                } else {
+                    print "empty";
                 }
-
-                # Audit Trail
-                $file_name = Files::find($buyer->file_id);
-                $remarks = 'COB Owner List (' . $file_name->file_no . ') has been imported.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
             } else {
                 print "false";
             }
