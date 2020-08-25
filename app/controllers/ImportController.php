@@ -17,6 +17,262 @@ class ImportController extends BaseController {
         }
     }
 
+    public function importBuyer() {
+        if (Request::ajax()) {
+            $excel = Input::file('import_file');
+            $file_id = Input::get('file_id');
+
+            if ($excel && $file_id) {
+
+                $file = Files::find($file_id);
+
+                if ($file) {
+
+                    $path = $excel->getRealPath();
+                    $data = Excel::load($path, function($reader) {
+                                
+                            })->get();
+
+                    if (!empty($data) && $data->count()) {
+                        foreach ($data->toArray() as $row) {
+                            if (!empty($row)) {
+                                // 1. File No.
+                                $file_no = '';
+                                if (isset($row['1']) && !empty($row['1'])) {
+                                    $file_no = trim($row['1']);
+                                }
+
+                                if (!empty($file_no)) {
+                                    $exist_file = Files::where('file_no', $file_no)->where('id', $file->id)->first();
+                                    if ($exist_file) {
+                                        // 2. Unit No.
+                                        $unit_no = '';
+                                        if (isset($row['2']) && !empty($row['2'])) {
+                                            $unit_no = trim($row['2']);
+                                        }
+
+                                        if (!empty($unit_no)) {
+                                            $check_buyer = Buyer::where('file_id', $file->id)->where('unit_no', $unit_no)->where('is_deleted', 0)->first();
+                                            if (!$check_buyer) {
+                                                $race = '';
+                                                if (isset($row['17']) && !empty($row['17'])) {
+                                                    $race_raw = trim($row['17']);
+
+                                                    if (!empty($race_raw)) {
+                                                        $race_query = Race::where('name', ucwords(strtolower($race_raw)))->where('is_deleted', 0)->first();
+                                                        if ($race_query) {
+                                                            $race = $race_query->id;
+                                                        } else {
+                                                            $race_query = new Race();
+                                                            $race_query->name = ucwords(strtolower($race_raw));
+                                                            $race_query->is_active = 1;
+                                                            $race_query->save();
+
+                                                            $race = $race_query->id;
+                                                        }
+                                                    }
+                                                }
+
+                                                $nationality = '';
+                                                if (isset($row['18']) && !empty($row['18'])) {
+                                                    $nationality_raw = trim($row['18']);
+
+                                                    if (!empty($nationality_raw)) {
+                                                        $nationality_query = Nationality::where('name', ucwords(strtolower($nationality_raw)))->where('is_deleted', 0)->first();
+                                                        if ($nationality_query) {
+                                                            $nationality = $nationality_query->id;
+                                                        } else {
+                                                            $nationality_query = new Nationality();
+                                                            $nationality_query->name = ucwords(strtolower($nationality_raw));
+                                                            $nationality_query->is_active = 1;
+                                                            $nationality_query->save();
+
+                                                            $nationality = $nationality_query->id;
+                                                        }
+                                                    }
+                                                }
+
+                                                $buyer = new Buyer();
+                                                $buyer->file_id = $file->id;
+                                                $buyer->unit_no = $unit_no;
+                                                $buyer->no_petak = $row['3'];
+                                                $buyer->no_petak_aksesori = $row['4'];
+                                                $buyer->keluasan_lantai_petak = $row['5'];
+                                                $buyer->keluasan_lantai_petak_aksesori = $row['6'];
+                                                $buyer->unit_share = $row['7'];
+                                                $buyer->jenis_kegunaan = $row['8'];
+                                                $buyer->owner_name = $row['9'];
+                                                $buyer->ic_company_no = $row['10'];
+                                                $buyer->nama2 = $row['11'];
+                                                $buyer->ic_no2 = $row['12'];
+                                                $buyer->address = $row['13'];
+                                                $buyer->alamat_surat_menyurat = $row['14'];
+                                                $buyer->phone_no = $row['15'];                                                
+                                                $buyer->email = $row['16'];
+                                                $buyer->race_id = $race;
+                                                $buyer->nationality_id = $nationality;
+                                                $buyer->caj_penyelenggaraan = $row['20'];
+                                                $buyer->sinking_fund = $row['21'];
+                                                $buyer->remarks = $row['22'];
+                                                $buyer->save();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        # Audit Trail
+                        $remarks = 'COB Buyer List (' . $file->file_no . ') has been inserted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+
+                        print "true";
+                    } else {
+                        print "empty_data";
+                    }
+                } else {
+                    print "false";
+                }
+            } else {
+                print "empty_file";
+            }
+        } else {
+            print "false";
+        }
+    }
+    
+    public function importTenant() {
+        if (Request::ajax()) {
+            $excel = Input::file('import_file');
+            $file_id = Input::get('file_id');
+
+            if ($excel && $file_id) {
+
+                $file = Files::find($file_id);
+
+                if ($file) {
+
+                    $path = $excel->getRealPath();
+                    $data = Excel::load($path, function($reader) {
+                                
+                            })->get();
+
+                    if (!empty($data) && $data->count()) {
+                        foreach ($data->toArray() as $row) {
+                            if (!empty($row)) {
+                                // 1. File No.
+                                $file_no = '';
+                                if (isset($row['1']) && !empty($row['1'])) {
+                                    $file_no = trim($row['1']);
+                                }
+
+                                if (!empty($file_no)) {
+                                    $exist_file = Files::where('file_no', $file_no)->where('id', $file->id)->first();
+                                    if ($exist_file) {
+                                        // 2. Unit No.
+                                        $unit_no = '';
+                                        if (isset($row['2']) && !empty($row['2'])) {
+                                            $unit_no = trim($row['2']);
+                                        }
+
+                                        if (!empty($unit_no)) {
+                                            $check_tenant = Tenant::where('file_id', $file->id)->where('unit_no', $unit_no)->where('is_deleted', 0)->first();
+                                            if (!$check_tenant) {
+                                                $race = '';
+                                                if (isset($row['17']) && !empty($row['17'])) {
+                                                    $race_raw = trim($row['17']);
+
+                                                    if (!empty($race_raw)) {
+                                                        $race_query = Race::where('name', ucwords(strtolower($race_raw)))->where('is_deleted', 0)->first();
+                                                        if ($race_query) {
+                                                            $race = $race_query->id;
+                                                        } else {
+                                                            $race_query = new Race();
+                                                            $race_query->name = ucwords(strtolower($race_raw));
+                                                            $race_query->is_active = 1;
+                                                            $race_query->save();
+
+                                                            $race = $race_query->id;
+                                                        }
+                                                    }
+                                                }
+
+                                                $nationality = '';
+                                                if (isset($row['18']) && !empty($row['18'])) {
+                                                    $nationality_raw = trim($row['18']);
+
+                                                    if (!empty($nationality_raw)) {
+                                                        $nationality_query = Nationality::where('name', ucwords(strtolower($nationality_raw)))->where('is_deleted', 0)->first();
+                                                        if ($nationality_query) {
+                                                            $nationality = $nationality_query->id;
+                                                        } else {
+                                                            $nationality_query = new Nationality();
+                                                            $nationality_query->name = ucwords(strtolower($nationality_raw));
+                                                            $nationality_query->is_active = 1;
+                                                            $nationality_query->save();
+
+                                                            $nationality = $nationality_query->id;
+                                                        }
+                                                    }
+                                                }
+
+                                                $tenant = new Tenant();
+                                                $tenant->file_id = $file->id;
+                                                $tenant->unit_no = $unit_no;
+                                                $tenant->no_petak = $row['3'];
+                                                $tenant->no_petak_aksesori = $row['4'];
+                                                $tenant->keluasan_lantai_petak = $row['5'];
+                                                $tenant->keluasan_lantai_petak_aksesori = $row['6'];
+                                                $tenant->unit_share = $row['7'];
+                                                $tenant->jenis_kegunaan = $row['8'];
+                                                $tenant->tenant_name = $row['9'];
+                                                $tenant->ic_company_no = $row['10'];
+                                                $tenant->nama2 = $row['11'];
+                                                $tenant->ic_no2 = $row['12'];
+                                                $tenant->address = $row['13'];
+                                                $tenant->alamat_surat_menyurat = $row['14'];
+                                                $tenant->phone_no = $row['15'];                                                
+                                                $tenant->email = $row['16'];
+                                                $tenant->race_id = $race;
+                                                $tenant->nationality_id = $nationality;
+                                                $tenant->caj_penyelenggaraan = $row['20'];
+                                                $tenant->sinking_fund = $row['21'];
+                                                $tenant->remarks = $row['22'];
+                                                $tenant->save();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        # Audit Trail
+                        $remarks = 'COB Tenant List (' . $file->file_no . ') has been inserted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+
+                        print "true";
+                    } else {
+                        print "empty_data";
+                    }
+                } else {
+                    print "false";
+                }
+            } else {
+                print "empty_file";
+            }
+        } else {
+            print "false";
+        }
+    }
+
     public function importCOBFile() {
         if (Request::ajax()) {
             $file = Input::file('import_file');
@@ -27,7 +283,7 @@ class ImportController extends BaseController {
 
                 $path = $file->getRealPath();
                 $data = Excel::load($path, function($reader) {
-
+                            
                         })->get();
 
                 if (!empty($data) && $data->count()) {

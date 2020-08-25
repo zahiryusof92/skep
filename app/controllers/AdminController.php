@@ -3425,6 +3425,16 @@ class AdminController extends BaseController {
             $race = $data['race'];
             $nationality = $data['nationality'];
             $remark = $data['remarks'];
+            $no_petak = $data['no_petak'];
+            $no_petak_aksesori = $data['no_petak_aksesori'];
+            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+            $jenis_kegunaan = $data['jenis_kegunaan'];
+            $nama2 = $data['nama2'];
+            $ic_no2 = $data['ic_no2'];
+            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+            $sinking_fund = $data['sinking_fund'];
 
             $checkFile = Files::find($file_id);
 
@@ -3441,6 +3451,16 @@ class AdminController extends BaseController {
                 $buyer->race_id = $race;
                 $buyer->nationality_id = $nationality;
                 $buyer->remarks = $remark;
+                $buyer->no_petak = $no_petak;
+                $buyer->no_petak_aksesori = $no_petak_aksesori;
+                $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
+                $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                $buyer->jenis_kegunaan = $jenis_kegunaan;
+                $buyer->nama2 = $nama2;
+                $buyer->ic_no2 = $ic_no2;
+                $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
+                $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
+                $buyer->sinking_fund = $sinking_fund;
                 $success = $buyer->save();
 
                 if ($success) {
@@ -3503,6 +3523,16 @@ class AdminController extends BaseController {
             $race = $data['race'];
             $nationality = $data['nationality'];
             $remark = $data['remarks'];
+            $no_petak = $data['no_petak'];
+            $no_petak_aksesori = $data['no_petak_aksesori'];
+            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+            $jenis_kegunaan = $data['jenis_kegunaan'];
+            $nama2 = $data['nama2'];
+            $ic_no2 = $data['ic_no2'];
+            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+            $sinking_fund = $data['sinking_fund'];
             $id = $data['id'];
 
             $checkFile = Files::find($file_id);
@@ -3521,6 +3551,16 @@ class AdminController extends BaseController {
                     $buyer->race_id = $race;
                     $buyer->nationality_id = $nationality;
                     $buyer->remarks = $remark;
+                    $buyer->no_petak = $no_petak;
+                    $buyer->no_petak_aksesori = $no_petak_aksesori;
+                    $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
+                    $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                    $buyer->jenis_kegunaan = $jenis_kegunaan;
+                    $buyer->nama2 = $nama2;
+                    $buyer->ic_no2 = $ic_no2;
+                    $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
+                    $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
+                    $buyer->sinking_fund = $sinking_fund;
                     $success = $buyer->save();
 
                     if ($success) {

@@ -170,6 +170,12 @@ Route::post('/submitEditBuyer', 'AdminController@submitEditBuyer')->before('auth
 Route::get('/getBuyerList/{id}', 'AdminController@getBuyerList')->before('authMember');
 Route::post('/deleteBuyer', 'AdminController@deleteBuyer')->before('authMember');
 
+// import buyer
+Route::post('/importBuyer', 'ImportController@importBuyer')->before('authMember');
+
+// import tenant
+Route::post('/importTenant', 'ImportController@importTenant')->before('authMember');
+
 //document
 Route::get('/update/document/{id}', 'AdminController@document')->before('authMember');
 Route::get('/getDocument/{id}', 'AdminController@getDocument')->before('authMember');

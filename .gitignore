@@ -6,3 +6,7 @@ composer.lock
 .env.php
 Thumbs.db
 /nbproject/
+nbproject/private/private.properties
+nbproject/project.xml
+nbproject/project.properties
+nbproject/private/private.xml

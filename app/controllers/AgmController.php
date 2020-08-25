@@ -460,7 +460,20 @@ class AgmController extends BaseController {
     public function purchaser() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+            }
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.purchaser'),
@@ -576,6 +589,16 @@ class AgmController extends BaseController {
             $race = $data['race'];
             $nationality = $data['nationality'];
             $remark = $data['remarks'];
+            $no_petak = $data['no_petak'];
+            $no_petak_aksesori = $data['no_petak_aksesori'];
+            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+            $jenis_kegunaan = $data['jenis_kegunaan'];
+            $nama2 = $data['nama2'];
+            $ic_no2 = $data['ic_no2'];
+            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+            $sinking_fund = $data['sinking_fund'];
 
             $checkFile = Files::find($file_id);
 
@@ -592,6 +615,16 @@ class AgmController extends BaseController {
                 $buyer->race_id = $race;
                 $buyer->nationality_id = $nationality;
                 $buyer->remarks = $remark;
+                $buyer->no_petak = $no_petak;
+                $buyer->no_petak_aksesori = $no_petak_aksesori;
+                $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
+                $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                $buyer->jenis_kegunaan = $jenis_kegunaan;
+                $buyer->nama2 = $nama2;
+                $buyer->ic_no2 = $ic_no2;
+                $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
+                $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
+                $buyer->sinking_fund = $sinking_fund;
                 $success = $buyer->save();
 
                 if ($success) {
@@ -667,6 +700,16 @@ class AgmController extends BaseController {
             $race = $data['race'];
             $nationality = $data['nationality'];
             $remark = $data['remarks'];
+            $no_petak = $data['no_petak'];
+            $no_petak_aksesori = $data['no_petak_aksesori'];
+            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+            $jenis_kegunaan = $data['jenis_kegunaan'];
+            $nama2 = $data['nama2'];
+            $ic_no2 = $data['ic_no2'];
+            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+            $sinking_fund = $data['sinking_fund'];
             $id = $data['id'];
 
             $checkFile = Files::find($file_id);
@@ -685,6 +728,16 @@ class AgmController extends BaseController {
                     $buyer->race_id = $race;
                     $buyer->nationality_id = $nationality;
                     $buyer->remarks = $remark;
+                    $buyer->no_petak = $no_petak;
+                    $buyer->no_petak_aksesori = $no_petak_aksesori;
+                    $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
+                    $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                    $buyer->jenis_kegunaan = $jenis_kegunaan;
+                    $buyer->nama2 = $nama2;
+                    $buyer->ic_no2 = $ic_no2;
+                    $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
+                    $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
+                    $buyer->sinking_fund = $sinking_fund;
                     $success = $buyer->save();
 
                     if ($success) {
@@ -982,6 +1035,16 @@ class AgmController extends BaseController {
             $race = $data['race'];
             $nationality = $data['nationality'];
             $remark = $data['remarks'];
+            $no_petak = $data['no_petak'];
+            $no_petak_aksesori = $data['no_petak_aksesori'];
+            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+            $jenis_kegunaan = $data['jenis_kegunaan'];
+            $nama2 = $data['nama2'];
+            $ic_no2 = $data['ic_no2'];
+            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+            $sinking_fund = $data['sinking_fund'];
 
             $checkFile = Files::find($file_id);
 
@@ -997,6 +1060,16 @@ class AgmController extends BaseController {
                 $tenant->race_id = $race;
                 $tenant->nationality_id = $nationality;
                 $tenant->remarks = $remark;
+                $tenant->no_petak = $no_petak;
+                $tenant->no_petak_aksesori = $no_petak_aksesori;
+                $tenant->keluasan_lantai_petak = $keluasan_lantai_petak;
+                $tenant->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                $tenant->jenis_kegunaan = $jenis_kegunaan;
+                $tenant->nama2 = $nama2;
+                $tenant->ic_no2 = $ic_no2;
+                $tenant->alamat_surat_menyurat = $alamat_surat_menyurat;
+                $tenant->caj_penyelenggaraan = $caj_penyelenggaraan;
+                $tenant->sinking_fund = $sinking_fund;
                 $success = $tenant->save();
 
                 if ($success) {
@@ -1071,6 +1144,16 @@ class AgmController extends BaseController {
             $race = $data['race'];
             $nationality = $data['nationality'];
             $remark = $data['remarks'];
+            $no_petak = $data['no_petak'];
+            $no_petak_aksesori = $data['no_petak_aksesori'];
+            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+            $jenis_kegunaan = $data['jenis_kegunaan'];
+            $nama2 = $data['nama2'];
+            $ic_no2 = $data['ic_no2'];
+            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+            $sinking_fund = $data['sinking_fund'];
             $id = $data['id'];
 
             $checkFile = Files::find($file_id);
@@ -1088,6 +1171,16 @@ class AgmController extends BaseController {
                     $tenant->race_id = $race;
                     $tenant->nationality_id = $nationality;
                     $tenant->remarks = $remark;
+                    $tenant->no_petak = $no_petak;
+                    $tenant->no_petak_aksesori = $no_petak_aksesori;
+                    $tenant->keluasan_lantai_petak = $keluasan_lantai_petak;
+                    $tenant->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                    $tenant->jenis_kegunaan = $jenis_kegunaan;
+                    $tenant->nama2 = $nama2;
+                    $tenant->ic_no2 = $ic_no2;
+                    $tenant->alamat_surat_menyurat = $alamat_surat_menyurat;
+                    $tenant->caj_penyelenggaraan = $caj_penyelenggaraan;
+                    $tenant->sinking_fund = $sinking_fund;
                     $success = $tenant->save();
 
                     if ($success) {

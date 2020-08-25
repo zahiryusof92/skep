@@ -1,16 +1,15 @@
 <?php
 
 return array(
-
     /*
-    |--------------------------------------------------------------------------
-    | eCob App Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines contain the default messages used by eCob App
-    | Feel free to tweak each of these messages here.
-    |
-    */
+      |--------------------------------------------------------------------------
+      | eCob App Language Lines
+      |--------------------------------------------------------------------------
+      |
+      | The following language lines contain the default messages used by eCob App
+      | Feel free to tweak each of these messages here.
+      |
+     */
 
     "app_name" => "eCOB Management System",
     "app_name_short" => "eCOB System",
@@ -163,7 +162,7 @@ return array(
             "upload_document" => "Upload Document",
             "add_designation" => "Add Designation",
             "edit_designation" => "Edit Designation",
-            "add_purchaser" => "Edit Purchaser",
+            "add_purchaser" => "Add Purchaser",
             "edit_purchaser" => "Edit Purchaser",
             "import_purchaser" => "Import Purchaser",
             "add_tenant" => "Add Tenant",
@@ -272,8 +271,8 @@ return array(
         "ic_company_number" => "IC No / Company Number",
         "race" => "Race",
         "nationality" => "Nationality",
-        "import_csv_file" => "Import CSV File",
-        "download_csv_template" => "Download CSV Template",
+        "import_buyer" => "Import Buyer",
+        "download_csv_template" => "Download Template",
         "tenant" => "Tenant",
         "meeting" => "Meeting",
         "copy_list" => "Copy & List",
@@ -478,6 +477,15 @@ return array(
         "please_select_valid_image" => "Please Select a valid Image File",
         "only_image_allowed" => "Only .jpeg, .jpg, .png and .gif images type allowed",
         "csv_file_empty" => "The CSV file is empty",
+        "no_petak" => "No Petak",
+        "no_petak_aksesori" => "No Petak Aksesori (Jika Ada)",
+        "keluasan_lantai_petak" => "Keluasan Lantai Petak (SQ.M)",
+        "keluasan_lantai_petak_aksesori" => "Keluasan Lantai Petak Aksesori (SQ.M)",
+        "jenis_kegunaan" => "Jenis Kegunaan",
+        "nama2" => "Nama Pemilik 2",
+        "ic_no2" => "No Kad Pengenalan",
+        "alamat_surat_menyurat" => "Alamat Surat Menyurat",
+        "caj_penyelenggaraan" => "Caj Penyelenggaraan",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

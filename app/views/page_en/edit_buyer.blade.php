@@ -63,8 +63,53 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group">
+                                                        <label>{{ trans('app.forms.no_petak') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.no_petak') }}" id="no_petak" value="{{$buyer->no_petak}}">
+                                                        <div id="no_petak_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.no_petak_aksesori') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.no_petak_aksesori') }}" id="no_petak_aksesori" value="{{$buyer->no_petak_aksesori}}">
+                                                        <div id="no_petak_aksesori_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.keluasan_lantai_petak') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.keluasan_lantai_petak') }}" id="keluasan_lantai_petak" value="{{$buyer->keluasan_lantai_petak}}">
+                                                        <div id="keluasan_lantai_petak_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.keluasan_lantai_petak_aksesori') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.keluasan_lantai_petak_aksesori') }}" id="keluasan_lantai_petak_aksesori" value="{{$buyer->keluasan_lantai_petak_aksesori}}">
+                                                        <div id="keluasan_lantai_petak_aksesori_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
                                                         <label>{{ trans('app.forms.unit_share') }}</label>
                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.unit_share') }}" id="unit_share" value="{{$buyer->unit_share}}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.jenis_kegunaan') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.jenis_kegunaan') }}" id="jenis_kegunaan" value="{{$buyer->jenis_kegunaan}}">
+                                                        <div id="jenis_kegunaan_error" style="display:none;"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -89,8 +134,34 @@
                                             <div class="row">
                                                 <div class="col-md-8">
                                                     <div class="form-group">
+                                                        <label>{{ trans('app.forms.nama2') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.nama2') }}" id="nama2" value="{{$buyer->nama2}}">
+                                                        <div id="nama2_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.ic_no2') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.ic_no2') }}" id="ic_no2" value="{{$buyer->ic_no2}}">
+                                                        <div id="ic_no2_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
                                                         <label>{{ trans('app.forms.address') }}</label>
                                                         <textarea class="form-control" placeholder="{{ trans('app.forms.address') }}" rows="3" id="address">{{$buyer->address}}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.alamat_surat_menyurat') }}</label>
+                                                        <textarea class="form-control" placeholder="{{ trans('app.forms.alamat_surat_menyurat') }}" rows="3" id="alamat_surat_menyurat">{{$buyer->alamat_surat_menyurat}}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -139,6 +210,24 @@
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.caj_penyelenggaraan') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.caj_penyelenggaraan') }}" id="caj_penyelenggaraan" value="{{$buyer->caj_penyelenggaraan}}">
+                                                        <div id="caj_penyelenggaraan_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="sinking_fund" value="{{$buyer->sinking_fund}}">
+                                                        <div id="sinking_fund_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-8">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.remarks') }}</label>
@@ -177,7 +266,7 @@
             return "Data you have entered may not be saved, do you really want to leave?";
         }
     });
-    
+
     function editBuyer() {
         changes = false;
         $("#submit_button").attr("disabled", "disabled");
@@ -195,7 +284,17 @@
                 email = $("#email").val(),
                 race = $("#race").val(),
                 nationality = $("#nationality").val(),
-                remarks = $("#remarks").val();
+                remarks = $("#remarks").val(),
+                no_petak = $("#no_petak").val(),
+                no_petak_aksesori = $("#no_petak_aksesori").val(),
+                keluasan_lantai_petak = $("#keluasan_lantai_petak").val(),
+                keluasan_lantai_petak_aksesori = $("#keluasan_lantai_petak_aksesori").val(),
+                jenis_kegunaan = $("#jenis_kegunaan").val(),
+                nama2 = $("#nama2").val(),
+                ic_no2 = $("#ic_no2").val(),
+                alamat_surat_menyurat = $("#alamat_surat_menyurat").val(),
+                caj_penyelenggaraan = $("#caj_penyelenggaraan").val(),
+                sinking_fund = $("#sinking_fund").val();
 
         var error = 0;
 
@@ -235,6 +334,16 @@
                     remarks: remarks,
                     race: race,
                     nationality: nationality,
+                    no_petak: no_petak,
+                    no_petak_aksesori: no_petak_aksesori,
+                    keluasan_lantai_petak: keluasan_lantai_petak,
+                    keluasan_lantai_petak_aksesori: keluasan_lantai_petak_aksesori,
+                    jenis_kegunaan: jenis_kegunaan,
+                    nama2: nama2,
+                    ic_no2: ic_no2,
+                    alamat_surat_menyurat: alamat_surat_menyurat,
+                    caj_penyelenggaraan: caj_penyelenggaraan,
+                    sinking_fund: sinking_fund,
                     file_id: '{{$files->id}}',
                     id: '{{$buyer->id}}'
                 },
