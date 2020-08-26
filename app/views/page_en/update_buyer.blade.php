@@ -185,8 +185,9 @@ foreach ($user_permission as $permission) {
                                                         <th style="width:5%;">{{ trans("app.forms.no") }}</th>
                                                         <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
                                                         <th style="width:10%;">{{ trans('app.forms.unit_share') }}</th>
-                                                        <th style="width:50%;">{{ trans('app.forms.owner_name') }}</th>
+                                                        <th style="width:30%;">{{ trans('app.forms.owner_name') }}</th>
                                                         <th style="width:20%;">{{ trans('app.forms.ic_company_number') }}</th>
+                                                        <th style="width:20%;">{{ trans('app.forms.race_name_en') }}</th>
                                                         <?php if ($update_permission == 1) { ?>
                                                             <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                                             <?php } ?>

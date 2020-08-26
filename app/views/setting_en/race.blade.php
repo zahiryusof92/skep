@@ -31,7 +31,8 @@ foreach ($user_permission as $permission) {
                     <table class="table table-hover nowrap" id="race" width="100%">
                         <thead>
                             <tr>
-                                <th style="width:70%;">{{ trans('app.forms.race') }}</th>
+                                <th style="width:25%;">{{ trans('app.forms.race_name_en') }}</th>
+                                <th style="width:25%;">{{ trans('app.forms.race_name_my') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.sort_no') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.status') }}</th>
                                 <?php if ($update_permission == 1) { ?>
@@ -56,7 +57,7 @@ foreach ($user_permission as $permission) {
         oTable = $('#race').DataTable({
             "sAjaxSource": "{{URL::action('SettingController@getRace')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "order": [[ 1, "asc" ]],
+            "order": [[ 2, "asc" ]],
             responsive: true
         });
     });

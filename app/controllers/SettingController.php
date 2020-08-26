@@ -730,7 +730,7 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Form Type: ' . $formtype->name . ' has been inserted.';
+                $remarks = 'Form Type: ' . $formtype->name_en . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -753,13 +753,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($ft->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveFormtype(\'' . $ft->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveFormtype(\'' . $ft->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
                     $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFormtype(\'' . $ft->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateFormtype', $ft->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFormType(\'' . $ft->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFormtype(\'' . $ft->id . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $ft->name_en,
@@ -848,7 +848,7 @@ class SettingController extends BaseController {
             $deleted = $formtype->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'FormType: ' . $formtype->id . ' has been deleted.';
+                $remarks = 'FormType: ' . $formtype->name_en . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -3749,14 +3749,15 @@ class SettingController extends BaseController {
             $is_active = $data['is_active'];
 
             $race = new Race();
-            $race->name = $data['name'];
+            $race->name_en = $data['name_en'];
+            $race->name_my = $data['name_my'];
             $race->sort_no = $data['sort_no'];
             $race->is_active = $is_active;
             $success = $race->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name . ' has been inserted.';
+                $remarks = 'Race: ' . $race->name_en . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -3775,21 +3776,22 @@ class SettingController extends BaseController {
 
         if (count($race) > 0) {
             $data = Array();
-            foreach ($race as $cities) {
+            foreach ($race as $races) {
                 $button = "";
-                if ($cities->is_active == 1) {
+                if ($races->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveRace(\'' . $cities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveRace(\'' . $races->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeRace(\'' . $cities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeRace(\'' . $races->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateRace', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteRace(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateRace', $races->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteRace(\'' . $races->id . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
-                    $cities->name,
-                    $cities->sort_no,
+                    $races->name_en,
+                    $races->name_my,
+                    $races->sort_no,
                     $status,
                     $button
                 );
@@ -3823,7 +3825,7 @@ class SettingController extends BaseController {
             $updated = $race->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name . ' has been updated.';
+                $remarks = 'Race: ' . $race->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -3848,7 +3850,7 @@ class SettingController extends BaseController {
             $updated = $race->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name . ' has been updated.';
+                $remarks = 'Race: ' . $race->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -3873,7 +3875,7 @@ class SettingController extends BaseController {
             $deleted = $race->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->id . ' has been deleted.';
+                $remarks = 'Race: ' . $race->name_en . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -3911,14 +3913,15 @@ class SettingController extends BaseController {
             $id = $data['id'];
 
             $race = Race::find($id);
-            $race->name = $data['name'];
+            $race->name_en = $data['name_en'];
+            $race->name_my = $data['name_my'];
             $race->sort_no = $data['sort_no'];
             $race->is_active = $data['is_active'];
             $success = $race->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name . ' has been updated.';
+                $remarks = 'Race: ' . $race->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
                 $auditTrail->remarks = $remarks;
@@ -3997,21 +4000,21 @@ class SettingController extends BaseController {
 
         if (count($nationality) > 0) {
             $data = Array();
-            foreach ($nationality as $cities) {
+            foreach ($nationality as $nationalities) {
                 $button = "";
-                if ($cities->is_active == 1) {
+                if ($nationalities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveNationality(\'' . $cities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveNationality(\'' . $nationalities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeNationality(\'' . $cities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeNationality(\'' . $nationalities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateNationality', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteNationality(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateNationality', $nationalities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteNationality(\'' . $nationalities->id . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
-                    $cities->name,
-                    $cities->sort_no,
+                    $nationalities->name,
+                    $nationalities->sort_no,
                     $status,
                     $button
                 );

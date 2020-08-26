@@ -180,7 +180,7 @@ foreach ($user_permission as $permission) {
                                     <select id="race" class="form-control select2">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($race as $races)
-                                        <option value="{{ $races->id }}">{{ $races->name }}</option>
+                                        <option value="{{ $races->id }}">{{ $races->name_en }}</option>
                                         @endforeach
                                     </select>
                                     <div id="race_error" style="display:none;"></div>

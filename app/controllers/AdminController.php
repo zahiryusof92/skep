@@ -3610,6 +3610,7 @@ class AdminController extends BaseController {
                     $buyer_lists->unit_share,
                     $buyer_lists->owner_name,
                     $buyer_lists->ic_company_no,
+                    (!empty($buyer_lists->race) ? $buyer_list->race->name_en : ''),
                     $button
                 );
 

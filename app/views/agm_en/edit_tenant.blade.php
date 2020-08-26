@@ -180,7 +180,7 @@ foreach ($user_permission as $permission) {
                                     <select id="race" class="form-control select2">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($race as $races)
-                                        <option value="{{ $races->id }}" {{($tenant->race_id == $races->id ? " selected" : "")}}>{{ $races->name }}</option>
+                                        <option value="{{ $races->id }}" {{($tenant->race_id == $races->id ? " selected" : "")}}>{{ $races->name_en }}</option>
                                         @endforeach
                                     </select>
                                     <div id="race_error" style="display:none;"></div>
@@ -338,7 +338,7 @@ foreach ($user_permission as $permission) {
                     $("#submit_button").removeAttr("disabled");
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.tenants.store') }}</span>", function () {
+                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.tenants.update') }}</span>", function () {
                             window.location = '{{URL::action("AgmController@tenant") }}';
                         });
                     } else {

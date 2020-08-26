@@ -40,7 +40,7 @@ $company = Company::find(Auth::user()->company_id);
                     </tr>
                     <tr>
                         @foreach ($race as $rc)
-                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name) }} (%)</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name_my) }} (%)</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -55,12 +55,12 @@ $company = Company::find(Auth::user()->company_id);
                         <?php if ($total_owner > 0) { ?>
                             <?php $percentage_owner = ($total_owner / $total_all_owner) * 100; ?>
                         <?php } ?>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $percentage_owner }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ round($percentage_owner, 2) }}</td>
 
                         <?php
                         $ownerData[] = array(
-                            'name' => $rc->name,
-                            'y' => $percentage_owner
+                            'name' => $rc->name_my,
+                            'y' => round($percentage_owner, 2)
                         );
                         ?>
                         @endforeach
@@ -120,7 +120,7 @@ $company = Company::find(Auth::user()->company_id);
                     </tr>
                     <tr>
                         @foreach ($race as $rc)
-                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name) }} (%)</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name_my) }} (%)</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -135,12 +135,12 @@ $company = Company::find(Auth::user()->company_id);
                         <?php if ($total_tenant > 0) { ?>
                             <?php $percentage_tenant = ($total_tenant / $total_all_tenant) * 100; ?>
                         <?php } ?>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $percentage_tenant }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ round($percentage_tenant, 2) }}</td>
 
                         <?php
                         $tenantData[] = array(
-                            'name' => $rc->name,
-                            'y' => $percentage_tenant
+                            'name' => $rc->name_my,
+                            'y' => round($percentage_tenant, 2)
                         );
                         ?>
                         @endforeach

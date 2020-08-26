@@ -59,12 +59,13 @@ class ImportController extends BaseController {
                                                     $race_raw = trim($row['17']);
 
                                                     if (!empty($race_raw)) {
-                                                        $race_query = Race::where('name', ucwords(strtolower($race_raw)))->where('is_deleted', 0)->first();
+                                                        $race_query = Race::where('name_en', ucwords(strtolower($race_raw)))->orWhere('name_my', ucwords(strtolower($race_raw)))->where('is_deleted', 0)->first();
                                                         if ($race_query) {
                                                             $race = $race_query->id;
                                                         } else {
                                                             $race_query = new Race();
-                                                            $race_query->name = ucwords(strtolower($race_raw));
+                                                            $race_query->name_en = ucwords(strtolower($race_raw));
+                                                            $race_query->name_my = ucwords(strtolower($race_raw));
                                                             $race_query->is_active = 1;
                                                             $race_query->save();
 
@@ -187,12 +188,13 @@ class ImportController extends BaseController {
                                                     $race_raw = trim($row['17']);
 
                                                     if (!empty($race_raw)) {
-                                                        $race_query = Race::where('name', ucwords(strtolower($race_raw)))->where('is_deleted', 0)->first();
+                                                        $race_query = Race::where('name_en', ucwords(strtolower($race_raw)))->orWhere('name_my', ucwords(strtolower($race_raw)))->where('is_deleted', 0)->first();
                                                         if ($race_query) {
                                                             $race = $race_query->id;
                                                         } else {
                                                             $race_query = new Race();
-                                                            $race_query->name = ucwords(strtolower($race_raw));
+                                                            $race_query->name_en = ucwords(strtolower($race_raw));
+                                                            $race_query->name_my = ucwords(strtolower($race_raw));
                                                             $race_query->is_active = 1;
                                                             $race_query->save();
 
