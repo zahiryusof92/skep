@@ -516,7 +516,7 @@ class AgmController extends BaseController {
                     $buyer_lists->ic_company_no,
                     $buyer_lists->phone_no,
                     $buyer_lists->email,
-                    $buyer_lists->race->name,
+                    $buyer_lists->race ? $buyer_lists->race->name : '',
                     $button
                 );
 
@@ -963,7 +963,7 @@ class AgmController extends BaseController {
                     $tenant_lists->ic_company_no,
                     $tenant_lists->phone_no,
                     $tenant_lists->email,
-                    $tenant_lists->race->name,
+                    $tenant_lists->race ? $tenant_lists->race->name : '',
                     $button
                 );
 
