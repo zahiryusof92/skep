@@ -722,8 +722,8 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
 
             $formtype = new FormType();
-            $formtype->bi_type = $data['bi_type'];
-            $formtype->bm_type = $data['bm_type'];
+            $formtype->name_en = $data['bi_type'];
+            $formtype->name_my = $data['bm_type'];
             $formtype->sort_no = $data['sort_no'];
             $formtype->is_active = $data['is_active'];
             $success = $formtype->save();
@@ -886,8 +886,8 @@ class SettingController extends BaseController {
             $id = $data['id'];
 
             $formtype = FormType::find($id);
-            $formtype->bi_type = $data['bi_type'];
-            $formtype->bm_type = $data['bm_type'];
+            $formtype->name_en = $data['bi_type'];
+            $formtype->name_my = $data['bm_type'];
             $formtype->sort_no = $data['sort_no'];
             $formtype->is_active = $data['is_active'];
             $success = $formtype->save();

@@ -32,7 +32,7 @@ foreach ($user_permission as $permission) {
                                 <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.form_type_bi') }}</label>
                             </div>
                             <div class="col-md-4">
-                                <input id="bi_type" class="form-control" type="text" value="{{ $formtype->bi_type }}">
+                                <input id="bi_type" class="form-control" type="text" value="{{ $formtype->name_en }}">
                                 <div id="bi_error" style="display:none;"></div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@ foreach ($user_permission as $permission) {
                                 <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.form_type_bm') }}</label>
                             </div>
                             <div class="col-md-4">
-                                <input id="bm_type" class="form-control" type="text" value="{{ $formtype->bm_type }}">
+                                <input id="bm_type" class="form-control" type="text" value="{{ $formtype->name_my }}">
                                 <div id="bm_error" style="display:none;"></div>
                             </div>
                         </div>
