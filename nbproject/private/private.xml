@@ -2,6 +2,20 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/xampp/htdocs/skep/app/views/print_en/owner_tenant.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/controllers/ImportController.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/controllers/AdminController.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/agm_en/add_tenant.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/agm_en/edit_purchaser.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/page_en/add_buyer.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/controllers/AgmController.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/agm_en/add_purchaser.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/page_en/edit_buyer.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/agm_en/edit_tenant.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/lang/en/app.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/page_en/update_buyer.blade.php</file>
+            <file>file:/C:/xampp/htdocs/skep/app/views/report_en/owner_tenant.blade.php</file>
+        </group>
     </open-files>
 </project-private>

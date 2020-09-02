@@ -120,6 +120,7 @@ Route::post('/submitUpdateMonitoring', 'AdminController@submitUpdateMonitoring')
 Route::post('/addAGMDetails', 'AdminController@addAGMDetails')->before('authMember');
 Route::post('/editAGMDetails', 'AdminController@editAGMDetails')->before('authMember');
 Route::get('/getAGM/{file_id}', 'AdminController@getAGM')->before('authMember');
+Route::get('/getAGMByMC/{file_id}', 'AdminController@getAGMByMC')->before('authMember');
 Route::post('/getAGMDetails', 'AdminController@getAGMDetails')->before('authMember');
 Route::post('/deleteAGMDetails/{id}', 'AdminController@deleteAGMDetails')->before('authMember');
 Route::post('/addAJKDetails', 'AdminController@addAJKDetails')->before('authMember');

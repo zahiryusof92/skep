@@ -54,7 +54,7 @@ foreach ($user_permission as $permission) {
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <h4>{{ trans('app.forms.detail') }}</h4>
-                                            <h6>1. {{ trans('app.forms.delivery_document_of_development_area') }}</h6>
+                                            <h6>{{ trans('app.forms.delivery_document_of_development_area') }}</h6>
                                             <div class="form-group row">
                                                 <div class="col-md-3">
                                                     <label class="form-control-label">{{ trans('app.forms.pre_calculate_plan') }}</label>
@@ -91,13 +91,15 @@ foreach ($user_permission as $permission) {
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    @if (Auth::user()->getAdmin() || strtoupper(Auth::user()->getRole->name) == 'JMB')
                                     <hr/>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <h6>2. {{ trans('app.forms.delivery_document_of_each_meeting') }}</h6>
+                                            <h6>{{ trans('app.forms.delivery_document_of_each_meeting_by_jmb') }}</h6>
                                             <div class="table-responsive">
                                                 <?php if ($update_permission == 1) { ?>
-                                                    <button type="button" class="btn btn-primary pull-right margin-bottom-25" onclick="addAGMDetails()">
+                                                    <button type="button" class="btn btn-primary pull-right margin-bottom-25" onclick="addAGMDetails('jmb')">
                                                         {{ trans('app.forms.add') }}
                                                     </button>
                                                     <br/><br/>
@@ -124,7 +126,7 @@ foreach ($user_permission as $permission) {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <table class="table table-hover nowrap" id="financial_report_list" width="100%">
+                                                <table class="table table-hover nowrap" id="agm_report_list" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
@@ -145,6 +147,65 @@ foreach ($user_permission as $permission) {
                                             </div>
                                         </div>
                                     </div>
+                                    @endif
+                                    
+                                    @if (Auth::user()->getAdmin() || strtoupper(Auth::user()->getRole->name) == 'MC')
+                                    <hr/>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <h6>{{ trans('app.forms.delivery_document_of_each_meeting_by_mc') }}</h6>
+                                            <div class="table-responsive">
+                                                <?php if ($update_permission == 1) { ?>
+                                                    <button type="button" class="btn btn-primary pull-right margin-bottom-25" onclick="addAGMDetails('mc')">
+                                                        {{ trans('app.forms.add') }}
+                                                    </button>
+                                                    <br/><br/>
+                                                <?php } ?>
+                                                <div class="form-group row">
+                                                    <div class="col-md-3">
+                                                        <label class="form-control-label">{{ trans('app.forms.financial_report_start_month') }}</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <select class="form-control" id="commercial_sinking_fund_option">
+                                                            <option value="0" selected="">{{ trans('app.forms.all') }}</option>
+                                                            <option value="1">{{ trans('app.forms.january') }}</option>
+                                                            <option value="2">{{ trans('app.forms.february') }}</option>
+                                                            <option value="3">{{ trans('app.forms.march') }}</option>
+                                                            <option value="4">{{ trans('app.forms.april') }}</option>
+                                                            <option value="5">{{ trans('app.forms.may') }}</option>
+                                                            <option value="6">{{ trans('app.forms.june') }}</option>
+                                                            <option value="7">{{ trans('app.forms.july') }}</option>
+                                                            <option value="8">{{ trans('app.forms.august') }}</option>
+                                                            <option value="9">{{ trans('app.forms.september') }}</option>
+                                                            <option value="10">{{ trans('app.forms.october') }}</option>
+                                                            <option value="11">{{ trans('app.forms.november') }}</option>
+                                                            <option value="12">{{ trans('app.forms.december') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <table class="table table-hover nowrap" id="agm_by_mc_report_list" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
+                                                            <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
+                                                            <th style="width:5%;"></th>
+                                                            <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
+                                                            <th style="width:5%;"></th>
+                                                            <th style="width:20%;">{{ trans('app.forms.financial_report') }}</th>
+                                                            <th style="width:5%;"></th>
+                                                            <?php if ($update_permission == 1) { ?>
+                                                                <th style="width:5%;">{{ trans('app.forms.action') }}</th>
+                                                            <?php } ?>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    
                                     <hr/>
                                     <div class="row">
                                         <div class="col-lg-12">
@@ -391,6 +452,7 @@ foreach ($user_permission as $permission) {
                     <input type="hidden" id="audit_report_file_url"/>
                     <input type="hidden" id="letter_integrity_url"/>
                     <input type="hidden" id="letter_bankruptcy_url"/>
+                    <input type="hidden" id="type"/>
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
@@ -751,7 +813,7 @@ foreach ($user_permission as $permission) {
     });
 
     $(document).ready(function () {
-        $('#financial_report_list').DataTable({
+        $('#agm_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM', $file->id)}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "order": [[0, "asc"]],
@@ -763,6 +825,20 @@ foreach ($user_permission as $permission) {
                 }
             ]
         });
+        
+        $('#agm_by_mc_report_list').DataTable({
+            "sAjaxSource": "{{URL::action('AdminController@getAGMByMC', $file->id)}}",
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "order": [[0, "asc"]],
+            "responsive": true,
+            "aoColumnDefs": [
+                {
+                    "bSortable": false,
+                    "aTargets": [-1]
+                }
+            ]
+        });
+        
         $('#ajk_details_list').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAJK', $file->id)}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
@@ -1002,6 +1078,7 @@ foreach ($user_permission as $permission) {
     $(document).on("click", '.edit_agm', function (e) {
         var agm_id = $(this).data('agm_id');
         var agm_date = $(this).data('agm_date');
+        var agm_date_raw = $(this).data('agm_date_raw');
         var audit_start_date = $(this).data('audit_start_date');
         var audit_end_date = $(this).data('audit_end_date');
         var audit_report_file_url = $(this).data('audit_report_file_url');
@@ -1009,10 +1086,15 @@ foreach ($user_permission as $permission) {
         var letter_bankruptcy_url = $(this).data('letter_bankruptcy_url');
 
         $("#agm_id_edit").val(agm_id);
-        if (agm_date == "0000-00-00 00:00:00") {
+        if (agm_date == "") {
             $("#agm_date_edit").val("");
         } else {
             $("#agm_date_edit").val(agm_date);
+        }
+        if (agm_date_raw == "") {
+            $("#agm_date_edit_raw").val("");
+        } else {
+            $("#agm_date_edit_raw").val(agm_date_raw);
         }
         if (audit_start_date == "0000-00-00 00:00:00") {
             $("#audit_start_edit").val("");
@@ -1043,7 +1125,8 @@ foreach ($user_permission as $permission) {
         $("#ajk_year_edit").val(year);
     });
 
-    function addAGMDetails() {
+    function addAGMDetails(type) {
+        $("#type").val(type);
         $("#add_agm_details").modal("show");
     }
     function editAGMDetails() {
@@ -1166,7 +1249,8 @@ foreach ($user_permission as $permission) {
                 audit_end = $("#audit_end").val(),
                 audit_report_file_url = $("#audit_report_file_url").val(),
                 letter_integrity_url = $("#letter_integrity_url").val(),
-                letter_bankruptcy_url = $("#letter_bankruptcy_url").val();
+                letter_bankruptcy_url = $("#letter_bankruptcy_url").val(),
+                type = $("#type").val();
 
         var error = 0;
 
@@ -1189,6 +1273,7 @@ foreach ($user_permission as $permission) {
                     audit_report_file_url: audit_report_file_url,
                     letter_integrity_url: letter_integrity_url,
                     letter_bankruptcy_url: letter_bankruptcy_url,
+                    type: type,
                     file_id: '{{$file->id}}'
                 },
                 success: function (data) {
