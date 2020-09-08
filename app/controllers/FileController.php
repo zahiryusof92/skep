@@ -7,8 +7,11 @@ class FileController extends BaseController {
         if ($file) {
             $destinationPath = 'uploads/form_files';
             $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-            Input::file('form_file')->move($destinationPath, $filename);
-            return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
         }
     }
 
@@ -17,65 +20,250 @@ class FileController extends BaseController {
         if ($file) {
             $destinationPath = 'uploads/document_files';
             $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-            Input::file('document_file')->move($destinationPath, $filename);
-            return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
         }
     }
 
     public function uploadStrataFile() {
         $file = Input::file('strata_file');
-        $destinationPath = 'uploads/strata_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('strata_file')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/strata_files';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
     public function uploadAuditReportFile() {
-        $file = Input::file('audit_report_file');
-        $destinationPath = 'uploads/audit_report_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('audit_report_file')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+        $file = (!empty(Input::file('audit_report_file')) ? Input::file('audit_report_file') : Input::file('audit_report_file_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/audit_report_files';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
     public function uploadLetterIntegrity() {
-        $file = Input::file('letter_integrity');
-        $destinationPath = 'uploads/letter_integrity_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('letter_integrity')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+        $file = (!empty(Input::file('letter_integrity')) ? Input::file('letter_integrity') : Input::file('letter_integrity_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/letter_integrity_files';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
     public function uploadLetterBankruptcy() {
-        $file = Input::file('letter_bankruptcy');
-        $destinationPath = 'uploads/letter_bankruptcy_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('letter_bankruptcy')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+        $file = (!empty(Input::file('letter_bankruptcy')) ? Input::file('letter_bankruptcy') : Input::file('letter_bankruptcy_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/letter_bankruptcy_files';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
-    public function uploadAuditReportFileEdit() {
-        $file = Input::file('audit_report_file_edit');
-        $destinationPath = 'uploads/audit_report_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('audit_report_file_edit')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+    public function uploadNoticeAgmEgm() {
+        $file = (!empty(Input::file('notice_agm_egm')) ? Input::file('notice_agm_egm') : Input::file('notice_agm_egm_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/notice_agm_egm';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
-    public function uploadLetterIntegrityEdit() {
-        $file = Input::file('letter_integrity_edit');
-        $destinationPath = 'uploads/letter_integrity_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('letter_integrity_edit')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+    public function uploadMinutesAgmEgm() {
+        $file = (!empty(Input::file('minutes_agm_egm')) ? Input::file('minutes_agm_egm') : Input::file('minutes_agm_egm_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/minutes_agm_egm';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
-    public function uploadLetterBankruptcyEdit() {
-        $file = Input::file('letter_bankruptcy_edit');
-        $destinationPath = 'uploads/letter_bankruptcy_files';
-        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-        Input::file('letter_bankruptcy_edit')->move($destinationPath, $filename);
-        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+    public function uploadMinutesAjk() {
+        $file = (!empty(Input::file('minutes_ajk')) ? Input::file('minutes_ajk') : Input::file('minutes_ajk_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/minutes_ajk';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadEligibleVote() {
+        $file = (!empty(Input::file('eligible_vote')) ? Input::file('eligible_vote') : Input::file('eligible_vote_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/eligible_vote';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadAttendMeeting() {
+        $file = (!empty(Input::file('attend_meeting')) ? Input::file('attend_meeting') : Input::file('attend_meeting_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/attend_meeting';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadProksi() {
+        $file = (!empty(Input::file('proksi')) ? Input::file('proksi') : Input::file('proksi_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/proksi';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadAjkInfo() {
+        $file = (!empty(Input::file('ajk_info')) ? Input::file('ajk_info') : Input::file('ajk_info_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/ajk_info';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadIc() {
+        $file = (!empty(Input::file('ic')) ? Input::file('ic') : Input::file('ic_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/ic';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadPurchaseAggrement() {
+        $file = (!empty(Input::file('purchase_aggrement')) ? Input::file('purchase_aggrement') : Input::file('purchase_aggrement_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/purchase_aggrement';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadMaintenanceStatement() {
+        $file = (!empty(Input::file('maintenance_statement')) ? Input::file('maintenance_statement') : Input::file('maintenance_statement_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/maintenance_statement';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadIntegrityPledge() {
+        $file = (!empty(Input::file('integrity_pledge')) ? Input::file('integrity_pledge') : Input::file('integrity_pledge_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/integrity_pledge';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadReportAuditedFinancial() {
+        $file = (!empty(Input::file('report_audited_financial')) ? Input::file('report_audited_financial') : Input::file('report_audited_financial_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/report_audited_financial';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
+
+    public function uploadHouseRules() {
+        $file = (!empty(Input::file('house_rules')) ? Input::file('house_rules') : Input::file('house_rules_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/house_rules';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
     }
 
     public function uploadBuyerCSVAction($id) {
@@ -96,7 +284,7 @@ class FileController extends BaseController {
                 if ($file->move('files', $filename)) {
                     if (($handle = fopen(url('/') . '/files/' . $filename, "r")) !== FALSE) {
                         while (($data = fgetcsv($handle, 200000, ",")) !== FALSE) {
-                            if (!empty($data[0])) {                                
+                            if (!empty($data[0])) {
                                 $file_check = Files::where('file_no', $data[0])->where('id', $files->id)->get();
                                 if (count($file_check) > 0) {
                                     array_push($data, "Success");
@@ -105,7 +293,7 @@ class FileController extends BaseController {
                                     array_push($data, "Error");
                                     $csvData[] = "";
                                 }
-                            }                            
+                            }
                         }
                         fclose($handle);
                     }

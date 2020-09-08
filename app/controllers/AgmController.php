@@ -462,16 +462,20 @@ class AgmController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+
             if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
 
@@ -482,6 +486,7 @@ class AgmController extends BaseController {
             'sub_nav_active' => 'agmpurchasesub_list',
             'user_permission' => $user_permission,
             'files' => $files,
+            'cob' => $cob,
             'Uploadmessage' => '',
             'upload' => "true",
             'image' => ''
@@ -510,10 +515,11 @@ class AgmController extends BaseController {
                             </button>&nbsp';
 
                 $data_raw = array(
+                    $buyer_lists->file->company->short_name,
+                    $buyer_lists->file->file_no,
                     $buyer_lists->unit_no,
                     $buyer_lists->unit_share,
                     $buyer_lists->owner_name,
-                    $buyer_lists->ic_company_no,
                     $buyer_lists->phone_no,
                     $buyer_lists->email,
                     (!empty($buyer_lists->race_id) ? $buyer_lists->race->name_en : ''),
@@ -911,16 +917,20 @@ class AgmController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+
             if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
 
@@ -931,6 +941,7 @@ class AgmController extends BaseController {
             'sub_nav_active' => 'agmtenantsub_list',
             'user_permission' => $user_permission,
             'files' => $files,
+            'cob' => $cob,
             'Uploadmessage' => '',
             'upload' => "true",
             'image' => ''
@@ -958,9 +969,10 @@ class AgmController extends BaseController {
                             </button>&nbsp';
 
                 $data_raw = array(
+                    $tenant_lists->file->company->short_name,
+                    $tenant_lists->file->file_no,
                     $tenant_lists->unit_no,
                     $tenant_lists->tenant_name,
-                    $tenant_lists->ic_company_no,
                     $tenant_lists->phone_no,
                     $tenant_lists->email,
                     (!empty($tenant_lists->race_id) ? $tenant_lists->race->name_en : ''),

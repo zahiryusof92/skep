@@ -129,7 +129,7 @@ foreach ($user_permission as $permission) {
         });
 
         $('#company').on('change', function () {
-            oTable.columns(4).search(this.value).draw();
+            oTable.columns(0).search(this.value).draw();
         });
         $('#file_no').on('change', function () {
             oTable.columns(1).search(this.value).draw();

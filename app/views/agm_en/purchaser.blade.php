@@ -168,18 +168,55 @@ foreach ($user_permission as $permission) {
 
                         <br/><br/>
                     <?php } ?>
+
+                    <div class="row">
+                        <div class="col-lg-12 text-center">
+                            <form>
+                                <div class="row">
+                                    @if (Auth::user()->getAdmin())
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.cob') }}</label>
+                                            <select id="company" class="form-control select2">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @foreach ($cob as $companies)
+                                                <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.file_no') }}</label>
+                                            <select id="file_no" class="form-control select2">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @foreach ($files as $files_no)
+                                                <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <hr/>
+
                     <div class="table-responsive">
                         <table class="table table-hover nowrap" id="purchaser" width="100%">
                             <thead>
                                 <tr>
+                                    <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.unit_share') }}</th>
-                                    <th style="width:20%;">{{ trans('app.forms.buyer') }}</th>
-                                    <th style="width:15%;">{{ trans('app.forms.nric') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.buyer') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
-                                    <th style="width:15%;">{{ trans('app.forms.email') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.email') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.race') }}</th>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -196,9 +233,9 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
-        $('#purchaser').DataTable({
+        var oTable = $('#purchaser').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getPurchaser')}}",
-            "order": [[0, "asc"]],
+            "order": [[2, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
                 {
@@ -206,6 +243,13 @@ foreach ($user_permission as $permission) {
                     "aTargets": [-1]
                 }
             ]
+        });
+
+        $('#company').on('change', function () {
+            oTable.columns(0).search(this.value).draw();
+        });
+        $('#file_no').on('change', function () {
+            oTable.columns(1).search(this.value).draw();
         });
     });
     function deletePurchaser(id) {

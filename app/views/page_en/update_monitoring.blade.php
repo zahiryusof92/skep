@@ -446,13 +446,212 @@ foreach ($user_permission as $permission) {
                         </div>
                     </div>
                 </form>
+                
+                <hr/>
+                
+                <form id="upload_notice_agm_egm" enctype="multipart/form-data" method="post" action="{{ url('uploadNoticeAgmEgm') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_notice_agm_egm') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_notice_agm_egm" class="btn btn-xs btn-danger" onclick="clearNoticeAgmEgm()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="notice_agm_egm" id="notice_agm_egm">
+                            <div id="validation-notice_agm_egm"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_minutes_agm_egm" enctype="multipart/form-data" method="post" action="{{ url('uploadMinutesAgmEgm') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_minutes_agm_egm') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_minutes_agm_egm" class="btn btn-xs btn-danger" onclick="clearMinutesAgmEgm()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="minutes_agm_egm" id="minutes_agm_egm">
+                            <div id="validation-minutes_agm_egm"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_minutes_ajk" enctype="multipart/form-data" method="post" action="{{ url('uploadMinutesAjk') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_minutes_ajk') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_minutes_ajk" class="btn btn-xs btn-danger" onclick="clearMinutesAjk()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="minutes_ajk" id="minutes_ajk">
+                            <div id="validation-minutes_ajk"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_eligible_vote" enctype="multipart/form-data" method="post" action="{{ url('uploadEligibleVote') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_eligible_vote') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_eligible_vote" class="btn btn-xs btn-danger" onclick="clearEligbleVote()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="eligible_vote" id="eligible_vote">
+                            <div id="validation-eligible_vote"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_attend_meeting" enctype="multipart/form-data" method="post" action="{{ url('uploadAttendMeeting') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_attend_meeting') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_attend_meeting" class="btn btn-xs btn-danger" onclick="clearAttendMeeting()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="attend_meeting" id="attend_meeting">
+                            <div id="validation-attend_meeting"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_proksi" enctype="multipart/form-data" method="post" action="{{ url('uploadProksi') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_proksi') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_proksi" class="btn btn-xs btn-danger" onclick="clearProksi()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="proksi" id="proksi">
+                            <div id="validation-proksi"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_ajk_info" enctype="multipart/form-data" method="post" action="{{ url('uploadAjkInfo') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_ajk_info') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_ajk_info" class="btn btn-xs btn-danger" onclick="clearAjkInfo()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="ajk_info" id="ajk_info">
+                            <div id="validation-ajk_info"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_ic" enctype="multipart/form-data" method="post" action="{{ url('uploadIc') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_ic') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_ic" class="btn btn-xs btn-danger" onclick="clearIc()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="ic" id="ic">
+                            <div id="validation-ic"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post" action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_purchase_aggrement') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_purchase_aggrement" class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="purchase_aggrement" id="purchase_aggrement">
+                            <div id="validation-purchase_aggrement"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_maintenance_statement" enctype="multipart/form-data" method="post" action="{{ url('uploadMaintenanceStatement') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_maintenance_statement') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_maintenance_statement" class="btn btn-xs btn-danger" onclick="clearMaintenanceStatement()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="maintenance_statement" id="maintenance_statement">
+                            <div id="validation-maintenance_statement"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_integrity_pledge" enctype="multipart/form-data" method="post" action="{{ url('uploadIntegrityPledge') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_integrity_pledge') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_integrity_pledge" class="btn btn-xs btn-danger" onclick="clearIntegrityPledge()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="integrity_pledge" id="integrity_pledge">
+                            <div id="validation-integrity_pledge"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_report_audited_financial" enctype="multipart/form-data" method="post" action="{{ url('uploadReportAuditedFinancial') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_report_audited_financial') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_report_audited_financial" class="btn btn-xs btn-danger" onclick="clearReportAuditedFinancial()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="report_audited_financial" id="report_audited_financial">
+                            <div id="validation-report_audited_financial"></div>
+                        </div>
+                    </div>
+                </form>
+                
+                <form id="upload_house_rules" enctype="multipart/form-data" method="post" action="{{ url('uploadHouseRules') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_house_rules') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_house_rules" class="btn btn-xs btn-danger" onclick="clearHouseRules()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="house_rules" id="house_rules">
+                            <div id="validation-house_rules"></div>
+                        </div>
+                    </div>
+                </form>
+                
             </div>
             <div class="modal-footer">
                 <form>
                     <input type="hidden" id="audit_report_file_url"/>
                     <input type="hidden" id="letter_integrity_url"/>
                     <input type="hidden" id="letter_bankruptcy_url"/>
+                    <input type="hidden" id="notice_agm_egm_url"/>
+                    <input type="hidden" id="minutes_agm_egm_url"/>
+                    <input type="hidden" id="minutes_ajk_url"/>
+                    <input type="hidden" id="eligible_vote_url"/>
+                    <input type="hidden" id="attend_meeting_url"/>
+                    <input type="hidden" id="proksi_url"/>
+                    <input type="hidden" id="ajk_info_url"/>
+                    <input type="hidden" id="ic_url"/>
+                    <input type="hidden" id="purchase_aggrement_url"/>
+                    <input type="hidden" id="maintenance_statement_url"/>
+                    <input type="hidden" id="integrity_pledge_url"/>
+                    <input type="hidden" id="report_audited_financial_url"/>
+                    <input type="hidden" id="house_rules_url"/>
                     <input type="hidden" id="type"/>
+                    
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
@@ -526,6 +725,7 @@ foreach ($user_permission as $permission) {
                         </div>
                     </div>
                 </form>
+                <div id="agmEditNew"></div>
             </div>
             <div class="modal-footer">
                 <form>
@@ -688,6 +888,8 @@ foreach ($user_permission as $permission) {
 </div>
 
 <!-- Page Scripts -->
+<script src="{{ asset('assets/common/js/update_monitoring.js') }}"></script>
+ 
 <script>
     var changes = false;
     $('input, textarea, select').on('keypress change input', function () {
@@ -708,7 +910,8 @@ foreach ($user_permission as $permission) {
                 id: id
             },
             success: function (data) {
-                $("#agmEdit").html(data);
+                $("#agmEdit").html(data.result);
+                $("#agmEditNew").html(data.result_new);
                 $("#edit_agm_details").modal("show");
             }
         });
@@ -811,7 +1014,7 @@ foreach ($user_permission as $permission) {
             $("#audit_end_edit").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
         });
     });
-
+    
     $(document).ready(function () {
         $('#agm_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM', $file->id)}}",
@@ -852,229 +1055,7 @@ foreach ($user_permission as $permission) {
             ]
         });
     });
-
-    $(document).ready(function () {
-        //add
-        var options1 = {
-            beforeSubmit: showRequest1,
-            success: showResponse1,
-            dataType: 'json'
-        };
-        var options2 = {
-            beforeSubmit: showRequest2,
-            success: showResponse2,
-            dataType: 'json'
-        };
-        var options3 = {
-            beforeSubmit: showRequest3,
-            success: showResponse3,
-            dataType: 'json'
-        };
-        //edit
-        var options4 = {
-            beforeSubmit: showRequest4,
-            success: showResponse4,
-            dataType: 'json'
-        };
-        var options5 = {
-            beforeSubmit: showRequest5,
-            success: showResponse5,
-            dataType: 'json'
-        };
-        var options6 = {
-            beforeSubmit: showRequest6,
-            success: showResponse6,
-            dataType: 'json'
-        };
-
-
-        //add
-        $('body').delegate('#audit_report_file', 'change', function () {
-            $('#upload_audit_report_file').ajaxForm(options1).submit();
-        });
-        $('body').delegate('#letter_integrity', 'change', function () {
-            $('#upload_letter_integrity').ajaxForm(options2).submit();
-        });
-        $('body').delegate('#letter_bankruptcy', 'change', function () {
-            $('#upload_letter_bankruptcy').ajaxForm(options3).submit();
-        });
-        //edit
-        $('body').delegate('#audit_report_file_edit', 'change', function () {
-            $('#upload_audit_report_file_edit').ajaxForm(options4).submit();
-        });
-        $('body').delegate('#letter_integrity_edit', 'change', function () {
-            $('#upload_letter_integrity_edit').ajaxForm(options5).submit();
-        });
-        $('body').delegate('#letter_bankruptcy_edit', 'change', function () {
-            $('#upload_letter_bankruptcy_edit').ajaxForm(options6).submit();
-        });
-    });
-
-    //upload audit report file
-    function showRequest1(formData, jqForm, options1) {
-        $("#validation-errors_audit_report_file").hide().empty();
-        return true;
-    }
-    function showResponse1(response, statusText, xhr, $form) {
-        if (response.success == false)
-        {
-            var arr = response.errors;
-            $.each(arr, function (index, value)
-            {
-                if (value.length != 0)
-                {
-                    $("#validation-errors_audit_report_file").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                }
-            });
-            $("#validation-errors_audit_report_file").show();
-            $("#audit_report_file").css("color", "red");
-        } else {
-            $("#validation-errors_audit_report_file").html("<i class='fa fa-check' id='check_audit_report_file' style='color:green;'></i>");
-            $("#clear_audit_report_file").show();
-            $("#validation-errors_audit_report_file").show();
-            $("#audit_report_file").css("color", "green");
-            $("#audit_report_file_url").val(response.file);
-        }
-    }
-
-    //upload letter integrity
-    function showRequest2(formData, jqForm, options2) {
-        $("#validation-errors_letter_integrity").hide().empty();
-        return true;
-    }
-    function showResponse2(response, statusText, xhr, $form) {
-        if (response.success == false)
-        {
-            var arr = response.errors;
-            $.each(arr, function (index, value)
-            {
-                if (value.length != 0)
-                {
-                    $("#validation-errors_letter_integrity").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                }
-            });
-            $("#validation-errors_letter_integrity").show();
-            $("#letter_integrity").css("color", "red");
-        } else {
-            $("#validation-errors_letter_integrity").html("<i class='fa fa-check' id='check_letter_integrity' style='color:green;'></i>");
-            $("#clear_letter_integrity").show();
-            $("#validation-errors_letter_integrity").show();
-            $("#letter_integrity").css("color", "green");
-            $("#letter_integrity_url").val(response.file);
-        }
-    }
-
-    //upload letter bankruptcy
-    function showRequest3(formData, jqForm, options3) {
-        $("#validation-errors_letter_bankruptcy").hide().empty();
-        return true;
-    }
-    function showResponse3(response, statusText, xhr, $form) {
-        if (response.success == false)
-        {
-            var arr = response.errors;
-            $.each(arr, function (index, value)
-            {
-                if (value.length != 0)
-                {
-                    $("#validation-errors_letter_bankruptcy").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                }
-            });
-            $("#validation-errors_letter_bankruptcy").show();
-            $("#letter_bankruptcy").css("color", "red");
-        } else {
-            $("#validation-errors_letter_bankruptcy").html("<i class='fa fa-check' id='check_letter_bankruptcy' style='color:green;'></i>");
-            $("#clear_letter_bankruptcy").show();
-            $("#validation-errors_letter_bankruptcy").show();
-            $("#letter_bankruptcy").css("color", "green");
-            $("#letter_bankruptcy_url").val(response.file);
-        }
-    }
-
-    //upload audit report file edit
-    function showRequest4(formData, jqForm, options4) {
-        $("#validation-errors_audit_report_file_edit").hide().empty();
-        return true;
-    }
-    function showResponse4(response, statusText, xhr, $form) {
-        if (response.success == false)
-        {
-            var arr = response.errors;
-            $.each(arr, function (index, value)
-            {
-                if (value.length != 0)
-                {
-                    $("#validation-errors_audit_report_file_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                }
-            });
-            $("#validation-errors_audit_report_file_edit").show();
-            $("#audit_report_file_edit").css("color", "red");
-        } else {
-            $("#report_edit").hide();
-            $("#validation-errors_audit_report_file_edit").html("<i class='fa fa-check' id='check_audit_report_file_edit' style='color:green;'></i>");
-            $("#clear_audit_report_file_edit").show();
-            $("#validation-errors_audit_report_file_edit").show();
-            $("#audit_report_file_edit").css("color", "green");
-            $("#audit_report_file_url_edit").val(response.file);
-        }
-    }
-
-    //upload letter integrity edit
-    function showRequest5(formData, jqForm, options5) {
-        $("#validation-errors_letter_integrity_edit").hide().empty();
-        return true;
-    }
-    function showResponse5(response, statusText, xhr, $form) {
-        if (response.success == false)
-        {
-            var arr = response.errors;
-            $.each(arr, function (index, value)
-            {
-                if (value.length != 0)
-                {
-                    $("#validation-errors_letter_integrity_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                }
-            });
-            $("#validation-errors_letter_integrity_edit").show();
-            $("#letter_integrity_edit").css("color", "red");
-        } else {
-            $("#integrity_edit").hide();
-            $("#validation-errors_letter_integrity_edit").html("<i class='fa fa-check' id='check_letter_integrity_edit' style='color:green;'></i>");
-            $("#clear_letter_integrity_edit").show();
-            $("#validation-errors_letter_integrity_edit").show();
-            $("#letter_integrity_edit").css("color", "green");
-            $("#letter_integrity_url_edit").val(response.file);
-        }
-    }
-
-    //upload letter bankruptcy edit
-    function showRequest6(formData, jqForm, options6) {
-        $("#validation-errors_letter_bankruptcy_edit").hide().empty();
-        return true;
-    }
-    function showResponse6(response, statusText, xhr, $form) {
-        if (response.success == false)
-        {
-            var arr = response.errors;
-            $.each(arr, function (index, value)
-            {
-                if (value.length != 0)
-                {
-                    $("#validation-errors_letter_bankruptcy_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                }
-            });
-            $("#validation-errors_letter_bankruptcy_edit").show();
-            $("#letter_bankruptcy_edit").css("color", "red");
-        } else {
-            $("#bankruptcy_edit").hide();
-            $("#validation-errors_letter_bankruptcy_edit").html("<i class='fa fa-check' id='check_letter_bankruptcy_edit' style='color:green;'></i>");
-            $("#clear_letter_bankruptcy_edit").show();
-            $("#validation-errors_letter_bankruptcy_edit").show();
-            $("#letter_bankruptcy_edit").css("color", "green");
-            $("#letter_bankruptcy_url_edit").val(response.file);
-        }
-    }
-
+    
     $(document).on("click", '.edit_agm', function (e) {
         var agm_id = $(this).data('agm_id');
         var agm_date = $(this).data('agm_date');
@@ -1250,6 +1231,19 @@ foreach ($user_permission as $permission) {
                 audit_report_file_url = $("#audit_report_file_url").val(),
                 letter_integrity_url = $("#letter_integrity_url").val(),
                 letter_bankruptcy_url = $("#letter_bankruptcy_url").val(),
+                notice_agm_egm_url = $("#notice_agm_egm_url").val(),
+                minutes_agm_egm_url = $("#minutes_agm_egm_url").val(),
+                minutes_ajk_url = $("#minutes_ajk_url").val(),
+                eligible_vote_url = $("#eligible_vote_url").val(),
+                attend_meeting_url = $("#attend_meeting_url").val(),
+                proksi_url = $("#proksi_url").val(),
+                ajk_info_url = $("#ajk_info_url").val(),
+                ic_url = $("#ic_url").val(),
+                purchase_aggrement_url = $("#purchase_aggrement_url").val(),
+                maintenance_statement_url = $("#maintenance_statement_url").val(),
+                integrity_pledge_url = $("#integrity_pledge_url").val(),
+                report_audited_financial_url = $("#report_audited_financial_url").val(),
+                house_rules_url = $("#house_rules_url").val(),
                 type = $("#type").val();
 
         var error = 0;
@@ -1273,6 +1267,19 @@ foreach ($user_permission as $permission) {
                     audit_report_file_url: audit_report_file_url,
                     letter_integrity_url: letter_integrity_url,
                     letter_bankruptcy_url: letter_bankruptcy_url,
+                    notice_agm_egm_url: notice_agm_egm_url,
+                    minutes_agm_egm_url: minutes_agm_egm_url,
+                    minutes_ajk_url: minutes_ajk_url,
+                    eligible_vote_url: eligible_vote_url,
+                    attend_meeting_url: attend_meeting_url,
+                    proksi_url: proksi_url,
+                    ajk_info_url: ajk_info_url,
+                    ic_url: ic_url,
+                    purchase_aggrement_url: purchase_aggrement_url,
+                    maintenance_statement_url: maintenance_statement_url,
+                    integrity_pledge_url: integrity_pledge_url,
+                    report_audited_financial_url: report_audited_financial_url,
+                    house_rules_url: house_rules_url,
                     type: type,
                     file_id: '{{$file->id}}'
                 },
@@ -1353,7 +1360,20 @@ foreach ($user_permission as $permission) {
                 audit_end = $("#audit_end_edit").val(),
                 audit_report_file_url = $("#audit_report_file_url_edit").val(),
                 letter_integrity_url = $("#letter_integrity_url_edit").val(),
-                letter_bankruptcy_url = $("#letter_bankruptcy_url_edit").val();
+                letter_bankruptcy_url = $("#letter_bankruptcy_url_edit").val(),
+                notice_agm_egm_url = $("#notice_agm_egm_url").val(),
+                minutes_agm_egm_url = $("#minutes_agm_egm_url").val(),
+                minutes_ajk_url = $("#minutes_ajk_url").val(),
+                eligible_vote_url = $("#eligible_vote_url").val(),
+                attend_meeting_url = $("#attend_meeting_url").val(),
+                proksi_url = $("#proksi_url").val(),
+                ajk_info_url = $("#ajk_info_url").val(),
+                ic_url = $("#ic_url").val(),
+                purchase_aggrement_url = $("#purchase_aggrement_url").val(),
+                maintenance_statement_url = $("#maintenance_statement_url").val(),
+                integrity_pledge_url = $("#integrity_pledge_url").val(),
+                report_audited_financial_url = $("#report_audited_financial_url").val(),
+                house_rules_url = $("#house_rules_url").val();
 
         var error = 0;
 
@@ -1376,6 +1396,19 @@ foreach ($user_permission as $permission) {
                     audit_report_file_url: audit_report_file_url,
                     letter_integrity_url: letter_integrity_url,
                     letter_bankruptcy_url: letter_bankruptcy_url,
+                    notice_agm_egm_url: notice_agm_egm_url,
+                    minutes_agm_egm_url: minutes_agm_egm_url,
+                    minutes_ajk_url: minutes_ajk_url,
+                    eligible_vote_url: eligible_vote_url,
+                    attend_meeting_url: attend_meeting_url,
+                    proksi_url: proksi_url,
+                    ajk_info_url: ajk_info_url,
+                    ic_url: ic_url,
+                    purchase_aggrement_url: purchase_aggrement_url,
+                    maintenance_statement_url: maintenance_statement_url,
+                    integrity_pledge_url: integrity_pledge_url,
+                    report_audited_financial_url: report_audited_financial_url,
+                    house_rules_url: house_rules_url,
                     id: agm_id_edit
                 },
                 success: function (data) {
@@ -1568,7 +1601,7 @@ foreach ($user_permission as $permission) {
             });
         }
     }
-
+    
     function deleteAGMDetails(id) {
         swal({
             title: "{{ trans('app.confirmation.are_you_sure') }}",
@@ -1745,57 +1778,462 @@ foreach ($user_permission as $permission) {
             });
         });
     }
-
-    function clearAuditFile() {
-        $("#audit_report_file").val("");
-        $("#audit_report_file_url").val("");
-        $("#audit_report_file").css("color", "grey");
-        $("#clear_audit_report_file").hide();
-        $("#check_audit_report_file").hide();
+    
+    function deleteNoticeAgmEgm(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteNoticeAgmEgm') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
     }
-
-    function clearLetterIntegrity() {
-        $("#letter_integrity").val("");
-        $("#letter_integrity_url").val("");
-        $("#letter_integrity").css("color", "grey");
-        $("#clear_letter_integrity").hide();
-        $("#check_letter_integrity").hide();
+    
+    function deleteMinutesAgmEgm(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteMinutesAgmEgm') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
     }
-
-    function clearLetterBankruptcy() {
-        $("#letter_bankruptcy").val("");
-        $("#letter_bankruptcy_url").val("");
-        $("#letter_bankruptcy").css("color", "grey");
-        $("#clear_letter_bankruptcy").hide();
-        $("#check_letter_bankruptcy").hide();
+    
+    function deleteMinutesAjk(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteMinutesAjk') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
     }
-
-    function clearAuditFileEdit() {
-        $("#audit_report_file_edit").val("");
-        $("#audit_report_file_url_edit").val("");
-        $("#audit_report_file_edit").css("color", "grey");
-        $("#clear_audit_report_file_edit").hide();
-        $("#check_audit_report_file_edit").hide();
+    
+    function deleteEligibleVote(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteEligibleVote') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
     }
-
-    function clearLetterIntegrityEdit() {
-        $("#letter_integrity_edit").val("");
-        $("#letter_integrity_url_edit").val("");
-        $("#letter_integrity_edit").css("color", "grey");
-        $("#clear_letter_integrity_edit").hide();
-        $("#check_letter_integrity_edit").hide();
+    
+    function deleteAttendMeeting(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteAttendMeeting') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
     }
-
-    function clearLetterBankruptcyEdit() {
-        $("#letter_bankruptcy_edit").val("");
-        $("#letter_bankruptcy_url_edit").val("");
-        $("#letter_bankruptcy_edit").css("color", "grey");
-        $("#clear_letter_bankruptcy_edit").hide();
-        $("#check_letter_bankruptcy_edit").hide();
+    
+    function deleteProksi(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteProksi') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteAjkInfo(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteAjkInfo') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteIc(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteIc') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deletePurchaseAggrement(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deletePurchaseAggrement') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteMaintenanceStatement(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteMaintenanceStatement') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteIntegrityPledge(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteIntegrityPledge') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteReportAuditedFinancial(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteReportAuditedFinancial') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteHouseRules(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteHouseRules') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
     }
 </script>
-
-
 <!-- End Page Scripts-->
 
 @stop

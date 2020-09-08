@@ -1999,6 +1999,19 @@ class AdminController extends BaseController {
             $audit_report_file_url = $data['audit_report_file_url'];
             $letter_integrity_url = $data['letter_integrity_url'];
             $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
+            $notice_agm_egm_url = $data['notice_agm_egm_url'];
+            $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
+            $minutes_ajk_url = $data['minutes_ajk_url'];
+            $eligible_vote_url = $data['eligible_vote_url'];
+            $attend_meeting_url = $data['attend_meeting_url'];
+            $proksi_url = $data['proksi_url'];
+            $ajk_info_url = $data['ajk_info_url'];
+            $ic_url = $data['ic_url'];
+            $purchase_aggrement_url = $data['purchase_aggrement_url'];
+            $maintenance_statement_url = $data['maintenance_statement_url'];
+            $integrity_pledge_url = $data['integrity_pledge_url'];
+            $report_audited_financial_url = $data['report_audited_financial_url'];
+            $house_rules_url = $data['house_rules_url'];
             $type = $data['type'];
 
             $agm_detail = new MeetingDocument();
@@ -2017,6 +2030,19 @@ class AdminController extends BaseController {
             $agm_detail->audit_report_url = $audit_report_file_url;
             $agm_detail->letter_integrity_url = $letter_integrity_url;
             $agm_detail->letter_bankruptcy_url = $letter_bankruptcy_url;
+            $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
+            $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
+            $agm_detail->minutes_ajk_url = $minutes_ajk_url;
+            $agm_detail->eligible_vote_url = $eligible_vote_url;
+            $agm_detail->attend_meeting_url = $attend_meeting_url;
+            $agm_detail->proksi_url = $proksi_url;
+            $agm_detail->ajk_info_url = $ajk_info_url;
+            $agm_detail->ic_url = $ic_url;
+            $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+            $agm_detail->maintenance_statement_url = $maintenance_statement_url;
+            $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->report_audited_financial_url = $report_audited_financial_url;
+            $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->type = $type;
             $success = $agm_detail->save();
 
@@ -2056,7 +2082,19 @@ class AdminController extends BaseController {
             $audit_report_file_url = $data['audit_report_file_url'];
             $letter_integrity_url = $data['letter_integrity_url'];
             $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
-
+            $notice_agm_egm_url = $data['notice_agm_egm_url'];
+            $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
+            $minutes_ajk_url = $data['minutes_ajk_url'];
+            $eligible_vote_url = $data['eligible_vote_url'];
+            $attend_meeting_url = $data['attend_meeting_url'];
+            $proksi_url = $data['proksi_url'];
+            $ajk_info_url = $data['ajk_info_url'];
+            $ic_url = $data['ic_url'];
+            $purchase_aggrement_url = $data['purchase_aggrement_url'];
+            $maintenance_statement_url = $data['maintenance_statement_url'];
+            $integrity_pledge_url = $data['integrity_pledge_url'];
+            $report_audited_financial_url = $data['report_audited_financial_url'];
+            $house_rules_url = $data['house_rules_url'];
 
             $agm_detail = MeetingDocument::find($id);
             $agm_detail->agm_date = $agm_date;
@@ -2073,6 +2111,19 @@ class AdminController extends BaseController {
             $agm_detail->audit_report_url = $audit_report_file_url;
             $agm_detail->letter_integrity_url = $letter_integrity_url;
             $agm_detail->letter_bankruptcy_url = $letter_bankruptcy_url;
+            $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
+            $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
+            $agm_detail->minutes_ajk_url = $minutes_ajk_url;
+            $agm_detail->eligible_vote_url = $eligible_vote_url;
+            $agm_detail->attend_meeting_url = $attend_meeting_url;
+            $agm_detail->proksi_url = $proksi_url;
+            $agm_detail->ajk_info_url = $ajk_info_url;
+            $agm_detail->ic_url = $ic_url;
+            $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+            $agm_detail->maintenance_statement_url = $maintenance_statement_url;
+            $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->report_audited_financial_url = $report_audited_financial_url;
+            $agm_detail->house_rules_url = $house_rules_url;
             $success = $agm_detail->save();
 
             if ($success) {
@@ -2093,10 +2144,12 @@ class AdminController extends BaseController {
     }
 
     public function getAGMDetails() {
+        $output = [];
         $data = Input::all();
         if (Request::ajax()) {
 
             $result = "";
+            $result_new = "";
             $id = $data['id'];
 
             $agm = MeetingDocument::find($id);
@@ -2188,7 +2241,7 @@ class AdminController extends BaseController {
 
                 $result .= '</form>';
 
-                $result .= '<form id="upload_audit_report_file_edit" enctype="multipart/form-data" method="post" action="' . url("uploadAuditReportFileEdit") . '" autocomplete="off">';
+                $result .= '<form id="upload_audit_report_file_edit" enctype="multipart/form-data" method="post" action="' . url("uploadAuditReportFile") . '" autocomplete="off">';
                 $result .= '<div class="form-group row">';
                 $result .= '<div class="col-md-6"><label class="form-control-label">&nbsp;</label></div>';
                 $result .= '<div class="col-md-6">';
@@ -2203,7 +2256,7 @@ class AdminController extends BaseController {
                 $result .= '</div>';
                 $result .= '</form>';
 
-                $result .= '<form id="upload_letter_integrity_edit" enctype="multipart/form-data" method="post" action="' . url("uploadLetterIntegrityEdit") . '" autocomplete="off">';
+                $result .= '<form id="upload_letter_integrity_edit" enctype="multipart/form-data" method="post" action="' . url("uploadLetterIntegrity") . '" autocomplete="off">';
                 $result .= '<div class="form-group row">';
                 $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.pledge_letter_of_integrity') . '</label></div>';
                 $result .= '<div class="col-md-6">';
@@ -2218,7 +2271,7 @@ class AdminController extends BaseController {
                 $result .= '</div>';
                 $result .= '</form>';
 
-                $result .= '<form id="upload_letter_bankruptcy_edit" enctype="multipart/form-data" method="post" action="' . url("uploadLetterBankruptcyEdit") . '" autocomplete="off">';
+                $result .= '<form id="upload_letter_bankruptcy_edit" enctype="multipart/form-data" method="post" action="' . url("uploadLetterBankruptcy") . '" autocomplete="off">';
                 $result .= '<div class="form-group row">';
                 $result .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.declaration_letter_of_non_bankruptcy') . '</label></div>';
                 $result .= '<div class="col-md-6">';
@@ -2232,10 +2285,212 @@ class AdminController extends BaseController {
                 $result .= '</div>';
                 $result .= '</div>';
                 $result .= '</form>';
+
+                $result_new .= '<hr/>';
+                $result_new .= '<form id="upload_notice_agm_egm_edit" enctype="multipart/form-data" method="post" action="' . url("uploadNoticeAgmEgm") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_notice_agm_egm') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_notice_agm_egm_edit" class="btn btn-xs btn-danger" onclick="clearNoticeAgmEgmEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="notice_agm_egm_edit" id="notice_agm_egm_edit">';
+                $result_new .= '<div id="validation-notice_agm_egm_edit"></div>';
+                if ($agm->notice_agm_egm_url != "") {
+                    $result_new .= '<div id="btn_notice_agm_egm_edit"><a href="' . asset($agm->notice_agm_egm_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteNoticeAgmEgm(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_minutes_agm_egm_edit" enctype="multipart/form-data" method="post" action="' . url("uploadMinutesAgmEgm") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_minutes_agm_egm') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_minutes_agm_egm_edit" class="btn btn-xs btn-danger" onclick="clearMinutesAgmEgmEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="minutes_agm_egm_edit" id="minutes_agm_egm_edit">';
+                $result_new .= '<div id="validation-minutes_agm_egm_edit"></div>';
+                if ($agm->minutes_agm_egm_url != "") {
+                    $result_new .= '<div id="btn_minutes_agm_egm_edit"><a href="' . asset($agm->minutes_agm_egm_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgm(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_minutes_ajk_edit" enctype="multipart/form-data" method="post" action="' . url("uploadMinutesAjk") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_minutes_ajk') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_minutes_ajk_edit" class="btn btn-xs btn-danger" onclick="clearMinutesAjkEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="minutes_ajk_edit" id="minutes_ajk_edit">';
+                $result_new .= '<div id="validation-minutes_ajk_edit"></div>';
+                if ($agm->minutes_ajk_url != "") {
+                    $result_new .= '<div id="btn_minutes_ajk_edit"><a href="' . asset($agm->minutes_ajk_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAjk(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_eligible_vote_edit" enctype="multipart/form-data" method="post" action="' . url("uploadEligibleVote") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_eligible_vote') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_eligible_vote_edit" class="btn btn-xs btn-danger" onclick="clearEligbleVoteEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="eligible_vote_edit" id="eligible_vote_edit">';
+                $result_new .= '<div id="validation-eligible_vote_edit"></div>';
+                if ($agm->eligible_vote_url != "") {
+                    $result_new .= '<div id="btn_eligible_vote_edit"><a href="' . asset($agm->eligible_vote_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEligibleVote(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_attend_meeting_edit" enctype="multipart/form-data" method="post" action="' . url("uploadAttendMeeting") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_attend_meeting') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_attend_meeting_edit" class="btn btn-xs btn-danger" onclick="clearAttendMeetingEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="attend_meeting_edit" id="attend_meeting_edit">';
+                $result_new .= '<div id="validation-attend_meeting_edit"></div>';
+                if ($agm->attend_meeting_url != "") {
+                    $result_new .= '<div id="btn_attend_meeting_edit"><a href="' . asset($agm->attend_meeting_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendMeeting(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_proksi_edit" enctype="multipart/form-data" method="post" action="' . url("uploadProksi") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_proksi') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_proksi_edit" class="btn btn-xs btn-danger" onclick="clearProksiEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="proksi_edit" id="proksi_edit">';
+                $result_new .= '<div id="validation-proksi_edit"></div>';
+                if ($agm->proksi_url != "") {
+                    $result_new .= '<div id="btn_proksi_edit"><a href="' . asset($agm->proksi_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteProksi(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_ajk_info_edit" enctype="multipart/form-data" method="post" action="' . url("uploadAjkInfo") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_ajk_info') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_ajk_info_edit" class="btn btn-xs btn-danger" onclick="clearAjkInfoEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="ajk_info_edit" id="ajk_info_edit">';
+                $result_new .= '<div id="validation-ajk_info_edit"></div>';
+                if ($agm->ajk_info_url != "") {
+                    $result_new .= '<div id="btn_ajk_info_edit"><a href="' . asset($agm->ajk_info_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAjkInfo(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_ic_edit" enctype="multipart/form-data" method="post" action="' . url("uploadIc") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_ic') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_ic_edit" class="btn btn-xs btn-danger" onclick="clearIcEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="ic_edit" id="ic_edit">';
+                $result_new .= '<div id="validation-ic_edit"></div>';
+                if ($agm->ic_url != "") {
+                    $result_new .= '<div id="btn_ic_edit"><a href="' . asset($agm->ic_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIc(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_purchase_aggrement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadPurchaseAggrement") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_purchase_aggrement') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_purchase_aggrement_edit" class="btn btn-xs btn-danger" onclick="clearPurchaseAggrementEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="purchase_aggrement_edit" id="purchase_aggrement_edit">';
+                $result_new .= '<div id="validation-purchase_aggrement_edit"></div>';
+                if ($agm->purchase_aggrement_url != "") {
+                    $result_new .= '<div id="btn_purchase_aggrement_edit"><a href="' . asset($agm->purchase_aggrement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_maintenance_statement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadMaintenanceStatement") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_maintenance_statement') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_maintenance_statement_edit" class="btn btn-xs btn-danger" onclick="clearMaintenanceStatementEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="maintenance_statement_edit" id="maintenance_statement_edit">';
+                $result_new .= '<div id="validation-maintenance_statement_edit"></div>';
+                if ($agm->maintenance_statement_url != "") {
+                    $result_new .= '<div id="btn_maintenance_statement_edit"><a href="' . asset($agm->maintenance_statement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMaintenanceStatement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_integrity_pledge_edit" enctype="multipart/form-data" method="post" action="' . url("uploadIntegrityPledge") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_integrity_pledge') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_integrity_pledge_edit" class="btn btn-xs btn-danger" onclick="clearIntegrityPledgeEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="integrity_pledge_edit" id="integrity_pledge_edit">';
+                $result_new .= '<div id="validation-integrity_pledge_edit"></div>';
+                if ($agm->integrity_pledge_url != "") {
+                    $result_new .= '<div id="btn_integrity_pledge_edit"><a href="' . asset($agm->integrity_pledge_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_report_audited_financial_edit" enctype="multipart/form-data" method="post" action="' . url("uploadReportAuditedFinancial") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_report_audited_financial') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_report_audited_financial_edit" class="btn btn-xs btn-danger" onclick="clearReportAuditedFinancialEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="report_audited_financial_edit" id="report_audited_financial_edit">';
+                $result_new .= '<div id="validation-report_audited_financial_edit"></div>';
+                if ($agm->report_audited_financial_url != "") {
+                    $result_new .= '<div id="btn_report_audited_financial_edit"><a href="' . asset($agm->report_audited_financial_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancial(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_house_rules_edit" enctype="multipart/form-data" method="post" action="' . url("uploadHouseRules") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_house_rules') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_house_rules_edit" class="btn btn-xs btn-danger" onclick="clearHouseRulesEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="house_rules_edit" id="house_rules_edit">';
+                $result_new .= '<div id="validation-house_rules_edit"></div>';
+                if ($agm->house_rules_url != "") {
+                    $result_new .= '<div id="btn_house_rules_edit"><a href="' . asset($agm->house_rules_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteHouseRules(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
             } else {
                 $result = trans('app.errors.no_data_found');
             }
-            print $result;
+
+            $output = array(
+                'result' => $result,
+                'result_new' => $result_new
+            );
+
+            return $output;
         }
     }
 
@@ -2361,7 +2616,7 @@ class AdminController extends BaseController {
             return $output;
         }
     }
-    
+
     public function getAGMByMC($file_id) {
         $agm_detail = MeetingDocument::where('file_id', $file_id)->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
@@ -7217,6 +7472,345 @@ class AdminController extends BaseController {
         );
 
         return View::make('form_en.index', $viewData);
+    }
+
+    // Sept 2020
+    public function deleteNoticeAgmEgm() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->notice_agm_egm_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteMinutesAgmEgm() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->minutes_agm_egm_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteMinutesAjk() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->minutes_ajk_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteEligibleVote() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->eligible_vote_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteAttendMeeting() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->attend_meeting_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteProksi() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->proksi_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteAjkInfo() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->ajk_info_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteIc() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->ic_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deletePurchaseAggrement() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->purchase_aggrement_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteMaintenanceStatement() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->maintenance_statement_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteIntegrityPledge() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->integrity_pledge_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteReportAuditedFinancial() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->report_audited_financial_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteHouseRules() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->house_rules_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
     }
 
 }

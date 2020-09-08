@@ -143,6 +143,46 @@ Route::post('/uploadICFile', 'FileController@uploadICFile');
 Route::post('/uploadAttendanceFile', 'FileController@uploadAttendanceFile');
 Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancialFile');
 
+// Sept 2020
+Route::post('/uploadNoticeAgmEgm', 'FileController@uploadNoticeAgmEgm');
+Route::post('/deleteNoticeAgmEgm/{id}', 'AdminController@deleteNoticeAgmEgm')->before('authMember');
+
+Route::post('/uploadMinutesAgmEgm', 'FileController@uploadMinutesAgmEgm');
+Route::post('/deleteMinutesAgmEgm/{id}', 'AdminController@deleteMinutesAgmEgm')->before('authMember');
+
+Route::post('/uploadMinutesAjk', 'FileController@uploadMinutesAjk');
+Route::post('/deleteMinutesAjk/{id}', 'AdminController@deleteMinutesAjk')->before('authMember');
+
+Route::post('/uploadEligibleVote', 'FileController@uploadEligibleVote');
+Route::post('/deleteEligibleVote/{id}', 'AdminController@deleteEligibleVote')->before('authMember');
+
+Route::post('/uploadAttendMeeting', 'FileController@uploadAttendMeeting');
+Route::post('/deleteAttendMeeting/{id}', 'AdminController@deleteAttendMeeting')->before('authMember');
+
+Route::post('/uploadProksi', 'FileController@uploadProksi');
+Route::post('/deleteProksi/{id}', 'AdminController@deleteProksi')->before('authMember');
+
+Route::post('/uploadAjkInfo', 'FileController@uploadAjkInfo');
+Route::post('/deleteAjkInfo/{id}', 'AdminController@deleteAjkInfo')->before('authMember');
+
+Route::post('/uploadIc', 'FileController@uploadIc');
+Route::post('/deleteIc/{id}', 'AdminController@deleteIc')->before('authMember');
+
+Route::post('/uploadPurchaseAggrement', 'FileController@uploadPurchaseAggrement');
+Route::post('/deletePurchaseAggrement/{id}', 'AdminController@deletePurchaseAggrement')->before('authMember');
+
+Route::post('/uploadMaintenanceStatement', 'FileController@uploadMaintenanceStatement');
+Route::post('/deleteMaintenanceStatement/{id}', 'AdminController@deleteMaintenanceStatement')->before('authMember');
+
+Route::post('/uploadIntegrityPledge', 'FileController@uploadIntegrityPledge');
+Route::post('/deleteIntegrityPledge/{id}', 'AdminController@deleteIntegrityPledge')->before('authMember');
+
+Route::post('/uploadReportAuditedFinancial', 'FileController@uploadReportAuditedFinancial');
+Route::post('/deleteReportAuditedFinancial/{id}', 'AdminController@deleteReportAuditedFinancial')->before('authMember');
+
+Route::post('/uploadHouseRules', 'FileController@uploadHouseRules');
+Route::post('/deleteHouseRules/{id}', 'AdminController@deleteHouseRules')->before('authMember');
+
 //others
 Route::get('/view/others/{id}', 'AdminController@viewOthers')->before('authMember');
 Route::get('/updateFile/others/{id}', 'AdminController@others')->before('authMember');
