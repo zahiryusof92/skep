@@ -278,7 +278,7 @@ $(document).ready(function () {
                         }
                     });
                     $("#validation-ajk_info").show();
-                    $("#proksi").css("color", "red");
+                    $("#ajk_info").css("color", "red");
                 } else {
                     $("#validation-ajk_info").html("<i class='fa fa-check' id='check_ajk_info' style='color:green;'></i>");
                     $("#clear_ajk_info").show();
@@ -343,6 +343,35 @@ $(document).ready(function () {
                     $("#validation-purchase_aggrement").show();
                     $("#purchase_aggrement").css("color", "green");
                     $("#purchase_aggrement_url").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //strata_title
+    $('body').delegate('#strata_title', 'change', function () {
+        $('#upload_strata_title').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-strata_title").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-strata_title").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-strata_title").show();
+                    $("#strata_title").css("color", "red");
+                } else {
+                    $("#validation-strata_title").html("<i class='fa fa-check' id='check_strata_title' style='color:green;'></i>");
+                    $("#clear_strata_title").show();
+                    $("#validation-strata_title").show();
+                    $("#strata_title").css("color", "green");
+                    $("#strata_title_url").val(response.file);
                 }
             }
         }).submit();
@@ -556,7 +585,7 @@ $(document).ready(function () {
     });
 });
 
-//notice_agm_egm
+//notice_agm_egm edit
 $('body').delegate('#notice_agm_egm_edit', 'change', function () {
     $('#upload_notice_agm_egm_edit').ajaxForm({
         dataType: 'json',
@@ -585,6 +614,396 @@ $('body').delegate('#notice_agm_egm_edit', 'change', function () {
         }
     }).submit();
 });
+
+//minutes_agm_egm_edit
+    $('body').delegate('#minutes_agm_egm_edit', 'change', function () {
+        $('#upload_minutes_agm_egm_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-minutes_agm_egm_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-minutes_agm_egm_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-minutes_agm_egm_edit").show();
+                    $("#minutes_agm_egm_edit").css("color", "red");
+                } else {
+                    $("#btn_minutes_agm_egm_edit").hide();
+                    $("#validation-minutes_agm_egm_edit").html("<i class='fa fa-check' id='check_minutes_agm_egm_edit' style='color:green;'></i>");
+                    $("#clear_minutes_agm_egm_edit").show();
+                    $("#validation-minutes_agm_egm_edit").show();
+                    $("#minutes_agm_egm_edit").css("color", "green");
+                    $("#minutes_agm_egm_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //minutes_ajk_edit
+    $('body').delegate('#minutes_ajk_edit', 'change', function () {
+        $('#upload_minutes_ajk_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-minutes_ajk_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-minutes_ajk_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-minutes_ajk_edit").show();
+                    $("#minutes_ajk_edit").css("color", "red");
+                } else {
+                    $("#btn_minutes_ajk_edit").hide();
+                    $("#validation-minutes_ajk_edit").html("<i class='fa fa-check' id='check_minutes_ajk_edit' style='color:green;'></i>");
+                    $("#clear_minutes_ajk_edit").show();
+                    $("#validation-minutes_ajk_edit").show();
+                    $("#minutes_ajk_edit").css("color", "green");
+                    $("#minutes_ajk_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //eligible_vote_edit
+    $('body').delegate('#eligible_vote_edit', 'change', function () {
+        $('#upload_eligible_vote_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-eligible_vote_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-eligible_vote_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-eligible_vote_edit").show();
+                    $("#eligible_vote_edit").css("color", "red");
+                } else {
+                    $("#btn_eligible_vote_edit").hide();
+                    $("#validation-eligible_vote_edit").html("<i class='fa fa-check' id='check_eligible_vote_edit' style='color:green;'></i>");
+                    $("#clear_eligible_vote_edit").show();
+                    $("#validation-eligible_vote_edit").show();
+                    $("#eligible_vote_edit").css("color", "green");
+                    $("#eligible_vote_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //attend_meeting_edit
+    $('body').delegate('#attend_meeting_edit', 'change', function () {
+        $('#upload_attend_meeting_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-attend_meeting_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-attend_meeting_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-attend_meeting_edit").show();
+                    $("#attend_meeting_edit").css("color", "red");
+                } else {
+                    $("#btn_attend_meeting_edit").hide();
+                    $("#validation-attend_meeting_edit").html("<i class='fa fa-check' id='check_attend_meeting_edit' style='color:green;'></i>");
+                    $("#clear_attend_meeting_edit").show();
+                    $("#validation-attend_meeting_edit").show();
+                    $("#attend_meeting_edit").css("color", "green");
+                    $("#attend_meeting_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //proksi_edit
+    $('body').delegate('#proksi_edit', 'change', function () {
+        $('#upload_proksi_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-proksi_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-proksi_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-proksi_edit").show();
+                    $("#proksi_edit").css("color", "red");
+                } else {
+                    $("#btn_proksi_edit").hide();
+                    $("#validation-proksi_edit").html("<i class='fa fa-check' id='check_proksi_edit' style='color:green;'></i>");
+                    $("#clear_proksi_edit").show();
+                    $("#validation-proksi_edit").show();
+                    $("#proksi_edit").css("color", "green");
+                    $("#proksi_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //ajk_info_edit
+    $('body').delegate('#ajk_info_edit', 'change', function () {
+        $('#upload_ajk_info_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-ajk_info_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-ajk_info_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-ajk_info_edit").show();
+                    $("#proksi_edit").css("color", "red");
+                } else {
+                    $("#btn_ajk_info_edit").hide();
+                    $("#validation-ajk_info_edit").html("<i class='fa fa-check' id='check_ajk_info_edit' style='color:green;'></i>");
+                    $("#clear_ajk_info_edit").show();
+                    $("#validation-ajk_info_edit").show();
+                    $("#ajk_info_edit").css("color", "green");
+                    $("#ajk_info_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //ic_edit
+    $('body').delegate('#ic_edit', 'change', function () {
+        $('#upload_ic_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-ic_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-ic_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-ic_edit").show();
+                    $("#ic_edit").css("color", "red");
+                } else {
+                    $("#btn_ic_edit").hide();
+                    $("#validation-ic_edit").html("<i class='fa fa-check' id='check_ic_edit' style='color:green;'></i>");
+                    $("#clear_ic_edit").show();
+                    $("#validation-ic_edit").show();
+                    $("#ic_edit").css("color", "green");
+                    $("#ic_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //purchase_aggrement_edit
+    $('body').delegate('#purchase_aggrement_edit', 'change', function () {
+        $('#upload_purchase_aggrement_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-purchase_aggrement_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-purchase_aggrement_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-purchase_aggrement_edit").show();
+                    $("#purchase_aggrement_edit").css("color", "red");
+                } else {
+                    $("#btn_purchase_aggrement_edit").hide();
+                    $("#validation-purchase_aggrement_edit").html("<i class='fa fa-check' id='check_purchase_aggrement_edit' style='color:green;'></i>");
+                    $("#clear_purchase_aggrement_edit").show();
+                    $("#validation-purchase_aggrement_edit").show();
+                    $("#purchase_aggrement_edit").css("color", "green");
+                    $("#purchase_aggrement_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //strata_title_edit
+    $('body').delegate('#strata_title_edit', 'change', function () {
+        $('#upload_strata_title_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-strata_title_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-strata_title_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-strata_title_edit").show();
+                    $("#strata_title_edit").css("color", "red");
+                } else {
+                    $("#btn_strata_title_edit").hide();
+                    $("#validation-strata_title_edit").html("<i class='fa fa-check' id='check_strata_title_edit' style='color:green;'></i>");
+                    $("#clear_strata_title_edit").show();
+                    $("#validation-strata_title_edit").show();
+                    $("#strata_title_edit").css("color", "green");
+                    $("#strata_title_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //maintenance_statement_edit
+    $('body').delegate('#maintenance_statement_edit', 'change', function () {
+        $('#upload_maintenance_statement_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-maintenance_statement_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-maintenance_statement_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-maintenance_statement_edit").show();
+                    $("#maintenance_statement_edit").css("color", "red");
+                } else {
+                    $("#btn_maintenance_statement_edit").hide();
+                    $("#validation-maintenance_statement_edit").html("<i class='fa fa-check' id='check_maintenance_statement_edit' style='color:green;'></i>");
+                    $("#clear_maintenance_statement_edit").show();
+                    $("#validation-maintenance_statement_edit").show();
+                    $("#maintenance_statement_edit").css("color", "green");
+                    $("#maintenance_statement_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //integrity_pledge_edit
+    $('body').delegate('#integrity_pledge_edit', 'change', function () {
+        $('#upload_integrity_pledge_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-integrity_pledge_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-integrity_pledge_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-integrity_pledge_edit").show();
+                    $("#integrity_pledge_edit").css("color", "red");
+                } else {
+                    $("#btn_integrity_pledge_edit").hide();
+                    $("#validation-integrity_pledge_edit").html("<i class='fa fa-check' id='check_integrity_pledge_edit' style='color:green;'></i>");
+                    $("#clear_integrity_pledge_edit").show();
+                    $("#validation-integrity_pledge_edit").show();
+                    $("#integrity_pledge_edit").css("color", "green");
+                    $("#integrity_pledge_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //report_audited_financial_edit
+    $('body').delegate('#report_audited_financial_edit', 'change', function () {
+        $('#upload_report_audited_financial_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-report_audited_financial_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-report_audited_financial_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-report_audited_financial_edit").show();
+                    $("#report_audited_financial_edit").css("color", "red");
+                } else {
+                    $("#btn_report_audited_financial_edit").hide();
+                    $("#validation-report_audited_financial_edit").html("<i class='fa fa-check' id='check_report_audited_financial_edit' style='color:green;'></i>");
+                    $("#clear_report_audited_financial_edit").show();
+                    $("#validation-report_audited_financial_edit").show();
+                    $("#report_audited_financial_edit").css("color", "green");
+                    $("#report_audited_financial_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
+    //house_rules
+    $('body').delegate('#house_rules_edit', 'change', function () {
+        $('#upload_house_rules_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-house_rules_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-house_rules_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-house_rules_edit").show();
+                    $("#house_rules_edit").css("color", "red");
+                } else {
+                    $("#btn_house_rules_edit").hide();
+                    $("#validation-house_rules_edit").html("<i class='fa fa-check' id='check_house_rules_edit' style='color:green;'></i>");
+                    $("#clear_house_rules_edit").show();
+                    $("#validation-house_rules_edit").show();
+                    $("#house_rules_edit").css("color", "green");
+                    $("#house_rules_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
 
 
 
@@ -683,6 +1102,14 @@ function clearPurchaseAggrement() {
     $("#purchase_aggrement").css("color", "grey");
     $("#clear_purchase_aggrement").hide();
     $("#check_purchase_aggrement").hide();
+}
+
+function clearStrataTitle() {
+    $("#strata_title").val("");
+    $("#strata_title_url").val("");
+    $("#strata_title").css("color", "grey");
+    $("#clear_strata_title").hide();
+    $("#check_strata_title").hide();
 }
 
 function clearMaintenanceStatement() {
@@ -812,6 +1239,14 @@ function clearPurchaseAggrementEdit() {
     $("#purchase_aggrement_edit").css("color", "grey");
     $("#clear_purchase_aggrement_edit").hide();
     $("#check_purchase_aggrement_edit").hide();
+}
+
+function clearStrataTitleEdit() {
+    $("#strata_title_edit").val("");
+    $("#strata_title_url_edit").val("");
+    $("#strata_title_edit").css("color", "grey");
+    $("#clear_strata_title_edit").hide();
+    $("#check_strata_title_edit").hide();
 }
 
 function clearMaintenanceStatementEdit() {

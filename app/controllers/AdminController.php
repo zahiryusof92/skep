@@ -2008,6 +2008,7 @@ class AdminController extends BaseController {
             $ajk_info_url = $data['ajk_info_url'];
             $ic_url = $data['ic_url'];
             $purchase_aggrement_url = $data['purchase_aggrement_url'];
+            $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
@@ -2039,6 +2040,7 @@ class AdminController extends BaseController {
             $agm_detail->ajk_info_url = $ajk_info_url;
             $agm_detail->ic_url = $ic_url;
             $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+            $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
@@ -2091,6 +2093,7 @@ class AdminController extends BaseController {
             $ajk_info_url = $data['ajk_info_url'];
             $ic_url = $data['ic_url'];
             $purchase_aggrement_url = $data['purchase_aggrement_url'];
+            $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
@@ -2120,6 +2123,7 @@ class AdminController extends BaseController {
             $agm_detail->ajk_info_url = $ajk_info_url;
             $agm_detail->ic_url = $ic_url;
             $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+            $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
@@ -2407,20 +2411,39 @@ class AdminController extends BaseController {
                 $result_new .= '</div>';
                 $result_new .= '</form>';
 
-                $result_new .= '<form id="upload_purchase_aggrement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadPurchaseAggrement") . '" autocomplete="off">';
-                $result_new .= '<div class="form-group row">';
-                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_purchase_aggrement') . '</label></div>';
-                $result_new .= '<div class="col-md-6">';
-                $result_new .= '<button type="button" id="clear_purchase_aggrement_edit" class="btn btn-xs btn-danger" onclick="clearPurchaseAggrementEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
-                $result_new .= '<input type="file" name="purchase_aggrement_edit" id="purchase_aggrement_edit">';
-                $result_new .= '<div id="validation-purchase_aggrement_edit"></div>';
-                if ($agm->purchase_aggrement_url != "") {
-                    $result_new .= '<div id="btn_purchase_aggrement_edit"><a href="' . asset($agm->purchase_aggrement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                if ($agm->type == 'jmb') {
+                    $result_new .= '<form id="upload_purchase_aggrement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadPurchaseAggrement") . '" autocomplete="off">';
+                    $result_new .= '<div class="form-group row">';
+                    $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_purchase_aggrement') . '</label></div>';
+                    $result_new .= '<div class="col-md-6">';
+                    $result_new .= '<button type="button" id="clear_purchase_aggrement_edit" class="btn btn-xs btn-danger" onclick="clearPurchaseAggrementEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                    $result_new .= '<input type="file" name="purchase_aggrement_edit" id="purchase_aggrement_edit">';
+                    $result_new .= '<div id="validation-purchase_aggrement_edit"></div>';
+                    if ($agm->purchase_aggrement_url != "") {
+                        $result_new .= '<div id="btn_purchase_aggrement_edit"><a href="' . asset($agm->purchase_aggrement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                        $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    }
+                    $result_new .= '</div>';
+                    $result_new .= '</div>';
+                    $result_new .= '</form>';
                 }
-                $result_new .= '</div>';
-                $result_new .= '</div>';
-                $result_new .= '</form>';
+
+                if ($agm->type == 'mc') {
+                    $result_new .= '<form id="upload_strata_title_edit" enctype="multipart/form-data" method="post" action="' . url("uploadStrataTitle") . '" autocomplete="off">';
+                    $result_new .= '<div class="form-group row">';
+                    $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_strata_title') . '</label></div>';
+                    $result_new .= '<div class="col-md-6">';
+                    $result_new .= '<button type="button" id="clear_strata_title_edit" class="btn btn-xs btn-danger" onclick="clearStrataTitleEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                    $result_new .= '<input type="file" name="strata_title_edit" id="strata_title_edit">';
+                    $result_new .= '<div id="validation-strata_title_edit"></div>';
+                    if ($agm->strata_title_url != "") {
+                        $result_new .= '<div id="btn_strata_title_edit"><a href="' . asset($agm->strata_title_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                        $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    }
+                    $result_new .= '</div>';
+                    $result_new .= '</div>';
+                    $result_new .= '</form>';
+                }
 
                 $result_new .= '<form id="upload_maintenance_statement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadMaintenanceStatement") . '" autocomplete="off">';
                 $result_new .= '<div class="form-group row">';
@@ -7691,6 +7714,32 @@ class AdminController extends BaseController {
 
             $agm_details = MeetingDocument::find($id);
             $agm_details->purchase_aggrement_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteStrataTitle() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $agm_details = MeetingDocument::find($id);
+            $agm_details->strata_title_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
                 # Audit Trail

@@ -209,6 +209,20 @@ class FileController extends BaseController {
             }
         }
     }
+    
+    public function uploadStrataTitle() {
+        $file = (!empty(Input::file('strata_title')) ? Input::file('strata_title') : Input::file('strata_title_edit'));
+
+        if ($file && !empty($file)) {
+            $destinationPath = 'uploads/strata_title';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
 
     public function uploadMaintenanceStatement() {
         $file = (!empty(Input::file('maintenance_statement')) ? Input::file('maintenance_statement') : Input::file('maintenance_statement_edit'));

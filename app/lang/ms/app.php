@@ -275,6 +275,7 @@ return array(
         "upload_ajk_info" => "Maklumat Anggota Jawatankuasa Yang Dilantik (Lampiran A)",
         "upload_ic" => "Salinan Kad Pengenalan Bagi Setiap AJK",
         "upload_purchase_aggrement" => "Salinan Surat Perjanjian Jual Beli Bagi Setiap AJK",
+        "upload_strata_title" => "Salinan Hakmilik Strata (Strata Title) Bagi Setiap AJK",
         "upload_maintenance_statement" => "Salinan Penyata Akaun Caj Penyenggaraan Bagi Setiap AJK Sehingga Tarikh Mesyuarat Agung (Statement Of Account Of Maintenance Charges)",
         "upload_integrity_pledge" => "Ikrar Integriti Jawatankuasa Pengurusan Setiap AJK (Lampiran B)",
         "upload_report_audited_financial" => "Laporan Akaun Teraudit",

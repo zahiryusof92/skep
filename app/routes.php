@@ -171,6 +171,9 @@ Route::post('/deleteIc/{id}', 'AdminController@deleteIc')->before('authMember');
 Route::post('/uploadPurchaseAggrement', 'FileController@uploadPurchaseAggrement');
 Route::post('/deletePurchaseAggrement/{id}', 'AdminController@deletePurchaseAggrement')->before('authMember');
 
+Route::post('/uploadStrataTitle', 'FileController@uploadStrataTitle');
+Route::post('/deleteStrataTitle/{id}', 'AdminController@deleteStrataTitle')->before('authMember');
+
 Route::post('/uploadMaintenanceStatement', 'FileController@uploadMaintenanceStatement');
 Route::post('/deleteMaintenanceStatement/{id}', 'AdminController@deleteMaintenanceStatement')->before('authMember');
 

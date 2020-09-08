@@ -575,6 +575,20 @@ foreach ($user_permission as $permission) {
                     </div>
                 </form>
                 
+                <form id="upload_strata_title" enctype="multipart/form-data" method="post" action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_strata_title') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger" onclick="clearStrataTitle()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="strata_title" id="strata_title">
+                            <div id="validation-strata_title"></div>
+                        </div>
+                    </div>
+                </form>
+                
                 <form id="upload_maintenance_statement" enctype="multipart/form-data" method="post" action="{{ url('uploadMaintenanceStatement') }}" autocomplete="off">
                     <div class="form-group row">
                         <div class="col-md-6">
@@ -646,6 +660,7 @@ foreach ($user_permission as $permission) {
                     <input type="hidden" id="ajk_info_url"/>
                     <input type="hidden" id="ic_url"/>
                     <input type="hidden" id="purchase_aggrement_url"/>
+                    <input type="hidden" id="strata_title_url"/>
                     <input type="hidden" id="maintenance_statement_url"/>
                     <input type="hidden" id="integrity_pledge_url"/>
                     <input type="hidden" id="report_audited_financial_url"/>
@@ -733,6 +748,21 @@ foreach ($user_permission as $permission) {
                     <input type="hidden" id="audit_report_file_url_edit"/>
                     <input type="hidden" id="letter_integrity_url_edit"/>
                     <input type="hidden" id="letter_bankruptcy_url_edit"/>
+                    <input type="hidden" id="notice_agm_egm_url_edit"/>
+                    <input type="hidden" id="minutes_agm_egm_url_edit"/>
+                    <input type="hidden" id="minutes_ajk_url_edit"/>
+                    <input type="hidden" id="eligible_vote_url_edit"/>
+                    <input type="hidden" id="attend_meeting_url_edit"/>
+                    <input type="hidden" id="proksi_url_edit"/>
+                    <input type="hidden" id="ajk_info_url_edit"/>
+                    <input type="hidden" id="ic_url_edit"/>
+                    <input type="hidden" id="purchase_aggrement_url_edit"/>
+                    <input type="hidden" id="strata_title_url_edit"/>
+                    <input type="hidden" id="maintenance_statement_url_edit"/>
+                    <input type="hidden" id="integrity_pledge_url_edit"/>
+                    <input type="hidden" id="report_audited_financial_url_edit"/>
+                    <input type="hidden" id="house_rules_url_edit"/>
+                    
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
@@ -1108,9 +1138,27 @@ foreach ($user_permission as $permission) {
 
     function addAGMDetails(type) {
         $("#type").val(type);
+        
+        if (type == 'mc') {
+            $("#upload_strata_title").show();
+            $("#upload_purchase_aggrement").hide();
+        }
+        if (type == 'jmb') {
+            $("#upload_strata_title").hide();
+            $("#upload_purchase_aggrement").show();
+        }
         $("#add_agm_details").modal("show");
     }
-    function editAGMDetails() {
+    function editAGMDetails(type) {
+        
+        if (type == 'mc') {
+            $("#upload_strata_title").show();
+            $("#upload_purchase_aggrement").hide();
+        }
+        if (type == 'jmb') {
+            $("#upload_strata_title").hide();
+            $("#upload_purchase_aggrement").show();
+        }
         $("#edit_agm_details").modal("show");
     }
 
@@ -1240,6 +1288,7 @@ foreach ($user_permission as $permission) {
                 ajk_info_url = $("#ajk_info_url").val(),
                 ic_url = $("#ic_url").val(),
                 purchase_aggrement_url = $("#purchase_aggrement_url").val(),
+                strata_title_url = $("#strata_title_url").val(),
                 maintenance_statement_url = $("#maintenance_statement_url").val(),
                 integrity_pledge_url = $("#integrity_pledge_url").val(),
                 report_audited_financial_url = $("#report_audited_financial_url").val(),
@@ -1276,6 +1325,7 @@ foreach ($user_permission as $permission) {
                     ajk_info_url: ajk_info_url,
                     ic_url: ic_url,
                     purchase_aggrement_url: purchase_aggrement_url,
+                    strata_title_url: strata_title_url,
                     maintenance_statement_url: maintenance_statement_url,
                     integrity_pledge_url: integrity_pledge_url,
                     report_audited_financial_url: report_audited_financial_url,
@@ -1361,19 +1411,20 @@ foreach ($user_permission as $permission) {
                 audit_report_file_url = $("#audit_report_file_url_edit").val(),
                 letter_integrity_url = $("#letter_integrity_url_edit").val(),
                 letter_bankruptcy_url = $("#letter_bankruptcy_url_edit").val(),
-                notice_agm_egm_url = $("#notice_agm_egm_url").val(),
-                minutes_agm_egm_url = $("#minutes_agm_egm_url").val(),
-                minutes_ajk_url = $("#minutes_ajk_url").val(),
-                eligible_vote_url = $("#eligible_vote_url").val(),
-                attend_meeting_url = $("#attend_meeting_url").val(),
-                proksi_url = $("#proksi_url").val(),
-                ajk_info_url = $("#ajk_info_url").val(),
-                ic_url = $("#ic_url").val(),
-                purchase_aggrement_url = $("#purchase_aggrement_url").val(),
-                maintenance_statement_url = $("#maintenance_statement_url").val(),
-                integrity_pledge_url = $("#integrity_pledge_url").val(),
-                report_audited_financial_url = $("#report_audited_financial_url").val(),
-                house_rules_url = $("#house_rules_url").val();
+                notice_agm_egm_url = $("#notice_agm_egm_url_edit").val(),
+                minutes_agm_egm_url = $("#minutes_agm_egm_url_edit").val(),
+                minutes_ajk_url = $("#minutes_ajk_url_edit").val(),
+                eligible_vote_url = $("#eligible_vote_url_edit").val(),
+                attend_meeting_url = $("#attend_meeting_url_edit").val(),
+                proksi_url = $("#proksi_url_edit").val(),
+                ajk_info_url = $("#ajk_info_url_edit").val(),
+                ic_url = $("#ic_url_edit").val(),
+                purchase_aggrement_url = $("#purchase_aggrement_url_edit").val(),
+                strata_title_url = $("#strata_title_url_edit").val(),
+                maintenance_statement_url = $("#maintenance_statement_url_edit").val(),
+                integrity_pledge_url = $("#integrity_pledge_url_edit").val(),
+                report_audited_financial_url = $("#report_audited_financial_url_edit").val(),
+                house_rules_url = $("#house_rules_url_edit").val();
 
         var error = 0;
 
@@ -1405,6 +1456,7 @@ foreach ($user_permission as $permission) {
                     ajk_info_url: ajk_info_url,
                     ic_url: ic_url,
                     purchase_aggrement_url: purchase_aggrement_url,
+                    strata_title_url: strata_title_url,
                     maintenance_statement_url: maintenance_statement_url,
                     integrity_pledge_url: integrity_pledge_url,
                     report_audited_financial_url: report_audited_financial_url,
