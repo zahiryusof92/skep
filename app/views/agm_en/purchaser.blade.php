@@ -205,7 +205,7 @@ foreach ($user_permission as $permission) {
                     <hr/>
 
                     <div class="table-responsive">
-                        <table class="table table-hover nowrap" id="purchaser" width="100%">
+                        <table class="table table-hover nowrap" id="purchaser_list" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -233,7 +233,7 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
-        var oTable = $('#purchaser').DataTable({
+        var oTable = $('#purchaser_list').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getPurchaser')}}",
             "order": [[2, "asc"]],
             "responsive": false,

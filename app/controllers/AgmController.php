@@ -506,6 +506,32 @@ class AgmController extends BaseController {
         if (count($buyer_list) > 0) {
             $data = Array();
             foreach ($buyer_list as $buyer_lists) {
+				$continue = false;
+				
+				if (!Auth::user()->getAdmin()) {
+					if (!empty(Auth::user()->file_id)) {
+						if ($buyer_lists->file_id != Auth::user()->file_id) {
+							$continue = true;
+						}
+					} else {
+						if ($buyer_lists->file->company->id != Auth::user()->company_id) {
+							$continue = true;
+						}
+					}
+				} else {
+					if (empty(Session::get('admin_cob'))) {
+						$continue = false;
+					} else {
+						if ($buyer_lists->file->company->id != Session::get('admin_cob')) {
+							$continue = true;
+						}
+					}
+				}
+				
+				if ($continue) {
+					continue;
+				}
+				
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $buyer_lists->id) . '\'">
                                 <i class="fa fa-pencil"></i>
@@ -960,6 +986,32 @@ class AgmController extends BaseController {
         if (count($tenant_list) > 0) {
             $data = Array();
             foreach ($tenant_list as $tenant_lists) {
+				$continue = false;
+				
+				if (!Auth::user()->getAdmin()) {
+					if (!empty(Auth::user()->file_id)) {
+						if ($tenant_lists->file_id != Auth::user()->file_id) {
+							$continue = true;
+						}
+					} else {
+						if ($tenant_lists->file->company->id != Auth::user()->company_id) {
+							$continue = true;
+						}
+					}
+				} else {
+					if (empty(Session::get('admin_cob'))) {
+						$continue = false;
+					} else {
+						if ($tenant_lists->file->company->id != Session::get('admin_cob')) {
+							$continue = true;
+						}
+					}
+				}
+				
+				if ($continue) {
+					continue;
+				}
+				
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', $tenant_lists->id) . '\'">
                                 <i class="fa fa-pencil"></i>
