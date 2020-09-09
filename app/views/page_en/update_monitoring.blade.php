@@ -1091,7 +1091,9 @@ foreach ($user_permission as $permission) {
         var agm_date = $(this).data('agm_date');
         var agm_date_raw = $(this).data('agm_date_raw');
         var audit_start_date = $(this).data('audit_start_date');
+        var audit_start_date_raw = $(this).data('audit_start_date_raw');
         var audit_end_date = $(this).data('audit_end_date');
+        var audit_end_date_raw = $(this).data('audit_end_date_raw');
         var audit_report_file_url = $(this).data('audit_report_file_url');
         var letter_integrity_url = $(this).data('letter_integrity_url');
         var letter_bankruptcy_url = $(this).data('letter_bankruptcy_url');
@@ -1107,15 +1109,25 @@ foreach ($user_permission as $permission) {
         } else {
             $("#agm_date_edit_raw").val(agm_date_raw);
         }
-        if (audit_start_date == "0000-00-00 00:00:00") {
+        if (audit_start_date == "") {
             $("#audit_start_edit").val("");
         } else {
             $("#audit_start_edit").val(audit_start_date);
         }
-        if (audit_end_date == "0000-00-00 00:00:00") {
+        if (audit_start_date_raw == "") {
+            $("#audit_start_edit_raw").val("");
+        } else {
+            $("#audit_start_edit_raw").val(audit_start_date_raw);
+        }
+        if (audit_end_date == "") {
             $("#audit_end_edit").val("");
         } else {
             $("#audit_end_edit").val(audit_end_date);
+        }
+        if (audit_end_date_raw == "") {
+            $("#audit_end_date_raw").val("");
+        } else {
+            $("#audit_end_date_raw").val(audit_end_date_raw);
         }
         $("#audit_report_file_url_edit").val(audit_report_file_url);
         $("#letter_integrity_url_edit").val(letter_integrity_url);
