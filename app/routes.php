@@ -331,7 +331,7 @@ Route::post('/deleteAJK', 'AgmController@deleteAJK')->before('authMember');
 
 //Purchaser Submission
 Route::get('/purchaser', 'AgmController@purchaser')->before('authMember');
-Route::get('/getPurchaser', 'AgmController@getPurchaser')->before('authMember');
+Route::post('/getPurchaser', 'AgmController@getPurchaser')->before('authMember');
 Route::get('/addPurchaser', 'AgmController@addPurchaser')->before('authMember');
 Route::post('/submitPurchaser', 'AgmController@submitPurchaser')->before('authMember');
 Route::get('/editPurchaser/{id}', 'AgmController@editPurchaser')->before('authMember');

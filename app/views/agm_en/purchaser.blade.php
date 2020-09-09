@@ -234,7 +234,13 @@ foreach ($user_permission as $permission) {
 <script>
     $(document).ready(function () {
         var oTable = $('#purchaser_list').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getPurchaser')}}",
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{ URL::action('AgmController@getPurchaser') }}",
+                "dataType": "json",
+                "type": "POST"
+            },
             "order": [[2, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
@@ -242,6 +248,17 @@ foreach ($user_permission as $permission) {
                     "bSortable": false,
                     "aTargets": [-1]
                 }
+            ],
+            "columns": [
+                {"data": "cob"},
+                {"data": "file_no"},
+                {"data": "unit_no"},
+                {"data": "unit_share"},
+                {"data": "owner_name"},
+                {"data": "phone_no"},
+                {"data": "email"},
+                {"data": "race"},
+                {"data": "action"}
             ]
         });
 
