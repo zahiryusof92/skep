@@ -180,7 +180,7 @@ foreach ($user_permission as $permission) {
                                             <select id="company" class="form-control select2">
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @foreach ($cob as $companies)
-                                                <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -192,7 +192,7 @@ foreach ($user_permission as $permission) {
                                             <select id="file_no" class="form-control select2">
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @foreach ($files as $files_no)
-                                                <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                                <option value="{{ $files_no->id }}">{{ $files_no->file_no }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -263,6 +263,18 @@ foreach ($user_permission as $permission) {
         });
 
         $('#company').on('change', function () {
+            $.ajax({
+                url: "{{ URL::action('AgmController@getFileListByCOB') }}",
+                type: "POST",
+                data: {
+                    company: $("#company").val()
+                },
+                success: function (data) {
+                    $("#file_no").html(data);
+                    oTable.columns(1).search('').draw();
+                }
+            });
+            
             oTable.columns(0).search(this.value).draw();
         });
         $('#file_no').on('change', function () {

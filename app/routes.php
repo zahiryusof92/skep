@@ -320,6 +320,9 @@ Route::post('/deleteFormFile', 'AdminController@deleteFormFile');
 Route::post('/uploadFormFile', 'FileController@uploadFormFile');
 
 ########################## AGM Submission ##########################
+
+Route::post('/getFileListByCOB', 'AgmController@getFileListByCOB');
+
 //AGM Design Submission
 Route::get('/AJK', 'AgmController@AJK')->before('authMember');
 Route::get('/getAJK', 'AgmController@getAJK')->before('authMember');
@@ -343,7 +346,7 @@ Route::post('/submitUploadPurchaser', 'AgmController@submitUploadPurchaser')->be
 
 //Tenant Submission
 Route::get('/tenant', 'AgmController@tenant')->before('authMember');
-Route::get('/getTenant', 'AgmController@getTenant')->before('authMember');
+Route::post('/getTenant', 'AgmController@getTenant')->before('authMember');
 Route::get('/addTenant', 'AgmController@addTenant')->before('authMember');
 Route::post('/submitTenant', 'AgmController@submitTenant')->before('authMember');
 Route::get('/editTenant/{id}', 'AgmController@editTenant')->before('authMember');

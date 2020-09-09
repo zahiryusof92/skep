@@ -180,7 +180,7 @@ foreach ($user_permission as $permission) {
                                             <select id="company" class="form-control select2">
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @foreach ($cob as $companies)
-                                                <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -192,7 +192,7 @@ foreach ($user_permission as $permission) {
                                             <select id="file_no" class="form-control select2">
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @foreach ($files as $files_no)
-                                                <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                                <option value="{{ $files_no->id }}">{{ $files_no->file_no }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -205,7 +205,7 @@ foreach ($user_permission as $permission) {
                     <hr/>
 
                     <div class="table-responsive">
-                        <table class="table table-hover nowrap" id="tenant" width="100%">
+                        <table class="table table-hover nowrap" id="tenant_list" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -232,8 +232,14 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
-        var oTable = $('#tenant').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getTenant')}}",
+        var oTable = $('#tenant_list').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{ URL::action('AgmController@getTenant') }}",
+                "dataType": "json",
+                "type": "POST"
+            },
             "order": [[2, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
@@ -241,11 +247,33 @@ foreach ($user_permission as $permission) {
                     "bSortable": false,
                     "aTargets": [-1]
                 }
+            ],
+            "columns": [
+                {"data": "cob"},
+                {"data": "file_no"},
+                {"data": "unit_no"},
+                {"data": "tenant_name"},
+                {"data": "phone_no"},
+                {"data": "email"},
+                {"data": "race"},
+                {"data": "action"}
             ]
         });
 
         $('#company').on('change', function () {
             oTable.columns(0).search(this.value).draw();
+            
+            $.ajax({
+                url: "{{ URL::action('AgmController@getFileListByCOB') }}",
+                type: "POST",
+                data: {
+                    company: $("#company").val()
+                },
+                success: function (data) {
+                    $("#file_no").html(data);
+                    oTable.columns(1).search('').draw();
+                }
+            });
         });
         $('#file_no').on('change', function () {
             oTable.columns(1).search(this.value).draw();
