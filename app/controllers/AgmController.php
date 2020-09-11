@@ -2208,10 +2208,10 @@ class AgmController extends BaseController {
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $post->id) . '\'">
+                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', $post->id) . '\'">
                                 <i class="fa fa-pencil"></i>
                             </button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . $post->id . '\')">
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . $post->id . '\')">
                                 <i class="fa fa-trash"></i>
                             </button>&nbsp';
 
