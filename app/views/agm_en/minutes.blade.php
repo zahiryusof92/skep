@@ -21,6 +21,28 @@ foreach ($user_permission as $permission) {
         </div>
         <div class="panel-body">
             <div class="row">
+                <div class="col-lg-12 text-center">
+                    <form>
+                        <div class="row">                           
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.file_no') }}</label>
+                                    <select id="file_no" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($files as $files_no)
+                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr/>
+            
+            <div class="row">
                 <div class="col-lg-12">
                     <div class="table-responsive">
                         <?php if ($insert_permission == 1) { ?>
@@ -31,7 +53,8 @@ foreach ($user_permission as $permission) {
                         <table class="table table-hover nowrap" id="financial_report_list" width="100%">
                             <thead>
                                 <tr>
-                                    <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.agm_date') }}</th>
                                     <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
                                     <th style="width:5%;"></th>
                                     <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
@@ -57,10 +80,10 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
-        $('#financial_report_list').DataTable({
+        var oTable = $('#financial_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getMinutes')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "order": [[0, "asc"]],
+            "order": [[1, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
                 {
@@ -68,6 +91,10 @@ foreach ($user_permission as $permission) {
                     "aTargets": [1, 2, 3, 4, 5, 6, -1]
                 }
             ]
+        });
+        
+        $('#file_no').on('change', function () {
+            oTable.columns(0).search(this.value).draw();
         });
     });
 

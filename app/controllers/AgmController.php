@@ -2653,10 +2653,24 @@ class AgmController extends BaseController {
     }
 
     public function getMinutes() {
-        if (!empty(Auth::user()->file_id)) {
-            $agm_detail = MeetingDocument::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $agm_detail = MeetingDocument::where('file_id', Auth::user()->file_id)->where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            } else {
+                if (strtoupper(Auth::user()->getRole->name) == 'JMB') {
+                    $agm_detail = MeetingDocument::where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                } else if (strtoupper(Auth::user()->getRole->name) == 'JMB') {
+                    $agm_detail = MeetingDocument::where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                } else {
+                    $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                }
+            }
         } else {
-            $agm_detail = MeetingDocument::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            if (empty(Session::get('admin_cob'))) {
+                $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            } else {
+                $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            }
         }
 
         if (count($agm_detail) > 0) {
@@ -2666,6 +2680,16 @@ class AgmController extends BaseController {
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $agm_details->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
                 $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . $agm_details->id . '\')"><i class="fa fa-trash""></i></button>';
 
+                if ($agm_details->file_id) {
+                    $files = Files::find($agm_details->file_id);
+                    if ($files) {
+                        $file_no = $files->file_no;
+                    } else {
+                        $file_no = 'not available';
+                    }
+                } else {
+                    $file_no = 'not set';
+                }
                 if ($agm_details->agm_date == "0000-00-00") {
                     $date_agm = '';
                 } else {
@@ -2733,6 +2757,7 @@ class AgmController extends BaseController {
                 }
 
                 $data_raw = array(
+                    $file_no,
                     $date_agm,
                     trans('app.forms.annual_general_meeting') . '<br/>'
                     . trans('app.forms.extra_general_meeting') . '<br/>'
@@ -2827,6 +2852,21 @@ class AgmController extends BaseController {
             $audit_report_file_url = $data['audit_report_file_url'];
             $letter_integrity_url = $data['letter_integrity_url'];
             $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
+            $notice_agm_egm_url = $data['notice_agm_egm_url'];
+            $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
+            $minutes_ajk_url = $data['minutes_ajk_url'];
+            $eligible_vote_url = $data['eligible_vote_url'];
+            $attend_meeting_url = $data['attend_meeting_url'];
+            $proksi_url = $data['proksi_url'];
+            $ajk_info_url = $data['ajk_info_url'];
+            $ic_url = $data['ic_url'];
+            $purchase_aggrement_url = $data['purchase_aggrement_url'];
+            $strata_title_url = $data['strata_title_url'];
+            $maintenance_statement_url = $data['maintenance_statement_url'];
+            $integrity_pledge_url = $data['integrity_pledge_url'];
+            $report_audited_financial_url = $data['report_audited_financial_url'];
+            $house_rules_url = $data['house_rules_url'];
+            $type = $data['type'];
             $remarks = $data['remarks'];
 
             $agm_detail = new MeetingDocument();
@@ -2872,6 +2912,21 @@ class AgmController extends BaseController {
             }
             $agm_detail->audit_start_date = $audit_start;
             $agm_detail->audit_end_date = $audit_end;
+            $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
+            $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
+            $agm_detail->minutes_ajk_url = $minutes_ajk_url;
+            $agm_detail->eligible_vote_url = $eligible_vote_url;
+            $agm_detail->attend_meeting_url = $attend_meeting_url;
+            $agm_detail->proksi_url = $proksi_url;
+            $agm_detail->ajk_info_url = $ajk_info_url;
+            $agm_detail->ic_url = $ic_url;
+            $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+            $agm_detail->strata_title_url = $strata_title_url;
+            $agm_detail->maintenance_statement_url = $maintenance_statement_url;
+            $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->report_audited_financial_url = $report_audited_financial_url;
+            $agm_detail->house_rules_url = $house_rules_url;
+            $agm_detail->type = $type;
             $agm_detail->remarks = $remarks;
             $success = $agm_detail->save();
 
@@ -2953,6 +3008,20 @@ class AgmController extends BaseController {
             $audit_report_file_url = $data['audit_report_file_url'];
             $letter_integrity_url = $data['letter_integrity_url'];
             $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
+            $notice_agm_egm_url = $data['notice_agm_egm_url'];
+            $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
+            $minutes_ajk_url = $data['minutes_ajk_url'];
+            $eligible_vote_url = $data['eligible_vote_url'];
+            $attend_meeting_url = $data['attend_meeting_url'];
+            $proksi_url = $data['proksi_url'];
+            $ajk_info_url = $data['ajk_info_url'];
+            $ic_url = $data['ic_url'];
+            $purchase_aggrement_url = $data['purchase_aggrement_url'];
+            $strata_title_url = $data['strata_title_url'];
+            $maintenance_statement_url = $data['maintenance_statement_url'];
+            $integrity_pledge_url = $data['integrity_pledge_url'];
+            $report_audited_financial_url = $data['report_audited_financial_url'];
+            $house_rules_url = $data['house_rules_url'];
             $remarks = $data['remarks'];
 
             $agm_detail = MeetingDocument::find($id);
@@ -2999,6 +3068,20 @@ class AgmController extends BaseController {
                 }
                 $agm_detail->audit_start_date = $audit_start;
                 $agm_detail->audit_end_date = $audit_end;
+                $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
+                $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
+                $agm_detail->minutes_ajk_url = $minutes_ajk_url;
+                $agm_detail->eligible_vote_url = $eligible_vote_url;
+                $agm_detail->attend_meeting_url = $attend_meeting_url;
+                $agm_detail->proksi_url = $proksi_url;
+                $agm_detail->ajk_info_url = $ajk_info_url;
+                $agm_detail->ic_url = $ic_url;
+                $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+                $agm_detail->strata_title_url = $strata_title_url;
+                $agm_detail->maintenance_statement_url = $maintenance_statement_url;
+                $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+                $agm_detail->report_audited_financial_url = $report_audited_financial_url;
+                $agm_detail->house_rules_url = $house_rules_url;
                 $agm_detail->remarks = $remarks;
                 $success = $agm_detail->save();
 

@@ -1161,8 +1161,7 @@ foreach ($user_permission as $permission) {
         }
         $("#add_agm_details").modal("show");
     }
-    function editAGMDetails(type) {
-        
+    function editAGMDetails(type) {        
         if (type == 'mc') {
             $("#upload_strata_title").show();
             $("#upload_purchase_aggrement").hide();
@@ -2136,6 +2135,41 @@ foreach ($user_permission as $permission) {
         }, function () {
             $.ajax({
                 url: "{{ URL::action('AdminController@deletePurchaseAggrement') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
+    function deleteStrataTitle(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteStrataTitle') }}",
                 type: "POST",
                 data: {
                     id: id
