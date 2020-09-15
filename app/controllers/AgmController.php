@@ -2659,7 +2659,7 @@ class AgmController extends BaseController {
             } else {
                 if (strtoupper(Auth::user()->getRole->name) == 'JMB') {
                     $agm_detail = MeetingDocument::where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
-                } else if (strtoupper(Auth::user()->getRole->name) == 'JMB') {
+                } else if (strtoupper(Auth::user()->getRole->name) == 'MC') {
                     $agm_detail = MeetingDocument::where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
                 } else {
                     $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
@@ -2676,12 +2676,32 @@ class AgmController extends BaseController {
         if (count($agm_detail) > 0) {
             $data = Array();
             foreach ($agm_detail as $agm_details) {
+                $files = Files::find($agm_details->file_id);
+                if ($files) {
+                    if (!Auth::user()->getAdmin()) {
+                        if ($files->company_id != Auth::user()->company_id) {
+                            continue;
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($files->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                    if (Auth::user()->getAdmin()) {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
+
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $agm_details->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
                 $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . $agm_details->id . '\')"><i class="fa fa-trash""></i></button>';
 
                 if ($agm_details->file_id) {
-                    $files = Files::find($agm_details->file_id);
                     if ($files) {
                         $file_no = $files->file_no;
                     } else {
