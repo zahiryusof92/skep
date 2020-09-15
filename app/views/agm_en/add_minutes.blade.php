@@ -615,10 +615,7 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script src="{{ asset('assets/common/js/add_monitoring.js') }}"></script>
 
-<script>
-    $("#upload_strata_title").hide();
-    $("#upload_purchase_aggrement").hide();
-        
+<script>        
     function typeDetails() {
         $("#upload_strata_title").hide();
         $("#upload_purchase_aggrement").hide();
