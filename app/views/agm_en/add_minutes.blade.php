@@ -31,7 +31,7 @@ foreach ($user_permission as $permission) {
 
                         <?php if (strtoupper(Auth::user()->getRole->name) == 'JMB') { ?>
                             <input type="hidden" id="type" value="jmb"/>
-                        <?php } else if (strtoupper(Auth::user()->getRole->name) == 'mc') { ?>
+                        <?php } else if (strtoupper(Auth::user()->getRole->name) == 'MC') { ?>
                             <input type="hidden" id="type" value="mc"/>
                         <?php } else { ?>
                             <div class="form-group row">
