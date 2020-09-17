@@ -204,6 +204,31 @@ class AgmController extends BaseController {
         if (count($ajk_detail) > 0) {
             $data = Array();
             foreach ($ajk_detail as $ajk_details) {
+
+                if (!empty($ajk_details->file_id)) {
+                    if (!Auth::user()->getAdmin()) {
+                        if (!empty(Auth::user()->company_id)) {
+                            if ($ajk_details->files->company_id != Auth::user()->company_id) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($ajk_details->files->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                   if (!Auth::user()->getAdmin()) {
+                        continue;
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
+
                 $designation = Designation::find($ajk_details->designation);
 
                 $button = "";
@@ -2705,10 +2730,10 @@ class AgmController extends BaseController {
                     if ($files) {
                         $file_no = $files->file_no;
                     } else {
-                        $file_no = 'not available';
+                        $file_no = '<i>(not available)</i>';
                     }
                 } else {
-                    $file_no = 'not set';
+                    $file_no = '<i>(not set)</i>';
                 }
                 if ($agm_details->agm_date == "0000-00-00") {
                     $date_agm = '';
@@ -3156,6 +3181,19 @@ class AgmController extends BaseController {
     public function document() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
 
         $viewData = array(
@@ -3164,6 +3202,7 @@ class AgmController extends BaseController {
             'main_nav_active' => 'agm_main',
             'sub_nav_active' => 'agmdocumentsub_list',
             'user_permission' => $user_permission,
+            'files' => $files,
             'documentType' => $documentType,
             'image' => ""
         );
@@ -3182,6 +3221,31 @@ class AgmController extends BaseController {
             $data = Array();
             foreach ($document as $documents) {
                 $button = "";
+
+                if (!empty($documents->file_id)) {
+                    if (!Auth::user()->getAdmin()) {
+                        if (!empty(Auth::user()->company_id)) {
+                            if ($documents->file->company_id != Auth::user()->company_id) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($documents->file->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                    if (!Auth::user()->getAdmin()) {
+                        continue;
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
+
                 if ($documents->is_hidden == 1) {
                     $is_hidden = 'Yes';
                 } else {
@@ -3198,7 +3262,7 @@ class AgmController extends BaseController {
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $documents->id . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
-                    ($documents->file ? $documents->file->file_no : '-'),
+                    (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
                     $documents->type->name,
                     $documents->name,
                     $is_hidden,

@@ -21,10 +21,20 @@ foreach ($user_permission as $permission) {
         </div>
         <div class="panel-body">
             <div class="row">
+                <div class="col-lg-12">
+                    <?php if ($insert_permission == 1) { ?>
+                        <button type="button" class="btn btn-primary margin-bottom-25" onclick="window.location = '{{ URL::action('AgmController@addMinutes') }}'">
+                            {{ trans('app.forms.add') }}
+                        </button>
+                    <?php } ?>
+                </div>
+            </div>
+            
+            <div class="row">
                 <div class="col-lg-12 text-center">
                     <form>
                         <div class="row">                           
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.file_no') }}</label>
                                     <select id="file_no" class="form-control select2">
@@ -44,12 +54,7 @@ foreach ($user_permission as $permission) {
             
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="table-responsive">
-                        <?php if ($insert_permission == 1) { ?>
-                            <button type="button" class="btn btn-primary margin-bottom-25" onclick="window.location = '{{ URL::action('AgmController@addMinutes') }}'">
-                                {{ trans('app.forms.add') }}
-                            </button>
-                        <?php } ?>
+                    <div class="table-responsive">                        
                         <table class="table table-hover nowrap" id="financial_report_list" width="100%">
                             <thead>
                                 <tr>

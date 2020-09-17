@@ -23,11 +23,37 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addRating') }}'" type="button" class="btn btn-primary">
+                        <button onclick="window.location = '{{ URL::action('AdminController@addRating') }}'" type="button" class="btn btn-primary margin-bottom-25">
                             {{ trans('app.buttons.add_rating') }}
                         </button>
-                        <br/><br/>
                     <?php } ?>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.file_no') }}</label>
+                                    <select id="file_no" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($files as $files_no)
+                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr/>
+            
+            <div class="row">
+                <div class="col-lg-12">                    
                     <table class="table table-hover nowrap" id="rating" width="100%">
                         <thead>
                             <tr>
@@ -70,6 +96,10 @@ foreach ($user_permission as $permission) {
                     "aTargets": [-2, -1]
                 }
             ]
+        });
+        
+        $('#file_no').on('change', function () {
+            oTable.columns(0).search(this.value).draw();
         });
     });
 

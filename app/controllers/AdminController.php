@@ -5999,6 +5999,19 @@ class AdminController extends BaseController {
     public function rating() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.rating'),
@@ -6006,6 +6019,7 @@ class AdminController extends BaseController {
             'main_nav_active' => 'admin_main',
             'sub_nav_active' => 'rating_list',
             'user_permission' => $user_permission,
+            'files' => $files,
             'image' => ""
         );
 
@@ -6018,6 +6032,30 @@ class AdminController extends BaseController {
             $data = Array();
             foreach ($rating as $ratings) {
                 $button = "";
+
+                if (!empty($ratings->file_id)) {
+                    if (!Auth::user()->getAdmin()) {
+                        if (!empty(Auth::user()->company_id)) {
+                            if ($ratings->file->company_id != Auth::user()->company_id) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($ratings->file->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                    if (!Auth::user()->getAdmin()) {
+                        continue;
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
 
                 $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AdminController@updateRating', $ratings->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteRating(\'' . $ratings->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -6080,7 +6118,7 @@ class AdminController extends BaseController {
 
                 $data_raw = array(
                     $ratings->file->file_no,
-                    (!empty($ratings->date) ? date('d-M-Y', strtotime($ratings->date)) : '(not set)'),
+                    (!empty($ratings->date) ? date('d-M-Y', strtotime($ratings->date)) : '<i>(not set)</i>'),
                     number_format($ratings_A, 2),
                     number_format($ratings_B, 2),
                     number_format($ratings_C, 2),
@@ -6392,6 +6430,31 @@ class AdminController extends BaseController {
             $data = Array();
 
             foreach ($form as $forms) {
+
+                if (!empty($forms->company_id)) {
+                    if (!Auth::user()->getAdmin()) {
+                        if (!empty(Auth::user()->company_id)) {
+                            if ($forms->company_id != Auth::user()->company_id) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($forms->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                    if (!Auth::user()->getAdmin()) {
+                        continue;
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
+
                 $formtype = FormType::find($forms->form_type_id);
 
                 $button = "";

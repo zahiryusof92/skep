@@ -23,25 +23,37 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission == 1) { ?>
-                    <button onclick="window.location = '{{ URL::action('AdminController@addMemo') }}'" type="button" class="btn btn-primary">
-                        {{ trans('app.buttons.add_memo') }}
-                    </button>
-                    <br/><br/>
+                        <button onclick="window.location = '{{ URL::action('AdminController@addMemo') }}'" type="button" class="btn btn-primary margin-bottom-25">
+                            {{ trans('app.buttons.add_memo') }}
+                        </button>
                     <?php } ?>
-                    <div class="row">
-                        <div class="form-group">
-                            <label  class="col-md-offset-2 col-md-1 control-label">{{ trans('app.forms.memo_type') }}:</label>
-                            <div class="col-sm-3">
-                                <select id="memo_type" class="form-control">
-                                    <option value="">{{ trans('app.forms.all') }}</option>
-                                    @foreach ($memotype as $memotypes)
-                                    <option value="{{$memotypes->description}}">{{$memotypes->description}}</option>
-                                    @endforeach
-                                </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.memo_type') }}:</label>
+                                    <select id="memo_type" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.all') }}</option>
+                                        @foreach ($memotype as $memotypes)
+                                        <option value="{{$memotypes->description}}">{{$memotypes->description}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
+                </div>
+            </div>
 
+            <hr/>
+
+            <div class="row">
+                <div class="col-lg-12">
                     <table class="table table-hover nowrap" id="memo" width="100%">
                         <thead>
                             <tr>
@@ -52,8 +64,8 @@ foreach ($user_permission as $permission) {
                                 <th style="width:10%;">{{ trans('app.forms.expired_date') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                 <?php if ($update_permission == 1) { ?>
-                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                <?php } ?>
+                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                    <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,7 +85,7 @@ foreach ($user_permission as $permission) {
         oTable = $('#memo').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getMemo')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "order": [[ 0, "desc" ]],
+            "order": [[0, "desc"]],
             responsive: true,
             "aoColumnDefs": [
                 {
@@ -84,7 +96,7 @@ foreach ($user_permission as $permission) {
         });
     });
 
-    $('#memo_type').on('change', function (){
+    $('#memo_type').on('change', function () {
         oTable.columns(1).search(this.value).draw();
     });
 
@@ -95,9 +107,9 @@ foreach ($user_permission as $permission) {
             data: {
                 id: id
             },
-            success: function(data) {
+            success: function (data) {
                 if (data.trim() == "true") {
-                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function() {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function () {
                         window.location = "{{URL::action('AdminController@memo')}}";
                     });
                 } else {
@@ -114,9 +126,9 @@ foreach ($user_permission as $permission) {
             data: {
                 id: id
             },
-            success: function(data) {
+            success: function (data) {
                 if (data.trim() == "true") {
-                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function() {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function () {
                         window.location = "{{URL::action('AdminController@memo')}}";
                     });
                 } else {
@@ -126,7 +138,7 @@ foreach ($user_permission as $permission) {
         });
     }
 
-    function deleteMemo (id) {
+    function deleteMemo(id) {
         swal({
             title: "{{ trans('app.confirmation.are_you_sure') }}",
             text: "{{ trans('app.confirmation.no_recover_file') }}",
@@ -136,15 +148,14 @@ foreach ($user_permission as $permission) {
             cancelButtonClass: "btn-default",
             confirmButtonText: "Delete",
             closeOnConfirm: true
-        },
-        function(){
+        }, function () {
             $.ajax({
                 url: "{{ URL::action('AdminController@deleteMemo') }}",
                 type: "POST",
                 data: {
                     id: id
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.trim() == "true") {
                         swal({
                             title: "{{ trans('app.successes.deleted_title') }}",

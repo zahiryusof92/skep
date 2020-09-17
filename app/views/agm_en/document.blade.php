@@ -23,11 +23,37 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AgmController@addDocument') }}'" type="button" class="btn btn-primary">
+                        <button onclick="window.location = '{{ URL::action('AgmController@addDocument') }}'" type="button" class="btn btn-primary margin-bottom-25">
                             {{ trans('app.buttons.add_document') }}
                         </button>
-                        <br/><br/>
                     <?php } ?>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.file_no') }}</label>
+                                    <select id="file_no" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($files as $files_no)
+                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr/>
+            
+            <div class="row">
+                <div class="col-lg-12">                    
                     <table class="table table-hover nowrap" id="document" width="100%">
                         <thead>
                             <tr>
@@ -58,7 +84,7 @@ foreach ($user_permission as $permission) {
         oTable = $('#document').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getDocument')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "order": [[2, "asc"]],
+            "order": [[0, "asc"]],
             "responsive": true,
             "aoColumnDefs": [
                 {
@@ -66,6 +92,10 @@ foreach ($user_permission as $permission) {
                     "aTargets": [-1]
                 }
             ]
+        });
+        
+        $('#file_no').on('change', function () {
+            oTable.columns(0).search(this.value).draw();
         });
     });
 
