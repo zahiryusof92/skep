@@ -210,6 +210,24 @@
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.caj_penyelenggaraan') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.caj_penyelenggaraan') }}" id="caj_penyelenggaraan">
+                                                        <div id="caj_penyelenggaraan_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="sinking_fund">
+                                                        <div id="sinking_fund_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-8">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.remarks') }}</label>

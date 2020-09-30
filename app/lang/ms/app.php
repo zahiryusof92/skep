@@ -503,7 +503,7 @@ return array(
         "nama2" => "Nama Pemilik 2",
         "ic_no2" => "No Kad Pengenalan",
         "alamat_surat_menyurat" => "Alamat Surat Menyurat",
-        "caj_penyelenggaraan" => "Caj Penyelenggaraan",
+        "caj_penyelenggaraan" => "Caj Penyelenggaraan (RM)",
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",
