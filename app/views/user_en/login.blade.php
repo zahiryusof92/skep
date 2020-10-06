@@ -76,7 +76,7 @@ if (isset($cob) && !empty($cob)) {
 
                 {{Form::close()}}
 
-                <h6 class="text-center padding-top-5">&copy; 2020 ODESI ECOB SDN BHD. All rights reserved.</h6>
+                <h6 class="text-center padding-top-5">&copy; {{ date('Y') }} ODESI ECOB SDN BHD. All rights reserved.</h6>
             </div>
         </div>        
     </div>
