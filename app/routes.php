@@ -377,6 +377,26 @@ Route::post('/deleteDocument/{id}', 'AgmController@deleteDocument')->before('aut
 Route::post('/deleteDocumentFile', 'AgmController@deleteDocumentFile')->before('authMember');
 Route::post('/uploadDocumentFile', 'FileController@uploadDocumentFile')->before('authMember');
 
+//defect
+Route::get('/defect', 'AgmController@defect')->before('authMember');
+Route::get('/getDefect', 'AgmController@getDefect')->before('authMember');
+Route::get('/addDefect', 'AgmController@addDefect')->before('authMember');
+Route::post('/submitAddDefect', 'AgmController@submitAddDefect')->before('authMember');
+Route::get('/updateDefect/{id}', 'AgmController@updateDefect')->before('authMember');
+Route::post('/submitUpdateDefect', 'AgmController@submitUpdateDefect')->before('authMember');
+Route::post('/deleteDefect/{id}', 'AgmController@deleteDefect')->before('authMember');
+Route::post('/deleteDefectAttachment', 'AgmController@deleteDefectAttachment')->before('authMember');
+Route::post('/uploadDefectAttachment', 'FileController@uploadDefectAttachment')->before('authMember');
+
+//insurance
+Route::get('/insurance', 'AgmController@insurance')->before('authMember');
+Route::get('/getInsurance', 'AgmController@getInsurance')->before('authMember');
+Route::get('/addInsurance', 'AgmController@addInsurance')->before('authMember');
+Route::post('/submitAddInsurance', 'AgmController@submitAddInsurance')->before('authMember');
+Route::get('/updateInsurance/{id}', 'AgmController@updateInsurance')->before('authMember');
+Route::post('/submitUpdateInsurance', 'AgmController@submitUpdateInsurance')->before('authMember');
+Route::post('/deleteInsurance/{id}', 'AgmController@deleteInsurance')->before('authMember');
+
 ########################## Master Setup ##########################
 //area
 Route::get('/area', 'SettingController@area')->before('authMember');
@@ -575,6 +595,28 @@ Route::post('/inactiveNationality', 'SettingController@inactiveNationality')->be
 Route::get('/updateNationality/{id}', 'SettingController@updateNationality')->before('authMember');
 Route::post('/submitUpdateNationality', 'SettingController@submitUpdateNationality')->before('authMember');
 Route::post('/deleteNationality/{id}', 'SettingController@deleteNationality')->before('authMember');
+
+//defect category
+Route::get('/defectCategory', 'SettingController@defectCategory')->before('authMember');
+Route::get('/addDefectCategory', 'SettingController@addDefectCategory')->before('authMember');
+Route::post('/submitDefectCategory', 'SettingController@submitDefectCategory')->before('authMember');
+Route::get('/getDefectCategory', 'SettingController@getDefectCategory')->before('authMember');
+Route::post('/activeDefectCategory', 'SettingController@activeDefectCategory')->before('authMember');
+Route::post('/inactiveDefectCategory', 'SettingController@inactiveDefectCategory')->before('authMember');
+Route::get('/updateDefectCategory/{id}', 'SettingController@updateDefectCategory')->before('authMember');
+Route::post('/submitUpdateDefectCategory', 'SettingController@submitUpdateDefectCategory')->before('authMember');
+Route::post('/deleteDefectCategory/{id}', 'SettingController@deleteDefectCategory')->before('authMember');
+
+//insurance provider
+Route::get('/insuranceProvider', 'SettingController@insuranceProvider')->before('authMember');
+Route::get('/addInsuranceProvider', 'SettingController@addInsuranceProvider')->before('authMember');
+Route::post('/submitInsuranceProvider', 'SettingController@submitInsuranceProvider')->before('authMember');
+Route::get('/getInsuranceProvider', 'SettingController@getInsuranceProvider')->before('authMember');
+Route::post('/activeInsuranceProvider', 'SettingController@activeInsuranceProvider')->before('authMember');
+Route::post('/inactiveInsuranceProvider', 'SettingController@inactiveInsuranceProvider')->before('authMember');
+Route::get('/updateInsuranceProvider/{id}', 'SettingController@updateInsuranceProvider')->before('authMember');
+Route::post('/submitUpdateInsuranceProvider', 'SettingController@submitUpdateInsuranceProvider')->before('authMember');
+Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceProvider')->before('authMember');
 
 // --- Reporting --- //
 //audit trail

@@ -487,6 +487,19 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
+                    
+                    <li id="defect_category_list">
+                        <a class="left-menu-link" href="{{URL::action('SettingController@defectCategory')}}">
+                            {{ trans('app.menus.master.defect_category') }}
+                        </a>
+                    </li>
+                    
+                    <li id="insurance_provider_list">
+                        <a class="left-menu-link" href="{{URL::action('SettingController@insuranceProvider')}}">
+                            {{ trans('app.menus.master.insurance_provider') }}
+                        </a>
+                    </li>
+                    
                 </ul>
             </li>
             @endif
@@ -591,6 +604,19 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
+                    
+                    <li id="defect_list">
+                        <a class="left-menu-link" href="{{URL::action('AgmController@defect')}}">
+                            {{ trans('app.menus.agm.defect') }}
+                        </a>
+                    </li>
+                    
+                    <li id="insurance_list">
+                        <a class="left-menu-link" href="{{URL::action('AgmController@insurance')}}">
+                            {{ trans('app.menus.agm.insurance') }}
+                        </a>
+                    </li>
+                    
                 </ul>
             </li>
             @endif

@@ -137,6 +137,12 @@ return array(
             "edit_unit_of_measure" => "Edit Unit of Measure",
             "edit_race" => "Edit Race",
             "edit_nationality" => "Edit Nationality",
+            "defect_category" => "Complaint Category",
+            "add_defect_category" => "Add Complaint Category",
+            "edit_defect_category" => "Edit Complaint Category",
+            "insurance_provider" => "Insurance Provider",
+            "add_insurance_provider" => "Add Insurance Provider",
+            "edit_insurance_provider" => "Edit Insurance Provider",
         ),
         "reporting" => array(
             "reporting" => "Reporting",
@@ -174,6 +180,12 @@ return array(
             "add_document" => "Add Document",
             "edit_document" => "Edit Document",
             "import_document" => "Import Document",
+            "defect" => "Complaint",
+            "add_defect" => "Add Complaint",
+            "edit_defect" => "Edit Complaint",
+            "insurance" => "Insurance",
+            "add_insurance" => "Add Insurance",
+            "edit_insurance" => "Edit Insurance"
         ),
         "form" => array(
             "management" => "Form Management",
@@ -489,6 +501,7 @@ return array(
         "delete" => "Delete",
         "edit" => "Edit",
         "pending" => "Pending",
+        "resolved" => "Resolved",
         "approved" => "Approved",
         "rejected" => "Rejected",
         "please_select_valid_image" => "Please Select a valid Image File",
@@ -503,6 +516,13 @@ return array(
         "ic_no2" => "No Kad Pengenalan",
         "alamat_surat_menyurat" => "Alamat Surat Menyurat",
         "caj_penyelenggaraan" => "Caj Penyelenggaraan (RM)",
+        "defect_category" => "Complaint Category",
+        "defect_category_name" => "Complaint Category Name",
+        "insurance_provider" => "Insurance Provider",
+        "insurance_provider_name" => "Insurance Provider Name",
+        "defect_name" => "Complaint Name",
+        "defect_description" => "Complaint Description",
+        "upload_defect_attachment" => "Upload Complaint Attachment"
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -785,5 +805,9 @@ return array(
         "add_race" => "Add Race",
         "add_state" => "Add State",
         "add_unit_of_measure" => "Add Unit of Measure",
+        "add_defect_category" => "Add Complaint Category",
+        "add_insurance_provider" => "Add Insurance Provider",
+        "add_defect" => "Add Complaint",
+        "add_insurance" => "Add Insurance",
     )
 );

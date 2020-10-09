@@ -4156,4 +4156,448 @@ class SettingController extends BaseController {
             }
         }
     }
+    
+    // defect category
+    public function defectCategory() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.defect_category'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'defect_category_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.defect_category', $viewData);
+    }
+
+    public function addDefectCategory() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.add_defect_category'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'defect_category_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.add_defect_category', $viewData);
+    }
+
+    public function submitDefectCategory() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $is_active = $data['is_active'];
+
+            $defectCategory = new DefectCategory();
+            $defectCategory->name = $data['name'];
+            $defectCategory->sort_no = $data['sort_no'];
+            $defectCategory->is_active = $is_active;
+            $success = $defectCategory->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been inserted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function getDefectCategory() {
+        $defectCategory = DefectCategory::where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+
+        if (count($defectCategory) > 0) {
+            $data = Array();
+            foreach ($defectCategory as $categories) {
+                $button = "";
+                if ($categories->is_active == 1) {
+                    $status = trans('app.forms.active');
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDefectCategory(\'' . $categories->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                } else {
+                    $status = trans('app.forms.inactive');
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDefectCategory(\'' . $categories->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                }
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDefectCategory', $categories->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefectCategory(\'' . $categories->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                $data_raw = array(
+                    $categories->name,
+                    $categories->sort_no,
+                    $status,
+                    $button
+                );
+
+                array_push($data, $data_raw);
+            }
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function inactiveDefectCategory() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $defectCategory = DefectCategory::find($id);
+            $defectCategory->is_active = 0;
+            $updated = $defectCategory->save();
+            if ($updated) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function activeDefectCategory() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $defectCategory = DefectCategory::find($id);
+            $defectCategory->is_active = 1;
+            $updated = $defectCategory->save();
+            if ($updated) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteDefectCategory() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $defectCategory = DefectCategory::find($id);
+            $defectCategory->is_deleted = 1;
+            $deleted = $defectCategory->save();
+            if ($deleted) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $defectCategory->id . ' has been deleted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function updateDefectCategory($id) {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $defectCategory = DefectCategory::find($id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.edit_defect_category'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'defect_category_list',
+            'user_permission' => $user_permission,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('setting_en.update_defect_category', $viewData);
+    }
+
+    public function submitUpdateDefectCategory() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = $data['id'];
+
+            $defectCategory = DefectCategory::find($id);
+            $defectCategory->name = $data['name'];
+            $defectCategory->sort_no = $data['sort_no'];
+            $defectCategory->is_active = $data['is_active'];
+            $success = $defectCategory->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+    
+    // insurance provider
+    public function insuranceProvider() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.insurance_provider'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'insurance_provider_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.insurance_provider', $viewData);
+    }
+
+    public function addInsuranceProvider() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.add_insurance_provider'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'insurance_provider_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.add_insurance_provider', $viewData);
+    }
+
+    public function submitInsuranceProvider() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $is_active = $data['is_active'];
+
+            $insuranceProvider = new InsuranceProvider();
+            $insuranceProvider->name = $data['name'];
+            $insuranceProvider->sort_no = $data['sort_no'];
+            $insuranceProvider->is_active = $is_active;
+            $success = $insuranceProvider->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been inserted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function getInsuranceProvider() {
+        $insuranceProvider = InsuranceProvider::where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+
+        if (count($insuranceProvider) > 0) {
+            $data = Array();
+            foreach ($insuranceProvider as $providers) {
+                $button = "";
+                if ($providers->is_active == 1) {
+                    $status = trans('app.forms.active');
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveInsuranceProvider(\'' . $providers->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                } else {
+                    $status = trans('app.forms.inactive');
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeInsuranceProvider(\'' . $providers->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                }
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateInsuranceProvider', $providers->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsuranceProvider(\'' . $providers->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                $data_raw = array(
+                    $providers->name,
+                    $providers->sort_no,
+                    $status,
+                    $button
+                );
+
+                array_push($data, $data_raw);
+            }
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function inactiveInsuranceProvider() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider->is_active = 0;
+            $updated = $insuranceProvider->save();
+            if ($updated) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function activeInsuranceProvider() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider->is_active = 1;
+            $updated = $insuranceProvider->save();
+            if ($updated) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteInsuranceProvider() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider->is_deleted = 1;
+            $deleted = $insuranceProvider->save();
+            if ($deleted) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $insuranceProvider->id . ' has been deleted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function updateInsuranceProvider($id) {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $insuranceProvider = InsuranceProvider::find($id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.edit_insurance_provider'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'insurance_provider_list',
+            'user_permission' => $user_permission,
+            'insuranceProvider' => $insuranceProvider,
+            'image' => ""
+        );
+
+        return View::make('setting_en.update_insurance_provider', $viewData);
+    }
+
+    public function submitUpdateInsuranceProvider() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = $data['id'];
+
+            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider->name = $data['name'];
+            $insuranceProvider->sort_no = $data['sort_no'];
+            $insuranceProvider->is_active = $data['is_active'];
+            $success = $insuranceProvider->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
 }

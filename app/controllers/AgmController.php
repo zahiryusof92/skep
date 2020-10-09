@@ -220,7 +220,7 @@ class AgmController extends BaseController {
                         }
                     }
                 } else {
-                   if (!Auth::user()->getAdmin()) {
+                    if (!Auth::user()->getAdmin()) {
                         continue;
                     } else {
                         if (!empty(Session::get('admin_cob'))) {
@@ -3465,6 +3465,559 @@ class AgmController extends BaseController {
                     $remarks = $document->id . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Document";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+
+                    return "true";
+                } else {
+                    return "false";
+                }
+            } else {
+                return 'false';
+            }
+        } else {
+            return "false";
+        }
+    }
+
+    //defect
+    public function defect() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
+        $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.agm.defect'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'defect_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('agm_en.defect', $viewData);
+    }
+
+    public function getDefect() {
+        if (!empty(Auth::user()->file_id)) {
+            $defect = Defect::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $defect = Defect::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
+
+        if (count($defect) > 0) {
+            $data = Array();
+            foreach ($defect as $defects) {
+                $button = "";
+
+                if (!empty($defects->file_id)) {
+                    if (!Auth::user()->getAdmin()) {
+                        if (!empty(Auth::user()->company_id)) {
+                            if ($defects->file->company_id != Auth::user()->company_id) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($defects->file->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                    if (!Auth::user()->getAdmin()) {
+                        continue;
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
+
+                $status = trans('app.forms.pending');
+                if ($defects->status == 1) {
+                    $status = trans('app.forms.resolved');
+                }
+
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@updateDefect', $defects->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $defects->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                $data_raw = array(
+                    (!empty($defects->file_id) ? $defects->file->file_no : '<i>(not set)</i>'),
+                    $defects->category->name,
+                    $defects->name,
+                    $defects->description,
+                    $status,
+                    $button
+                );
+
+                array_push($data, $data_raw);
+            }
+
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function deleteDefect() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $defect = Defect::find($id);
+            if ($defect) {
+                $defect->is_deleted = 1;
+                $deleted = $defect->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'Defect: ' . $defect->name . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Defect";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+
+                    print "true";
+                } else {
+                    print "false";
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteDefectAttachment() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $defect = Defect::find($id);
+            if ($defect) {
+                $defect->attachment_url = "";
+                $deleted = $defect->save();
+
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'Defect: ' . $defect->name . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Defect";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+
+                    print "true";
+                } else {
+                    print "false";
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function addDefect() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        }
+        $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.agm.add_defect'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'defect_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('agm_en.add_defect', $viewData);
+    }
+
+    public function submitAddDefect() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $defect = new Defect();
+            $defect->file_id = $data['file_id'];
+            $defect->defect_category_id = $data['defect_category'];
+            $defect->name = $data['name'];
+            $defect->description = $data['description'];
+            $defect->attachment_url = $data['defect_attachment'];
+            $success = $defect->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = 'Defect: ' . $defect->name . ' has been inserted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Defect";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function updateDefect($id) {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $defect = Defect::find($id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        }
+        $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.agm.edit_defect'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'defect_list',
+            'user_permission' => $user_permission,
+            'defect' => $defect,
+            'files' => $files,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('agm_en.edit_defect', $viewData);
+    }
+
+    public function submitUpdateDefect() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = $data['id'];
+
+            $defect = Defect::find($id);
+            if ($defect) {
+                $defect->file_id = $data['file_id'];
+                $defect->defect_category_id = $data['defect_category'];
+                $defect->name = $data['name'];
+                $defect->description = $data['description'];
+                $defect->attachment_url = $data['defect_attachment'];
+                if ($data['status']) {
+                    $defect->status = $data['status'];
+                }
+                $success = $defect->save();
+
+                if ($success) {
+                    # Audit Trail
+                    $remarks = $defect->id . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Defect";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+
+                    return "true";
+                } else {
+                    return "false";
+                }
+            } else {
+                return 'false';
+            }
+        } else {
+            return "false";
+        }
+    }
+    
+    //insurance
+    public function insurance() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
+        $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.agm.insurance'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'insurance_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'defectCategory' => $insuranceProvider,
+            'image' => ""
+        );
+
+        return View::make('agm_en.insurance', $viewData);
+    }
+
+    public function getInsurance() {
+        if (!empty(Auth::user()->file_id)) {
+            $defect = Insurance::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        } else {
+            $defect = Insurance::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        }
+
+        if (count($defect) > 0) {
+            $data = Array();
+            foreach ($defect as $defects) {
+                $button = "";
+
+                if (!empty($defects->file_id)) {
+                    if (!Auth::user()->getAdmin()) {
+                        if (!empty(Auth::user()->company_id)) {
+                            if ($defects->file->company_id != Auth::user()->company_id) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            if ($defects->file->company_id != Session::get('admin_cob')) {
+                                continue;
+                            }
+                        }
+                    }
+                } else {
+                    if (!Auth::user()->getAdmin()) {
+                        continue;
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            continue;
+                        }
+                    }
+                }
+
+                $status = trans('app.forms.pending');
+                if ($defects->status == 1) {
+                    $status = trans('app.forms.resolved');
+                }
+
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@updateInsurance', $defects->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $defects->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                $data_raw = array(
+                    (!empty($defects->file_id) ? $defects->file->file_no : '<i>(not set)</i>'),
+                    $defects->provider->name,
+                    $defects->remarks,
+                    $button
+                );
+
+                array_push($data, $data_raw);
+            }
+
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function deleteInsurance() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $defect = Insurance::find($id);
+            if ($defect) {
+                $defect->is_deleted = 1;
+                $deleted = $defect->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'Insurance: ' . $defect->name . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Insurance";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+
+                    print "true";
+                } else {
+                    print "false";
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function addInsurance() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        }
+        $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.agm.add_insurance'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'insurance_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'insuranceProvider' => $insuranceProvider,
+            'image' => ""
+        );
+
+        return View::make('agm_en.add_insurance', $viewData);
+    }
+
+    public function submitAddInsurance() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $insurance = new Insurance();
+            $insurance->file_id = $data['file_id'];
+            $insurance->insurance_provider_id = $data['insurance_provider'];
+            $insurance->remarks = $data['remarks'];
+            $success = $insurance->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = 'Insurance: ' . $insurance->name . ' has been inserted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Insurance";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function updateInsurance($id) {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $insurance = Insurance::find($id);
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            }
+        }
+        $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.agm.edit_insurance'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'insurance_list',
+            'user_permission' => $user_permission,
+            'insurance' => $insurance,
+            'files' => $files,
+            'insuranceProvider' => $insuranceProvider,
+            'image' => ""
+        );
+
+        return View::make('agm_en.edit_insurance', $viewData);
+    }
+
+    public function submitUpdateInsurance() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = $data['id'];
+
+            $insurance = Insurance::find($id);
+            if ($insurance) {
+                $insurance->file_id = $data['file_id'];
+                $insurance->insurance_provider_id = $data['insurance_provider'];
+                $insurance->remarks = $data['remarks'];
+                $success = $insurance->save();
+
+                if ($success) {
+                    # Audit Trail
+                    $remarks = $insurance->id . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Insurance";
                     $auditTrail->remarks = $remarks;
                     $auditTrail->audit_by = Auth::user()->id;
                     $auditTrail->save();

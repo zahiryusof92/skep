@@ -1,16 +1,15 @@
 <?php
 
 return array(
-
     /*
-    |--------------------------------------------------------------------------
-    | eCob App Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines contain the default messages used by eCob App
-    | Feel free to tweak each of these messages here.
-    |
-    */
+      |--------------------------------------------------------------------------
+      | eCob App Language Lines
+      |--------------------------------------------------------------------------
+      |
+      | The following language lines contain the default messages used by eCob App
+      | Feel free to tweak each of these messages here.
+      |
+     */
 
     "app_name" => "eCOB Management System",
     "app_name_short" => "eCOB System",
@@ -35,7 +34,7 @@ return array(
             "file_list" => "Senarai Fail COB",
             "file_list_before_vp" => "Fail COB Sebelum VP",
             "add_finance_file_list" => "Tambah Laporan Kewangan",
-            "edit_finance_file_list" => "Edit Finance File List",
+            "edit_finance_file_list" => "Kemas Kini Fail Kewangan",
             "finance_file_list" => "Laporan Kewangan",
             "finance_support" => "Bantuan Kewangan",
             "add_finance_support" => "Tambah Sumbangan Kewangan",
@@ -138,6 +137,12 @@ return array(
             "edit_unit_of_measure" => "Kemas Kini Unit Ukuran",
             "edit_race" => "Kemas Kini Perkauman",
             "edit_nationality" => "Kemas Kini Kewarganegaraan",
+            "defect_category" => "Kategori Kerosakan",
+            "add_defect_category" => "Tambah Kategori Kerosakan",
+            "edit_defect_category" => "Kemas Kini Kategori Kerosakan",
+            "insurance_provider" => "Penyedia Insurans",
+            "add_insurance_provider" => "Tambah Penyedia Insurans",
+            "edit_insurance_provider" => "Kemas Kini Penyedia Insurans",
         ),
         "reporting" => array(
             "reporting" => "Laporan",
@@ -175,6 +180,12 @@ return array(
             "add_document" => "Tambah Dokumen",
             "edit_document" => "Kemas Kini Dokumen",
             "import_document" => "Import Dokumen",
+            "defect" => "Aduan",
+            "add_defect" => "Tambah Aduan",
+            "edit_defect" => "Kemas Kini Aduan",
+            "insurance" => "Insurans",
+            "add_insurance" => "Tambah Insurans",
+            "edit_insurance" => "Kemas Kini Insurans"
         ),
         "form" => array(
             "management" => "Pengurusan Borang",
@@ -490,6 +501,7 @@ return array(
         "delete" => "Padam",
         "edit" => "Kemas Kini",
         "pending" => "Belum Selesai",
+        "resolved" => "Selesai",
         "approved" => "Diluluskan",
         "rejected" => "Ditolak",
         "please_select_valid_image" => "Sila Pilih Fail Gambar Yang Sah",
@@ -504,6 +516,13 @@ return array(
         "ic_no2" => "No Kad Pengenalan",
         "alamat_surat_menyurat" => "Alamat Surat Menyurat",
         "caj_penyelenggaraan" => "Caj Penyelenggaraan (RM)",
+        "defect_category" => "Kategori Kerosakan",
+        "defect_category_name" => "Nama Kategori Aduan",
+        "insurance_provider" => "Penyedia Insurans",
+        "insurance_provider_name" => "Nama Penyedia Insurans",
+        "defect_name" => "Nama Aduan",
+        "defect_description" => "Keterangan Aduan",
+        "upload_defect_attachment" => "Muatnaik Lampiran Aduan"
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",
@@ -786,5 +805,8 @@ return array(
         "add_race" => "Tambah Kaum",
         "add_state" => "Tambah Negeri",
         "add_unit_of_measure" => "Tambah Unit Ukuran",
+        "add_defect_category" => "Tambah Kategori Kerosakan",
+        "add_insurance_provider" => "Tambah Penyedia Insurans",
+        "add_defect" => "Tambah Aduan",
     )
 );

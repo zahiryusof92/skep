@@ -31,7 +31,7 @@
 
     </head>
 
-    <body class="theme-default">
+    <body class="theme-default single-page">
 
         <!-- BEGIN CONTENT -->
         <section class="page-content">

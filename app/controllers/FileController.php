@@ -27,6 +27,19 @@ class FileController extends BaseController {
             }
         }
     }
+    
+    public function uploadDefectAttachment() {
+        $file = Input::file('defect_attachment');
+        if ($file) {
+            $destinationPath = 'uploads/defect_attachment';
+            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $upload = $file->move($destinationPath, $filename);
+
+            if ($upload) {
+                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+            }
+        }
+    }
 
     public function uploadStrataFile() {
         $file = Input::file('strata_file');

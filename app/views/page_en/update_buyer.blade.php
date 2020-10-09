@@ -179,6 +179,7 @@ foreach ($user_permission as $permission) {
 
                                                 <br/><br/>
                                             <?php } ?>
+                                                
                                             <table class="table table-hover nowrap" id="buyer_list">
                                                 <thead>
                                                     <tr>
