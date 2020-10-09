@@ -2619,6 +2619,7 @@ class AdminController extends BaseController {
                     . trans('app.forms.financial_audit_end_date') . '<br/>'
                     . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
+                    date('d-M-Y', strtotime($agm_details->updated_at)),
                     $button
                 );
 
@@ -2742,6 +2743,7 @@ class AdminController extends BaseController {
                     . trans('app.forms.financial_audit_end_date') . '<br/>'
                     . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
+                    date('d-M-Y', strtotime($agm_details->updated_at)),
                     $button
                 );
 

@@ -522,7 +522,8 @@ return array(
         "insurance_provider_name" => "Insurance Provider Name",
         "defect_name" => "Complaint Name",
         "defect_description" => "Complaint Description",
-        "upload_defect_attachment" => "Upload Complaint Attachment"
+        "upload_defect_attachment" => "Upload Complaint Attachment",
+        "recent_update" => "Recently Update"
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

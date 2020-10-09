@@ -522,7 +522,8 @@ return array(
         "insurance_provider_name" => "Nama Penyedia Insurans",
         "defect_name" => "Nama Aduan",
         "defect_description" => "Keterangan Aduan",
-        "upload_defect_attachment" => "Muatnaik Lampiran Aduan"
+        "upload_defect_attachment" => "Muatnaik Lampiran Aduan",
+        "recent_update" => "Terakhir Dikemaskini"
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",

@@ -129,13 +129,14 @@ foreach ($user_permission as $permission) {
                                                 <table class="table table-hover nowrap" id="agm_report_list" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
+                                                            <th style="width:10%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
                                                             <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
                                                             <th style="width:5%;"></th>
                                                             <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
                                                             <th style="width:5%;"></th>
                                                             <th style="width:20%;">{{ trans('app.forms.financial_report') }}</th>
                                                             <th style="width:5%;"></th>
+                                                            <th style="width:10%;">{{ trans('app.forms.recent_update') }}</th>
                                                             <?php if ($update_permission == 1) { ?>
                                                                 <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                                             <?php } ?>
@@ -186,13 +187,14 @@ foreach ($user_permission as $permission) {
                                                 <table class="table table-hover nowrap" id="agm_by_mc_report_list" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
+                                                            <th style="width:10%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
                                                             <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
                                                             <th style="width:5%;"></th>
                                                             <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
                                                             <th style="width:5%;"></th>
                                                             <th style="width:20%;">{{ trans('app.forms.financial_report') }}</th>
                                                             <th style="width:5%;"></th>
+                                                            <th style="width:10%;">{{ trans('app.forms.recent_update') }}</th>
                                                             <?php if ($update_permission == 1) { ?>
                                                                 <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                                             <?php } ?>
@@ -1050,7 +1052,7 @@ foreach ($user_permission as $permission) {
             "sAjaxSource": "{{URL::action('AdminController@getAGM', $file->id)}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "order": [[0, "asc"]],
-            "responsive": true,
+            "responsive": false,
             "aoColumnDefs": [
                 {
                     "bSortable": false,
@@ -1063,7 +1065,7 @@ foreach ($user_permission as $permission) {
             "sAjaxSource": "{{URL::action('AdminController@getAGMByMC', $file->id)}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "order": [[0, "asc"]],
-            "responsive": true,
+            "responsive": false,
             "aoColumnDefs": [
                 {
                     "bSortable": false,
