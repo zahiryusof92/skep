@@ -42,8 +42,10 @@ foreach ($user_permission as $permission) {
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:50%;">{{ trans('app.forms.file_number') }}</th>
-                                            <th style="width:30%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                            <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
+                                            <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
                                             <?php if ($update_permission == 1) { ?>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
@@ -58,7 +60,8 @@ foreach ($user_permission as $permission) {
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:80%;">{{ trans('app.forms.file_number') }}</th>
+                                            <th style="width:55%;">{{ trans('app.forms.file_number') }}</th>
+                                            <th style="width:25%;">{{ trans('app.forms.scheme_name') }}</th>
                                             <?php if ($update_permission == 1) { ?>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
@@ -73,8 +76,10 @@ foreach ($user_permission as $permission) {
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:50%;">{{ trans('app.forms.file_number') }}</th>
-                                            <th style="width:30%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                            <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
+                                            <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
                                             <?php if ($update_permission == 1) { ?>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
@@ -89,8 +94,10 @@ foreach ($user_permission as $permission) {
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:50%;">{{ trans('app.forms.file_number') }}</th>
-                                            <th style="width:30%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                            <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
+                                            <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
                                             <?php if ($update_permission == 1) { ?>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
@@ -122,9 +129,10 @@ foreach ($user_permission as $permission) {
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.scheme_name') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.designation') }}</th>
-                                            <th style="width:25%;">{{ trans('app.forms.name') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.name') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.year') }}</th>
@@ -202,7 +210,7 @@ foreach ($user_permission as $permission) {
         oTable = $('#agm_remainder').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGMRemainder')}}",
             "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
-            "order": [[1, "desc"]],
+            "order": [[3, "desc"]],
             "pageLength": 5,
             "responsive": true,
             "aoColumnDefs": [
@@ -219,7 +227,7 @@ foreach ($user_permission as $permission) {
         oTable1 = $('#never_agm').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getNeverAGM')}}",
             "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
-            "order": [[0, "desc"]],
+            "order": [[1, "asc"]],
             "pageLength": 5,
             "responsive": true,
             "aoColumnDefs": [
@@ -235,7 +243,7 @@ foreach ($user_permission as $permission) {
         oTable2 = $('#more_12months').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM12Months')}}",
             "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
-            "order": [[1, "desc"]],
+            "order": [[3, "desc"]],
             "pageLength": 5,
             "responsive": true,
             "aoColumnDefs": [
@@ -251,7 +259,7 @@ foreach ($user_permission as $permission) {
         oTable3 = $('#more_15months').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM15Months')}}",
             "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
-            "order": [[1, "desc"]],
+            "order": [[3, "desc"]],
             "pageLength": 5,
             "responsive": true,
             "aoColumnDefs": [
@@ -276,7 +284,7 @@ foreach ($user_permission as $permission) {
     oTable5 = $('#designation_remainder').DataTable({
         "sAjaxSource": "{{URL::action('AgmController@getDesignationRemainder')}}",
         "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
-        "order": [[5, 'desc'], [6, 'desc']],
+        "order": [[6, 'desc'], [7, 'desc']],
         "pageLength": 5,
         "responsive": true
     });

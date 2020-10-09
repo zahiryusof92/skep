@@ -523,7 +523,9 @@ return array(
         "defect_name" => "Nama Aduan",
         "defect_description" => "Keterangan Aduan",
         "upload_defect_attachment" => "Muatnaik Lampiran Aduan",
-        "recent_update" => "Terakhir Dikemaskini"
+        "recent_update" => "Terakhir Dikemaskini",
+        "agm_due_date" => "Tarikh Akhir AGM",
+        "scheme_name" => "Nama Skim"
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",

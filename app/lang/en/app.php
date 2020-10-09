@@ -523,7 +523,9 @@ return array(
         "defect_name" => "Complaint Name",
         "defect_description" => "Complaint Description",
         "upload_defect_attachment" => "Upload Complaint Attachment",
-        "recent_update" => "Recently Update"
+        "recent_update" => "Recently Update",
+        "agm_due_date" => "AGM Due Date",
+        "scheme_name" => "Scheme Name"
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

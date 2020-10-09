@@ -34,6 +34,7 @@ class AgmController extends BaseController {
                                     $data_raw = array(
                                         $ajk_details->files->company->short_name,
                                         $ajk_details->files->file_no,
+                                        ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
                                         $designation->description,
                                         $ajk_details->name,
                                         $ajk_details->phone_no,
@@ -59,6 +60,7 @@ class AgmController extends BaseController {
                                     $data_raw = array(
                                         $ajk_details->files->company->short_name,
                                         $ajk_details->files->file_no,
+                                        ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
                                         $designation->description,
                                         $ajk_details->name,
                                         $ajk_details->phone_no,
@@ -86,6 +88,7 @@ class AgmController extends BaseController {
                                 $data_raw = array(
                                     $ajk_details->files->company->short_name,
                                     $ajk_details->files->file_no,
+                                    ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
                                     $designation->description,
                                     $ajk_details->name,
                                     $ajk_details->phone_no,
@@ -110,6 +113,7 @@ class AgmController extends BaseController {
                                     $data_raw = array(
                                         $ajk_details->files->company->short_name,
                                         $ajk_details->files->file_no,
+                                        ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
                                         $designation->description,
                                         $ajk_details->name,
                                         $ajk_details->phone_no,
@@ -3777,7 +3781,7 @@ class AgmController extends BaseController {
             return "false";
         }
     }
-    
+
     //insurance
     public function insurance() {
         //get user permission
@@ -3857,7 +3861,7 @@ class AgmController extends BaseController {
 
                 $data_raw = array(
                     (!empty($defects->file_id) ? $defects->file->file_no : '<i>(not set)</i>'),
-                    $defects->provider->name,
+                    ($defects->provider ? $defects->provider->name : ''),
                     $defects->remarks,
                     $button
                 );

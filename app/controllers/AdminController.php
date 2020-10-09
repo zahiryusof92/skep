@@ -124,14 +124,16 @@ class AdminController extends BaseController {
             $data = Array();
             foreach ($file as $files) {
                 $agm_remainder = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-                if (count($agm_remainder) > 0) {
+                if ($agm_remainder) {
                     if ($agm_remainder->agm_date <= date('Y-m-d', $oneyear) && $agm_remainder->agm_date != "0000-00-00") {
                         $button = "";
                         $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
-                            date('d-M-Y', strtotime($agm_remainder->agm_date)),
+                            ($files->strata ? $files->strata->name : ''),
+                            ($agm_remainder->agm_date ? date('d-M-Y', strtotime($agm_remainder->agm_date)) : ''),
+                            ($agm_remainder->agm_date ? date('d-M-Y', strtotime($agm_remainder->agm_date . " + 1 year")) : ''),
                             $button
                         );
 
@@ -177,11 +179,12 @@ class AdminController extends BaseController {
 
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
-                if (count($never_agm) > 0) {
+                if ($never_agm) {
                     if ($never_agm->agm_date == "0000-00-00") {
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
+                            ($files->strata ? $files->strata->name : ''),
                             $button
                         );
 
@@ -191,6 +194,7 @@ class AdminController extends BaseController {
                     $data_raw = array(
                         $files->company->short_name,
                         $files->file_no,
+                        ($files->strata ? $files->strata->name : ''),
                         $button
                     );
 
@@ -234,14 +238,16 @@ class AdminController extends BaseController {
             $data = Array();
             foreach ($file as $files) {
                 $agm_more12months = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-                if (count($agm_more12months) > 0) {
+                if ($agm_more12months) {
                     if ($agm_more12months->agm_date <= date('Y-m-d', $twelveMonths) && $agm_more12months->agm_date != "0000-00-00") {
                         $button = "";
                         $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
-                            date('d-M-Y', strtotime($agm_more12months->agm_date)),
+                            ($files->strata ? $files->strata->name : ''),
+                            ($agm_more12months->agm_date ? date('d-M-Y', strtotime($agm_more12months->agm_date)) : ''),
+                            ($agm_more12months->agm_date ? date('d-M-Y', strtotime($agm_more12months->agm_date . " + 1 year")) : ''),
                             $button
                         );
 
@@ -286,14 +292,16 @@ class AdminController extends BaseController {
             $data = Array();
             foreach ($file as $files) {
                 $agm_more15months = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-                if (count($agm_more15months) > 0) {
+                if ($agm_more15months) {
                     if ($agm_more15months->agm_date <= date('Y-m-d', $fifthteenMonths) && $agm_more15months->agm_date != "0000-00-00") {
                         $button = "";
                         $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                         $data_raw = array(
                             $files->company->short_name,
                             $files->file_no,
-                            date('d-M-Y', strtotime($agm_more15months->agm_date)),
+                            ($files->strata ? $files->strata->name : ''),
+                            ($agm_more15months->agm_date ? date('d-M-Y', strtotime($agm_more15months->agm_date)) : ''),
+                            ($agm_more15months->agm_date ? date('d-M-Y', strtotime($agm_more15months->agm_date . " + 1 year")) : ''),
                             $button
                         );
 
