@@ -158,6 +158,7 @@ return array(
             "rating_summary_report" => "Rating Summary Report",
             "management_summary_report" => "Management Summary Report",
             "cob_file_report" => "COB File / Management (%) Report",
+            "purchaser" => "Purchaser"
         ),
         "agm" => array(
             "submission" => "AGM Submission",

@@ -158,6 +158,7 @@ return array(
             "rating_summary_report" => "Laporan Ringkasan Penilaian Bintang",
             "management_summary_report" => "Laporan Ringkasan Pengurusan",
             "cob_file_report" => "Fail COB / Laporan % Pengurusan",
+            "purchaser" => "Pembeli"
         ),
         "agm" => array(
             "submission" => "Penyerahan AGM",

@@ -343,6 +343,8 @@ Route::post('/deletePurchaser', 'AgmController@deletePurchaser')->before('authMe
 Route::get('/importPurchaser', 'AgmController@importPurchaser')->before('authMember');
 Route::post('/uploadPurchaserCSVAction', 'FileController@uploadPurchaserCSVAction')->before('authMember');
 Route::post('/submitUploadPurchaser', 'AgmController@submitUploadPurchaser')->before('authMember');
+Route::post('/report/purchaser', 'ReportController@purchaser')->before('authMember');
+Route::post('/print/purchaser', 'PrintController@printPurchaser')->before('authMember');
 
 //Tenant Submission
 Route::get('/tenant', 'AgmController@tenant')->before('authMember');

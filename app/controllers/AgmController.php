@@ -531,13 +531,14 @@ class AgmController extends BaseController {
         $columns = array(
             0 => 'company.short_name',
             1 => 'files.file_no',
-            2 => 'buyer.unit_no',
-            3 => 'buyer.unit_share',
-            4 => 'buyer.owner_name',
-            5 => 'buyer.phone_no',
-            6 => 'buyer.email',
-            7 => 'race.name_en',
-            8 => 'action'
+            2 => 'buyer.scheme_name',
+            3 => 'buyer.unit_no',
+            4 => 'buyer.unit_share',
+            5 => 'buyer.owner_name',
+            6 => 'buyer.phone_no',
+            7 => 'buyer.email',
+            8 => 'race.name_en',
+            9 => 'action'
         );
 
         $limit = $requestData['length'];
@@ -602,7 +603,8 @@ class AgmController extends BaseController {
                             ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                             ->leftJoin('company', 'files.company_id', '=', 'company.id')
                             ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                            ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                            ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('buyer.is_deleted', 0)
                             ->offset($start)
@@ -614,6 +616,7 @@ class AgmController extends BaseController {
                             ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                             ->leftJoin('company', 'files.company_id', '=', 'company.id')
                             ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('buyer.is_deleted', 0)
                             ->count();
@@ -622,7 +625,8 @@ class AgmController extends BaseController {
                             ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                             ->leftJoin('company', 'files.company_id', '=', 'company.id')
                             ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                            ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                            ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('buyer.is_deleted', 0)
                             ->where(function($query) use ($search) {
@@ -644,6 +648,7 @@ class AgmController extends BaseController {
                             ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                             ->leftJoin('company', 'files.company_id', '=', 'company.id')
                             ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('buyer.is_deleted', 0)
                             ->where(function($query) use ($search) {
@@ -665,7 +670,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -678,6 +684,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -687,7 +694,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->offset($start)
@@ -699,6 +707,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->count();
@@ -709,7 +718,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -732,6 +742,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -751,7 +762,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -773,6 +785,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -797,7 +810,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -810,6 +824,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -819,7 +834,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->offset($start)
@@ -831,6 +847,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', $company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->count();
@@ -839,7 +856,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->offset($start)
@@ -851,6 +869,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->count();
@@ -859,7 +878,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('buyer.is_deleted', 0)
                                 ->offset($start)
                                 ->limit($limit)
@@ -870,6 +890,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('buyer.is_deleted', 0)
                                 ->count();
                     }
@@ -879,7 +900,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -902,6 +924,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -921,7 +944,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -943,6 +967,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', $company_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -961,7 +986,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -983,6 +1009,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1001,7 +1028,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
                                     $query->where('company.short_name', 'LIKE', "%" . $search . "%")
@@ -1022,6 +1050,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
                                     $query->where('company.short_name', 'LIKE', "%" . $search . "%")
@@ -1043,7 +1072,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -1056,6 +1086,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -1065,7 +1096,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('buyer.is_deleted', 0)
                                 ->offset($start)
@@ -1077,6 +1109,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('buyer.is_deleted', 0)
                                 ->count();
@@ -1087,7 +1120,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -1110,6 +1144,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
                                 ->where('buyer.is_deleted', 0)
@@ -1129,7 +1164,8 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1151,6 +1187,7 @@ class AgmController extends BaseController {
                                 ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
                                 ->leftJoin('company', 'files.company_id', '=', 'company.id')
                                 ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('buyer.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1181,6 +1218,7 @@ class AgmController extends BaseController {
 
                 $nestedData['cob'] = $post->short_name;
                 $nestedData['file_no'] = $post->file_no;
+                $nestedData['scheme_name'] = $post->strata_name;
                 $nestedData['unit_no'] = $post->unit_no;
                 $nestedData['unit_share'] = $post->unit_share;
                 $nestedData['owner_name'] = $post->owner_name;

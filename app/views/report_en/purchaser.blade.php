@@ -1,0 +1,142 @@
+@extends('layout.english_layout.default')
+
+@section('content')
+
+<?php
+$company = Company::find(Auth::user()->company_id);
+?>
+<div class="page-content-inner">
+    <section class="panel panel-with-borders">
+        <div class="panel-heading">
+            <h3>{{$title}}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="invoice-block">
+                <div class="row">
+                    <table width="100%">
+                        <tr>
+                            <td class="text-center">
+                                <h4 class="margin-bottom-0">
+                                    <img src="{{asset($company->image_url)}}" height="100px;" alt="">
+                                </h4>
+                            </td>
+                            <td>
+                                <h5 class="margin-bottom-10">
+                                    {{$company->name}}
+                                </h5>
+                                <h6 class="margin-bottom-0">
+                                    {{$title}}
+                                </h6>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="row" style="margin-top: 30px;">
+                    <div class="col-lg-12"> 
+                        <form target="_blank" action="{{ url('/print/purchaser') }}" method="POST">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.cob') }}</label>
+                                        <input type="hidden" name="company" value="{{ $cob_company }}"/>
+                                        <p>{{ $cob_name}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <input type="hidden" name="file_no" value="{{ $file_no }}"/>
+                                        <p>{{ $file_name}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Filter</label>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label><input type="checkbox" name="scheme_name">&nbsp; {{ trans('app.forms.scheme_name') }}</label><br/>
+                                                <label><input type="checkbox" name="unit_no">&nbsp; {{ trans('app.forms.unit_number') }}</label><br/>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label><input type="checkbox" name="unit_share">&nbsp; {{ trans('app.forms.unit_share') }}</label><br/> 
+                                                <label><input type="checkbox" name="buyer">&nbsp; {{ trans('app.forms.buyer') }}</label><br/>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label><input type="checkbox" name="phone_number">&nbsp; {{ trans('app.forms.phone_number') }}</label><br/>
+                                                <label><input type="checkbox" name="email">&nbsp; {{ trans('app.forms.email') }}</label><br/>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label><input type="checkbox" name="race">&nbsp; {{ trans('app.forms.race') }}</label><br/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label><br/>
+                                        <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover nowrap" id="purchaser_list" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
+                                        <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:20%;">{{ trans('app.forms.scheme_name') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.unit_share') }}</th>
+                                        <th style="width:20%;">{{ trans('app.forms.buyer') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
+                                        <th style="width:15%;">{{ trans('app.forms.email') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.race') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if ($purchaser)
+                                    @foreach ($purchaser as $purchasers)
+                                    <tr>
+                                        <td>{{ $purchasers->short_name }}</td>
+                                        <td>{{ $purchasers->file_no }}</td>
+                                        <td>{{ $purchasers->strata_name }}</td>
+                                        <td>{{ $purchasers->unit_no }}</td>
+                                        <td>{{ $purchasers->unit_share }}</td>
+                                        <td>{{ $purchasers->owner_name }}</td>
+                                        <td>{{ $purchasers->phone_no }}</td>
+                                        <td>{{ $purchasers->email }}</td>
+                                        <td>{{ $purchasers->race_name }}</td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr>
+                                        <td colspan="9">No data availabe</td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End  -->
+</div>
+
+<!-- Page Scripts -->
+<script>
+    $("[data-toggle=tooltip]").tooltip();
+</script>
+<!-- End Page Scripts-->
+
+@stop

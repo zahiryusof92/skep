@@ -314,4 +314,90 @@ class ReportController extends BaseController {
         }
     }
 
+    //purchaser
+    public function purchaser() {
+        $purchaser = array();
+        $data = Input::all();
+
+        $cob_company = '';
+        $cob_name = 'All COB';
+        if (isset($data['company']) && !empty($data['company'])) {
+            $cob_company = $data['company'];
+            $cob_name = Company::find($cob_company)->pluck('short_name');
+        }
+        $file_no = '';
+        $file_name = 'All Files';
+        if (isset($data['file_no']) && !empty($data['file_no'])) {
+            $file_no = $data['file_no'];
+            $file_name = Files::find($file_no)->pluck('file_no');
+        }
+
+        if (!empty($cob_company) && !empty($file_no)) {
+            $purchaser = DB::table('buyer')
+                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
+                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
+                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
+                    ->where('files.company_id', $cob_company)
+                    ->where('files.id', $file_no)
+                    ->where('buyer.is_deleted', 0)
+                    ->orderBy('unit_no', 'asc')
+                    ->get();
+        } else if (!empty($cob_company)) {
+            $purchaser = DB::table('buyer')
+                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
+                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
+                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
+                    ->where('files.company_id', $cob_company)
+                    ->where('buyer.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else if (!empty($file_no)) {
+            $purchaser = DB::table('buyer')
+                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
+                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
+                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
+                    ->where('files.id', $file_no)
+                    ->where('buyer.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else {
+            $purchaser = DB::table('buyer')
+                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
+                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
+                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
+                    ->where('buyer.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.purchaser'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'agmpurchasesub_list',
+            'image' => "",
+            'file_no' => $file_no,
+            'file_name' => $file_name,
+            'cob_company' => $cob_company,
+            'cob_name' => $cob_name,
+            'purchaser' => $purchaser
+        );
+
+        return View::make('report_en.purchaser', $viewData);
+    }
+
 }

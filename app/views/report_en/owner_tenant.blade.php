@@ -27,11 +27,13 @@
                                     {{$title}}
                                 </h6>
                             </td>
+                            @if ($file_id)
                             <td class="text-center">
                                 <a href="{{URL::action('PrintController@printOwnerTenant', $file_id)}}" target="_blank">
                                     <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
+                            @endif
                         </tr>
                     </table>
                 </div>
