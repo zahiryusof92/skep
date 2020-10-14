@@ -8032,7 +8032,7 @@ class AdminController extends BaseController {
                 }
 
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateDefect', $defects->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $defects->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefect(\'' . $defects->id . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     (!empty($defects->file_id) ? $defects->file->file_no : '<i>(not set)</i>'),
@@ -8385,7 +8385,7 @@ class AdminController extends BaseController {
                 }
 
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', $insurances->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
