@@ -310,22 +310,26 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.cob.finance_support') }}
                         </a>
                     </li>
-                    @endif
-                    @if ($access_permission45)
-                    <li id="defect_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@defect')}}">
-                            {{ trans('app.menus.agm.defect') }}
-                        </a>
-                    </li>
-                    @endif
-                    @if ($access_permission46)
-                    <li id="insurance_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@insurance')}}">
-                            {{ trans('app.menus.agm.insurance') }}
-                        </a>
-                    </li>
-                    @endif
+                    @endif                    
                 </ul>
+            </li>
+            @endif
+            
+            @if ($access_permission45)
+            <li class="left-menu-list-link" id="defect_list">
+                <a class="left-menu-link" href="{{ URL::action('AdminController@defect') }}">
+                    <i class="left-menu-link-icon fa fa-comments"><!-- --></i>
+                    {{ trans('app.menus.agm.defect') }}
+                </a>
+            </li>
+            @endif
+            
+            @if ($access_permission46)
+            <li class="left-menu-list-link" id="insurance_list">
+                <a class="left-menu-link" href="{{ URL::action('AdminController@insurance') }}">
+                    <i class="left-menu-link-icon fa fa-medkit"><!-- --></i>
+                    {{ trans('app.menus.agm.insurance') }}
+                </a>
             </li>
             @endif
 

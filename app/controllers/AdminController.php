@@ -7968,8 +7968,8 @@ class AdminController extends BaseController {
         if ($permission) {
             $viewData = array(
                 'title' => trans('app.menus.agm.defect'),
-                'panel_nav_active' => 'cob_panel',
-                'main_nav_active' => 'cob_main',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
                 'sub_nav_active' => 'defect_list',
                 'user_permission' => $user_permission,
                 'files' => $files,
@@ -8149,8 +8149,8 @@ class AdminController extends BaseController {
         if ($permission) {
             $viewData = array(
                 'title' => trans('app.menus.agm.add_defect'),
-                'panel_nav_active' => 'cob_panel',
-                'main_nav_active' => 'cob_main',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
                 'sub_nav_active' => 'defect_list',
                 'user_permission' => $user_permission,
                 'files' => $files,
@@ -8229,8 +8229,8 @@ class AdminController extends BaseController {
         if ($permission) {
             $viewData = array(
                 'title' => trans('app.menus.agm.edit_defect'),
-                'panel_nav_active' => 'cob_panel',
-                'main_nav_active' => 'cob_main',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
                 'sub_nav_active' => 'defect_list',
                 'user_permission' => $user_permission,
                 'defect' => $defect,
@@ -8320,8 +8320,8 @@ class AdminController extends BaseController {
         if ($permission) {
             $viewData = array(
                 'title' => trans('app.menus.agm.insurance'),
-                'panel_nav_active' => 'cob_panel',
-                'main_nav_active' => 'cob_main',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
                 'sub_nav_active' => 'insurance_list',
                 'user_permission' => $user_permission,
                 'files' => $files,
@@ -8470,8 +8470,8 @@ class AdminController extends BaseController {
         if ($permission) {
             $viewData = array(
                 'title' => trans('app.menus.agm.add_insurance'),
-                'panel_nav_active' => 'cob_panel',
-                'main_nav_active' => 'cob_main',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
                 'sub_nav_active' => 'insurance_list',
                 'user_permission' => $user_permission,
                 'files' => $files,
@@ -8548,8 +8548,8 @@ class AdminController extends BaseController {
         if ($permission) {
             $viewData = array(
                 'title' => trans('app.menus.agm.edit_insurance'),
-                'panel_nav_active' => 'cob_panel',
-                'main_nav_active' => 'cob_main',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
                 'sub_nav_active' => 'insurance_list',
                 'user_permission' => $user_permission,
                 'insurance' => $insurance,
