@@ -3,7 +3,12 @@
 @section('content')
 
 <?php
-$update_permission = 1;
+$update_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 48) {
+        $update_permission = $permissions->update_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -55,7 +60,7 @@ $update_permission = 1;
                             </div>
                         </div>
                         <div class="form-actions">
-                            <?php if ($update_permission == 1) { ?>
+                            <?php if ($update_permission) { ?>
                             <button type="button" class="btn btn-primary" id="submit_button" onclick="updateInsuranceProvider()">{{ trans('app.forms.save') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("SettingController@defectCategory") }}'" >{{ trans('app.forms.cancel') }}</button>

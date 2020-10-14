@@ -380,24 +380,24 @@ Route::post('/deleteDocumentFile', 'AgmController@deleteDocumentFile')->before('
 Route::post('/uploadDocumentFile', 'FileController@uploadDocumentFile')->before('authMember');
 
 //defect
-Route::get('/defect', 'AgmController@defect')->before('authMember');
-Route::get('/getDefect', 'AgmController@getDefect')->before('authMember');
-Route::get('/addDefect', 'AgmController@addDefect')->before('authMember');
-Route::post('/submitAddDefect', 'AgmController@submitAddDefect')->before('authMember');
-Route::get('/updateDefect/{id}', 'AgmController@updateDefect')->before('authMember');
-Route::post('/submitUpdateDefect', 'AgmController@submitUpdateDefect')->before('authMember');
-Route::post('/deleteDefect/{id}', 'AgmController@deleteDefect')->before('authMember');
-Route::post('/deleteDefectAttachment', 'AgmController@deleteDefectAttachment')->before('authMember');
+Route::get('/defect', 'AdminController@defect')->before('authMember');
+Route::get('/getDefect', 'AdminController@getDefect')->before('authMember');
+Route::get('/addDefect', 'AdminController@addDefect')->before('authMember');
+Route::post('/submitAddDefect', 'AdminController@submitAddDefect')->before('authMember');
+Route::get('/updateDefect/{id}', 'AdminController@updateDefect')->before('authMember');
+Route::post('/submitUpdateDefect', 'AdminController@submitUpdateDefect')->before('authMember');
+Route::post('/deleteDefect/{id}', 'AdminController@deleteDefect')->before('authMember');
+Route::post('/deleteDefectAttachment', 'AdminController@deleteDefectAttachment')->before('authMember');
 Route::post('/uploadDefectAttachment', 'FileController@uploadDefectAttachment')->before('authMember');
 
 //insurance
-Route::get('/insurance', 'AgmController@insurance')->before('authMember');
-Route::get('/getInsurance', 'AgmController@getInsurance')->before('authMember');
-Route::get('/addInsurance', 'AgmController@addInsurance')->before('authMember');
-Route::post('/submitAddInsurance', 'AgmController@submitAddInsurance')->before('authMember');
-Route::get('/updateInsurance/{id}', 'AgmController@updateInsurance')->before('authMember');
-Route::post('/submitUpdateInsurance', 'AgmController@submitUpdateInsurance')->before('authMember');
-Route::post('/deleteInsurance/{id}', 'AgmController@deleteInsurance')->before('authMember');
+Route::get('/insurance', 'AdminController@insurance')->before('authMember');
+Route::get('/getInsurance', 'AdminController@getInsurance')->before('authMember');
+Route::get('/addInsurance', 'AdminController@addInsurance')->before('authMember');
+Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before('authMember');
+Route::get('/updateInsurance/{id}', 'AdminController@updateInsurance')->before('authMember');
+Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
+Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
 
 ########################## Master Setup ##########################
 //area

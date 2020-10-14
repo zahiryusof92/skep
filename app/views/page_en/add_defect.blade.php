@@ -3,7 +3,12 @@
 @section('content')
 
 <?php
-$insert_permission = 1;
+$insert_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 45) {
+        $insert_permission = $permissions->insert_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -92,11 +97,11 @@ $insert_permission = 1;
 
                     <form>
                         <div class="form-actions">
-                            <?php if ($insert_permission == 1) { ?>
+                            <?php if ($insert_permission) { ?>
                                 <input type="hidden" id="defect_attachment_url" value=""/>
                                 <button type="button" class="btn btn-primary" id="submit_button" onclick="submitAddDefect()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AgmController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
+                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
                             <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                         </div>
                     </form>
@@ -187,7 +192,7 @@ $insert_permission = 1;
 
         if (error == 0) {
             $.ajax({
-                url: "{{ URL::action('AgmController@submitAddDefect') }}",
+                url: "{{ URL::action('AdminController@submitAddDefect') }}",
                 type: "POST",
                 data: {
                     file_id: file_id,
@@ -202,7 +207,7 @@ $insert_permission = 1;
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AgmController@defect") }}';
+                            window.location = '{{URL::action("AdminController@defect") }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
@@ -229,7 +234,7 @@ $insert_permission = 1;
             closeOnConfirm: true
         }, function () {
             $.ajax({
-                url: "{{ URL::action('AgmController@deleteDefectAttachment') }}",
+                url: "{{ URL::action('AdminController@deleteDefectAttachment') }}",
                 type: "POST",
                 data: {
                     id: id

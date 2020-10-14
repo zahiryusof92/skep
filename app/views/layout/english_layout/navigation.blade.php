@@ -51,6 +51,10 @@ $access_permission41 = 0;
 $access_permission42 = 0;
 $access_permission43 = 0;
 $access_permission44 = 0;
+$access_permission45 = 0;
+$access_permission46 = 0;
+$access_permission47 = 0;
+$access_permission48 = 0;
 
 $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
@@ -198,6 +202,18 @@ if ($user_permission) {
         if ($permission->submodule_id == 44) {
             $access_permission44 = $permission->access_permission;
         }
+        if ($permission->submodule_id == 45) {
+            $access_permission45 = $permission->access_permission;
+        }
+        if ($permission->submodule_id == 46) {
+            $access_permission46 = $permission->access_permission;
+        }
+        if ($permission->submodule_id == 47) {
+            $access_permission47 = $permission->access_permission;
+        }
+        if ($permission->submodule_id == 48) {
+            $access_permission48 = $permission->access_permission;
+        }
     }
 }
 
@@ -292,6 +308,20 @@ if (!Auth::user()->getAdmin()) {
                     <li id="finance_support_list">
                         <a class="left-menu-link" href="{{URL::action('FinanceController@financeSupport')}}">
                             {{ trans('app.menus.cob.finance_support') }}
+                        </a>
+                    </li>
+                    @endif
+                    @if ($access_permission45)
+                    <li id="defect_list">
+                        <a class="left-menu-link" href="{{URL::action('AdminController@defect')}}">
+                            {{ trans('app.menus.agm.defect') }}
+                        </a>
+                    </li>
+                    @endif
+                    @if ($access_permission46)
+                    <li id="insurance_list">
+                        <a class="left-menu-link" href="{{URL::action('AdminController@insurance')}}">
+                            {{ trans('app.menus.agm.insurance') }}
                         </a>
                     </li>
                     @endif
@@ -487,19 +517,20 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-                    
+                    @if ($access_permission47)
                     <li id="defect_category_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@defectCategory')}}">
                             {{ trans('app.menus.master.defect_category') }}
                         </a>
                     </li>
-                    
+                    @endif                    
+                    @if ($access_permission48)
                     <li id="insurance_provider_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@insuranceProvider')}}">
                             {{ trans('app.menus.master.insurance_provider') }}
                         </a>
                     </li>
-                    
+                    @endif
                 </ul>
             </li>
             @endif
@@ -604,19 +635,6 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-                    
-                    <li id="defect_list">
-                        <a class="left-menu-link" href="{{URL::action('AgmController@defect')}}">
-                            {{ trans('app.menus.agm.defect') }}
-                        </a>
-                    </li>
-                    
-                    <li id="insurance_list">
-                        <a class="left-menu-link" href="{{URL::action('AgmController@insurance')}}">
-                            {{ trans('app.menus.agm.insurance') }}
-                        </a>
-                    </li>
-                    
                 </ul>
             </li>
             @endif

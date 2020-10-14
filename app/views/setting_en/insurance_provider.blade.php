@@ -3,8 +3,19 @@
 @section('content')
 
 <?php
-$insert_permission = 1;
-$update_permission = 1;
+$insert_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 48) {
+        $insert_permission = $permissions->insert_permission;
+    }
+}
+
+$update_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 48) {
+        $update_permission = $permissions->update_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -15,7 +26,7 @@ $update_permission = 1;
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
+                    <?php if ($insert_permission) { ?>
                         <button onclick="window.location = '{{ URL::action('SettingController@addInsuranceProvider') }}'" type="button" class="btn btn-primary">
                             {{ trans('app.buttons.add_insurance_provider') }}
                         </button>
@@ -27,7 +38,7 @@ $update_permission = 1;
                                 <th style="width:70%;">{{ trans('app.forms.insurance_provider') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.sort_no') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.status') }}</th>
-                                <?php if ($update_permission == 1) { ?>
+                                <?php if ($update_permission) { ?>
                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                     <?php } ?>
                             </tr>

@@ -87,10 +87,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($areas->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveArea(\'' . $areas->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveArea(\'' . $areas->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeArea(\'' . $areas->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeArea(\'' . $areas->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateArea', $areas->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteArea(\'' . $areas->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -309,10 +309,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($cities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCity(\'' . $cities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCity(\'' . $cities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCity(\'' . $cities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCity(\'' . $cities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCity', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCity(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -531,10 +531,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($cities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCountry(\'' . $cities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCountry(\'' . $cities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCountry(\'' . $cities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCountry(\'' . $cities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCountry', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCountry(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -753,10 +753,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($ft->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveFormtype(\'' . $ft->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveFormtype(\'' . $ft->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFormtype(\'' . $ft->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFormtype(\'' . $ft->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateFormtype', $ft->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFormtype(\'' . $ft->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -977,10 +977,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($states->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveState(\'' . $states->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveState(\'' . $states->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeState(\'' . $states->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeState(\'' . $states->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateState', $states->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteState(\'' . $states->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -1200,10 +1200,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($cities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDocumenttype(\'' . $cities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDocumenttype(\'' . $cities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDocumenttype(\'' . $cities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDocumenttype(\'' . $cities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDocumenttype', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocumenttype(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -1422,10 +1422,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($categories->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCategory(\'' . $categories->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCategory(\'' . $categories->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCategory(\'' . $categories->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCategory(\'' . $categories->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCategory', $categories->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCategory(\'' . $categories->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -1644,10 +1644,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($lands->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLandTitle(\'' . $lands->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLandTitle(\'' . $lands->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLandTitle(\'' . $lands->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLandTitle(\'' . $lands->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateLandTitle', $lands->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteLandTitle(\'' . $lands->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -1892,10 +1892,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($developers->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDeveloper(\'' . $developers->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDeveloper(\'' . $developers->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDeveloper(\'' . $developers->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDeveloper(\'' . $developers->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDeveloper', $developers->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDeveloper(\'' . $developers->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -2168,10 +2168,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($agents->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAgent(\'' . $agents->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAgent(\'' . $agents->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAgent(\'' . $agents->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAgent(\'' . $agents->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateAgent', $agents->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteAgent(\'' . $agents->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -2418,10 +2418,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($parliments->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveParliment(\'' . $parliments->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveParliment(\'' . $parliments->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeParliment(\'' . $parliments->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeParliment(\'' . $parliments->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateParliment', $parliments->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteParliment(\'' . $parliments->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -2647,10 +2647,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($duns->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDun(\'' . $duns->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDun(\'' . $duns->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDun(\'' . $duns->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDun(\'' . $duns->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDun', $duns->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
@@ -2882,10 +2882,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($parks->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactivePark(\'' . $parks->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactivePark(\'' . $parks->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activePark(\'' . $parks->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activePark(\'' . $parks->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updatePark', $parks->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
@@ -3110,10 +3110,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($memotypes->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemoType(\'' . $memotypes->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemoType(\'' . $memotypes->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemoType(\'' . $memotypes->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemoType(\'' . $memotypes->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateMemoType', $memotypes->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemoType(\'' . $memotypes->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -3332,10 +3332,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($designations->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDesignation(\'' . $designations->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDesignation(\'' . $designations->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDesignation(\'' . $designations->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDesignation(\'' . $designations->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDesignation', $designations->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDesignation(\'' . $designations->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -3554,10 +3554,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($unitmeasures->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUnitMeasure(\'' . $unitmeasures->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUnitMeasure(\'' . $unitmeasures->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUnitMeasure(\'' . $unitmeasures->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUnitMeasure(\'' . $unitmeasures->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateUnitMeasure', $unitmeasures->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUnitMeasure(\'' . $unitmeasures->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -3780,10 +3780,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($races->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveRace(\'' . $races->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveRace(\'' . $races->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeRace(\'' . $races->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeRace(\'' . $races->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateRace', $races->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteRace(\'' . $races->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -4004,10 +4004,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($nationalities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveNationality(\'' . $nationalities->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveNationality(\'' . $nationalities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeNationality(\'' . $nationalities->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeNationality(\'' . $nationalities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateNationality', $nationalities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteNationality(\'' . $nationalities->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -4156,38 +4156,76 @@ class SettingController extends BaseController {
             }
         }
     }
-    
+
     // defect category
     public function defectCategory() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        $viewData = array(
-            'title' => trans('app.menus.master.defect_category'),
-            'panel_nav_active' => 'master_panel',
-            'main_nav_active' => 'master_main',
-            'sub_nav_active' => 'defect_category_list',
-            'user_permission' => $user_permission,
-            'image' => ""
-        );
+        $permission = false;
+        foreach ($user_permission as $permissions) {
+            if ($permissions->submodule_id == 47) {
+                $permission = $permissions->access_permission;
+            }
+        }
 
-        return View::make('setting_en.defect_category', $viewData);
+        if ($permission) {
+            $viewData = array(
+                'title' => trans('app.menus.master.defect_category'),
+                'panel_nav_active' => 'master_panel',
+                'main_nav_active' => 'master_main',
+                'sub_nav_active' => 'defect_category_list',
+                'user_permission' => $user_permission,
+                'image' => ""
+            );
+
+            return View::make('setting_en.defect_category', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     public function addDefectCategory() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        $viewData = array(
-            'title' => trans('app.menus.master.add_defect_category'),
-            'panel_nav_active' => 'master_panel',
-            'main_nav_active' => 'master_main',
-            'sub_nav_active' => 'defect_category_list',
-            'user_permission' => $user_permission,
-            'image' => ""
-        );
+        $permission = false;
+        foreach ($user_permission as $permissions) {
+            if ($permissions->submodule_id == 47) {
+                $permission = $permissions->insert_permission;
+            }
+        }
 
-        return View::make('setting_en.add_defect_category', $viewData);
+        if ($permission) {
+            $viewData = array(
+                'title' => trans('app.menus.master.add_defect_category'),
+                'panel_nav_active' => 'master_panel',
+                'main_nav_active' => 'master_main',
+                'sub_nav_active' => 'defect_category_list',
+                'user_permission' => $user_permission,
+                'image' => ""
+            );
+
+            return View::make('setting_en.add_defect_category', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     public function submitDefectCategory() {
@@ -4226,10 +4264,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($categories->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDefectCategory(\'' . $categories->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDefectCategory(\'' . $categories->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDefectCategory(\'' . $categories->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDefectCategory(\'' . $categories->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDefectCategory', $categories->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefectCategory(\'' . $categories->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -4339,17 +4377,36 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $defectCategory = DefectCategory::find($id);
 
-        $viewData = array(
-            'title' => trans('app.menus.master.edit_defect_category'),
-            'panel_nav_active' => 'master_panel',
-            'main_nav_active' => 'master_main',
-            'sub_nav_active' => 'defect_category_list',
-            'user_permission' => $user_permission,
-            'defectCategory' => $defectCategory,
-            'image' => ""
-        );
+        $permission = false;
+        foreach ($user_permission as $permissions) {
+            if ($permissions->submodule_id == 47) {
+                $permission = $permissions->update_permission;
+            }
+        }
 
-        return View::make('setting_en.update_defect_category', $viewData);
+        if ($permission) {
+            $viewData = array(
+                'title' => trans('app.menus.master.edit_defect_category'),
+                'panel_nav_active' => 'master_panel',
+                'main_nav_active' => 'master_main',
+                'sub_nav_active' => 'defect_category_list',
+                'user_permission' => $user_permission,
+                'defectCategory' => $defectCategory,
+                'image' => ""
+            );
+
+            return View::make('setting_en.update_defect_category', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     public function submitUpdateDefectCategory() {
@@ -4378,38 +4435,76 @@ class SettingController extends BaseController {
             }
         }
     }
-    
+
     // insurance provider
     public function insuranceProvider() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        $viewData = array(
-            'title' => trans('app.menus.master.insurance_provider'),
-            'panel_nav_active' => 'master_panel',
-            'main_nav_active' => 'master_main',
-            'sub_nav_active' => 'insurance_provider_list',
-            'user_permission' => $user_permission,
-            'image' => ""
-        );
+        $permission = false;
+        foreach ($user_permission as $permissions) {
+            if ($permissions->submodule_id == 48) {
+                $permission = $permissions->access_permission;
+            }
+        }
 
-        return View::make('setting_en.insurance_provider', $viewData);
+        if ($permission) {
+            $viewData = array(
+                'title' => trans('app.menus.master.insurance_provider'),
+                'panel_nav_active' => 'master_panel',
+                'main_nav_active' => 'master_main',
+                'sub_nav_active' => 'insurance_provider_list',
+                'user_permission' => $user_permission,
+                'image' => ""
+            );
+
+            return View::make('setting_en.insurance_provider', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     public function addInsuranceProvider() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        $viewData = array(
-            'title' => trans('app.menus.master.add_insurance_provider'),
-            'panel_nav_active' => 'master_panel',
-            'main_nav_active' => 'master_main',
-            'sub_nav_active' => 'insurance_provider_list',
-            'user_permission' => $user_permission,
-            'image' => ""
-        );
+        $permission = false;
+        foreach ($user_permission as $permissions) {
+            if ($permissions->submodule_id == 48) {
+                $permission = $permissions->insert_permission;
+            }
+        }
 
-        return View::make('setting_en.add_insurance_provider', $viewData);
+        if ($permission) {
+            $viewData = array(
+                'title' => trans('app.menus.master.add_insurance_provider'),
+                'panel_nav_active' => 'master_panel',
+                'main_nav_active' => 'master_main',
+                'sub_nav_active' => 'insurance_provider_list',
+                'user_permission' => $user_permission,
+                'image' => ""
+            );
+
+            return View::make('setting_en.add_insurance_provider', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     public function submitInsuranceProvider() {
@@ -4448,10 +4543,10 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($providers->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveInsuranceProvider(\'' . $providers->id . '\')">'.trans('app.forms.inactive').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveInsuranceProvider(\'' . $providers->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeInsuranceProvider(\'' . $providers->id . '\')">'.trans('app.forms.active').'</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeInsuranceProvider(\'' . $providers->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateInsuranceProvider', $providers->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsuranceProvider(\'' . $providers->id . '\')"><i class="fa fa-trash"></i></button>';
@@ -4561,17 +4656,36 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $insuranceProvider = InsuranceProvider::find($id);
 
-        $viewData = array(
-            'title' => trans('app.menus.master.edit_insurance_provider'),
-            'panel_nav_active' => 'master_panel',
-            'main_nav_active' => 'master_main',
-            'sub_nav_active' => 'insurance_provider_list',
-            'user_permission' => $user_permission,
-            'insuranceProvider' => $insuranceProvider,
-            'image' => ""
-        );
+        $permission = false;
+        foreach ($user_permission as $permissions) {
+            if ($permissions->submodule_id == 48) {
+                $permission = $permissions->update_permission;
+            }
+        }
 
-        return View::make('setting_en.update_insurance_provider', $viewData);
+        if ($permission) {
+            $viewData = array(
+                'title' => trans('app.menus.master.edit_insurance_provider'),
+                'panel_nav_active' => 'master_panel',
+                'main_nav_active' => 'master_main',
+                'sub_nav_active' => 'insurance_provider_list',
+                'user_permission' => $user_permission,
+                'insuranceProvider' => $insuranceProvider,
+                'image' => ""
+            );
+
+            return View::make('setting_en.update_insurance_provider', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     public function submitUpdateInsuranceProvider() {
@@ -4600,4 +4714,5 @@ class SettingController extends BaseController {
             }
         }
     }
+
 }

@@ -9,7 +9,7 @@
         <div class="margin-auto text-center max-width-500">
             <h1>{{$title}}</h1>
             <h6>{{ trans('app.page404.body') }}</h6>
-            <a class="btn btn-primary" href="{{ URL::action('AdminController@home') }}">{{ trans('app.page404.action') }}</a>
+            <button class="btn btn-primary" onclick="window.history.go(-1); return false;">{{ trans('app.page404.action') }}</button>
         </div>
     </div>
     <!-- End Page 404 -->

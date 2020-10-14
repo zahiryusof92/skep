@@ -3,8 +3,19 @@
 @section('content')
 
 <?php
-$insert_permission = 1;
-$update_permission = 1;
+$insert_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 45) {
+        $insert_permission = $permissions->insert_permission;
+    }
+}
+
+$update_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 45) {
+        $update_permission = $permissions->update_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -15,8 +26,8 @@ $update_permission = 1;
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AgmController@addDefect') }}'" type="button" class="btn btn-primary margin-bottom-25">
+                    <?php if ($insert_permission) { ?>
+                        <button onclick="window.location = '{{ URL::action('AdminController@addDefect') }}'" type="button" class="btn btn-primary margin-bottom-25">
                             {{ trans('app.buttons.add_defect') }}
                         </button>
                     <?php } ?>
@@ -55,7 +66,7 @@ $update_permission = 1;
                                 <th style="width:20%;">{{ trans('app.forms.defect_name') }}</th>
                                 <th style="width:35%;">{{ trans('app.forms.defect_description') }}</th>
                                 <th style="width:35%;">{{ trans('app.forms.status') }}</th>
-                                <?php if ($update_permission == 1) { ?>
+                                <?php if ($update_permission) { ?>
                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                     <?php } ?>
                             </tr>
@@ -75,7 +86,7 @@ $update_permission = 1;
     var oTable;
     $(defect).ready(function () {
         oTable = $('#defect').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getDefect')}}",
+            "sAjaxSource": "{{URL::action('AdminController@getDefect')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "order": [[0, "asc"]],
             "responsive": true,
@@ -104,7 +115,7 @@ $update_permission = 1;
             closeOnConfirm: true
         }, function () {
             $.ajax({
-                url: "{{ URL::action('AgmController@deleteDefect') }}",
+                url: "{{ URL::action('AdminController@deleteDefect') }}",
                 type: "POST",
                 data: {
                     id: id

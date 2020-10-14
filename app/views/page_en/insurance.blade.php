@@ -3,8 +3,19 @@
 @section('content')
 
 <?php
-$insert_permission = 1;
-$update_permission = 1;
+$insert_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 46) {
+        $insert_permission = $permissions->insert_permission;
+    }
+}
+
+$update_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 46) {
+        $update_permission = $permissions->update_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -15,8 +26,8 @@ $update_permission = 1;
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AgmController@addInsurance') }}'" type="button" class="btn btn-primary margin-bottom-25">
+                    <?php if ($insert_permission) { ?>
+                        <button onclick="window.location = '{{ URL::action('AdminController@addInsurance') }}'" type="button" class="btn btn-primary margin-bottom-25">
                             {{ trans('app.buttons.add_insurance') }}
                         </button>
                     <?php } ?>
@@ -53,7 +64,7 @@ $update_permission = 1;
                                 <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
                                 <th style="width:25%;">{{ trans('app.forms.insurance_provider') }}</th>
                                 <th style="width:40%;">{{ trans('app.forms.remarks') }}</th>
-                                <?php if ($update_permission == 1) { ?>
+                                <?php if ($update_permission) { ?>
                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                     <?php } ?>
                             </tr>
@@ -73,7 +84,7 @@ $update_permission = 1;
     var oTable;
     $(insurance).ready(function () {
         oTable = $('#insurance').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getInsurance')}}",
+            "sAjaxSource": "{{URL::action('AdminController@getInsurance')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "order": [[0, "asc"]],
             "responsive": true,
@@ -102,7 +113,7 @@ $update_permission = 1;
             closeOnConfirm: true
         }, function () {
             $.ajax({
-                url: "{{ URL::action('AgmController@deleteInsurance') }}",
+                url: "{{ URL::action('AdminController@deleteInsurance') }}",
                 type: "POST",
                 data: {
                     id: id

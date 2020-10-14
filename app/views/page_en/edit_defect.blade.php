@@ -3,7 +3,12 @@
 @section('content')
 
 <?php
-$update_permission = 1;
+$update_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 45) {
+        $update_permission = $permissions->update_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -87,7 +92,7 @@ $update_permission = 1;
                                     <div id="validation-errors_defect_attachment"></div>
                                     @if ($defect->attachment_url != "")
                                     <a href="{{asset($defect->attachment_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
-                                    <?php if ($update_permission == 1) { ?>
+                                    <?php if ($update_permission) { ?>
                                         <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDefectAttachment('{{$defect->id}}')"><i class="fa fa-times"></i></button>
                                     <?php } ?>
                                     @endif
@@ -97,7 +102,7 @@ $update_permission = 1;
                     </form>
 
                     <form>
-                        @if (Auth::user()->getAdmin())
+                        @if (Auth::user()->getAdmin() || strtolower(Auth::user()->getRole->name) == 'cob manager' || strtolower(Auth::user()->getRole->name) == 'cob')
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -116,11 +121,11 @@ $update_permission = 1;
                         @endif
                         
                         <div class="form-actions">
-                            <?php if ($update_permission == 1) { ?>
+                            <?php if ($update_permission) { ?>
                                 <input type="hidden" id="defect_attachment_url" value="{{$defect->attachment_url}}"/>
                                 <button type="button" class="btn btn-primary" id="submit_button" onclick="submitEditDefect()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AgmController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
+                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
                             <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                         </div>
                     </form>
@@ -217,7 +222,7 @@ $update_permission = 1;
 
         if (error == 0) {
             $.ajax({
-                url: "{{ URL::action('AgmController@submitUpdateDefect') }}",
+                url: "{{ URL::action('AdminController@submitUpdateDefect') }}",
                 type: "POST",
                 data: {
                     file_id: file_id,
@@ -234,7 +239,7 @@ $update_permission = 1;
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AgmController@defect") }}';
+                            window.location = '{{URL::action("AdminController@defect") }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
@@ -261,7 +266,7 @@ $update_permission = 1;
             closeOnConfirm: true
         }, function () {
             $.ajax({
-                url: "{{ URL::action('AgmController@deleteDefectAttachment') }}",
+                url: "{{ URL::action('AdminController@deleteDefectAttachment') }}",
                 type: "POST",
                 data: {
                     id: id

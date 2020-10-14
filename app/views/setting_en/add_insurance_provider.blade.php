@@ -3,7 +3,12 @@
 @section('content')
 
 <?php
-$insert_permission = 1;
+$insert_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 48) {
+        $insert_permission = $permissions->insert_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -56,7 +61,7 @@ $insert_permission = 1;
                         </div>
 
                         <div class="form-actions">
-                            <?php if ($insert_permission == 1) { ?>
+                            <?php if ($insert_permission) { ?>
                             <button type="button" class="btn btn-primary" id="submit_button" onclick="submitInsuranceProvider()">{{ trans('app.forms.save') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("SettingController@defectCategory") }}'">{{ trans('app.forms.cancel') }}</button>

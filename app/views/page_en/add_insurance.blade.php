@@ -3,7 +3,12 @@
 @section('content')
 
 <?php
-$update_permission = 1;
+$insert_permission = false;
+foreach ($user_permission as $permissions) {
+    if ($permissions->submodule_id == 46) {
+        $insert_permission = $permissions->insert_permission;
+    }
+}
 ?>
 
 <div class="page-content-inner">
@@ -30,7 +35,7 @@ $update_permission = 1;
                                     <select id="file_id" class="form-control select2" name="file_id">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($files as $file_no)
-                                        <option value="{{$file_no->id}}"  {{ $insurance->file_id == $file_no->id ? 'selected' : '' }}>{{$file_no->file_no}}</option>
+                                        <option value="{{$file_no->id}}">{{$file_no->file_no}}</option>
                                         @endforeach
                                     </select>
                                     <div id="file_id_error" style="display:none;"></div>
@@ -45,7 +50,7 @@ $update_permission = 1;
                                     <select id="insurance_provider" class="form-control select2" name="insurance_provider">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($insuranceProvider as $provider)
-                                        <option value="{{ $provider->id }}"  {{ $insurance->insurance_provider_id == $provider->id ? 'selected' : '' }}>{{ $provider->name }}</option>
+                                        <option value="{{ $provider->id }}">{{ $provider->name }}</option>
                                         @endforeach
                                     </select>
                                     <div id="insurance_provider_error" style="display:none;"></div>
@@ -57,17 +62,17 @@ $update_permission = 1;
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">{{ trans('app.forms.remarks') }}</label>
-                                    <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}">{{ $insurance->remarks }}</textarea>
+                                    <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}"></textarea>
                                     <div id="remarks_error" style="display:none;"></div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-actions">
-                            <?php if ($update_permission == 1) { ?>
-                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitEditDefect()">{{ trans('app.forms.submit') }}</button>
+                            <?php if ($insert_permission) { ?>
+                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitAddInsurance()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AgmController@insurance') }}'">{{ trans('app.forms.cancel') }}</button>
+                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@insurance') }}'">{{ trans('app.forms.cancel') }}</button>
                             <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                         </div>
                     </form>
@@ -80,7 +85,7 @@ $update_permission = 1;
 
 <!-- Page Scripts -->
 <script>
-    function submitEditDefect() {
+    function submitAddInsurance() {
         $("#loading").css("display", "inline-block");
         $("#submit_button").attr("disabled", "disabled");
         $("#cancel_button").attr("disabled", "disabled");
@@ -104,21 +109,20 @@ $update_permission = 1;
 
         if (error == 0) {
             $.ajax({
-                url: "{{ URL::action('AgmController@submitUpdateInsurance') }}",
+                url: "{{ URL::action('AdminController@submitAddInsurance') }}",
                 type: "POST",
                 data: {
                     file_id: file_id,
                     insurance_provider: insurance_provider,
-                    remarks: remarks,
-                    id: "{{ $insurance->id }}"
+                    remarks: remarks
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AgmController@insurance") }}';
+                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                            window.location = '{{URL::action("AdminController@insurance") }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
