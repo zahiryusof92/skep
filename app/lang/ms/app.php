@@ -20,7 +20,7 @@ return array(
     ),
     "page404" => array(
         "body" => "Halaman yang anda cari tidak wujud. Mungkia ia sudah dikeluarkan atau telah dipadam. Sebagai alternatif, sila kembali ke halaman utama.",
-        "action" => "KEMBALI KE HALAMAN UTAMA"
+        "action" => "KEMBALI"
     ),
     "menus" => array(
         "home" => "Halaman Utama",
@@ -158,7 +158,15 @@ return array(
             "rating_summary_report" => "Laporan Ringkasan Penilaian Bintang",
             "management_summary_report" => "Laporan Ringkasan Pengurusan",
             "cob_file_report" => "Fail COB / Laporan % Pengurusan",
-            "purchaser" => "Pembeli"
+            "purchaser" => "Pembeli",
+            "complaint" => "Aduan",
+            "insurance" => "Insurans",
+            "collection" => "Kutipan",
+            "council" => "Council",
+            "dun" => "DUN",
+            "parliment" => "Parlimen",
+            "vp" => "Sebelum VP vs Selepas VP",
+            "management_list" => "Senarai Pengurusan",
         ),
         "agm" => array(
             "submission" => "Penyerahan AGM",
@@ -357,9 +365,9 @@ return array(
         "more_than_12_months" => "> 12 Bulan",
         "more_than_15_months" => "> 15 Bulan",
         "designation_reminder" => "Peringatan Jawatan",
-        "total_development_area" => "Jumlah Kawasan Pembangunan: :total",
-        "total_sample_percentage" => "Jumlah Sampel & Peratusan: :total",
-        "total_no_information" => "Tiada Maklumat: :total",
+        "total_development_area" => "Jumlah Kawasan Pembangunan:",
+        "total_sample_percentage" => "Jumlah Sampel & Peratusan:",
+        "total_no_information" => "Tiada Maklumat:",
         "page" => "Halaman",
         "access" => "Akses",
         "insert" => "Masukkan",
@@ -526,7 +534,11 @@ return array(
         "upload_defect_attachment" => "Muatnaik Lampiran Aduan",
         "recent_update" => "Terakhir Dikemaskini",
         "agm_due_date" => "Tarikh Akhir AGM",
-        "scheme_name" => "Nama Skim"
+        "scheme_name" => "Nama Skim",
+        "all_cob" => "Semua COB",
+        "type" => "Jenis",
+        "type_name" => "Nama",
+        "insurance" => "Insurans"
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",
@@ -812,5 +824,7 @@ return array(
         "add_defect_category" => "Tambah Kategori Kerosakan",
         "add_insurance_provider" => "Tambah Penyedia Insurans",
         "add_defect" => "Tambah Aduan",
+        "add_insurance" => "Tambah Insurans",
+        "reset" => "Reset",
     )
 );

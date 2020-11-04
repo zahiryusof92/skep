@@ -47,6 +47,9 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link" href="{{URL::action('AdminController@document', $file->id)}}">{{ trans('app.forms.document') }}</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
+                            </li>
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="management" role="tabpanel">
@@ -114,7 +117,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="jmb_city">
+                                                            <select class="form-control select2" id="jmb_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}">{{$cities->description}}</option>
@@ -133,7 +136,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="jmb_state">
+                                                            <select class="form-control select2" id="jmb_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}">{{$states->name}}</option>
@@ -144,7 +147,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="jmb_country">
+                                                            <select class="form-control select2" id="jmb_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}">{{$countries->name}}</option>
@@ -241,7 +244,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="jmb_city">
+                                                            <select class="form-control select2" id="jmb_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}" {{($management_jmb->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
@@ -260,7 +263,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="jmb_state">
+                                                            <select class="form-control select2" id="jmb_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}" {{($management_jmb->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
@@ -271,7 +274,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="jmb_country">
+                                                            <select class="form-control select2" id="jmb_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}" {{($management_jmb->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
@@ -384,7 +387,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="mc_city">
+                                                            <select class="form-control select2" id="mc_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}">{{$cities->description}}</option>
@@ -403,7 +406,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="mc_state">
+                                                            <select class="form-control select2" id="mc_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}">{{$states->name}}</option>
@@ -414,7 +417,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="mc_country">
+                                                            <select class="form-control select2" id="mc_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}">{{$countries->name}}</option>
@@ -525,7 +528,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="mc_city">
+                                                            <select class="form-control select2" id="mc_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}" {{($management_mc->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
@@ -544,7 +547,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="mc_state">
+                                                            <select class="form-control select2" id="mc_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}" {{($management_mc->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
@@ -555,7 +558,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="mc_country">
+                                                            <select class="form-control select2" id="mc_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}" {{($management_mc->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
@@ -602,7 +605,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.appointed_by') }}</label>
-                                                            <select class="form-control" id="agent_selected_by">
+                                                            <select class="form-control select2" id="agent_selected_by">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 <option value="developer">{{ trans('app.forms.developer') }}</option>
                                                                 <option value="cob">{{ trans('app.forms.cob') }}</option>
@@ -616,7 +619,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.name') }}</label>
-                                                            <select class="form-control" id="agent_name">
+                                                            <select class="form-control select2" id="agent_name">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($agent as $agents)
                                                                 <option value="{{$agents->id}}">{{$agents->name}}</option>
@@ -651,7 +654,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="agent_city">
+                                                            <select class="form-control select2" id="agent_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}">{{$cities->description}}</option>
@@ -670,7 +673,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="agent_state">
+                                                            <select class="form-control select2" id="agent_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}">{{$states->name}}</option>
@@ -681,7 +684,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="agent_country">
+                                                            <select class="form-control select2" id="agent_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}">{{$countries->name}}</option>
@@ -726,7 +729,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.appointed_by') }}</label>
-                                                            <select class="form-control" id="agent_selected_by">
+                                                            <select class="form-control select2" id="agent_selected_by">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 <option value="developer" {{($management_agent->selected_by == "developer" ? " selected" : "")}}>{{ trans('app.forms.developer') }}</option>
                                                                 <option value="cob" {{($management_agent->selected_by == "cob" ? " selected" : "")}}>{{ trans('app.forms.cob') }}</option>
@@ -740,7 +743,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.name') }}</label>
-                                                            <select class="form-control" id="agent_name">
+                                                            <select class="form-control select2" id="agent_name">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($agent as $agents)
                                                                 <option value="{{$agents->id}}" {{($management_agent->agent == $agents->id ? " selected" : "")}}>{{$agents->name}}</option>
@@ -775,7 +778,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="agent_city">
+                                                            <select class="form-control select2" id="agent_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}" {{($management_agent->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
@@ -794,7 +797,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="agent_state">
+                                                            <select class="form-control select2" id="agent_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}" {{($management_agent->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
@@ -805,7 +808,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="agent_country">
+                                                            <select class="form-control select2" id="agent_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}" {{($management_agent->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
@@ -882,7 +885,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="others_city">
+                                                            <select class="form-control select2" id="others_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}">{{$cities->description}}</option>
@@ -901,7 +904,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="others_state">
+                                                            <select class="form-control select2" id="others_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}">{{$states->name}}</option>
@@ -912,7 +915,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="others_country">
+                                                            <select class="form-control select2" id="others_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}">{{$countries->name}}</option>
@@ -987,7 +990,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="others_city">
+                                                            <select class="form-control select2" id="others_city">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
                                                                 <option value="{{$cities->id}}" {{($management_others->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
@@ -1006,7 +1009,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="others_state">
+                                                            <select class="form-control select2" id="others_state">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
                                                                 <option value="{{$states->id}}" {{($management_others->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
@@ -1017,7 +1020,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="others_country">
+                                                            <select class="form-control select2" id="others_country">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
                                                                 <option value="{{$countries->id}}" {{($management_others->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>

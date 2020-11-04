@@ -47,6 +47,9 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link" href="{{URL::action('AdminController@document', $file->id)}}">{{ trans('app.forms.document') }}</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
+                            </li>
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="monitoring" role="tabpanel">
@@ -109,7 +112,7 @@ foreach ($user_permission as $permission) {
                                                         <label class="form-control-label">{{ trans('app.forms.financial_report_start_month') }}</label>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <select class="form-control" id="commercial_sinking_fund_option">
+                                                        <select class="form-control select2" id="commercial_sinking_fund_option">
                                                             <option value="0" selected="">{{ trans('app.forms.all') }}</option>
                                                             <option value="1">{{ trans('app.forms.january') }}</option>
                                                             <option value="2">{{ trans('app.forms.february') }}</option>
@@ -167,7 +170,7 @@ foreach ($user_permission as $permission) {
                                                         <label class="form-control-label">{{ trans('app.forms.financial_report_start_month') }}</label>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <select class="form-control" id="commercial_sinking_fund_option">
+                                                        <select class="form-control select2" id="commercial_sinking_fund_option">
                                                             <option value="0" selected="">{{ trans('app.forms.all') }}</option>
                                                             <option value="1">{{ trans('app.forms.january') }}</option>
                                                             <option value="2">{{ trans('app.forms.february') }}</option>

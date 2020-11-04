@@ -43,7 +43,7 @@ $company = Company::find(Auth::user()->company_id);
                                         <p>{{ $cob_name}}</p>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.file_no') }}</label>
                                         <input type="hidden" name="file_no" value="{{ $file_no }}"/>
@@ -72,7 +72,7 @@ $company = Company::find(Auth::user()->company_id);
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <div class="form-group">
                                         <label>&nbsp;</label><br/>
                                         <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
@@ -91,30 +91,30 @@ $company = Company::find(Auth::user()->company_id);
                             <table class="table table-hover nowrap" id="purchaser_list" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.scheme_name') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.unit_share') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.buyer') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
-                                        <th style="width:15%;">{{ trans('app.forms.email') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.race') }}</th>
+                                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.cob') }}</th>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.scheme_name') }}</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.unit_number') }}</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.unit_share') }}</th>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.buyer') }}</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.phone_number') }}</th>
+                                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.email') }}</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.race') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if ($purchaser)
                                     @foreach ($purchaser as $purchasers)
                                     <tr>
-                                        <td>{{ $purchasers->short_name }}</td>
-                                        <td>{{ $purchasers->file_no }}</td>
-                                        <td>{{ $purchasers->strata_name }}</td>
+                                        <td>{{ $purchasers->file_id ? $purchasers->file->company->short_name : '-' }}</td>
+                                        <td>{{ $purchasers->file_id ? $purchasers->file->file_no : '-' }}</td>
+                                        <td>{{ $purchasers->file_id ? $purchasers->file->strata->name : '-' }}</td>
                                         <td>{{ $purchasers->unit_no }}</td>
                                         <td>{{ $purchasers->unit_share }}</td>
                                         <td>{{ $purchasers->owner_name }}</td>
                                         <td>{{ $purchasers->phone_no }}</td>
                                         <td>{{ $purchasers->email }}</td>
-                                        <td>{{ $purchasers->race_name }}</td>
+                                        <td>{{ $purchasers->race_id ? $purchasers->race->name_en : '-' }}</td>
                                     </tr>
                                     @endforeach
                                     @else

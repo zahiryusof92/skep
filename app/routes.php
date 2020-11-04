@@ -40,15 +40,14 @@ Route::get('/editProfile', 'UserController@editProfile')->before('authMember');
 Route::post('/submitEditProfile', 'UserController@submitEditProfile')->before('authMember');
 
 //home
-Route::get('/home', 'AdminController@home')->before('authMember');
-Route::get('/getAGMRemainder', 'AdminController@getAGMRemainder')->before('authMember');
-Route::get('/getNeverAGM', 'AdminController@getNeverAGM')->before('authMember');
-Route::get('/getAGM12Months', 'AdminController@getAGM12Months')->before('authMember');
-Route::get('/getAGM15Months', 'AdminController@getAGM15Months')->before('authMember');
-Route::get('/getMemoHome', 'AdminController@getMemoHome')->before('authMember');
-Route::post('/getMemoDetails', 'AdminController@getMemoDetails')->before('authMember');
-
-Route::get('/getDesignationRemainder', 'AgmController@getDesignationRemainder')->before('authMember');
+Route::get('/home', 'HomeController@home')->before('authMember');
+Route::get('/home/getAGMRemainder', 'HomeController@getAGMRemainder')->before('authMember');
+Route::get('/home/getNeverAGM', 'HomeController@getNeverAGM')->before('authMember');
+Route::get('/home/getAGM12Months', 'HomeController@getAGM12Months')->before('authMember');
+Route::get('/home/getAGM15Months', 'HomeController@getAGM15Months')->before('authMember');
+Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMember');
+Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
+Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 
 // --- COB Maintenance --- //
 //file prefix
@@ -231,6 +230,15 @@ Route::post('/deleteDocument/{id}', 'AdminController@deleteDocument')->before('a
 Route::post('/deleteDocumentFile', 'AdminController@deleteDocumentFile')->before('authMember');
 Route::post('/uploadDocumentFile', 'FileController@uploadDocumentFile')->before('authMember');
 
+//insurance
+Route::get('/insurance/{id}', 'AdminController@insurance')->before('authMember');
+Route::get('/getInsurance/{id}', 'AdminController@getInsurance')->before('authMember');
+Route::get('/addInsurance/{id}', 'AdminController@addInsurance')->before('authMember');
+Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before('authMember');
+Route::get('/updateInsurance/{id}/{file_id}', 'AdminController@updateInsurance')->before('authMember');
+Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
+Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
+
 //upload csv
 Route::get('/update/importBuyer/{id}', 'AdminController@importBuyer')->before('authMember');
 Route::post('/uploadBuyerCSVAction/{id}', 'FileController@uploadBuyerCSVAction')->before('authMember');
@@ -334,7 +342,7 @@ Route::post('/deleteAJK', 'AgmController@deleteAJK')->before('authMember');
 
 //Purchaser Submission
 Route::get('/purchaser', 'AgmController@purchaser')->before('authMember');
-Route::post('/getPurchaser', 'AgmController@getPurchaser')->before('authMember');
+Route::get('/getPurchaser', 'AgmController@getPurchaser')->before('authMember');
 Route::get('/addPurchaser', 'AgmController@addPurchaser')->before('authMember');
 Route::post('/submitPurchaser', 'AgmController@submitPurchaser')->before('authMember');
 Route::get('/editPurchaser/{id}', 'AgmController@editPurchaser')->before('authMember');
@@ -389,15 +397,6 @@ Route::post('/submitUpdateDefect', 'AdminController@submitUpdateDefect')->before
 Route::post('/deleteDefect/{id}', 'AdminController@deleteDefect')->before('authMember');
 Route::post('/deleteDefectAttachment', 'AdminController@deleteDefectAttachment')->before('authMember');
 Route::post('/uploadDefectAttachment', 'FileController@uploadDefectAttachment')->before('authMember');
-
-//insurance
-Route::get('/insurance', 'AdminController@insurance')->before('authMember');
-Route::get('/getInsurance', 'AdminController@getInsurance')->before('authMember');
-Route::get('/addInsurance', 'AdminController@addInsurance')->before('authMember');
-Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before('authMember');
-Route::get('/updateInsurance/{id}', 'AdminController@updateInsurance')->before('authMember');
-Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
-Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
 
 ########################## Master Setup ##########################
 //area
@@ -638,7 +637,6 @@ Route::get('/reporting/managementSummary', 'AdminController@managementSummary')-
 //cob file / management
 Route::get('/reporting/cobFileManagement', 'AdminController@cobFileManagement')->before('authMember');
 
-
 // strata profile
 Route::get('/reporting/strataProfile', 'ReportController@strataProfile')->before('authMember');
 Route::get('/reporting/getStrataProfile', 'ReportController@getStrataProfile')->before('authMember');
@@ -648,6 +646,40 @@ Route::get('/print/strataProfile/{id}', 'PrintController@printStrataProfile')->b
 // owner tenant
 Route::get('/reporting/ownerTenant', 'ReportController@ownerTenant')->before('authMember');
 Route::get('/print/ownerTenant/file_id={id}', 'PrintController@printOwnerTenant')->before('authMember');
+
+// insurance
+Route::get('/reporting/insurance', 'ReportController@insurance')->before('authMember');
+Route::get('/print/insurance/file_id={id}', 'PrintController@printInsurance')->before('authMember');
+
+// complaint
+Route::get('/reporting/complaint', 'ReportController@complaint')->before('authMember');
+Route::get('/print/complaint/file_id={id}', 'PrintController@printComplaint')->before('authMember');
+
+// collection
+Route::get('/reporting/collection', 'ReportController@collection')->before('authMember');
+Route::get('/print/collection/file_id={id}', 'PrintController@printCollection')->before('authMember');
+
+// council
+Route::get('/reporting/council', 'ReportController@council')->before('authMember');
+Route::get('/print/council/cob_id={id}', 'PrintController@printCouncil')->before('authMember');
+
+// dun
+Route::get('/reporting/dun', 'ReportController@dun')->before('authMember');
+Route::get('/print/dun/cob_id={id}', 'PrintController@printDun')->before('authMember');
+
+// parliment
+Route::get('/reporting/parliment', 'ReportController@parliment')->before('authMember');
+Route::get('/print/parliment/cob_id={id}', 'PrintController@printParliment')->before('authMember');
+
+// vp
+Route::get('/reporting/vp', 'ReportController@vp')->before('authMember');
+Route::get('/print/vp', 'PrintController@printVp')->before('authMember');
+
+// management list
+Route::get('/reporting/management', 'ReportController@management')->before('authMember');
+Route::post('/reporting/managementList', 'ReportController@managementList')->before('authMember');
+Route::get('/reporting/getManagementList', 'ReportController@getManagementList')->before('authMember');
+Route::post('/print/managementList', 'PrintController@printManagementList')->before('authMember');
 
 // -- COB -- //
 Route::get('cob/get/{id}', 'CobController@get');

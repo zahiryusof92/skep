@@ -3,10 +3,11 @@
 @section('content')
 
 <?php
-$insert_permission = false;
-foreach ($user_permission as $permissions) {
-    if ($permissions->submodule_id == 46) {
-        $insert_permission = $permissions->insert_permission;
+$update_permission = 0;
+
+foreach ($user_permission as $permission) {
+    if ($permission->submodule_id == 3) {
+        $update_permission = $permission->update_permission;
     }
 }
 ?>
@@ -19,63 +20,89 @@ foreach ($user_permission as $permissions) {
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-12">
-                    <form class="form-horizontal">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
-                                </div>
-                            </div>
-                        </div>
+                    <h6>{{ trans('app.forms.file_no') }}: {{$file->file_no}}</h6>
+                    <div id="update_files_lists">
+                        <ul class="nav nav-pills nav-justified" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@house', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@strata', $file->id)}}">{{ trans('app.forms.developed_area') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@management', $file->id)}}">{{ trans('app.forms.management') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@monitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@scoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@buyer', $file->id)}}">{{ trans('app.forms.buyer_list') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@document', $file->id)}}">{{ trans('app.forms.document') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active">{{ trans('app.forms.insurance') }}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content padding-vertical-20">
+                            <div class="tab-pane active" id="update_insurance" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <form class="form-horizontal">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_id" class="form-control select2" name="file_id">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $file_no)
-                                        <option value="{{$file_no->id}}">{{$file_no->file_no}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="file_id_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><span style="color: red;">*</span> {{ trans('app.forms.insurance_provider') }}</label>
+                                                        <select id="insurance_provider" class="form-control select2" name="insurance_provider">
+                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                            @foreach ($insuranceProvider as $provider)
+                                                            <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div id="insurance_provider_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.insurance_provider') }}</label>
-                                    <select id="insurance_provider" class="form-control select2" name="insurance_provider">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($insuranceProvider as $provider)
-                                        <option value="{{ $provider->id }}">{{ $provider->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="insurance_provider_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">{{ trans('app.forms.remarks') }}</label>
-                                    <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}"></textarea>
-                                    <div id="remarks_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{ trans('app.forms.remarks') }}</label>
+                                                        <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}"></textarea>
+                                                        <div id="remarks_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                        <div class="form-actions">
-                            <?php if ($insert_permission) { ?>
-                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitAddInsurance()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@insurance') }}'">{{ trans('app.forms.cancel') }}</button>
-                            <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                            <div class="form-actions">
+                                                <?php if ($update_permission) { ?>
+                                                    <input type="hidden" id="file_id" name="file_id" value="{{ $file->id }}"/>
+                                                    <button type="button" class="btn btn-primary" id="submit_button" onclick="submitAddInsurance()">{{ trans('app.forms.submit') }}</button>
+                                                <?php } ?>
+                                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@insurance', ['All']) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,7 +112,19 @@ foreach ($user_permission as $permissions) {
 
 <!-- Page Scripts -->
 <script>
+    var changes = false;
+    $('input, textarea, select').on('keypress change input', function () {
+        changes = true;
+    });
+
+    $(window).on('beforeunload', function () {
+        if (changes) {
+            return "{{ trans('app.confirmation.want_to_leave') }}";
+        }
+    });
+
     function submitAddInsurance() {
+        changes = false;
         $("#loading").css("display", "inline-block");
         $("#submit_button").attr("disabled", "disabled");
         $("#cancel_button").attr("disabled", "disabled");
@@ -122,7 +161,7 @@ foreach ($user_permission as $permissions) {
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@insurance") }}';
+                            window.location = '{{URL::action("AdminController@insurance", [$file->id]) }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

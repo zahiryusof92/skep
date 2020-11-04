@@ -178,9 +178,11 @@ foreach ($user_permission as $permission) {
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.cob') }}</label>
                                     <select id="company" name="company" class="form-control select2">
+                                        @if (count($cob) > 1)
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @endif
                                         @foreach ($cob as $companies)
-                                        <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                        <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -192,7 +194,7 @@ foreach ($user_permission as $permission) {
                                     <select id="file_no" name="file_no" class="form-control select2">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($files as $files_no)
-                                        <option value="{{ $files_no->id }}">{{ $files_no->file_no }}</option>
+                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -243,33 +245,23 @@ foreach ($user_permission as $permission) {
 <script>
     $(document).ready(function () {
         var oTable = $('#purchaser_list').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax": {
-                "url": "{{ URL::action('AgmController@getPurchaser') }}",
-                "dataType": "json",
-                "type": "POST"
-            },
-            "order": [[0, "asc"], [1, "asc"], [3, "asc"]],
-            "responsive": false,
-            "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('AgmController@getPurchaser') }}",
+            columns: [
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'files', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
+                {data: 'unit_no', name: 'buyer.unit_no'},
+                {data: 'unit_share', name: 'buyer.unit_share'},
+                {data: 'owner_name', name: 'buyer.owner_name'},
+                {data: 'phone_no', name: 'buyer.phone_no'},
+                {data: 'email', name: 'buyer.email'},
+                {data: 'race', name: 'race.name_en'},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
-            "columns": [
-                {"data": "cob"},
-                {"data": "file_no"},
-                {"data": "scheme_name"},
-                {"data": "unit_no"},
-                {"data": "unit_share"},
-                {"data": "owner_name"},
-                {"data": "phone_no"},
-                {"data": "email"},
-                {"data": "race"},
-                {"data": "action"}
-            ]
+            order: [[0, "asc"], [1, "asc"], [3, "asc"]],
+            responsive: false,
         });
 
         $('#company').on('change', function () {
@@ -291,7 +283,7 @@ foreach ($user_permission as $permission) {
             oTable.columns(1).search(this.value).draw();
         });
     });
-    
+
     function deletePurchaser(id) {
         swal({
             title: "{{ trans('app.confirmation.are_you_sure') }}",

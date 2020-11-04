@@ -148,13 +148,7 @@ if (count($strata) > 0) {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '{point.name}<br/><b>{point.percentage:.1f} %</b>',
-                    distance: -50,
-                    filter: {
-                        property: 'percentage',
-                        operator: '>',
-                        value: 4
-                    }
+                    format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
                 },
                 showInLegend: true
             }

@@ -17,377 +17,10 @@ class AdminController extends BaseController {
         }
     }
 
-    public function home() {
-        //get user permission
-        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        $stratas = 0;
-        $ratings = 0;
-        $fiveStars = 0;
-        $fourStars = 0;
-        $threeStars = 0;
-        $twoStars = 0;
-        $oneStars = 0;
-        $jmbs = 0;
-        $mcs = 0;
-        $agents = 0;
-        $otherss = 0;
-
-        $developer = Developer::where('is_deleted', 0)->count();
-
-        if (count($file) > 0) {
-            foreach ($file as $files) {
-                $strata = Strata::where('file_id', $files->id)->count();
-                $rating = Scoring::where('file_id', $files->id)->where('is_deleted', 0)->count();
-
-                $fiveStar = Scoring::where('file_id', $files->id)->where('is_deleted', 0)->where('total_score', '>=', 81)->where('total_score', '<=', 100)->count();
-                $fourStar = Scoring::where('file_id', $files->id)->where('is_deleted', 0)->where('total_score', '>=', 61)->where('total_score', '<=', 80)->count();
-                $threeStar = Scoring::where('file_id', $files->id)->where('is_deleted', 0)->where('total_score', '>=', 41)->where('total_score', '<=', 60)->count();
-                $twoStar = Scoring::where('file_id', $files->id)->where('is_deleted', 0)->where('total_score', '>=', 21)->where('total_score', '<=', 40)->count();
-                $oneStar = Scoring::where('file_id', $files->id)->where('is_deleted', 0)->where('total_score', '>=', 1)->where('total_score', '<=', 20)->count();
-
-                $stratas += $strata;
-                $ratings += $rating;
-                $fiveStars += $fiveStar;
-                $fourStars += $fourStar;
-                $threeStars += $threeStar;
-                $twoStars += $twoStar;
-                $oneStars += $oneStar;
-
-                $jmb = ManagementJMB::where('file_id', $files->id)->count();
-                $mc = ManagementMC::where('file_id', $files->id)->count();
-                $agent = ManagementAgent::where('file_id', $files->id)->count();
-                $others = ManagementOthers::where('file_id', $files->id)->count();
-
-                $jmbs += $jmb;
-                $mcs += $mc;
-                $agents += $agent;
-                $otherss += $others;
-            }
-        }
-
-        $viewData = array(
-            'title' => trans('app.app_name_short'),
-            'panel_nav_active' => 'home_panel',
-            'main_nav_active' => 'home_main',
-            'sub_nav_active' => 'home',
-            'user_permission' => $user_permission,
-            'strata' => $stratas,
-            'rating' => $ratings,
-            'fiveStar' => $fiveStars,
-            'fourStar' => $fourStars,
-            'threeStar' => $threeStars,
-            'twoStar' => $twoStars,
-            'oneStar' => $oneStars,
-            'developer' => $developer,
-            'jmb' => $jmbs,
-            'mc' => $mcs,
-            'agent' => $agents,
-            'others' => $otherss,
-            'image' => ""
-        );
-
-        return View::make('home_en.index', $viewData);
-    }
-
-    public function getAGMRemainder() {
-        $oneyear = strtotime("-1 Year");
-
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        if (count($file) > 0) {
-            $data = Array();
-            foreach ($file as $files) {
-                $agm_remainder = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-                if ($agm_remainder) {
-                    if ($agm_remainder->agm_date <= date('Y-m-d', $oneyear) && $agm_remainder->agm_date != "0000-00-00") {
-                        $button = "";
-                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
-                        $data_raw = array(
-                            $files->company->short_name,
-                            $files->file_no,
-                            ($files->strata ? $files->strata->name : ''),
-                            ($agm_remainder->agm_date ? date('d-M-Y', strtotime($agm_remainder->agm_date)) : ''),
-                            ($agm_remainder->agm_date ? date('d-M-Y', strtotime($agm_remainder->agm_date . " + 1 year")) : ''),
-                            $button
-                        );
-
-                        array_push($data, $data_raw);
-                    }
-                }
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
-    }
-
-    public function getNeverAGM() {
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        if (count($file) > 0) {
-            $data = Array();
-            foreach ($file as $files) {
-                $never_agm = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
-                if ($never_agm) {
-                    if ($never_agm->agm_date == "0000-00-00") {
-                        $data_raw = array(
-                            $files->company->short_name,
-                            $files->file_no,
-                            ($files->strata ? $files->strata->name : ''),
-                            $button
-                        );
-
-                        array_push($data, $data_raw);
-                    }
-                } else {
-                    $data_raw = array(
-                        $files->company->short_name,
-                        $files->file_no,
-                        ($files->strata ? $files->strata->name : ''),
-                        $button
-                    );
-
-                    array_push($data, $data_raw);
-                }
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
-    }
-
-    public function getAGM12Months() {
-        $twelveMonths = strtotime("-12 Months");
-
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        if (count($file) > 0) {
-            $data = Array();
-            foreach ($file as $files) {
-                $agm_more12months = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-                if ($agm_more12months) {
-                    if ($agm_more12months->agm_date <= date('Y-m-d', $twelveMonths) && $agm_more12months->agm_date != "0000-00-00") {
-                        $button = "";
-                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
-                        $data_raw = array(
-                            $files->company->short_name,
-                            $files->file_no,
-                            ($files->strata ? $files->strata->name : ''),
-                            ($agm_more12months->agm_date ? date('d-M-Y', strtotime($agm_more12months->agm_date)) : ''),
-                            ($agm_more12months->agm_date ? date('d-M-Y', strtotime($agm_more12months->agm_date . " + 1 year")) : ''),
-                            $button
-                        );
-
-                        array_push($data, $data_raw);
-                    }
-                }
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
-    }
-
-    public function getAGM15Months() {
-        $fifthteenMonths = strtotime("-15 Months");
-
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        if (count($file) > 0) {
-            $data = Array();
-            foreach ($file as $files) {
-                $agm_more15months = MeetingDocument::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('agm_date', 'desc')->first();
-                if ($agm_more15months) {
-                    if ($agm_more15months->agm_date <= date('Y-m-d', $fifthteenMonths) && $agm_more15months->agm_date != "0000-00-00") {
-                        $button = "";
-                        $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@monitoring', $files->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
-                        $data_raw = array(
-                            $files->company->short_name,
-                            $files->file_no,
-                            ($files->strata ? $files->strata->name : ''),
-                            ($agm_more15months->agm_date ? date('d-M-Y', strtotime($agm_more15months->agm_date)) : ''),
-                            ($agm_more15months->agm_date ? date('d-M-Y', strtotime($agm_more15months->agm_date . " + 1 year")) : ''),
-                            $button
-                        );
-
-                        array_push($data, $data_raw);
-                    }
-                }
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
-    }
-
-    public function getMemoHome() {
-        $memo = Memo::where('is_deleted', 0)->where('is_active', 1)->orderBy('id', 'desc')->get();
-
-        if (count($memo) > 0) {
-            $data = Array();
-            foreach ($memo as $memos) {
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . $memos->id . '\')">' . trans('app.forms.view') . '</button>&nbsp;';
-                $data_raw = array(
-                    $memos->subject,
-                    date('d-M-Y', strtotime($memos->memo_date)),
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
-    }
-
-    public function getMemoDetails() {
-        $data = Input::all();
-        if (Request::ajax()) {
-
-            $result = "";
-            $id = $data['id'];
-
-            $memo = Memo::find($id);
-
-            if (count($memo) > 0) {
-
-                $result .= "<div class='modal-header'>";
-                $result .= "<button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>";
-                $result .= "<h4 class='modal-title' id='myModalLabel'>" . ($memo->subject != "" ? $memo->subject : "-") . "</h4>";
-                $result .= "<h6 class='modal-title' id=''>" . (date('d-M-Y', strtotime($memo->memo_date)) != "" ? date('d-M-Y', strtotime($memo->memo_date)) : "-") . "</h6>";
-                $result .= "</div>";
-                $result .= "<div class='modal-body'>";
-                $result .= "<p>" . ($memo->description != "" ? $memo->description : "-") . "</p>";
-                $result .= "</div>";
-            } else {
-                $result = trans('app.errors.no_data_found');
-            }
-
-            print $result;
-        }
-    }
-
-    // --- COB Maintenance --- //
-    //file prefix
+// --- COB Maintenance --- //
+//file prefix
     public function filePrefix() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $viewData = array(
@@ -403,7 +36,7 @@ class AdminController extends BaseController {
     }
 
     public function addFilePrefix() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -444,7 +77,7 @@ class AdminController extends BaseController {
             $success = $fileprefix->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -518,7 +151,7 @@ class AdminController extends BaseController {
             $prefix->is_active = 0;
             $updated = $prefix->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -543,7 +176,7 @@ class AdminController extends BaseController {
             $prefix->is_active = 1;
             $updated = $prefix->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -568,7 +201,7 @@ class AdminController extends BaseController {
             $prefix->is_deleted = 1;
             $deleted = $prefix->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'COB File Prefix: ' . $prefix->description . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -584,7 +217,7 @@ class AdminController extends BaseController {
     }
 
     public function updateFilePrefix($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $prefix = FilePrefix::find($id);
 
@@ -616,7 +249,7 @@ class AdminController extends BaseController {
             $success = $fileprefix->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -631,9 +264,9 @@ class AdminController extends BaseController {
         }
     }
 
-    // add file
+// add file
     public function addFile() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
@@ -724,7 +357,7 @@ class AdminController extends BaseController {
                                         $created6 = $others->save();
 
                                         if ($created6) {
-                                            # Audit Trail
+# Audit Trail
                                             $remarks = $files->file_no . ' has been inserted.';
                                             $auditTrail = new AuditTrail();
                                             $auditTrail->module = "COB File";
@@ -762,9 +395,9 @@ class AdminController extends BaseController {
         }
     }
 
-    // file list
+// file list
     public function fileList() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -773,6 +406,7 @@ class AdminController extends BaseController {
         }
 
         $file = Files::where('is_deleted', 0)->get();
+        $year = Files::getVPYear();
 
         $viewData = array(
             'title' => trans('app.menus.cob.file_list'),
@@ -782,6 +416,7 @@ class AdminController extends BaseController {
             'user_permission' => $user_permission,
             'cob' => $cob,
             'file' => $file,
+            'year' => $year,
             'image' => ""
         );
 
@@ -791,73 +426,80 @@ class AdminController extends BaseController {
     public function getFileList() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', '!=', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0);
             } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', '!=', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', '!=', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0);
             } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', '!=', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0);
             }
         }
 
-        if (count($file) > 0) {
-            $data = Array();
-            foreach ($file as $files) {
-                $strata = Strata::where('file_id', $files->id)->first();
-                if (count($strata) > 0) {
-                    $strata_name = $strata->name;
-                } else {
-                    $strata_name = "";
-                }
-                $button = "";
-                if ($files->is_active == 1) {
-                    $is_active = trans('app.forms.yes');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $files->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                } else {
-                    $is_active = trans('app.forms.no');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                }
+        return Datatables::of($file)
+                        ->addColumn('cob', function ($model) {
+                            return ($model->company_id ? $model->company->short_name : '-');
+                        })
+                        ->editColumn('file_no', function ($model) {
+                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $model->id) . "'>" . $model->file_no . "</a>";
+                        })
+                        ->addColumn('strata', function ($model) {
+                            return ($model->strata_id ? $model->strata->name : '-');
+                        })
+                        ->addColumn('year', function ($model) {
+                            return ($model->strata->year != '0' ? $model->strata->year : '');
+                        })
+                        ->addColumn('active', function ($model) {
+                            if ($model->is_active == 1) {
+                                $is_active = trans('app.forms.yes');
+                            } else {
+                                $is_active = trans('app.forms.no');
+                            }
 
-                if (Auth::user()->role == 1) {
-                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $files->id . '" data-file_no="' . $files->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                }
+                            return $is_active;
+                        })
+                        ->addColumn('action', function ($model) {
+                            $button = '';
+                            if ($model->is_active == 1) {
+                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                            } else {
+                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            }
+                            if (Auth::user()->role == 1) {
+                                $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                            }
+                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
-//                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $files->id) . '\'">View <i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
-
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $files->id) . "'>" . $files->file_no . "</a>",
-                    $strata_name,
-                    $files->company->short_name,
-                    $files->year,
-                    $is_active,
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
+                            return $button;
+                        })
+                        ->make(true);
     }
 
-    // file list
+// file list
     public function fileListBeforeVP() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -866,6 +508,7 @@ class AdminController extends BaseController {
         }
 
         $file = Files::where('is_deleted', 0)->get();
+        $year = Files::getVPYear();
 
         $viewData = array(
             'title' => trans('app.menus.cob.file_list_before_vp'),
@@ -875,6 +518,7 @@ class AdminController extends BaseController {
             'user_permission' => $user_permission,
             'cob' => $cob,
             'file' => $file,
+            'year' => $year,
             'image' => ""
         );
 
@@ -884,68 +528,75 @@ class AdminController extends BaseController {
     public function getFileListBeforeVP() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_active', 2)
+                        ->where('files.is_deleted', 0);
             } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_active', 2)
+                        ->where('files.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.is_active', 2)
+                        ->where('files.is_deleted', 0);
             } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 2)->where('is_deleted', 0)->get();
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_active', 2)
+                        ->where('files.is_deleted', 0);
             }
         }
 
-        if (count($file) > 0) {
-            $data = Array();
-            foreach ($file as $files) {
-                $strata = Strata::where('file_id', $files->id)->first();
-                if (count($strata) > 0) {
-                    $strata_name = $strata->name;
-                } else {
-                    $strata_name = "";
-                }
-                $button = "";
-                if ($files->is_active == 1) {
-                    $is_active = trans('app.forms.yes');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $files->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                } else {
-                    $is_active = trans('app.forms.no');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $files->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                }
+        return Datatables::of($file)
+                        ->addColumn('cob', function ($model) {
+                            return ($model->company_id ? $model->company->short_name : '-');
+                        })
+                        ->editColumn('file_no', function ($model) {
+                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $model->id) . "'>" . $model->file_no . "</a>";
+                        })
+                        ->addColumn('strata', function ($model) {
+                            return ($model->strata_id ? $model->strata->name : '-');
+                        })
+                        ->addColumn('year', function ($model) {
+                            return ($model->strata->year != '0' ? $model->strata->year : '');
+                        })
+                        ->addColumn('active', function ($model) {
+                            if ($model->is_active == 1) {
+                                $is_active = trans('app.forms.yes');
+                            } else {
+                                $is_active = trans('app.forms.no');
+                            }
 
-                if (Auth::user()->role == 1) {
-                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $files->id . '" data-file_no="' . $files->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                }
+                            return $is_active;
+                        })
+                        ->addColumn('action', function ($model) {
+                            $button = '';
+                            if ($model->is_active == 1) {
+                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                            } else {
+                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            }
+                            if (Auth::user()->role == 1) {
+                                $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                            }
+                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
-//                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $files->id) . '\'">View <i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $files->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
-
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $files->id) . "'>" . $files->file_no . "</a>",
-                    $strata_name,
-                    $files->company->short_name,
-                    $files->year,
-                    $is_active,
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
+                            return $button;
+                        })
+                        ->make(true);
     }
 
     public function inactiveFileList() {
@@ -958,7 +609,7 @@ class AdminController extends BaseController {
             $files->is_active = 0;
             $updated = $files->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $files->file_no . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "COB File";
@@ -983,7 +634,7 @@ class AdminController extends BaseController {
             $files->is_active = 1;
             $updated = $files->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $files->file_no . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "COB File";
@@ -1015,28 +666,28 @@ class AdminController extends BaseController {
                     $management = Management::where('file_id', $files->id)->delete();
                     $monitor = Monitoring::where('file_id', $files->id)->delete();
                     $others = OtherDetails::where('file_id', $files->id)->delete();
-                    # Commercial Block
+# Commercial Block
                     $commercial = Commercial::where('file_id', $files->id)->delete();
-                    # Residential Block
+# Residential Block
                     $residential = Residential::where('file_id', $files->id)->delete();
-                    # Management JMB
+# Management JMB
                     $managementjmb = ManagementJMB::where('file_id', $files->id)->delete();
-                    # Management MC
+# Management MC
                     $managementmc = ManagementMC::where('file_id', $files->id)->delete();
-                    # Management Agent
+# Management Agent
                     $managementagent = ManagementAgent::where('file_id', $files->id)->delete();
-                    # Management Other
+# Management Other
                     $managementother = ManagementOthers::where('file_id', $files->id)->delete();
-                    # Meeting Document
+# Meeting Document
                     $meetingdocument = MeetingDocument::where('file_id', $files->id)->delete();
-                    # AJK Detail
+# AJK Detail
                     $ajkdetail = AJKDetails::where('file_id', $files->id)->delete();
-                    # Scoring
+# Scoring
                     $scoring = Scoring::where('file_id', $files->id)->delete();
-                    # Buyer List
+# Buyer List
                     $buyerlist = Buyer::where('file_id', $files->id)->delete();
 
-                    # Audit Trail
+# Audit Trail
                     $remarks = $files->file_no . ' has been deleted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "COB File";
@@ -1070,7 +721,7 @@ class AdminController extends BaseController {
                     $files->file_no = $data['file_no'];
                     $updated = $files->save();
                     if ($updated) {
-                        # Audit Trail
+# Audit Trail
                         $remarks = $files->file_no . ' has been updated.';
                         $auditTrail = new AuditTrail();
                         $auditTrail->module = "COB File";
@@ -1090,7 +741,7 @@ class AdminController extends BaseController {
     }
 
     public function viewHouse($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $house_scheme = HouseScheme::where('file_id', $file->id)->first();
@@ -1120,7 +771,7 @@ class AdminController extends BaseController {
     }
 
     public function house($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $house_scheme = HouseScheme::where('file_id', $file->id)->first();
@@ -1199,7 +850,7 @@ class AdminController extends BaseController {
                         $success = $house_scheme->save();
 
                         if ($success) {
-                            # Audit Trail
+# Audit Trail
                             $remarks = 'House Info (' . $files->file_no . ') has been updated.';
                             $auditTrail = new AuditTrail();
                             $auditTrail->module = "COB File";
@@ -1218,7 +869,7 @@ class AdminController extends BaseController {
     }
 
     public function viewStrata($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $strata = Strata::where('file_id', $file->id)->first();
@@ -1281,7 +932,7 @@ class AdminController extends BaseController {
     }
 
     public function strata($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $strata = Strata::where('file_id', $file->id)->first();
@@ -1467,21 +1118,21 @@ class AdminController extends BaseController {
                 $success = $strata->save();
 
                 if ($success) {
-                    //residential
+//residential
                     $residential_unit_no = $data['residential_unit_no'];
                     $residential_maintenance_fee = $data['residential_maintenance_fee'];
                     $residential_maintenance_fee_option = $data['residential_maintenance_fee_option'];
                     $residential_sinking_fund = $data['residential_sinking_fund'];
                     $residential_sinking_fund_option = $data['residential_sinking_fund_option'];
 
-                    //commercial
+//commercial
                     $commercial_unit_no = $data['commercial_unit_no'];
                     $commercial_maintenance_fee = $data['commercial_maintenance_fee'];
                     $commercial_maintenance_fee_option = $data['commercial_maintenance_fee_option'];
                     $commercial_sinking_fund = $data['commercial_sinking_fund'];
                     $commercial_sinking_fund_option = $data['commercial_sinking_fund_option'];
 
-                    //facility
+//facility
                     $management_office = $data['management_office'];
                     $management_office_unit = $data['management_office_unit'];
                     $swimming_pool = $data['swimming_pool'];
@@ -1579,7 +1230,7 @@ class AdminController extends BaseController {
                     $saved = $facility->save();
 
                     if ($saved) {
-                        # Audit Trail
+# Audit Trail
                         $file_name = Files::find($strata->file_id);
                         $remarks = 'Strata Info (' . $file_name->file_no . ') has been updated.';
                         $auditTrail = new AuditTrail();
@@ -1613,7 +1264,7 @@ class AdminController extends BaseController {
             $strata->file_url = "";
             $deleted = $strata->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($strata->file_id);
                 $remarks = 'Strata Info (' . $file_name->file_no . ') has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -1630,7 +1281,7 @@ class AdminController extends BaseController {
     }
 
     public function viewManagement($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $management = Management::where('file_id', $file->id)->first();
@@ -1668,7 +1319,7 @@ class AdminController extends BaseController {
     }
 
     public function management($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $management = Management::where('file_id', $file->id)->first();
@@ -1709,7 +1360,7 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            //jmb
+//jmb
             $is_jmb = $data['is_jmb'];
             $jmb_date_formed = $data['jmb_date_formed'];
             $jmb_certificate_no = $data['jmb_certificate_no'];
@@ -1725,7 +1376,7 @@ class AdminController extends BaseController {
             $jmb_fax_no = $data['jmb_fax_no'];
             $jmb_email = $data['jmb_email'];
 
-            //mc
+//mc
             $is_mc = $data['is_mc'];
             $mc_date_formed = $data['mc_date_formed'];
             $mc_certificate_no = $data['mc_certificate_no'];
@@ -1742,7 +1393,7 @@ class AdminController extends BaseController {
             $mc_fax_no = $data['mc_fax_no'];
             $mc_email = $data['mc_email'];
 
-            //agent
+//agent
             $is_agent = $data['is_agent'];
             $agent_selected_by = $data['agent_selected_by'];
             $agent_name = $data['agent_name'];
@@ -1757,7 +1408,7 @@ class AdminController extends BaseController {
             $agent_fax_no = $data['agent_fax_no'];
             $agent_email = $data['agent_email'];
 
-            //others
+//others
             $is_others = $data['is_others'];
             $others_name = $data['others_name'];
             $others_address1 = $data['others_address1'];
@@ -1771,7 +1422,7 @@ class AdminController extends BaseController {
             $others_fax_no = $data['others_fax_no'];
             $others_email = $data['others_email'];
 
-            //id
+//id
             $file_id = $data['file_id'];
             $management_id = $data['management_id'];
 
@@ -1893,7 +1544,7 @@ class AdminController extends BaseController {
                         $others_old->delete();
                     }
                 }
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($management->file_id);
                 $remarks = 'Management Info (' . $file_name->file_no . ') has been updated.';
                 $auditTrail = new AuditTrail();
@@ -1910,7 +1561,7 @@ class AdminController extends BaseController {
     }
 
     public function viewMonitoring($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $monitoring = Monitoring::where('file_id', $files->id)->first();
@@ -1933,7 +1584,7 @@ class AdminController extends BaseController {
     }
 
     public function monitoring($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $monitoring = Monitoring::where('file_id', $file->id)->first();
@@ -1972,7 +1623,7 @@ class AdminController extends BaseController {
             $success = $monitor->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($monitor->file_id);
                 $remarks = 'Monitoring Info (' . $file_name->file_no . ') has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2057,7 +1708,7 @@ class AdminController extends BaseController {
             $success = $agm_detail->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been inserted.';
                 $auditTrail = new AuditTrail();
@@ -2139,7 +1790,7 @@ class AdminController extends BaseController {
             $success = $agm_detail->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2784,7 +2435,7 @@ class AdminController extends BaseController {
             $deleted = $agm_details->save();
 
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -2810,7 +2461,7 @@ class AdminController extends BaseController {
             $agm_details->audit_report_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2836,7 +2487,7 @@ class AdminController extends BaseController {
             $agm_details->letter_integrity_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2862,7 +2513,7 @@ class AdminController extends BaseController {
             $agm_details->letter_bankruptcy_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2888,7 +2539,7 @@ class AdminController extends BaseController {
             $agm_details->agm_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2914,7 +2565,7 @@ class AdminController extends BaseController {
             $agm_details->egm_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2940,7 +2591,7 @@ class AdminController extends BaseController {
             $agm_details->minutes_meeting_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2966,7 +2617,7 @@ class AdminController extends BaseController {
             $agm_details->jmc_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2992,7 +2643,7 @@ class AdminController extends BaseController {
             $agm_details->ic_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -3018,7 +2669,7 @@ class AdminController extends BaseController {
             $agm_details->attendance_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -3044,7 +2695,7 @@ class AdminController extends BaseController {
             $agm_details->audited_financial_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -3079,7 +2730,7 @@ class AdminController extends BaseController {
             $success = $ajk_detail->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($ajk_detail->file_id);
                 $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been inserted.';
                 $auditTrail = new AuditTrail();
@@ -3113,7 +2764,7 @@ class AdminController extends BaseController {
             $success = $ajk_detail->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($ajk_detail->file_id);
                 $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -3185,7 +2836,7 @@ class AdminController extends BaseController {
             $ajk_details->is_deleted = 1;
             $deleted = $ajk_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($ajk_details->file_id);
                 $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . ' has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -3202,7 +2853,7 @@ class AdminController extends BaseController {
     }
 
     public function viewOthers($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $other_details = OtherDetails::where('file_id', $files->id)->first();
@@ -3223,7 +2874,7 @@ class AdminController extends BaseController {
     }
 
     public function others($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $other_details = OtherDetails::where('file_id', $file->id)->first();
@@ -3294,7 +2945,7 @@ class AdminController extends BaseController {
                 $success = $others->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $file_name = Files::find($others->file_id);
                     $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
                     $auditTrail = new AuditTrail();
@@ -3412,7 +3063,7 @@ class AdminController extends BaseController {
             $others->image_url = "";
             $deleted = $others->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($others->file_id);
                 $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
                 $auditTrail = new AuditTrail();
@@ -3429,7 +3080,7 @@ class AdminController extends BaseController {
     }
 
     public function viewScoring($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $image = OtherDetails::where('file_id', $files->id)->first();
@@ -3448,7 +3099,7 @@ class AdminController extends BaseController {
     }
 
     public function scoring($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -3532,7 +3183,7 @@ class AdminController extends BaseController {
             $success = $scoring->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($scoring->file_id);
                 $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been inserted.';
                 $auditTrail = new AuditTrail();
@@ -3612,7 +3263,7 @@ class AdminController extends BaseController {
                 $success = $scoring->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $file_name = Files::find($scoring->file_id);
                     $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been updated.';
                     $auditTrail = new AuditTrail();
@@ -3746,7 +3397,7 @@ class AdminController extends BaseController {
             $scoring->is_deleted = 1;
             $deleted = $scoring->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($scoring->file_id);
                 $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -3763,7 +3414,7 @@ class AdminController extends BaseController {
     }
 
     public function viewBuyer($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $image = OtherDetails::where('file_id', $files->id)->first();
@@ -3784,7 +3435,7 @@ class AdminController extends BaseController {
     }
 
     public function buyer($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -3878,7 +3529,7 @@ class AdminController extends BaseController {
                 $success = $buyer->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $file_name = Files::find($buyer->file_id);
                     $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit' . $buyer->unit_no . ' has been inserted.';
                     $auditTrail = new AuditTrail();
@@ -3898,7 +3549,7 @@ class AdminController extends BaseController {
     }
 
     public function editBuyer($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $buyer = Buyer::find($id);
         $files = Files::find($buyer->file_id);
@@ -3978,7 +3629,7 @@ class AdminController extends BaseController {
                     $success = $buyer->save();
 
                     if ($success) {
-                        # Audit Trail
+# Audit Trail
                         $file_name = Files::find($buyer->file_id);
                         $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been updated.';
                         $auditTrail = new AuditTrail();
@@ -4056,7 +3707,7 @@ class AdminController extends BaseController {
             $buyer->is_deleted = 1;
             $deleted = $buyer->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($buyer->file_id);
                 $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -4073,7 +3724,7 @@ class AdminController extends BaseController {
     }
 
     public function importBuyer($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -4105,7 +3756,7 @@ class AdminController extends BaseController {
                 if (!empty($getAllBuyer)) {
                     foreach ($getAllBuyer as $buyerList) {
 
-                        // 1. File No.
+// 1. File No.
                         $file_no = '';
                         if (isset($buyerList[0]) && !empty($buyerList[0])) {
                             $file_no = trim($buyerList[0]);
@@ -4116,7 +3767,7 @@ class AdminController extends BaseController {
                             if ($check_file_id) {
                                 $files_id = $check_file_id->id;
 
-                                // 2. Unit No.
+// 2. Unit No.
                                 $unit_no = '';
                                 if (isset($buyerList[1]) && !empty($buyerList[1])) {
                                     $unit_no = trim($buyerList[1]);
@@ -4178,7 +3829,7 @@ class AdminController extends BaseController {
                                         $success = $buyer->save();
 
                                         if ($success) {
-                                            # Audit Trail
+# Audit Trail
                                             $file_name = Files::find($buyer->file_id);
                                             $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been inserted.';
                                             $auditTrail = new AuditTrail();
@@ -4205,9 +3856,9 @@ class AdminController extends BaseController {
         }
     }
 
-    //document
+//document
     public function document($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
@@ -4287,7 +3938,7 @@ class AdminController extends BaseController {
                 $document->is_deleted = 1;
                 $deleted = $document->save();
                 if ($deleted) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Document: ' . $document->name_en . ' has been deleted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Document";
@@ -4317,7 +3968,7 @@ class AdminController extends BaseController {
                 $deleted = $document->save();
 
                 if ($deleted) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Document: ' . $document->name_en . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Document";
@@ -4337,7 +3988,7 @@ class AdminController extends BaseController {
 
     public function addDocument($id) {
         $file = Files::find($id);
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -4371,7 +4022,7 @@ class AdminController extends BaseController {
             $success = $document->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($document->file_id);
                 $remarks = 'COB Document (' . $file_name->file_no . ') has been inserted.';
                 $remarks = $document->id . ' has been updated.';
@@ -4390,7 +4041,7 @@ class AdminController extends BaseController {
 
     public function editDocument($id) {
         $file = Files::find($id);
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $document = Document::find($id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
@@ -4427,7 +4078,7 @@ class AdminController extends BaseController {
                 $success = $document->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $file_name = Files::find($document->file_id);
                     $remarks = 'COB Document (' . $file_name->file_no . ') has been updated.';
                     $remarks = $document->id . ' has been updated.';
@@ -4450,7 +4101,7 @@ class AdminController extends BaseController {
     }
 
     public function fileApproval($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         if ($files->status == 1) {
@@ -4516,9 +4167,9 @@ class AdminController extends BaseController {
         }
     }
 
-    // --- Administrator --- //
+// --- Administrator --- //
     public function company() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $viewData = array(
@@ -4591,7 +4242,7 @@ class AdminController extends BaseController {
             $company->is_active = 0;
             $updated = $company->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Company: ' . $company->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -4616,7 +4267,7 @@ class AdminController extends BaseController {
             $company->is_active = 1;
             $updated = $company->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Company: ' . $company->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -4641,7 +4292,7 @@ class AdminController extends BaseController {
             $company->is_deleted = 1;
             $deleted = $company->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Company: ' . $company->description . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -4657,7 +4308,7 @@ class AdminController extends BaseController {
     }
 
     public function addCompany() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
@@ -4716,7 +4367,7 @@ class AdminController extends BaseController {
             $success = $company->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Organization Profile has been added.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4732,7 +4383,7 @@ class AdminController extends BaseController {
     }
 
     public function editCompany($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $company = Company::find($id);
@@ -4799,7 +4450,7 @@ class AdminController extends BaseController {
                 $success = $company->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Organization Profile has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4817,9 +4468,9 @@ class AdminController extends BaseController {
         }
     }
 
-    //Access Group
+//Access Group
     public function accessGroups() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $viewData = array(
@@ -4835,7 +4486,7 @@ class AdminController extends BaseController {
     }
 
     public function addAccessGroup() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $module = Module::get();
 
@@ -4870,7 +4521,7 @@ class AdminController extends BaseController {
             $success = $role->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Role : ' . $role->name . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4952,7 +4603,7 @@ class AdminController extends BaseController {
                     $new_permission->submodule_id = $permission_lists['module_id'];
                     $new_permission->role_id = $role->id;
 
-                    //default value is 0
+//default value is 0
                     $new_permission->access_permission = 0;
                     $new_permission->insert_permission = 0;
                     $new_permission->update_permission = 0;
@@ -4971,7 +4622,7 @@ class AdminController extends BaseController {
                     $saved = $new_permission->save();
                 }
                 if ($saved) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Access Permission for ' . $role->name . ' has been inserted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5046,7 +4697,7 @@ class AdminController extends BaseController {
                 $role->is_active = 0;
                 $updated = $role->save();
                 if ($updated) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5075,7 +4726,7 @@ class AdminController extends BaseController {
                 $role->is_active = 1;
                 $updated = $role->save();
                 if ($updated) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5104,7 +4755,7 @@ class AdminController extends BaseController {
                 $role->is_deleted = 1;
                 $deleted = $role->save();
                 if ($deleted) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5123,7 +4774,7 @@ class AdminController extends BaseController {
     }
 
     public function updateAccessGroup($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $accessgroup = Role::find($id);
         $module = Module::get();
@@ -5161,7 +4812,7 @@ class AdminController extends BaseController {
             $success = $role->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Role : ' . $role->name . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5237,7 +4888,7 @@ class AdminController extends BaseController {
                     );
                 }
 
-                //delete the access permission in db before add new
+//delete the access permission in db before add new
                 $deleted = AccessGroup::where('role_id', $role_id)->delete();
 
                 foreach ($permission_list as $permission_lists) {
@@ -5246,7 +4897,7 @@ class AdminController extends BaseController {
                     $new_permission->submodule_id = $permission_lists['module_id'];
                     $new_permission->role_id = $role->id;
 
-                    //default value is 0
+//default value is 0
                     $new_permission->access_permission = 0;
                     $new_permission->insert_permission = 0;
                     $new_permission->update_permission = 0;
@@ -5265,7 +4916,7 @@ class AdminController extends BaseController {
                     $saved = $new_permission->save();
                 }
                 if ($saved) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Access Permission for ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5281,9 +4932,9 @@ class AdminController extends BaseController {
         }
     }
 
-    //user
+//user
     public function user() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $viewData = array(
@@ -5299,7 +4950,7 @@ class AdminController extends BaseController {
     }
 
     public function addUser() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
@@ -5384,7 +5035,7 @@ class AdminController extends BaseController {
                     $success = $user->save();
 
                     if ($success) {
-                        # Audit Trail
+# Audit Trail
                         $remarks = 'User ' . $user->username . ' has been inserted.';
                         $auditTrail = new AuditTrail();
                         $auditTrail->module = "System Administration";
@@ -5474,7 +5125,7 @@ class AdminController extends BaseController {
     }
 
     public function getUserDetails($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::find($id);
         $company = Company::find($user->company_id);
@@ -5512,7 +5163,7 @@ class AdminController extends BaseController {
             $success = $user->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'User ' . $user->username . ' has been approved.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5537,7 +5188,7 @@ class AdminController extends BaseController {
             $user->is_active = 0;
             $updated = $user->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'User ' . $user->username . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5562,7 +5213,7 @@ class AdminController extends BaseController {
             $user->is_active = 1;
             $updated = $user->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'User ' . $user->username . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5587,7 +5238,7 @@ class AdminController extends BaseController {
             $user->is_deleted = 1;
             $deleted = $user->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'User ' . $user->username . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5635,7 +5286,7 @@ class AdminController extends BaseController {
     }
 
     public function updateUser($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::find($id);
 
@@ -5719,7 +5370,7 @@ class AdminController extends BaseController {
                     $success = $user->save();
 
                     if ($success) {
-                        # Audit Trail
+# Audit Trail
                         $remarks = 'User ' . $user->username . ' has been updated.';
                         $auditTrail = new AuditTrail();
                         $auditTrail->module = "System Administration";
@@ -5740,9 +5391,9 @@ class AdminController extends BaseController {
         }
     }
 
-    //memo
+//memo
     public function memo() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
 
@@ -5760,7 +5411,7 @@ class AdminController extends BaseController {
     }
 
     public function addMemo() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
 
@@ -5802,7 +5453,7 @@ class AdminController extends BaseController {
             $success = $memo->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $memo->subject . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Memo";
@@ -5880,7 +5531,7 @@ class AdminController extends BaseController {
             $memo->is_active = 0;
             $updated = $memo->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $memo->subject . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Memo";
@@ -5905,7 +5556,7 @@ class AdminController extends BaseController {
             $memo->is_active = 1;
             $updated = $memo->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $memo->subject . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Memo";
@@ -5930,7 +5581,7 @@ class AdminController extends BaseController {
             $memo->is_deleted = 1;
             $deleted = $memo->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $memo->subject . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Memo";
@@ -5946,7 +5597,7 @@ class AdminController extends BaseController {
     }
 
     public function updateMemo($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $memo = Memo::find($id);
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
@@ -5990,7 +5641,7 @@ class AdminController extends BaseController {
             $success = $memo->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = $memo->subject . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Memo";
@@ -6005,9 +5656,9 @@ class AdminController extends BaseController {
         }
     }
 
-    //rating
+//rating
     public function rating() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -6159,7 +5810,7 @@ class AdminController extends BaseController {
     }
 
     public function addRating() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -6253,7 +5904,7 @@ class AdminController extends BaseController {
             $success = $scoring->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($scoring->file_id);
                 $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . ' has been inserted.';
                 $auditTrail = new AuditTrail();
@@ -6272,7 +5923,7 @@ class AdminController extends BaseController {
     }
 
     public function updateRating($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -6368,7 +6019,7 @@ class AdminController extends BaseController {
                 $success = $scoring->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $file_name = Files::find($scoring->file_id);
                     $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . ' has been updated.';
                     $auditTrail = new AuditTrail();
@@ -6399,7 +6050,7 @@ class AdminController extends BaseController {
             $scoring->is_deleted = 1;
             $deleted = $scoring->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($scoring->file_id);
                 $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . ' has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -6415,9 +6066,9 @@ class AdminController extends BaseController {
         }
     }
 
-    //form
+//form
     public function form() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
 
@@ -6517,7 +6168,7 @@ class AdminController extends BaseController {
             $form->is_active = 0;
             $updated = $form->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -6542,7 +6193,7 @@ class AdminController extends BaseController {
             $form->is_active = 1;
             $updated = $form->save();
             if ($updated) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -6567,7 +6218,7 @@ class AdminController extends BaseController {
             $form->is_deleted = 1;
             $deleted = $form->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -6593,7 +6244,7 @@ class AdminController extends BaseController {
             $deleted = $form->save();
 
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -6609,7 +6260,7 @@ class AdminController extends BaseController {
     }
 
     public function addForm() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
@@ -6653,7 +6304,7 @@ class AdminController extends BaseController {
             $success = $form->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -6669,7 +6320,7 @@ class AdminController extends BaseController {
     }
 
     public function updateForm($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $form = AdminForm::find($id);
 
@@ -6717,7 +6368,7 @@ class AdminController extends BaseController {
                 $success = $form->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = $form->id . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Form";
@@ -6737,8 +6388,8 @@ class AdminController extends BaseController {
         }
     }
 
-    // --- Reporting --- //
-    //audit trail
+// --- Reporting --- //
+//audit trail
     public function auditTrail() {
 
         $viewData = array(
@@ -7112,7 +6763,7 @@ class AdminController extends BaseController {
         echo json_encode($json_data);
     }
 
-    //file by location
+//file by location
     public function fileByLocation() {
         $strata = Strata::get();
 
@@ -7264,7 +6915,7 @@ class AdminController extends BaseController {
 //        }
     }
 
-    //rating summary
+//rating summary
     public function ratingSummary() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -7308,6 +6959,8 @@ class AdminController extends BaseController {
             }
         }
 
+        $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+
         $viewData = array(
             'title' => trans('app.menus.reporting.rating_summary_report'),
             'panel_nav_active' => 'reporting_panel',
@@ -7320,6 +6973,7 @@ class AdminController extends BaseController {
             'threeStar' => $threeStars,
             'twoStar' => $twoStars,
             'oneStar' => $oneStars,
+            'category' => $category,
             'image' => ""
         );
 
@@ -7330,7 +6984,7 @@ class AdminController extends BaseController {
         return View::make('report_en.rating_summary', $viewData);
     }
 
-    //management summary
+//management summary
     public function managementSummary() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -7444,7 +7098,7 @@ class AdminController extends BaseController {
         return View::make('report_en.management_summary', $viewData);
     }
 
-    //cob file / management
+//cob file / management
     public function cobFileManagement() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -7551,9 +7205,9 @@ class AdminController extends BaseController {
         return View::make('report_en.cob_file_management', $viewData);
     }
 
-    //form download
+//form download
     public function formDownload() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
 
@@ -7570,7 +7224,7 @@ class AdminController extends BaseController {
         return View::make('form_en.index', $viewData);
     }
 
-    // Sept 2020
+// Sept 2020
     public function deleteNoticeAgmEgm() {
         $data = Input::all();
         if (Request::ajax()) {
@@ -7581,7 +7235,7 @@ class AdminController extends BaseController {
             $agm_details->notice_agm_egm_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7607,7 +7261,7 @@ class AdminController extends BaseController {
             $agm_details->minutes_agm_egm_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7633,7 +7287,7 @@ class AdminController extends BaseController {
             $agm_details->minutes_ajk_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7659,7 +7313,7 @@ class AdminController extends BaseController {
             $agm_details->eligible_vote_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7685,7 +7339,7 @@ class AdminController extends BaseController {
             $agm_details->attend_meeting_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7711,7 +7365,7 @@ class AdminController extends BaseController {
             $agm_details->proksi_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7737,7 +7391,7 @@ class AdminController extends BaseController {
             $agm_details->ajk_info_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7763,7 +7417,7 @@ class AdminController extends BaseController {
             $agm_details->ic_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7789,7 +7443,7 @@ class AdminController extends BaseController {
             $agm_details->purchase_aggrement_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7815,7 +7469,7 @@ class AdminController extends BaseController {
             $agm_details->strata_title_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7841,7 +7495,7 @@ class AdminController extends BaseController {
             $agm_details->maintenance_statement_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7867,7 +7521,7 @@ class AdminController extends BaseController {
             $agm_details->integrity_pledge_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7893,7 +7547,7 @@ class AdminController extends BaseController {
             $agm_details->report_audited_financial_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7919,7 +7573,7 @@ class AdminController extends BaseController {
             $agm_details->house_rules_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-                # Audit Trail
+# Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -7939,9 +7593,9 @@ class AdminController extends BaseController {
      * 13 October 2020
      */
 
-    //defect
+//defect
     public function defect() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -8073,7 +7727,7 @@ class AdminController extends BaseController {
                 $defect->is_deleted = 1;
                 $deleted = $defect->save();
                 if ($deleted) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Defect: ' . $defect->name . ' has been deleted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Defect";
@@ -8103,7 +7757,7 @@ class AdminController extends BaseController {
                 $deleted = $defect->save();
 
                 if ($deleted) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = 'Defect: ' . $defect->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Defect";
@@ -8122,7 +7776,7 @@ class AdminController extends BaseController {
     }
 
     public function addDefect() {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -8185,7 +7839,7 @@ class AdminController extends BaseController {
             $success = $defect->save();
 
             if ($success) {
-                # Audit Trail
+# Audit Trail
                 $remarks = 'Defect: ' . $defect->name . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Defect";
@@ -8201,7 +7855,7 @@ class AdminController extends BaseController {
     }
 
     public function updateDefect($id) {
-        //get user permission
+//get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $defect = Defect::find($id);
         if (!Auth::user()->getAdmin()) {
@@ -8271,7 +7925,7 @@ class AdminController extends BaseController {
                 $success = $defect->save();
 
                 if ($success) {
-                    # Audit Trail
+# Audit Trail
                     $remarks = $defect->id . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Defect";
@@ -8291,125 +7945,199 @@ class AdminController extends BaseController {
         }
     }
 
-    //insurance
-    public function insurance() {
+//insurance
+    public function insurance($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        }
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
 
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 46) {
-                $permission = $permissions->access_permission;
+
+        if ($id == 'All') {
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                } else {
+                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                } else {
+                    $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                }
             }
-        }
 
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.agm.insurance'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => 'insurance_list',
-                'user_permission' => $user_permission,
-                'files' => $files,
-                'insuranceProvider' => $insuranceProvider,
-                'image' => ""
-            );
+            $permission = false;
+            foreach ($user_permission as $permissions) {
+                if ($permissions->submodule_id == 46) {
+                    $permission = $permissions->access_permission;
+                }
+            }
 
-            return View::make('page_en.insurance', $viewData);
+            if ($permission) {
+                $viewData = array(
+                    'title' => trans('app.menus.agm.insurance'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => 'insurance_list',
+                    'user_permission' => $user_permission,
+                    'files' => $files,
+                    'insuranceProvider' => $insuranceProvider,
+                    'image' => ""
+                );
+
+                return View::make('insurance_en.insurance', $viewData);
+            } else {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+
+                return View::make('404_en', $viewData);
+            }
         } else {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
+            $file = Files::find($id);
+            if ($file) {
+                $image = OtherDetails::where('file_id', $file->id)->first();
 
-            return View::make('404_en', $viewData);
+                $viewData = array(
+                    'title' => trans('app.menus.cob.update_cob_file'),
+                    'panel_nav_active' => 'cob_panel',
+                    'main_nav_active' => 'cob_main',
+                    'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
+                    'user_permission' => $user_permission,
+                    'file' => $file,
+                    'insuranceProvider' => $insuranceProvider,
+                    'image' => (!empty($image->image_url) ? $image->image_url : '')
+                );
+
+                return View::make('page_en.update_insurance', $viewData);
+            } else {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+
+                return View::make('404_en', $viewData);
+            }
         }
     }
 
-    public function getInsurance() {
-        if (!empty(Auth::user()->file_id)) {
-            $insurance = Insurance::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
-        } else {
-            $insurance = Insurance::where('is_deleted', 0)->orderBy('id', 'desc')->get();
-        }
-
-        if ($insurance) {
-            $data = Array();
-            foreach ($insurance as $insurances) {
-                $button = "";
-
-                if (!empty($insurances->file_id)) {
-                    if (!Auth::user()->getAdmin()) {
-                        if (!empty(Auth::user()->company_id)) {
-                            if ($insurances->file->company_id != Auth::user()->company_id) {
-                                continue;
-                            }
-                        }
-                    } else {
-                        if (!empty(Session::get('admin_cob'))) {
-                            if ($insurances->file->company_id != Session::get('admin_cob')) {
-                                continue;
-                            }
-                        }
-                    }
-                } else {
-                    if (!Auth::user()->getAdmin()) {
-                        continue;
-                    } else {
-                        if (!empty(Session::get('admin_cob'))) {
-                            continue;
-                        }
-                    }
-                }
-
-                $status = trans('app.forms.pending');
-                if ($insurances->status == 1) {
-                    $status = trans('app.forms.resolved');
-                }
-
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', $insurances->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
-
-                $data_raw = array(
-                    (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
-                    ($insurances->provider ? $insurances->provider->name : ''),
-                    $insurances->remarks,
-                    $button
-                );
-
-                array_push($data, $data_raw);
+    public function getInsurance($id) {
+        if ($id == 'All') {
+            if (!empty(Auth::user()->file_id)) {
+                $insurance = Insurance::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            } else {
+                $insurance = Insurance::where('is_deleted', 0)->orderBy('id', 'desc')->get();
             }
 
-            $output_raw = array(
-                "aaData" => $data
-            );
+            if ($insurance) {
+                $data = Array();
+                foreach ($insurance as $insurances) {
+                    $button = "";
 
-            $output = json_encode($output_raw);
-            return $output;
+                    if (!empty($insurances->file_id)) {
+                        if (!Auth::user()->getAdmin()) {
+                            if (!empty(Auth::user()->company_id)) {
+                                if ($insurances->file->company_id != Auth::user()->company_id) {
+                                    continue;
+                                }
+                            }
+                        } else {
+                            if (!empty(Session::get('admin_cob'))) {
+                                if ($insurances->file->company_id != Session::get('admin_cob')) {
+                                    continue;
+                                }
+                            }
+                        }
+                    } else {
+                        if (!Auth::user()->getAdmin()) {
+                            continue;
+                        } else {
+                            if (!empty(Session::get('admin_cob'))) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    $status = trans('app.forms.pending');
+                    if ($insurances->status == 1) {
+                        $status = trans('app.forms.resolved');
+                    }
+
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', ['All', $insurances->id]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                    $data_raw = array(
+                        (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
+                        ($insurances->provider ? $insurances->provider->name : ''),
+                        $insurances->remarks,
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+
+                $output_raw = array(
+                    "aaData" => $data
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
+            } else {
+                $output_raw = array(
+                    "aaData" => []
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
+            }
         } else {
-            $output_raw = array(
-                "aaData" => []
-            );
+            $insurance = Insurance::where('file_id', $id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
-            $output = json_encode($output_raw);
-            return $output;
+            if ($insurance) {
+                $data = Array();
+                foreach ($insurance as $insurances) {
+                    $button = "";
+
+                    $status = trans('app.forms.pending');
+                    if ($insurances->status == 1) {
+                        $status = trans('app.forms.resolved');
+                    }
+
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', [$insurances->file->id, $insurances->id]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                    $data_raw = array(
+                        (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
+                        ($insurances->provider ? $insurances->provider->name : ''),
+                        $insurances->remarks,
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+
+                $output_raw = array(
+                    "aaData" => $data
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
+            } else {
+                $output_raw = array(
+                    "aaData" => []
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
+            }
         }
     }
 
@@ -8442,54 +8170,85 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addInsurance() {
+    public function addInsurance($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
 
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 46) {
-                $permission = $permissions->insert_permission;
+        if ($id == 'All') {
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                } else {
+                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                } else {
+                    $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                }
             }
-        }
 
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.agm.add_insurance'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => 'insurance_list',
-                'user_permission' => $user_permission,
-                'files' => $files,
-                'insuranceProvider' => $insuranceProvider,
-                'image' => ""
-            );
+            $permission = false;
+            foreach ($user_permission as $permissions) {
+                if ($permissions->submodule_id == 46) {
+                    $permission = $permissions->insert_permission;
+                }
+            }
 
-            return View::make('page_en.add_insurance', $viewData);
+            if ($permission) {
+                $viewData = array(
+                    'title' => trans('app.menus.agm.add_insurance'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => 'insurance_list',
+                    'user_permission' => $user_permission,
+                    'files' => $files,
+                    'insuranceProvider' => $insuranceProvider,
+                    'image' => ""
+                );
+
+                return View::make('insurance_en.add_insurance', $viewData);
+            } else {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+
+                return View::make('404_en', $viewData);
+            }
         } else {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
+            $file = Files::find($id);
+            if ($file) {
+                $image = OtherDetails::where('file_id', $file->id)->first();
 
-            return View::make('404_en', $viewData);
+                $viewData = array(
+                    'title' => trans('app.menus.cob.update_cob_file'),
+                    'panel_nav_active' => 'cob_panel',
+                    'main_nav_active' => 'cob_main',
+                    'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
+                    'user_permission' => $user_permission,
+                    'file' => $file,
+                    'insuranceProvider' => $insuranceProvider,
+                    'image' => (!empty($image->image_url) ? $image->image_url : '')
+                );
+
+                return View::make('page_en.add_insurance', $viewData);
+            } else {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+
+                return View::make('404_en', $viewData);
+            }
         }
     }
 
@@ -8519,56 +8278,89 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateInsurance($id) {
+    public function updateInsurance($id, $file_id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $insurance = Insurance::find($id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->get();
 
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 46) {
-                $permission = $permissions->update_permission;
+        if ($id == 'All') {
+            $insurance = Insurance::find($file_id);
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                } else {
+                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                } else {
+                    $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                }
             }
-        }
 
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.agm.edit_insurance'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => 'insurance_list',
-                'user_permission' => $user_permission,
-                'insurance' => $insurance,
-                'files' => $files,
-                'insuranceProvider' => $insuranceProvider,
-                'image' => ""
-            );
+            $permission = false;
+            foreach ($user_permission as $permissions) {
+                if ($permissions->submodule_id == 46) {
+                    $permission = $permissions->update_permission;
+                }
+            }
 
-            return View::make('page_en.edit_insurance', $viewData);
+            if ($permission) {
+                $viewData = array(
+                    'title' => trans('app.menus.agm.edit_insurance'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => 'insurance_list',
+                    'user_permission' => $user_permission,
+                    'insurance' => $insurance,
+                    'files' => $files,
+                    'insuranceProvider' => $insuranceProvider,
+                    'image' => ""
+                );
+
+                return View::make('insurance_en.edit_insurance', $viewData);
+            } else {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+
+                return View::make('404_en', $viewData);
+            }
         } else {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
+            $file = Files::find($id);
+            if ($file) {
+                $insurance = Insurance::where('file_id', $file->id)->first();
+                $image = OtherDetails::where('file_id', $file->id)->first();
 
-            return View::make('404_en', $viewData);
+                $viewData = array(
+                    'title' => trans('app.menus.cob.update_cob_file'),
+                    'panel_nav_active' => 'cob_panel',
+                    'main_nav_active' => 'cob_main',
+                    'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
+                    'user_permission' => $user_permission,
+                    'file' => $file,
+                    'insurance' => $insurance,
+                    'insuranceProvider' => $insuranceProvider,
+                    'image' => (!empty($image->image_url) ? $image->image_url : '')
+                );
+
+                return View::make('page_en.edit_insurance', $viewData);
+            } else {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+
+                return View::make('404_en', $viewData);
+            }
         }
     }
 

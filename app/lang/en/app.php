@@ -20,7 +20,7 @@ return array(
     ),
     "page404" => array(
         "body" => "The page you are looking for does not exist. It may have been moved, or removed altogether. Alternatively, return to the front page.",
-        "action" => "GO BACK TO THE HOMEPAGE"
+        "action" => "GO BACK"
     ),
     "menus" => array(
         "home" => "Home",
@@ -158,7 +158,15 @@ return array(
             "rating_summary_report" => "Rating Summary Report",
             "management_summary_report" => "Management Summary Report",
             "cob_file_report" => "COB File / Management (%) Report",
-            "purchaser" => "Purchaser"
+            "purchaser" => "Purchaser",
+            "complaint" => "Complaint",
+            "insurance" => "Insurance",
+            "collection" => "Collection",
+            "council" => "Council",
+            "dun" => "DUN",
+            "parliment" => "Parliament",
+            "vp" => "Before VP vs After VP",
+            "management_list" => "Management List",
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -357,9 +365,9 @@ return array(
         "more_than_12_months" => "> 12 Months",
         "more_than_15_months" => "> 15 Months",
         "designation_reminder" => "Designation Reminder",
-        "total_development_area" => "Total Development Area: :total",
-        "total_sample_percentage" => "Total Sample & Percentage: :total",
-        "total_no_information" => "No Information: :total",
+        "total_development_area" => "Total Development Area:",
+        "total_sample_percentage" => "Total Sample & Percentage:",
+        "total_no_information" => "No Information:",
         "page" => "Page",
         "access" => "Access",
         "insert" => "Insert",
@@ -526,7 +534,11 @@ return array(
         "upload_defect_attachment" => "Upload Complaint Attachment",
         "recent_update" => "Recently Update",
         "agm_due_date" => "AGM Due Date",
-        "scheme_name" => "Scheme Name"
+        "scheme_name" => "Scheme Name",
+        "all_cob" => "All COB",
+        "type" => "Type",
+        "type_name" => "Name",
+        "insurance" => "Insurance"
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -813,5 +825,6 @@ return array(
         "add_insurance_provider" => "Add Insurance Provider",
         "add_defect" => "Add Complaint",
         "add_insurance" => "Add Insurance",
+        "reset" => "Reset",
     )
 );

@@ -47,6 +47,9 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link" href="{{URL::action('AdminController@document', $file->id)}}">{{ trans('app.forms.document') }}</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
+                            </li>
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="strata" role="tabpanel">
@@ -87,7 +90,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.parliament') }}</label>
-                                                        <select class="form-control" id="strata_parliament" onchange="findDUN()">
+                                                        <select class="form-control select2" id="strata_parliament" onchange="findDUN()">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($parliament as $parliaments)
                                                             <option value="{{$parliaments->id}}" {{($strata->parliament == $parliaments->id ? " selected" : "")}}>{{$parliaments->description}}</option>
@@ -99,7 +102,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.dun') }}</label>
-                                                        <select class="form-control" id="strata_dun" onchange="findPark()">
+                                                        <select class="form-control select2" id="strata_dun" onchange="findPark()">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($dun as $duns)
                                                             <option value="{{$duns->id}}" {{($strata->dun == $duns->id ? " selected" : "")}}>{{$duns->description}}</option>
@@ -113,7 +116,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.park') }}</label>
-                                                        <select class="form-control" id="strata_park">
+                                                        <select class="form-control select2" id="strata_park">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($park as $parks)
                                                             <option value="{{$parks->id}}" {{($strata->park == $parks->id ? " selected" : "")}}>{{$parks->description}}</option>
@@ -157,7 +160,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.city') }}</label>
-                                                        <select class="form-control" id="strata_city">
+                                                        <select class="form-control select2" id="strata_city">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($city as $cities)
                                                             <option value="{{$cities->id}}" {{($strata->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
@@ -178,7 +181,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.state') }}</label>
-                                                        <select class="form-control" id="strata_state">
+                                                        <select class="form-control select2" id="strata_state">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($state as $states)
                                                             <option value="{{$states->id}}" {{($strata->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
@@ -190,7 +193,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.country') }}</label>
-                                                        <select class="form-control" id="strata_country">
+                                                        <select class="form-control select2" id="strata_country">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($country as $countries)
                                                             <option value="{{$countries->id}}" {{($strata->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
@@ -236,7 +239,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.city_town_district') }}</label>
-                                                        <select class="form-control" id="strata_town">
+                                                        <select class="form-control select2" id="strata_town">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($city as $cities)
                                                             <option value="{{$cities->id}}" {{($strata->town == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
@@ -248,7 +251,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.area') }}</label>
-                                                        <select class="form-control" id="strata_area">
+                                                        <select class="form-control select2" id="strata_area">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($area as $areas)
                                                             <option value="{{$areas->id}}" {{($strata->area == $areas->id ? " selected" : "")}}>{{$areas->description}}</option>
@@ -302,7 +305,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.land_title') }}</label>
-                                                        <select class="form-control" id="strata_land_title">
+                                                        <select class="form-control select2" id="strata_land_title">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($land_title as $land_titles)
                                                             <option value="{{$land_titles->id}}" {{($strata->land_title == $land_titles->id ? " selected" : "")}}>{{$land_titles->description}}</option>
@@ -314,7 +317,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.category') }}</label>
-                                                        <select class="form-control" id="strata_category">
+                                                        <select class="form-control select2" id="strata_category">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($category as $categories)
                                                             <option value="{{$categories->id}}" {{($strata->category == $categories->id ? " selected" : "")}}>{{$categories->description}}</option>
@@ -328,7 +331,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.perimeter') }}</label>
-                                                        <select class="form-control" id="strata_perimeter">
+                                                        <select class="form-control select2" id="strata_perimeter">
                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                             @foreach ($perimeter as $perimeters)
                                                             <option value="{{$perimeters->id}}" {{($strata->perimeter == $perimeters->id ? " selected" : "")}}>{{$perimeters->description_en}}</option>
@@ -460,7 +463,7 @@ foreach ($user_permission as $permission) {
                                                             <label>{{ trans('app.forms.maintenance_fee') }}</label>
                                                             <div class="form-inline">
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" value="{{$residential->maintenance_fee}}">
-                                                                <select class="form-control" id="residential_maintenance_fee_option">
+                                                                <select class="form-control select2" id="residential_maintenance_fee_option">
                                                                     @foreach ($unitoption as $unitoptions)
                                                                     <option value="{{$unitoptions->id}}" {{($residential->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                     @endforeach
@@ -475,7 +478,7 @@ foreach ($user_permission as $permission) {
                                                             <label>{{ trans('app.forms.sinking_fund') }}</label>
                                                             <div class="form-inline">
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" value="{{$residential->sinking_fund}}">
-                                                                <select class="form-control" id="residential_sinking_fund_option">
+                                                                <select class="form-control select2" id="residential_sinking_fund_option">
                                                                     @foreach ($unitoption as $unitoptions)
                                                                     <option value="{{$unitoptions->id}}" {{($residential->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                     @endforeach
@@ -559,7 +562,7 @@ foreach ($user_permission as $permission) {
                                                             <label>{{ trans('app.forms.commercial_fee') }}</label>
                                                             <div class="form-inline">
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" value="{{$commercial->maintenance_fee}}">
-                                                                <select class="form-control" id="commercial_maintenance_fee_option">
+                                                                <select class="form-control select2" id="commercial_maintenance_fee_option">
                                                                     @foreach ($unitoption as $unitoptions)
                                                                     <option value="{{$unitoptions->id}}" {{($commercial->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                     @endforeach
@@ -574,7 +577,7 @@ foreach ($user_permission as $permission) {
                                                             <label>{{ trans('app.forms.sinking_fund') }}</label>
                                                             <div class="form-inline">
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" value="{{$commercial->sinking_fund}}">
-                                                                <select class="form-control" id="commercial_sinking_fund_option">
+                                                                <select class="form-control select2" id="commercial_sinking_fund_option">
                                                                     @foreach ($unitoption as $unitoptions)
                                                                     <option value="{{$unitoptions->id}}" {{($commercial->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                     @endforeach

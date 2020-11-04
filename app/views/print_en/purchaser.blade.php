@@ -32,28 +32,28 @@ $company = Company::find(Auth::user()->company_id);
             <table border="1" id="audit_trail" width="100%" style="font-size: 11px;">
                 <thead>
                     <tr>
-                        <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
-                        <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.cob') }}</th>
+                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
                         @if ($scheme_name)
-                        <th style="width:20%;">{{ trans('app.forms.scheme_name') }}</th>
+                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.scheme_name') }}</th>
                         @endif
                         @if ($unit_no)
-                        <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.unit_number') }}</th>
                         @endif
                         @if ($unit_share)
-                        <th style="width:10%;">{{ trans('app.forms.unit_share') }}</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.unit_share') }}</th>
                         @endif
                         @if ($buyer)
-                        <th style="width:20%;">{{ trans('app.forms.buyer') }}</th>
+                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.buyer') }}</th>
                         @endif
                         @if ($phone_number)
-                        <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.phone_number') }}</th>
                         @endif
                         @if ($email)
-                        <th style="width:15%;">{{ trans('app.forms.email') }}</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.email') }}</th>
                         @endif
                         @if ($race)
-                        <th style="width:10%;">{{ trans('app.forms.race') }}</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.race') }}</th>
                         @endif
                     </tr>
                 </thead>
@@ -61,28 +61,28 @@ $company = Company::find(Auth::user()->company_id);
                     @if ($purchaser)
                     @foreach ($purchaser as $purchasers)
                     <tr>
-                        <td>{{ $purchasers->short_name }}</td>
-                        <td>{{ $purchasers->file_no }}</td>
+                        <td>&nbsp; {{ $purchasers->file_id ? $purchasers->file->company->short_name : '-' }}</td>
+                        <td>&nbsp; {{ $purchasers->file_id ? $purchasers->file->file_no : '-' }}</td>
                         @if ($scheme_name)
-                        <td>{{ $purchasers->strata_name }}</td>
+                        <td>&nbsp; {{ $purchasers->file_id ? $purchasers->file->strata->name : '-' }}</td>
                         @endif
                         @if ($unit_no)
-                        <td>{{ $purchasers->unit_no }}</td>
+                        <td>&nbsp; {{ $purchasers->unit_no }}</td>
                         @endif
                         @if ($unit_share)
-                        <td>{{ $purchasers->unit_share }}</td>
+                        <td>&nbsp; {{ $purchasers->unit_share }}</td>
                         @endif
                         @if ($buyer)
-                        <td>{{ $purchasers->owner_name }}</td>
+                        <td>&nbsp; {{ $purchasers->owner_name }}</td>
                         @endif
                         @if ($phone_number)
-                        <td>{{ $purchasers->phone_no }}</td>
+                        <td>&nbsp; {{ $purchasers->phone_no }}</td>
                         @endif
                         @if ($email)
-                        <td>{{ $purchasers->email }}</td>
+                        <td>&nbsp; {{ $purchasers->email }}</td>
                         @endif
                         @if ($race)
-                        <td>{{ $purchasers->race_name }}</td>
+                        <td>&nbsp; {{ $purchasers->race_id ? $purchasers->race->name_en : '-' }}</td>
                         @endif
                     </tr>
                     @endforeach
