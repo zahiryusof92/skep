@@ -6416,17 +6416,17 @@ class AdminController extends BaseController {
 
         if (!Auth::user()->getAdmin()) {
             $totalData = DB::table('audit_trail')
-                    ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                    ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                     ->where('users.company_id', Auth::user()->company_id)
                     ->count();
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $totalData = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                         ->count();
             } else {
                 $totalData = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                         ->where('users.company_id', Session::get('admin_cob'))
                         ->count();
             }
@@ -6469,7 +6469,7 @@ class AdminController extends BaseController {
             if (empty($search)) {
                 if (!empty($new_from_date) && !empty($new_to_date)) {
                     $posts = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                             ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
@@ -6480,14 +6480,14 @@ class AdminController extends BaseController {
                             ->get();
 
                     $totalFiltered = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                             ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
                             ->where('users.company_id', Auth::user()->company_id)
                             ->count();
                 } else {
                     $posts = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->offset($start)
@@ -6496,14 +6496,14 @@ class AdminController extends BaseController {
                             ->get();
 
                     $totalFiltered = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->count();
                 }
             } else {
                 if (!empty($new_from_date) && !empty($new_to_date)) {
                     $posts = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                             ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
@@ -6520,7 +6520,7 @@ class AdminController extends BaseController {
                             ->get();
 
                     $totalFiltered = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                             ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
                             ->where('users.company_id', Auth::user()->company_id)
@@ -6533,7 +6533,7 @@ class AdminController extends BaseController {
                             ->count();
                 } else {
                     $posts = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->where(function($query) use ($search) {
@@ -6548,7 +6548,7 @@ class AdminController extends BaseController {
                             ->get();
 
                     $totalFiltered = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->where(function($query) use ($search) {
                                 $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
@@ -6564,7 +6564,7 @@ class AdminController extends BaseController {
                 if (empty($search)) {
                     if (!empty($new_from_date) && !empty($new_to_date)) {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
@@ -6574,13 +6574,13 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
                                 ->count();
                     } else {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->offset($start)
                                 ->limit($limit)
@@ -6588,13 +6588,13 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->count();
                     }
                 } else {
                     if (!empty($new_from_date) && !empty($new_to_date)) {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
@@ -6610,7 +6610,7 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
                                 ->where(function($query) use ($search) {
@@ -6622,7 +6622,7 @@ class AdminController extends BaseController {
                                 ->count();
                     } else {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where(function($query) use ($search) {
                                     $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
@@ -6636,7 +6636,7 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where(function($query) use ($search) {
                                     $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
                                     ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
@@ -6650,7 +6650,7 @@ class AdminController extends BaseController {
                 if (empty($search)) {
                     if (!empty($new_from_date) && !empty($new_to_date)) {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
@@ -6661,14 +6661,14 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->count();
                     } else {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->offset($start)
@@ -6677,14 +6677,14 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->count();
                     }
                 } else {
                     if (!empty($new_from_date) && !empty($new_to_date)) {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
@@ -6701,7 +6701,7 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
                                 ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
                                 ->where('users.company_id', Session::get('admin_cob'))
@@ -6714,7 +6714,7 @@ class AdminController extends BaseController {
                                 ->count();
                     } else {
                         $posts = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->where(function($query) use ($search) {
@@ -6729,7 +6729,7 @@ class AdminController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->where(function($query) use ($search) {
                                     $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
@@ -6989,7 +6989,7 @@ class AdminController extends BaseController {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -7001,7 +7001,7 @@ class AdminController extends BaseController {
                 $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', 1)
@@ -7014,7 +7014,7 @@ class AdminController extends BaseController {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.is_active', 1)
                         ->where('files.is_deleted', 0)
@@ -7024,7 +7024,7 @@ class AdminController extends BaseController {
                 $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', 1)
@@ -7103,7 +7103,7 @@ class AdminController extends BaseController {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -7115,7 +7115,7 @@ class AdminController extends BaseController {
                 $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', 1)
@@ -7128,7 +7128,7 @@ class AdminController extends BaseController {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.is_active', 1)
                         ->where('files.is_deleted', 0)
@@ -7138,7 +7138,7 @@ class AdminController extends BaseController {
                 $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', 1)
@@ -7945,8 +7945,11 @@ class AdminController extends BaseController {
         }
     }
 
-//insurance
+    //insurance
     public function insurance($id) {
+//        $filename = Files::getFileName();
+//        return "<pre>" . print_r($filename, true) . "</pre>";
+        
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
@@ -7966,6 +7969,8 @@ class AdminController extends BaseController {
                     $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
                 }
             }
+            
+            $filename = Files::getFileName();
 
             $permission = false;
             foreach ($user_permission as $permissions) {
@@ -7982,6 +7987,7 @@ class AdminController extends BaseController {
                     'sub_nav_active' => 'insurance_list',
                     'user_permission' => $user_permission,
                     'files' => $files,
+                    'filename' => $filename,
                     'insuranceProvider' => $insuranceProvider,
                     'image' => ""
                 );
@@ -8076,6 +8082,7 @@ class AdminController extends BaseController {
 
                     $data_raw = array(
                         (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
+                        (!empty($insurances->file_id) ? $insurances->file->strata->name : '<i>(not set)</i>'),
                         ($insurances->provider ? $insurances->provider->name : ''),
                         $insurances->remarks,
                         $button

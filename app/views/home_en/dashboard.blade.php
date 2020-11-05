@@ -38,7 +38,7 @@ foreach ($user_permission as $permission) {
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="tab1" role="tabpanel">
-                                <table class="table table-hover nowrap" id="agm_remainder" width="100%">
+                                <table class="table table-hover" id="agm_remainder" width="100%">
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -56,7 +56,7 @@ foreach ($user_permission as $permission) {
                                 </table>
                             </div>
                             <div class="tab-pane" id="tab2" role="tabpanel">
-                                <table class="table table-hover nowrap" id="never_agm" width="100%">
+                                <table class="table table-hover" id="never_agm" width="100%">
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -72,7 +72,7 @@ foreach ($user_permission as $permission) {
                                 </table>
                             </div>
                             <div class="tab-pane" id="tab3" role="tabpanel">
-                                <table class="table table-hover nowrap" id="more_12months" width="100%">
+                                <table class="table table-hover" id="more_12months" width="100%">
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -90,7 +90,7 @@ foreach ($user_permission as $permission) {
                                 </table>
                             </div>
                             <div class="tab-pane" id="tab4" role="tabpanel">
-                                <table class="table table-hover nowrap" id="more_15months" width="100%">
+                                <table class="table table-hover" id="more_15months" width="100%">
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -125,11 +125,11 @@ foreach ($user_permission as $permission) {
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="tabDesignation1" role="tabpanel">
-                                <table class="table table-hover nowrap" id="designation_remainder" width="100%">
+                                <table class="table table-hover" id="designation_remainder" width="100%">
                                     <thead>
                                         <tr>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.file_no') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.scheme_name') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.designation') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.name') }}</th>
@@ -137,7 +137,7 @@ foreach ($user_permission as $permission) {
                                             <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.year') }}</th>
                                             <?php if ($update_permission == 1) { ?>
-                                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                                <th style="width:15%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
                                         </tr>
                                     </thead>
@@ -156,7 +156,7 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.memo') }}</h4>
-                    <table class="table table-hover nowrap" id="memo" width="100%">
+                    <table class="table table-hover" id="memo" width="100%">
                         <thead>
                             <tr>
                                 <th style="width:70%;">{{ trans('app.forms.subject') }}</th>

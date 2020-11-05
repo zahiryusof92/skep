@@ -44,9 +44,10 @@
             }
             .panel {
                 background: #eceff4 !important;
-            }            
+            }
+                      
         </style>
-        
+
         <!-- Vendors Scripts -->
         <!-- v1.0.0 -->
         <script src="{{ asset('assets/vendors/jquery/jquery.min.js') }}"></script>
@@ -105,7 +106,7 @@
 
         <!-- Dynamic Form -->
         <script src="{{ asset('assets/common/js/dynamic-form.js')}}"></script>
-        
+
         <!-- BlockUI -->
         <script src="{{ asset('assets/common/js/blockUI/blockUI.js')}}"></script>
 
@@ -129,16 +130,16 @@
         <div class="main-backdrop"><!-- --></div>
 
         <script>
-            $(document).ready(function () {
-                $(".numeric-only").on('keypress', function (e) {
-                    var keyCode = e.which ? e.which : e.keyCode;
-                    if (!(keyCode >= 48 && keyCode <= 57)) {
-                        return false;
-                    }
-                });
+$(document).ready(function () {
+    $(".numeric-only").on('keypress', function (e) {
+        var keyCode = e.which ? e.which : e.keyCode;
+        if (!(keyCode >= 48 && keyCode <= 57)) {
+            return false;
+        }
+    });
 
-                $('.select2').select2();
-            });
+    $('.select2').select2();
+});
         </script>
     </body>
 </html>

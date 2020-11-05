@@ -24,7 +24,7 @@ foreach ($user_permission as $permission) {
                         {{ trans('app.buttons.add_finance_support') }}
                     </button>
                     <br/><br/>
-                    <table class="table table-hover nowrap" id="filelist" width="100%" style="font-size: 13px;">
+                    <table class="table table-hover" id="filelist" width="100%" style="font-size: 13px;">
                         <thead>
                             <tr>
                                 <th style="width:30%;">{{ trans('app.forms.file_no') }}.</th>

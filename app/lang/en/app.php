@@ -538,7 +538,8 @@ return array(
         "all_cob" => "All COB",
         "type" => "Type",
         "type_name" => "Name",
-        "insurance" => "Insurance"
+        "insurance" => "Insurance",
+        "file_name" => "File Name"
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

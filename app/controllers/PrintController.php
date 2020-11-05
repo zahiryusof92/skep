@@ -13,7 +13,7 @@ class PrintController extends BaseController {
             if (!empty($start) && !empty($end)) {
                 if ($start == $end) {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->where('audit_trail.created_at', 'LIKE', $start . '%')
@@ -21,7 +21,7 @@ class PrintController extends BaseController {
                             ->get();
                 } else {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->whereBetween('audit_trail.created_at', [$start, $end])
@@ -32,7 +32,7 @@ class PrintController extends BaseController {
                 $end = date('Y-m-d');
                 if ($start == $end) {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->where('audit_trail.created_at', 'LIKE', $start . '%')
@@ -40,7 +40,7 @@ class PrintController extends BaseController {
                             ->get();
                 } else {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Auth::user()->company_id)
                             ->whereBetween('audit_trail.created_at', [$start, $end])
@@ -49,7 +49,7 @@ class PrintController extends BaseController {
                 }
             } else if (!empty($end)) {
                 $audit_trail = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                         ->select('audit_trail.*', 'users.full_name as name')
                         ->where('users.company_id', Auth::user()->company_id)
                         ->where('audit_trail.created_at', 'LIKE', $end . '%')
@@ -57,7 +57,7 @@ class PrintController extends BaseController {
                         ->get();
             } else {
                 $audit_trail = DB::table('audit_trail')
-                        ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                        ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                         ->select('audit_trail.*', 'users.full_name as name')
                         ->where('users.company_id', Auth::user()->company_id)
                         ->orderBy('audit_trail.id', 'desc')
@@ -68,14 +68,14 @@ class PrintController extends BaseController {
                 if (!empty($start) && !empty($end)) {
                     if ($start == $end) {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('audit_trail.created_at', 'LIKE', $start . '%')
                                 ->orderBy('audit_trail.id', 'desc')
                                 ->get();
                     } else {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->whereBetween('audit_trail.created_at', [$start, $end])
                                 ->orderBy('audit_trail.id', 'desc')
@@ -85,14 +85,14 @@ class PrintController extends BaseController {
                     $end = date('Y-m-d');
                     if ($start == $end) {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('audit_trail.created_at', 'LIKE', $start . '%')
                                 ->orderBy('audit_trail.id', 'desc')
                                 ->get();
                     } else {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->whereBetween('audit_trail.created_at', [$start, $end])
                                 ->orderBy('audit_trail.id', 'desc')
@@ -100,14 +100,14 @@ class PrintController extends BaseController {
                     }
                 } else if (!empty($end)) {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('audit_trail.created_at', 'LIKE', $end . '%')
                             ->orderBy('audit_trail.id', 'desc')
                             ->get();
                 } else {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->orderBy('audit_trail.id', 'desc')
                             ->get();
@@ -116,7 +116,7 @@ class PrintController extends BaseController {
                 if (!empty($start) && !empty($end)) {
                     if ($start == $end) {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->where('audit_trail.created_at', 'LIKE', $start . '%')
@@ -124,7 +124,7 @@ class PrintController extends BaseController {
                                 ->get();
                     } else {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->whereBetween('audit_trail.created_at', [$start, $end])
@@ -135,7 +135,7 @@ class PrintController extends BaseController {
                     $end = date('Y-m-d');
                     if ($start == $end) {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->where('audit_trail.created_at', 'LIKE', $start . '%')
@@ -143,7 +143,7 @@ class PrintController extends BaseController {
                                 ->get();
                     } else {
                         $audit_trail = DB::table('audit_trail')
-                                ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                                 ->select('audit_trail.*', 'users.full_name as name')
                                 ->where('users.company_id', Session::get('admin_cob'))
                                 ->whereBetween('audit_trail.created_at', [$start, $end])
@@ -152,7 +152,7 @@ class PrintController extends BaseController {
                     }
                 } else if (!empty($end)) {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Session::get('admin_cob'))
                             ->where('audit_trail.created_at', 'LIKE', $end . '%')
@@ -160,7 +160,7 @@ class PrintController extends BaseController {
                             ->get();
                 } else {
                     $audit_trail = DB::table('audit_trail')
-                            ->leftJoin('users', 'audit_trail.audit_by', '=', 'users.id')
+                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
                             ->select('audit_trail.*', 'users.full_name as name')
                             ->where('users.company_id', Session::get('admin_cob'))
                             ->orderBy('audit_trail.id', 'desc')
@@ -265,7 +265,7 @@ class PrintController extends BaseController {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -277,7 +277,7 @@ class PrintController extends BaseController {
                 $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', 1)
@@ -290,7 +290,7 @@ class PrintController extends BaseController {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.is_active', 1)
                         ->where('files.is_deleted', 0)
@@ -300,7 +300,7 @@ class PrintController extends BaseController {
                 $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', 1)
@@ -380,7 +380,7 @@ class PrintController extends BaseController {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -392,7 +392,7 @@ class PrintController extends BaseController {
                 $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', 1)
@@ -405,7 +405,7 @@ class PrintController extends BaseController {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.is_active', 1)
                         ->where('files.is_deleted', 0)
@@ -415,7 +415,7 @@ class PrintController extends BaseController {
                 $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
                 $strata = DB::table('files')
-                        ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
                         ->select('strata.*', 'files.id as file_id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', 1)

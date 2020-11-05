@@ -42,8 +42,8 @@ $company = Company::find(Auth::user()->company_id);
                         </thead>
                         <tbody>
                             <?php
-                            $totalChart = '';
-                            $parlimentChart = '';
+                            $parlimentChart = array();
+                                $totalChart = array();    
                             ?>
                             @foreach ($file_info as $file)                                
                             @if ($file['parliment'])
@@ -76,6 +76,7 @@ $company = Company::find(Auth::user()->company_id);
                             @endforeach
 
                             @if ($category)
+                            <?php $catChart = array(); ?>
                             @foreach ($category as $cats)
                             <?php
                             $catChart[] = array(

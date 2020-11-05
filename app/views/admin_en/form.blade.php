@@ -28,7 +28,7 @@ foreach ($user_permission as $permission) {
                         </button>
                         <br/><br/>
                     <?php } ?>
-                    <table class="table table-hover nowrap" id="form" width="100%">
+                    <table class="table table-hover" id="form" width="100%">
                         <thead>
                             <tr>
                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>

@@ -80,7 +80,7 @@ if (count($strata) > 0) {
                 <div class="row">
                     <div class="col-lg-12">
                         <br/>
-                        <table border="1" id="cob_file_management" width="100%" style="font-size: 12px;">
+                        <table border="1" id="cob_file_management" width="100%">
                             <thead>
                                 <tr>
                                     <th rowspan="2" style="width:40%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.items') }}</th>

@@ -38,6 +38,7 @@ foreach ($user_permission as $permissions) {
                 <div class="col-lg-12 text-center">
                     <form>
                         <div class="row">
+                            @if ($files)
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.file_no') }}</label>
@@ -49,6 +50,22 @@ foreach ($user_permission as $permissions) {
                                     </select>
                                 </div>
                             </div>
+                            @endif
+                            
+                            @if ($filename)
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.file_name') }}</label>
+                                    <select id="file_name" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($filename as $name)
+                                        <option value="{{ $name->name }}">{{ $name->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            @endif
+                            
                         </div>
                     </form>
                 </div>
@@ -58,12 +75,13 @@ foreach ($user_permission as $permissions) {
 
             <div class="row">
                 <div class="col-lg-12">                    
-                    <table class="table table-hover nowrap" id="insurance" width="100%">
+                    <table class="table table-hover" id="insurance" width="100%">
                         <thead>
                             <tr>
                                 <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
-                                <th style="width:25%;">{{ trans('app.forms.insurance_provider') }}</th>
-                                <th style="width:40%;">{{ trans('app.forms.remarks') }}</th>
+                                <th style="width:25%;">{{ trans('app.forms.file_name') }}</th>
+                                <th style="width:20%;">{{ trans('app.forms.insurance_provider') }}</th>
+                                <th style="width:20%;">{{ trans('app.forms.remarks') }}</th>
                                 <?php if ($update_permission) { ?>
                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                     <?php } ?>
@@ -98,6 +116,9 @@ foreach ($user_permission as $permissions) {
 
         $('#file_no').on('change', function () {
             oTable.columns(0).search(this.value).draw();
+        });
+        $('#file_name').on('change', function () {
+            oTable.columns(1).search(this.value).draw();
         });
     });
 

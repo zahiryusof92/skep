@@ -45,7 +45,9 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <select class="form-control select2" id="cob_id" name="cob_id" required="">
+                                            @if (count($cob) > 1)
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @endif
                                             @foreach ($cob as $cobs)
                                             <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
                                             @endforeach
@@ -77,8 +79,8 @@
                             </thead>
                             <tbody>
                                 <?php
-                                $totalChart = '';
-                                $dunChart = '';
+                                $dunChart = array();
+                                $totalChart = array();                                
                                 ?>
                                 @foreach ($file_info as $file)                                
                                 @if ($file['dun'])
@@ -111,6 +113,7 @@
                                 @endforeach
 
                                 @if ($category)
+                                <?php $catChart = array(); ?>
                                 @foreach ($category as $cats)
                                 <?php
                                 $catChart[] = array(
