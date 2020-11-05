@@ -740,5 +740,16 @@ Route::get('/{cob}', 'UserController@login')->before('guest');
 Route::get('/{cob}/login', 'UserController@login')->before('guest');
 Route::get('/{cob}/logout', 'UserController@logout')->before('authMember');
 
+// Route group for API
+Route::group(array('prefix' => 'api/v1'), function() {
+//    Route::resource('login', 'Api\LoginController');
+//    Route::resource('files', 'Api\FilesController');
+//    Route::resource('logout', 'Api\LogoutController');
+    
+    Route::post('/login', 'Api\ApiController@login');
+    Route::post('/files', 'Api\ApiController@files');
+    Route::post('/fileDetails', 'Api\ApiController@fileDetails');
+});
+
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
