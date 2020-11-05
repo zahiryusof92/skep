@@ -2,151 +2,6 @@
 
 class AgmController extends BaseController {
 
-    public function getDesignationRemainder() {
-        $currentMonth = strtotime(date('Y-m-d'));
-
-        $ajk_detail = AJKDetails::where('is_deleted', 0)->orderBy('id', 'desc')->get();
-
-        if (count($ajk_detail) > 0) {
-            $data = array();
-
-            foreach ($ajk_detail as $ajk_details) {
-                if (!empty($ajk_details->year) && !empty($ajk_details->month)) {
-                    $raw_month = $ajk_details->year . '-' . $ajk_details->month . '-' . '01';
-
-                    $designation_time = strtotime($raw_month);
-                    $designation_final = strtotime('+1 month', $designation_time);
-
-                    if ($designation_final <= $currentMonth) {
-                        if (!Auth::user()->getAdmin()) {
-                            if (!empty(Auth::user()->file_id)) {
-                                if ($ajk_details->files->id == Auth::user()->file_id) {
-                                    $designation = Designation::find($ajk_details->designation);
-
-                                    $button = "";
-                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $ajk_details->id) . '\'">';
-                                    $button .= '<i class="fa fa-pencil"></i>';
-                                    $button .= '</button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $ajk_details->id . '\')">';
-                                    $button .= '<i class="fa fa-trash"></i>';
-                                    $button .= '</button>&nbsp';
-
-                                    $data_raw = array(
-                                        $ajk_details->files->company->short_name,
-                                        $ajk_details->files->file_no,
-                                        ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
-                                        $designation->description,
-                                        $ajk_details->name,
-                                        $ajk_details->phone_no,
-                                        $ajk_details->monthName(),
-                                        $ajk_details->year,
-//                                    $button
-                                    );
-
-                                    array_push($data, $data_raw);
-                                }
-                            } else {
-                                if ($ajk_details->files->company->id == Auth::user()->company_id) {
-                                    $designation = Designation::find($ajk_details->designation);
-
-                                    $button = "";
-                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $ajk_details->id) . '\'">';
-                                    $button .= '<i class="fa fa-pencil"></i>';
-                                    $button .= '</button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $ajk_details->id . '\')">';
-                                    $button .= '<i class="fa fa-trash"></i>';
-                                    $button .= '</button>&nbsp';
-
-                                    $data_raw = array(
-                                        $ajk_details->files->company->short_name,
-                                        $ajk_details->files->file_no,
-                                        ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
-                                        $designation->description,
-                                        $ajk_details->name,
-                                        $ajk_details->phone_no,
-                                        $ajk_details->monthName(),
-                                        $ajk_details->year,
-//                                    $button
-                                    );
-
-                                    array_push($data, $data_raw);
-                                }
-                            }
-                        } else {
-                            if (empty(Session::get('admin_cob'))) {
-
-                                $designation = Designation::find($ajk_details->designation);
-
-                                $button = "";
-                                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $ajk_details->id) . '\'">';
-                                $button .= '<i class="fa fa-pencil"></i>';
-                                $button .= '</button>&nbsp;';
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $ajk_details->id . '\')">';
-                                $button .= '<i class="fa fa-trash"></i>';
-                                $button .= '</button>&nbsp';
-
-                                $data_raw = array(
-                                    $ajk_details->files->company->short_name,
-                                    $ajk_details->files->file_no,
-                                    ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
-                                    $designation->description,
-                                    $ajk_details->name,
-                                    $ajk_details->phone_no,
-                                    $ajk_details->monthName(),
-                                    $ajk_details->year,
-//                                    $button
-                                );
-
-                                array_push($data, $data_raw);
-                            } else {
-                                if ($ajk_details->files->company->id == Session::get('admin_cob')) {
-                                    $designation = Designation::find($ajk_details->designation);
-
-                                    $button = "";
-                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $ajk_details->id) . '\'">';
-                                    $button .= '<i class="fa fa-pencil"></i>';
-                                    $button .= '</button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $ajk_details->id . '\')">';
-                                    $button .= '<i class="fa fa-trash"></i>';
-                                    $button .= '</button>&nbsp';
-
-                                    $data_raw = array(
-                                        $ajk_details->files->company->short_name,
-                                        $ajk_details->files->file_no,
-                                        ($ajk_details->files->strata ? $ajk_details->files->strata->name : ''),
-                                        $designation->description,
-                                        $ajk_details->name,
-                                        $ajk_details->phone_no,
-                                        $ajk_details->monthName(),
-                                        $ajk_details->year,
-//                                        $button
-                                    );
-
-                                    array_push($data, $data_raw);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
-    }
-
     public function AJK() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -525,719 +380,84 @@ class AgmController extends BaseController {
     }
 
     public function getPurchaser() {
-        $data = array();
-        $requestData = Request::input();
-
-        $columns = array(
-            0 => 'company.short_name',
-            1 => 'files.file_no',
-            2 => 'buyer.scheme_name',
-            3 => 'buyer.unit_no',
-            4 => 'buyer.unit_share',
-            5 => 'buyer.owner_name',
-            6 => 'buyer.phone_no',
-            7 => 'buyer.email',
-            8 => 'race.name_en',
-            9 => 'action'
-        );
-
-        $limit = $requestData['length'];
-        $start = $requestData['start'];
-        $order = $columns[$requestData['order'][0]['column']];
-        $dir = $requestData['order'][0]['dir'];
-        $search = $requestData['search']['value'];
-        $company_id = $requestData['columns'][0]['search']['value'];
-        $file_id = $requestData['columns'][1]['search']['value'];
-
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $totalData = DB::table('buyer')
-                        ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('race', 'buyer.race_id', '=', 'race.id')
+                        ->select(['buyer.*'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('buyer.is_deleted', 0)
-                        ->count();
+                        ->get();
             } else {
-                $totalData = DB::table('buyer')
-                        ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('race', 'buyer.race_id', '=', 'race.id')
+                        ->select(['buyer.*'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('buyer.is_deleted', 0)
-                        ->count();
+                        ->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $totalData = DB::table('buyer')
-                        ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                        ->where('buyer.is_deleted', 0)
-                        ->count();
+                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('race', 'buyer.race_id', '=', 'race.id')
+                        ->select(['buyer.*'])
+                        ->where('buyer.is_deleted', 0);
             } else {
-                $totalData = DB::table('buyer')
-                        ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('race', 'buyer.race_id', '=', 'race.id')
+                        ->select(['buyer.*'])
                         ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('buyer.is_deleted', 0)
-                        ->count();
+                        ->where('buyer.is_deleted', 0);
             }
         }
 
-        if ($limit == -1) {
-            if ($totalData != 0) {
-                $limit = $totalData;
-            } else {
-                $limit = 1;
-            }
-        } else {
-            $limit = $limit;
-        }
-
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                if (empty($search)) {
-                    $posts = DB::table('buyer')
-                            ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                            ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                            ->where('files.id', Auth::user()->file_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order, $dir)
-                            ->get();
-
-                    $totalFiltered = DB::table('buyer')
-                            ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                            ->where('files.id', Auth::user()->file_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->count();
-                } else {
-                    $posts = DB::table('buyer')
-                            ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                            ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                            ->where('files.id', Auth::user()->file_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->where(function($query) use ($search) {
-                                $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
+        if ($posts) {
+            return Datatables::of($posts)
+                            ->addColumn('cob', function ($model) {
+                                $cob = '';
+                                if ($model->file_id) {
+                                    $cob = $model->file->company->short_name;
+                                }
+                                return $cob;
                             })
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order, $dir)
-                            ->get();
-
-                    $totalFiltered = DB::table('buyer')
-                            ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                            ->where('files.id', Auth::user()->file_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->where(function($query) use ($search) {
-                                $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
+                            ->addColumn('files', function ($model) {
+                                $files = '';
+                                if ($model->file_id) {
+                                    $files = $model->file->file_no;
+                                }
+                                return $files;
                             })
-                            ->count();
-                }
-            } else {
-                if (empty($search)) {
-                    if (!empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
+                            ->addColumn('strata', function ($model) {
+                                $race = '';
+                                if ($model->file_id) {
+                                    $race = $model->file->strata->name;
+                                }
+                                return $race;
+                            })
+                            ->addColumn('race', function ($model) {
+                                $race = '';
+                                if ($model->race_id) {
+                                    $race = $model->race->name_en;
+                                }
+                                return $race;
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = "";
+                                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
 
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    } else {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    }
-                } else {
-                    if (!empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Auth::user()->company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    }
-                }
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                if (empty($search)) {
-                    if (!empty($company_id) && !empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', $company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', $company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    } else if (!empty($company_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', $company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', $company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    } else if (!empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    } else {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    }
-                } else {
-                    if (!empty($company_id) && !empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', $company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', $company_id)
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else if (!empty($company_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', $company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', $company_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else if (!empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    }
-                }
-            } else {
-                if (empty($search)) {
-                    if (!empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    } else {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('buyer.is_deleted', 0)
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('buyer.is_deleted', 0)
-                                ->count();
-                    }
-                } else {
-                    if (!empty($file_id)) {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('files.id', $file_id)
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else {
-                        $posts = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('buyer')
-                                ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                                ->where('files.company_id', Session::get('admin_cob'))
-                                ->where('buyer.is_deleted', 0)
-                                ->where(function($query) use ($search) {
-                                    $query->where('company.short_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('files.file_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.unit_share', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.owner_name', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.phone_no', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('buyer.email', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('race.name_en', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    }
-                }
-            }
+                                return $button;
+                            })
+                            ->make(true);
         }
-
-        if (!empty($posts)) {
-            foreach ($posts as $post) {
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $post->id) . '\'">
-                                <i class="fa fa-pencil"></i>
-                            </button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . $post->id . '\')">
-                                <i class="fa fa-trash"></i>
-                            </button>&nbsp';
-
-                $nestedData['cob'] = $post->short_name;
-                $nestedData['file_no'] = $post->file_no;
-                $nestedData['scheme_name'] = $post->strata_name;
-                $nestedData['unit_no'] = $post->unit_no;
-                $nestedData['unit_share'] = $post->unit_share;
-                $nestedData['owner_name'] = $post->owner_name;
-                $nestedData['phone_no'] = $post->phone_no;
-                $nestedData['email'] = $post->email;
-                $nestedData['race'] = $post->race_name;
-                $nestedData['action'] = $button;
-                $data[] = $nestedData;
-            }
-        }
-
-        $json_data = array(
-            "draw" => intval(Request::input('draw')),
-            "recordsTotal" => intval($totalData),
-            "recordsFiltered" => intval($totalFiltered),
-            "data" => $data
-        );
-
-        echo json_encode($json_data);
     }
 
     public function addPurchaser() {
@@ -4010,10 +3230,15 @@ class AgmController extends BaseController {
         $result = '';
         $data = Input::all();
         if (Request::ajax()) {
-            $company_id = $data['company'];
+            $company_name = $data['company'];
 
-            if ($company_id) {
-                $files = Files::where('company_id', $company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            if ($company_name) {
+                $cob = Company::where('short_name', $company_name)->first();
+                if ($cob) {
+                    $files = Files::where('company_id', $cob->id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                } else {
+                    $files = array();
+                }
             } else {
                 if (!Auth::user()->getAdmin()) {
                     if (!empty(Auth::user()->file_id)) {
@@ -4033,7 +3258,7 @@ class AgmController extends BaseController {
             $result = "<option value=''>" . trans('app.forms.please_select') . "</option>";
             if ($files) {
                 foreach ($files as $file) {
-                    $result .= "<option value='" . $file->id . "'>" . $file->file_no . "</option>";
+                    $result .= "<option value='" . $file->file_no . "'>" . $file->file_no . "</option>";
                 }
             }
         }

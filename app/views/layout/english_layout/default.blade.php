@@ -100,6 +100,7 @@
 
         <!-- Highcharts -->
         <script src="{{ asset('assets/highcharts/highcharts.js')}}"></script>
+        <script src="{{ asset('assets/highcharts/modules/variable-pie.js')}}"></script>
         <script src="{{ asset('assets/highcharts/modules/exporting.js')}}"></script>
 
         <!-- Dynamic Form -->

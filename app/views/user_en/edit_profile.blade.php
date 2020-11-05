@@ -73,7 +73,7 @@
                         </div>
                         <div class="form-actions">
                             <button type="button" class="btn btn-primary" id="submit_button" onclick="updateProfile()">{{ trans('app.forms.submit') }}</button>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@home')}}'">{{ trans('app.forms.cancel') }}</button>
+                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
                     </form>
                 </div>
@@ -123,7 +123,7 @@
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.profile_edited_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@home") }}';
+                            window.location = '{{URL::action("HomeController@home") }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

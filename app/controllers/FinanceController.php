@@ -500,6 +500,7 @@ class FinanceController extends BaseController {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
         $file = Files::where('is_deleted', 0)->get();
+        $year = Files::getVPYear();
         $month = [
             1 => 'JAN',
             2 => 'FEB',
@@ -523,6 +524,7 @@ class FinanceController extends BaseController {
             'sub_nav_active' => 'finance_file_list',
             'user_permission' => $user_permission,
             'cob' => $cob,
+            'year' => $year,
             'month' => $month,
             'file' => $file,
             'image' => ""
@@ -534,58 +536,81 @@ class FinanceController extends BaseController {
     public function getFinanceList() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $filelist = Finance::where('file_id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['finance_file.*', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0);
             } else {
-                $filelist = Finance::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['finance_file.*', 'strata.id as strata_id'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $filelist = Finance::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['finance_file.*', 'strata.id as strata_id'])
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0);
             } else {
-                $filelist = Finance::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['finance_file.*', 'strata.id as strata_id'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0);
             }
         }
 
+        return Datatables::of($file)
+                        ->addColumn('cob', function ($model) {
+                            return ($model->file_id ? $model->file->company->short_name : '-');
+                        })
+                        ->editColumn('file_no', function ($model) {
+                            return "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceFileList', $model->id) . "'>" . $model->file->file_no . " " . $model->year . "-" . strtoupper($model->monthName()) . "</a>";
+                        })
+                        ->addColumn('strata', function ($model) {
+                            return ($model->file_id ? $model->file->strata->strataName() : '-');
+                        })
+                        ->editColumn('month', function ($model) {
+                            return ($model->month ? $model->monthName() : '');
+                        })
+                        ->editColumn('year', function ($model) {
+                            return ($model->year != '0' ? $model->year : '');
+                        })
+                        ->addColumn('active', function ($model) {
+                            if ($model->is_active == 1) {
+                                $is_active = trans('app.forms.active');
+                            } else {
+                                $is_active = trans('app.forms.inactive');
+                            }
 
-        if (count($filelist) > 0) {
-            $data = Array();
-            foreach ($filelist as $filelists) {
-                $button = "";
-                if ($filelists->is_active == 1) {
-                    $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $filelists->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                } else {
-                    $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $filelists->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                }
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
+                            return $is_active;
+                        })
+                        ->addColumn('action', function ($model) {
+                            $button = '';
+                            if ($model->is_active == 1) {
+                                $status = trans('app.forms.active');
+                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                            } else {
+                                $status = trans('app.forms.inactive');
+                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            }
+                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $model->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceFileList', $filelists->id) . "'>" . $filelists->file->file_no . " " . $filelists->year . "-" . strtoupper($filelists->monthName()) . "</a>",
-                    $filelists->file->strata->strataName(),
-                    $filelists->company->short_name,
-                    $filelists->monthName(),
-                    $filelists->year,
-                    $status,
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
+                            return $button;
+                        })
+                        ->make(true);
     }
 
     public function deleteFinanceList() {

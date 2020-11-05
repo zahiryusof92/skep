@@ -13,10 +13,451 @@ class HomeController extends BaseController {
       |	Route::get('/', 'HomeController@showWelcome');
       |
      */
-    
+
+    public function home() {
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $total_strata = Files::whereHas('strata', function ($query) {
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                })->count();
+
+        $total_rating = Files::whereHas('ratings', function ($query) {
+                    $query->where('scoring_quality_index.is_deleted', 0);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                })
+                ->count();
+
+        $data = Files::getDashboardData();
+
+        $viewData = array(
+            'title' => trans('app.app_name_short'),
+            'panel_nav_active' => 'home_panel',
+            'main_nav_active' => 'home_main',
+            'sub_nav_active' => 'home',
+            'user_permission' => $user_permission,
+            'total_strata' => $total_strata,
+            'total_rating' => $total_rating,
+            'data' => $data,
+            'image' => ""
+        );
+
+        return View::make('home_en.dashboard', $viewData);
+    }
+
+    public function getAGMRemainder() {
+        $condition = function ($query) {
+            $query->where('meeting_document.agm_date', '!=', '0000-00-00');
+            $query->where('meeting_document.agm_date', '<=', date('Y-m-d', strtotime('-1 year')));
+            $query->where('meeting_document.is_deleted', 0);
+            $query->where('files.is_active', 1);
+            $query->where('files.is_deleted', 0);
+            $query->orderBy('meeting_document.agm_date', 'desc');
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where($condition);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where($condition);
+            }
+        }
+
+        if ($file) {
+            return Datatables::of($file)
+                            ->addColumn('cob', function ($model) {
+                                return ($model->company_id ? $model->company->short_name : '-');
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return $model->file_no;
+                            })
+                            ->addColumn('strata', function ($model) {
+                                return ($model->strata_id ? $model->strata->name : '-');
+                            })
+                            ->addColumn('agm_date', function ($model) {
+                                return ($model->meeting_document_id ? date('d-M-Y', strtotime($model->latestMeetingDocument->agm_date)) : '-');
+                            })
+                            ->addColumn('agm_expiry_date', function ($model) {
+                                return ($model->meeting_document_id ? date('d-M-Y', strtotime($model->latestMeetingDocument->agm_date . " + 1 year")) : '-');
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = '';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+
+                                return $button;
+                            })
+                            ->make(true);
+        }
+    }
+
+    public function getNeverAGM() {
+        $condition = function ($query) {
+            $query->whereDoesntHave('meetingDocument');
+            $query->orWhereHas('meetingDocument', function ($query2) {
+                $query2->where('meeting_document.agm_date', '0000-00-00');
+            });
+            $query->where('files.is_active', 1);
+            $query->where('files.is_deleted', 0);
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            } else {
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where($condition);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where($condition);
+            } else {
+                $file = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where($condition);
+            }
+        }
+
+        if ($file) {
+            return Datatables::of($file)
+                            ->addColumn('cob', function ($model) {
+                                return ($model->company_id ? $model->company->short_name : '-');
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return $model->file_no;
+                            })
+                            ->addColumn('strata', function ($model) {
+                                return ($model->strata_id ? $model->strata->name : '-');
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = '';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $model->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+
+                                return $button;
+                            })
+                            ->make(true);
+        }
+    }
+
+    public function getAGM12Months() {
+        $condition = function ($query) {
+            $query->where('meeting_document.agm_date', '!=', '0000-00-00');
+            $query->where('meeting_document.agm_date', '<=', date('Y-m-d', strtotime('-12 Months')));
+            $query->where('meeting_document.is_deleted', 0);
+            $query->where('files.is_active', 1);
+            $query->where('files.is_deleted', 0);
+            $query->orderBy('meeting_document.agm_date', 'desc');
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where($condition);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where($condition);
+            }
+        }
+
+        if ($file) {
+            return Datatables::of($file)
+                            ->addColumn('cob', function ($model) {
+                                return ($model->company_id ? $model->company->short_name : '-');
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return $model->file_no;
+                            })
+                            ->addColumn('strata', function ($model) {
+                                return ($model->strata_id ? $model->strata->name : '-');
+                            })
+                            ->addColumn('agm_date', function ($model) {
+                                return ($model->meeting_document_id ? date('d-M-Y', strtotime($model->latestMeetingDocument->agm_date)) : '-');
+                            })
+                            ->addColumn('agm_expiry_date', function ($model) {
+                                return ($model->meeting_document_id ? date('d-M-Y', strtotime($model->latestMeetingDocument->agm_date . " + 1 year")) : '-');
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = '';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+
+                                return $button;
+                            })
+                            ->make(true);
+        }
+    }
+
+    public function getAGM15Months() {
+        $condition = function ($query) {
+            $query->where('meeting_document.agm_date', '!=', '0000-00-00');
+            $query->where('meeting_document.agm_date', '<=', date('Y-m-d', strtotime('-15 Months')));
+            $query->where('meeting_document.is_deleted', 0);
+            $query->where('files.is_active', 1);
+            $query->where('files.is_deleted', 0);
+            $query->orderBy('meeting_document.agm_date', 'desc');
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where($condition);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where($condition);
+            }
+        }
+
+        if ($file) {
+            return Datatables::of($file)
+                            ->addColumn('cob', function ($model) {
+                                return ($model->company_id ? $model->company->short_name : '-');
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return $model->file_no;
+                            })
+                            ->addColumn('strata', function ($model) {
+                                return ($model->strata_id ? $model->strata->name : '-');
+                            })
+                            ->addColumn('agm_date', function ($model) {
+                                return ($model->meeting_document_id ? date('d-M-Y', strtotime($model->latestMeetingDocument->agm_date)) : '-');
+                            })
+                            ->addColumn('agm_expiry_date', function ($model) {
+                                return ($model->meeting_document_id ? date('d-M-Y', strtotime($model->latestMeetingDocument->agm_date . " + 1 year")) : '-');
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = '';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+
+                                return $button;
+                            })
+                            ->make(true);
+        }
+    }
+
+    public function getDesignationRemainder() {
+        $current_year = date('Y');
+        $current_month = date('m', strtotime('first day of +1 month'));
+
+//        return $current_month;
+        $condition = function ($query1) use ($current_month, $current_year) {
+            $query1->where(function ($query2) {
+                $query2->where('ajk_details.month', '!=', '00');
+                $query2->orWhere('ajk_details.month', '!=', '');
+            });
+            $query1->where(function ($query3) {
+                $query3->where('ajk_details.year', '!=', '0000');
+                $query3->orWhere('ajk_details.year', '!=', '');
+            });
+            $query1->where(function ($query4) use ($current_month, $current_year) {
+                $query4->where('ajk_details.year', '<=', $current_year);
+                $query4->where('ajk_details.month', '<', $current_month);
+            });
+            $query1->where('ajk_details.is_deleted', 0);
+            $query1->where('designation.is_deleted', 0);
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where($condition);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = AJKDetails::join('designation', 'ajk_details.designation', '=', 'designation.id')
+                        ->join('files', 'ajk_details.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
+                        ->where($condition);
+            } else {
+                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where($condition);
+            }
+        }
+
+        if ($file) {
+            return Datatables::of($file)
+                            ->addColumn('cob', function ($model) {
+                                return ($model->file_id ? $model->file->company->short_name : '-');
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return ($model->file_id ? $model->file->file_no : '');
+                            })
+                            ->addColumn('strata', function ($model) {
+                                return ($model->strata_id ? $model->file->strata->name : '-');
+                            })
+                            ->editColumn('designation', function ($model) {
+                                return ($model->designation_id ? $model->designations->description : '-');
+                            })
+                            ->editColumn('name', function ($model) {
+                                return ($model->name);
+                            })
+                            ->editColumn('phone_no', function ($model) {
+                                return ($model->phone_no);
+                            })
+                            ->editColumn('month', function ($model) {
+                                return $model->month;
+                            })
+                            ->editColumn('year', function ($model) {
+                                return $model->year;
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = '';
+                                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+
+                                return $button;
+                            })
+                            ->make(true);
+        }
+    }
+
+    public function getMemoHome() {
+        $memo = Memo::where('is_active', 1);
+
+        return Datatables::of($memo)
+                        ->editColumn('memo_date', function ($model) {
+                            return ($model->memo_date ? date('d-M-Y', strtotime($model->memo_date)) : '');
+                        })
+                        ->addColumn('action', function ($model) {
+                            return '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . $model->id . '\')">' . trans('app.forms.view') . '</button>';
+                        })
+                        ->make(true);
+    }
+
+    public function getMemoDetails() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $result = "";
+            $id = $data['id'];
+
+            $memo = Memo::find($id);
+
+            if (count($memo) > 0) {
+
+                $result .= "<div class='modal-header'>";
+                $result .= "<button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>";
+                $result .= "<h4 class='modal-title' id='myModalLabel'>" . ($memo->subject != "" ? $memo->subject : "-") . "</h4>";
+                $result .= "<h6 class='modal-title' id=''>" . (date('d-M-Y', strtotime($memo->memo_date)) != "" ? date('d-M-Y', strtotime($memo->memo_date)) : "-") . "</h6>";
+                $result .= "</div>";
+                $result .= "<div class='modal-body'>";
+                $result .= "<p>" . ($memo->description != "" ? $memo->description : "-") . "</p>";
+                $result .= "</div>";
+            } else {
+                $result = trans('app.errors.no_data_found');
+            }
+
+            print $result;
+        }
+    }
+
     public function getCompanyName() {
         $company = Company::find(Auth::user()->company_id);
-        
+
         print $company->name;
     }
+
 }

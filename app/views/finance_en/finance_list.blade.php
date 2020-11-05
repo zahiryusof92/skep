@@ -40,8 +40,8 @@ foreach ($user_permission as $permission) {
                                     <label>{{ trans('app.forms.month') }}</label>
                                     <select id="month" class="form-control select2">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($month as $months)
-                                        <option value="{{ $months }}">{{ $months }}</option>
+                                        @foreach ($month as $val => $months)
+                                        <option value="{{ $val }}">{{ $months }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -50,10 +50,9 @@ foreach ($user_permission as $permission) {
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.year') }}</label>
                                     <select id="year" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @for ($i = 2012; $i <= date('Y'); $i++)
-                                        <option value="{{ $i }}">{{ $i}}</option>
-                                        @endfor
+                                        @foreach ($year as $value => $years)
+                                        <option value="{{ $value }}">{{ $years }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -69,9 +68,9 @@ foreach ($user_permission as $permission) {
                     <table class="table table-hover nowrap" id="filelist" width="100%" style="font-size: 13px;">
                         <thead>
                             <tr>
-                                <th style="width:20%;">{{ trans('app.forms.finance_management') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.strata') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.cob') }}</th>
+                                <th style="width:20%;">{{ trans('app.forms.finance_management') }}</th>
+                                <th style="width:20%;">{{ trans('app.forms.strata') }}</th>                                
                                 <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.year') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.status') }}</th>
@@ -95,15 +94,27 @@ foreach ($user_permission as $permission) {
     var oTable;
     $(document).ready(function () {
         oTable = $('#filelist').DataTable({
-            "sAjaxSource": "{{URL::action('FinanceController@getFinanceList')}}",
-            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
-            "order": [[0, "asc"]],
-            "scrollX": true,
-            "responsive": false
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('FinanceController@getFinanceList') }}",
+            lengthMenu: [[15, 30, 50, 100, -1], [15, 30, 50, 100, "All"]],
+            pageLength: 30,
+            order: [[0, "asc"], [1, 'asc'], [3, 'desc'], [4, 'desc']],
+            responsive: false,
+            scrollX: true,
+            columns: [
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'file_no', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
+                {data: 'month', name: 'finance_file.month'},
+                {data: 'year', name: 'finance_file.year'},
+                {data: 'active', name: 'files.is_active', searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
+            ]
         });
 
         $('#company').on('change', function () {
-            oTable.columns(2).search(this.value).draw();
+            oTable.columns(0).search(this.value).draw();
         });
         $('#month').on('change', function () {
             oTable.columns(3).search(this.value).draw();

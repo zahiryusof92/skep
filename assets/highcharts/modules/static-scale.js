@@ -1,12 +1,13 @@
 /*
- Highcharts JS v6.0.3 (2017-11-14)
+ Highcharts Gantt JS v8.2.2 (2020-10-22)
+
  StaticScale
 
- (c) 2016 Torstein Honsi, Lars A. V. Cabrera
-
- --- WORK IN PROGRESS ---
+ (c) 2016-2019 Torstein Honsi, Lars A. V. Cabrera
 
  License: www.highcharts.com/license
 */
-(function(a){"object"===typeof module&&module.exports?module.exports=a:a(Highcharts)})(function(a){(function(c){var a=c.Chart,e=c.each,f=c.pick;a.prototype.adjustHeight=function(){e(this.axes,function(b){var a=b.chart,e=!!a.initiatedScale&&a.options.animation,d=b.options.staticScale;c.isNumber(d)&&!b.horiz&&c.defined(b.min)&&(b=f(b.unitLength,b.max+b.tickInterval-b.min)*d,b=Math.max(b,d),d=b-a.plotHeight,1<=Math.abs(d)&&(a.plotHeight=b,a.setSize(null,a.chartHeight+d,e)))});this.initiatedScale=!0};
-c.addEvent(a.prototype,"render",a.prototype.adjustHeight)})(a)});
+(function(a){"object"===typeof module&&module.exports?(a["default"]=a,module.exports=a):"function"===typeof define&&define.amd?define("highcharts/modules/static-scale",["highcharts"],function(b){a(b);a.Highcharts=b;return a}):a("undefined"!==typeof Highcharts?Highcharts:void 0)})(function(a){function b(a,c,d,b){a.hasOwnProperty(c)||(a[c]=b.apply(null,d))}a=a?a._modules:{};b(a,"Extensions/StaticScale.js",[a["Core/Axis/Axis.js"],a["Core/Chart/Chart.js"],a["Core/Utilities.js"]],function(a,b,d){var c=
+d.addEvent,f=d.defined,g=d.isNumber,h=d.pick;c(a,"afterSetOptions",function(){var a=this.chart.options&&this.chart.options.chart;!this.horiz&&g(this.options.staticScale)&&(!a.height||a.scrollablePlotArea&&a.scrollablePlotArea.minHeight)&&(this.staticScale=this.options.staticScale)});b.prototype.adjustHeight=function(){"adjustHeight"!==this.redrawTrigger&&((this.axes||[]).forEach(function(a){var b=a.chart,d=!!b.initiatedScale&&b.options.animation,c=a.options.staticScale;if(a.staticScale&&f(a.min)){var e=
+h(a.brokenAxis&&a.brokenAxis.unitLength,a.max+a.tickInterval-a.min)*c;e=Math.max(e,c);c=e-b.plotHeight;1<=Math.abs(c)&&(b.plotHeight=e,b.redrawTrigger="adjustHeight",b.setSize(void 0,b.chartHeight+c,d));a.series.forEach(function(a){(a=a.sharedClipKey&&b[a.sharedClipKey])&&a.attr({height:b.plotHeight})})}}),this.initiatedScale=!0);this.redrawTrigger=null};c(b,"render",b.prototype.adjustHeight)});b(a,"masters/modules/static-scale.src.js",[],function(){})});
+//# sourceMappingURL=static-scale.js.map

@@ -181,10 +181,9 @@ foreach ($user_permission as $permission) {
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.year') }}</label>
                                     <select id="year" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @for ($i = 2012; $i <= date('Y'); $i++)
-                                        <option value="{{ $i }}">{{ $i}}</option>
-                                        @endfor
+                                        @foreach ($year as $value => $years)
+                                        <option value="{{ $value }}">{{ $years }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -197,9 +196,9 @@ foreach ($user_permission as $permission) {
 
             <div class="row">
                 <div class="col-lg-12">
-                    <table class="table table-hover nowrap" id="filelist" width="100%" style="font-size: 13px;">
+                    <table class="table table-hover nowrap" id="filelist" width="100%">
                         <thead>
-                            <tr>
+                            <tr>                                
                                 <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
                                 <th style="width:30%;">{{ trans('app.forms.name') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -225,26 +224,26 @@ foreach ($user_permission as $permission) {
     var oTable;
     $(document).ready(function () {
         oTable = $('#filelist').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getFileList')}}",
-            "lengthMenu": [
-                [15, 30, 50, 100, -1],
-                [15, 30, 50, 100, "All"]
-            ],
-            "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
-            ],
-            "sorting": [
-                [2, "asc"]
-            ],
-            "scrollX": true,
-            "responsive": false
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('AdminController@getFileList') }}",
+            lengthMenu: [[15, 30, 50, 100, -1], [15, 30, 50, 100, "All"]],
+            pageLength: 30,
+            order: [[2, "asc"], [1, 'asc']],
+            responsive: false,
+            scrollX: true,
+            columns: [
+                {data: 'file_no', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'year', name: 'strata.year'},
+                {data: 'active', name: 'files.is_active', searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
+            ]
         });
 
         $('#company').on('change', function () {
-            oTable.columns(2).search(this.value).draw();
+            oTable.columns(0).search(this.value).draw();
         });
         $('#year').on('change', function () {
             oTable.columns(3).search(this.value).draw();
@@ -357,7 +356,7 @@ foreach ($user_permission as $permission) {
 <script>
     $(document).on("click", ".modal-update-file-no", function () {
         $("#file_no_error").css("display", "none");
-        
+
         var fileNo = $(this).data('file_no'),
                 fileID = $(this).data('id');
 
@@ -365,7 +364,7 @@ foreach ($user_permission as $permission) {
         $(".modal-footer #file_id").val(fileID);
 
     });
-    
+
     $("#form_update_file_no").on('submit', (function (e) {
         e.preventDefault();
 

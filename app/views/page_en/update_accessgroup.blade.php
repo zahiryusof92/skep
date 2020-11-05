@@ -194,7 +194,7 @@ foreach ($user_permission as $permission) {
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.admin_status') }}</label>
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.status') }}</label>
                                     <select id="is_active" class="form-control">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         <option value="1" {{($accessgroup->is_active==1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>

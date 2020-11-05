@@ -40,7 +40,7 @@ $swith_lang = true;
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="" role="menu">
-                        <a class="dropdown-item" href="{{URL::action('AdminController@home')}}"><i class="dropdown-icon icmn-home2"></i> {{ trans('app.menus.home') }}</a>
+                        <a class="dropdown-item" href="{{URL::action('HomeController@home')}}"><i class="dropdown-icon icmn-home2"></i> {{ trans('app.menus.home') }}</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{URL::action('UserController@editProfile')}}"><i class="dropdown-icon icmn-profile"></i> {{ trans('app.menus.edit_profile') }}</a>
                         <a class="dropdown-item" href="{{URL::action('UserController@changePassword')}}"><i class="dropdown-icon fa fa-key"></i> {{ trans('app.menus.change_password') }}</a>

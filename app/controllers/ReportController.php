@@ -3,6 +3,11 @@
 class ReportController extends BaseController {
 
     public function ownerTenant() {
+        if (!AccessGroup::hasAccess(49)) {
+            $title = trans('app.errors.page_not_found');
+            return View::make('404_en', compact('title'));
+        }
+
         $data = Input::all();
 
         //get user permission
@@ -323,60 +328,59 @@ class ReportController extends BaseController {
         $cob_name = 'All COB';
         if (isset($data['company']) && !empty($data['company'])) {
             $cob_company = $data['company'];
-            $cob_name = Company::find($cob_company)->pluck('short_name');
+            $cob_name = $data['company'];
         }
+
         $file_no = '';
         $file_name = 'All Files';
         if (isset($data['file_no']) && !empty($data['file_no'])) {
             $file_no = $data['file_no'];
-            $file_name = Files::find($file_no)->pluck('file_no');
+            $file_name = $data['file_no'];
         }
 
         if (!empty($cob_company) && !empty($file_no)) {
-            $purchaser = DB::table('buyer')
-                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                    ->where('files.company_id', $cob_company)
-                    ->where('files.id', $file_no)
+            $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'buyer.race_id', '=', 'race.id')
+                    ->select(['buyer.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->where('files.file_no', $file_no)
                     ->where('buyer.is_deleted', 0)
-                    ->orderBy('unit_no', 'asc')
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
                     ->get();
         } else if (!empty($cob_company)) {
-            $purchaser = DB::table('buyer')
-                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                    ->where('files.company_id', $cob_company)
+            $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'buyer.race_id', '=', 'race.id')
+                    ->select(['buyer.*'])
+                    ->where('company.short_name', $cob_company)
                     ->where('buyer.is_deleted', 0)
                     ->orderBy('company.short_name', 'ASC')
                     ->orderBy('files.file_no', 'ASC')
                     ->orderBy('unit_no', 'ASC')
                     ->get();
         } else if (!empty($file_no)) {
-            $purchaser = DB::table('buyer')
-                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
-                    ->where('files.id', $file_no)
+            $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'buyer.race_id', '=', 'race.id')
+                    ->select(['buyer.*'])
+                    ->where('files.file_no', $file_no)
                     ->where('buyer.is_deleted', 0)
                     ->orderBy('company.short_name', 'ASC')
                     ->orderBy('files.file_no', 'ASC')
                     ->orderBy('unit_no', 'ASC')
                     ->get();
         } else {
-            $purchaser = DB::table('buyer')
-                    ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
-                    ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                    ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
-                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-                    ->select('buyer.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name', 'strata.name as strata_name')
+            $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'buyer.race_id', '=', 'race.id')
+                    ->select(['buyer.*'])
                     ->where('buyer.is_deleted', 0)
                     ->orderBy('company.short_name', 'ASC')
                     ->orderBy('files.file_no', 'ASC')
@@ -398,6 +402,613 @@ class ReportController extends BaseController {
         );
 
         return View::make('report_en.purchaser', $viewData);
+    }
+
+    /*
+     * Complaint Report
+     */
+
+    public function complaint() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        $defect_category = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+            $file_info = Files::getComplaintReportByCOB($cob_id);
+        } else {
+            $cob_id = '';
+            $file_info = Files::getComplaintReportByCOB();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.complaint'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'complaint_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'defect_category' => $defect_category,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.complaint', $viewData);
+    }
+
+    /*
+     * Insurance Report
+     */
+
+    public function insurance() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        $insurance_provider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+            $file_info = Files::getInsuranceReportByCOB($cob_id);
+        } else {
+            $cob_id = '';
+            $file_info = Files::getInsuranceReportByCOB();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.insurance'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'insurance_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'insurance_provider' => $insurance_provider,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.insurance', $viewData);
+    }
+
+    public function collection() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+            $file_info = Files::getCollectionReportByCOB($cob_id);
+        } else {
+            $cob_id = '';
+            $file_info = Files::getCollectionReportByCOB();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.collection'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'collection_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.collection', $viewData);
+    }
+
+    /*
+     * Council Report
+     */
+
+    public function council() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+            $file_info = Files::getCouncilReportByCOB($cob_id);
+        } else {
+            $cob_id = '';
+            $file_info = Files::getCouncilReportByCOB();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.council'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'council_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.council', $viewData);
+    }
+
+    public function dun() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+            $file_info = Files::getDunReportByCOB($cob_id);
+        } else {
+            $cob_id = '';
+            $file_info = Files::getDunReportByCOB();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.dun'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'dun_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'category' => $category,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.dun', $viewData);
+    }
+
+    public function parliment() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+            $file_info = Files::getParlimentReportByCOB($cob_id);
+        } else {
+            $cob_id = '';
+            $file_info = Files::getParlimentReportByCOB();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.parliment'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'parliment_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'category' => $category,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.parliment', $viewData);
+    }
+
+    public function vp() {
+        $data = Input::all();
+
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        $year = Files::getVPYear();
+
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            if (isset($data['year']) && !empty($data['year'])) {
+                $cob_id = $data['cob_id'];
+                $year_id = $data['year'];
+            } else {
+                $cob_id = $data['cob_id'];
+                $year_id = '';
+            }
+        } else {
+            if (isset($data['year']) && !empty($data['year'])) {
+                $cob_id = '';
+                $year_id = $data['year'];
+            } else {
+                $cob_id = '';
+                $year_id = '';
+            }
+        }
+
+        $file_info = Files::getVPReport($cob_id, $year_id ? $year_id : date('Y'));
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.vp'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'vp_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'year' => $year,
+            'year_id' => $year_id ? $year_id : date('Y'),
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'cob_name' => $cob_id ? Company::where('id', $cob_id)->pluck('name') : '',
+            'image' => ''
+        );
+
+        return View::make('report_en.vp', $viewData);
+    }
+
+    public function management() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.management_list'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'management_list_report_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'files' => $files,
+            'image' => ''
+        );
+
+        return View::make('report_en.management', $viewData);
+    }
+
+    public function managementList() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $result = array();
+        $data = Input::all();
+
+        $cob_company = '';
+        $cob_name = 'All COB';
+        if (isset($data['company']) && !empty($data['company'])) {
+            $cob_company = $data['company'];
+            $cob_name = $data['company'];
+        }
+
+        $file_no = '';
+        $file_name = 'All Files';
+        if (isset($data['file_no']) && !empty($data['file_no'])) {
+            $file_no = $data['file_no'];
+            $file_name = $data['file_no'];
+        }
+
+        if (!empty($cob_company) && !empty($file_no)) {
+            $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                    ->select(['files.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->where('files.file_no', $file_no)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->get();
+        } else if (!empty($cob_company)) {
+            $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                    ->select(['files.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->get();
+        } else if (!empty($file_no)) {
+            $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                    ->select(['files.*'])
+                    ->where('files.file_no', $file_no)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->get();
+        } else {
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->select(['files.*'])
+                            ->where('id', Auth::user()->file_id)
+                            ->where('company_id', Auth::user()->company_id)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->get();
+                } else {
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->select(['files.*'])
+                            ->where('company_id', Auth::user()->company_id)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->get();
+
+                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->select(['files.*'])
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->get();
+                } else {
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->select(['files.*'])
+                            ->where('company_id', Session::get('admin_cob'))
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->get();
+                }
+            }
+        }
+
+        if ($files) {
+            foreach ($files as $file) {
+                if ($file->managementJMB) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'JMB',
+                        $file->managementJMB->name,
+                        ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+                        $file->managementJMB->email,
+                        $file->managementJMB->phone_no
+                    );
+
+                    array_push($result, $data_raw);
+                }
+
+                if ($file->managementMC) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'MC',
+                        $file->managementMC->name,
+                        ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+                        $file->managementMC->email,
+                        $file->managementMC->phone_no
+                    );
+
+                    array_push($result, $data_raw);
+                }
+
+                if ($file->managementAgent) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'Agent',
+                        $file->managementAgent->name,
+                        ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
+                        $file->managementAgent->email,
+                        $file->managementAgent->phone_no
+                    );
+
+                    array_push($result, $data_raw);
+                }
+
+                if ($file->managementOthers) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'Others',
+                        $file->managementOthers->name,
+                        ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
+                        $file->managementOthers->email,
+                        $file->managementOthers->phone_no
+                    );
+
+                    array_push($result, $data_raw);
+                }
+            }
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.management_list'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'management_list_report_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'cob_company' => $cob_company,
+            'cob_name' => $cob_name,
+            'file_no' => $file_no,
+            'file_name' => $file_name,
+            'result' => $result,
+            'image' => ''
+        );
+
+        return View::make('report_en.management_list', $viewData);
+    }
+
+    public function getManagementList() {
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
+
+        if (count($files) > 0) {
+            $data = array();
+            foreach ($files as $file) {
+                if ($file->managementJMB) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'JMB',
+                        $file->managementJMB->name,
+                        ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+                        $file->managementJMB->email,
+                        $file->managementJMB->phone_no
+                    );
+
+                    array_push($data, $data_raw);
+                }
+
+                if ($file->managementMC) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'MC',
+                        $file->managementMC->name,
+                        ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+                        $file->managementMC->email,
+                        $file->managementMC->phone_no
+                    );
+
+                    array_push($data, $data_raw);
+                }
+
+                if ($file->managementAgent) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'Agent',
+                        $file->managementAgent->name,
+                        ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
+                        $file->managementAgent->email,
+                        $file->managementAgent->phone_no
+                    );
+
+                    array_push($data, $data_raw);
+                }
+
+                if ($file->managementOthers) {
+                    $data_raw = array(
+                        $file->company->short_name,
+                        $file->file_no,
+                        'Others',
+                        $file->managementOthers->name,
+                        ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
+                        $file->managementOthers->email,
+                        $file->managementOthers->phone_no
+                    );
+
+                    array_push($data, $data_raw);
+                }
+            }
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
     }
 
 }
