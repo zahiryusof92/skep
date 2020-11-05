@@ -323,8 +323,7 @@ class HomeController extends BaseController {
     public function getDesignationRemainder() {
         $current_year = date('Y');
         $current_month = date('m', strtotime('first day of +1 month'));
-
-//        return $current_month;
+        
         $condition = function ($query1) use ($current_month, $current_year) {
             $query1->where(function ($query2) {
                 $query2->where('ajk_details.month', '!=', '00');
@@ -344,18 +343,20 @@ class HomeController extends BaseController {
 
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                $file = AJKDetails::join('designation', 'ajk_details.designation', '=', 'designation.id')
+                        ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($condition);
             } else {
-                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                $file = AJKDetails::join('designation', 'ajk_details.designation', '=', 'designation.id')
+                        ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
                         ->where('company_id', Auth::user()->company_id)
                         ->where($condition);
             }
@@ -368,10 +369,11 @@ class HomeController extends BaseController {
                         ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
                         ->where($condition);
             } else {
-                $file = Files::join('meeting_document', 'meeting_document.file_id', '=', 'files.id')
+                $file = AJKDetails::join('designation', 'ajk_details.designation', '=', 'designation.id')
+                        ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'meeting_document.id as meeting_document_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
                         ->where('company_id', Session::get('admin_cob'))
                         ->where($condition);
             }

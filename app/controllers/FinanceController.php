@@ -549,7 +549,7 @@ class FinanceController extends BaseController {
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
                         ->select(['finance_file.*', 'strata.id as strata_id'])
-                        ->where('company_id', Auth::user()->company_id)
+                        ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_deleted', 0)
                         ->where('finance_file.is_deleted', 0);
             }
@@ -566,7 +566,7 @@ class FinanceController extends BaseController {
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
                         ->select(['finance_file.*', 'strata.id as strata_id'])
-                        ->where('company_id', Session::get('admin_cob'))
+                        ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_deleted', 0)
                         ->where('finance_file.is_deleted', 0);
             }

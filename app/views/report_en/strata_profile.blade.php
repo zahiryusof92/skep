@@ -62,7 +62,7 @@ $zone = [
 
             <div class="row">
                 <div class="col-lg-12">
-                    <table class="table table-hover nowrap" id="filelist" style="width: 100%">
+                    <table class="table table-hover" id="filelist" style="width: 100%">
                         <thead>
                             <tr>
                                 <th style="width:55%;">{{ trans('app.forms.file_no') }}</th>

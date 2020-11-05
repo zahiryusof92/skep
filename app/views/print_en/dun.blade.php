@@ -42,8 +42,8 @@ $company = Company::find(Auth::user()->company_id);
                         </thead>
                         <tbody>
                             <?php
-                            $totalChart = '';
-                            $dunChart = '';
+                            $dunChart = array();
+                            $totalChart = array();
                             ?>
                             @foreach ($file_info as $file)                                
                             @if ($file['dun'])
@@ -76,6 +76,7 @@ $company = Company::find(Auth::user()->company_id);
                             @endforeach
 
                             @if ($category)
+                            <?php $catChart = array(); ?>
                             @foreach ($category as $cats)
                             <?php
                             $catChart[] = array(

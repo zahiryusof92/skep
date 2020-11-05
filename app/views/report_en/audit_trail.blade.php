@@ -51,7 +51,7 @@ $company = Company::find(Auth::user()->company_id);
                     <br/>
                     <div class="row">
                         <div class="col-lg-12">
-                            <table class="table" id="audit_trail" width="100%" style="font-size: 12px;">
+                            <table class="table table-hover" id="audit_trail" width="100%">
                                 <thead>
                                     <tr>
                                         <th style="width:10%; text-align: center !important;">{{ trans('app.forms.date') }}</th>

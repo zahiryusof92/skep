@@ -106,7 +106,10 @@
                             </tbody>
                         </table>
 
+                        <hr/>
+                        
                         <div id="owner_chart"></div>
+                        
                         <script>
                             Highcharts.chart('owner_chart', {
                                 chart: {
@@ -191,7 +194,10 @@
                             </tbody>
                         </table>
 
+                        <hr/>
+                        
                         <div id="tenant_chart"></div>
+                        
                         <script>
                             Highcharts.chart('tenant_chart', {
                                 chart: {

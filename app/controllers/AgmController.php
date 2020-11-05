@@ -67,13 +67,13 @@ class AgmController extends BaseController {
                 if (!empty($ajk_details->file_id)) {
                     if (!Auth::user()->getAdmin()) {
                         if (!empty(Auth::user()->company_id)) {
-                            if ($ajk_details->files->company_id != Auth::user()->company_id) {
+                            if ($ajk_details->file_id && $ajk_details->file->company_id != Auth::user()->company_id) {
                                 continue;
                             }
                         }
                     } else {
                         if (!empty(Session::get('admin_cob'))) {
-                            if ($ajk_details->files->company_id != Session::get('admin_cob')) {
+                            if ($ajk_details->file_id && $ajk_details->file->company_id != Session::get('admin_cob')) {
                                 continue;
                             }
                         }
@@ -99,8 +99,8 @@ class AgmController extends BaseController {
                             </button>&nbsp';
 
                 $data_raw = array(
-                    $ajk_details->files->company->short_name,
-                    $ajk_details->files->file_no,
+                    $ajk_details->file->company->short_name,
+                    $ajk_details->file->file_no,
                     $designation->description,
                     $ajk_details->name,
                     $ajk_details->phone_no,
@@ -388,8 +388,7 @@ class AgmController extends BaseController {
                         ->join('race', 'buyer.race_id', '=', 'race.id')
                         ->select(['buyer.*'])
                         ->where('files.id', Auth::user()->file_id)
-                        ->where('buyer.is_deleted', 0)
-                        ->get();
+                        ->where('buyer.is_deleted', 0);
             } else {
                 $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
@@ -397,8 +396,7 @@ class AgmController extends BaseController {
                         ->join('race', 'buyer.race_id', '=', 'race.id')
                         ->select(['buyer.*'])
                         ->where('files.company_id', Auth::user()->company_id)
-                        ->where('buyer.is_deleted', 0)
-                        ->get();
+                        ->where('buyer.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
@@ -892,17 +890,17 @@ class AgmController extends BaseController {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $totalData = DB::table('tenant')
-                        ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('race', 'tenant.race_id', '=', 'race.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('tenant.is_deleted', 0)
                         ->count();
             } else {
                 $totalData = DB::table('tenant')
-                        ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('race', 'tenant.race_id', '=', 'race.id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('tenant.is_deleted', 0)
                         ->count();
@@ -910,16 +908,16 @@ class AgmController extends BaseController {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $totalData = DB::table('tenant')
-                        ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('race', 'tenant.race_id', '=', 'race.id')
                         ->where('tenant.is_deleted', 0)
                         ->count();
             } else {
                 $totalData = DB::table('tenant')
-                        ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                        ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                        ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('race', 'tenant.race_id', '=', 'race.id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('tenant.is_deleted', 0)
                         ->count();
@@ -940,9 +938,9 @@ class AgmController extends BaseController {
             if (!empty(Auth::user()->file_id)) {
                 if (empty($search)) {
                     $posts = DB::table('tenant')
-                            ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                            ->join('files', 'tenant.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('race', 'tenant.race_id', '=', 'race.id')
                             ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('tenant.is_deleted', 0)
@@ -952,17 +950,17 @@ class AgmController extends BaseController {
                             ->get();
 
                     $totalFiltered = DB::table('tenant')
-                            ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                            ->join('files', 'tenant.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('race', 'tenant.race_id', '=', 'race.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('tenant.is_deleted', 0)
                             ->count();
                 } else {
                     $posts = DB::table('tenant')
-                            ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                            ->join('files', 'tenant.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('race', 'tenant.race_id', '=', 'race.id')
                             ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('tenant.is_deleted', 0)
@@ -981,9 +979,9 @@ class AgmController extends BaseController {
                             ->get();
 
                     $totalFiltered = DB::table('tenant')
-                            ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                            ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                            ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                            ->join('files', 'tenant.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('race', 'tenant.race_id', '=', 'race.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('tenant.is_deleted', 0)
                             ->where(function($query) use ($search) {
@@ -1001,9 +999,9 @@ class AgmController extends BaseController {
                 if (empty($search)) {
                     if (!empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
@@ -1014,18 +1012,18 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
                     } else {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1035,9 +1033,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
@@ -1045,9 +1043,9 @@ class AgmController extends BaseController {
                 } else {
                     if (!empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
@@ -1067,9 +1065,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1085,9 +1083,9 @@ class AgmController extends BaseController {
                                 ->count();
                     } else {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1106,9 +1104,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Auth::user()->company_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1129,9 +1127,9 @@ class AgmController extends BaseController {
                 if (empty($search)) {
                     if (!empty($company_id) && !empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
@@ -1142,18 +1140,18 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
                     } else if (!empty($company_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1163,17 +1161,17 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', $company_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
                     } else if (!empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1183,17 +1181,17 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
                     } else {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('tenant.is_deleted', 0)
                                 ->offset($start)
@@ -1202,18 +1200,18 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
                     }
                 } else {
                     if (!empty($company_id) && !empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
@@ -1233,9 +1231,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', $company_id)
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1251,9 +1249,9 @@ class AgmController extends BaseController {
                                 ->count();
                     } else if (!empty($company_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', $company_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1272,9 +1270,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', $company_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1289,9 +1287,9 @@ class AgmController extends BaseController {
                                 ->count();
                     } else if (!empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1310,9 +1308,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1327,9 +1325,9 @@ class AgmController extends BaseController {
                                 ->count();
                     } else {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('tenant.is_deleted', 0)
                                 ->where(function($query) use ($search) {
@@ -1347,9 +1345,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('tenant.is_deleted', 0)
                                 ->where(function($query) use ($search) {
                                     $query->where('company.short_name', 'LIKE', "%" . $search . "%")
@@ -1367,9 +1365,9 @@ class AgmController extends BaseController {
                 if (empty($search)) {
                     if (!empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
@@ -1380,18 +1378,18 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
                     } else {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('tenant.is_deleted', 0)
@@ -1401,9 +1399,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('tenant.is_deleted', 0)
                                 ->count();
@@ -1411,9 +1409,9 @@ class AgmController extends BaseController {
                 } else {
                     if (!empty($file_id)) {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
@@ -1433,9 +1431,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('files.id', $file_id)
                                 ->where('tenant.is_deleted', 0)
@@ -1451,9 +1449,9 @@ class AgmController extends BaseController {
                                 ->count();
                     } else {
                         $posts = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->select('tenant.*', 'files.file_no as file_no', 'company.short_name as short_name', 'race.name_en as race_name')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('tenant.is_deleted', 0)
@@ -1472,9 +1470,9 @@ class AgmController extends BaseController {
                                 ->get();
 
                         $totalFiltered = DB::table('tenant')
-                                ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
-                                ->leftJoin('company', 'files.company_id', '=', 'company.id')
-                                ->leftJoin('race', 'tenant.race_id', '=', 'race.id')
+                                ->join('files', 'tenant.file_id', '=', 'files.id')
+                                ->join('company', 'files.company_id', '=', 'company.id')
+                                ->join('race', 'tenant.race_id', '=', 'race.id')
                                 ->where('files.company_id', Session::get('admin_cob'))
                                 ->where('tenant.is_deleted', 0)
                                 ->where(function($query) use ($search) {

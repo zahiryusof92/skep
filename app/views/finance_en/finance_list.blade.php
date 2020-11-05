@@ -65,17 +65,17 @@ foreach ($user_permission as $permission) {
 
             <div class="row">
                 <div class="col-lg-12">
-                    <table class="table table-hover nowrap" id="filelist" width="100%" style="font-size: 13px;">
+                    <table class="table table-hover" id="filelist" width="100%" style="font-size: 13px;">
                         <thead>
                             <tr>
-                                <th style="width:20%;">{{ trans('app.forms.cob') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.finance_management') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.strata') }}</th>                                
+                                <th style="width:25%;">{{ trans('app.forms.strata') }}</th>                                
                                 <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.year') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                 @if ($update_permission == 1)
-                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                <th style="width:15%;">{{ trans('app.forms.action') }}</th>
                                 @endif
                             </tr>
                         </thead>

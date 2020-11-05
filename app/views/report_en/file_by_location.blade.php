@@ -41,7 +41,7 @@ $company = Company::find(Auth::user()->company_id);
                 <div class="row">
                     <div class="col-lg-12">
                         <br/>
-                        <table class="table" id="file_location_list" width="100%" style="font-size: 12px;">
+                        <table class="table table-hover" id="file_location_list" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width:20%; text-align: center !important;">{{ trans('app.forms.parliament') }}</th>

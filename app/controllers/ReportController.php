@@ -739,6 +739,8 @@ class ReportController extends BaseController {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
+        
+        $filename = Files::getFileName();
 
         $viewData = array(
             'title' => trans('app.menus.reporting.management_list'),
@@ -748,6 +750,7 @@ class ReportController extends BaseController {
             'user_permission' => $user_permission,
             'cob' => $cob,
             'files' => $files,
+            'filename' => $filename,
             'image' => ''
         );
 
@@ -816,8 +819,6 @@ class ReportController extends BaseController {
                             ->orderBy('company.short_name', 'ASC')
                             ->orderBy('files.file_no', 'ASC')
                             ->get();
-
-                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
                 }
             } else {
                 if (empty(Session::get('admin_cob'))) {
@@ -845,6 +846,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'JMB',
                         $file->managementJMB->name,
                         ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
@@ -859,6 +861,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'MC',
                         $file->managementMC->name,
                         ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
@@ -873,6 +876,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'Agent',
                         $file->managementAgent->name,
                         ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
@@ -887,6 +891,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'Others',
                         $file->managementOthers->name,
                         ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
@@ -943,6 +948,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'JMB',
                         $file->managementJMB->name,
                         ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
@@ -957,6 +963,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'MC',
                         $file->managementMC->name,
                         ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
@@ -971,6 +978,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'Agent',
                         $file->managementAgent->name,
                         ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
@@ -985,6 +993,7 @@ class ReportController extends BaseController {
                     $data_raw = array(
                         $file->company->short_name,
                         $file->file_no,
+                        $file->strata->name,
                         'Others',
                         $file->managementOthers->name,
                         ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),

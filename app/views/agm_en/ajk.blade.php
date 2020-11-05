@@ -90,7 +90,7 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <div class="table-responsive">                        
-                        <table class="table table-hover nowrap" id="ajk_details_list" width="100%">
+                        <table class="table table-hover" id="ajk_details_list" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>

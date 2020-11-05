@@ -51,7 +51,7 @@
                                         <p>{{ $file_name}}</p>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Filter</label>
                                         <div class="row">
@@ -86,10 +86,11 @@
                                 <thead>
                                     <tr>
                                         <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.cob') }}</th>
-                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_name') }}</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type') }}</th>
                                         <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type_name') }}</th>
-                                        <th style="width:25%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.address') }}</th>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.address') }}</th>
                                         <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.email') }}</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.phone_number') }}</th>
                                     </tr>
@@ -105,6 +106,7 @@
                                         <td>{{ $res[4] }}</td>
                                         <td>{{ $res[5] }}</td>
                                         <td>{{ $res[6] }}</td>
+                                        <td>{{ $res[7] }}</td>
                                     </tr>
                                     @endforeach
                                     @else

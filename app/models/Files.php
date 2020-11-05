@@ -102,7 +102,7 @@ class Files extends Eloquent {
             foreach ($company as $cob) {
                 foreach ($provider as $pro) {
                     $insurance = DB::table('insurance')
-                            ->leftJoin('files', 'insurance.file_id', '=', 'files.id')
+                            ->join('files', 'insurance.file_id', '=', 'files.id')
                             ->where('files.company_id', $cob->id)
                             ->where('insurance.insurance_provider_id', $pro->id)
                             ->where('files.is_deleted', 0)
@@ -147,7 +147,7 @@ class Files extends Eloquent {
             foreach ($company as $cob) {
                 foreach ($category as $cat) {
                     $defect = DB::table('defect')
-                            ->leftJoin('files', 'defect.file_id', '=', 'files.id')
+                            ->join('files', 'defect.file_id', '=', 'files.id')
                             ->where('files.company_id', $cob->id)
                             ->where('defect.defect_category_id', $cat->id)
                             ->where('files.is_deleted', 0)
@@ -270,32 +270,32 @@ class Files extends Eloquent {
         if ($company) {
             foreach ($company as $cob) {
                 $total_strata = DB::table('strata')
-                        ->leftJoin('files', 'strata.file_id', '=', 'files.id')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('files.is_deleted', 0)
                         ->count();
 
                 $total_jmb = DB::table('management_jmb')
-                        ->leftJoin('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('files.is_deleted', 0)
                         ->count();
 
                 $total_mc = DB::table('management_mc')
-                        ->leftJoin('files', 'management_mc.file_id', '=', 'files.id')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('files.is_deleted', 0)
                         ->count();
 
                 $total_buyer = DB::table('buyer')
-                        ->leftJoin('files', 'buyer.file_id', '=', 'files.id')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('buyer.is_deleted', 0)
                         ->where('files.is_deleted', 0)
                         ->count();
 
                 $total_tenant = DB::table('tenant')
-                        ->leftJoin('files', 'tenant.file_id', '=', 'files.id')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('tenant.is_deleted', 0)
                         ->where('files.is_deleted', 0)
@@ -340,7 +340,7 @@ class Files extends Eloquent {
                 $dataDun = [];
                 foreach ($duns as $dun) {
                     $total_file = DB::table('strata')
-                            ->leftJoin('files', 'strata.file_id', '=', 'files.id')
+                            ->join('files', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', $cob->id)
                             ->where('strata.dun', $dun->id)
                             ->where('files.is_deleted', 0)
@@ -350,7 +350,7 @@ class Files extends Eloquent {
                     if ($total_file) {
                         foreach ($category as $cat) {
                             $total_cat_file = DB::table('strata')
-                                    ->leftJoin('files', 'strata.file_id', '=', 'files.id')
+                                    ->join('files', 'strata.file_id', '=', 'files.id')
                                     ->where('files.company_id', $cob->id)
                                     ->where('strata.dun', $dun->id)
                                     ->where('strata.category', $cat->id)
@@ -409,7 +409,7 @@ class Files extends Eloquent {
                 $dataParliment = [];
                 foreach ($parliments as $parliment) {
                     $total_file = DB::table('strata')
-                            ->leftJoin('files', 'strata.file_id', '=', 'files.id')
+                            ->join('files', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', $cob->id)
                             ->where('strata.parliament', $parliment->id)
                             ->where('files.is_deleted', 0)
@@ -419,7 +419,7 @@ class Files extends Eloquent {
                     if ($total_file) {
                         foreach ($category as $cat) {
                             $total_cat_file = DB::table('strata')
-                                    ->leftJoin('files', 'strata.file_id', '=', 'files.id')
+                                    ->join('files', 'strata.file_id', '=', 'files.id')
                                     ->where('files.company_id', $cob->id)
                                     ->where('strata.parliament', $parliment->id)
                                     ->where('strata.category', $cat->id)
@@ -470,7 +470,7 @@ class Files extends Eloquent {
             if (!empty(Auth::user()->file_id)) {
                 if ($cob_id && $year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
@@ -480,7 +480,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
@@ -490,7 +490,7 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($cob_id) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
@@ -499,7 +499,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
@@ -508,7 +508,7 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
@@ -517,7 +517,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
@@ -526,7 +526,7 @@ class Files extends Eloquent {
                             ->count();
                 } else {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
@@ -534,7 +534,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.id', Auth::user()->file_id)
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
@@ -544,7 +544,7 @@ class Files extends Eloquent {
             } else {
                 if ($cob_id && $year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
                             ->where('files.company_id', $cob_id)
@@ -553,7 +553,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
                             ->where('files.company_id', $cob_id)
@@ -562,7 +562,7 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($cob_id) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
                             ->where('files.company_id', $cob_id)
@@ -570,7 +570,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
                             ->where('files.company_id', $cob_id)
@@ -578,7 +578,7 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
                             ->where('strata.year', $year)
@@ -586,7 +586,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
                             ->where('strata.year', $year)
@@ -594,14 +594,14 @@ class Files extends Eloquent {
                             ->count();
                 } else {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 1)
                             ->where('files.is_deleted', 0)
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Auth::user()->company_id)
                             ->where('files.is_active', 2)
                             ->where('files.is_deleted', 0)
@@ -612,7 +612,7 @@ class Files extends Eloquent {
             if (empty(Session::get('admin_cob'))) {
                 if ($cob_id && $year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 1)
                             ->where('files.company_id', $cob_id)
                             ->where('strata.year', $year)
@@ -620,7 +620,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 2)
                             ->where('files.company_id', $cob_id)
                             ->where('strata.year', $year)
@@ -628,41 +628,41 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($cob_id) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 1)
                             ->where('files.company_id', $cob_id)
                             ->where('files.is_deleted', 0)
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 2)
                             ->where('files.company_id', $cob_id)
                             ->where('files.is_deleted', 0)
                             ->count();
                 } else if ($year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 1)
                             ->where('strata.year', $year)
                             ->where('files.is_deleted', 0)
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 2)
                             ->where('strata.year', $year)
                             ->where('files.is_deleted', 0)
                             ->count();
                 } else {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 1)
                             ->where('files.is_deleted', 0)
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.is_active', 2)
                             ->where('files.is_deleted', 0)
                             ->count();
@@ -670,7 +670,7 @@ class Files extends Eloquent {
             } else {
                 if ($cob_id && $year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 1)
                             ->where('files.company_id', $cob_id)
@@ -679,7 +679,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 2)
                             ->where('files.company_id', $cob_id)
@@ -688,7 +688,7 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($cob_id) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 1)
                             ->where('files.company_id', $cob_id)
@@ -696,7 +696,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 2)
                             ->where('files.company_id', $cob_id)
@@ -704,7 +704,7 @@ class Files extends Eloquent {
                             ->count();
                 } else if ($year) {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 1)
                             ->where('strata.year', $year)
@@ -712,7 +712,7 @@ class Files extends Eloquent {
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 2)
                             ->where('strata.year', $year)
@@ -720,14 +720,14 @@ class Files extends Eloquent {
                             ->count();
                 } else {
                     $file_after_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 1)
                             ->where('files.is_deleted', 0)
                             ->count();
 
                     $file_before_vp = DB::table('files')
-                            ->leftJoin('strata', 'strata.file_id', '=', 'files.id')
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
                             ->where('files.company_id', Session::get('admin_cob'))
                             ->where('files.is_active', 1)
                             ->where('files.is_deleted', 0)
@@ -877,6 +877,42 @@ class Files extends Eloquent {
         );
 
         return $result;
+    }
+
+    public static function getFileName() {
+        $filename = array();
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('file.id', Auth::user()->file_id)
+                        ->where('file.company_id', Auth::user()->company_id)
+                        ->where('file.is_deleted', 0)
+                        ->orderBy('strata.name', 'asc')
+                        ->get();
+            } else {
+                $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('strata.name', 'asc')
+                        ->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('strata.name', 'asc')
+                        ->get();
+            } else {
+                $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('strata.name', 'asc')
+                        ->get();
+            }
+        }
+
+        return $filename;
     }
 
 }

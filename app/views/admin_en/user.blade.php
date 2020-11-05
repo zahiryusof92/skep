@@ -28,7 +28,7 @@ foreach ($user_permission as $permission) {
                     </button>
                     <br/><br/>
                     <?php } ?>
-                    <table class="table table-hover nowrap" id="land" width="100%">
+                    <table class="table table-hover" id="userlist_datatable" width="100%">
                         <thead>
                             <tr>
                                 <th style="width:10%;">{{ trans('app.forms.username') }}</th>
@@ -56,7 +56,7 @@ foreach ($user_permission as $permission) {
 <script>
     var oTable;
     $(document).ready(function () {
-        oTable = $('#land').DataTable({
+        oTable = $('#userlist_datatable').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getUser')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "order": [[ 0, "asc" ]],
