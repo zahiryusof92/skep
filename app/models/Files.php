@@ -98,7 +98,7 @@ class Files extends Eloquent {
         }
 
         $provider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
-        if ($company && $provider) {
+        if (count($company) > 0 && count($provider) > 0) {
             foreach ($company as $cob) {
                 foreach ($provider as $pro) {
                     $insurance = DB::table('insurance')
@@ -106,6 +106,7 @@ class Files extends Eloquent {
                             ->where('files.company_id', $cob->id)
                             ->where('insurance.insurance_provider_id', $pro->id)
                             ->where('files.is_deleted', 0)
+                            ->where('insurance.is_deleted', 0)
                             ->count();
 
                     $dataPro[$pro->id] = array(
@@ -143,7 +144,7 @@ class Files extends Eloquent {
         }
 
         $category = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
-        if ($company && $category) {
+        if (count($company) > 0 && count($category) > 0) {
             foreach ($company as $cob) {
                 foreach ($category as $cat) {
                     $defect = DB::table('defect')
