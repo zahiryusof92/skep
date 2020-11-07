@@ -152,6 +152,7 @@ class Files extends Eloquent {
                             ->where('files.company_id', $cob->id)
                             ->where('defect.defect_category_id', $cat->id)
                             ->where('files.is_deleted', 0)
+                            ->where('defect.is_deleted', 0)
                             ->count();
 
                     $dataCat[$cat->id] = array(
@@ -748,17 +749,10 @@ class Files extends Eloquent {
     }
 
     public static function getDashboardData() {
-        $condition = function ($query) {
+        $active = function ($query) {
             $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
-
-        $total_developer = Developer::where('is_deleted', 0)->count();
-        $total_jmb = Files::whereHas('managementJMB', $condition)->count();
-        $total_mc = Files::whereHas('managementMC', $condition)->count();
-        $total_agent = Files::whereHas('managementAgent', $condition)->count();
-        $total_others = Files::whereHas('managementOthers', $condition)->count();
-
 
         $condition5 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 81)->where('scoring_quality_index.total_score', '<=', 100);
@@ -766,24 +760,28 @@ class Files extends Eloquent {
             $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
+
         $condition4 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 61)->where('scoring_quality_index.total_score', '<=', 80);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
+
         $condition3 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 41)->where('scoring_quality_index.total_score', '<=', 60);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
+
         $condition2 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 21)->where('scoring_quality_index.total_score', '<=', 40);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
+
         $condition1 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 1)->where('scoring_quality_index.total_score', '<=', 20);
             $query->where('scoring_quality_index.is_deleted', 0);
@@ -793,65 +791,286 @@ class Files extends Eloquent {
 
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $fiveStar = Files::whereHas('ratings', $condition5)
+                $total_developer = DB::table('developer')
+                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $fourStar = Files::whereHas('ratings', $condition4)
+
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $threeStar = Files::whereHas('ratings', $condition3)
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $twoStar = Files::whereHas('ratings', $condition2)
+
+                $total_agent = DB::table('management_agent')
+                        ->join('files', 'management_agent.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $oneStar = Files::whereHas('ratings', $condition1)
+
+                $total_others = DB::table('management_others')
+                        ->join('files', 'management_others.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $fiveStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition5)
+                        ->count();
+
+                $fourStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition4)
+                        ->count();
+
+                $threeStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition3)
+                        ->count();
+
+                $twoStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition2)
+                        ->count();
+
+                $oneStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition1)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_rating = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
             } else {
-                $fiveStar = Files::whereHas('ratings', $condition5)
+                $total_developer = DB::table('developer')
+                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $fourStar = Files::whereHas('ratings', $condition4)
+
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $threeStar = Files::whereHas('ratings', $condition3)
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $twoStar = Files::whereHas('ratings', $condition2)
+
+                $total_agent = DB::table('management_agent')
+                        ->join('files', 'management_agent.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
-                $oneStar = Files::whereHas('ratings', $condition1)
+
+                $total_others = DB::table('management_others')
+                        ->join('files', 'management_others.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $fiveStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition5)
+                        ->count();
+
+                $fourStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition4)
+                        ->count();
+
+                $threeStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition3)
+                        ->count();
+
+                $twoStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition2)
+                        ->count();
+
+                $oneStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition1)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_rating = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
                         ->count();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $fiveStar = Files::whereHas('ratings', $condition5)->count();
-                $fourStar = Files::whereHas('ratings', $condition4)->count();
-                $threeStar = Files::whereHas('ratings', $condition3)->count();
-                $twoStar = Files::whereHas('ratings', $condition2)->count();
-                $oneStar = Files::whereHas('ratings', $condition1)->count();
+                $total_developer = DB::table('developer')
+                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_agent = DB::table('management_agent')
+                        ->join('files', 'management_agent.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_others = DB::table('management_others')
+                        ->join('files', 'management_others.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $fiveStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where($condition5)
+                        ->count();
+
+                $fourStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where($condition4)
+                        ->count();
+
+                $threeStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where($condition3)
+                        ->count();
+
+                $twoStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where($condition2)
+                        ->count();
+
+                $oneStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where($condition1)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_rating = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
             } else {
-                $fiveStar = Files::whereHas('ratings', $condition5)
+                $total_developer = DB::table('developer')
+                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
                         ->count();
-                $fourStar = Files::whereHas('ratings', $condition4)
+
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
                         ->count();
-                $threeStar = Files::whereHas('ratings', $condition3)
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
                         ->count();
-                $twoStar = Files::whereHas('ratings', $condition2)
+
+                $total_agent = DB::table('management_agent')
+                        ->join('files', 'management_agent.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
                         ->count();
-                $oneStar = Files::whereHas('ratings', $condition1)
+
+                $total_others = DB::table('management_others')
+                        ->join('files', 'management_others.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $fiveStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($condition5)
+                        ->count();
+
+                $fourStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($condition4)
+                        ->count();
+
+                $threeStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($condition3)
+                        ->count();
+
+                $twoStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($condition2)
+                        ->count();
+
+                $oneStar = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($condition1)
                         ->count();
             }
         }
@@ -874,7 +1093,9 @@ class Files extends Eloquent {
 
         $result = array(
             'rating' => $rating,
-            'management' => $management
+            'management' => $management,
+            'total_strata' => $total_strata,
+            'total_rating' => $total_rating
         );
 
         return $result;

@@ -179,17 +179,23 @@ foreach ($user_permission as $permission) {
                         <!--<div class="chart-pie-chart"></div>-->
                         <div id="rating_star"></div>
                         <br/>
-                        <span>{{ trans('app.forms.total_development_area') }} {{ $total_strata }}</span>
+                        <span>{{ trans('app.forms.total_development_area') }} {{ $data ? $data['total_strata'] : '0' }}</span>
                         <br/>
-                        @if ($total_rating && $total_strata)
-                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $total_rating }} ({{ number_format((( $total_rating / $total_strata) * 100), 2) }}%)</span>
+                        @if ($data)
+                        @if ($data['total_strata'] && $data['total_rating'])
+                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} ({{ number_format((( $data['total_rating'] / $data['total_strata']) * 100), 2) }}%)</span>
                         <br/>
-                        <span>{{ trans('app.forms.total_no_information') }} {{ $total_strata - $total_rating }}</span>
+                        <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span>
                         @else
-                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $total_rating }} (0%)</span>
+                        <span>{{ trans('app.forms.total_sample_percentage') }} 0 (0%)</span>
                         <br/>
                         <span>{{ trans('app.forms.total_no_information') }} 0</span>
                         @endif                        
+                        @else
+                        <span>{{ trans('app.forms.total_sample_percentage') }} 0 (0%)</span>
+                        <br/>
+                        <span>{{ trans('app.forms.total_no_information') }} 0</span>
+                        @endif
                     </div>
                 </div>
                 <div class="col-lg-6">
