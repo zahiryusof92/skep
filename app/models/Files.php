@@ -1072,7 +1072,7 @@ class Files extends Eloquent {
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where($condition1)
                         ->count();
-                
+
                 $total_strata = DB::table('strata')
                         ->join('files', 'strata.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
@@ -1122,12 +1122,14 @@ class Files extends Eloquent {
                         ->where('file.id', Auth::user()->file_id)
                         ->where('file.company_id', Auth::user()->company_id)
                         ->where('file.is_deleted', 0)
+                        ->where('strata.name', '!=', '')
                         ->orderBy('strata.name', 'asc')
                         ->get();
             } else {
                 $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_deleted', 0)
+                        ->where('strata.name', '!=', '')
                         ->orderBy('strata.name', 'asc')
                         ->get();
             }
@@ -1135,12 +1137,14 @@ class Files extends Eloquent {
             if (empty(Session::get('admin_cob'))) {
                 $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
                         ->where('files.is_deleted', 0)
+                        ->where('strata.name', '!=', '')
                         ->orderBy('strata.name', 'asc')
                         ->get();
             } else {
                 $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_deleted', 0)
+                        ->where('strata.name', '!=', '')
                         ->orderBy('strata.name', 'asc')
                         ->get();
             }
