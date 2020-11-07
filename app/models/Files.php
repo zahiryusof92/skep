@@ -1072,6 +1072,18 @@ class Files extends Eloquent {
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where($condition1)
                         ->count();
+                
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $total_rating = DB::table('scoring_quality_index')
+                        ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
             }
         }
 
