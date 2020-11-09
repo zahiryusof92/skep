@@ -37,7 +37,7 @@
                     <div class="col-lg-12 text-center">
                         <form action="{{ url('/reporting/managementList') }}" method="POST" target="_blank" >
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.cob') }}</label>
                                         <select class="form-control select2" id="company" name="company">
@@ -50,7 +50,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.file_no') }}</label>
                                         <select id="file_no" name="file_no" class="form-control select2">
@@ -61,13 +61,26 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.file_name') }}</label>
-                                        <select id="file_name" class="form-control select2">
+                                        <select id="file_name" name="file_name" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($filename as $name)
                                             <option value="{{ $name->name }}">{{ $name->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.type') }}</label>
+                                        <select id="type" name="type" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($types as $type)
+                                            <option value="{{ $type['value'] }}">{{ $type['name'] }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -153,6 +166,9 @@
         });
         $('#file_name').on('change', function () {
             oTable.columns(2).search(this.value).draw();
+        });
+        $('#type').on('change', function () {
+            oTable.columns(3).search(this.value).draw();
         });
     });
 </script>

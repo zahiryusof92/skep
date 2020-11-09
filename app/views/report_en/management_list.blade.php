@@ -37,29 +37,43 @@
                     <div class="col-lg-12">
                         <form action="{{ url('/print/managementList') }}" method="POST" target="_blank" >
                             <div class="row">
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.cob') }}</label>
                                         <input type="hidden" name="company" value="{{ $cob_company }}"/>
                                         <p>{{ $cob_name}}</p>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.file_no') }}</label>
                                         <input type="hidden" name="file_no" value="{{ $file_no }}"/>
                                         <p>{{ $file_name}}</p>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_name') }}</label>
+                                        <input type="hidden" name="file_name" value="{{ $filename }}"/>
+                                        <p>{{ $fname }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.type') }}</label>
+                                        <input type="hidden" name="type" value="{{ $type }}"/>
+                                        <p>{{ $type_name }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Filter</label>
                                         <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-6">
                                                 <label><input type="checkbox" name="type_name">&nbsp; {{ trans('app.forms.type_name') }}</label><br/>
                                                 <label><input type="checkbox" name="address">&nbsp; {{ trans('app.forms.address') }}</label><br/>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-6">
                                                 <label><input type="checkbox" name="email">&nbsp; {{ trans('app.forms.email') }}</label><br/> 
                                                 <label><input type="checkbox" name="phone_number">&nbsp; {{ trans('app.forms.phone_number') }}</label><br/>
                                             </div>
