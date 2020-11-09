@@ -774,13 +774,12 @@ Route::get('/{cob}/logout', 'UserController@logout')->before('authMember');
 
 // Route group for API
 Route::group(array('prefix' => 'api/v1'), function() {
-//    Route::resource('login', 'Api\LoginController');
-//    Route::resource('files', 'Api\FilesController');
-//    Route::resource('logout', 'Api\LogoutController');
-    
     Route::post('/login', 'Api\ApiController@login');
     Route::post('/files', 'Api\ApiController@files');
     Route::post('/fileDetails', 'Api\ApiController@fileDetails');
+    Route::post('/getRating', 'Api\ApiController@getRating');
+    Route::post('/addRating', 'Api\ApiController@addRating');
+    Route::post('/editRating', 'Api\ApiController@editRating');
 });
 
 //invalid route
