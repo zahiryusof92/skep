@@ -11,5 +11,10 @@ class Buyer extends Eloquent {
     public function race() {
         return $this->belongsTo('Race', 'race_id');
     }
+    
+    public function nationality() {
+        return $this->belongsTo('Nationality', 'nationality_id');
+    }
+
 
 }

@@ -775,9 +775,22 @@ Route::get('/{cob}/logout', 'UserController@logout')->before('authMember');
 // Route group for API
 Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('/login', 'Api\ApiController@login');
+    Route::post('/editProfile', 'Api\ApiController@editProfile');
+
     Route::post('/files', 'Api\ApiController@files');
-    Route::post('/fileDetails', 'Api\ApiController@fileDetails');
-    Route::post('/getRating', 'Api\ApiController@getRating');
+    Route::post('/houseScheme', 'Api\ApiController@houseScheme');
+    Route::post('/strata', 'Api\ApiController@strata');
+    Route::post('/management', 'Api\ApiController@management');
+    Route::post('/monitoring', 'Api\ApiController@monitoring');
+    Route::post('/meetingJMB', 'Api\ApiController@meetingJMB');
+    Route::post('/meetingMC', 'Api\ApiController@meetingMC');
+    Route::post('/designation', 'Api\ApiController@designation');
+    Route::post('/other', 'Api\ApiController@other');
+    Route::post('/buyer', 'Api\ApiController@buyer');
+    Route::post('/document', 'Api\ApiController@document');
+    Route::post('/insurance', 'Api\ApiController@insurance');
+
+    Route::post('/rating', 'Api\ApiController@rating');
     Route::post('/addRating', 'Api\ApiController@addRating');
     Route::post('/editRating', 'Api\ApiController@editRating');
 });

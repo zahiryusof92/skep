@@ -15,6 +15,10 @@ class Files extends Eloquent {
     public function strata() {
         return $this->hasOne('Strata', 'file_id');
     }
+    
+    public function houseScheme() {
+        return $this->hasOne('HouseScheme', 'file_id');
+    }
 
     public function finance() {
         return $this->hasMany('Finance', 'file_id');
@@ -59,6 +63,10 @@ class Files extends Eloquent {
     public function defect() {
         return $this->hasMany('Defect', 'file_id');
     }
+    
+    public function management() {
+        return $this->hasOne('Management', 'file_id');
+    }
 
     public function managementJMB() {
         return $this->hasOne('ManagementJMB', 'file_id');
@@ -78,6 +86,10 @@ class Files extends Eloquent {
 
     public function ratings() {
         return $this->hasOne('Scoring', 'file_id');
+    }
+    
+    public function monitoring() {
+        return $this->hasOne('Monitoring', 'file_id');
     }
 
     public static function getInsuranceReportByCOB($cob_id = NULL) {
