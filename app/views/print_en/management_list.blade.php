@@ -33,15 +33,14 @@ $company = Company::find(Auth::user()->company_id);
                 <thead>
                     <tr>
                         <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.cob') }}</th>
-                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
-                        @if ($type)
-                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type') }}</th>
-                        @endif
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_name') }}</th>
+                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type') }}</th>
                         @if ($type_name)
                         <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type_name') }}</th>
                         @endif
                         @if ($address)
-                        <th style="width:25%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.address') }}</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.address') }}</th>
                         @endif
                         @if ($email)
                         <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.email') }}</th>
@@ -57,20 +56,19 @@ $company = Company::find(Auth::user()->company_id);
                     <tr>
                         <td>&nbsp; {{ $res[0] }}</td>
                         <td>&nbsp; {{ $res[1] }}</td>
-                        @if ($type)
                         <td>&nbsp; {{ $res[2] }}</td>
-                        @endif
-                        @if ($type_name)
                         <td>&nbsp; {{ $res[3] }}</td>
-                        @endif
-                        @if ($address)
+                        @if ($type_name)
                         <td>&nbsp; {{ $res[4] }}</td>
                         @endif
-                        @if ($email)
+                        @if ($address)
                         <td>&nbsp; {{ $res[5] }}</td>
                         @endif
-                        @if ($phone_number)
+                        @if ($email)
                         <td>&nbsp; {{ $res[6] }}</td>
+                        @endif
+                        @if ($phone_number)
+                        <td>&nbsp; {{ $res[7] }}</td>
                         @endif
                     </tr>
                     @endforeach

@@ -118,68 +118,74 @@
                         </table>
                     </div>
                 </div>
-                @endif
 
                 <hr/>
 
                 <div id="chart"></div>
+
+                <script type="text/javascript">
+                    Highcharts.chart('chart', {
+                        chart: {
+                            type: 'bar'
+                        },
+                        title: {
+                            text: 'KATEGORI ADUAN'
+                        },
+                        xAxis: {
+                            categories: <?php echo json_encode($cobData); ?>,
+                            title: {
+                                text: null
+                            }
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'JUMLAH (ADUAN)',
+                                align: 'high'
+                            },
+                            labels: {
+                                overflow: 'justify'
+                            }
+                        },
+                        tooltip: {
+                            valueSuffix: ' Aduan'
+                        },
+                        plotOptions: {
+                            bar: {
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            }
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'right',
+                            verticalAlign: 'top',
+                            x: -40,
+                            y: 80,
+                            floating: true,
+                            borderWidth: 1,
+                            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+                            shadow: true
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        series: <?php echo json_encode($chartData); ?>
+                    });
+                </script>
+                @else
+
+                <hr/>
+                
+                <p>{{ trans('app.forms.no_data_available')}}</p>
+                
+                @endif
 
             </div>
         </div>
     </section>
     <!-- End  -->
 </div>
-
-<script type="text/javascript">
-    Highcharts.chart('chart', {
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'KATEGORI ADUAN'
-        },
-        xAxis: {
-            categories: <?php echo json_encode($cobData); ?>,
-            title: {
-                text: null
-            }
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'JUMLAH (ADUAN)',
-                align: 'high'
-            },
-            labels: {
-                overflow: 'justify'
-            }
-        },
-        tooltip: {
-            valueSuffix: ' Aduan'
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: true
-                }
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'top',
-            x: -40,
-            y: 80,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
-            shadow: true
-        },
-        credits: {
-            enabled: false
-        },
-        series: <?php echo json_encode($chartData); ?>
-    });
-</script>
 
 @stop

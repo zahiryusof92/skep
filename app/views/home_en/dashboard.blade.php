@@ -179,17 +179,16 @@ foreach ($user_permission as $permission) {
                         <!--<div class="chart-pie-chart"></div>-->
                         <div id="rating_star"></div>
                         <br/>
-                        <span>{{ trans('app.forms.total_development_area') }} {{ $total_strata }}</span>
+                        <span>{{ trans('app.forms.total_development_area') }} {{ $data['total_strata'] }}</span>
                         <br/>
-                        @if ($total_rating && $total_strata)
-                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $total_rating }} ({{ number_format((( $total_rating / $total_strata) * 100), 2) }}%)</span>
+                        @if ($data['total_strata'] > 0 && $data['total_rating'] > 0)
+                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} ({{ number_format((( $data['total_rating'] / $data['total_strata']) * 100), 2) }}%)</span>
                         <br/>
-                        <span>{{ trans('app.forms.total_no_information') }} {{ $total_strata - $total_rating }}</span>
-                        @else
-                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $total_rating }} (0%)</span>
+                        @else 
+                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} (0%)</span>
                         <br/>
-                        <span>{{ trans('app.forms.total_no_information') }} 0</span>
-                        @endif                        
+                        @endif
+                        <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span>
                     </div>
                 </div>
                 <div class="col-lg-6">
