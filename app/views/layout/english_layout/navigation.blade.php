@@ -381,7 +381,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(26))
                     <li id="rating_summary_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@ratingSummary')}}">
+                        <a class="left-menu-link" href="{{URL::action('ReportController@ratingSummary')}}">
                             {{ trans('app.menus.reporting.rating_summary') }}
                         </a>
                     </li>

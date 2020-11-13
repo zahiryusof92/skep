@@ -122,7 +122,7 @@ foreach ($user_permission as $permissions) {
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@insurance") }}';
+                            window.location = '{{URL::action("AdminController@insurance", ["All"]) }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

@@ -38,6 +38,8 @@ $company = Company::find(Auth::user()->company_id);
                     </table>
                 </div>
                 <hr/>
+
+                @if ($rating_data)
                 <div class="row">
                     <div class="col-lg-12">
                         <br/>
@@ -59,25 +61,26 @@ $company = Company::find(Auth::user()->company_id);
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$strata}}</td>
-                                    @if ($strata == 0)
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$rating}} (0%)</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $rating_data['total_strata'] }}</td>
+                                    @if ($rating_data['total_strata'] > 0 && $rating_data['total_rating'] > 0)
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $rating_data['total_rating'] }} ({{number_format((($rating_data['total_rating'] / $rating_data['total_strata']) * 100), 2)}}%)</td>
                                     @else
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$rating}} ({{number_format((($rating/$strata)*100), 2)}}%)</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $rating_data['total_rating'] }} (0%)</td>
                                     @endif
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$fiveStar}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$fourStar}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$threeStar}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$twoStar}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$oneStar}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$strata - $rating}}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ ($rating_data['rating'][0] ? $rating_data['rating'][0]['y'] : '0') }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ ($rating_data['rating'][1] ? $rating_data['rating'][1]['y'] : '0') }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ ($rating_data['rating'][2] ? $rating_data['rating'][2]['y'] : '0') }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ ($rating_data['rating'][3] ? $rating_data['rating'][3]['y'] : '0') }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ ($rating_data['rating'][4] ? $rating_data['rating'][4]['y'] : '0') }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $rating_data['total_strata'] - $rating_data['total_rating'] }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+                @endif
 
-                @if ($category)
+                @if ($summary_data)
                 <br/>                
                 <div class="row">
                     <div class="col-lg-12">
@@ -98,50 +101,21 @@ $company = Company::find(Auth::user()->company_id);
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($category as $cat)
-                                <?php
-                                $cat_stratas = 0;
-                                $cat_ratings = 0;
-                                $cat_fiveStars = 0;
-                                $cat_fourStars = 0;
-                                $cat_threeStars = 0;
-                                $cat_twoStars = 0;
-                                $cat_oneStars = 0;
-
-                                $category_file = Category::getFiles($cat->id);
-                                if ($category_file) {
-                                    foreach ($category_file as $cat_file) {
-                                        $cat_strata = Strata::where('file_id', $cat_file['id'])->count();
-                                        $cat_rating = Scoring::where('file_id', $cat_file['id'])->where('is_deleted', 0)->count();
-                                        $cat_fiveStar = Scoring::where('file_id', $cat_file['id'])->where('is_deleted', 0)->where('total_score', '>=', 81)->where('total_score', '<=', 100)->count();
-                                        $cat_fourStar = Scoring::where('file_id', $cat_file['id'])->where('is_deleted', 0)->where('total_score', '>=', 61)->where('total_score', '<=', 80)->count();
-                                        $cat_threeStar = Scoring::where('file_id', $cat_file['id'])->where('is_deleted', 0)->where('total_score', '>=', 41)->where('total_score', '<=', 60)->count();
-                                        $cat_twoStar = Scoring::where('file_id', $cat_file['id'])->where('is_deleted', 0)->where('total_score', '>=', 21)->where('total_score', '<=', 40)->count();
-                                        $cat_oneStar = Scoring::where('file_id', $cat_file['id'])->where('is_deleted', 0)->where('total_score', '>=', 1)->where('total_score', '<=', 20)->count();
-
-                                        $cat_stratas += $cat_strata;
-                                        $cat_ratings += $cat_rating;
-                                        $cat_fiveStars += $cat_fiveStar;
-                                        $cat_fourStars += $cat_fourStar;
-                                        $cat_threeStars += $cat_threeStar;
-                                        $cat_twoStars += $cat_twoStar;
-                                        $cat_oneStars += $cat_oneStar;
-                                    }
-                                }
-                                ?>                                
+                                @foreach ($summary_data as $data)                             
                                 <tr>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $cat->description }}</td>
-                                    @if ($cat_stratas == 0)
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_ratings}} (0%)</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['category'] }}</td>
+                                    @if ($data['percentage'] > 0)
+                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['total_rating'] }} ({{ $data['percentage'] }}%)</td>
                                     @else
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_ratings}} ({{number_format((($cat_ratings/$cat_stratas)*100), 2)}}%)</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['total_rating'] }} (0%)</td>
+                                   
                                     @endif
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_fiveStars}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_fourStars}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_threeStars}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_twoStars}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_oneStars}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$cat_stratas - $cat_ratings}}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['rating'][0]['y'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['rating'][1]['y'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['rating'][2]['y'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['rating'][3]['y'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['rating'][4]['y'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['no_info'] }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -150,6 +124,7 @@ $company = Company::find(Auth::user()->company_id);
                 </div>
                 @endif
 
+                @if ($rating_data)
                 <br/>
                 <div class="row">
                     <div class="col-lg-12">
@@ -159,50 +134,45 @@ $company = Company::find(Auth::user()->company_id);
                         </div>
                     </div>
                 </div>
+
+                <!-- Page Scripts -->
+                <script>
+                    Highcharts.chart('rating_star', {
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie'
+                        },
+                        title: {
+                            text: 'Rumusan Penakrifan Bintang Kawasan Pemajuan'
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
+                                },
+                                showInLegend: true
+                            }
+                        },
+                        series: [{
+                                name: 'Penakrifan Bintang',
+                                colorByPoint: true,
+                                data: <?php echo json_encode($rating_data ? $rating_data['rating'] : ''); ?>
+                            }]
+                    });
+                </script>
+                @endif
             </div>
         </div>        
     </section>    
     <!-- End  -->
 </div>
-
-<!-- Page Scripts -->
-<script>
-    Highcharts.chart('rating_star', {
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            type: 'pie'
-        },
-        title: {
-            text: 'Rumusan Penakrifan Bintang Kawasan Pemajuan'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
-                },
-                showInLegend: true
-            }
-        },
-        series: [{
-                name: 'Penakrifan Bintang',
-                colorByPoint: true,
-                data: [
-                    {name: '1 Bintang', y: <?php echo $oneStar; ?>},
-                    {name: '2 Bintang', y: <?php echo $twoStar; ?>},
-                    {name: '3 Bintang', y: <?php echo $threeStar; ?>},
-                    {name: '4 Bintang', y: <?php echo $fourStar; ?>},
-                    {name: '5 Bintang', y: <?php echo $fiveStar; ?>}
-                ]
-            }]
-    });
-</script>
 
 @stop

@@ -160,14 +160,14 @@ class FinanceController extends BaseController {
                                 ];
 
                                 $counter = 1;
-                                foreach ($tableFieldSF as $count => $name) {
+                                foreach ($tableFieldSF as $key => $name) {
                                     $reportSF = new FinanceReportPerbelanjaan();
                                     $reportSF->type = 'SF';
                                     $reportSF->finance_file_id = $finance->id;
                                     $reportSF->name = $name;
                                     $reportMF->report_key = $key;
                                     $reportSF->amount = 0;
-                                    $reportSF->sort_no = ++$count;
+                                    $reportSF->sort_no = $counter;
                                     $reportSF->save();
 
                                     $counter++;

@@ -15,7 +15,7 @@ class Files extends Eloquent {
     public function strata() {
         return $this->hasOne('Strata', 'file_id');
     }
-    
+
     public function houseScheme() {
         return $this->hasOne('HouseScheme', 'file_id');
     }
@@ -63,7 +63,7 @@ class Files extends Eloquent {
     public function defect() {
         return $this->hasMany('Defect', 'file_id');
     }
-    
+
     public function management() {
         return $this->hasOne('Management', 'file_id');
     }
@@ -87,7 +87,7 @@ class Files extends Eloquent {
     public function ratings() {
         return $this->hasOne('Scoring', 'file_id');
     }
-    
+
     public function monitoring() {
         return $this->hasOne('Monitoring', 'file_id');
     }
@@ -1163,6 +1163,313 @@ class Files extends Eloquent {
         }
 
         return $filename;
+    }
+
+    public static function getRatingByCategory() {
+        $result = array();
+
+        $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+        if ($category) {
+            foreach ($category as $cat) {
+                $active = function ($query) use ($cat) {
+                    $query->where('category.id', $cat->id);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                    $query->where('category.is_deleted', 0);
+                };
+
+                $condition5 = function ($query) use ($cat) {
+                    $query->where('category.id', $cat->id);
+                    $query->where('scoring_quality_index.total_score', '>=', 81)->where('scoring_quality_index.total_score', '<=', 100);
+                    $query->where('scoring_quality_index.is_deleted', 0);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                    $query->where('category.is_deleted', 0);
+                };
+
+                $condition4 = function ($query) use ($cat) {
+                    $query->where('category.id', $cat->id);
+                    $query->where('scoring_quality_index.total_score', '>=', 61)->where('scoring_quality_index.total_score', '<=', 80);
+                    $query->where('scoring_quality_index.is_deleted', 0);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                    $query->where('category.is_deleted', 0);
+                };
+
+                $condition3 = function ($query) use ($cat) {
+                    $query->where('category.id', $cat->id);
+                    $query->where('scoring_quality_index.total_score', '>=', 41)->where('scoring_quality_index.total_score', '<=', 60);
+                    $query->where('scoring_quality_index.is_deleted', 0);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                    $query->where('category.is_deleted', 0);
+                };
+
+                $condition2 = function ($query) use ($cat) {
+                    $query->where('category.id', $cat->id);
+                    $query->where('scoring_quality_index.total_score', '>=', 21)->where('scoring_quality_index.total_score', '<=', 40);
+                    $query->where('scoring_quality_index.is_deleted', 0);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                    $query->where('category.is_deleted', 0);
+                };
+
+                $condition1 = function ($query) use ($cat) {
+                    $query->where('category.id', $cat->id);
+                    $query->where('scoring_quality_index.total_score', '>=', 1)->where('scoring_quality_index.total_score', '<=', 20);
+                    $query->where('scoring_quality_index.is_deleted', 0);
+                    $query->where('files.is_active', 1);
+                    $query->where('files.is_deleted', 0);
+                    $query->where('category.is_deleted', 0);
+                };
+
+                if (!Auth::user()->getAdmin()) {
+                    if (!empty(Auth::user()->file_id)) {
+                        $fiveStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition5)
+                                ->count();
+
+                        $fourStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition4)
+                                ->count();
+
+                        $threeStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition3)
+                                ->count();
+
+                        $twoStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition2)
+                                ->count();
+
+                        $oneStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition1)
+                                ->count();
+
+                        $total_strata = DB::table('strata')
+                                ->join('files', 'strata.file_id', '=', 'files.id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($active)
+                                ->count();
+
+                        $total_rating = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($active)
+                                ->count();
+                    } else {
+                        $fiveStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition5)
+                                ->count();
+
+                        $fourStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition4)
+                                ->count();
+
+                        $threeStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition3)
+                                ->count();
+
+                        $twoStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition2)
+                                ->count();
+
+                        $oneStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($condition1)
+                                ->count();
+
+                        $total_strata = DB::table('strata')
+                                ->join('files', 'strata.file_id', '=', 'files.id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($active)
+                                ->count();
+
+                        $total_rating = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Auth::user()->company_id)
+                                ->where($active)
+                                ->count();
+                    }
+                } else {
+                    if (empty(Session::get('admin_cob'))) {
+                        $fiveStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($condition5)
+                                ->count();
+
+                        $fourStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($condition4)
+                                ->count();
+
+                        $threeStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($condition3)
+                                ->count();
+
+                        $twoStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($condition2)
+                                ->count();
+
+                        $oneStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($condition1)
+                                ->count();
+
+                        $total_strata = DB::table('strata')
+                                ->join('files', 'strata.file_id', '=', 'files.id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($active)
+                                ->count();
+
+                        $total_rating = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where($active)
+                                ->count();
+                    } else {
+                        $fiveStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($condition5)
+                                ->count();
+
+                        $fourStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($condition4)
+                                ->count();
+
+                        $threeStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($condition3)
+                                ->count();
+
+                        $twoStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($condition2)
+                                ->count();
+
+                        $oneStar = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($condition1)
+                                ->count();
+
+                        $total_strata = DB::table('strata')
+                                ->join('files', 'strata.file_id', '=', 'files.id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($active)
+                                ->count();
+
+                        $total_rating = DB::table('scoring_quality_index')
+                                ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                                ->join('strata', 'files.id', '=', 'strata.file_id')
+                                ->join('category', 'strata.category', '=', 'category.id')
+                                ->where('files.company_id', Session::get('admin_cob'))
+                                ->where($active)
+                                ->count();
+                    }
+                }
+
+                $rating = array(
+                    ['name' => '5 Stars', 'y' => $fiveStar],
+                    ['name' => '4 Stars', 'y' => $fourStar],
+                    ['name' => '3 Stars', 'y' => $threeStar],
+                    ['name' => '2 Stars', 'y' => $twoStar],
+                    ['name' => '1 Star', 'y' => $oneStar]
+                );
+
+                $result[] = array(
+                    'category' => $cat->description,
+                    'total_strata' => $total_strata,
+                    'total_rating' => $total_rating,
+                    'percentage' => ($total_strata > 0 ? round(($total_rating / $total_strata) * 100, 2) : 0),
+                    'no_info' => $total_strata - $total_rating,
+                    'rating' => $rating
+                );
+            }
+        }
+
+        return $result;
     }
 
 }

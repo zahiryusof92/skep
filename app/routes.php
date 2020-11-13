@@ -629,7 +629,7 @@ Route::get('/reporting/fileByLocation', 'AdminController@fileByLocation')->befor
 Route::get('/getFileByLocation', 'AdminController@getFileByLocation')->before('authMember');
 
 //rating summary
-Route::get('/reporting/ratingSummary', 'AdminController@ratingSummary')->before('authMember');
+Route::get('/reporting/ratingSummary', 'ReportController@ratingSummary')->before('authMember');
 
 //management summary
 Route::get('/reporting/managementSummary', 'AdminController@managementSummary')->before('authMember');
