@@ -539,7 +539,8 @@ return array(
         "type" => "Type",
         "type_name" => "Name",
         "insurance" => "Insurance",
-        "file_name" => "File Name"
+        "file_name" => "File Name",
+        "zone" => "Zone",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

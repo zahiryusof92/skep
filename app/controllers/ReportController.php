@@ -63,8 +63,17 @@ class ReportController extends BaseController {
     public function strataProfile() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-        $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
+
+        $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
 
         $access_permission = 0;
         foreach ($user_permission as $permission) {
@@ -101,72 +110,116 @@ class ReportController extends BaseController {
     public function getStrataProfile() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->get();
+                $files = DB::table('files')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('parliment', 'strata.parliament', '=', 'parliment.id')
+                        ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
+                        ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
+                        ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('finance_file.year', date('Y'))
+                        ->where('finance_file_report.type', 'SF')
+                        ->where('finance_file_income.name', 'SINKING FUND')
+                        ->where('files.is_active', 1)
+                        ->where('finance_file.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0)
+                        ->groupBy('files.id')
+                        ->groupBy('finance_file.id')
+                        ->orderBy('files.id')
+                        ->get();
             } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->get();
+                $files = DB::table('files')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('parliment', 'strata.parliament', '=', 'parliment.id')
+                        ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
+                        ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
+                        ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('finance_file.year', date('Y'))
+                        ->where('finance_file_report.type', 'SF')
+                        ->where('finance_file_income.name', 'SINKING FUND')
+                        ->where('files.is_active', 1)
+                        ->where('finance_file.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0)
+                        ->groupBy('files.id')
+                        ->groupBy('finance_file.id')
+                        ->orderBy('files.id')
+                        ->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_deleted', 0)->get();
+                $files = DB::table('files')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('parliment', 'strata.parliament', '=', 'parliment.id')
+                        ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
+                        ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
+                        ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->where('finance_file.year', date('Y'))
+                        ->where('finance_file_report.type', 'SF')
+                        ->where('finance_file_income.name', 'SINKING FUND')
+                        ->where('files.is_active', 1)
+                        ->where('finance_file.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0)
+                        ->groupBy('files.id')
+                        ->groupBy('finance_file.id')
+                        ->orderBy('files.id')
+                        ->get();
             } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->get();
+                $files = DB::table('files')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('parliment', 'strata.parliament', '=', 'parliment.id')
+                        ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
+                        ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
+                        ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('finance_file.year', date('Y'))
+                        ->where('finance_file_report.type', 'SF')
+                        ->where('finance_file_income.name', 'SINKING FUND')
+                        ->where('files.is_active', 1)
+                        ->where('finance_file.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0)
+                        ->groupBy('files.id')
+                        ->groupBy('finance_file.id')
+                        ->orderBy('files.id')
+                        ->get();
             }
         }
 
-        if ($file) {
-            $data = Array();
-            foreach ($file as $files) {
-                $parliament_name = '<i>(not set)</i>';
-
-                $parliament = Parliment::find($files->strata->parliament);
-                if ($parliament) {
-                    $parliament_name = $parliament->description;
-                }
-
-                $berjaya_dikutip = 0;
-                $sepatut_dikutip = 0;
-                $purata_dikutip = 0;
-
-                if ($files->finance) {
-                    foreach ($files->finance as $finance) {
-                        if ($finance->year == date('Y')) {
-                            if ($finance->financeIncome) {
-                                foreach ($finance->financeReport as $report) {
-                                    if ($report->type == 'SF') {
-                                        $sepatut_dikutip = $sepatut_dikutip + $report->fee_semasa;
-                                    }
-                                }
-                                foreach ($finance->financeIncome as $income) {
-                                    if ($income->name == 'SINKING FUND') {
-                                        $berjaya_dikutip = $berjaya_dikutip + $income->semasa;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
-                    $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
-                }
-
-                if ($purata_dikutip >= 80) {
+        if ($files) {
+            $data = array();
+            foreach ($files as $file) {
+                if ($file->percentage >= 80) {
                     $zone = 'Biru';
-                } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
+                } else if ($file->percentage < 79 && $file->percentage >= 50) {
                     $zone = 'Kuning';
                 } else {
                     $zone = 'Merah';
                 }
 
                 $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $files->id) . "'>" . $files->file_no . "</a>",
-                    $files->company->short_name,
-                    $parliament_name,
+                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $file->id) . "'>" . $file->file_no . "</a>",
+                    $file->strata_name,
+                    $file->company_name,
+                    $file->parliment_name,
                     $zone
                 );
 
                 array_push($data, $data_raw);
             }
+
             $output_raw = array(
                 "aaData" => $data
             );
@@ -181,6 +234,77 @@ class ReportController extends BaseController {
             $output = json_encode($output_raw);
             return $output;
         }
+
+//        return "<pre>" . print_r($files, true) . "</pre>";
+//
+//        if ($file) {
+//            $data = Array();
+//            foreach ($file as $files) {
+//                $parliament_name = '<i>(not set)</i>';
+//
+//                $parliament = Parliment::find($files->strata->parliament);
+//                if ($parliament) {
+//                    $parliament_name = $parliament->description;
+//                }
+//
+//                $berjaya_dikutip = 0;
+//                $sepatut_dikutip = 0;
+//                $purata_dikutip = 0;
+//
+//                if ($files->finance) {
+//                    foreach ($files->finance as $finance) {
+//                        if ($finance->year == date('Y')) {
+//                            if ($finance->financeIncome) {
+//                                foreach ($finance->financeReport as $report) {
+//                                    if ($report->type == 'SF') {
+//                                        $sepatut_dikutip = $sepatut_dikutip + $report->fee_semasa;
+//                                    }
+//                                }
+//                                foreach ($finance->financeIncome as $income) {
+//                                    if ($income->name == 'SINKING FUND') {
+//                                        $berjaya_dikutip = $berjaya_dikutip + $income->semasa;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
+//                    $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
+//                }
+//
+//                if ($purata_dikutip >= 80) {
+//                    $zone = 'Biru';
+//                } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
+//                    $zone = 'Kuning';
+//                } else {
+//                    $zone = 'Merah';
+//                }
+//
+//                $data_raw = array(
+//                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $files->id) . "'>" . $files->file_no . "</a>",
+//                    $files->company->short_name,
+//                    $parliament_name,
+//                    $zone
+//                );
+//
+//                array_push($data, $data_raw);
+//            }
+//            $output_raw = array(
+//                "aaData" => $data
+//            );
+//
+//            $output = json_encode($output_raw);
+//            return $output;
+//        } else {
+//            $output_raw = array(
+//                "aaData" => []
+//            );
+//
+//            $output = json_encode($output_raw);
+//            return $output;
+//        }
     }
 
     public function viewStrataProfile($id) {
@@ -1150,6 +1274,26 @@ class ReportController extends BaseController {
             $output = json_encode($output_raw);
             return $output;
         }
+    }
+
+    //rating summary
+    public function ratingSummary() {
+        $summary_data = Files::getRatingByCategory();
+//        return "<pre>" . print_r($summary_data, true) . "</pre>";
+
+        $rating_data = Files::getDashboardData();
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.rating_summary_report'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'rating_summary_list',
+            'rating_data' => $rating_data,
+            'summary_data' => $summary_data,
+            'image' => ""
+        );
+
+        return View::make('report_en.rating_summary', $viewData);
     }
 
 }

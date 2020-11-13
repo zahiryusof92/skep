@@ -42,6 +42,8 @@
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">AKAUN METER AIR</th>
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">ZON</th>
                     </tr>
+                </thead>
+                <tbody>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['pbt'] }}</td>
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['strata_name'] }}</td>
@@ -53,10 +55,6 @@
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['type_meter'] }}</td>
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['zone'] }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    </tr>
                 </tbody>
             </table>
 
@@ -67,14 +65,12 @@
                         <th style="width:35%; text-align: center !important; vertical-align:middle !important;">KADAR SINKING FUND (RM)</th>
                         <th style="width:30%; text-align: center !important; vertical-align:middle !important;">% PURATA KUTIPAN TAHUNAN</th>
                     </tr>
+                </thead>
+                <tbody>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['mf_rate'] }}</td>
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['sf_rate'] }}</td>
                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['purata_dikutip'] }}</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
                     </tr>
                 </tbody>
             </table>
@@ -88,6 +84,9 @@
                         <th style="width:80%; text-align: center !important; vertical-align:middle !important;">JENIS BANTUAN</th>
                         <th style="width:15%; text-align: center !important; vertical-align:middle !important;">KOS (RM)</th>
                     </tr>
+                </thead>
+                <tbody>
+                    @if (count($files->financeSupport) > 0)
                     <?php $count = 1 ?>
                     @foreach ($files->financeSupport as $support)
                     <tr>
@@ -97,10 +96,11 @@
                     </tr>
                     <?php $count = $count + 1 ?>
                     @endforeach
-                </thead>
-                <tbody>
+                    @else
                     <tr>
+                        <td colspan="3" style="text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.no_data_available') }}</td>
                     </tr>
+                    @endif
                 </tbody>
             </table>
             @endif
@@ -115,7 +115,7 @@
                     </tr>
                     <tr>
                         @foreach ($race as $rc)
-                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name) }} (%)</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name_my) }} (%)</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -143,7 +143,7 @@
                 </tbody>
             </table>
 
-            <div id="owner_chart"></div>
+            <div id="owner_chart" style="margin-top: 10px;"></div>
             <script>
                 Highcharts.chart('owner_chart', {
                     chart: {
@@ -164,13 +164,7 @@
                             cursor: 'pointer',
                             dataLabels: {
                                 enabled: true,
-                                format: '{point.name}<br/><b>{point.percentage:.1f} %</b>',
-                                distance: -50,
-                                filter: {
-                                    property: 'percentage',
-                                    operator: '>',
-                                    value: 4
-                                }
+                                format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
                             },
                             showInLegend: true
                         }
@@ -195,7 +189,7 @@
                     </tr>
                     <tr>
                         @foreach ($race as $rc)
-                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name) }} (%)</th>
+                        <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ strtoupper($rc->name_my) }} (%)</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -223,7 +217,7 @@
                 </tbody>
             </table>
 
-            <div id="tenant_chart"></div>
+            <div id="tenant_chart" style="margin-top: 10px;"></div>
             <script>
                 Highcharts.chart('tenant_chart', {
                     chart: {
@@ -244,13 +238,7 @@
                             cursor: 'pointer',
                             dataLabels: {
                                 enabled: true,
-                                format: '{point.name}<br/><b>{point.percentage:.1f} %</b>',
-                                distance: -50,
-                                filter: {
-                                    property: 'percentage',
-                                    operator: '>',
-                                    value: 4
-                                }
+                                format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
                             },
                             showInLegend: true
                         }
