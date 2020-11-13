@@ -775,6 +775,9 @@ Route::get('/{cob}/logout', 'UserController@logout')->before('authMember');
 // Route group for API
 Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('/login', 'Api\ApiController@login');
+});
+
+Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::post('/editProfile', 'Api\ApiController@editProfile');
 
     Route::post('/files', 'Api\ApiController@files');

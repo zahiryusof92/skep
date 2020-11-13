@@ -108,6 +108,7 @@ return array(
         'Illuminate\Workbench\WorkbenchServiceProvider',
         'Maatwebsite\Excel\ExcelServiceProvider',
         'yajra\Datatables\DatatablesServiceProvider',
+        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider'
     ),
     /*
       |--------------------------------------------------------------------------
@@ -171,5 +172,7 @@ return array(
         'View' => 'Illuminate\Support\Facades\View',
         'Excel' => 'Maatwebsite\Excel\Facades\Excel',
         'Datatables' => 'yajra\Datatables\Facades\Datatables',
+        'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+        'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
     ),
 );

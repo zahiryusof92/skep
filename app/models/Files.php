@@ -15,7 +15,7 @@ class Files extends Eloquent {
     public function strata() {
         return $this->hasOne('Strata', 'file_id');
     }
-
+    
     public function houseScheme() {
         return $this->hasOne('HouseScheme', 'file_id');
     }
@@ -87,7 +87,7 @@ class Files extends Eloquent {
     public function ratings() {
         return $this->hasOne('Scoring', 'file_id');
     }
-
+    
     public function monitoring() {
         return $this->hasOne('Monitoring', 'file_id');
     }
