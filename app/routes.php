@@ -796,9 +796,18 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::post('/rating', 'Api\ApiController@rating');
     Route::post('/addRating', 'Api\ApiController@addRating');
     Route::post('/editRating', 'Api\ApiController@editRating');
-    
+
     Route::post('/search', 'Api\ApiController@search');
 });
+
+//API route
+Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before('authMember');
+Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before('authMember');
+Route::post('api/addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary')->before('authMember');
+Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->before('authMember');
+Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before('authMember');
+Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before('authMember');
+Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before('authMember');
 
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
