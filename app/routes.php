@@ -796,6 +796,8 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::post('/rating', 'Api\ApiController@rating');
     Route::post('/addRating', 'Api\ApiController@addRating');
     Route::post('/editRating', 'Api\ApiController@editRating');
+    
+    Route::post('/search', 'Api\ApiController@search');
 });
 
 //invalid route
