@@ -1066,7 +1066,7 @@ class ApiController extends BaseController {
                     'message' => 'Invalid File',
                     'result' => false,
                 );
-
+              
                 return Response::json($response);
             }
         }
@@ -1495,7 +1495,7 @@ class ApiController extends BaseController {
                         ->skip($from)
                         ->take($per_page)
                         ->get();
-
+              
                 if ($insurances) {
                     foreach ($insurances as $insurance) {
                         $insurancesList[] = array(
@@ -1716,6 +1716,22 @@ class ApiController extends BaseController {
                         'updated_at' => ($file->updated_at ? $file->updated_at->format('Y-m-d H:i:s') : '')
                     );
                 }
+
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
+                );
+
+                return Response::json($response);
+            } else {
+                $response = array(
+                    'error' => true,
+                    'message' => 'Invalid File',
+                    'result' => false,
+                );
+
+                return Response::json($response);
             }
 
             $result[] = array(
