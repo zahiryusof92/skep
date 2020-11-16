@@ -67,14 +67,14 @@ class ApiController extends BaseController {
                 $result[] = array(
                     'id' => $user->id,
                     'username' => $user->username,
-                    'full_name' => $user->full_name,
-                    'email' => $user->email,
-                    'phone_no' => $user->phone_no,
+                    'full_name' => ($user->full_name ? $user->full_name : ''),
+                    'email' => ($user->email ? $user->email : ''),
+                    'phone_no' => ($user->phone_no ? $user->phone_no : ''),
                     'role_id' => $user->role,
                     'role' => ($user->role ? $user->getRole->name : ''),
                     'company_id' => $user->company_id,
                     'company' => ($user->company_id ? $user->getCOB->name : ''),
-                    'remarks' => $user->remarks,
+                    'remarks' => ($user->remarks ? $user->remarks : ''),
                     'token' => JWTAuth::fromUser($user),
                     'created_at' => ($user->created_at ? $user->created_at->format('Y-m-d H:i:s') : ''),
                     'updated_at' => ($user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '')
@@ -119,14 +119,14 @@ class ApiController extends BaseController {
                 $result[] = array(
                     'id' => $user->id,
                     'username' => $user->username,
-                    'full_name' => $user->full_name,
-                    'email' => $user->email,
-                    'phone_no' => $user->phone_no,
+                    'full_name' => ($user->full_name ? $user->full_name : ''),
+                    'email' => ($user->email ? $user->email : ''),
+                    'phone_no' => ($user->phone_no ? $user->phone_no : ''),
                     'role_id' => $user->role,
                     'role' => ($user->role ? $user->getRole->name : ''),
                     'company_id' => $user->company_id,
                     'company' => ($user->company_id ? $user->getCOB->name : ''),
-                    'remarks' => $user->remarks,
+                    'remarks' => ($user->remarks ? $user->remarks : ''),
                     'created_at' => ($user->created_at ? $user->created_at->format('Y-m-d H:i:s') : ''),
                     'updated_at' => ($user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '')
                 );
@@ -154,66 +154,101 @@ class ApiController extends BaseController {
         $result = array();
         $fileList = array();
 
+        $total_files = 0;
+        $current_page = ((Request::has('page') && !empty(Request::get('page'))) ? Request::get('page') : 1);
+        $per_page = ((Request::has('per_page') && !empty(Request::get('per_page'))) ? Request::get('per_page') : 15);
+        $from = ($current_page - 1) * $per_page;
+        $order_raw = ((Request::has('order') && !empty(Request::has('order'))) ? Request::get('order') : 'file_name');
+        $dir = ((Request::has('dir') && !empty(Request::has('dir'))) ? Request::get('dir') : 'asc');
+
+        if ($order_raw && $order_raw == 'file_no') {
+            $order = 'files.file_no';
+        } else if ($order_raw && $order_raw == 'file_name') {
+            $order = 'strata.name';
+        } else if ($order_raw && $order_raw == 'company') {
+            $order = 'company.short_name';
+        } else if ($order_raw && $order_raw == 'year') {
+            $order = 'strata.year';
+        } else {
+            $order = 'strata.name';
+        }
+
         $user = JWTAuth::parseToken()->authenticate();
         if ($user) {
-            $current_page = (Request::has('page')) ? Request::get('page') : 1;
-            $per_page = (Request::has('per_page')) ? Request::get('per_page') : 10;
-            $from = ($current_page - 1) * $per_page;
-
-            if (!Auth::user()->getAdmin()) {
-                if (!empty(Auth::user()->file_id)) {
-                    $total_files = Files::where('id', Auth::user()->file_id)
-                            ->where('company_id', Auth::user()->company_id)
-                            ->where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
+            if (!$user->getAdmin()) {
+                if (!empty($user->file_id)) {
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->where('files.id', $user->file_id)
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->count();
 
-                    $files = Files::where('id', Auth::user()->file_id)
-                            ->where('company_id', Auth::user()->company_id)
-                            ->where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
-                            ->orderBy('id')
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where('files.id', $user->file_id)
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->skip($from)
                             ->take($per_page)
+                            ->orderBy($order, $dir)
                             ->get();
                 } else {
-                    $total_files = Files::where('company_id', Auth::user()->company_id)
-                            ->where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->count();
 
-                    $files = Files::where('company_id', Auth::user()->company_id)
-                            ->where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
-                            ->orderBy('id')
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->skip($from)
                             ->take($per_page)
+                            ->orderBy($order, $dir)
                             ->get();
                 }
             } else {
                 if (empty(Session::get('admin_cob'))) {
-                    $total_files = Files::where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->count();
 
-                    $files = Files::where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
-                            ->orderBy('id')
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->skip($from)
                             ->take($per_page)
+                            ->orderBy($order, $dir)
                             ->get();
                 } else {
-                    $total_files = Files::where('company_id', Session::get('admin_cob'))
-                            ->where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->where('files.company_id', Session::get('admin_cob'))
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->count();
 
-                    $files = Files::where('company_id', Session::get('admin_cob'))
-                            ->where('is_active', '!=', 2)
-                            ->where('is_deleted', 0)
-                            ->orderBy('id')
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where('files.company_id', Session::get('admin_cob'))
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
                             ->skip($from)
                             ->take($per_page)
+                            ->orderBy($order, $dir)
                             ->get();
                 }
             }
@@ -223,20 +258,23 @@ class ApiController extends BaseController {
                     $fileList[] = array(
                         'id' => $file->id,
                         'company_id' => $file->company_id,
-                        'company' => $file->company->name,
-                        'file_no' => $file->file_no,
-                        'year' => ($file->strata ? $file->strata->year : $file->year),
-                        'remarks' => $file->remarks,
-                        'created_at' => $file->created_at->format('Y-m-d H:i:s'),
-                        'updated_at' => $file->updated_at->format('Y-m-d H:i:s')
+                        'company' => ($file->company_id ? $file->company->short_name : ''),
+                        'file_no' => ($file->file_no ? $file->file_no : ''),
+                        'file_name' => ($file->strata_id ? $file->strata->name : ''),
+                        'year' => (($file->strata_id && $file->strata->year > 0) ? $file->strata->year : ''),
+                        'remarks' => ($file->remarks ? $file->remarks : ''),
+                        'created_at' => ($file->created_at ? $file->created_at->format('Y-m-d H:i:s') : ''),
+                        'updated_at' => ($file->updated_at ? $file->updated_at->format('Y-m-d H:i:s') : '')
                     );
                 }
             }
 
             $result[] = array(
+                'oder' => $order_raw,
+                'dir' => $dir,
+                'page' => ceil($current_page),
                 'total' => $total_files,
                 'per_page' => $per_page,
-                'page' => ceil($current_page),
                 'last_page' => ceil($total_files / $per_page),
                 'from' => $from + 1,
                 'to' => ($current_page * $per_page) < $total_files ? ($current_page * $per_page) : $total_files,
@@ -289,7 +327,7 @@ class ApiController extends BaseController {
                         'country' => ($file->houseScheme->country ? $file->houseScheme->countries->name : ''),
                         'phone_no' => $file->houseScheme->phone_no,
                         'fax_no' => $file->houseScheme->fax_no,
-                        'remarks' => $file->houseScheme->remarks,
+                        'remarks' => ($file->houseScheme->remarks ? $file->houseScheme->remarks : ''),
                         'created_at' => ($file->houseScheme->created_at ? $file->houseScheme->created_at->format('Y-m-d H:i:s') : ''),
                         'updated_at' => ($file->houseScheme->updated_at ? $file->houseScheme->updated_at->format('Y-m-d H:i:s') : '')
                     );
@@ -334,7 +372,7 @@ class ApiController extends BaseController {
                 if ($file->strata) {
                     $result[] = array(
                         'id' => $file->strata->id,
-                        'name' => $file->strata->name,
+                        'name' => ($file->strata->name ? $file->strata->name : ''),
                         'title' => ($file->strata->title ? true : false),
                         'parliament_id' => $file->strata->parliament,
                         'parliament' => ($file->strata->parliament ? $file->strata->parliment->description : ''),
@@ -342,21 +380,21 @@ class ApiController extends BaseController {
                         'dun' => ($file->strata->dun ? $file->strata->duns->description : ''),
                         'park_id' => $file->strata->park,
                         'park' => ($file->strata->park ? $file->strata->parks->description : ''),
-                        'address1' => $file->strata->address1,
-                        'address2' => $file->strata->address2,
-                        'address3' => $file->strata->address3,
-                        'address4' => $file->strata->address4,
+                        'address1' => ($file->strata->address1 ? $file->strata->address1 : ''),
+                        'address2' => ($file->strata->address2 ? $file->strata->address2 : ''),
+                        'address3' => ($file->strata->address3 ? $file->strata->address3 : ''),
+                        'address4' => ($file->strata->address4 ? $file->strata->address4 : ''),
                         'city_id' => $file->strata->city,
                         'city' => ($file->strata->city ? $file->strata->cities->description : ''),
-                        'poscode' => $file->strata->poscode,
+                        'poscode' => ($file->strata->poscode ? $file->strata->poscode : ''),
                         'state_id' => $file->strata->state,
                         'state' => ($file->strata->state ? $file->strata->states->name : ''),
                         'country_id' => $file->strata->country,
                         'country' => ($file->strata->country ? $file->strata->countries->name : ''),
-                        'block_no' => $file->strata->block_no,
-                        'total_floor' => $file->strata->total_floor,
-                        'year' => $file->strata->year,
-                        'ownership_no' => $file->strata->ownership_no,
+                        'block_no' => ($file->strata->block_no ? $file->strata->block_no : ''),
+                        'total_floor' => ($file->strata->total_floor ? $file->strata->total_floor : ''),
+                        'year' => ((!empty($file->strata->year) && $file->strata->year > 0) ? $file->strata->year : ''),
+                        'ownership_no' => ($file->strata->ownership_no ? $file->strata->ownership_no : ''),
                         'town_id' => $file->strata->town,
                         'town' => ($file->strata->town ? $file->strata->towns->description : ''),
                         'area_id' => $file->strata->area,
@@ -364,7 +402,7 @@ class ApiController extends BaseController {
                         'land_area' => $file->strata->land_area,
                         'land_area_unit_id' => $file->strata->land_area_unit,
                         'land_area_unit' => ($file->strata->land_area_unit ? $file->strata->areaUnit->description : ''),
-                        'lot_no' => $file->strata->lot_no,
+                        'lot_no' => ($file->strata->lot_no ? $file->strata->lot_no : ''),
                         'date' => ($file->strata->date != '0000-00-00' ? $file->strata->date : ''),
                         'land_title_id' => $file->strata->land_title,
                         'land_title' => ($file->strata->land_title ? $file->strata->landTitle->description : ''),
@@ -373,8 +411,8 @@ class ApiController extends BaseController {
                         'perimeter_id' => $file->strata->perimeter,
                         'perimeter' => ($file->strata->perimeter ? $file->strata->perimeters->id : ''),
                         'file_url' => ($file->strata->url ? asset($file->strata->url) : ''),
-                        'total_share_unit' => $file->strata->total_share_unit,
-                        'ccc_no' => $file->strata->ccc_no,
+                        'total_share_unit' => ($file->strata->total_share_unit ? $file->strata->total_share_unit : ''),
+                        'ccc_no' => ($file->strata->ccc_no ? $file->strata->ccc_no : ''),
                         'ccc_date' => ($file->strata->ccc_date != '0000-00-00' ? $file->strata->ccc_date : ''),
                         'is_residential' => ($file->strata->is_residential ? true : false),
                         'is_commercial' => ($file->strata->is_commercial ? true : false),
@@ -428,22 +466,22 @@ class ApiController extends BaseController {
                         $jmb = array(
                             'id' => $file->managementJMB->id,
                             'date_formed' => ($file->managementJMB->date_formed != '0000-00-00' ? $file->managementJMB->date_formed : ''),
-                            'certificate_no' => $file->managementJMB->certificate_no,
-                            'name' => $file->managementJMB->name,
-                            'address1' => $file->managementJMB->address1,
-                            'address2' => $file->managementJMB->address2,
-                            'address3' => $file->managementJMB->address3,
-                            'address4' => $file->managementJMB->address4,
+                            'certificate_no' => ($file->managementJMB->certificate_no ? $file->managementJMB->certificate_no : ''),
+                            'name' => ($file->managementJMB->name ? $file->managementJMB->name : ''),
+                            'address1' => ($file->managementJMB->address1 ? $file->managementJMB->address1 : ''),
+                            'address2' => ($file->managementJMB->address2 ? $file->managementJMB->address2 : ''),
+                            'address3' => ($file->managementJMB->address3 ? $file->managementJMB->address3 : ''),
+                            'address4' => ($file->managementJMB->address4 ? $file->managementJMB->address4 : ''),
                             'city_id' => $file->managementJMB->city,
                             'city' => ($file->managementJMB->city ? $file->managementJMB->cities->description : ''),
-                            'poscode' => $file->managementJMB->poscode,
+                            'poscode' => ($file->managementJMB->poscode ? $file->managementJMB->poscode : ''),
                             'state_id' => $file->managementJMB->state,
                             'state' => ($file->managementJMB->state ? $file->managementJMB->states->name : ''),
                             'country_id' => $file->managementJMB->country,
                             'country' => ($file->managementJMB->country ? $file->managementJMB->countries->name : ''),
-                            'phone_no' => $file->managementJMB->phone_no,
-                            'fax_no' => $file->managementJMB->fax_no,
-                            'email' => $file->managementJMB->email,
+                            'phone_no' => ($file->managementJMB->phone_no ? $file->managementJMB->phone_no : ''),
+                            'fax_no' => ($file->managementJMB->fax_no ? $file->managementJMB->fax_no : ''),
+                            'email' => ($file->managementJMB->email ? $file->managementJMB->email : ''),
                             'created_at' => ($file->managementJMB->created_at ? $file->managementJMB->created_at->format('Y-m-d H:i:s') : ''),
                             'updated_at' => ($file->managementJMB->created_at ? $file->managementJMB->updated_at->format('Y-m-d H:i:s') : '')
                         );
@@ -455,11 +493,11 @@ class ApiController extends BaseController {
                             'date_formed' => ($file->managementMC->date_formed != '0000-00-00' ? $file->managementMC->date_formed : ''),
                             'certificate_no' => $file->managementMC->certificate_no,
                             'first_agm' => ($file->managementMC->first_agm != '0000-00-00' ? $file->managementMC->first_agm : ''),
-                            'name' => $file->managementMC->name,
-                            'address1' => $file->managementMC->address1,
-                            'address2' => $file->managementMC->address2,
-                            'address3' => $file->managementMC->address3,
-                            'address4' => $file->managementMC->address4,
+                            'name' => ($file->managementMC->name ? $file->managementMC->name : ''),
+                            'address1' => ($file->managementMC->address1 ? $file->managementMC->address1 : ''),
+                            'address2' => ($file->managementMC->address2 ? $file->managementMC->address2 : ''),
+                            'address3' => ($file->managementMC->address3 ? $file->managementMC->address3 : ''),
+                            'address4' => ($file->managementMC->address4 ? $file->managementMC->address4 : ''),
                             'city_id' => $file->managementMC->city,
                             'city' => ($file->managementMC->city ? $file->managementMC->cities->description : ''),
                             'poscode' => $file->managementMC->poscode,
@@ -478,22 +516,22 @@ class ApiController extends BaseController {
                     if ($file->management->is_agent && $file->managementAgent) {
                         $agent = array(
                             'id' => $file->managementAgent->id,
-                            'selected_by' => $file->managementAgent->selected_by,
-                            'agent' => $file->managementAgent->agent,
-                            'address1' => $file->managementAgent->address1,
-                            'address2' => $file->managementAgent->address2,
-                            'address3' => $file->managementAgent->address3,
-                            'address4' => $file->managementAgent->address4,
+                            'selected_by' => ($file->managementAgent->selected_by ? $file->managementAgent->selected_by : ''),
+                            'agent' => ($file->managementAgent->agent ? $file->managementAgent->agent : ''),
+                            'address1' => ($file->managementAgent->address1 ? $file->managementAgent->address1 : ''),
+                            'address2' => ($file->managementAgent->address2 ? $file->managementAgent->address2 : ''),
+                            'address3' => ($file->managementAgent->address3 ? $file->managementAgent->address3 : ''),
+                            'address4' => ($file->managementAgent->address4 ? $file->managementAgent->address4 : ''),
                             'city_id' => $file->managementAgent->city,
                             'city' => ($file->managementAgent->city ? $file->managementAgent->cities->description : ''),
-                            'poscode' => $file->managementAgent->poscode,
+                            'poscode' => ($file->managementAgent->poscode ? $file->managementAgent->poscode : ''),
                             'state_id' => $file->managementAgent->state,
                             'state' => ($file->managementAgent->state ? $file->managementAgent->states->name : ''),
                             'country_id' => $file->managementAgent->country,
                             'country' => ($file->managementAgent->country ? $file->managementAgent->countries->name : ''),
-                            'phone_no' => $file->managementAgent->phone_no,
-                            'fax_no' => $file->managementAgent->fax_no,
-                            'email' => $file->managementAgent->email,
+                            'phone_no' => ($file->managementAgent->phone_no ? $file->managementAgent->phone_no : ''),
+                            'fax_no' => ($file->managementAgent->fax_no ? $file->managementAgent->fax_no : ''),
+                            'email' => ($file->managementAgent->email ? $file->managementAgent->email : ''),
                             'created_at' => ($file->managementAgent->created_at ? $file->managementAgent->created_at->format('Y-m-d H:i:s') : ''),
                             'updated_at' => ($file->managementAgent->created_at ? $file->managementAgent->updated_at->format('Y-m-d H:i:s') : '')
                         );
@@ -502,21 +540,21 @@ class ApiController extends BaseController {
                     if ($file->management->is_others && $file->managementOthers) {
                         $others = array(
                             'id' => $file->managementOthers->id,
-                            'name' => $file->managementOthers->name,
-                            'address1' => $file->managementOthers->address1,
-                            'address2' => $file->managementOthers->address2,
-                            'address3' => $file->managementOthers->address3,
-                            'address4' => $file->managementOthers->address4,
+                            'name' => ($file->managementOthers->name ? $file->managementOthers->name : ''),
+                            'address1' => ($file->managementOthers->address1 ? $file->managementOthers->address1 : ''),
+                            'address2' => ($file->managementOthers->address2 ? $file->managementOthers->address2 : ''),
+                            'address3' => ($file->managementOthers->address3 ? $file->managementOthers->address3 : ''),
+                            'address4' => ($file->managementOthers->address4 ? $file->managementOthers->address4 : ''),
                             'city_id' => $file->managementOthers->city,
                             'city' => ($file->managementOthers->city ? $file->managementOthers->cities->description : ''),
-                            'poscode' => $file->managementOthers->poscode,
+                            'poscode' => ($file->managementOthers->poscode ? $file->managementOthers->poscode : ''),
                             'state_id' => $file->managementOthers->state,
                             'state' => ($file->managementOthers->state ? $file->managementOthers->states->name : ''),
                             'country_id' => $file->managementOthers->country,
                             'country' => ($file->managementOthers->country ? $file->managementOthers->countries->name : ''),
-                            'phone_no' => $file->managementOthers->phone_no,
-                            'fax_no' => $file->managementOthers->fax_no,
-                            'email' => $file->managementOthers->email,
+                            'phone_no' => ($file->managementOthers->phone_no ? $file->managementOthers->phone_no : ''),
+                            'fax_no' => ($file->managementOthers->fax_no ? $file->managementOthers->fax_no : ''),
+                            'email' => ($file->managementOthers->email ? $file->managementOthers->email : ''),
                             'created_at' => ($file->managementOthers->created_at ? $file->managementOthers->created_at->format('Y-m-d H:i:s') : ''),
                             'updated_at' => ($file->managementOthers->created_at ? $file->managementOthers->updated_at->format('Y-m-d H:i:s') : '')
                         );
@@ -578,8 +616,8 @@ class ApiController extends BaseController {
                         'id' => $file->monitoring->id,
                         'pre_calculate' => ($file->monitoring->pre_calculate ? true : false),
                         'buyer_registration' => ($file->monitoring->buyer_registration ? true : false),
-                        'certificate_no' => $file->monitoring->certificate_no,
-                        'remarks' => $file->monitoring->remarks,
+                        'certificate_no' => ($file->monitoring->certificate_no ? $file->monitoring->certificate_no : ''),
+                        'remarks' => ($file->monitoring->remarks ? $file->monitoring->remarks : ''),
                         'created_at' => ($file->monitoring->created_at ? $file->monitoring->created_at->format('Y-m-d H:i:s') : ''),
                         'updated_at' => ($file->monitoring->created_at ? $file->monitoring->updated_at->format('Y-m-d H:i:s') : '')
                     );
@@ -920,12 +958,12 @@ class ApiController extends BaseController {
                 if ($file->other) {
                     $result[] = array(
                         'id' => $file->other->id,
-                        'name' => $file->other->name,
+                        'name' => ($file->other->name ? $file->other->name : ''),
                         'image_url' => ($file->other->image_url ? asset($file->other->image_url) : ''),
                         'latitude' => ($file->other->latitude != '0.0000000' ? $file->other->latitude : ''),
                         'longitude' => ($file->other->longitude != '0.0000000' ? $file->other->longitude : ''),
-                        'description' => $file->other->description,
-                        'pms_system' => $file->other->pms_system,
+                        'description' => ($file->other->description ? $file->other->description : ''),
+                        'pms_system' => ($file->other->pms_system ? $file->other->pms_system : ''),
                         'owner_occupied' => ($file->other->owner_occupied ? true : false),
                         'rented' => ($file->other->rented ? true : false),
                         'bantuan_lphs' => ($file->other->bantuan_lphs ? true : false),
@@ -1003,7 +1041,7 @@ class ApiController extends BaseController {
 
                         $result[] = array(
                             'id' => $ratings->id,
-                            'date' => (!empty($ratings->date) ? date('d-M-Y', strtotime($ratings->date)) : '<i>(not set)</i>'),
+                            'date' => ((!empty($ratings->date) && $ratings->date != '0000-00-00') ? date('d-M-Y', strtotime($ratings->date)) : ''),
                             'rating_A' => number_format($ratings_A, 2),
                             'rating_B' => number_format($ratings_B, 2),
                             'rating_C' => number_format($ratings_C, 2),
@@ -1028,7 +1066,7 @@ class ApiController extends BaseController {
                     'message' => 'Invalid File',
                     'result' => false,
                 );
-
+              
                 return Response::json($response);
             }
         }
@@ -1121,7 +1159,7 @@ class ApiController extends BaseController {
 
                     $result[] = array(
                         'id' => $scoring->id,
-                        'date' => (!empty($scoring->date) ? date('d-M-Y', strtotime($scoring->date)) : '<i>(not set)</i>'),
+                        'date' => ((!empty($scoring->date) && $scoring->date != '0000-00-00') ? date('d-M-Y', strtotime($scoring->date)) : ''),
                         'rating_A' => number_format($ratings_A, 2),
                         'rating_B' => number_format($ratings_B, 2),
                         'rating_C' => number_format($ratings_C, 2),
@@ -1233,7 +1271,7 @@ class ApiController extends BaseController {
 
                     $result[] = array(
                         'id' => $scoring->id,
-                        'date' => (!empty($scoring->date) ? date('d-M-Y', strtotime($scoring->date)) : '<i>(not set)</i>'),
+                        'date' => ((!empty($scoring->date) && $scoring->date != '0000-00-00') ? date('d-M-Y', strtotime($scoring->date)) : ''),
                         'rating_A' => number_format($ratings_A, 2),
                         'rating_B' => number_format($ratings_B, 2),
                         'rating_C' => number_format($ratings_C, 2),
@@ -1457,7 +1495,7 @@ class ApiController extends BaseController {
                         ->skip($from)
                         ->take($per_page)
                         ->get();
-
+              
                 if ($insurances) {
                     foreach ($insurances as $insurance) {
                         $insurancesList[] = array(
@@ -1497,6 +1535,225 @@ class ApiController extends BaseController {
 
                 return Response::json($response);
             }
+        }
+
+        $response = array(
+            'error' => true,
+            'message' => 'Fail',
+            'result' => false,
+        );
+
+        return Response::json($response);
+    }
+
+    public function search() {
+        $result = array();
+        $fileList = array();
+
+        $total_files = 0;
+        $keyword = Request::get('keyword');
+        $current_page = ((Request::has('page') && !empty(Request::get('page'))) ? Request::get('page') : 1);
+        $per_page = ((Request::has('per_page') && !empty(Request::get('per_page'))) ? Request::get('per_page') : 15);
+        $from = ($current_page - 1) * $per_page;
+        $order_raw = ((Request::has('order') && !empty(Request::has('order'))) ? Request::get('order') : 'file_name');
+        $dir = ((Request::has('dir') && !empty(Request::has('dir'))) ? Request::get('dir') : 'asc');
+
+        if ($order_raw && $order_raw == 'file_no') {
+            $order = 'files.file_no';
+        } else if ($order_raw && $order_raw == 'file_name') {
+            $order = 'strata.name';
+        } else if ($order_raw && $order_raw == 'company') {
+            $order = 'company.short_name';
+        } else if ($order_raw && $order_raw == 'year') {
+            $order = 'strata.year';
+        } else {
+            $order = 'strata.name';
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user) {
+            if (!$user->getAdmin()) {
+                if (!empty($user->file_id)) {
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.id', $user->file_id)
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->count();
+
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.id', $user->file_id)
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->skip($from)
+                            ->take($per_page)
+                            ->orderBy($order, $dir)
+                            ->get();
+                } else {
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->count();
+
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.company_id', $user->company_id)
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->skip($from)
+                            ->take($per_page)
+                            ->orderBy($order, $dir)
+                            ->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->count();
+
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->skip($from)
+                            ->take($per_page)
+                            ->orderBy($order, $dir)
+                            ->get();
+                } else {
+                    $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.company_id', Session::get('admin_cob'))
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->count();
+
+                    $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->select(['files.*', 'strata.id as strata_id'])
+                            ->where(function($query) use ($keyword) {
+                                $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
+                                ->orWhere('strata.year', 'LIKE', "%" . $keyword . "%");
+                            })
+                            ->where('files.company_id', Session::get('admin_cob'))
+                            ->where('files.is_active', '!=', 2)
+                            ->where('files.is_deleted', 0)
+                            ->skip($from)
+                            ->take($per_page)
+                            ->orderBy($order, $dir)
+                            ->get();
+                }
+            }
+
+            if ($files) {
+                foreach ($files as $file) {
+                    $fileList[] = array(
+                        'id' => $file->id,
+                        'company_id' => $file->company_id,
+                        'company' => ($file->company_id ? $file->company->short_name : ''),
+                        'file_no' => ($file->file_no ? $file->file_no : ''),
+                        'file_name' => ($file->strata_id ? $file->strata->name : ''),
+                        'year' => (($file->strata_id && $file->strata->year > 0) ? $file->strata->year : ''),
+                        'remarks' => ($file->remarks ? $file->remarks : ''),
+                        'created_at' => ($file->created_at ? $file->created_at->format('Y-m-d H:i:s') : ''),
+                        'updated_at' => ($file->updated_at ? $file->updated_at->format('Y-m-d H:i:s') : '')
+                    );
+                }
+
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
+                );
+
+                return Response::json($response);
+            } else {
+                $response = array(
+                    'error' => true,
+                    'message' => 'Invalid File',
+                    'result' => false,
+                );
+
+                return Response::json($response);
+            }
+
+            $result[] = array(
+                'keyword' => $keyword,
+                'oder' => $order_raw,
+                'dir' => $dir,
+                'page' => ceil($current_page),
+                'total' => $total_files,
+                'per_page' => $per_page,
+                'last_page' => ceil($total_files / $per_page),
+                'from' => $from + 1,
+                'to' => ($current_page * $per_page) < $total_files ? ($current_page * $per_page) : $total_files,
+                'data' => $fileList
+            );
+
+            $response = array(
+                'error' => false,
+                'message' => 'Success',
+                'result' => $result,
+            );
+
+            return Response::json($response);
         }
 
         $response = array(
