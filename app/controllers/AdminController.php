@@ -5460,7 +5460,7 @@ class AdminController extends BaseController {
             $memo->memo_type_id = $memo_type;
             $memo->memo_date = $memo_date;
             $memo->publish_date = $publish_date;
-            $memo->expired_date = $expired_date;
+            $memo->expired_date = (!empty($expired_date) ? $expired_date : null);
             $memo->subject = $subject;
             $memo->description = $description;
             $memo->remarks = $remarks;
@@ -5672,7 +5672,7 @@ class AdminController extends BaseController {
             $memo->memo_type_id = $memo_type;
             $memo->memo_date = $memo_date;
             $memo->publish_date = $publish_date;
-            $memo->expired_date = $expired_date;
+            $memo->expired_date = (!empty($expired_date) ? $expired_date : null);
             $memo->subject = $subject;
             $memo->description = $description;
             $memo->remarks = $remarks;

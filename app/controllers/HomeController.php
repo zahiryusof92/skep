@@ -408,28 +408,29 @@ class HomeController extends BaseController {
 
         if (!Auth::user()->getAdmin()) {
             $memo = Memo::where('publish_date', '<=', $today)
-                    ->where('expired_date', '>=', $today)
+                    ->where(function($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
                     ->where(function($query) {
-                        $query->where('company_id', Auth::user()->company_id)
-                        ->orWhere('company_id', 99);
+                        $query->where('company_id', Auth::user()->company_id)->orWhere('company_id', 99);
                     })
                     ->where('is_active', 1)
                     ->where('is_deleted', 0);
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $memo = Memo::where('publish_date', '<=', $today)
-                        ->where('expired_date', '>=', $today)
-                        ->where(function($query) {
-                            $query->orWhere('company_id', 99);
+                        ->where(function($query) use ($today) {
+                            $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
                         })
                         ->where('is_active', 1)
                         ->where('is_deleted', 0);
             } else {
                 $memo = Memo::where('publish_date', '<=', $today)
-                        ->where('expired_date', '>=', $today)
+                        ->where(function($query) use ($today) {
+                            $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                        })
                         ->where(function($query) {
-                            $query->where('company_id', Session::get('admin_cob'))
-                            ->orWhere('company_id', 99);
+                            $query->where('company_id', Session::get('admin_cob'))->orWhere('company_id', 99);
                         })
                         ->where('is_active', 1)
                         ->where('is_deleted', 0);
