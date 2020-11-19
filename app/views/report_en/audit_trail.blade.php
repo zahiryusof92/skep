@@ -81,7 +81,7 @@ $company = Company::find(Auth::user()->company_id);
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "{{ URL::action('AdminController@getAuditTrail') }}",
+                "url": "{{ URL::action('ReportController@getAuditTrail') }}",
                 "dataType": "json",
                 "type": "POST"
             },

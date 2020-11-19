@@ -29,11 +29,33 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
                         </div>
+
+                        @if (Auth::user()->getAdmin())
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
+                                    <select id="company" name="company" class="form-control select2" required="">
+                                        @if (count($cob) > 1)
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @endif
+                                        @foreach ($cob as $id => $companies)
+                                        <option value="{{ $id }}">{{ $companies }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="company_error" style="display:none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        @else
+                        <input type="hidden" id="company" name="company" value="{{ Auth::user()->company_id }}"/>
+                        @endif
+
+                        <div class="row">                            
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label><span style="color: red;">*</span> {{ trans('app.forms.memo_type') }}</label>
-                                    <select id="memo_type" class="form-control">
+                                    <select id="memo_type" class="form-control select2">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($memotype as $memotypes)
                                         <option value="{{$memotypes->id}}">{{$memotypes->description}}</option>
@@ -105,8 +127,8 @@ foreach ($user_permission as $permission) {
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.admin_status') }}</label>
-                                    <select id="is_active" class="form-control">
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.status') }}</label>
+                                    <select id="is_active" class="form-control select2">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         <option value="1">{{ trans('app.forms.active') }}</option>
                                         <option value="0">{{ trans('app.forms.inactive') }}</option>
@@ -125,7 +147,7 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="form-actions">
                             <?php if ($insert_permission == 1) { ?>
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="addMemo()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-primary" id="submit_button" onclick="addMemo()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@memo')}}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
@@ -140,7 +162,7 @@ foreach ($user_permission as $permission) {
 
 <!-- Page Scripts -->
 <script>
-    $(function(){
+    $(function () {
         $('#memo_date').datetimepicker({
             widgetPositioning: {
                 horizontal: 'left'
@@ -185,7 +207,8 @@ foreach ($user_permission as $permission) {
     function addMemo() {
         $("#loading").css("display", "inline-block");
 
-        var memo_type = $("#memo_type").val(),
+        var company = $("#company").val(),
+                memo_type = $("#memo_type").val(),
                 memo_date = $("#memo_date").val(),
                 publish_date = $("#publish_date").val(),
                 expired_date = $("#expired_date").val(),
@@ -196,6 +219,11 @@ foreach ($user_permission as $permission) {
 
         var error = 0;
 
+        if (company.trim() == "") {
+            $("#company_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"COB"]) }}</span>');
+            $("#company_error").css("display", "block");
+            error = 1;
+        }
         if (memo_type.trim() == "") {
             $("#memo_type_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Memo Type"]) }}</span>');
             $("#memo_type_error").css("display", "block");
@@ -233,6 +261,7 @@ foreach ($user_permission as $permission) {
                 url: "{{ URL::action('AdminController@submitMemo') }}",
                 type: "POST",
                 data: {
+                    company: company,
                     memo_type: memo_type,
                     memo_date: memo_date,
                     publish_date: publish_date,

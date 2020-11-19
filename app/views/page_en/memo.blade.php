@@ -34,6 +34,22 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12 text-center">
                     <form>
                         <div class="row">
+                            @if (Auth::user()->getAdmin())
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.cob') }}</label>
+                                    <select id="company" name="company" class="form-control select2">
+                                        @if (count($cob) > 1)
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @endif
+                                        @foreach ($cob as $id => $companies)
+                                        <option value="{{ $id }}">{{ $companies }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="company_error" style="display:none;"></div>
+                                </div>
+                            </div>
+                            @endif
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.memo_type') }}:</label>
@@ -56,10 +72,11 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <table class="table table-hover nowrap" id="memo" width="100%">
                         <thead>
-                            <tr>
+                            <tr>                                
                                 <th style="width:10%;">{{ trans('app.forms.memo_date') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                 <th style="width:20%;">{{ trans('app.forms.memo_type') }}</th>
-                                <th style="width:40%;">{{ trans('app.forms.subject') }}</th>
+                                <th style="width:30%;">{{ trans('app.forms.subject') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.publish_date') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.expired_date') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.status') }}</th>
@@ -83,21 +100,31 @@ foreach ($user_permission as $permission) {
     var oTable;
     $(document).ready(function () {
         oTable = $('#memo').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getMemo')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "order": [[0, "desc"]],
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('AdminController@getMemo') }}",
+            lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
+            pageLength: 5,
+            order: [[0, "desc"]],
             responsive: true,
-            "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
+            columns: [                
+                {data: 'memo_date', name: 'memo.memo_date'},
+                {data: 'company', name: 'memo.company_id'},
+                {data: 'memo_type', name: 'memo_type.description'},
+                {data: 'subject', name: 'memo.subject'},
+                {data: 'publish_date', name: 'memo.publish_date'},
+                {data: 'expired_date', name: 'memo.expired_date'},
+                {data: 'is_active', name: 'memo.is_active'},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
     });
 
-    $('#memo_type').on('change', function () {
+    $('#company').on('change', function () {
         oTable.columns(1).search(this.value).draw();
+    });
+    $('#memo_type').on('change', function () {
+        oTable.columns(2).search(this.value).draw();
     });
 
     function inactiveMemo(id) {
