@@ -16,6 +16,7 @@ use Document;
 use Insurance;
 use MeetingDocument;
 use AJKDetails;
+use HousingSchemeUser;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiController extends BaseController {
@@ -360,8 +361,85 @@ class ApiController extends BaseController {
         return Response::json($response);
     }
 
+    public function personInCharge() {
+        $result = array();
+        $dataList = array();
+
+        $file_id = Request::get('file_id');
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user) {
+            $current_page = (Request::has('page')) ? Request::get('page') : 1;
+            $per_page = (Request::has('per_page')) ? Request::get('per_page') : 10;
+            $from = ($current_page - 1) * $per_page;
+
+            $file = Files::find($file_id);
+            if ($file) {
+                $total = HousingSchemeUser::where('file_id', $file_id)
+                        ->where('is_deleted', 0)
+                        ->count();
+
+                $data = HousingSchemeUser::where('file_id', $file_id)
+                        ->where('is_deleted', 0)
+                        ->skip($from)
+                        ->take($per_page)
+                        ->get();
+
+                if ($data) {
+                    foreach ($data as $incharge) {
+                        $dataList[] = array(
+                            'id' => $incharge->id,
+                            'user_id' => $incharge->user_id,
+                            'name' => ($incharge->user_id ? $incharge->user->full_name : ''),
+                            'phone_no' => ($incharge->user_id ? $incharge->user->phone_no : ''),
+                            'email' => ($incharge->user_id ? $incharge->user->email : ''),
+                            'created_at' => ($incharge->created_at ? $incharge->created_at->format('Y-m-d H:i:s') : ''),
+                            'updated_at' => ($incharge->updated_at ? $incharge->updated_at->format('Y-m-d H:i:s') : '')
+                        );
+                    }
+
+                    $result[] = array(
+                        'total' => $total,
+                        'per_page' => $per_page,
+                        'page' => ceil($current_page),
+                        'last_page' => ceil($total / $per_page),
+                        'from' => $from + 1,
+                        'to' => ($current_page * $per_page) < $total ? ($current_page * $per_page) : $total,
+                        'data' => $dataList
+                    );
+                }
+
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
+                );
+
+                return Response::json($response);
+            } else {
+                $response = array(
+                    'error' => true,
+                    'message' => 'Invalid File',
+                    'result' => false,
+                );
+
+                return Response::json($response);
+            }
+        }
+
+        $response = array(
+            'error' => true,
+            'message' => 'Fail',
+            'result' => false,
+        );
+
+        return Response::json($response);
+    }
+
     public function strata() {
         $result = array();
+        $residential = '';
+        $commercial = '';
 
         $file_id = Request::get('file_id');
 
@@ -370,6 +448,32 @@ class ApiController extends BaseController {
             $file = Files::find($file_id);
             if ($file) {
                 if ($file->strata) {
+                    if ($file->strata->is_residential) {
+                        $residential = array(
+                            'id' => $file->resident->id,
+                            'unit_no' => ($file->resident->unit_no ? $file->resident->unit_no : ''),
+                            'maintenance_fee' => ($file->resident->maintenance_fee ? $file->resident->maintenance_fee : ''),
+                            'maintenance_fee_option' => ($file->resident->maintenance_fee_option ? $file->resident->mfUnit->description : ''),
+                            'sinking_fund' => ($file->resident->sinking_fund ? $file->resident->sinking_fund : ''),
+                            'sinking_fund_option' => ($file->resident->sinking_fund_option ? $file->resident->sfUnit->description : ''),
+                            'created_at' => ($file->resident->created_at ? $file->resident->created_at->format('Y-m-d H:i:s') : ''),
+                            'updated_at' => ($file->resident->updated_at ? $file->resident->updated_at->format('Y-m-d H:i:s') : '')
+                        );
+                    }
+
+                    if ($file->strata->is_commercial) {
+                        $commercial = array(
+                            'id' => $file->commercial->id,
+                            'unit_no' => ($file->commercial->unit_no ? $file->commercial->unit_no : ''),
+                            'maintenance_fee' => ($file->commercial->maintenance_fee ? $file->commercial->maintenance_fee : ''),
+                            'maintenance_fee_option' => ($file->commercial->maintenance_fee_option ? $file->commercial->mfUnit->description : ''),
+                            'sinking_fund' => ($file->commercial->sinking_fund ? $file->commercial->sinking_fund : ''),
+                            'sinking_fund_option' => ($file->commercial->sinking_fund_option ? $file->commercial->sfUnit->description : ''),
+                            'created_at' => ($file->commercial->created_at ? $file->commercial->created_at->format('Y-m-d H:i:s') : ''),
+                            'updated_at' => ($file->commercial->updated_at ? $file->commercial->updated_at->format('Y-m-d H:i:s') : '')
+                        );
+                    }
+
                     $result[] = array(
                         'id' => $file->strata->id,
                         'name' => ($file->strata->name ? $file->strata->name : ''),
@@ -415,7 +519,9 @@ class ApiController extends BaseController {
                         'ccc_no' => ($file->strata->ccc_no ? $file->strata->ccc_no : ''),
                         'ccc_date' => ($file->strata->ccc_date != '0000-00-00' ? $file->strata->ccc_date : ''),
                         'is_residential' => ($file->strata->is_residential ? true : false),
+                        'residential' => $residential,
                         'is_commercial' => ($file->strata->is_commercial ? true : false),
+                        'commercial' => $commercial,
                         'created_at' => ($file->strata->created_at ? $file->strata->created_at->format('Y-m-d H:i:s') : ''),
                         'updated_at' => ($file->strata->updated_at ? $file->strata->updated_at->format('Y-m-d H:i:s') : '')
                     );
@@ -425,6 +531,75 @@ class ApiController extends BaseController {
                     'error' => false,
                     'message' => 'Success',
                     'result' => $result
+                );
+
+                return Response::json($response);
+            } else {
+                $response = array(
+                    'error' => true,
+                    'message' => 'Invalid File',
+                    'result' => false,
+                );
+
+                return Response::json($response);
+            }
+        }
+
+        $response = array(
+            'error' => true,
+            'message' => 'Fail',
+            'result' => false,
+        );
+
+        return Response::json($response);
+    }
+
+    public function facility() {
+        $result = array();
+
+        $file_id = Request::get('file_id');
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user) {
+            $file = Files::find($file_id);
+            if ($file) {
+                if ($file->facility) {
+                    $result[] = array(
+                        'id' => $file->facility->id,
+                        'management_office' => ($file->facility->management_office ? true : false),
+                        'management_office_unit' => ($file->facility->management_office_unit ? $file->facility->management_office_unit : 0),
+                        'swimming_pool' => ($file->facility->swimming_pool ? true : false),
+                        'swimming_pool_unit' => ($file->facility->swimming_pool_unit ? $file->facility->swimming_pool_unit : 0),
+                        'surau' => ($file->facility->surau ? true : false),
+                        'surau_unit' => ($file->facility->surau_unit ? $file->facility->surau_unit : 0),
+                        'multipurpose_hall' => ($file->facility->multipurpose_hall ? true : false),
+                        'multipurpose_hall_unit' => ($file->facility->multipurpose_hall_unit ? $file->facility->multipurpose_hall_unit : 0),
+                        'gym' => ($file->facility->gym ? true : false),
+                        'gym_unit' => ($file->facility->gym_unit ? $file->facility->gym_unit : 0),
+                        'playground' => ($file->facility->playground ? true : false),
+                        'playground_unit' => ($file->facility->playground_unit ? $file->facility->playground_unit : 0),
+                        'guardhouse' => ($file->facility->guardhouse ? true : false),
+                        'guardhouse_unit' => ($file->facility->guardhouse_unit ? $file->facility->guardhouse_unit : 0),
+                        'kindergarten' => ($file->facility->kindergarten ? true : false),
+                        'kindergarten_unit' => ($file->facility->kindergarten_unit ? $file->facility->kindergarten_unit : 0),
+                        'open_space' => ($file->facility->open_space ? true : false),
+                        'open_space_unit' => ($file->facility->open_space_unit ? $file->facility->open_space_unit : 0),
+                        'lift' => ($file->facility->lift ? true : false),
+                        'lift_unit' => ($file->facility->lift_unit ? $file->facility->lift_unit : 0),
+                        'rubbish_room' => ($file->facility->rubbish_room ? true : false),
+                        'rubbish_room_unit' => ($file->facility->rubbish_room_unit ? $file->facility->rubbish_room_unit : 0),
+                        'gated' => ($file->facility->gated ? true : false),
+                        'gated_unit' => ($file->facility->gated_unit ? $file->facility->gated_unit : 0),
+                        'others' => ($file->facility->others ? $file->facility->others : ''),
+                        'created_at' => ($file->other->created_at ? $file->other->created_at->format('Y-m-d H:i:s') : ''),
+                        'updated_at' => ($file->other->updated_at ? $file->other->updated_at->format('Y-m-d H:i:s') : '')
+                    );
+                }
+
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
                 );
 
                 return Response::json($response);
@@ -1066,7 +1241,7 @@ class ApiController extends BaseController {
                     'message' => 'Invalid File',
                     'result' => false,
                 );
-              
+
                 return Response::json($response);
             }
         }
@@ -1495,7 +1670,7 @@ class ApiController extends BaseController {
                         ->skip($from)
                         ->take($per_page)
                         ->get();
-              
+
                 if ($insurances) {
                     foreach ($insurances as $insurance) {
                         $insurancesList[] = array(

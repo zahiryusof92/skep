@@ -782,7 +782,9 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
 
     Route::post('/files', 'Api\ApiController@files');
     Route::post('/houseScheme', 'Api\ApiController@houseScheme');
+    Route::post('/personInCharge', 'Api\ApiController@personInCharge');
     Route::post('/strata', 'Api\ApiController@strata');
+    Route::post('/facility', 'Api\ApiController@facility');
     Route::post('/management', 'Api\ApiController@management');
     Route::post('/monitoring', 'Api\ApiController@monitoring');
     Route::post('/meetingJMB', 'Api\ApiController@meetingJMB');
