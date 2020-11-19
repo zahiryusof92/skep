@@ -4,45 +4,6 @@
 
 <?php
 $company = Company::find(Auth::user()->company_id);
-$totalless10 = 0;
-$totalmore10 = 0;
-
-if (count($strata) > 0) {
-    foreach ($strata as $stratas) {
-        if ($stratas->is_residential == 1 && $stratas->is_commercial == 1) {
-            $less10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            if (count($less10residential) <= 0) {
-                $less10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            } else {
-                $less10commercial = 0;
-            }
-            $totalless10 = $totalless10 + ($less10residential + $less10commercial);
-
-            $more10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            if (count($less10residential) <= 0) {
-                $more10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            } else {
-                $more10commercial = 0;
-            }
-            $totalmore10 = $totalmore10 + ($more10residential + $more10commercial);
-        } else if ($stratas->is_residential == 1 && $stratas->is_commercial == 0) {
-            $less10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            $totalless10 = $totalless10 + $less10residential;
-
-            $more10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            $totalmore10 = $totalmore10 + $more10residential;
-        } else if ($stratas->is_residential == 0 && $stratas->is_commercial == 1) {
-            $less10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            $totalless10 = $totalless10 + $less10commercial;
-
-            $more10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            $totalmore10 = $totalmore10 + $more10commercial;
-        } else {
-            $totalless10 = $totalless10 + 1;
-            $totalmore10 = $totalmore10 + 0;
-        }
-    }
-}
 ?>
 
 <table width="100%">
@@ -76,14 +37,16 @@ if (count($strata) > 0) {
                     <tr>
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;"><= 10</th>
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">> 10</th>
-                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;"> </th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;"></th>
                     </tr>
                 </thead>
+
+                @if ($data)
                 <tbody>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">KAWASAN PEMAJUAN</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$totalless10}}</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$totalmore10}}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_less10'] }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_more10'] }}</td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                     </tr>
@@ -91,66 +54,72 @@ if (count($strata) > 0) {
                         <td style="text-align: center !important; vertical-align:middle !important;">PEMAJU DAN LIQUIDATOR</td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$developer}}</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{number_format((($developer / $total) * 100), 2)}}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['developer'] }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['developer'] / $data['total_all']) * 100), 2) : 0) }}</td>
                     </tr>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">JMB</td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$jmb}}</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{number_format((($jmb / $total) * 100), 2)}}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['jmb'] }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['jmb'] / $data['total_all']) * 100), 2) : 0) }}</td>
                     </tr>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">MC</td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$mc}}</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{number_format((($mc / $total) * 100), 2)}}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['mc'] }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['mc'] / $data['total_all']) * 100), 2) : 0) }}</td>
                     </tr>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">EJEN</td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$agent}}</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{number_format((($agent / $total) * 100), 2)}}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['agent'] }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['agent'] / $data['total_all']) * 100), 2) : 0) }}</td>
                     </tr>
                     <tr>
                         <td style="text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{$others}}</td>
-                        <td style="text-align: center !important; vertical-align:middle !important;">{{number_format((($others / $total) * 100), 2)}}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['others'] }}</td>
+                        <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['others'] / $data['total_all']) * 100), 2) : 0) }}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th style="text-align: center !important; vertical-align:middle !important;">JUMLAH JMB, MC & EJEN</th>
-                        <th colspan="3" style="text-align: center !important; vertical-align:middle !important;">{{$jmb + $mc + $agent}}</th>
-                        <th style="text-align: center !important; vertical-align:middle !important;">{{number_format((($jmb + $mc + $agent) / $total), 2)}}</th>
+                        <th colspan="3" style="text-align: center !important; vertical-align:middle !important;">{{ ($data['jmb'] + $data['mc'] + $data['agent']) }}</th>
+                        <th style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format(((($data['jmb'] + $data['mc'] + $data['agent']) / $data['total_all']) * 100), 2) : 0) }}</th>
                     </tr>
                 </tfoot>
+                @endif
+
             </table>
             <br/>
+
+            @if ($data)
             <table border="1" id="cob_file" width="70%">
                 <thead>
                     <tr>
                         <th rowspan="3" style="width:60%; text-align: center !important; vertical-align:middle !important;">JUMLAH PETAK KESELURUHAN SEBENAR</th>
                         <td style="width:20%; text-align: center !important; vertical-align:middle !important;">Kediaman</td>
-                        <td style="width:20%; text-align: center !important; vertical-align:middle !important;">{{$residential}}</td>
+                        <td style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ $data['residential'] }}</td>
                     </tr>
                     <tr>
                         <td style="width:20%; text-align: center !important; vertical-align:middle !important;">Kedai / Pejabat</td>
-                        <td style="width:20%; text-align: center !important; vertical-align:middle !important;">{{$commercial}}</td>
+                        <td style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ $data['commercial'] }}</td>
                     </tr>
                     <tr>
                         <th style="width:20%; text-align: center !important; vertical-align:middle !important;">JUMLAH</th>
-                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{$residential + $commercial}}</th>
+                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ $data['sum_all'] }}</th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
+            @endif
+
             <hr/>
             <table width="100%">
                 <tr>

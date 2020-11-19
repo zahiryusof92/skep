@@ -15,7 +15,7 @@ class Files extends Eloquent {
     public function strata() {
         return $this->hasOne('Strata', 'file_id');
     }
-    
+
     public function houseScheme() {
         return $this->hasOne('HouseScheme', 'file_id');
     }
@@ -87,7 +87,7 @@ class Files extends Eloquent {
     public function ratings() {
         return $this->hasOne('Scoring', 'file_id');
     }
-    
+
     public function monitoring() {
         return $this->hasOne('Monitoring', 'file_id');
     }
@@ -762,42 +762,36 @@ class Files extends Eloquent {
 
     public static function getDashboardData() {
         $active = function ($query) {
-            $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
 
         $condition5 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 81)->where('scoring_quality_index.total_score', '<=', 100);
             $query->where('scoring_quality_index.is_deleted', 0);
-            $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
 
         $condition4 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 61)->where('scoring_quality_index.total_score', '<=', 80);
             $query->where('scoring_quality_index.is_deleted', 0);
-            $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
 
         $condition3 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 41)->where('scoring_quality_index.total_score', '<=', 60);
             $query->where('scoring_quality_index.is_deleted', 0);
-            $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
 
         $condition2 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 21)->where('scoring_quality_index.total_score', '<=', 40);
             $query->where('scoring_quality_index.is_deleted', 0);
-            $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
 
         $condition1 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 1)->where('scoring_quality_index.total_score', '<=', 20);
             $query->where('scoring_quality_index.is_deleted', 0);
-            $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
         };
 
@@ -1173,7 +1167,6 @@ class Files extends Eloquent {
             foreach ($category as $cat) {
                 $active = function ($query) use ($cat) {
                     $query->where('category.id', $cat->id);
-                    $query->where('files.is_active', 1);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
                 };
@@ -1182,7 +1175,6 @@ class Files extends Eloquent {
                     $query->where('category.id', $cat->id);
                     $query->where('scoring_quality_index.total_score', '>=', 81)->where('scoring_quality_index.total_score', '<=', 100);
                     $query->where('scoring_quality_index.is_deleted', 0);
-                    $query->where('files.is_active', 1);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
                 };
@@ -1191,7 +1183,6 @@ class Files extends Eloquent {
                     $query->where('category.id', $cat->id);
                     $query->where('scoring_quality_index.total_score', '>=', 61)->where('scoring_quality_index.total_score', '<=', 80);
                     $query->where('scoring_quality_index.is_deleted', 0);
-                    $query->where('files.is_active', 1);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
                 };
@@ -1200,7 +1191,6 @@ class Files extends Eloquent {
                     $query->where('category.id', $cat->id);
                     $query->where('scoring_quality_index.total_score', '>=', 41)->where('scoring_quality_index.total_score', '<=', 60);
                     $query->where('scoring_quality_index.is_deleted', 0);
-                    $query->where('files.is_active', 1);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
                 };
@@ -1209,7 +1199,6 @@ class Files extends Eloquent {
                     $query->where('category.id', $cat->id);
                     $query->where('scoring_quality_index.total_score', '>=', 21)->where('scoring_quality_index.total_score', '<=', 40);
                     $query->where('scoring_quality_index.is_deleted', 0);
-                    $query->where('files.is_active', 1);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
                 };
@@ -1218,7 +1207,6 @@ class Files extends Eloquent {
                     $query->where('category.id', $cat->id);
                     $query->where('scoring_quality_index.total_score', '>=', 1)->where('scoring_quality_index.total_score', '<=', 20);
                     $query->where('scoring_quality_index.is_deleted', 0);
-                    $query->where('files.is_active', 1);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
                 };
@@ -1468,6 +1456,184 @@ class Files extends Eloquent {
                 );
             }
         }
+
+        return $result;
+    }
+
+    public static function getManagementSummaryCOB() {
+        $developer = 0;
+        $jmb = 0;
+        $mc = 0;
+        $agent = 0;
+        $others = 0;
+        $residential = 0;
+        $commercial = 0;
+        $count_less10 = 0;
+        $count_more10 = 0;
+        $count_all = 0;
+        $sum_less10 = 0;
+        $sum_more10 = 0;
+        $sum_all = 0;
+        $total_all = 0;
+
+        if (!Auth::user()->getAdmin()) {
+            $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        if ($company) {
+            foreach ($company as $cob) {
+                $total_developer = DB::table('developer')
+                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.developer')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('developer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->groupBy('developer.id')
+                        ->get();
+
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count();
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count();
+
+                $total_agent = DB::table('management_agent')
+                        ->join('files', 'management_agent.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count();
+
+                $total_others = DB::table('management_others')
+                        ->join('files', 'management_others.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count();
+
+                $count_residential = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('residential_block.unit_no');
+
+                $count_residential_less10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('residential_block.unit_no');
+
+                $count_residential_more10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('residential_block.unit_no');
+
+                $count_commercial = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('commercial_block.unit_no');
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('commercial_block.unit_no');
+
+                $count_commercial_more10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('commercial_block.unit_no');
+
+                $sum_residential = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('residential_block.unit_no');
+
+                $sum_residential_less10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('residential_block.unit_no');
+
+                $sum_residential_more10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('residential_block.unit_no');
+
+                $sum_commercial = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('commercial_block.unit_no');
+
+                $sum_commercial_less10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('commercial_block.unit_no');
+
+                $sum_commercial_more10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('commercial_block.unit_no');
+
+                $developer = $developer + count($total_developer);
+                $jmb = $jmb + $total_jmb;
+                $mc = $mc + $total_mc;
+                $agent = $agent + $total_agent;
+                $others = $others + $total_others;
+                $residential = $residential + $sum_residential;
+                $commercial = $commercial + $sum_commercial;
+                $count_less10 = $count_less10 + ($count_residential_less10 + $count_commercial_less10);
+                $count_more10 = $count_more10 + ($count_residential_more10 + $count_commercial_more10);
+                $count_all = $count_all + ($count_residential + $count_commercial);                
+                $sum_less10 = $sum_less10 + ($sum_residential_less10 + $sum_commercial_less10);
+                $sum_more10 = $sum_more10 + ($sum_residential_more10 + $sum_commercial_more10);
+                $sum_all = $sum_all + ($sum_residential + $sum_commercial);
+                $total_all = $total_all + (count($total_developer) + $total_jmb + $total_mc + $total_agent + $total_others);
+            }
+        }
+
+        $result = array(
+            'developer' => $developer,
+            'jmb' => $jmb,
+            'mc' => $mc,
+            'agent' => $agent,
+            'others' => $others,
+            'residential' => $residential,
+            'commercial' => $commercial,
+            'count_less10' => $count_less10,
+            'count_more10' => $count_more10,
+            'count_all' => $count_all,
+            'sum_less10' => $sum_less10,
+            'sum_more10' => $sum_more10,
+            'sum_all' => $sum_all,
+            'total_all' => $total_all
+        );
 
         return $result;
     }

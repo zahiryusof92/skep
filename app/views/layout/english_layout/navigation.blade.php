@@ -365,7 +365,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(24))
                     <li id="audit_trail_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@auditTrail')}}">
+                        <a class="left-menu-link" href="{{URL::action('ReportController@auditTrail')}}">
                             {{ trans('app.menus.reporting.audit_trail') }}
                         </a>
                     </li>
@@ -373,7 +373,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(25))
                     <li id="file_by_location_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@fileByLocation')}}">
+                        <a class="left-menu-link" href="{{URL::action('ReportController@fileByLocation')}}">
                             {{ trans('app.menus.reporting.file_by_location') }}
                         </a>
                     </li>
@@ -389,7 +389,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(27))
                     <li id="management_summary_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@managementSummary')}}">
+                        <a class="left-menu-link" href="{{URL::action('ReportController@managementSummary')}}">
                             {{ trans('app.menus.reporting.management_summary') }}
                         </a>
                     </li>
@@ -397,7 +397,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(28))
                     <li id="cob_file_management_list">
-                        <a class="left-menu-link" href="{{URL::action('AdminController@cobFileManagement')}}">
+                        <a class="left-menu-link" href="{{URL::action('ReportController@cobFileManagement')}}">
                             {{ trans('app.menus.reporting.cob_file') }}
                         </a>
                     </li>

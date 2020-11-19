@@ -4,45 +4,6 @@
 
 <?php
 $company = Company::find(Auth::user()->company_id);
-$totalless10 = 0;
-$totalmore10 = 0;
-
-if (count($strata) > 0) {    
-    foreach ($strata as $stratas) {
-        if ($stratas->is_residential == 1 && $stratas->is_commercial == 1) {
-            $less10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            if (count($less10residential) <= 0) {
-                $less10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            } else {
-                $less10commercial = 0;
-            }
-            $totalless10 = $totalless10 + ($less10residential + $less10commercial);
-
-            $more10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            if (count($less10residential) <= 0) {
-                $more10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            } else {
-                $more10commercial = 0;
-            }
-            $totalmore10 = $totalmore10 + ($more10residential + $more10commercial);
-        } else if ($stratas->is_residential == 1 && $stratas->is_commercial == 0) {
-            $less10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            $totalless10 = $totalless10 + $less10residential;
-            
-            $more10residential = Residential::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            $totalmore10 = $totalmore10 + $more10residential;
-        } else if ($stratas->is_residential == 0 && $stratas->is_commercial == 1) {            
-            $less10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '<=', 10)->count();
-            $totalless10 = $totalless10 + $less10commercial;
-            
-            $more10commercial = Commercial::where('strata_id', $stratas->id)->where('unit_no', '>', 10)->count();
-            $totalmore10 = $totalmore10 + $more10commercial;
-        } else {
-            $totalless10 = $totalless10 + 1;
-            $totalmore10 = $totalmore10 + 0;
-        }
-    }
-}
 ?>
 
 <div class="page-content-inner">
@@ -97,18 +58,22 @@ if (count($strata) > 0) {
                                     <th style="width:7%; text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</th>
                                 </tr>
                             </thead>
+
                             <tbody>
+                                @if ($data)
                                 <tr>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$totalless10}} ({{$residential_less10 + $commercial_less10}})</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$totalmore10}} ({{$residential_more10 + $commercial_more10}})</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{count($strata)}} ({{$residential + $commercial}})</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$developer}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$jmb}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$mc}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$agent}}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{$others}}</td>                                    
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_less10'] }} ({{ $data['sum_less10'] }})</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_more10'] }} ({{ $data['sum_more10'] }})</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_all'] }} ({{ $data['sum_all'] }})</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['developer'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['jmb'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['mc'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['agent'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['others'] }}</td>                                    
                                 </tr>
+                                @endif
                             </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -157,11 +122,11 @@ if (count($strata) > 0) {
                 name: 'Jenis Pengurusan',
                 colorByPoint: true,
                 data: [
-                    {name: 'Pemaju', y: <?php echo $developer; ?>},
-                    {name: 'JMB', y: <?php echo $jmb; ?>},
-                    {name: 'MC', y: <?php echo $mc; ?>},
-                    {name: 'Ejen', y: <?php echo $agent; ?>},
-                    {name: 'Lain-lain', y: <?php echo $others; ?>}
+                    {name: 'Pemaju', y: <?php echo $data['developer']; ?>},
+                    {name: 'JMB', y: <?php echo $data['jmb']; ?>},
+                    {name: 'MC', y: <?php echo $data['mc']; ?>},
+                    {name: 'Ejen', y: <?php echo $data['agent']; ?>},
+                    {name: 'Lain-lain', y: <?php echo $data['others']; ?>}
                 ]
             }]
     });

@@ -198,15 +198,15 @@ class PrintController extends BaseController {
     public function printRatingSummary() {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                $file = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                $file = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
             } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             }
         }
 
@@ -262,113 +262,14 @@ class PrintController extends BaseController {
 
     //management summary
     public function printManagementSummary() {
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        $jmbs = 0;
-        $mcs = 0;
-        $agents = 0;
-        $otherss = 0;
-        $residentials = 0;
-        $residential_less10s = 0;
-        $residential_more10s = 0;
-        $commercials = 0;
-        $commercial_less10s = 0;
-        $commercial_more10s = 0;
-
-        $developer = Developer::where('is_deleted', 0)->count();
-
-        if (count($file) > 0) {
-            foreach ($file as $files) {
-
-                $jmb = ManagementJMB::where('file_id', $files->id)->count();
-                $mc = ManagementMC::where('file_id', $files->id)->count();
-                $agent = ManagementAgent::where('file_id', $files->id)->count();
-                $others = ManagementOthers::where('file_id', $files->id)->count();
-                $residential = Residential::where('file_id', $files->id)->sum('unit_no');
-                $residential_less10 = Residential::where('file_id', $files->id)->where('unit_no', '<=', 10)->sum('unit_no');
-                $residential_more10 = Residential::where('file_id', $files->id)->where('unit_no', '>', 10)->sum('unit_no');
-                $commercial = Commercial::where('file_id', $files->id)->sum('unit_no');
-                $commercial_less10 = Commercial::where('file_id', $files->id)->where('unit_no', '<=', 10)->sum('unit_no');
-                $commercial_more10 = Commercial::where('file_id', $files->id)->where('unit_no', '>', 10)->sum('unit_no');
-
-                $jmbs += $jmb;
-                $mcs += $mc;
-                $agents += $agent;
-                $otherss += $others;
-                $residentials += $residential;
-                $residential_less10s += $residential_less10;
-                $residential_more10s += $residential_more10;
-                $commercials += $commercial;
-                $commercial_less10s += $commercial_less10;
-                $commercial_more10s += $commercial_more10;
-            }
-        }
+        $data = Files::getManagementSummaryCOB();
 
         $viewData = array(
             'title' => trans('app.menus.reporting.management_summary_report'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'management_summary_list',
-            'strata' => $strata,
-            'residential' => $residentials,
-            'residential_less10' => $residential_less10s,
-            'residential_more10' => $residential_more10s,
-            'commercial' => $commercials,
-            'commercial_less10' => $commercial_less10s,
-            'commercial_more10' => $commercial_more10s,
-            'developer' => $developer,
-            'jmb' => $jmbs,
-            'mc' => $mcs,
-            'agent' => $agents,
-            'others' => $otherss,
+            'data' => $data,
             'image' => ""
         );
 
@@ -377,105 +278,14 @@ class PrintController extends BaseController {
 
     //cob file / management
     public function printCobFileManagement() {
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $strata = DB::table('files')
-                        ->join('strata', 'strata.file_id', '=', 'files.id')
-                        ->select('strata.*', 'files.id as file_id')
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('files.is_active', 1)
-                        ->where('files.is_deleted', 0)
-                        ->orderBy('strata.id')
-                        ->get();
-
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
-        $jmbs = 0;
-        $mcs = 0;
-        $agents = 0;
-        $otherss = 0;
-        $residentials = 0;
-        $commercials = 0;
-
-        $developer = Developer::where('is_deleted', 0)->count();
-
-        if (count($file) > 0) {
-            foreach ($file as $files) {
-
-                $jmb = ManagementJMB::where('file_id', $files->id)->count();
-                $mc = ManagementMC::where('file_id', $files->id)->count();
-                $agent = ManagementAgent::where('file_id', $files->id)->count();
-                $others = ManagementOthers::where('file_id', $files->id)->count();
-                $residential = Residential::where('file_id', $files->id)->sum('unit_no');
-                $commercial = Commercial::where('file_id', $files->id)->sum('unit_no');
-
-                $jmbs += $jmb;
-                $mcs += $mc;
-                $agents += $agent;
-                $otherss += $others;
-                $residentials += $residential;
-                $commercials += $commercial;
-            }
-        }
-
-        $totals = $developer + $jmbs + $mcs + $agents + $otherss;
-        if ($totals == 0) {
-            $total = 1;
-        } else {
-            $total = $totals;
-        }
+        $data = Files::getManagementSummaryCOB();
 
         $viewData = array(
             'title' => trans('app.menus.reporting.cob_file_report'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'cob_file_management_list',
-            'strata' => $strata,
-            'developer' => $developer,
-            'jmb' => $jmbs,
-            'mc' => $mcs,
-            'agent' => $agents,
-            'others' => $otherss,
-            'total' => $total,
-            'residential' => $residentials,
-            'commercial' => $commercials,
+            'data' => $data,
             'image' => ""
         );
 
@@ -1214,7 +1024,7 @@ class PrintController extends BaseController {
                 }
             }
         }
-        
+
 //        return "<pre>" . print_r($result, true) . "</pre>";
 
         $viewData = array(

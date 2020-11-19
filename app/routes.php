@@ -621,21 +621,21 @@ Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceP
 
 // --- Reporting --- //
 //audit trail
-Route::get('/reporting/auditTrail', 'AdminController@auditTrail')->before('authMember');
-Route::post('/getAuditTrail', 'AdminController@getAuditTrail')->before('authMember');
+Route::get('/reporting/auditTrail', 'ReportController@auditTrail')->before('authMember');
+Route::post('/getAuditTrail', 'ReportController@getAuditTrail')->before('authMember');
 
 //file by location
-Route::get('/reporting/fileByLocation', 'AdminController@fileByLocation')->before('authMember');
-Route::get('/getFileByLocation', 'AdminController@getFileByLocation')->before('authMember');
+Route::get('/reporting/fileByLocation', 'ReportController@fileByLocation')->before('authMember');
+Route::get('/getFileByLocation', 'ReportController@getFileByLocation')->before('authMember');
 
 //rating summary
 Route::get('/reporting/ratingSummary', 'ReportController@ratingSummary')->before('authMember');
 
 //management summary
-Route::get('/reporting/managementSummary', 'AdminController@managementSummary')->before('authMember');
+Route::get('/reporting/managementSummary', 'ReportController@managementSummary')->before('authMember');
 
 //cob file / management
-Route::get('/reporting/cobFileManagement', 'AdminController@cobFileManagement')->before('authMember');
+Route::get('/reporting/cobFileManagement', 'ReportController@cobFileManagement')->before('authMember');
 
 // strata profile
 Route::get('/reporting/strataProfile', 'ReportController@strataProfile')->before('authMember');

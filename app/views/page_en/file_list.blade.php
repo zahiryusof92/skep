@@ -50,7 +50,9 @@ foreach ($user_permission as $permission) {
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
                                             <select name="import_company" id="import_company" class="form-control">
+                                                @if (count($cob) > 1)
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @endif
                                                 @foreach ($cob as $companies)
                                                 <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
                                                 @endforeach
@@ -169,7 +171,9 @@ foreach ($user_permission as $permission) {
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.cob') }}</label>
                                     <select id="company" class="form-control select2">
+                                        @if (count($cob) > 1)
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @endif
                                         @foreach ($cob as $companies)
                                         <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
                                         @endforeach
@@ -243,7 +247,7 @@ foreach ($user_permission as $permission) {
         });
 
         $('#company').on('change', function () {
-            oTable.columns(0).search(this.value).draw();
+            oTable.columns(2).search(this.value).draw();
         });
         $('#year').on('change', function () {
             oTable.columns(3).search(this.value).draw();
