@@ -438,8 +438,9 @@ class ApiController extends BaseController {
 
     public function strata() {
         $result = array();
-        $residential = '';
-        $commercial = '';
+      
+        $residential = new \stdClass();
+        $commercial = new \stdClass();
 
         $file_id = Request::get('file_id');
 
@@ -625,10 +626,10 @@ class ApiController extends BaseController {
 
     public function management() {
         $result = array();
-        $jmb = array();
-        $mc = array();
-        $agent = array();
-        $others = array();
+        $jmb = new \stdClass();
+        $mc = new \stdClass();
+        $agent = new \stdClass();
+        $others = new \stdClass();
 
         $file_id = Request::get('file_id');
 
