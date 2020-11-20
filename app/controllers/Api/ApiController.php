@@ -438,6 +438,7 @@ class ApiController extends BaseController {
 
     public function strata() {
         $result = array();
+      
         $residential = new \stdClass();
         $commercial = new \stdClass();
 
