@@ -438,7 +438,6 @@ class ApiController extends BaseController {
 
     public function strata() {
         $result = array();
-      
         $residential = new \stdClass();
         $commercial = new \stdClass();
 
@@ -734,21 +733,21 @@ class ApiController extends BaseController {
                             'created_at' => ($file->managementOthers->created_at ? $file->managementOthers->created_at->format('Y-m-d H:i:s') : ''),
                             'updated_at' => ($file->managementOthers->created_at ? $file->managementOthers->updated_at->format('Y-m-d H:i:s') : '')
                         );
-
-                        $result[] = array(
-                            'id' => $file->management->id,
-                            'is_jmb' => ($file->management->is_jmb ? true : false),
-                            'jmb' => $jmb,
-                            'is_mc' => ($file->management->is_mc ? true : false),
-                            'mc' => $mc,
-                            'is_agent' => ($file->management->is_agent ? true : false),
-                            'agent' => $agent,
-                            'is_others' => ($file->management->is_others ? true : false),
-                            'others' => $others,
-                            'created_at' => ($file->management->created_at ? $file->management->created_at->format('Y-m-d H:i:s') : ''),
-                            'updated_at' => ($file->management->created_at ? $file->management->updated_at->format('Y-m-d H:i:s') : '')
-                        );
                     }
+
+                    $result[] = array(
+                        'id' => $file->management->id,
+                        'is_jmb' => ($file->management->is_jmb ? true : false),
+                        'jmb' => $jmb,
+                        'is_mc' => ($file->management->is_mc ? true : false),
+                        'mc' => $mc,
+                        'is_agent' => ($file->management->is_agent ? true : false),
+                        'agent' => $agent,
+                        'is_others' => ($file->management->is_others ? true : false),
+                        'others' => $others,
+                        'created_at' => ($file->management->created_at ? $file->management->created_at->format('Y-m-d H:i:s') : ''),
+                        'updated_at' => ($file->management->created_at ? $file->management->updated_at->format('Y-m-d H:i:s') : '')
+                    );
                 }
 
                 $response = array(
@@ -1064,8 +1063,6 @@ class ApiController extends BaseController {
 
                 $designations = AJKDetails::where('file_id', $file->id)
                         ->where('is_deleted', 0)
-                        ->skip($from)
-                        ->take($per_page)
                         ->get();
 
                 if ($designations) {
@@ -1086,11 +1083,11 @@ class ApiController extends BaseController {
 
                     $result[] = array(
                         'total' => $total_designations,
-                        'per_page' => $per_page,
+                        'per_page' => $total_designations,
                         'page' => ceil($current_page),
                         'last_page' => ceil($total_designations / $per_page),
                         'from' => $from + 1,
-                        'to' => ($current_page * $per_page) < $total_designations ? ($current_page * $per_page) : $total_designations,
+                        'to' => ($current_page * $per_page) < $total_designations ? ($current_page * $total_designations) : $total_designations,
                         'data' => $designationList
                     );
                 }
