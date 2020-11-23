@@ -7487,6 +7487,14 @@ class AdminController extends BaseController {
             $insurance = new Insurance();
             $insurance->file_id = $data['file_id'];
             $insurance->insurance_provider_id = $data['insurance_provider'];
+            $insurance->public_liability_coverage = $data['public_liability_coverage'];
+            $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
+            $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
+            $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
+            $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
+            $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
+            $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
+            $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
             $insurance->remarks = $data['remarks'];
             $success = $insurance->save();
 
@@ -7601,6 +7609,14 @@ class AdminController extends BaseController {
             if ($insurance) {
                 $insurance->file_id = $data['file_id'];
                 $insurance->insurance_provider_id = $data['insurance_provider'];
+                $insurance->public_liability_coverage = $data['public_liability_coverage'];
+                $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
+                $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
+                $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
+                $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
+                $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
+                $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
+                $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
                 $insurance->remarks = $data['remarks'];
                 $success = $insurance->save();
 

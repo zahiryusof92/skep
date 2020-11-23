@@ -541,6 +541,12 @@ return array(
         "insurance" => "Insurance",
         "file_name" => "File Name",
         "zone" => "Zone",
+        "public_liability_coverage" => "Public Liability Coverage",
+        "fire_insurance_coverage" => "Fire Insurance Coverage",
+        "premium_per_year" => "Premium Per Year",
+        "validity" => "Validity",
+        "from" => "From",
+        "to" => "To"
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
