@@ -210,6 +210,7 @@ foreach ($user_permission as $permission) {
                                 <tr>
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.scheme_name') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.tenant') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.phone_number') }}</th>
@@ -233,36 +234,25 @@ foreach ($user_permission as $permission) {
 <script>
     $(document).ready(function () {
         var oTable = $('#tenant_list').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax": {
-                "url": "{{ URL::action('AgmController@getTenant') }}",
-                "dataType": "json",
-                "type": "POST"
-            },
-            "order": [[2, "asc"]],
-            "responsive": false,
-            "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('AgmController@getTenant') }}",
+            columns: [
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'files', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
+                {data: 'unit_no', name: 'tenant.unit_no'},
+                {data: 'tenant_name', name: 'tenant.tenant_name'},
+                {data: 'phone_no', name: 'tenant.phone_no'},
+                {data: 'email', name: 'tenant.email'},
+                {data: 'race', name: 'tenant.race_id'},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
-            "columns": [
-                {"data": "cob"},
-                {"data": "file_no"},
-                {"data": "unit_no"},
-                {"data": "tenant_name"},
-                {"data": "phone_no"},
-                {"data": "email"},
-                {"data": "race"},
-                {"data": "action"}
-            ]
+            order: [[0, "asc"], [1, "asc"], [3, "asc"]],
+            responsive: false
         });
 
-        $('#company').on('change', function () {
-            oTable.columns(0).search(this.value).draw();
-            
+        $('#company').on('change', function () {            
             $.ajax({
                 url: "{{ URL::action('AgmController@getFileListByCOB') }}",
                 type: "POST",
@@ -274,11 +264,14 @@ foreach ($user_permission as $permission) {
                     oTable.columns(1).search('').draw();
                 }
             });
+            
+            oTable.columns(0).search(this.value).draw();
         });
         $('#file_no').on('change', function () {
             oTable.columns(1).search(this.value).draw();
         });
     });
+    
     function deleteTenant(id) {
         swal({
             title: "{{ trans('app.confirmation.are_you_sure') }}",

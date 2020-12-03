@@ -356,7 +356,7 @@ Route::post('/print/purchaser', 'PrintController@printPurchaser')->before('authM
 
 //Tenant Submission
 Route::get('/tenant', 'AgmController@tenant')->before('authMember');
-Route::post('/getTenant', 'AgmController@getTenant')->before('authMember');
+Route::get('/getTenant', 'AgmController@getTenant')->before('authMember');
 Route::get('/addTenant', 'AgmController@addTenant')->before('authMember');
 Route::post('/submitTenant', 'AgmController@submitTenant')->before('authMember');
 Route::get('/editTenant/{id}', 'AgmController@editTenant')->before('authMember');
@@ -767,6 +767,16 @@ Route::get('/updateAgmPurchaseSub/{id}', 'AgmController@updateAgmPurchaseSub')->
 Route::post('/submitUpdateAgmPurchaseSub', 'AgmController@submitUpdateAgmPurchaseSub')->before('authMember');
 Route::post('/deleteAgmPurchaseSub/{id}', 'AgmController@deleteAgmPurchaseSub')->before('authMember');
 
+/*
+ * Directory Route Start
+ */
+Route::group(array('before' => 'authMember'), function() {
+    Route::resource('vendors', 'VendorController');
+    Route::resource('propertyAgents', 'PropertyAgentController');
+});
+/*
+ * Directory Route End
+ */
 
 Route::get('/{cob}', 'UserController@login')->before('guest');
 Route::get('/{cob}/login', 'UserController@login')->before('guest');
