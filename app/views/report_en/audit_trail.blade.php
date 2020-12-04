@@ -54,10 +54,10 @@ $company = Company::find(Auth::user()->company_id);
                             <table class="table table-hover" id="audit_trail" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="width:10%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
+                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
                                         <th style="width:20%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
-                                        <th style="width:50%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
-                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
+                                        <th style="width:45%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
+                                        <th style="width:15%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

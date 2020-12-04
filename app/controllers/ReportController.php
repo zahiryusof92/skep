@@ -358,7 +358,7 @@ class ReportController extends BaseController {
 
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                $nestedData['created_at'] = date('Y-m-d', strtotime($post->created_at));
+                $nestedData['created_at'] = date('d-M-Y H:i A', strtotime($post->created_at));
                 $nestedData['module'] = $post->module;
                 $nestedData['remarks'] = $post->remarks;
                 $nestedData['full_name'] = $post->name;

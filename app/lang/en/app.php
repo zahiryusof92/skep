@@ -834,5 +834,37 @@ return array(
         "add_defect" => "Add Complaint",
         "add_insurance" => "Add Insurance",
         "reset" => "Reset",
-    )
+    ),
+    'directory' => [
+        'title' => 'Directory',
+        'vendors' => [
+            'title' => 'Vendors',
+            'create' => 'Add Vendor',
+            'edit' => 'Edit Vendor',
+            'view' => 'View Vendor',
+            'name' => 'Name',
+            'address' => 'Address',
+            'council' => 'Council',
+            'council_help' => '(Can select multiple council)',
+            'rating' => 'Rating',
+            'rating_help' => '(Min:1, Max:10)',
+            'remarks' => 'Remarks',
+            'action' => 'Action'
+        ],
+        'property_agents' => [
+            'title' => 'Property Agents',
+            'create' => 'Add Property Agent',
+            'edit' => 'Edit Property Agent',
+            'view' => 'View Property Agent',
+            'company' => 'Company Name',
+            'name' => 'Person In Charge',
+            'address' => 'Address',
+            'council' => 'Council',
+            'council_help' => '(Can select multiple council)',
+            'rating' => 'Rating',
+            'rating_help' => '(Min:1, Max:10)',
+            'remarks' => 'Remarks',
+            'action' => 'Action'
+        ]
+    ],
 );

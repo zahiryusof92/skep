@@ -45,7 +45,9 @@
             .panel {
                 background: #eceff4 !important;
             }
-                      
+            .star-checked {
+                color: orange;
+            }    
         </style>
 
         <!-- Vendors Scripts -->
