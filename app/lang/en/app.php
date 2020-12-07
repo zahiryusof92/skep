@@ -852,10 +852,10 @@ return array(
             'action' => 'Action'
         ],
         'property_agents' => [
-            'title' => 'Property Agents',
-            'create' => 'Add Property Agent',
-            'edit' => 'Edit Property Agent',
-            'view' => 'View Property Agent',
+            'title' => 'PMC',
+            'create' => 'Add PMC',
+            'edit' => 'Edit PMC',
+            'view' => 'View PMC',
             'company' => 'Company Name',
             'name' => 'Person In Charge',
             'address' => 'Address',
@@ -865,6 +865,21 @@ return array(
             'rating_help' => '(Min:1, Max:10)',
             'remarks' => 'Remarks',
             'action' => 'Action'
-        ]
+        ],
+    ],
+    'reminder_letter' => [
+        'title' => 'Surat Peringatan',
+        'create' => 'Create Letter',
+        'edit' => 'Edit Letter',
+        'unit_no' => 'Unit No.',
+        'name' => 'Name',
+        'ic_no' => 'IC No.',
+        'phone_no' => 'Phone No.',
+        'email' => 'Email',
+        'address' => 'Address',
+        'mailing_address' => 'Mailing Address',
+        'duration_overdue' => 'Tempoh Tertunggak',
+        'amount_overdue' => 'Jumlah tertunggak',
+        'list' => 'List',
     ],
 );
