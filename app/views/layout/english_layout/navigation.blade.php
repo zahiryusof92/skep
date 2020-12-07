@@ -45,6 +45,7 @@ if (!Auth::user()->getAdmin()) {
                 </a>
             </li>
 
+            @if (Module::hasAccess(1))
             <li class="left-menu-list-submenu" id="cob_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file"><!-- --></i>
@@ -110,6 +111,7 @@ if (!Auth::user()->getAdmin()) {
 
                 </ul>
             </li>
+            @endif
 
             @if (AccessGroup::hasAccess(45))
             <li class="left-menu-list-link" id="defect_list">
@@ -129,6 +131,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Module::hasAccess(2))
             <li class="left-menu-list-submenu" id="admin_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-user"><!-- --></i>
@@ -186,7 +189,9 @@ if (!Auth::user()->getAdmin()) {
 
                 </ul>
             </li>
+            @endif
 
+            @if (Module::hasAccess(3))
             <li class="left-menu-list-submenu" id="master_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-gears"><!-- --></i>
@@ -355,7 +360,9 @@ if (!Auth::user()->getAdmin()) {
 
                 </ul>
             </li>
+            @endif
 
+            @if (Module::hasAccess(4))
             <li class="left-menu-list-submenu" id="reporting_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-pdf-o"><!-- --></i>
@@ -485,7 +492,9 @@ if (!Auth::user()->getAdmin()) {
 
                 </ul>
             </li>
+            @endif
 
+            @if (Module::hasAccess(5))
             <li class="left-menu-list-submenu" id="agm_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-sitemap"><!-- --></i>
@@ -535,8 +544,9 @@ if (!Auth::user()->getAdmin()) {
 
                 </ul>
             </li>
+            @endif
 
-            @if (AccessGroup::hasAccess(34))
+            @if (Module::hasAccess(6))
             <li class="left-menu-list-submenu" id="form_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text-o"><!-- --></i>
@@ -554,14 +564,14 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (AccessGroup::hasAccess(58) || AccessGroup::hasAccess(59))
+            @if (Module::hasAccess(8))
             <li class="left-menu-list-submenu" id="directory_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-folder-open"><!-- --></i>
                     {{ trans('app.directory.title') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="directory_main">
-                    
+
                     @if (AccessGroup::hasAccess(58))
                     <li id="vendor_directory_list">
                         <a class="left-menu-link" href="{{ route('vendors.index') }}">
@@ -569,7 +579,7 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-                    
+
                     @if (AccessGroup::hasAccess(59))
                     <li id="property_agent_directory_list">
                         <a class="left-menu-link" href="{{ route('propertyAgents.index') }}">
@@ -577,12 +587,16 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-                    
+
                 </ul>
             </li>
             @endif
 
-            @if (AccessGroup::hasAccess(35))
+            <!-- Summon Start -->
+            
+            <!-- Summon End -->
+
+            @if (Module::hasAccess(7))
             <li class="left-menu-list-submenu" id="change_cob_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-exchange"><!-- --></i>

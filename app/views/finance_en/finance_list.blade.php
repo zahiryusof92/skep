@@ -74,9 +74,7 @@ foreach ($user_permission as $permission) {
                                 <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.year') }}</th>
                                 <th style="width:10%;">{{ trans('app.forms.status') }}</th>
-                                @if ($update_permission == 1)
                                 <th style="width:15%;">{{ trans('app.forms.action') }}</th>
-                                @endif
                             </tr>
                         </thead>
                         <tbody>

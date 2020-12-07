@@ -446,8 +446,10 @@ class AgmController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = "";
-                                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                if (AccessGroup::hasUpdate(31)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                }
 
                                 return $button;
                             })
@@ -928,8 +930,10 @@ class AgmController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = "";
-                                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                if (AccessGroup::hasUpdate(43)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                }
 
                                 return $button;
                             })

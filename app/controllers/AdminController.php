@@ -482,15 +482,17 @@ class AdminController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            if ($model->is_active == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                            } else {
-                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            if (AccessGroup::hasUpdate(9)) {
+                                if ($model->is_active == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                } else {
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                }
+                                if (Auth::user()->role == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                                }
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
-                            if (Auth::user()->role == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                            }
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                             return $button;
                         })
@@ -584,15 +586,17 @@ class AdminController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            if ($model->is_active == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                            } else {
-                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            if (AccessGroup::hasUpdate(9)) {
+                                if ($model->is_active == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                } else {
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                }
+                                if (Auth::user()->role == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                                }
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
-                            if (Auth::user()->role == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                            }
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                             return $button;
                         })

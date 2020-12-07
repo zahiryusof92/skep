@@ -599,14 +599,16 @@ class FinanceController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            if ($model->is_active == 1) {
-                                $status = trans('app.forms.active');
-                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                            } else {
-                                $status = trans('app.forms.inactive');
-                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            if (AccessGroup::hasUpdate(38)) {
+                                if ($model->is_active == 1) {
+                                    $status = trans('app.forms.active');
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                } else {
+                                    $status = trans('app.forms.inactive');
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                }
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $model->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
                             }
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $model->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                             return $button;
                         })
