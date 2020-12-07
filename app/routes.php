@@ -719,7 +719,8 @@ Route::get('/editFinanceFileList/{id}', 'FinanceController@editFinanceFileList')
 Route::post('/updateFinanceFileList', 'FinanceController@updateFinanceFileList')->before('authMember');
 Route::post('/updateFinanceFile', 'FinanceController@updateFinanceFile')->before('authMember');
 
-Route::post('/updateFinanceCheck', 'FinanceController@updateFinanceCheck')->before('authMember');
+Route::post('/updateFinanceFileCheck', 'FinanceController@updateFinanceFileCheck')->before('authMember');
+Route::post('/updateFinanceFileSummary', 'FinanceController@updateFinanceFileSummary')->before('authMember');
 Route::post('/updateFinanceFileAdmin', 'FinanceController@updateFinanceFileAdmin')->before('authMember');
 Route::post('/updateFinanceFileStaff', 'FinanceController@updateFinanceFileStaff')->before('authMember');
 Route::post('/updateFinanceFileContract', 'FinanceController@updateFinanceFileContract')->before('authMember');

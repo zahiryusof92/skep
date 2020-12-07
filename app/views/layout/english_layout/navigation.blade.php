@@ -554,26 +554,33 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-
+            @if (AccessGroup::hasAccess(58) || AccessGroup::hasAccess(59))
             <li class="left-menu-list-submenu" id="directory_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-folder-open"><!-- --></i>
                     {{ trans('app.directory.title') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="directory_main">
+                    
+                    @if (AccessGroup::hasAccess(58))
                     <li id="vendor_directory_list">
                         <a class="left-menu-link" href="{{ route('vendors.index') }}">
                             {{ trans('app.directory.vendors.title') }}
                         </a>
                     </li>
+                    @endif
+                    
+                    @if (AccessGroup::hasAccess(59))
                     <li id="property_agent_directory_list">
                         <a class="left-menu-link" href="{{ route('propertyAgents.index') }}">
                             {{ trans('app.directory.property_agents.title') }}
                         </a>
                     </li>
+                    @endif
+                    
                 </ul>
             </li>
-
+            @endif
 
             @if (AccessGroup::hasAccess(35))
             <li class="left-menu-list-submenu" id="change_cob_panel">

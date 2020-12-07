@@ -7,67 +7,80 @@ $prefix = 'income_';
 
         <h6>3. LAPORAN PENDAPATAN</h6>
 
-            <div class="row">
-                <table class="table table-sm" id="dynamic_form_income" style="font-size: 12px;">
-                    <thead>
-                        <tr>
-                            <th width="5%">&nbsp;</th>
-                            <th width="50%" style="text-align: center;">PENDAPATAN</th>
-                            <th width="10%" style="text-align: center;">TUNGGAKAN<br/>B</th>
-                            <th width="10%" style="text-align: center;">SEMASA<br/>A</th>
-                            <th width="10%" style="text-align: center;">ADVANCED<br/>C</th>
-                            <th width="10%" style="text-align: center;">JUMLAH<br/>A + B + C</th>
-                            <td width="5%" style="text-align: center;">&nbsp;</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $count = 0;
-                        $total_tunggakan = 0;
-                        $total_semasa = 0;
-                        $total_hadapan = 0;
-                        $total_all = 0;
-                        ?>
+        <form id="form_income">
+        
+        <div class="row">
+            <table class="table table-sm" id="dynamic_form_income" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th width="5%">&nbsp;</th>
+                        <th width="50%" style="text-align: center;">PENDAPATAN</th>
+                        <th width="10%" style="text-align: center;">TUNGGAKAN<br/>B</th>
+                        <th width="10%" style="text-align: center;">SEMASA<br/>A</th>
+                        <th width="10%" style="text-align: center;">ADVANCED<br/>C</th>
+                        <th width="10%" style="text-align: center;">JUMLAH<br/>A + B + C</th>
+                        <td width="5%" style="text-align: center;">&nbsp;</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $count = 0;
+                    $total_tunggakan = 0;
+                    $total_semasa = 0;
+                    $total_hadapan = 0;
+                    $total_all = 0;
+                    ?>
 
-                        @foreach ($incomeFile as $incomeFiles)
-                        <?php
-                        $total_tunggakan += $incomeFiles['tunggakan'];
-                        $total_semasa += $incomeFiles['semasa'];
-                        $total_hadapan += $incomeFiles['hadapan'];
-                        $total_income = $incomeFiles['tunggakan'] + $incomeFiles['semasa'] + $incomeFiles['hadapan'];
-                        $total_all += $total_income;
-                        ?>
-                        <tr id="income_row{{ ++$count }}">
-                            <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $incomeFiles['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $incomeFiles['name'] }}" readonly=""></td>
-                            <td><input type="number" step="any" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right numeric-only income_tunggakan" value="{{ $incomeFiles['tunggakan'] }}"></td>
-                            <td><input type="number" step="any" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right numeric-only" value="{{ $incomeFiles['semasa'] }}"></td>
-                            <td><input type="number" step="any" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $incomeFiles['hadapan'] }}"></td>
-                            <td><input type="number" step="any" id="{{ $prefix . 'total_income_' . $count }}" name="{{ $prefix }}total_income[]" class="form-control form-control-sm text-right numeric-only" value="{{ $total_income }}" readonly=""></td>
-                            @if ($incomeFiles['is_custom'])
-                            <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowIncome('income_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
-                            @else
-                            <td>&nbsp;</td>
-                            @endif
-                        </tr>
-                        @endforeach
+                    @foreach ($incomeFile as $incomeFiles)
+                    <?php
+                    $total_tunggakan += $incomeFiles['tunggakan'];
+                    $total_semasa += $incomeFiles['semasa'];
+                    $total_hadapan += $incomeFiles['hadapan'];
+                    $total_income = $incomeFiles['tunggakan'] + $incomeFiles['semasa'] + $incomeFiles['hadapan'];
+                    $total_all += $total_income;
+                    ?>
+                    <tr id="income_row{{ ++$count }}">
+                        <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $incomeFiles['is_custom'] }}">{{ $count }}</td>
+                        <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $incomeFiles['name'] }}" readonly=""></td>
+                        <td><input type="number" step="any" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right numeric-only income_tunggakan" value="{{ $incomeFiles['tunggakan'] }}"></td>
+                        <td><input type="number" step="any" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right numeric-only" value="{{ $incomeFiles['semasa'] }}"></td>
+                        <td><input type="number" step="any" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $incomeFiles['hadapan'] }}"></td>
+                        <td><input type="number" step="any" id="{{ $prefix . 'total_income_' . $count }}" name="{{ $prefix }}total_income[]" class="form-control form-control-sm text-right numeric-only" value="{{ $total_income }}" readonly=""></td>
+                        @if ($incomeFiles['is_custom'])
+                        <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowIncome('income_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                        @else
+                        <td>&nbsp;</td>
+                        @endif
+                    </tr>
+                    @endforeach
 
-                        <tr>
-                            <td class="padding-table text-right" colspan="7"><a href="javascript:void(0);" onclick="addRowIncome()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
-                        </tr>
+                    <tr>
+                        <td class="padding-table text-right" colspan="7"><a href="javascript:void(0);" onclick="addRowIncome()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                    </tr>
 
-                        <tr>
-                            <td>&nbsp;</td>
-                            <th class="padding-form">JUMLAH</th>
-                            <th><input type="number" step="any" id="{{ $prefix . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $total_tunggakan }}" readonly=""></th>
-                            <th><input type="number" step="any" id="{{ $prefix . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $total_semasa }}" readonly=""></th>
-                            <th><input type="number" step="any" id="{{ $prefix . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $total_hadapan }}" readonly=""></th>
-                            <th><input type="number" step="any" id="{{ $prefix . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $total_all }}" readonly=""></th>
-                            <td>&nbsp;</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <th class="padding-form">JUMLAH</th>
+                        <th><input type="number" step="any" id="{{ $prefix . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $total_tunggakan }}" readonly=""></th>
+                        <th><input type="number" step="any" id="{{ $prefix . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $total_semasa }}" readonly=""></th>
+                        <th><input type="number" step="any" id="{{ $prefix . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $total_hadapan }}" readonly=""></th>
+                        <th><input type="number" step="any" id="{{ $prefix . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $total_all }}" readonly=""></th>
+                        <td>&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <?php if ($update_permission == 1) { ?>
+                <div class="form-actions">
+                    <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
+                    <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
+                    <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                </div>
+            <?php } ?>
+
+        </form>
+        
     </div>
 </div>
 
@@ -146,4 +159,46 @@ $prefix = 'income_';
 
         calculateIncomeTotal();
     }
+
+    $(function () {
+        $("#form_income").submit(function (e) {
+            e.preventDefault();
+            changes = false;
+
+            var data = $(this).serialize();
+
+            $(".loading").css("display", "inline-block");
+            $(".submit_button").attr("disabled", "disabled");
+            $("#check_mandatory_fields").css("display", "none");
+
+            var error = 0;
+
+            if (error == 0) {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+
+                $.ajax({
+                    method: "POST",
+                    url: "{{ URL::action('FinanceController@updateFinanceFileIncome') }}",
+                    data: data,
+                    success: function (response) {
+                        $.unblockUI();
+                        $(".loading").css("display", "none");
+                        $(".submit_button").removeAttr("disabled");
+
+                        if (response.trim() == "true") {
+                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                                location.reload();
+                            });
+                        } else {
+                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                        }
+                    }
+                });
+            } else {
+                $(".loading").css("display", "none");
+                $(".submit_button").removeAttr("disabled");
+                $("#check_mandatory_fields").css("display", "block");
+            }
+        });
+    });
 </script>

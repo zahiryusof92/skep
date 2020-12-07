@@ -7,6 +7,8 @@
             <h3>{{ $title }}</h3>
         </div>
         <div class="panel-body">
+            
+            @if (AccessGroup::hasInsert(58))
             <div class="row">
                 <div class="col-lg-12">
                     <button onclick="window.location = '{{ URL::action('VendorController@create') }}'" type="button" class="btn btn-primary margin-bottom-25">
@@ -14,6 +16,7 @@
                     </button>
                 </div>
             </div>
+            @endif
 
             <div class="row">
                 <div class="col-lg-12">                    

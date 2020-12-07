@@ -8,56 +8,69 @@ class PropertyAgentController extends \BaseController {
      * @return Response
      */
     public function index() {
+        if (AccessGroup::hasAccess(59)) {
+            if (Request::ajax()) {
+                if (!Auth::user()->getAdmin()) {
+                    $company = array(Auth::user()->company_id);
+                    $model = PropertyAgent::whereIn('company_id', $company)->where('is_deleted', 0);
+                } else {
+                    $model = PropertyAgent::where('is_deleted', 0);
+                }
 
-        if (Request::ajax()) {
-            if (!Auth::user()->getAdmin()) {
-                $company = array(Auth::user()->company_id);
-                $model = PropertyAgent::whereIn('company_id', $company)->where('is_deleted', 0);
-            } else {
-                $model = PropertyAgent::where('is_deleted', 0);
+                return Datatables::of($model)
+                                ->editColumn('rating', function ($model) {
+                                    $star = '';
+                                    if ($model->rating) {
+                                        for ($x = 1; $x <= $model->rating; $x++) {
+                                            $star .= '<span class="fa fa-star star-checked"></span>';
+                                        }
+                                    }
+                                    return $star;
+                                })
+                                ->editColumn('council', function ($model) {
+                                    $council_id = json_decode($model->company_id);
+                                    $company = Company::whereIn('id', $council_id)->orderBy('name', 'asc')->get();
+                                    foreach ($company as $cob) {
+                                        $council[] = $cob->name;
+                                    }
+                                    return implode('<br/>', $council);
+                                })
+                                ->addColumn('action', function ($model) {
+                                    $btn = '';
+                                    $btn .= '<a href="' . route('propertyAgents.show', $model->id) . '" class="btn btn-xs btn-primary" title="View"><i class="fa fa-eye"></i></a>&nbsp;';
+                                    if (AccessGroup::hasUpdate(59)) {
+                                        $btn .= '<a href="' . route('propertyAgents.edit', $model->id) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+                                        $btn .= '<form action="' . route('propertyAgents.destroy', $model->id) . '" method="POST" id="delete_form_' . $model->id . '" style="display:inline-block;">';
+                                        $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                                        $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                                        $btn .= '</form>';
+                                    }
+
+                                    return $btn;
+                                })
+                                ->make(true);
             }
 
-            return Datatables::of($model)
-                            ->editColumn('rating', function ($model) {
-                                $star = '';
-                                if ($model->rating) {
-                                    for ($x = 1; $x <= $model->rating; $x++) {
-                                        $star .= '<span class="fa fa-star star-checked"></span>';
-                                    }
-                                }
-                                return $star;
-                            })
-                            ->editColumn('council', function ($model) {
-                                $council_id = json_decode($model->company_id);
-                                $company = Company::whereIn('id', $council_id)->orderBy('name', 'asc')->get();
-                                foreach ($company as $cob) {
-                                    $council[] = $cob->name;
-                                }
-                                return implode('<br/>', $council);
-                            })
-                            ->addColumn('action', function ($model) {
-                                $btn = '';
-                                $btn .= '<a href="' . route('propertyAgents.show', $model->id) . '" class="btn btn-xs btn-primary" title="View"><i class="fa fa-eye"></i></a>&nbsp;';
-                                $btn .= '<a href="' . route('propertyAgents.edit', $model->id) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-                                $btn .= '<form action="' . route('propertyAgents.destroy', $model->id) . '" method="POST" id="delete_form_' . $model->id . '" style="display:inline-block;">';
-                                $btn .= '<input type="hidden" name="_method" value="DELETE">';
-                                $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash"></i></button>';
-                                $btn .= '</form>';
+            $viewData = array(
+                'title' => trans('app.directory.property_agents.title'),
+                'panel_nav_active' => 'directory_panel',
+                'main_nav_active' => 'directory_main',
+                'sub_nav_active' => 'property_agent_directory_list',
+                'image' => ''
+            );
 
-                                return $btn;
-                            })
-                            ->make(true);
+            return View::make('property_agents.index', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
         }
-
-        $viewData = array(
-            'title' => trans('app.directory.property_agents.title'),
-            'panel_nav_active' => 'directory_panel',
-            'main_nav_active' => 'directory_main',
-            'sub_nav_active' => 'property_agent_directory_list',
-            'image' => ''
-        );
-
-        return View::make('property_agents.index', $viewData);
     }
 
     /**
@@ -66,18 +79,30 @@ class PropertyAgentController extends \BaseController {
      * @return Response
      */
     public function create() {
-        $council = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+        if (AccessGroup::hasInsert(59)) {
+            $council = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
 
-        $viewData = array(
-            'title' => trans('app.directory.property_agents.create'),
-            'panel_nav_active' => 'directory_panel',
-            'main_nav_active' => 'directory_main',
-            'sub_nav_active' => 'property_agent_directory_list',
-            'council' => $council,
-            'image' => ''
-        );
+            $viewData = array(
+                'title' => trans('app.directory.property_agents.create'),
+                'panel_nav_active' => 'directory_panel',
+                'main_nav_active' => 'directory_main',
+                'sub_nav_active' => 'property_agent_directory_list',
+                'council' => $council,
+                'image' => ''
+            );
 
-        return View::make('property_agents.create', $viewData);
+            return View::make('property_agents.create', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     /**
@@ -124,18 +149,30 @@ class PropertyAgentController extends \BaseController {
      * @return Response
      */
     public function show($id) {
-        $model = PropertyAgent::where('id', $id)->where('is_deleted', 0)->first();
+        if (AccessGroup::hasAccess(59)) {
+            $model = PropertyAgent::where('id', $id)->where('is_deleted', 0)->first();
 
-        $viewData = array(
-            'title' => trans('app.directory.property_agents.view'),
-            'panel_nav_active' => 'directory_panel',
-            'main_nav_active' => 'directory_main',
-            'sub_nav_active' => 'property_agent_directory_list',
-            'model' => $model,
-            'image' => ''
-        );
+            $viewData = array(
+                'title' => trans('app.directory.property_agents.view'),
+                'panel_nav_active' => 'directory_panel',
+                'main_nav_active' => 'directory_main',
+                'sub_nav_active' => 'property_agent_directory_list',
+                'model' => $model,
+                'image' => ''
+            );
 
-        return View::make('property_agents.show', $viewData);
+            return View::make('property_agents.show', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     /**
@@ -145,20 +182,32 @@ class PropertyAgentController extends \BaseController {
      * @return Response
      */
     public function edit($id) {
-        $model = PropertyAgent::where('id', $id)->where('is_deleted', 0)->first();
-        $council = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+        if (AccessGroup::hasUpdate(59)) {
+            $model = PropertyAgent::where('id', $id)->where('is_deleted', 0)->first();
+            $council = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
 
-        $viewData = array(
-            'title' => trans('app.directory.property_agents.edit'),
-            'panel_nav_active' => 'directory_panel',
-            'main_nav_active' => 'directory_main',
-            'sub_nav_active' => 'property_agent_directory_list',
-            'model' => $model,
-            'council' => $council,
-            'image' => ''
-        );
+            $viewData = array(
+                'title' => trans('app.directory.property_agents.edit'),
+                'panel_nav_active' => 'directory_panel',
+                'main_nav_active' => 'directory_main',
+                'sub_nav_active' => 'property_agent_directory_list',
+                'model' => $model,
+                'council' => $council,
+                'image' => ''
+            );
 
-        return View::make('property_agents.edit', $viewData);
+            return View::make('property_agents.edit', $viewData);
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
     }
 
     /**

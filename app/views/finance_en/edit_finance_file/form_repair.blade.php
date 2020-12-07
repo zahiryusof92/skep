@@ -8,143 +8,156 @@ $prefix2 = 'repair_singkingfund_';
 
         <h6>4.3 PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN a. Guna Duit Maintenance Fee</h6>
 
-        <div class="row">
-            <table class="table table-sm" id="dynamic_form_repair_a" style="font-size: 12px;">
-                <thead>
-                    <tr>
-                        <th width="5%">&nbsp;</th>
-                        <th width="40%" style="text-align: center;">PERKARA</th>
-                        <th width="10%" style="text-align: center;">TUNGGAKAN BULAN-BULAN TERDAHULU<br/>A</th>
-                        <th width="10%" style="text-align: center;">BULAN SEMASA<br/>B</th>
-                        <th width="10%" style="text-align: center;">BULAN HADAPAN<br/>C</th>
-                        <th width="10%" style="text-align: center;">JUMLAH<br/>A + B + C</th>
-                        <th width="10%" style="text-align: center;">JUMLAH<br/>BAKI BAYARAN MASIH TERTUNGGAK<br/>(BELUM BAYAR)</th>
-                        <td width="5%" style="text-align: center;">&nbsp;</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $count = 0;
-                    $total_tunggakan = 0;
-                    $total_semasa = 0;
-                    $total_hadapan = 0;
-                    $total_tertunggak = 0;
-                    $total_all = 0;
-                    ?>
+        <form id="form_repair">
 
-                    @foreach ($repaira as $repairas)
-                    <?php
-                    $total_tunggakan += $repairas['tunggakan'];
-                    $total_semasa += $repairas['semasa'];
-                    $total_hadapan += $repairas['hadapan'];
-                    $total_tertunggak += $repairas['tertunggak'];
-                    $total_income = $repairas['tunggakan'] + $repairas['semasa'] + $repairas['hadapan'];
-                    $total_all += $total_income;
-                    ?>
-                    <tr id="repaira_row{{ ++$count }}">
-                        <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $repairas['is_custom'] }}">{{ $count }}</td>
-                        <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $repairas['name'] }}" readonly=""></td>
-                        <td><input type="number" step="any" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['tunggakan'] }}"></td>
-                        <td><input type="number" step="any" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['semasa'] }}"></td>
-                        <td><input type="number" step="any" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['hadapan'] }}"></td>
-                        <td><input type="number" step="any" id="{{ $prefix . 'total_income_' . $count }}" name="{{ $prefix }}total_income[]" class="form-control form-control-sm text-right numeric-only" value="{{ $total_income }}" readonly=""></td>
-                        <td><input type="number" step="any" oninput="calculateRepairATotal('{{ $count }}')" id="{{ $prefix . 'tertunggak_' . $count }}" name="{{ $prefix }}tertunggak[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['tertunggak'] }}"></td>
-                        @if ($repairas['is_custom'])
-                        <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowRepairA('repaira_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
-                        @else
-                        <td>&nbsp;</td>
-                        @endif
-                    </tr>
-                    @endforeach
+            <div class="row">
+                <table class="table table-sm" id="dynamic_form_repair_a" style="font-size: 12px;">
+                    <thead>
+                        <tr>
+                            <th width="5%">&nbsp;</th>
+                            <th width="40%" style="text-align: center;">PERKARA</th>
+                            <th width="10%" style="text-align: center;">TUNGGAKAN BULAN-BULAN TERDAHULU<br/>A</th>
+                            <th width="10%" style="text-align: center;">BULAN SEMASA<br/>B</th>
+                            <th width="10%" style="text-align: center;">BULAN HADAPAN<br/>C</th>
+                            <th width="10%" style="text-align: center;">JUMLAH<br/>A + B + C</th>
+                            <th width="10%" style="text-align: center;">JUMLAH<br/>BAKI BAYARAN MASIH TERTUNGGAK<br/>(BELUM BAYAR)</th>
+                            <td width="5%" style="text-align: center;">&nbsp;</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $count = 0;
+                        $total_tunggakan = 0;
+                        $total_semasa = 0;
+                        $total_hadapan = 0;
+                        $total_tertunggak = 0;
+                        $total_all = 0;
+                        ?>
 
-                    <tr>
-                        <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowRepairA()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
-                    </tr>
+                        @foreach ($repaira as $repairas)
+                        <?php
+                        $total_tunggakan += $repairas['tunggakan'];
+                        $total_semasa += $repairas['semasa'];
+                        $total_hadapan += $repairas['hadapan'];
+                        $total_tertunggak += $repairas['tertunggak'];
+                        $total_income = $repairas['tunggakan'] + $repairas['semasa'] + $repairas['hadapan'];
+                        $total_all += $total_income;
+                        ?>
+                        <tr id="repaira_row{{ ++$count }}">
+                            <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $repairas['is_custom'] }}">{{ $count }}</td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $repairas['name'] }}" readonly=""></td>
+                            <td><input type="number" step="any" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['tunggakan'] }}"></td>
+                            <td><input type="number" step="any" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['semasa'] }}"></td>
+                            <td><input type="number" step="any" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['hadapan'] }}"></td>
+                            <td><input type="number" step="any" id="{{ $prefix . 'total_income_' . $count }}" name="{{ $prefix }}total_income[]" class="form-control form-control-sm text-right numeric-only" value="{{ $total_income }}" readonly=""></td>
+                            <td><input type="number" step="any" oninput="calculateRepairATotal('{{ $count }}')" id="{{ $prefix . 'tertunggak_' . $count }}" name="{{ $prefix }}tertunggak[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairas['tertunggak'] }}"></td>
+                            @if ($repairas['is_custom'])
+                            <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowRepairA('repaira_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                            @else
+                            <td>&nbsp;</td>
+                            @endif
+                        </tr>
+                        @endforeach
 
-                    <tr>
-                        <td>&nbsp;</td>
-                        <th class="padding-form">JUMLAH</th>
-                        <th><input type="number" step="any" id="{{ $prefix . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $total_tunggakan }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $total_semasa }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $total_hadapan }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $total_all }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ $total_tertunggak }}" readonly=""></th>
-                        <td>&nbsp;</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        <tr>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowRepairA()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                        </tr>
 
-        <hr/>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <th class="padding-form">JUMLAH</th>
+                            <th><input type="number" step="any" id="{{ $prefix . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $total_tunggakan }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $total_semasa }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $total_hadapan }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $total_all }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ $total_tertunggak }}" readonly=""></th>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <h6>4.3 PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN b. Guna Duit Sinking Fund</h6>
+            <hr/>
 
-        <div class="row">
-            <table class="table table-sm" id="dynamic_form_repair_b" style="font-size: 12px;">
-                <thead>
-                    <tr>
-                        <th width="5%">&nbsp;</th>
-                        <th width="40%" style="text-align: center;">PERKARA</th>
-                        <th width="10%" style="text-align: center;">TUNGGAKAN BULAN-BULAN TERDAHULU<br/>A</th>
-                        <th width="10%" style="text-align: center;">BULAN SEMASA<br/>B</th>
-                        <th width="10%" style="text-align: center;">BULAN HADAPAN<br/>C</th>
-                        <th width="10%" style="text-align: center;">JUMLAH<br/>A + B + C</th>
-                        <th width="10%" style="text-align: center;">JUMLAH<br/>BAKI BAYARAN MASIH TERTUNGGAK<br/>(BELUM BAYAR)</th>
-                        <td width="5%" style="text-align: center;">&nbsp;</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $countb = 0;
-                    $totalb_tunggakan = 0;
-                    $totalb_semasa = 0;
-                    $totalb_hadapan = 0;
-                    $totalb_tertunggak = 0;
-                    $totalb_all = 0;
-                    ?>
+            <h6>4.3 PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN b. Guna Duit Sinking Fund</h6>
 
-                    @foreach ($repairb as $repairbs)
-                    <?php
-                    $totalb_tunggakan += $repairbs['tunggakan'];
-                    $totalb_semasa += $repairbs['semasa'];
-                    $totalb_hadapan += $repairbs['hadapan'];
-                    $totalb_tertunggak += $repairbs['tertunggak'];
-                    $totalb_income = $repairbs['tunggakan'] + $repairbs['semasa'] + $repairbs['hadapan'];
-                    $totalb_all += $totalb_income;
-                    ?>
-                    <tr id="repairb_row{{ ++$countb }}">
-                        <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $repairbs['is_custom'] }}">{{ $countb }}</td>
-                        <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $repairbs['name'] }}" readonly=""></td>
-                        <td><input type="number" step="any" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['tunggakan'] }}"></td>
-                        <td><input type="number" step="any" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'semasa_' . $countb }}" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['semasa'] }}"></td>
-                        <td><input type="number" step="any" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'hadapan_' . $countb }}" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['hadapan'] }}"></td>
-                        <td><input type="number" step="any" id="{{ $prefix2 . 'total_income_' . $countb }}" name="{{ $prefix2 }}total_income[]" class="form-control form-control-sm text-right numeric-only" value="{{ $totalb_income }}" readonly=""></td>
-                        <td><input type="number" step="any" oninput="calculateRepairBTotal('{{ $countb }}')" id="{{ $prefix2 . 'tertunggak_' . $countb }}" name="{{ $prefix2 }}tertunggak[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['tertunggak'] }}"></td>
-                        @if ($repairbs['is_custom'])
-                        <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowRepairB('repaira_row<?php echo $countb ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
-                        @else
-                        <td>&nbsp;</td>
-                        @endif
-                    </tr>
-                    @endforeach
+            <div class="row">
+                <table class="table table-sm" id="dynamic_form_repair_b" style="font-size: 12px;">
+                    <thead>
+                        <tr>
+                            <th width="5%">&nbsp;</th>
+                            <th width="40%" style="text-align: center;">PERKARA</th>
+                            <th width="10%" style="text-align: center;">TUNGGAKAN BULAN-BULAN TERDAHULU<br/>A</th>
+                            <th width="10%" style="text-align: center;">BULAN SEMASA<br/>B</th>
+                            <th width="10%" style="text-align: center;">BULAN HADAPAN<br/>C</th>
+                            <th width="10%" style="text-align: center;">JUMLAH<br/>A + B + C</th>
+                            <th width="10%" style="text-align: center;">JUMLAH<br/>BAKI BAYARAN MASIH TERTUNGGAK<br/>(BELUM BAYAR)</th>
+                            <td width="5%" style="text-align: center;">&nbsp;</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $countb = 0;
+                        $totalb_tunggakan = 0;
+                        $totalb_semasa = 0;
+                        $totalb_hadapan = 0;
+                        $totalb_tertunggak = 0;
+                        $totalb_all = 0;
+                        ?>
 
-                    <tr>
-                        <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowRepairB()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
-                    </tr>
+                        @foreach ($repairb as $repairbs)
+                        <?php
+                        $totalb_tunggakan += $repairbs['tunggakan'];
+                        $totalb_semasa += $repairbs['semasa'];
+                        $totalb_hadapan += $repairbs['hadapan'];
+                        $totalb_tertunggak += $repairbs['tertunggak'];
+                        $totalb_income = $repairbs['tunggakan'] + $repairbs['semasa'] + $repairbs['hadapan'];
+                        $totalb_all += $totalb_income;
+                        ?>
+                        <tr id="repairb_row{{ ++$countb }}">
+                            <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $repairbs['is_custom'] }}">{{ $countb }}</td>
+                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $repairbs['name'] }}" readonly=""></td>
+                            <td><input type="number" step="any" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['tunggakan'] }}"></td>
+                            <td><input type="number" step="any" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'semasa_' . $countb }}" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['semasa'] }}"></td>
+                            <td><input type="number" step="any" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'hadapan_' . $countb }}" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['hadapan'] }}"></td>
+                            <td><input type="number" step="any" id="{{ $prefix2 . 'total_income_' . $countb }}" name="{{ $prefix2 }}total_income[]" class="form-control form-control-sm text-right numeric-only" value="{{ $totalb_income }}" readonly=""></td>
+                            <td><input type="number" step="any" oninput="calculateRepairBTotal('{{ $countb }}')" id="{{ $prefix2 . 'tertunggak_' . $countb }}" name="{{ $prefix2 }}tertunggak[]" class="form-control form-control-sm text-right numeric-only" value="{{ $repairbs['tertunggak'] }}"></td>
+                            @if ($repairbs['is_custom'])
+                            <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowRepairB('repaira_row<?php echo $countb ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                            @else
+                            <td>&nbsp;</td>
+                            @endif
+                        </tr>
+                        @endforeach
 
-                    <tr>
-                        <td>&nbsp;</td>
-                        <th class="padding-form">JUMLAH</th>
-                        <th><input type="number" step="any" id="{{ $prefix2 . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $totalb_tunggakan }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix2 . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $totalb_semasa }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix2 . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $totalb_hadapan }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix2 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $totalb_income }}" readonly=""></th>
-                        <th><input type="number" step="any" id="{{ $prefix2 . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ $totalb_tertunggak }}" readonly=""></th>
-                        <td>&nbsp;</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        <tr>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowRepairB()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                        </tr>
+
+                        <tr>
+                            <td>&nbsp;</td>
+                            <th class="padding-form">JUMLAH</th>
+                            <th><input type="number" step="any" id="{{ $prefix2 . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $totalb_tunggakan }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix2 . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $totalb_semasa }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix2 . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $totalb_hadapan }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix2 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $totalb_income }}" readonly=""></th>
+                            <th><input type="number" step="any" id="{{ $prefix2 . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ $totalb_tertunggak }}" readonly=""></th>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php if ($update_permission == 1) { ?>
+                <div class="form-actions">
+                    <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
+                    <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
+                    <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                </div>
+            <?php } ?>
+
+        </form>
+
     </div>
 </div>
 
@@ -307,4 +320,46 @@ $prefix2 = 'repair_singkingfund_';
 
         calculateRepairBTotal();
     }
+
+    $(function () {
+        $("#form_repair").submit(function (e) {
+            e.preventDefault();
+            changes = false;
+
+            var data = $(this).serialize();
+
+            $(".loading").css("display", "inline-block");
+            $(".submit_button").attr("disabled", "disabled");
+            $("#check_mandatory_fields").css("display", "none");
+
+            var error = 0;
+
+            if (error == 0) {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+
+                $.ajax({
+                    method: "POST",
+                    url: "{{ URL::action('FinanceController@updateFinanceFileRepair') }}",
+                    data: data,
+                    success: function (response) {
+                        $.unblockUI();
+                        $(".loading").css("display", "none");
+                        $(".submit_button").removeAttr("disabled");
+
+                        if (response.trim() == "true") {
+                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                                location.reload();
+                            });
+                        } else {
+                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                        }
+                    }
+                });
+            } else {
+                $(".loading").css("display", "none");
+                $(".submit_button").removeAttr("disabled");
+                $("#check_mandatory_fields").css("display", "block");
+            }
+        });
+    });
 </script>
