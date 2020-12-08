@@ -1125,9 +1125,9 @@ class Files extends Eloquent {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
-                        ->where('file.id', Auth::user()->file_id)
-                        ->where('file.company_id', Auth::user()->company_id)
-                        ->where('file.is_deleted', 0)
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
                         ->where('strata.name', '!=', '')
                         ->orderBy('strata.name', 'asc')
                         ->get();
