@@ -178,13 +178,11 @@ foreach ($user_permission as $permission) {
                         <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} (0%)</span>
                         <br/>
                         @endif
-                        <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span>
+                        {{-- <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span> --}}
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="margin-bottom-50">
-                        <!--<h4 class="text-center">COB File By Management Type</h4>-->
-                        <!--<div class="pie-chart"></div>-->
                         <div id="management_type"></div>
                     </div>
                 </div>

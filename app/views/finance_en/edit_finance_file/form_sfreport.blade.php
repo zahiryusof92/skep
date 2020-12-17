@@ -34,14 +34,14 @@ $count = 0;
                                 JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])
                             </td>
                             <td>
-                                <input type="number" step="any" id="{{ $prefix }}kutipan" name="{{ $prefix }}kutipan" class="form-control form-control-sm text-right" value="0.00" readonly="">
+                                <input type="currency" id="{{ $prefix }}kutipan" name="{{ $prefix }}kutipan" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </td>
                             <td>&nbsp;</td>
                             <td class="padding-table">
                                 <span style="color: red;">*</span>JUMLAH SINKING FUND SEPATUT DIKUTIP SEMASA
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_semasa'] }}">
+                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_semasa'] }}">
                             </td>
                         </tr>
                         <tr>
@@ -52,7 +52,7 @@ $count = 0;
                                 JUMLAH SINKING FUND BERJAYA DIKUTIP SEMASA
                             </th>
                             <th>
-                                <input type="number" step="any" id="{{ $prefix }}total_income" name="{{ $prefix }}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
+                                <input type="currency" id="{{ $prefix }}total_income" name="{{ $prefix }}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </th>
                         </tr>
                     </tbody>
@@ -76,7 +76,7 @@ $count = 0;
                         <tr id="sfr_row{{ ++$count }}">
                             <td><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $reportSFs['is_custom'] }}"><input type="hidden" name="{{ $prefix }}report_key[]" value="{{ $reportSFs['report_key'] }}">&nbsp;</td>
                             <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $reportSFs['name'] }}" readonly=""></td>
-                            <td><input type="number" step="any" id="{{ $prefix . $reportSFs['report_key'] }}" name="{{ $prefix }}amount[]" class="form-control form-control-sm text-right" value="{{ $reportSFs['amount'] }}" readonly=""></td>
+                            <td><input type="currency" id="{{ $prefix . $reportSFs['report_key'] }}" name="{{ $prefix }}amount[]" class="form-control form-control-sm text-right" value="{{ $reportSFs['amount'] }}" readonly=""></td>
                             @if ($reportSFs['is_custom'])
                             <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowSFR('sfr_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
                             @else
@@ -92,12 +92,12 @@ $count = 0;
                         <tr>
                             <td>&nbsp;</td>
                             <td class="padding-form">JUMLAH TELAH BAYAR [B]</td>
-                            <td><input type="number" step="any" id="{{ $prefix }}bayar_total" name="{{ $prefix }}bayar_total" class="form-control form-control-sm text-right" value="0.00" readonly=""></td>
+                            <td><input type="currency" id="{{ $prefix }}bayar_total" name="{{ $prefix }}bayar_total" class="form-control form-control-sm text-right" value="0.00" readonly=""></td>
                         </tr>
 
                         <tr>
                             <td class="padding-table" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - (B)</td>
-                            <td><input type="number" step="any" id="{{ $prefix }}lebihan_kurangan" name="{{ $prefix }}lebihan_kurangan" class="form-control form-control-sm text-right" value="0.00" readonly=""></td>
+                            <td><input type="currency" id="{{ $prefix }}lebihan_kurangan" name="{{ $prefix }}lebihan_kurangan" class="form-control form-control-sm text-right" value="0.00" readonly=""></td>
                         </tr>
                     </tbody>
                 </table>
@@ -113,7 +113,7 @@ $count = 0;
                                 <span style="color: red;">*</span> {{ trans('app.forms.no') }} AKAUN
                             </td>
                             <td width="35%">
-                                <input id="{{ $prefix }}no_akaun" name="{{ $prefix }}no_akaun" class="form-control form-control-sm" type="text" value="{{ $sfreport['no_akaun'] }}">
+                                <input id="{{ $prefix }}no_akaun" name="{{ $prefix }}no_akaun" class="form-control form-control-sm" type="digit" value="{{ $sfreport['no_akaun'] }}">
                                 <small id="{{ $prefix }}no_akaun_err" style="display: none;"></small>
                             </td>
                             <td width="5%">&nbsp;</td>
@@ -121,7 +121,7 @@ $count = 0;
                                 <span style="color: red;">*</span> BAKI BANK (AWAL)
                             </td>
                             <td width="15%">
-                                <input type="number" step="any" name="{{ $prefix }}baki_bank_awal" class="form-control form-control-sm text-right" value="{{ $sfreport['baki_bank_awal'] }}">
+                                <input type="currency" name="{{ $prefix }}baki_bank_awal" class="form-control form-control-sm text-right" value="{{ $sfreport['baki_bank_awal'] }}">
                             </td>
                         </tr>
                         <tr>
@@ -137,7 +137,7 @@ $count = 0;
                                 <span style="color: red;">*</span> BAKI BANK (AKHIR)
                             </td>
                             <td>
-                                <input type="number" step="any" name="{{ $prefix }}baki_bank_akhir" class="form-control form-control-sm text-right" value="{{ $sfreport['baki_bank_akhir'] }}">
+                                <input type="currency" name="{{ $prefix }}baki_bank_akhir" class="form-control form-control-sm text-right" value="{{ $sfreport['baki_bank_akhir'] }}">
                             </td>
                         </tr>
                     </tbody>
@@ -178,24 +178,27 @@ $count = 0;
         var sfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var sfr_bayar_total = 0;
         for (var i = 0; i < sfr_bayar.length; i++) {
-            sfr_bayar_total += parseFloat(sfr_bayar[i].value);
-            $('#' + sfr_bayar[i].id).val(parseFloat(sfr_bayar[i].value).toFixed(2));
+            sfr_bayar_total += Number(sfr_bayar[i].value);
         }
         $('#{{ $prefix }}bayar_total').val(parseFloat(sfr_bayar_total).toFixed(2));
 
-        var sfr_lebihan_kurangan = parseFloat(sfr_kutipan) - parseFloat(sfr_bayar_total);
+        var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_bayar_total);
         $('#{{ $prefix }}lebihan_kurangan').val(parseFloat(sfr_lebihan_kurangan).toFixed(2));
     }
 
     function addRowSFR() {
+        changes = true;
+        
         var rowSFRNo = $("#dynamic_form_sfr tr").length;
         rowSFRNo = rowSFRNo - 3;
-        $("#dynamic_form_sfr tr:last").prev().prev().prev().after('<tr id="sfr_row' + rowSFRNo + '"><td><input type="hidden" name="{{ $prefix }}is_custom[]" value="1"><input type="hidden" name="{{ $prefix }}report_key[]" value="custom' + rowSFRNo + '">&nbsp;</td><td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value=""></td><td><input type="number" step="any" oninput="calculateSFR()" id="{{ $prefix }}amount_' + rowSFRNo + '" name="{{ $prefix }}amount[]" class="form-control form-control-sm text-right numeric-only" value="0"></td><td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowSFR(\'sfr_row' + rowSFRNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
+        $("#dynamic_form_sfr tr:last").prev().prev().prev().after('<tr id="sfr_row' + rowSFRNo + '"><td><input type="hidden" name="{{ $prefix }}is_custom[]" value="1"><input type="hidden" name="{{ $prefix }}report_key[]" value="custom' + rowSFRNo + '">&nbsp;</td><td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value=""></td><td><input type="currency" oninput="calculateSFR()" id="{{ $prefix }}amount_' + rowSFRNo + '" name="{{ $prefix }}amount[]" class="form-control form-control-sm text-right" value="0"></td><td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowSFR(\'sfr_row' + rowSFRNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
 
         calculateSFR();
     }
 
     function deleteRowSFR(rowSFRNo) {
+        changes = true;
+        
         $('#' + rowSFRNo).remove();
 
         calculateSFR();
