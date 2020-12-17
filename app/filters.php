@@ -43,18 +43,30 @@ Route::filter('authUser', function() {
 });
 
 Route::filter('authMember', function() {
+    
     if (Auth::guest()) {
         if (Request::ajax()) {
+            
             return Response::make('Unauthorized', 401);
         } else {
             return Redirect::guest('/');
+                    
 //            return Redirect::guest('/');
         }
     }
 });
 
 Route::filter('auth.basic', function() {
+    if((app('request')->header('php-auth-user') != null && app('request')->header('php-auth-pw') != null
+    )) {
+        $input = array('username' => app('request')->header('php-auth-user'), 
+        'password' => app('request')->header('php-auth-pw'));
+        Input::merge($input);
     return Auth::basic('username');
+    } else {
+        return Auth::basic();
+
+    }
 });
 
 /*

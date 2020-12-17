@@ -731,6 +731,9 @@ Route::post('/updateFinanceFileUtility', 'FinanceController@updateFinanceFileUti
 Route::post('/updateFinanceFileReportSf', 'FinanceController@updateFinanceFileReportSf')->before('authMember');
 Route::post('/updateFinanceFileReportMf', 'FinanceController@updateFinanceFileReportMf')->before('authMember');
 
+//cob file / management
+Route::get('/print/financeFile/{id}', 'PrintController@printFinanceFile')->before('authMember');
+
 // FINANCE SUPPORT
 Route::get('/financeSupport', 'FinanceController@financeSupport')->before('authMember');
 Route::get('/getFinanceSupportList', 'FinanceController@getFinanceSupportList')->before('authMember');
@@ -814,13 +817,13 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
 });
 
 //API route
-Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before('authMember');
-Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before('authMember');
-Route::post('api/addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary')->before('authMember');
-Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->before('authMember');
-Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before('authMember');
-Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before('authMember');
-Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before('authMember');
+Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before(['auth.basic','authMember']);
+Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before(['auth.basic','authMember']);
+Route::post('api/addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary')->before(['auth.basic','authMember']);
+Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->before(['auth.basic','authMember']);
+Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before(['auth.basic','authMember']);
+Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before(['auth.basic','authMember']);
+Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before(['auth.basic','authMember']);
 
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
