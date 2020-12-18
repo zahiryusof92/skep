@@ -321,6 +321,7 @@ $prefix3 = 'utilab_';
     }
 
     function deleteRowUtility(rowUtilityNo) {
+        changes = true;
 
         $('#' + rowUtilityNo).remove();
 
