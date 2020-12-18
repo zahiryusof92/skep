@@ -153,6 +153,8 @@ foreach ($user_permission as $permission) {
 
 <!-- Page Scripts -->
 <script>
+    var error = 0;
+
     $(document).ready(function () {
         $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
             window.location.hash = $(e.target).attr('href');
@@ -162,6 +164,34 @@ foreach ($user_permission as $permission) {
             $('#financeTab a[href="' + window.location.hash + '"]').tab('show');
         }
     });
+
+    function submitForm() {
+        if (window.location.hash == '#home') {
+            submitCheck();
+        } else if (window.location.hash == '#summary') {
+            submitSummary();
+        } else if (window.location.hash == '#mfreport') {
+            submitMFReport();
+        } else if (window.location.hash == '#sfreport') {
+            submitSFReport();
+        } else if (window.location.hash == '#income') {
+            submitIncome();
+        } else if (window.location.hash == '#utility') {
+            submitUtility();
+        } else if (window.location.hash == '#contractexp') {
+            submitContract();
+        } else if (window.location.hash == '#repair') {
+            submitRepair();
+        } else if (window.location.hash == '#vandalisme') {
+            submitVandalisme();
+        } else if (window.location.hash == '#staff') {
+            submitStaff();
+        } else if (window.location.hash == '#admin') {
+            submitAdmin();
+        } else {
+            submitCheck();
+        }
+    }
 
     var changes = false;
     $('input, textarea, select').on('keypress change input', function () {
@@ -196,7 +226,12 @@ foreach ($user_permission as $permission) {
                         },
                         callback: function (result) {
                             if (result) {
-                                current.tab('show');
+                                // save data
+                                submitForm();
+
+                                if (!error) {
+                                    current.tab('show');
+                                }
                             }
                         }
                     });

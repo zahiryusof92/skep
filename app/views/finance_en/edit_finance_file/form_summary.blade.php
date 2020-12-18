@@ -37,8 +37,6 @@ $prefix = 'sum_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
-                    <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                 </div>
             <?php } ?>
 
@@ -93,8 +91,7 @@ $prefix = 'sum_';
         var mechanical3 = $("#updateFinanceFile [id=repair_maintenancefee_total_income_9]").val();
         var mechanical4 = $("#updateFinanceFile [id=repair_maintenancefee_total_income_14]").val();
         var mechanical5 = $("#updateFinanceFile [id=repair_maintenancefee_total_income_19]").val();
-        var mechanical6 = $("#updateFinanceFile [id=repair_maintenancefee_total_income_21]").val();
-        var mechanical = Number(mechanical1) + Number(mechanical2) + Number(mechanical3) + Number(mechanical4) + Number(mechanical5) + Number(mechanical6);
+        var mechanical = Number(mechanical1) + Number(mechanical2) + Number(mechanical3) + Number(mechanical4) + Number(mechanical5);
         $('#{{ $prefix }}mechaninal').val(parseFloat(mechanical).toFixed(2));
 
         var kawalan_serangga = $("#updateFinanceFile [id=contract_total_income_15]").val();
@@ -120,7 +117,7 @@ $prefix = 'sum_';
 
         var fi_ejen_pengurusan = $("#updateFinanceFile [id=admin_total_income_12]").val();
         $('#{{ $prefix }}fi_ejen_pengurusan').val(parseFloat(fi_ejen_pengurusan).toFixed(2));
-        
+
         var lain_lain = 0;
         $('#{{ $prefix }}lain_lain').val(parseFloat(lain_lain).toFixed(2));
 
@@ -132,45 +129,38 @@ $prefix = 'sum_';
         $('#{{ $prefix }}jumlah_pembelanjaan').val(parseFloat(sum_total_summary).toFixed(2));
     }
 
-    $(function () {
-        $("#form_summary").submit(function (e) {
-            e.preventDefault();
-            changes = false;
+    function submitSummary() {
+        error = 0;
+        var data = $("#form_summary").serialize();
 
-            var data = $(this).serialize();
+        $(".loading").css("display", "inline-block");
+        $(".submit_button").attr("disabled", "disabled");
+        $("#check_mandatory_fields").css("display", "none");
 
-            $(".loading").css("display", "inline-block");
-            $(".submit_button").attr("disabled", "disabled");
-            $("#check_mandatory_fields").css("display", "none");
+        if (error == 0) {
+            $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
 
-            var error = 0;
+            $.ajax({
+                method: "POST",
+                url: "{{ URL::action('FinanceController@updateFinanceFileSummary') }}",
+                data: data,
+                success: function (response) {
+                    changes = false;
+                    $.unblockUI();
+                    $(".loading").css("display", "none");
+                    $(".submit_button").removeAttr("disabled");
 
-            if (error == 0) {
-                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-
-                $.ajax({
-                    method: "POST",
-                    url: "{{ URL::action('FinanceController@updateFinanceFileSummary') }}",
-                    data: data,
-                    success: function (response) {
-                        $.unblockUI();
-                        $(".loading").css("display", "none");
-                        $(".submit_button").removeAttr("disabled");
-
-                        if (response.trim() == "true") {
-                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                                location.reload();
-                            });
-                        } else {
-                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                        }
+                    if (response.trim() == "true") {
+                        
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                });
-            } else {
-                $(".loading").css("display", "none");
-                $(".submit_button").removeAttr("disabled");
-                $("#check_mandatory_fields").css("display", "block");
-            }
-        });
-    });
+                }
+            });
+        } else {
+            $(".loading").css("display", "none");
+            $(".submit_button").removeAttr("disabled");
+            $("#check_mandatory_fields").css("display", "block");
+        }
+    }
 </script>

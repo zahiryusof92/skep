@@ -763,13 +763,13 @@ class FinanceController extends BaseController {
                 }
 
                 # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
-
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+//                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+//
+//                $auditTrail = new AuditTrail();
+//                $auditTrail->module = "COB Finance File";
+//                $auditTrail->remarks = $remarks;
+//                $auditTrail->audit_by = Auth::user()->id;
+//                $auditTrail->save();
 
                 return "true";
             }

@@ -44,8 +44,8 @@
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
-                    <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                    <button type="button"class="btn btn-primary submit_button" onclick="submitCheck()">{{ trans("app.forms.submit") }}</button>
+                    <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                 </div>
             <?php } ?>
 
@@ -56,73 +56,80 @@
 
 <!-- Page Scripts -->
 <script type="text/javascript">
-    $(function () {
-        $("#form_check").submit(function (e) {
-            e.preventDefault();
-            changes = false;
+    function submitCheck() {
+        error = 0;
+        var data = $('#form_check').serialize();
 
-            var data = $(this).serialize();
+        $(".loading").css("display", "inline-block");
+        $(".submit_button").attr("disabled", "disabled");
+        $("#name_err").css("display", "none");
+        $("#date_err").css("display", "none");
+        $("#position_err").css("display", "none");
+        $("#is_active_err").css("display", "none");
+        $("#check_mandatory_fields").css("display", "none");
 
-            $(".loading").css("display", "inline-block");
-            $(".submit_button").attr("disabled", "disabled");
-            $("#name_err").css("display", "none");
-            $("#date_err").css("display", "none");
-            $("#position_err").css("display", "none");
-            $("#is_active_err").css("display", "none");
-            $("#check_mandatory_fields").css("display", "none");
+        if ($("#name").val().trim() == "") {
+            $("#name_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
+            $("#name_err").css("display", "block");
+            error = 1;
+        }
 
-            var error = 0;
+        if ($("#mirror_date").val().trim() == "") {
+            $("#date_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Date"]) }}</span>');
+            $("#date_err").css("display", "block");
+            error = 1;
+        }
 
-            if ($("#name").val().trim() == "") {
-                $("#name_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-                $("#name_err").css("display", "block");
-                error = 1;
-            }
+        if ($("#position").val().trim() == "") {
+            $("#position_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Position"]) }}</span>');
+            $("#position_err").css("display", "block");
+            error = 1;
+        }
 
-            if ($("#mirror_date").val().trim() == "") {
-                $("#date_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Date"]) }}</span>');
-                $("#date_err").css("display", "block");
-                error = 1;
-            }
+        if ($("#is_active").val().trim() == "") {
+            $("#is_active_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Status"]) }}</span>');
+            $("#is_active_err").css("display", "block");
+            error = 1;
+        }
 
-            if ($("#position").val().trim() == "") {
-                $("#position_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Position"]) }}</span>');
-                $("#position_err").css("display", "block");
-                error = 1;
-            }
+        if (error == 0) {
+            $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
 
-            if ($("#is_active").val().trim() == "") {
-                $("#is_active_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Status"]) }}</span>');
-                $("#is_active_err").css("display", "block");
-                error = 1;
-            }
+            $.ajax({
+                method: "POST",
+                url: "{{ URL::action('FinanceController@updateFinanceFileCheck') }}",
+                data: data,
+                success: function (response) {
+                    changes = false;
+                    $.unblockUI();
+                    $(".loading").css("display", "none");
+                    $(".submit_button").removeAttr("disabled");
 
-            if (error == 0) {
-                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-
-                $.ajax({
-                    method: "POST",
-                    url: "{{ URL::action('FinanceController@updateFinanceFileCheck') }}",
-                    data: data,
-                    success: function (response) {
-                        $.unblockUI();
-                        $(".loading").css("display", "none");
-                        $(".submit_button").removeAttr("disabled");
-
-                        if (response.trim() == "true") {
-                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                                location.reload();
-                            });
-                        } else {
-                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                        }
+                    if (response.trim() == "true") {
+                        submitSummary();
+                        $.notify({
+                            message: "<div class='text-center'>{{ trans('app.successes.saved_successfully') }}</div>"
+                        }, {
+                            type: 'success',
+                            allow_dismiss: false,
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            delay: 100,
+                            timer: 500
+                        });
+                        $('a[href="' + window.location.hash + '"]').trigger('click');
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                });
-            } else {
-                $(".loading").css("display", "none");
-                $(".submit_button").removeAttr("disabled");
-                $("#check_mandatory_fields").css("display", "block");
-            }
-        });
-    });
+                }
+            });
+        } else {
+            $(".loading").css("display", "none");
+            $(".submit_button").removeAttr("disabled");
+            $("#check_mandatory_fields").css("display", "block");
+        }
+    }
 </script>

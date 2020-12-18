@@ -141,8 +141,8 @@ $prefix3 = 'utilab_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
-                    <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                    <button type="button"class="btn btn-primary submit_button" onclick="submitUtility()">{{ trans("app.forms.submit") }}</button>
+                    <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>   
                 </div>
             <?php } ?>
 
@@ -312,7 +312,7 @@ $prefix3 = 'utilab_';
 
     function addRowUtility() {
         changes = true;
-        
+
         var rowUtilityNo = $("#dynamic_form_utility tr").length;
         rowUtilityNo = rowUtilityNo - 8;
         $("#dynamic_form_utility tr:last").prev().prev().prev().after('<tr id="utility_row' + rowUtilityNo + '"><td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="1">' + rowUtilityNo + '</td><td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value=""></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}tunggakan_' + rowUtilityNo + '" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}semasa_' + rowUtilityNo + '" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}hadapan_' + rowUtilityNo + '" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" id="{{ $prefix2 }}total_income_' + rowUtilityNo + '" name="{{ $prefix2 }}total_income[]" class="form-control form-control-sm text-right" value="0" readonly=""></td><td><input type="currency" oninput="calculateUtilityBTotal(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}tertunggak_' + rowUtilityNo + '" name="{{ $prefix2 }}tertunggak[]" class="form-control form-control-sm text-right" value="0"></td><td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowUtility(\'utility_row' + rowUtilityNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
@@ -321,52 +321,59 @@ $prefix3 = 'utilab_';
     }
 
     function deleteRowUtility(rowUtilityNo) {
-         changes = true;
-         
+        changes = true;
+
         $('#' + rowUtilityNo).remove();
 
         calculateUtilityBTotal();
     }
 
-    $(function () {
-        $("#form_utility").submit(function (e) {
-            e.preventDefault();
-            changes = false;
+    function submitUtility() {
+        error = 0;
+        var data = $("#form_utility").serialize();
 
-            var data = $(this).serialize();
+        $(".loading").css("display", "inline-block");
+        $(".submit_button").attr("disabled", "disabled");
+        $("#check_mandatory_fields").css("display", "none");
 
-            $(".loading").css("display", "inline-block");
-            $(".submit_button").attr("disabled", "disabled");
-            $("#check_mandatory_fields").css("display", "none");
+        if (error == 0) {
+            $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
 
-            var error = 0;
+            $.ajax({
+                method: "POST",
+                url: "{{ URL::action('FinanceController@updateFinanceFileUtility') }}",
+                data: data,
+                success: function (response) {
+                    changes = false;
+                    $.unblockUI();
+                    $(".loading").css("display", "none");
+                    $(".submit_button").removeAttr("disabled");
 
-            if (error == 0) {
-                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-
-                $.ajax({
-                    method: "POST",
-                    url: "{{ URL::action('FinanceController@updateFinanceFileUtility') }}",
-                    data: data,
-                    success: function (response) {
-                        $.unblockUI();
-                        $(".loading").css("display", "none");
-                        $(".submit_button").removeAttr("disabled");
-
-                        if (response.trim() == "true") {
-                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                                location.reload();
-                            });
-                        } else {
-                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                        }
+                    if (response.trim() == "true") {
+                        submitSummary();
+                        $.notify({
+                            message: "<div class='text-center'>{{ trans('app.successes.saved_successfully') }}</div>"
+                        }, {
+                            type: 'success',
+                            allow_dismiss: false,
+                            placement: {
+                                from: "top",
+                                align: "center"
+                            },
+                            delay: 100,
+                            timer: 500
+                        });
+                        $('a[href="' + window.location.hash + '"]').trigger('click');
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                });
-            } else {
-                $(".loading").css("display", "none");
-                $(".submit_button").removeAttr("disabled");
-                $("#check_mandatory_fields").css("display", "block");
-            }
-        });
-    });
+                }
+            });
+        } else {
+            $(".loading").css("display", "none");
+            $(".submit_button").removeAttr("disabled");
+            $("#check_mandatory_fields").css("display", "block");
+        }
+    }
 </script>
