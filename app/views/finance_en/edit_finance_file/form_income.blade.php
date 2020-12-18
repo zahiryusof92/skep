@@ -8,7 +8,6 @@ $prefix = 'income_';
         <h6>3. LAPORAN PENDAPATAN</h6>
 
         <form id="form_income">
-
             <div class="row">
                 <table class="table table-sm" id="dynamic_form_income" style="font-size: 12px;">
                     <thead>
@@ -145,7 +144,7 @@ $prefix = 'income_';
 
     function addRowIncome() {
         changes = true;
-
+        
         var rowIncomeNo = $("#dynamic_form_income tr").length;
         rowIncomeNo = rowIncomeNo - 2;
         $("#dynamic_form_income tr:last").prev().prev().after('<tr id="income_row' + rowIncomeNo + '"><td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="1">' + rowIncomeNo + '</td><td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value=""></td><td><input type="currency" oninput="calculateIncome(\'' + rowIncomeNo + '\')" id="{{ $prefix }}tunggakan_' + rowIncomeNo + '"  name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateIncome(\'' + rowIncomeNo + '\')" id="{{ $prefix }}semasa_' + rowIncomeNo + '"  name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateIncome(\'' + rowIncomeNo + '\')" id="{{ $prefix }}hadapan_' + rowIncomeNo + '"  name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" id="{{ $prefix }}total_income_' + rowIncomeNo + '" name="{{ $prefix }}total_income[]" class="form-control form-control-sm text-right" value="0" readonly=""></td><td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowIncome(\'income_row' + rowIncomeNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');

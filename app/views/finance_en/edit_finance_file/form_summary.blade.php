@@ -92,6 +92,7 @@ $prefix = 'sum_';
         var mechanical4 = $("#updateFinanceFile [id=repair_maintenancefee_total_income_14]").val();
         var mechanical5 = $("#updateFinanceFile [id=repair_maintenancefee_total_income_19]").val();
         var mechanical = Number(mechanical1) + Number(mechanical2) + Number(mechanical3) + Number(mechanical4) + Number(mechanical5);
+
         $('#{{ $prefix }}mechaninal').val(parseFloat(mechanical).toFixed(2));
 
         var kawalan_serangga = $("#updateFinanceFile [id=contract_total_income_15]").val();

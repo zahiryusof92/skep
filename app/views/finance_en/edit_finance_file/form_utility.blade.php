@@ -312,7 +312,7 @@ $prefix3 = 'utilab_';
 
     function addRowUtility() {
         changes = true;
-
+        
         var rowUtilityNo = $("#dynamic_form_utility tr").length;
         rowUtilityNo = rowUtilityNo - 8;
         $("#dynamic_form_utility tr:last").prev().prev().prev().after('<tr id="utility_row' + rowUtilityNo + '"><td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="1">' + rowUtilityNo + '</td><td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value=""></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}tunggakan_' + rowUtilityNo + '" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}semasa_' + rowUtilityNo + '" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}hadapan_' + rowUtilityNo + '" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" id="{{ $prefix2 }}total_income_' + rowUtilityNo + '" name="{{ $prefix2 }}total_income[]" class="form-control form-control-sm text-right" value="0" readonly=""></td><td><input type="currency" oninput="calculateUtilityBTotal(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}tertunggak_' + rowUtilityNo + '" name="{{ $prefix2 }}tertunggak[]" class="form-control form-control-sm text-right" value="0"></td><td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowUtility(\'utility_row' + rowUtilityNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
@@ -321,7 +321,6 @@ $prefix3 = 'utilab_';
     }
 
     function deleteRowUtility(rowUtilityNo) {
-        changes = true;
 
         $('#' + rowUtilityNo).remove();
 
