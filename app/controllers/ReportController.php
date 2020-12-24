@@ -926,17 +926,63 @@ class ReportController extends BaseController {
                     ->orderBy('unit_no', 'ASC')
                     ->get();
         } else {
-            $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->join('race', 'buyer.race_id', '=', 'race.id')
-                    ->select(['buyer.*'])
-                    ->where('buyer.is_deleted', 0)
-                    ->where('files.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('files.id', Auth::user()->file_id)
+                            ->where('files.company_id', Auth::user()->company_id)
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                } else {
+                    $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('files.company_id', Auth::user()->company_id)
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                } else {
+                    $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('files.company_id', Session::get('admin_cob'))
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                }
+            }
         }
 
         $viewData = array(
@@ -954,7 +1000,7 @@ class ReportController extends BaseController {
 
         return View::make('report_en.purchaser', $viewData);
     }
-    
+
     //tenant
     public function tenant() {
         $tenant = array();
@@ -1015,21 +1061,67 @@ class ReportController extends BaseController {
                     ->orderBy('unit_no', 'ASC')
                     ->get();
         } else {
-            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->join('race', 'tenant.race_id', '=', 'race.id')
-                    ->select(['tenant.*'])
-                    ->where('tenant.is_deleted', 0)
-                    ->where('files.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('files.id', Auth::user()->file_id)
+                            ->where('files.company_id', Auth::user()->company_id)
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                } else {
+                    $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('files.company_id', Auth::user()->company_id)
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                } else {
+                    $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+                            ->join('company', 'files.company_id', '=', 'company.id')
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('race', 'buyer.race_id', '=', 'race.id')
+                            ->select(['buyer.*'])
+                            ->where('files.company_id', Session::get('admin_cob'))
+                            ->where('buyer.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
+                            ->orderBy('company.short_name', 'ASC')
+                            ->orderBy('files.file_no', 'ASC')
+                            ->orderBy('unit_no', 'ASC')
+                            ->get();
+                }
+            }
         }
 
         $viewData = array(
-            'title' => trans('app.menus.reporting.purchaser'),
+            'title' => trans('app.menus.reporting.tenant'),
             'panel_nav_active' => 'agm_panel',
             'main_nav_active' => 'agm_main',
             'sub_nav_active' => 'agmtenantsub_list',

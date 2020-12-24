@@ -159,6 +159,7 @@ return array(
             "management_summary_report" => "Management Summary Report",
             "cob_file_report" => "COB File / Management (%) Report",
             "purchaser" => "Purchaser",
+            "tenant" => "Tenant",
             "complaint" => "Complaint",
             "insurance" => "Insurance",
             "collection" => "Collection",

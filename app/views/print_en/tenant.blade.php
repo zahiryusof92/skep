@@ -43,7 +43,7 @@ $company = Company::find(Auth::user()->company_id);
                         @if ($unit_share)
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.unit_share') }}</th>
                         @endif
-                        @if ($tenant)
+                        @if ($tenant_name)
                         <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.tenant') }}</th>
                         @endif
                         @if ($phone_number)
@@ -72,7 +72,7 @@ $company = Company::find(Auth::user()->company_id);
                         @if ($unit_share)
                         <td>&nbsp; {{ $tenants->unit_share }}</td>
                         @endif
-                        @if ($tenant)
+                        @if ($tenant_name)
                         <td>&nbsp; {{ $tenants->tenant_name }}</td>
                         @endif
                         @if ($phone_number)

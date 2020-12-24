@@ -60,7 +60,7 @@ $company = Company::find(Auth::user()->company_id);
                                             </div>
                                             <div class="col-md-3">
                                                 <label><input type="checkbox" name="unit_share">&nbsp; {{ trans('app.forms.unit_share') }}</label><br/> 
-                                                <label><input type="checkbox" name="tenant">&nbsp; {{ trans('app.forms.tenant') }}</label><br/>
+                                                <label><input type="checkbox" name="tenant_name">&nbsp; {{ trans('app.forms.tenant') }}</label><br/>
                                             </div>
                                             <div class="col-md-3">
                                                 <label><input type="checkbox" name="phone_number">&nbsp; {{ trans('app.forms.phone_number') }}</label><br/>
