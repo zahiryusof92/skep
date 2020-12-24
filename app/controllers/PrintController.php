@@ -590,6 +590,117 @@ class PrintController extends BaseController {
 
         return View::make('print_en.purchaser', $viewData);
     }
+    
+    public function printTenant() {
+        $tenant = array();
+        $data = Input::all();
+
+        $cob_company = '';
+        if (isset($data['company'])) {
+            $cob_company = $data['company'];
+        }
+        $file_no = '';
+        if (isset($data['file_no'])) {
+            $file_no = $data['file_no'];
+        }
+        $scheme_name = '';
+        if (isset($data['scheme_name'])) {
+            $scheme_name = $data['scheme_name'];
+        }
+        $unit_no = '';
+        if (isset($data['unit_no'])) {
+            $unit_no = $data['unit_no'];
+        }
+        $unit_share = '';
+        if (isset($data['unit_share'])) {
+            $unit_share = $data['unit_share'];
+        }
+        $tenant = '';
+        if (isset($data['tenant'])) {
+            $tenant = $data['tenant'];
+        }
+        $phone_number = '';
+        if (isset($data['phone_number'])) {
+            $phone_number = $data['phone_number'];
+        }
+        $email = '';
+        if (isset($data['email'])) {
+            $email = $data['email'];
+        }
+        $race = '';
+        if (isset($data['race'])) {
+            $race = $data['race'];
+        }
+
+        if (!empty($cob_company) && !empty($file_no)) {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->where('files.file_no', $file_no)
+                    ->where('tenant.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else if (!empty($cob_company)) {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->where('tenant.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else if (!empty($file_no)) {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('files.file_no', $file_no)
+                    ->where('tenant.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('tenant.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.purchaser'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => '',
+            'file_no' => $file_no,
+            'cob_company' => $cob_company,
+            'scheme_name' => $scheme_name,
+            'unit_no' => $unit_no,
+            'unit_share' => $unit_share,
+            'tenant' => $tenant,
+            'phone_number' => $phone_number,
+            'email' => $email,
+            'race' => $race,
+            'tenant' => $tenant
+        );
+
+        return View::make('print_en.tenant', $viewData);
+    }
 
     public function printInsurance($cob_id) {
         if ($cob_id && $cob_id != 'all') {

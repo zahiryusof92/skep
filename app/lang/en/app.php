@@ -546,7 +546,8 @@ return array(
         "premium_per_year" => "Premium Per Year",
         "validity" => "Validity",
         "from" => "From",
-        "to" => "To"
+        "to" => "To",
+        "is_paid" => "Paid Version",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

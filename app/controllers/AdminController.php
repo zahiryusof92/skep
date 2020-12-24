@@ -4513,19 +4513,21 @@ class AdminController extends BaseController {
         if (Request::ajax()) {
 
             $description = $data['description'];
+            $is_paid = $data['is_paid'];
             $is_admin = $data['is_admin'];
             $is_active = $data['is_active'];
             $remarks = $data['remarks'];
 
             $role = new Role();
             $role->name = $description;
+            $role->is_paid = $is_paid;
             $role->is_admin = $is_admin;
             $role->is_active = $is_active;
             $role->remarks = $remarks;
             $success = $role->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Role : ' . $role->name . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4626,7 +4628,7 @@ class AdminController extends BaseController {
                     $saved = $new_permission->save();
                 }
                 if ($saved) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Access Permission for ' . $role->name . ' has been inserted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4701,7 +4703,7 @@ class AdminController extends BaseController {
                 $role->is_active = 0;
                 $updated = $role->save();
                 if ($updated) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4730,7 +4732,7 @@ class AdminController extends BaseController {
                 $role->is_active = 1;
                 $updated = $role->save();
                 if ($updated) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4759,7 +4761,7 @@ class AdminController extends BaseController {
                 $role->is_deleted = 1;
                 $deleted = $role->save();
                 if ($deleted) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4778,7 +4780,7 @@ class AdminController extends BaseController {
     }
 
     public function updateAccessGroup($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $accessgroup = Role::find($id);
         $module = Module::get();
@@ -4804,19 +4806,21 @@ class AdminController extends BaseController {
 
             $role_id = $data['role_id'];
             $description = $data['description'];
+            $is_paid = $data['is_paid'];
             $is_admin = $data['is_admin'];
             $is_active = $data['is_active'];
             $remarks = $data['remarks'];
 
             $role = Role::find($role_id);
             $role->name = $description;
+            $role->is_paid = $is_paid;
             $role->is_admin = $is_admin;
             $role->is_active = $is_active;
             $role->remarks = $remarks;
             $success = $role->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Role : ' . $role->name . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4954,18 +4958,54 @@ class AdminController extends BaseController {
     }
 
     public function addUser() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
-            $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            if (Auth::user()->isCOBManager()) {
+                if (Auth::user()->getRole->is_paid) {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                } else {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                }
+            } else {
+                $role = Role::where(function($query) {
+                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                        })
+                        ->where('is_admin', 0)
+                        ->where('is_active', 1)
+                        ->where('is_deleted', 0)
+                        ->orderBy('name')
+                        ->lists('name', 'id');
+            }
+
             $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
-                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             }
         }

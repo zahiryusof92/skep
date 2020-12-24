@@ -365,6 +365,8 @@ Route::post('/deleteTenant', 'AgmController@deleteTenant')->before('authMember')
 Route::get('/importTenant', 'AgmController@importTenant')->before('authMember');
 Route::post('/uploadTenantCSVAction', 'FileController@uploadTenantCSVAction')->before('authMember');
 Route::post('/submitUploadTenant', 'AgmController@submitUploadTenant')->before('authMember');
+Route::post('/report/tenant', 'ReportController@tenant')->before('authMember');
+Route::post('/print/tenant', 'PrintController@printTenant')->before('authMember');
 
 // upload minutes
 Route::get('/minutes', 'AgmController@minutes')->before('authMember');

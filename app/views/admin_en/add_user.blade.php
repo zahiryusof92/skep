@@ -76,13 +76,13 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label><span style="color: red;">*</span> A{{ trans('app.forms.access_group') }}</label>
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.access_group') }}</label>
                                     <select id="role" class="form-control select2" onchange="showExpiryDate(this)">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($role as $roles)
-                                        <option value="{{$roles->name}}">{{$roles->name}}</option>
+                                        @foreach ($role as $value => $name)
+                                        <option value="{{ $value }}">{{ $name }}</option>
                                         @endforeach
                                     </select>
                                     <div id="role_error" style="display:none;"></div>

@@ -954,6 +954,95 @@ class ReportController extends BaseController {
 
         return View::make('report_en.purchaser', $viewData);
     }
+    
+    //tenant
+    public function tenant() {
+        $tenant = array();
+        $data = Input::all();
+
+        $cob_company = '';
+        $cob_name = 'All COB';
+        if (isset($data['company']) && !empty($data['company'])) {
+            $cob_company = $data['company'];
+            $cob_name = $data['company'];
+        }
+
+        $file_no = '';
+        $file_name = 'All Files';
+        if (isset($data['file_no']) && !empty($data['file_no'])) {
+            $file_no = $data['file_no'];
+            $file_name = $data['file_no'];
+        }
+
+        if (!empty($cob_company) && !empty($file_no)) {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->where('files.file_no', $file_no)
+                    ->where('tenant.is_deleted', 0)
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else if (!empty($cob_company)) {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('company.short_name', $cob_company)
+                    ->where('tenant.is_deleted', 0)
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else if (!empty($file_no)) {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('files.file_no', $file_no)
+                    ->where('tenant.is_deleted', 0)
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        } else {
+            $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->join('race', 'tenant.race_id', '=', 'race.id')
+                    ->select(['tenant.*'])
+                    ->where('tenant.is_deleted', 0)
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('company.short_name', 'ASC')
+                    ->orderBy('files.file_no', 'ASC')
+                    ->orderBy('unit_no', 'ASC')
+                    ->get();
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.purchaser'),
+            'panel_nav_active' => 'agm_panel',
+            'main_nav_active' => 'agm_main',
+            'sub_nav_active' => 'agmtenantsub_list',
+            'image' => "",
+            'file_no' => $file_no,
+            'file_name' => $file_name,
+            'cob_company' => $cob_company,
+            'cob_name' => $cob_name,
+            'tenant' => $tenant
+        );
+
+        return View::make('report_en.tenant', $viewData);
+    }
 
     /*
      * Complaint Report
