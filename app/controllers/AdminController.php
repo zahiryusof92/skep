@@ -5335,14 +5335,50 @@ class AdminController extends BaseController {
         $user = User::find($id);
 
         if (!Auth::user()->getAdmin()) {
-            $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            if (Auth::user()->isCOBManager()) {
+                if (Auth::user()->getRole->is_paid) {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                } else {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                }
+            } else {
+                $role = Role::where(function($query) {
+                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                        })
+                        ->where('is_admin', 0)
+                        ->where('is_active', 1)
+                        ->where('is_deleted', 0)
+                        ->orderBy('name')
+                        ->lists('name', 'id');
+            }
+
             $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
-                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             }
         }
