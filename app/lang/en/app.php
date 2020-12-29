@@ -851,7 +851,16 @@ return array(
             'rating' => 'Rating',
             'rating_help' => '(Min:1, Max:10)',
             'remarks' => 'Remarks',
-            'action' => 'Action'
+            'reviews' => 'Reviews',
+            'action' => 'Action',
+            'project' => [
+                'title' => 'Projects',
+                'name' => 'Project Name',
+                'category' => 'Category',
+                'council' => 'Council',
+                'address' => 'Address',
+                'status' => 'Status'
+            ]
         ],
         'property_agents' => [
             'title' => 'PMC',
