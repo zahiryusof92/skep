@@ -154,7 +154,7 @@ class VendorController extends \BaseController {
             $model = Vendor::where('id', $id)->where('is_deleted', 0)->first();
 
             if ($model) {
-                if ($model->id == 1) {
+                if ($model->id == 1 || $model->id == 2) {
                     $review = array(
                         array(
                             'content' => 'Responsible vendor. Nice work!',
@@ -195,7 +195,7 @@ class VendorController extends \BaseController {
                             'longitude' => '101.469923',
                         ),
                     );
-                } else if ($model->id != 1) {
+                } else if ($model->id == 3) {
                     $review = array(
                         array(
                             'content' => 'Excellent work!',
@@ -221,6 +221,34 @@ class VendorController extends \BaseController {
                             'status' => 'complete',
                             'latitude' => '3.2479752',
                             'longitude' => '101.648426',
+                        ),
+                    );
+                } else if ($model->id == 4) {
+                    $review = array(
+                        array(
+                            'content' => 'Excellent work!',
+                            'author' => 'Abu',
+                        ),
+                    );
+
+                    $dummy = array(
+                        array(
+                            'name' => 'Apartment Impian Seri Setia @ Park 51',
+                            'category' => 'Cutting Grass',
+                            'council' => 'MBPJ',
+                            'address' => 'No, 2, Jalan 51A/241, Seksyen 51a, 46100 Petaling Jaya, Selangor',
+                            'status' => 'pending',
+                            'latitude' => '3.0880476',
+                            'longitude' => '101.6162902',
+                        ),
+                        array(
+                            'name' => '19 Residency',
+                            'category' => 'Plumbing Repair',
+                            'council' => 'MBSJ',
+                            'address' => '47110, Lebuh Bukit Puchong, Bandar Bukit Puchong, 47100 Puchong, Selangor',
+                            'status' => 'inprogress',
+                            'latitude' => '2.988620',
+                            'longitude' => '101.6241564',
                         ),
                     );
                 }
