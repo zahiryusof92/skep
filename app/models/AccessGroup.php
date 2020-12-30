@@ -4,6 +4,11 @@ class AccessGroup extends Eloquent {
 
     protected $table = 'access_group';
 
+    public function submodule() {
+
+        return $this->belongsTo('SubModule', 'submodule_id');
+    }
+
     public static function getAccessPermission($user_id) {
         $user = User::find($user_id);
         $user_role = $user->role;

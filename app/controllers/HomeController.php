@@ -96,7 +96,9 @@ class HomeController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                if (AccessGroup::hasUpdate(9)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                }
 
                                 return $button;
                             })
@@ -157,7 +159,7 @@ class HomeController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@viewHouse', $model->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@house', $model->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
 
                                 return $button;
                             })
@@ -228,7 +230,9 @@ class HomeController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                if (AccessGroup::hasUpdate(9)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                }
 
                                 return $button;
                             })
@@ -299,7 +303,9 @@ class HomeController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                if (AccessGroup::hasUpdate(9)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                }
 
                                 return $button;
                             })
@@ -394,9 +400,11 @@ class HomeController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';
-                                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
-
+                                if (AccessGroup::hasUpdate(9)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                }
+                                
                                 return $button;
                             })
                             ->make(true);

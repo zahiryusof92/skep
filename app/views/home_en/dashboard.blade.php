@@ -46,9 +46,7 @@ foreach ($user_permission as $permission) {
                                             <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
-                                            <?php if ($update_permission == 1) { ?>
-                                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                            <?php } ?>
+                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -62,9 +60,7 @@ foreach ($user_permission as $permission) {
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                             <th style="width:55%;">{{ trans('app.forms.file_number') }}</th>
                                             <th style="width:25%;">{{ trans('app.forms.scheme_name') }}</th>
-                                            <?php if ($update_permission == 1) { ?>
-                                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                            <?php } ?>
+                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -80,9 +76,7 @@ foreach ($user_permission as $permission) {
                                             <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
-                                            <?php if ($update_permission == 1) { ?>
-                                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                            <?php } ?>
+                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -98,9 +92,7 @@ foreach ($user_permission as $permission) {
                                             <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
                                             <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
-                                            <?php if ($update_permission == 1) { ?>
-                                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                            <?php } ?>
+                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -136,9 +128,7 @@ foreach ($user_permission as $permission) {
                                             <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.year') }}</th>
-                                            <?php if ($update_permission == 1) { ?>
-                                                <th style="width:15%;">{{ trans('app.forms.action') }}</th>
-                                            <?php } ?>
+                                            <th style="width:15%;">{{ trans('app.forms.action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -188,13 +178,11 @@ foreach ($user_permission as $permission) {
                         <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} (0%)</span>
                         <br/>
                         @endif
-                        <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span>
+                        {{-- <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span> --}}
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="margin-bottom-50">
-                        <!--<h4 class="text-center">COB File By Management Type</h4>-->
-                        <!--<div class="pie-chart"></div>-->
                         <div id="management_type"></div>
                     </div>
                 </div>

@@ -27,10 +27,13 @@ foreach ($user_permission as $permission) {
 <div class="page-content-inner">
     <section class="panel panel-with-borders">
         <div class="panel-heading">
-            <h3>{{$title}}</h3>
+            <h3>{{ $title }}</h3>
         </div>
         <div class="panel-body">
             <div class="row">
+                <div class="col-lg-12">
+                    <a href="{{ url('print/financeFile', $financefiledata->id) }}" target="_blank" class="btn btn-sm btn-success margin-inline pull-right">Print <i class="fa fa-print"></i></a>
+                </div>
                 <div class="col-lg-12">
                     <table class="table table-bordered">
                         <tbody>
@@ -44,7 +47,7 @@ foreach ($user_permission as $permission) {
                                 <td>{{ trans("app.forms.year") }}</td>
                                 <td>{{ $financefiledata->year }}</td>
                                 <td>{{ trans("app.forms.month") }}</td>
-                                <td>{{ $financefiledata->month }}</td>
+                                <td>{{ $financefiledata->monthName() }}</td>
                             </tr>
                             <tr>
                                 <td>{{ trans("app.forms.strata") }}</td>
@@ -57,7 +60,7 @@ foreach ($user_permission as $permission) {
 
             <hr/>
 
-            <form id="updateFinanceFile">
+            <div id="updateFinanceFile">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row">
@@ -69,7 +72,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
                         </div>
-                        <ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
+                        <ul class="nav nav-pills nav-justified" id="financeTab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{ trans("app.forms.check") }}</a>
                             </li>
@@ -104,8 +107,8 @@ foreach ($user_permission as $permission) {
                                 <a class="nav-link" id="admin-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">{{ trans("app.forms.admin") }}</a>
                             </li>
                         </ul>
-                        <div class="tab-content padding-vertical-20" id="myTabContent">
-                            <div class="tab-pane fade show active in" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="tab-content padding-vertical-20" id="financeTabContent">
+                            <div class="tab-pane fade active show in" id="home" role="tabpanel" aria-labelledby="home-tab">
                                 @include('finance_en.edit_finance_file.form_check')
                             </div>
                             <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
@@ -141,14 +144,8 @@ foreach ($user_permission as $permission) {
                         </div>
                     </div>
                 </div>
-                <?php if ($update_permission == 1) { ?>
-                    <div class="form-actions">
-                        <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                        <input type="submit" value="{{ trans("app.forms.submit") }}" class="btn btn-primary" id="submit_button">
-                        <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                    </div>
-                <?php } ?>
-            </form>
+            </div>
+
         </div>
     </section>
     <!-- End -->
@@ -156,6 +153,46 @@ foreach ($user_permission as $permission) {
 
 <!-- Page Scripts -->
 <script>
+    var error = 0;
+
+    $(document).ready(function () {
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            window.location.hash = $(e.target).attr('href');
+        });
+
+        if (window.location.hash) {
+            $('#financeTab a[href="' + window.location.hash + '"]').tab('show');
+        }
+    });
+
+    function submitForm() {
+        if (window.location.hash == '#home') {
+            submitCheck();
+        } else if (window.location.hash == '#summary') {
+            submitSummary();
+        } else if (window.location.hash == '#mfreport') {
+            submitMFReport();
+        } else if (window.location.hash == '#sfreport') {
+            submitSFReport();
+        } else if (window.location.hash == '#income') {
+            submitIncome();
+        } else if (window.location.hash == '#utility') {
+            submitUtility();
+        } else if (window.location.hash == '#contractexp') {
+            submitContract();
+        } else if (window.location.hash == '#repair') {
+            submitRepair();
+        } else if (window.location.hash == '#vandalisme') {
+            submitVandalisme();
+        } else if (window.location.hash == '#staff') {
+            submitStaff();
+        } else if (window.location.hash == '#admin') {
+            submitAdmin();
+        } else {
+            submitCheck();
+        }
+    }
+
     var changes = false;
     $('input, textarea, select').on('keypress change input', function () {
         changes = true;
@@ -167,81 +204,43 @@ foreach ($user_permission as $permission) {
         }
     });
 
-    $("#updateFinanceFile").submit(function (e) {
-        e.preventDefault();
+    $(function () {
+        $('#financeTab a[data-toggle="tab"]').click(function (e) {
+            e.preventDefault();
 
-        var data = $(this).serialize();
-        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
-            if (result) {
-                changes = false;
+            var current = $(this);
 
-                $("#loading").css("display", "inline-block");
-                $("#submit_button").attr("disabled", "disabled");
-                $("#name_err").css("display", "none");
-                $("#date_err").css("display", "none");
-                $("#position_err").css("display", "none");
-                $("#is_active_err").css("display", "none");
-                $("#check_mandatory_fields").css("display", "none");
+            if (!$(this).hasClass('active')) {
+                if (changes) {
+                    bootbox.confirm({
+                        message: "{{ trans('app.confirmation.want_to_leave') }}",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-success'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-danger'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                // save data
+                                submitForm();
 
-                var error = 0;
-
-                if ($("#name").val().trim() == "") {
-                    $("#name_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-                    $("#name_err").css("display", "block");
-                    error = 1;
-                }
-
-                if ($("#mirror_date").val().trim() == "") {
-                    $("#date_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Date"]) }}</span>');
-                    $("#date_err").css("display", "block");
-                    error = 1;
-                }
-
-                if ($("#position").val().trim() == "") {
-                    $("#position_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Position"]) }}</span>');
-                    $("#position_err").css("display", "block");
-                    error = 1;
-                }
-
-                if ($("#is_active").val().trim() == "") {
-                    $("#is_active_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Status"]) }}</span>');
-                    $("#is_active_err").css("display", "block");
-                    error = 1;
-                }
-
-                if (error == 0) {
-                    $.blockUI({ message: '{{ trans("app.confirmation.please_wait") }}' }); 
-                    
-                    $.ajax({
-                        method: "POST",
-                        url: "{{ URL::action('FinanceController@updateFinanceFile') }}",
-                        data: data,
-                        success: function (response) {
-                            $.unblockUI();
-                            $("#loading").css("display", "none");
-                            $("#submit_button").removeAttr("disabled");
-
-                            if (response.trim() == "true") {
-                                $.notify({
-                                    message: '<p style="text-align: center; margin-bottom: 0px;">{{ trans("app.successes.saved_successfully") }}</p>',
-                                }, {
-                                    type: 'success',
-                                    placement: {
-                                        align: "center"
-                                    }
-                                });
-                                location = '{{URL::action("FinanceController@editFinanceFileList", $financefiledata->id) }}';
-                            } else {
-                                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                                if (!error) {
+                                    current.tab('show');
+                                }
                             }
                         }
                     });
                 } else {
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#check_mandatory_fields").css("display", "block");
+                    return true;
                 }
             }
+
+            return false;
         });
     });
 
@@ -256,12 +255,132 @@ foreach ($user_permission as $permission) {
                 up: "fa fa-arrow-up",
                 down: "fa fa-arrow-down"
             },
-            format: 'DD/MM/YYYY',
+            format: 'DD/MM/YYYY'
         }).on('dp.change', function () {
             let currentDate = $(this).val().split('/');
             $("#mirror_date").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
         });
     });
+
+    // Jquery Dependency
+    $("input[type='currency']").on({
+        keyup: function () {
+            formatCurrency($(this));
+        },
+        blur: function () {
+            formatCurrency($(this), "blur");
+        }
+    });
+
+    function formatNumber(n) {
+        // format number 1000000 to 1,234,567
+        return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "");
+    }
+
+    function formatCurrency(input, blur) {
+        // appends $ to value, validates decimal side
+        // and puts cursor back in right position.
+
+        // get input value
+        var input_val = input.val();
+
+        // don't validate empty input
+        if (input_val === "") {
+            return;
+        }
+
+        // original length
+        var original_len = input_val.length;
+
+        // initial caret position 
+        var caret_pos = input.prop("selectionStart");
+
+        // check for decimal
+        if (input_val.indexOf(".") >= 0) {
+
+            // get position of first decimal
+            // this prevents multiple decimals from
+            // being entered
+            var decimal_pos = input_val.indexOf(".");
+
+            // split number by decimal point
+            var left_side = input_val.substring(0, decimal_pos);
+            var right_side = input_val.substring(decimal_pos);
+
+            // add commas to left side of number
+            left_side = formatNumber(left_side);
+
+            // validate right side
+            right_side = formatNumber(right_side);
+
+            // On blur make sure 2 numbers after decimal
+            if (blur === "blur") {
+                right_side += "00";
+            }
+
+            // Limit decimal to only 2 digits
+            right_side = right_side.substring(0, 2);
+
+            // join number by .
+            input_val = left_side + "." + right_side;
+
+        } else {
+            // no decimal entered
+            // add commas to number
+            // remove all non-digits
+            input_val = formatNumber(input_val);
+
+            // final formatting
+            if (blur === "blur") {
+                input_val += ".00";
+            }
+        }
+
+        // send updated string to input
+        input.val(input_val);
+
+        // put caret back in the right position
+        var updated_len = input_val.length;
+        caret_pos = updated_len - original_len + caret_pos;
+        input[0].setSelectionRange(caret_pos, caret_pos);
+    }
+
+    // Jquery Dependency
+    $("input[type='digit']").on({
+        keyup: function () {
+            formatDigit($(this));
+        },
+        blur: function () {
+            formatDigit($(this));
+        }
+    });
+
+    function formatDigit(input) {
+        // appends $ to value, validates decimal side
+        // and puts cursor back in right position.
+
+        // get input value
+        var input_val = input.val();
+
+        // don't validate empty input
+        if (input_val === "") {
+            return;
+        }
+
+        // original length
+        var original_len = input_val.length;
+
+        // initial caret position 
+        var caret_pos = input.prop("selectionStart");
+
+        // send updated string to input
+        input.val(input_val);
+
+        // put caret back in the right position
+        var updated_len = input_val.length;
+        caret_pos = updated_len - original_len + caret_pos;
+        input[0].setSelectionRange(caret_pos, caret_pos);
+    }
 </script>
 
 @stop

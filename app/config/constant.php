@@ -7,6 +7,7 @@ return [
                 'main' => [
                     'message_fields' => [
                         'file_no',
+                        'from_api',
                         'report.sf',
                         'report.mf',
                         'income.main',
@@ -32,11 +33,13 @@ return [
                         'file_no',
                         'year',
                         'month',
+                        'from_api'
                     ],
                     'special_validation' => [
                         'file_no'   => 'required',
                         'year'      => 'required|numeric',
                         'month'     => 'required|numeric',
+                        'from_api'    => 'required',
                         'check'    => 'required',
                         'summary'    => 'required',
                         'report'    => 'required',
@@ -101,7 +104,7 @@ return [
                         'fi_ejen_pengurusan',
                         'perbelanjaan_mesyuarat',
                         'elaun_jmb_mc',
-                        'lain_lain_tuntuan_jmb_mc',
+                        'lain_lain_tuntutan_jmb_mc',
                     ],
                     'only' => [
                         'default',
@@ -477,7 +480,9 @@ return [
         ],
         'messages' => [
             'file_no' => 'File No',
+            'from_api' => 'From API',
             'finance_file_id' => 'Finance File Id',
+            'finance_file_no' => 'Finance File No',
             'report.sf' => 'SF Report',
             'report.mf' => 'MF Report',
             'income.main' => 'Income Main',
@@ -648,7 +653,7 @@ return [
             'admin_fi_ejen_pengurusan' => 'FI EJEN PENGURUSAN',
             'admin_perbelanjaan_mesyuarat' => 'PERBELANJAAN MESYUARAT',
             'admin_elaun_jmb_mc' => 'ELAUN JMB/MC',
-            'admin_lain_lain_tuntuan_jmb_mc' => 'LAIN-LAIN TUNTUTAN JMB/MC',
+            'admin_lain_lain_tuntutan_jmb_mc' => 'LAIN-LAIN TUNTUTAN JMB/MC',
             
         ]
     ]

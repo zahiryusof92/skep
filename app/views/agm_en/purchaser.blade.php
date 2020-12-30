@@ -257,11 +257,11 @@ foreach ($user_permission as $permission) {
                 {data: 'owner_name', name: 'buyer.owner_name'},
                 {data: 'phone_no', name: 'buyer.phone_no'},
                 {data: 'email', name: 'buyer.email'},
-                {data: 'race', name: 'race.name_en'},
+                {data: 'race', name: 'buyer.race_id'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             order: [[0, "asc"], [1, "asc"], [3, "asc"]],
-            responsive: false,
+            responsive: false
         });
 
         $('#company').on('change', function () {

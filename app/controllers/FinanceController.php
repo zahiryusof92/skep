@@ -599,14 +599,16 @@ class FinanceController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            if ($model->is_active == 1) {
-                                $status = trans('app.forms.active');
-                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                            } else {
-                                $status = trans('app.forms.inactive');
-                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            if (AccessGroup::hasUpdate(38)) {
+                                if ($model->is_active == 1) {
+                                    $status = trans('app.forms.active');
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                } else {
+                                    $status = trans('app.forms.inactive');
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                }
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $model->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
                             }
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $model->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                             return $button;
                         })
@@ -702,202 +704,123 @@ class FinanceController extends BaseController {
         return View::make('finance_en.edit_finance_file', $viewData);
     }
 
-    public function updateFinanceCheck() {
+    public function updateFinanceFileCheck() {
         $data = Input::all();
+
         if (Request::ajax()) {
             $id = $data['finance_file_id'];
 
-            $financeCheck = FinanceCheck::where('finance_file_id', $id)->first();
-            if ($financeCheck) {
-                $financeCheck->finance_file_id = $id;
-                $financeCheck->date = $data['date'];
-                $financeCheck->name = $data['name'];
-                $financeCheck->position = $data['position'];
-                $financeCheck->is_active = $data['is_active'];
-                $financeCheck->remarks = $data['remarks'];
-                $success = $financeCheck->save();
-
-                if ($success) {
-                    # Audit Trail
-                    $remarks = 'Finance File  with id : ' . $id . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB Finance File  - Check";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    return "true";
+            $files = Finance::find($id);
+            if ($files) {
+                $finance = FinanceCheck::where('finance_file_id', $files->id)->first();
+                if ($finance) {
+                    $finance->date = $data['date'];
+                    $finance->name = $data['name'];
+                    $finance->position = $data['position'];
+                    $finance->is_active = $data['is_active'];
+                    $finance->remarks = $data['remarks'];
+                    $finance->save();
                 }
+
+                # Audit Trail
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB Finance File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                return "true";
             }
         }
 
         return "false";
     }
 
-    public function updateFinanceFileAdmin() {
+    public function updateFinanceFileSummary() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefix = 'admin_';
 
-        $removeOld = FinanceAdmin::where('finance_file_id', $id)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefix = 'sum_';
 
-        if ($removeOld) {
-            for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                if (!empty($data[$prefix . 'name'][$i])) {
-                    $finance = new FinanceAdmin;
-                    $finance->finance_file_id = $id;
-                    $finance->name = $data[$prefix . 'name'][$i];
-                    $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                    $finance->semasa = $data[$prefix . 'semasa'][$i];
-                    $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                    $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
-                    $finance->sort_no = $i;
-                    $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                    $finance->save();
-                }
-            }
-
-            if ($finance) {
-                # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                return 'true';
-            }
-        }
-
-        return 'false';
-    }
-
-    public function updateFinanceFileIncome() {
-        $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefix = 'income_';
-
-        $removeOld = FinanceIncome::where('finance_file_id', $id)->delete();
-
-        if ($removeOld) {
-            for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                if (!empty($data[$prefix . 'name'][$i])) {
-                    $finance = new FinanceIncome;
-                    $finance->finance_file_id = $id;
-                    $finance->name = $data[$prefix . 'name'][$i];
-                    $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                    $finance->semasa = $data[$prefix . 'semasa'][$i];
-                    $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                    $finance->sort_no = $i;
-                    $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                    $finance->save();
-                }
-            }
-
-            if ($finance) {
-                # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                return 'true';
-            }
-        }
-
-        return 'false';
-    }
-
-    public function updateFinanceFileUtility() {
-        $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefixs = [
-            'util_',
-            'utilb_',
-        ];
-
-        $removeOld = FinanceUtility::where('finance_file_id', $id)->delete();
-
-        if ($removeOld) {
-            foreach ($prefixs as $prefix) {
-                for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                    if (!empty($data[$prefix . 'name'][$i])) {
-                        $finance = new FinanceUtility;
-                        $finance->finance_file_id = $id;
-                        $finance->name = $data[$prefix . 'name'][$i];
-                        if ($prefix == 'util_') {
-                            $finance->type = 'BHG_A';
-                        } else {
-                            $finance->type = 'BHG_B';
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceSummary::where('finance_file_id', $files->id)->delete();
+                if ($remove) {
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $finance = new FinanceSummary;
+                            $finance->finance_file_id = $files->id;
+                            $finance->name = $data[$prefix . 'name'][$i];
+                            $finance->summary_key = $data[$prefix . 'summary_key'][$i];
+                            $finance->amount = $data[$prefix . 'amount'][$i];
+                            $finance->sort_no = $i;
+                            $finance->save();
                         }
-                        $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                        $finance->semasa = $data[$prefix . 'semasa'][$i];
-                        $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                        $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
-                        $finance->sort_no = $i;
-                        $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                        $finance->save();
                     }
                 }
-            }
 
-            if ($finance) {
                 # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+//                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+//
+//                $auditTrail = new AuditTrail();
+//                $auditTrail->module = "COB Finance File";
+//                $auditTrail->remarks = $remarks;
+//                $auditTrail->audit_by = Auth::user()->id;
+//                $auditTrail->save();
 
-                return 'true';
+                return "true";
             }
         }
 
-        return 'false';
+        return "false";
     }
 
     public function updateFinanceFileReportMf() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $type = 'MF';
-        $prefix = 'mfr_';
 
-        $removeOld = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', $type)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $type = 'MF';
+            $prefix = 'mfr_';
 
-        $finance = FinanceReport::where('finance_file_id', $id)->where('type', $type)->first();
-        if ($removeOld) {
-            $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
-            $finance->unit = $data[$prefix . 'unit'];
-            $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
-            $finance->no_akaun = $data[$prefix . 'no_akaun'];
-            $finance->nama_bank = $data[$prefix . 'nama_bank'];
-            $finance->baki_bank_awal = $data[$prefix . 'baki_bank_awal'];
-            $finance->baki_bank_akhir = $data[$prefix . 'baki_bank_akhir'];
-            $finance->save();
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                $finance = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->first();
 
-            for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                if (!empty($data[$prefix . 'name'][$i])) {
-                    $frp = new FinanceReportPerbelanjaan;
-                    $frp->type = $type;
-                    $frp->finance_file_id = $id;
-                    $frp->name = $data[$prefix . 'name'][$i];
-                    $frp->report_key = $data[$prefix . 'report_key'][$i];
-                    $frp->amount = $data[$prefix . 'amount'][$i];
-                    $frp->sort_no = $i;
-                    $frp->is_custom = 0;
-                    $frp->save();
+                if ($remove && $finance) {
+                    $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
+                    $finance->unit = $data[$prefix . 'unit'];
+                    $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
+                    $finance->no_akaun = $data[$prefix . 'no_akaun'];
+                    $finance->nama_bank = $data[$prefix . 'nama_bank'];
+                    $finance->baki_bank_awal = $data[$prefix . 'baki_bank_awal'];
+                    $finance->baki_bank_akhir = $data[$prefix . 'baki_bank_akhir'];
+                    $finance->save();
+
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $frp = new FinanceReportPerbelanjaan;
+                            $frp->type = $type;
+                            $frp->finance_file_id = $files->id;
+                            $frp->name = $data[$prefix . 'name'][$i];
+                            $frp->report_key = $data[$prefix . 'report_key'][$i];
+                            $frp->amount = $data[$prefix . 'amount'][$i];
+                            $frp->sort_no = $i;
+                            $frp->is_custom = 0;
+                            $frp->save();
+                        }
+                    }
                 }
-            }
 
-            if ($finance) {
                 # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
                 $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
+                $auditTrail->module = "COB Finance File";
                 $auditTrail->remarks = $remarks;
                 $auditTrail->audit_by = Auth::user()->id;
                 $auditTrail->save();
@@ -911,49 +834,193 @@ class FinanceController extends BaseController {
 
     public function updateFinanceFileReportSf() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $type = 'SF';
-        $prefix = 'sfr_';
 
-        $removeOld = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', $type)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $type = 'SF';
+            $prefix = 'sfr_';
 
-        if ($removeOld) {
-            $finance = FinanceReport::where('finance_file_id', $id)->where('type', $type)->first();
-            if ($finance) {
-                $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
-                $finance->unit = $data[$prefix . 'unit'];
-                $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
-                $finance->no_akaun = $data[$prefix . 'no_akaun'];
-                $finance->nama_bank = $data[$prefix . 'nama_bank'];
-                $finance->baki_bank_awal = $data[$prefix . 'baki_bank_awal'];
-                $finance->baki_bank_akhir = $data[$prefix . 'baki_bank_akhir'];
-                $finance->save();
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                $finance = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->first();
 
-                for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                    if (!empty($data[$prefix . 'name'][$i])) {
-                        $frp = new FinanceReportPerbelanjaan;
-                        $frp->type = $type;
-                        $frp->finance_file_id = $id;
-                        $frp->name = $data[$prefix . 'name'][$i];
-                        $frp->report_key = $data[$prefix . 'report_key'][$i];
-                        $frp->amount = $data[$prefix . 'amount'][$i];
-                        $frp->sort_no = $i;
-                        $frp->is_custom = $data[$prefix . 'is_custom'][$i];
-                        $frp->save();
+                if ($remove && $finance) {
+                    $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
+                    $finance->unit = $data[$prefix . 'unit'];
+                    $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
+                    $finance->no_akaun = $data[$prefix . 'no_akaun'];
+                    $finance->nama_bank = $data[$prefix . 'nama_bank'];
+                    $finance->baki_bank_awal = $data[$prefix . 'baki_bank_awal'];
+                    $finance->baki_bank_akhir = $data[$prefix . 'baki_bank_akhir'];
+                    $finance->save();
+
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $frp = new FinanceReportPerbelanjaan;
+                            $frp->type = $type;
+                            $frp->finance_file_id = $files->id;
+                            $frp->name = $data[$prefix . 'name'][$i];
+                            $frp->report_key = $data[$prefix . 'report_key'][$i];
+                            $frp->amount = $data[$prefix . 'amount'][$i];
+                            $frp->sort_no = $i;
+                            $frp->is_custom = $data[$prefix . 'is_custom'][$i];
+                            $frp->save();
+                        }
                     }
                 }
 
-                if ($finance) {
-                    # Audit Trail
-                    $remarks = 'Finance File with id : ' . $id . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB Finance";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                # Audit Trail
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
 
-                    return 'true';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB Finance File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                return 'true';
+            }
+        }
+
+        return 'false';
+    }
+
+    public function updateFinanceFileAdmin() {
+        $data = Input::all();
+
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefix = 'admin_';
+
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceAdmin::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $finance = new FinanceAdmin();
+                            $finance->finance_file_id = $files->id;
+                            $finance->name = $data[$prefix . 'name'][$i];
+                            $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                            $finance->semasa = $data[$prefix . 'semasa'][$i];
+                            $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                            $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
+                            $finance->sort_no = $i;
+                            $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                            $finance->save();
+                        }
+                    }
                 }
+
+                # Audit Trail
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB Finance File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                return 'true';
+            }
+        }
+
+        return 'false';
+    }
+
+    public function updateFinanceFileIncome() {
+        $data = Input::all();
+
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefix = 'income_';
+
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceIncome::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $finance = new FinanceIncome;
+                            $finance->finance_file_id = $files->id;
+                            $finance->name = $data[$prefix . 'name'][$i];
+                            $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                            $finance->semasa = $data[$prefix . 'semasa'][$i];
+                            $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                            $finance->sort_no = $i;
+                            $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                            $finance->save();
+                        }
+                    }
+                }
+
+                # Audit Trail
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB Finance File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                return 'true';
+            }
+        }
+
+        return 'false';
+    }
+
+    public function updateFinanceFileUtility() {
+        $data = Input::all();
+
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefixs = [
+                'util_',
+                'utilb_',
+            ];
+
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceUtility::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    foreach ($prefixs as $prefix) {
+                        for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                            if (!empty($data[$prefix . 'name'][$i])) {
+                                $finance = new FinanceUtility;
+                                $finance->finance_file_id = $files->id;
+                                $finance->name = $data[$prefix . 'name'][$i];
+                                if ($prefix == 'util_') {
+                                    $finance->type = 'BHG_A';
+                                } else {
+                                    $finance->type = 'BHG_B';
+                                }
+                                $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                                $finance->semasa = $data[$prefix . 'semasa'][$i];
+                                $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                                $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
+                                $finance->sort_no = $i;
+                                $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                                $finance->save();
+                            }
+                        }
+                    }
+                }
+
+                # Audit Trail
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB Finance File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                return 'true';
             }
         }
 
@@ -962,42 +1029,47 @@ class FinanceController extends BaseController {
 
     public function updateFinanceFileVandal() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefixs = [
-            'maintenancefee_',
-            'singkingfund_'
-        ];
 
-        $removeOld = FinanceVandal::where('finance_file_id', $id)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefixs = [
+                'maintenancefee_',
+                'singkingfund_'
+            ];
 
-        if ($removeOld) {
-            foreach ($prefixs as $prefix) {
-                for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                    if (!empty($data[$prefix . 'name'][$i])) {
-                        $finance = new FinanceVandal;
-                        $finance->finance_file_id = $id;
-                        $finance->name = $data[$prefix . 'name'][$i];
-                        if ($prefix == 'maintenancefee_') {
-                            $finance->type = 'MF';
-                        } else {
-                            $finance->type = 'SF';
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceVandal::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    foreach ($prefixs as $prefix) {
+                        for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                            if (!empty($data[$prefix . 'name'][$i])) {
+                                $finance = new FinanceVandal;
+                                $finance->finance_file_id = $files->id;
+                                $finance->name = $data[$prefix . 'name'][$i];
+                                if ($prefix == 'maintenancefee_') {
+                                    $finance->type = 'MF';
+                                } else {
+                                    $finance->type = 'SF';
+                                }
+                                $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                                $finance->semasa = $data[$prefix . 'semasa'][$i];
+                                $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                                $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
+                                $finance->sort_no = $i;
+                                $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                                $finance->save();
+                            }
                         }
-                        $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                        $finance->semasa = $data[$prefix . 'semasa'][$i];
-                        $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                        $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
-                        $finance->sort_no = $i;
-                        $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                        $finance->save();
                     }
                 }
-            }
 
-            if ($finance) {
                 # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
                 $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
+                $auditTrail->module = "COB Finance File";
                 $auditTrail->remarks = $remarks;
                 $auditTrail->audit_by = Auth::user()->id;
                 $auditTrail->save();
@@ -1011,42 +1083,47 @@ class FinanceController extends BaseController {
 
     public function updateFinanceFileRepair() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefixs = [
-            'repair_maintenancefee_',
-            'repair_singkingfund_'
-        ];
 
-        $removeOld = FinanceRepair::where('finance_file_id', $id)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefixs = [
+                'repair_maintenancefee_',
+                'repair_singkingfund_'
+            ];
 
-        if ($removeOld) {
-            foreach ($prefixs as $prefix) {
-                for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                    if (!empty($data[$prefix . 'name'][$i])) {
-                        $finance = new FinanceRepair;
-                        $finance->finance_file_id = $id;
-                        $finance->name = $data[$prefix . 'name'][$i];
-                        if ($prefix == 'repair_maintenancefee_') {
-                            $finance->type = 'MF';
-                        } else {
-                            $finance->type = 'SF';
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceRepair::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    foreach ($prefixs as $prefix) {
+                        for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                            if (!empty($data[$prefix . 'name'][$i])) {
+                                $finance = new FinanceRepair;
+                                $finance->finance_file_id = $files->id;
+                                $finance->name = $data[$prefix . 'name'][$i];
+                                if ($prefix == 'repair_maintenancefee_') {
+                                    $finance->type = 'MF';
+                                } else {
+                                    $finance->type = 'SF';
+                                }
+                                $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                                $finance->semasa = $data[$prefix . 'semasa'][$i];
+                                $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                                $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
+                                $finance->sort_no = $i;
+                                $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                                $finance->save();
+                            }
                         }
-                        $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                        $finance->semasa = $data[$prefix . 'semasa'][$i];
-                        $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                        $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
-                        $finance->sort_no = $i;
-                        $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                        $finance->save();
                     }
                 }
-            }
 
-            if ($finance) {
                 # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
                 $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
+                $auditTrail->module = "COB Finance File";
                 $auditTrail->remarks = $remarks;
                 $auditTrail->audit_by = Auth::user()->id;
                 $auditTrail->save();
@@ -1060,32 +1137,37 @@ class FinanceController extends BaseController {
 
     public function updateFinanceFileContract() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefix = 'contract_';
 
-        $removeOld = FinanceContract::where('finance_file_id', $id)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefix = 'contract_';
 
-        if ($removeOld) {
-            for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                if (!empty($data[$prefix . 'name'][$i])) {
-                    $finance = new FinanceContract;
-                    $finance->finance_file_id = $id;
-                    $finance->name = $data[$prefix . 'name'][$i];
-                    $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                    $finance->semasa = $data[$prefix . 'semasa'][$i];
-                    $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                    $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
-                    $finance->sort_no = $i;
-                    $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                    $finance->save();
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceContract::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $finance = new FinanceContract;
+                            $finance->finance_file_id = $files->id;
+                            $finance->name = $data[$prefix . 'name'][$i];
+                            $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                            $finance->semasa = $data[$prefix . 'semasa'][$i];
+                            $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                            $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
+                            $finance->sort_no = $i;
+                            $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                            $finance->save();
+                        }
+                    }
                 }
-            }
 
-            if ($finance) {
                 # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
                 $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
+                $auditTrail->module = "COB Finance File";
                 $auditTrail->remarks = $remarks;
                 $auditTrail->audit_by = Auth::user()->id;
                 $auditTrail->save();
@@ -1099,34 +1181,39 @@ class FinanceController extends BaseController {
 
     public function updateFinanceFileStaff() {
         $data = Input::all();
-        $id = $data['finance_file_id'];
-        $prefix = 'staff_';
 
-        $removeOld = FinanceStaff::where('finance_file_id', $id)->delete();
+        if (Request::ajax()) {
+            $id = $data['finance_file_id'];
+            $prefix = 'staff_';
 
-        if ($removeOld) {
-            for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                if (!empty($data[$prefix . 'name'][$i])) {
-                    $finance = new FinanceStaff;
-                    $finance->finance_file_id = $id;
-                    $finance->name = $data[$prefix . 'name'][$i];
-                    $finance->gaji_per_orang = $data[$prefix . 'gaji_per_orang'][$i];
-                    $finance->bil_pekerja = $data[$prefix . 'bil_pekerja'][$i];
-                    $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
-                    $finance->semasa = $data[$prefix . 'semasa'][$i];
-                    $finance->hadapan = $data[$prefix . 'hadapan'][$i];
-                    $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
-                    $finance->sort_no = $i;
-                    $finance->is_custom = $data[$prefix . 'is_custom'][$i];
-                    $finance->save();
+            $files = Finance::find($id);
+            if ($files) {
+                $remove = FinanceStaff::where('finance_file_id', $files->id)->delete();
+
+                if ($remove) {
+                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                        if (!empty($data[$prefix . 'name'][$i])) {
+                            $finance = new FinanceStaff;
+                            $finance->finance_file_id = $files->id;
+                            $finance->name = $data[$prefix . 'name'][$i];
+                            $finance->gaji_per_orang = $data[$prefix . 'gaji_per_orang'][$i];
+                            $finance->bil_pekerja = $data[$prefix . 'bil_pekerja'][$i];
+                            $finance->tunggakan = $data[$prefix . 'tunggakan'][$i];
+                            $finance->semasa = $data[$prefix . 'semasa'][$i];
+                            $finance->hadapan = $data[$prefix . 'hadapan'][$i];
+                            $finance->tertunggak = $data[$prefix . 'tertunggak'][$i];
+                            $finance->sort_no = $i;
+                            $finance->is_custom = $data[$prefix . 'is_custom'][$i];
+                            $finance->save();
+                        }
+                    }
                 }
-            }
 
-            if ($finance) {
                 # Audit Trail
-                $remarks = 'Finance File with id : ' . $id . ' has been updated.';
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+
                 $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance";
+                $auditTrail->module = "COB Finance File";
                 $auditTrail->remarks = $remarks;
                 $auditTrail->audit_by = Auth::user()->id;
                 $auditTrail->save();

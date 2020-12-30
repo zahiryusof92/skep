@@ -482,15 +482,17 @@ class AdminController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            if ($model->is_active == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                            } else {
-                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            if (AccessGroup::hasUpdate(9)) {
+                                if ($model->is_active == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                } else {
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                }
+                                if (Auth::user()->role == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                                }
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
-                            if (Auth::user()->role == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                            }
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                             return $button;
                         })
@@ -584,15 +586,17 @@ class AdminController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            if ($model->is_active == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                            } else {
-                                $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                            if (AccessGroup::hasUpdate(9)) {
+                                if ($model->is_active == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                } else {
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                }
+                                if (Auth::user()->role == 1) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                                }
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
-                            if (Auth::user()->role == 1) {
-                                $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                            }
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                             return $button;
                         })
@@ -4509,19 +4513,21 @@ class AdminController extends BaseController {
         if (Request::ajax()) {
 
             $description = $data['description'];
+            $is_paid = $data['is_paid'];
             $is_admin = $data['is_admin'];
             $is_active = $data['is_active'];
             $remarks = $data['remarks'];
 
             $role = new Role();
             $role->name = $description;
+            $role->is_paid = $is_paid;
             $role->is_admin = $is_admin;
             $role->is_active = $is_active;
             $role->remarks = $remarks;
             $success = $role->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Role : ' . $role->name . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4622,7 +4628,7 @@ class AdminController extends BaseController {
                     $saved = $new_permission->save();
                 }
                 if ($saved) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Access Permission for ' . $role->name . ' has been inserted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4697,7 +4703,7 @@ class AdminController extends BaseController {
                 $role->is_active = 0;
                 $updated = $role->save();
                 if ($updated) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4726,7 +4732,7 @@ class AdminController extends BaseController {
                 $role->is_active = 1;
                 $updated = $role->save();
                 if ($updated) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4755,7 +4761,7 @@ class AdminController extends BaseController {
                 $role->is_deleted = 1;
                 $deleted = $role->save();
                 if ($deleted) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Role : ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -4774,7 +4780,7 @@ class AdminController extends BaseController {
     }
 
     public function updateAccessGroup($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $accessgroup = Role::find($id);
         $module = Module::get();
@@ -4800,19 +4806,21 @@ class AdminController extends BaseController {
 
             $role_id = $data['role_id'];
             $description = $data['description'];
+            $is_paid = $data['is_paid'];
             $is_admin = $data['is_admin'];
             $is_active = $data['is_active'];
             $remarks = $data['remarks'];
 
             $role = Role::find($role_id);
             $role->name = $description;
+            $role->is_paid = $is_paid;
             $role->is_admin = $is_admin;
             $role->is_active = $is_active;
             $role->remarks = $remarks;
             $success = $role->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Role : ' . $role->name . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4950,18 +4958,54 @@ class AdminController extends BaseController {
     }
 
     public function addUser() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
-            $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            if (Auth::user()->isCOBManager()) {
+                if (Auth::user()->getRole->is_paid) {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                } else {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                }
+            } else {
+                $role = Role::where(function($query) {
+                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                        })
+                        ->where('is_admin', 0)
+                        ->where('is_active', 1)
+                        ->where('is_deleted', 0)
+                        ->orderBy('name')
+                        ->lists('name', 'id');
+            }
+
             $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
-                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             }
         }
@@ -5291,14 +5335,50 @@ class AdminController extends BaseController {
         $user = User::find($id);
 
         if (!Auth::user()->getAdmin()) {
-            $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            if (Auth::user()->isCOBManager()) {
+                if (Auth::user()->getRole->is_paid) {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                } else {
+                    $role = Role::where(function($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
+                }
+            } else {
+                $role = Role::where(function($query) {
+                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                        })
+                        ->where('is_admin', 0)
+                        ->where('is_active', 1)
+                        ->where('is_deleted', 0)
+                        ->orderBy('name')
+                        ->lists('name', 'id');
+            }
+
             $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
-                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
                 $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             }
         }
@@ -7487,6 +7567,14 @@ class AdminController extends BaseController {
             $insurance = new Insurance();
             $insurance->file_id = $data['file_id'];
             $insurance->insurance_provider_id = $data['insurance_provider'];
+            $insurance->public_liability_coverage = $data['public_liability_coverage'];
+            $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
+            $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
+            $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
+            $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
+            $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
+            $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
+            $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
             $insurance->remarks = $data['remarks'];
             $success = $insurance->save();
 
@@ -7601,6 +7689,14 @@ class AdminController extends BaseController {
             if ($insurance) {
                 $insurance->file_id = $data['file_id'];
                 $insurance->insurance_provider_id = $data['insurance_provider'];
+                $insurance->public_liability_coverage = $data['public_liability_coverage'];
+                $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
+                $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
+                $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
+                $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
+                $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
+                $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
+                $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
                 $insurance->remarks = $data['remarks'];
                 $success = $insurance->save();
 

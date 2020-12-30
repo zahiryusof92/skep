@@ -58,6 +58,34 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return $this->email;
     }
 
+    public function getRole() {
+        return $this->belongsTo('Role', 'role');
+    }
+
+    public function getFile() {
+        return $this->belongsTo('Files', 'file_id');
+    }
+
+    public function getCOB() {
+        return $this->belongsTo('Company', 'company_id');
+    }
+
+    public function isAdmin() {
+        if (stripos($this->getRole->name, Role::SUPERADMIN) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isCOBManager() {
+        if (stripos($this->getRole->name, Role::COB_MANAGER) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getAdmin() {
         if ($this->getRole->is_admin == 1) {
             return true;
@@ -68,15 +96,40 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
-    public function getRole() {
-        return $this->belongsTo('Role', 'role');
-    }
-    
-    public function getFile() {
-        return $this->belongsTo('Files', 'file_id');
+    public function isJMB() {
+        if (stripos($this->getRole->name, Role::JMB) !== FALSE) {
+            return true;
+        }
+
+        return false;
     }
 
-    public function getCOB() {
-        return $this->belongsTo('Company', 'company_id');
+    public function isLawyer() {
+        if (stripos($this->getRole->name, Role::LAWYER) !== FALSE) {
+            return true;
+        }
+
+        return false;
     }
+
+    public static function getLawyer() {
+        $lawyer = '';
+
+        $role = Role::where('name', 'lawyer')->where('is_active', 1)->where('is_deleted', 0)->first();
+        if ($role) {
+            $lawyer = User::where('role', $role->id)->where('is_active', 1)->where('is_deleted', 0)->get();
+        }
+
+        return $lawyer;
+    }
+
+    public function getTotalPoint() {
+        $debit = PointTransaction::where('user_id', $this->id)->where('is_debit', 1)->sum('point_usage');
+        $credit = PointTransaction::where('user_id', $this->id)->where('is_debit', 0)->sum('point_usage');
+
+        $sum_point = $debit - $credit;
+
+        return $sum_point;
+    }
+
 }

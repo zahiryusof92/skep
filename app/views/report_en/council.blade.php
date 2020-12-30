@@ -63,6 +63,15 @@
                 </div>
 
                 @if ($file_info)
+
+                <?php
+                $total_strata = 0;
+                $total_jmb = 0;
+                $total_mc = 0;
+                $total_buyer = 0;
+                $total_tenant = 0;
+                ?>
+
                 <div class="row">
                     <div class="col-lg-12">
                         <p>LAPORAN</p>
@@ -87,6 +96,14 @@
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $file['total_buyer'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $file['total_tenant'] }}</td>
                                 </tr>
+
+                                <?php
+                                $total_strata += $file['total_strata'];
+                                $total_jmb += $file['total_jmb'];
+                                $total_mc += $file['total_mc'];
+                                $total_buyer += $file['total_buyer'];
+                                $total_tenant += $file['total_tenant'];
+                                ?>
 
                                 <?php
                                 $cobData[] = array(
@@ -131,8 +148,22 @@
                                     'name' => 'Jumlah Penyewa',
                                     'data' => $tenantData
                                 );
-                                ?>
+                                ?>                                
                             </tbody>
+
+                            @if (count($file_info) > 1)
+                            <tfoot>
+                                <tr>
+                                    <th style="text-align: left !important; vertical-align:middle !important;">&nbsp; JUMLAH</th>
+                                    <th style="text-align: center !important; vertical-align:middle !important;">{{ $total_strata }}</th>
+                                    <th style="text-align: center !important; vertical-align:middle !important;">{{ $total_jmb }}</th>
+                                    <th style="text-align: center !important; vertical-align:middle !important;">{{ $total_mc }}</th>
+                                    <th style="text-align: center !important; vertical-align:middle !important;">{{ $total_buyer }}</th>
+                                    <th style="text-align: center !important; vertical-align:middle !important;">{{ $total_tenant }}</th>
+                                </tr>
+                            </tfoot>
+                            @endif
+
                         </table>
                     </div>
                 </div>

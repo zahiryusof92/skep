@@ -45,7 +45,9 @@
             .panel {
                 background: #eceff4 !important;
             }
-                      
+            .star-checked {
+                color: orange;
+            }    
         </style>
 
         <!-- Vendors Scripts -->
@@ -109,6 +111,9 @@
 
         <!-- BlockUI -->
         <script src="{{ asset('assets/common/js/blockUI/blockUI.js')}}"></script>
+
+        <!-- Google Map -->
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlZt8wLuj_w2qWw03-qEYWdWf5nPnvokA&callback=initMap" type="text/javascript"></script>
 
     </head>
 

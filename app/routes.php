@@ -356,7 +356,7 @@ Route::post('/print/purchaser', 'PrintController@printPurchaser')->before('authM
 
 //Tenant Submission
 Route::get('/tenant', 'AgmController@tenant')->before('authMember');
-Route::post('/getTenant', 'AgmController@getTenant')->before('authMember');
+Route::get('/getTenant', 'AgmController@getTenant')->before('authMember');
 Route::get('/addTenant', 'AgmController@addTenant')->before('authMember');
 Route::post('/submitTenant', 'AgmController@submitTenant')->before('authMember');
 Route::get('/editTenant/{id}', 'AgmController@editTenant')->before('authMember');
@@ -365,6 +365,8 @@ Route::post('/deleteTenant', 'AgmController@deleteTenant')->before('authMember')
 Route::get('/importTenant', 'AgmController@importTenant')->before('authMember');
 Route::post('/uploadTenantCSVAction', 'FileController@uploadTenantCSVAction')->before('authMember');
 Route::post('/submitUploadTenant', 'AgmController@submitUploadTenant')->before('authMember');
+Route::post('/report/tenant', 'ReportController@tenant')->before('authMember');
+Route::post('/print/tenant', 'PrintController@printTenant')->before('authMember');
 
 // upload minutes
 Route::get('/minutes', 'AgmController@minutes')->before('authMember');
@@ -719,7 +721,8 @@ Route::get('/editFinanceFileList/{id}', 'FinanceController@editFinanceFileList')
 Route::post('/updateFinanceFileList', 'FinanceController@updateFinanceFileList')->before('authMember');
 Route::post('/updateFinanceFile', 'FinanceController@updateFinanceFile')->before('authMember');
 
-Route::post('/updateFinanceCheck', 'FinanceController@updateFinanceCheck')->before('authMember');
+Route::post('/updateFinanceFileCheck', 'FinanceController@updateFinanceFileCheck')->before('authMember');
+Route::post('/updateFinanceFileSummary', 'FinanceController@updateFinanceFileSummary')->before('authMember');
 Route::post('/updateFinanceFileAdmin', 'FinanceController@updateFinanceFileAdmin')->before('authMember');
 Route::post('/updateFinanceFileStaff', 'FinanceController@updateFinanceFileStaff')->before('authMember');
 Route::post('/updateFinanceFileContract', 'FinanceController@updateFinanceFileContract')->before('authMember');
@@ -729,6 +732,9 @@ Route::post('/updateFinanceFileIncome', 'FinanceController@updateFinanceFileInco
 Route::post('/updateFinanceFileUtility', 'FinanceController@updateFinanceFileUtility')->before('authMember');
 Route::post('/updateFinanceFileReportSf', 'FinanceController@updateFinanceFileReportSf')->before('authMember');
 Route::post('/updateFinanceFileReportMf', 'FinanceController@updateFinanceFileReportMf')->before('authMember');
+
+//cob file / management
+Route::get('/print/financeFile/{id}', 'PrintController@printFinanceFile')->before('authMember');
 
 // FINANCE SUPPORT
 Route::get('/financeSupport', 'FinanceController@financeSupport')->before('authMember');
@@ -767,6 +773,16 @@ Route::get('/updateAgmPurchaseSub/{id}', 'AgmController@updateAgmPurchaseSub')->
 Route::post('/submitUpdateAgmPurchaseSub', 'AgmController@submitUpdateAgmPurchaseSub')->before('authMember');
 Route::post('/deleteAgmPurchaseSub/{id}', 'AgmController@deleteAgmPurchaseSub')->before('authMember');
 
+/*
+ * Directory Route Start
+ */
+Route::group(array('before' => 'authMember'), function() {
+    Route::resource('vendors', 'VendorController');
+    Route::resource('propertyAgents', 'PropertyAgentController');
+});
+/*
+ * Directory Route End
+ */
 
 Route::get('/{cob}', 'UserController@login')->before('guest');
 Route::get('/{cob}/login', 'UserController@login')->before('guest');
@@ -803,13 +819,13 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
 });
 
 //API route
-Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before('authMember');
-Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before('authMember');
-Route::post('api/addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary')->before('authMember');
-Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->before('authMember');
-Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before('authMember');
-Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before('authMember');
-Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before('authMember');
+Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before(['auth.basic','authMember']);
+Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before(['auth.basic','authMember']);
+Route::post('api/addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary')->before(['auth.basic','authMember']);
+Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->before(['auth.basic','authMember']);
+Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before(['auth.basic','authMember']);
+Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before(['auth.basic','authMember']);
+Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before(['auth.basic','authMember']);
 
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
