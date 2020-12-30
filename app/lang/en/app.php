@@ -159,6 +159,7 @@ return array(
             "management_summary_report" => "Management Summary Report",
             "cob_file_report" => "COB File / Management (%) Report",
             "purchaser" => "Purchaser",
+            "tenant" => "Tenant",
             "complaint" => "Complaint",
             "insurance" => "Insurance",
             "collection" => "Collection",
@@ -546,7 +547,8 @@ return array(
         "premium_per_year" => "Premium Per Year",
         "validity" => "Validity",
         "from" => "From",
-        "to" => "To"
+        "to" => "To",
+        "is_paid" => "Paid Version",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -849,7 +851,16 @@ return array(
             'rating' => 'Rating',
             'rating_help' => '(Min:1, Max:10)',
             'remarks' => 'Remarks',
-            'action' => 'Action'
+            'reviews' => 'Reviews',
+            'action' => 'Action',
+            'project' => [
+                'title' => 'Projects',
+                'name' => 'Project Name',
+                'category' => 'Category',
+                'council' => 'Council',
+                'address' => 'Address',
+                'status' => 'Status'
+            ]
         ],
         'property_agents' => [
             'title' => 'PMC',

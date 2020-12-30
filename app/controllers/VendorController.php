@@ -147,30 +147,110 @@ class VendorController extends \BaseController {
      * @return Response
      */
     public function show($id) {
+        $dummy = '';
+        $review = '';
+
         if (AccessGroup::hasAccess(58)) {
             $model = Vendor::where('id', $id)->where('is_deleted', 0)->first();
 
-            $viewData = array(
-                'title' => trans('app.directory.vendors.view'),
-                'panel_nav_active' => 'directory_panel',
-                'main_nav_active' => 'directory_main',
-                'sub_nav_active' => 'vendor_directory_list',
-                'model' => $model,
-                'image' => ''
-            );
+            if ($model) {
+                if ($model->id == 1) {
+                    $review = array(
+                        array(
+                            'content' => 'Responsible vendor. Nice work!',
+                            'author' => 'Zahir Yusof',
+                        ),
+                        array(
+                            'content' => 'Good vendor!',
+                            'author' => 'Ali',
+                        )
+                    );
 
-            return View::make('vendors.show', $viewData);
-        } else {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
+                    $dummy = array(
+                        array(
+                            'name' => 'Apartment Kelana Idaman',
+                            'category' => 'Electrical Wiring',
+                            'council' => 'MBPJ',
+                            'address' => 'Jalan PJU 1a/4a, Kelana Idaman, 47310 Petaling Jaya, Selangor',
+                            'status' => 'inprogress',
+                            'latitude' => '3.110805',
+                            'longitude' => '101.5880721',
+                        ),
+                        array(
+                            'name' => 'Apartment Seri Tulip',
+                            'category' => 'Plumbing Repair',
+                            'council' => 'MDHS',
+                            'address' => 'Jalan Tulip, Bukit Sentosa 2, 48000 Rawang, Selangor',
+                            'status' => 'complete',
+                            'latitude' => '3.3977034',
+                            'longitude' => '101.5604832',
+                        ),
+                        array(
+                            'name' => 'Eristana Townhouse',
+                            'category' => 'House Cleaning',
+                            'council' => 'MDKS',
+                            'address' => 'Eristana, PT 20608, mukim Ijok, Seri Pristana, 47000 Sungai Buloh, Selangor',
+                            'status' => 'pending',
+                            'latitude' => '3.2134182',
+                            'longitude' => '101.469923',
+                        ),
+                    );
+                } else if ($model->id != 1) {
+                    $review = array(
+                        array(
+                            'content' => 'Excellent work!',
+                            'author' => 'Abu',
+                        ),
+                    );
 
-            return View::make('404_en', $viewData);
+                    $dummy = array(
+                        array(
+                            'name' => '20 Trees, Taman Melawati',
+                            'category' => 'Wall Driling',
+                            'council' => 'MPAJ',
+                            'address' => 'Taman Melawati, 68000 Kuala Lumpur',
+                            'status' => 'inprogress',
+                            'latitude' => '3.2195545',
+                            'longitude' => '101.7496264',
+                        ),
+                        array(
+                            'name' => '162 Residency',
+                            'category' => 'Aircond Servicing',
+                            'council' => 'MPS',
+                            'address' => 'KM 12, Jalan Ipoh Rawang, One Selayang, 68100 Batu Caves, Selangor',
+                            'status' => 'complete',
+                            'latitude' => '3.2479752',
+                            'longitude' => '101.648426',
+                        ),
+                    );
+                }
+
+                $viewData = array(
+                    'title' => trans('app.directory.vendors.view'),
+                    'panel_nav_active' => 'directory_panel',
+                    'main_nav_active' => 'directory_main',
+                    'sub_nav_active' => 'vendor_directory_list',
+                    'model' => $model,
+                    'data' => $dummy,
+                    'review' => $review,
+                    'image' => ''
+                );
+
+//                return '<pre>' . print_r($viewData, true) . '</pre>';
+
+                return View::make('vendors.show', $viewData);
+            }
         }
+
+        $viewData = array(
+            'title' => trans('app.errors.page_not_found'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => '',
+            'image' => ""
+        );
+
+        return View::make('404_en', $viewData);
     }
 
     /**

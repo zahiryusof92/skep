@@ -181,6 +181,19 @@ foreach ($user_permission as $permission) {
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.is_paid') }}</label>
+                                    <select id="is_paid" class="form-control">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        <option value="1" {{( $accessgroup->is_paid == 1 ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
+                                        <option value="0" {{( $accessgroup->is_paid == 0 ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
+                                    </select>
+                                    <div id="is_paid_error" style="display:none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
                                     <label><span style="color: red;">*</span> {{ trans('app.forms.admin_status') }}</label>
                                     <select id="is_admin" class="form-control">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
@@ -236,6 +249,7 @@ foreach ($user_permission as $permission) {
 
         var description = $("#description").val(),
                 remarks = $("#remarks").val(),
+                is_paid = $("#is_paid").val(),
                 is_admin = $("#is_admin").val(),
                 is_active = $("#is_active").val();
 
@@ -244,6 +258,12 @@ foreach ($user_permission as $permission) {
         if (description.trim() == "") {
             $("#description_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
             $("#description_error").css("display", "block");
+            error = 1;
+        }
+        
+        if (is_paid.trim() == "") {
+            $("#is_paid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Paid Version"]) }}</span>');
+            $("#is_paid_error").css("display", "block");
             error = 1;
         }
 
@@ -269,6 +289,7 @@ foreach ($user_permission as $permission) {
                     selected_insert: $('.insert:checked').serialize(),
                     selected_update: $('.update:checked').serialize(),
                     remarks: remarks,
+                    is_paid: is_paid,
                     is_admin: is_admin,
                     is_active: is_active,
                     role_id: '{{$accessgroup->id}}'

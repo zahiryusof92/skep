@@ -35,8 +35,8 @@ foreach ($user_permission as $permission) {
                         </button>
                         &nbsp;
                         <a href="{{asset('files/tenant_template.xlsx')}}" target="_blank">
-                            <button type="button" class="btn btn-success pull-right">
-                                {{ trans('app.forms.download_csv_template') }}
+                            <button type="button" class="btn btn-warning">
+                                {{ trans('app.forms.download_csv_template') }} &nbsp;<i class="fa fa-download"></i>
                             </button>
                         </a>
 
@@ -165,53 +165,64 @@ foreach ($user_permission as $permission) {
                         </script>
                         @endif
                         @endif
-
-                        <br/><br/>
                     <?php } ?>
+                </div>
+            </div>
 
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <form>
-                                <div class="row">
-                                    @if (Auth::user()->getAdmin())
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>{{ trans('app.forms.cob') }}</label>
-                                            <select id="company" class="form-control select2">
-                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                @foreach ($cob as $companies)
-                                                <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>{{ trans('app.forms.file_no') }}</label>
-                                            <select id="file_no" class="form-control select2">
-                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                @foreach ($files as $files_no)
-                                                <option value="{{ $files_no->id }}">{{ $files_no->file_no }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-lg-12 text-center">
+                    <form target="_blank" action="{{ url('/report/tenant') }}" method="POST">
+                        <div class="row">
+                            @if (Auth::user()->getAdmin())
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.cob') }}</label>
+                                    <select id="company" name="company" class="form-control select2">
+                                        @if (count($cob) > 1)
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @endif
+                                        @foreach ($cob as $companies)
+                                        <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                            </form>
+                            </div>
+                            @endif
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.file_no') }}</label>
+                                    <select id="file_no" name="file_no" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($files as $files_no)
+                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label>&nbsp;</label><br/>
+                                    <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+                </div>
+            </div>
 
-                    <hr/>
+            <hr/>
 
+            <div class="row">
+                <div class="col-lg-12">
                     <div class="table-responsive">
-                        <table class="table table-hover nowrap" id="tenant_list" width="100%">
+                        <table class="table table-hover" id="tenant_list" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.scheme_name') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.unit_number') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.unit_share') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.tenant') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.phone_number') }}</th>
                                     <th style="width:20%;">{{ trans('app.forms.email') }}</th>
@@ -242,6 +253,7 @@ foreach ($user_permission as $permission) {
                 {data: 'files', name: 'files.file_no'},
                 {data: 'strata', name: 'strata.name'},
                 {data: 'unit_no', name: 'tenant.unit_no'},
+                {data: 'unit_share', name: 'tenant.unit_share'},
                 {data: 'tenant_name', name: 'tenant.tenant_name'},
                 {data: 'phone_no', name: 'tenant.phone_no'},
                 {data: 'email', name: 'tenant.email'},
@@ -252,7 +264,7 @@ foreach ($user_permission as $permission) {
             responsive: false
         });
 
-        $('#company').on('change', function () {            
+        $('#company').on('change', function () {
             $.ajax({
                 url: "{{ URL::action('AgmController@getFileListByCOB') }}",
                 type: "POST",
@@ -264,14 +276,14 @@ foreach ($user_permission as $permission) {
                     oTable.columns(1).search('').draw();
                 }
             });
-            
+
             oTable.columns(0).search(this.value).draw();
         });
         $('#file_no').on('change', function () {
             oTable.columns(1).search(this.value).draw();
         });
     });
-    
+
     function deleteTenant(id) {
         swal({
             title: "{{ trans('app.confirmation.are_you_sure') }}",
@@ -307,6 +319,8 @@ foreach ($user_permission as $permission) {
             });
         });
     }
+
+    $("[data-toggle=tooltip]").tooltip();
 </script>
 <!-- End Page Scripts-->
 
