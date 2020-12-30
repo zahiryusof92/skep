@@ -11,7 +11,7 @@ return array(
       |
      */
 
-    "app_name" => "eCOB Management System",
+    "app_name" => 'eCOB Management System',
     "app_name_short" => "eCOB System",
     "app_sub_title" => "eCOB System - :title",
     "language" => array(

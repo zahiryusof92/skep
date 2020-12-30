@@ -209,7 +209,7 @@ class UserController extends BaseController {
                                 ), $remember);
 
                 if ($auth) {
-                    if (Auth::user()->getAdmin()) {
+                    if (Auth::user()->getAdmin() || Auth::user()->isLawyer()) {
                         $user_account = User::where('id', Auth::user()->id)->first();
                         if ($user_account) {
                             Session::put('id', $user_account['id']);
@@ -301,7 +301,8 @@ class UserController extends BaseController {
             'image' => ""
         );
 
-        return View::make('user_en.change_password', $viewData);}
+        return View::make('user_en.change_password', $viewData);
+    }
 
     public function checkPasswordProfile() {
         $data = Input::all();

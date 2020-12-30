@@ -232,7 +232,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(12))
                     <li id="category_list">
-                        <a class="left-menu-link" href="{{URL::action('SettingController@category')}}">
+                        <a class="left-menu-link" href="{{ route('category.index') }}">
                             {{ trans('app.menus.master.category') }}
                         </a>
                     </li>
@@ -354,6 +354,22 @@ if (!Auth::user()->getAdmin()) {
                     <li id="insurance_provider_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@insuranceProvider')}}">
                             {{ trans('app.menus.master.insurance_provider') }}
+                        </a>
+                    </li>
+                    @endif
+
+                    @if (Auth::user()->isSuperadmin())
+                    <li id="point_package_list">
+                        <a class="left-menu-link" href="{{ route('pointPackage.index') }}">
+                            {{ trans('app.point_package.title') }}
+                        </a>
+                    </li>
+                    @endif
+
+                    @if (Auth::user()->isSuperadmin())
+                    <li id="conversion_list">
+                        <a class="left-menu-link" href="{{ route('conversion.index') }}">
+                            {{ trans('app.menus.master.conversion') }}
                         </a>
                     </li>
                     @endif
@@ -593,7 +609,59 @@ if (!Auth::user()->getAdmin()) {
             @endif
 
             <!-- Summon Start -->
-            
+            @if (Auth::user()->isJMB())
+            <li class="left-menu-list-submenu" id="summon_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
+                    {{ trans('app.summon.title') }}
+                </a>
+                <ul class="left-menu-list list-unstyled" id="summon_main">
+
+                    <li id="letter_of_reminder_list">
+                        <a class="left-menu-link" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">
+                            {{ trans('app.summon.letter_of_reminder') }}
+                        </a>
+                    </li>
+
+                    <li id="letter_of_demand_list">
+                        <a class="left-menu-link" href="{{ route('summon.create', Summon::LETTER_OF_DEMAND) }}">
+                            {{ trans('app.summon.letter_of_demand') }}
+                        </a>
+                    </li>
+
+                    <li id="summon_list">
+                        <a class="left-menu-link" href="{{ route('summon.index') }}">
+                            {{ trans('app.summon.list') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li id="my_point_list">
+                <a class="left-menu-link" href="{{ route('myPoint.index') }}">
+                    <i class="left-menu-link-icon fa fa-money"><!-- --></i>
+                    {{ trans('app.my_point.title') }}
+                </a>
+            </li>
+            @endif
+
+            @if (Auth::user()->isLawyer() || Auth::user()->isCOBManager())
+            <li class="left-menu-list-submenu" id="summon_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
+                    {{ trans('app.summon.title') }}
+                </a>
+                <ul class="left-menu-list list-unstyled" id="summon_main">
+
+                    <li id="summon_list">
+                        <a class="left-menu-link" href="{{ route('summon.index') }}">
+                            {{ trans('app.summon.list') }}
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+            @endif
             <!-- Summon End -->
 
             @if (Module::hasAccess(7))

@@ -17,6 +17,19 @@ class HomeController extends BaseController {
      */
 
     public function home() {
+
+        if (Auth::user()->isLawyer()) {
+            $viewData = array(
+                'title' => trans('app.app_name_short'),
+                'panel_nav_active' => 'home_panel',
+                'main_nav_active' => 'home_main',
+                'sub_nav_active' => 'home',
+                'image' => ""
+            );
+
+            return View::make('home_en.dashboard_lawyer', $viewData);
+        }
+
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $data = Files::getDashboardData();
 
@@ -404,7 +417,7 @@ class HomeController extends BaseController {
                                     $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                                     $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
                                 }
-                                
+
                                 return $button;
                             })
                             ->make(true);
