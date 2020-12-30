@@ -37,6 +37,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{URL::action('AdminController@document', $files->id)}}">{{ trans('app.forms.document') }}</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{URL::action('AdminController@insurance', $files->id)}}">{{ trans('app.forms.insurance') }}</a>
+                            </li>
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="buyer_tab" role="tabpanel">
