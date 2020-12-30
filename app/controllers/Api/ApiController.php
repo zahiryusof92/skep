@@ -39,55 +39,39 @@ class ApiController extends BaseController {
             $user = User::find(Auth::user()->id);
 
             if ($user) {
-                if ($user->getRole->name == 'JMB' || $user->getRole->name == 'MC') {
-                    $current = strtotime(date('Y-m-d'));
-                    $start = strtotime($user->start_date);
-                    $end = strtotime($user->end_date);
+                if ($user->isCOBManagerPaid() || $user->isCOBPaid()) {
+                    // Audit Trail
+                    $remarks = 'User ' . $user->username . ' is signed using Mobile App';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "System Administration";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = $user->id;
+                    $auditTrail->save();
 
-                    if ($current < $start && $current > $end) {
-                        Auth::logout();
+                    $result[] = array(
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'full_name' => ($user->full_name ? $user->full_name : ''),
+                        'email' => ($user->email ? $user->email : ''),
+                        'phone_no' => ($user->phone_no ? $user->phone_no : ''),
+                        'role_id' => $user->role,
+                        'role' => ($user->role ? $user->getRole->name : ''),
+                        'company_id' => $user->company_id,
+                        'company' => ($user->company_id ? $user->getCOB->name : ''),
+                        'remarks' => ($user->remarks ? $user->remarks : ''),
+                        'token' => JWTAuth::fromUser($user),
+                        'created_at' => ($user->created_at ? $user->created_at->format('Y-m-d H:i:s') : ''),
+                        'updated_at' => ($user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '')
+                    );
 
-                        $response = array(
-                            'error' => true,
-                            'message' => 'Account Expired',
-                            'result' => false,
-                        );
+                    $response = array(
+                        'error' => false,
+                        'message' => 'Success',
+                        'result' => $result,
+                    );
 
-                        return Response::json($response);
-                    }
+                    return Response::json($response);
                 }
-
-                // Audit Trail
-                $remarks = 'User ' . $user->username . ' is signed using Mobile App';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "System Administration";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = $user->id;
-                $auditTrail->save();
-
-                $result[] = array(
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'full_name' => ($user->full_name ? $user->full_name : ''),
-                    'email' => ($user->email ? $user->email : ''),
-                    'phone_no' => ($user->phone_no ? $user->phone_no : ''),
-                    'role_id' => $user->role,
-                    'role' => ($user->role ? $user->getRole->name : ''),
-                    'company_id' => $user->company_id,
-                    'company' => ($user->company_id ? $user->getCOB->name : ''),
-                    'remarks' => ($user->remarks ? $user->remarks : ''),
-                    'token' => JWTAuth::fromUser($user),
-                    'created_at' => ($user->created_at ? $user->created_at->format('Y-m-d H:i:s') : ''),
-                    'updated_at' => ($user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '')
-                );
-
-                $response = array(
-                    'error' => false,
-                    'message' => 'Success',
-                    'result' => $result,
-                );
-
-                return Response::json($response);
             }
         }
 
