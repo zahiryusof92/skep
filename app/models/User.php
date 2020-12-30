@@ -78,9 +78,37 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isCOB() {
+        if (stripos($this->getRole->name, Role::COB) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isCOBPaid() {
+        if (stripos($this->getRole->name, Role::COB) !== FALSE) {
+            if ($this->getRole->is_paid) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isCOBManager() {
         if (stripos($this->getRole->name, Role::COB_MANAGER) !== FALSE) {
             return true;
+        }
+
+        return false;
+    }
+
+    public function isCOBManagerPaid() {
+        if (stripos($this->getRole->name, Role::COB_MANAGER) !== FALSE) {
+            if ($this->getRole->is_paid) {
+                return true;
+            }
         }
 
         return false;
