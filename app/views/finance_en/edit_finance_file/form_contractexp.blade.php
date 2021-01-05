@@ -44,7 +44,7 @@ $prefix = 'contract_';
                         ?>
                         <tr id="contract_row{{ ++$count }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $contractFiles['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $contractFiles['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $contractFiles['name'] }}" {{ $contractFiles['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateContract('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $contractFiles['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateContract('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right" value="{{ $contractFiles['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateContract('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $contractFiles['hadapan'] }}"></td>
