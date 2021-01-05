@@ -50,7 +50,7 @@ $prefix3 = 'utilab_';
                         ?>
                         <tr id="util_row{{ ++$count }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $utilas['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $utilas['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $utilas['name'] }}" {{ $utilas['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateUtilityA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $utilas['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateUtilityA('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right" value="{{ $utilas['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateUtilityA('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $utilas['hadapan'] }}"></td>
@@ -95,7 +95,7 @@ $prefix3 = 'utilab_';
                         ?>
                         <tr id="utility_row{{ ++$countb }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $utilbs['is_custom'] }}">{{ $countb }}</td>
-                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $utilbs['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $utilbs['name'] }}" {{ $utilbs['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateUtilityB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $utilbs['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateUtilityB('{{ $countb }}')" id="{{ $prefix2 . 'semasa_' . $countb }}" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right" value="{{ $utilbs['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateUtilityB('{{ $countb }}')" id="{{ $prefix2 . 'hadapan_' . $countb }}" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $utilbs['hadapan'] }}"></td>

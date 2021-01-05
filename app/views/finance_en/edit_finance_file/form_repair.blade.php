@@ -45,7 +45,7 @@ $prefix2 = 'repair_singkingfund_';
                         ?>
                         <tr id="repaira_row{{ ++$count }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $repairas['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $repairas['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $repairas['name'] }}" {{ $repairas['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $repairas['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right" value="{{ $repairas['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateRepairA('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $repairas['hadapan'] }}"></td>
@@ -116,7 +116,7 @@ $prefix2 = 'repair_singkingfund_';
                         ?>
                         <tr id="repairb_row{{ ++$countb }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $repairbs['is_custom'] }}">{{ $countb }}</td>
-                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $repairbs['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $repairbs['name'] }}" {{ $repairbs['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $repairbs['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'semasa_' . $countb }}" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right" value="{{ $repairbs['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateRepairB('{{ $countb }}')" id="{{ $prefix2 . 'hadapan_' . $countb }}" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $repairbs['hadapan'] }}"></td>

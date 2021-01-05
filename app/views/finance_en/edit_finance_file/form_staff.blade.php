@@ -53,7 +53,7 @@ $prefix = 'staff_';
 
                         <tr id="staff_row{{ ++$count }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $staffFiles['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $staffFiles['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $staffFiles['name'] }}" {{ $staffFiles['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateStaff('{{ $count }}')" id="{{ $prefix . 'gaji_per_orang_' . $count }}" name="{{ $prefix }}gaji_per_orang[]" class="form-control form-control-sm text-right" value="{{ $staffFiles['gaji_per_orang'] }}"></td>
                             <td><input type="digit" oninput="calculateStaff('{{ $count }}')" id="{{ $prefix . 'bil_pekerja_' . $count }}" name="{{ $prefix }}bil_pekerja[]" class="form-control form-control-sm text-right" value="{{ $staffFiles['bil_pekerja'] }}"></td>
                             <td><input type="currency" id="{{ $prefix . 'total_gaji_' . $count }}" name="{{ $prefix }}total_gaji[]" class="form-control form-control-sm text-right" value="{{ $total_gaji }}" readonly=""></td>

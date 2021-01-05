@@ -75,7 +75,7 @@ $count = 0;
                         @foreach ($reportSF as $reportSFs)
                         <tr id="sfr_row{{ ++$count }}">
                             <td><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $reportSFs['is_custom'] }}"><input type="hidden" name="{{ $prefix }}report_key[]" value="{{ $reportSFs['report_key'] }}">&nbsp;</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $reportSFs['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $reportSFs['name'] }}" {{ $reportSFs['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" id="{{ $prefix . $reportSFs['report_key'] }}" name="{{ $prefix }}amount[]" class="form-control form-control-sm text-right" value="{{ $reportSFs['amount'] }}" readonly=""></td>
                             @if ($reportSFs['is_custom'])
                             <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowSFR('sfr_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
