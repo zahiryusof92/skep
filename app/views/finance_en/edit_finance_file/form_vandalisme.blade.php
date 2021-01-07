@@ -45,7 +45,7 @@ $prefix2 = 'singkingfund_';
                         ?>
                         <tr id="vandala_row{{ ++$count }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $vandalas['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $vandalas['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $vandalas['name'] }}" {{ $vandalas['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateVandalismeA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $vandalas['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateVandalismeA('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right" value="{{ $vandalas['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateVandalismeA('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $vandalas['hadapan'] }}"></td>
@@ -116,7 +116,7 @@ $prefix2 = 'singkingfund_';
                         ?>
                         <tr id="vandalb_row{{ ++$countb }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $vandalbs['is_custom'] }}">{{ $countb }}</td>
-                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $vandalbs['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $vandalbs['name'] }}" {{ $vandalbs['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateVandalismeB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $vandalbs['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateVandalismeB('{{ $countb }}')" id="{{ $prefix2 . 'semasa_' . $countb }}" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right" value="{{ $vandalbs['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateVandalismeB('{{ $countb }}')" id="{{ $prefix2 . 'hadapan_' . $countb }}" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $vandalbs['hadapan'] }}"></td>

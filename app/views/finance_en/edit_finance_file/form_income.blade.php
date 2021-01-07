@@ -40,7 +40,7 @@ $prefix = 'income_';
                         ?>
                         <tr id="income_row{{ ++$count }}">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $incomeFiles['is_custom'] }}">{{ $count }}</td>
-                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $incomeFiles['name'] }}" readonly=""></td>
+                            <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $incomeFiles['name'] }}" {{ $incomeFiles['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right income_tunggakan" value="{{ $incomeFiles['tunggakan'] }}"></td>
                             <td><input type="currency" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'semasa_' . $count }}" name="{{ $prefix }}semasa[]" class="form-control form-control-sm text-right" value="{{ $incomeFiles['semasa'] }}"></td>
                             <td><input type="currency" oninput="calculateIncome('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $incomeFiles['hadapan'] }}"></td>

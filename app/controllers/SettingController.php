@@ -2658,7 +2658,7 @@ class SettingController extends BaseController {
 
                 $data_raw = array(
                     $duns->description,
-                    $parliament->description,
+                    ($duns->parliament ? $parliament->description : ''),
                     $status,
                     $button
                 );
@@ -2893,7 +2893,7 @@ class SettingController extends BaseController {
 
                 $data_raw = array(
                     $parks->description,
-                    $dun->description,
+                    ($parks->dun ? $dun->description : ''),
                     $status,
                     $button
                 );
