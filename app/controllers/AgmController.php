@@ -22,22 +22,7 @@ class AgmController extends BaseController {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('status', 'asc')->get();
             }
         }
-
-        $month = [
-            1 => 'JAN',
-            2 => 'FEB',
-            3 => 'MAR',
-            4 => 'APR',
-            5 => 'MAY',
-            6 => 'JUN',
-            7 => 'JUL',
-            8 => 'AUG',
-            9 => 'SEP',
-            10 => 'OCT',
-            11 => 'NOV',
-            12 => 'DEC'
-        ];
-
+        
         $viewData = array(
             'title' => trans('app.menus.agm.designation'),
             'panel_nav_active' => 'agm_panel',
@@ -46,7 +31,7 @@ class AgmController extends BaseController {
             'user_permission' => $user_permission,
             'files' => $files,
             'cob' => $cob,
-            'month' => $month,
+            'month' => AJKDetails::monthList(),
             'image' => ''
         );
 
@@ -146,21 +131,6 @@ class AgmController extends BaseController {
             }
         }
 
-        $month = [
-            1 => 'JAN',
-            2 => 'FEB',
-            3 => 'MAR',
-            4 => 'APR',
-            5 => 'MAY',
-            6 => 'JUN',
-            7 => 'JUL',
-            8 => 'AUG',
-            9 => 'SEP',
-            10 => 'OCT',
-            11 => 'NOV',
-            12 => 'DEC'
-        ];
-
         $viewData = array(
             'title' => trans('app.menus.agm.add_designation'),
             'panel_nav_active' => 'agm_panel',
@@ -169,7 +139,7 @@ class AgmController extends BaseController {
             'user_permission' => $user_permission,
             'files' => $files,
             'designation' => $designation,
-            'month' => $month,
+            'month' => AJKDetails::monthList(),
             'image' => ''
         );
 
@@ -234,21 +204,6 @@ class AgmController extends BaseController {
             }
         }
 
-        $month = [
-            1 => 'JAN',
-            2 => 'FEB',
-            3 => 'MAR',
-            4 => 'APR',
-            5 => 'MAY',
-            6 => 'JUN',
-            7 => 'JUL',
-            8 => 'AUG',
-            9 => 'SEP',
-            10 => 'OCT',
-            11 => 'NOV',
-            12 => 'DEC'
-        ];
-
         $ajk_details = AJKDetails::find($id);
 
         $viewData = array(
@@ -259,7 +214,7 @@ class AgmController extends BaseController {
             'user_permission' => $user_permission,
             'files' => $files,
             'designation' => $designation,
-            'month' => $month,
+            'month' => AJKDetails::monthList(),
             'ajk_details' => $ajk_details,
             'image' => ''
         );

@@ -147,110 +147,49 @@ class VendorController extends \BaseController {
      * @return Response
      */
     public function show($id) {
-        $dummy = '';
-        $review = '';
-
         if (AccessGroup::hasAccess(58)) {
             $model = Vendor::where('id', $id)->where('is_deleted', 0)->first();
 
             if ($model) {
-                if ($model->id == 1 || $model->id == 2) {
-                    $review = array(
-                        array(
-                            'content' => 'Responsible vendor. Nice work!',
-                            'author' => 'Zahir Yusof',
-                        ),
-                        array(
-                            'content' => 'Good vendor!',
-                            'author' => 'Ali',
-                        )
-                    );
+                $council = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+                $category = ProjectCategory::where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
 
-                    $dummy = array(
-                        array(
-                            'name' => 'Apartment Kelana Idaman',
-                            'category' => 'Electrical Wiring',
-                            'council' => 'MBPJ',
-                            'address' => 'Jalan PJU 1a/4a, Kelana Idaman, 47310 Petaling Jaya, Selangor',
-                            'status' => 'inprogress',
-                            'latitude' => '3.110805',
-                            'longitude' => '101.5880721',
-                        ),
-                        array(
-                            'name' => 'Apartment Seri Tulip',
-                            'category' => 'Plumbing Repair',
-                            'council' => 'MDHS',
-                            'address' => 'Jalan Tulip, Bukit Sentosa 2, 48000 Rawang, Selangor',
-                            'status' => 'complete',
-                            'latitude' => '3.3977034',
-                            'longitude' => '101.5604832',
-                        ),
-                        array(
-                            'name' => 'Eristana Townhouse',
-                            'category' => 'House Cleaning',
-                            'council' => 'MDKS',
-                            'address' => 'Eristana, PT 20608, mukim Ijok, Seri Pristana, 47000 Sungai Buloh, Selangor',
-                            'status' => 'pending',
-                            'latitude' => '3.2134182',
-                            'longitude' => '101.469923',
-                        ),
-                    );
-                } else if ($model->id == 3) {
-                    $review = array(
-                        array(
-                            'content' => 'Excellent work!',
-                            'author' => 'Abu',
-                        ),
-                    );
+                if (Request::ajax()) {
+                    $project = VendorProject::where('vendor_id', $model->id)->where('is_deleted', 0);
 
-                    $dummy = array(
-                        array(
-                            'name' => '20 Trees, Taman Melawati',
-                            'category' => 'Wall Driling',
-                            'council' => 'MPAJ',
-                            'address' => 'Taman Melawati, 68000 Kuala Lumpur',
-                            'status' => 'inprogress',
-                            'latitude' => '3.2195545',
-                            'longitude' => '101.7496264',
-                        ),
-                        array(
-                            'name' => '162 Residency',
-                            'category' => 'Aircond Servicing',
-                            'council' => 'MPS',
-                            'address' => 'KM 12, Jalan Ipoh Rawang, One Selayang, 68100 Batu Caves, Selangor',
-                            'status' => 'complete',
-                            'latitude' => '3.2479752',
-                            'longitude' => '101.648426',
-                        ),
-                    );
-                } else if ($model->id == 4) {
-                    $review = array(
-                        array(
-                            'content' => 'Excellent work!',
-                            'author' => 'Abu',
-                        ),
-                    );
+                    return Datatables::of($project)
+                                    ->editColumn('company_id', function ($project) {
+                                        $council = '';
+                                        if ($project->company_id) {
+                                            $council = $project->company->short_name;
+                                        }
 
-                    $dummy = array(
-                        array(
-                            'name' => 'Apartment Impian Seri Setia @ Park 51',
-                            'category' => 'Cutting Grass',
-                            'council' => 'MBPJ',
-                            'address' => 'No, 2, Jalan 51A/241, Seksyen 51a, 46100 Petaling Jaya, Selangor',
-                            'status' => 'pending',
-                            'latitude' => '3.0880476',
-                            'longitude' => '101.6162902',
-                        ),
-                        array(
-                            'name' => '19 Residency',
-                            'category' => 'Plumbing Repair',
-                            'council' => 'MBSJ',
-                            'address' => '47110, Lebuh Bukit Puchong, Bandar Bukit Puchong, 47100 Puchong, Selangor',
-                            'status' => 'inprogress',
-                            'latitude' => '2.988620',
-                            'longitude' => '101.6241564',
-                        ),
-                    );
+                                        return $council;
+                                    })
+                                    ->editColumn('project_category_id', function ($project) {
+                                        $category = '';
+                                        if ($project->project_category_id) {
+                                            $category = $project->category->name;
+                                        }
+
+                                        return $category;
+                                    })
+                                    ->editColumn('status', function ($project) {
+                                        return $project->status();
+                                    })
+                                    ->addColumn('action', function ($model) {
+                                        $btn = '';
+                                        if (AccessGroup::hasUpdate(58)) {
+                                            $btn .= '<button type="button" class="btn btn-xs btn-warning modal-update-status" data-toggle="modal" data-target="#updateStatusForm" data-id="' . $model->id . '" data-status="' . $model->status . '">' . trans('app.directory.vendors.project.update_status') . '</button>&nbsp;';
+                                            $btn .= '<form action="' . url('vendors/project/destroy/' . $model->id) . '" method="GET" id="delete_form_' . $model->id . '" style="display:inline-block;">';
+                                            $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                                            $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                                            $btn .= '</form>';
+                                        }
+
+                                        return $btn;
+                                    })
+                                    ->make(true);
                 }
 
                 $viewData = array(
@@ -259,12 +198,12 @@ class VendorController extends \BaseController {
                     'main_nav_active' => 'directory_main',
                     'sub_nav_active' => 'vendor_directory_list',
                     'model' => $model,
-                    'data' => $dummy,
-                    'review' => $review,
+                    'council' => $council,
+                    'category' => $category,
+                    'data' => $model->project,
+                    'review' => $model->review,
                     'image' => ''
                 );
-
-//                return '<pre>' . print_r($viewData, true) . '</pre>';
 
                 return View::make('vendors.show', $viewData);
             }
@@ -362,6 +301,90 @@ class VendorController extends \BaseController {
      */
     public function destroy($id) {
         $model = Vendor::find($id);
+
+        if ($model) {
+            $model->is_deleted = 1;
+            $deleted = $model->save();
+
+            if ($deleted) {
+                return Redirect::back()->with('delete', trans('app.successes.deleted_successfully'));
+            }
+        }
+
+        return Redirect::back()->with('error', trans('app.errors.occurred'));
+    }
+
+    public function review() {
+        $data = Input::all();
+
+        $validator = Validator::make($data, array(
+                    'review' => 'required|min:3',
+        ));
+
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator)->withInput($data);
+        } else {
+            if (!empty($data['id'])) {
+                $model = new VendorReview();
+                $model->vendor_id = $data['id'];
+                $model->user_id = Auth::user()->id;
+                $model->description = $data['review'];
+                $model->is_deleted = 0;
+                $success = $model->save();
+
+                if ($success) {
+                    return Redirect::to('vendors/' . $model->vendor_id)->with('success', trans('app.successes.saved_successfully'));
+                }
+            }
+        }
+
+        return Redirect::back()->with('error', trans('app.errors.occurred'))->withInput($data);
+    }
+
+    public function project() {
+        $data = Input::all();
+
+        if (!empty($data['id'])) {
+            $model = new VendorProject();
+            $model->vendor_id = $data['id'];
+            $model->company_id = $data['council'];
+            $model->name = $data['name'];
+            $model->project_category_id = $data['category'];
+            $model->address = $data['address'];
+            $model->latitude = $data['latitude'];
+            $model->longitude = $data['longitude'];
+            $model->status = $data['status'];
+            $model->is_deleted = 0;
+            $success = $model->save();
+
+            if ($success) {
+                return "true";
+            }
+        }
+
+        return "false";
+    }
+
+    public function status() {
+        $data = Input::all();
+
+        if (!empty($data['id'])) {
+            $model = VendorProject::find($data['id']);
+            if ($model) {
+                $model->status = $data['status'];
+                $success = $model->save();
+
+                if ($success) {
+                    return "true";
+                }
+            }
+        }
+
+        return "false";
+    }
+
+    public function destroyProject($id) {
+        $model = VendorProject::find($id);
 
         if ($model) {
             $model->is_deleted = 1;

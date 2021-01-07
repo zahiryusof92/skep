@@ -20,21 +20,6 @@ class FinanceController extends BaseController {
             }
         }
 
-        $month = [
-            1 => 'JAN',
-            2 => 'FEB',
-            3 => 'MAR',
-            4 => 'APR',
-            5 => 'MAY',
-            6 => 'JUN',
-            7 => 'JUL',
-            8 => 'AUG',
-            9 => 'SEP',
-            10 => 'OCT',
-            11 => 'NOV',
-            12 => 'DEC'
-        ];
-
         $viewData = array(
             'title' => trans('app.menus.cob.add_finance_file_list'),
             'panel_nav_active' => 'cob_panel',
@@ -43,7 +28,7 @@ class FinanceController extends BaseController {
             'user_permission' => $user_permission,
             'image' => "",
             'file_no' => $file_no,
-            'month' => $month
+            'month' => Finance::monthList()
         );
 
         return View::make('finance_en.add_finance_file', $viewData);
@@ -501,21 +486,6 @@ class FinanceController extends BaseController {
         }
         $file = Files::where('is_deleted', 0)->get();
         $year = Files::getVPYear();
-        $month = [
-            1 => 'JAN',
-            2 => 'FEB',
-            3 => 'MAR',
-            4 => 'APR',
-            5 => 'MAY',
-            6 => 'JUN',
-            7 => 'JUL',
-            8 => 'AUG',
-            9 => 'SEP',
-            10 => 'OCT',
-            11 => 'NOV',
-            12 => 'DEC'
-        ];
-
 
         $viewData = array(
             'title' => trans('app.menus.cob.finance_file_list'),
@@ -525,7 +495,7 @@ class FinanceController extends BaseController {
             'user_permission' => $user_permission,
             'cob' => $cob,
             'year' => $year,
-            'month' => $month,
+            'month' => Finance::monthList(),
             'file' => $file,
             'image' => ""
         );
