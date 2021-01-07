@@ -290,7 +290,7 @@ foreach ($user_permission as $permission) {
             ajax: "{{ URL::action('HomeController@getDesignationRemainder') }}",
             lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
             pageLength: 5,
-            order: [[6, "desc"], [7, 'desc']],
+            order: [[7, 'asc'], [6, 'asc']],
             responsive: true,
             columns: [
                 {data: 'cob', name: 'company.short_name'},

@@ -806,6 +806,10 @@ Route::group(array('before' => 'authMember'), function() {
     /*
      * Directory Route Start
      */
+    Route::post('/vendors/review', 'VendorController@review');
+    Route::post('/vendors/project', 'VendorController@project');
+    Route::post('/vendors/project/status', 'VendorController@status');
+    Route::get('/vendors/project/destroy/{id}', 'VendorController@destroyProject');
     Route::resource('vendors', 'VendorController');
     Route::resource('propertyAgents', 'PropertyAgentController');
     /*
