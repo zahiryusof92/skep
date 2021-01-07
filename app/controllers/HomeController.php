@@ -319,17 +319,15 @@ class HomeController extends BaseController {
 
         $condition = function ($query1) use ($current_month, $current_year) {
             $query1->where(function ($query2) {
-                $query2->where('ajk_details.month', '!=', '00');
-                $query2->orWhere('ajk_details.month', '!=', '');
+                $query2->where('ajk_details.month', '>', '0');
             });
             $query1->where(function ($query3) {
-                $query3->where('ajk_details.year', '!=', '0000');
-                $query3->orWhere('ajk_details.year', '!=', '');
+                $query3->where('ajk_details.year', '>', '0');
             });
-            $query1->where(function ($query4) use ($current_month, $current_year) {
-                $query4->where('ajk_details.year', '<=', $current_year);
-                $query4->where('ajk_details.month', '<', $current_month);
-            });
+//            $query1->where(function ($query4) use ($current_month, $current_year) {
+//                $query4->where('ajk_details.month', '>', $current_month);
+//                $query4->where('ajk_details.year', '!=', $current_year);                
+//            });
             $query1->where('ajk_details.is_deleted', 0);
             $query1->where('designation.is_deleted', 0);
         };
@@ -340,7 +338,7 @@ class HomeController extends BaseController {
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($condition);
@@ -349,7 +347,7 @@ class HomeController extends BaseController {
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($condition);
             }
@@ -359,14 +357,14 @@ class HomeController extends BaseController {
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
                         ->where($condition);
             } else {
                 $file = AJKDetails::join('designation', 'ajk_details.designation', '=', 'designation.id')
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id'])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where($condition);
             }
@@ -393,7 +391,7 @@ class HomeController extends BaseController {
                                 return ($model->phone_no);
                             })
                             ->editColumn('month', function ($model) {
-                                return $model->month;
+                                return $model->monthName();
                             })
                             ->editColumn('year', function ($model) {
                                 return $model->year;
@@ -404,7 +402,7 @@ class HomeController extends BaseController {
                                     $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                                     $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
                                 }
-                                
+
                                 return $button;
                             })
                             ->make(true);

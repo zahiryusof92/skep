@@ -71,7 +71,7 @@ foreach ($user_permission as $permission) {
                                     <select id="role" class="form-control select2" onchange="showExpiryDate(this)">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                         @foreach ($role as $value => $name)
-                                        <option value="{{ $value }}" {{($user->role == $value ? " selected" : "")}}>{{ $name }}</option>
+                                        <option value="{{ $name }}" {{($user->role == $value ? " selected" : "")}}>{{ $name }}</option>
                                         @endforeach
                                     </select>
                                     <div id="role_error" style="display:none;"></div>

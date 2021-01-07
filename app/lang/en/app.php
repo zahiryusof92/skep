@@ -859,8 +859,17 @@ return array(
                 'category' => 'Category',
                 'council' => 'Council',
                 'address' => 'Address',
-                'status' => 'Status'
-            ]
+                'latitude' => 'Latitude',
+                'longitude' => 'Longitude',
+                'status' => 'Status',
+                'pending' => 'Pending',
+                'inprogress' => 'In Progress',
+                'complete' => 'Complete',
+                'update_status' => 'Update Status'
+            ],
+            'write_review' => 'Type your review',
+            'submit_review' => 'Submit Review',
+            'add_project' => 'Add Project',
         ],
         'property_agents' => [
             'title' => 'PMC',

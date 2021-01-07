@@ -5054,7 +5054,7 @@ class AdminController extends BaseController {
                     $user->email = $email;
                     $user->phone_no = $phone_no;
                     $user->role = $getRole->id;
-                    if ($getRole->name == 'JMB' || $getRole->name == 'MC') {
+                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
                         if (!empty($start_date)) {
                             $user->start_date = $start_date;
                         }
@@ -5079,7 +5079,7 @@ class AdminController extends BaseController {
                     $success = $user->save();
 
                     if ($success) {
-# Audit Trail
+                        # Audit Trail
                         $remarks = 'User ' . $user->username . ' has been inserted.';
                         $auditTrail = new AuditTrail();
                         $auditTrail->module = "System Administration";
@@ -5169,7 +5169,7 @@ class AdminController extends BaseController {
     }
 
     public function getUserDetails($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::find($id);
         $company = Company::find($user->company_id);
@@ -5207,7 +5207,7 @@ class AdminController extends BaseController {
             $success = $user->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'User ' . $user->username . ' has been approved.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5232,7 +5232,7 @@ class AdminController extends BaseController {
             $user->is_active = 0;
             $updated = $user->save();
             if ($updated) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'User ' . $user->username . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5257,7 +5257,7 @@ class AdminController extends BaseController {
             $user->is_active = 1;
             $updated = $user->save();
             if ($updated) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'User ' . $user->username . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5282,7 +5282,7 @@ class AdminController extends BaseController {
             $user->is_deleted = 1;
             $deleted = $user->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'User ' . $user->username . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -5330,7 +5330,7 @@ class AdminController extends BaseController {
     }
 
     public function updateUser($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::find($id);
 
@@ -5426,7 +5426,7 @@ class AdminController extends BaseController {
                     $user->email = $email;
                     $user->phone_no = $phone_no;
                     $user->role = $getRole->id;
-                    if ($getRole->name == 'JMB' || $getRole->name == 'MC') {
+                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
                         if (!empty($start_date)) {
                             $user->start_date = $start_date;
                         }
@@ -5450,7 +5450,7 @@ class AdminController extends BaseController {
                     $success = $user->save();
 
                     if ($success) {
-# Audit Trail
+                        # Audit Trail
                         $remarks = 'User ' . $user->username . ' has been updated.';
                         $auditTrail = new AuditTrail();
                         $auditTrail->module = "System Administration";
