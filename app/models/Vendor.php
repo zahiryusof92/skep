@@ -13,7 +13,7 @@ class Vendor extends Eloquent {
     }
     
     public function project() {
-        return $this->hasMany('VendorProject', 'vendor_id')->orderBy('id', 'desc');
+        return $this->hasMany('VendorProject', 'vendor_id')->where('is_deleted', 0)->orderBy('id', 'desc');
     }
 
 }
