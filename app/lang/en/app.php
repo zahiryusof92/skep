@@ -869,11 +869,12 @@ return array(
                 'pending' => 'Pending',
                 'inprogress' => 'In Progress',
                 'complete' => 'Complete',
-                'update_status' => 'Update Status'
+                'update_status' => 'Update Status',
             ],
             'write_review' => 'Type your review',
             'submit_review' => 'Submit Review',
             'add_project' => 'Add Project',
+            'update_project' => 'Edit Project',
         ],
         'property_agents' => [
             'title' => 'PMC',
