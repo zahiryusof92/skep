@@ -117,7 +117,7 @@ class VendorController extends \BaseController {
                     'name' => 'required|min:3',
                     'address' => 'required|min:5',
                     'council' => 'required|array',
-                    'rating' => 'required|integer:min:1|max:10',
+                    'rating' => 'required|integer|min:1|max:5',
                     'remarks' => 'sometimes|string|min:3',
         ));
 
@@ -180,10 +180,11 @@ class VendorController extends \BaseController {
                                     ->addColumn('action', function ($model) {
                                         $btn = '';
                                         if (AccessGroup::hasUpdate(58)) {
-                                            $btn .= '<button type="button" class="btn btn-xs btn-warning modal-update-status" data-toggle="modal" data-target="#updateStatusForm" data-id="' . $model->id . '" data-status="' . $model->status . '">' . trans('app.directory.vendors.project.update_status') . '</button>&nbsp;';
+                                            $btn .= '<button type="button" class="btn btn-xs btn-warning-outline modal-update-status" data-toggle="modal" data-target="#updateStatusForm" data-id="' . $model->id . '" data-status="' . $model->status . '">' . trans('app.directory.vendors.project.update_status') . '</button>&nbsp;';
+                                            $btn .= '<button type="button" class="btn btn-xs btn-info modal-update-project" data-toggle="modal" data-target="#updateProjectForm" data-id="' . $model->id . '" data-name="' . $model->name . '" data-category="' . $model->project_category_id . '"  data-council="' . $model->company_id . '" data-address="' . $model->address . '" data-latitude="' . $model->latitude . '" data-longitude="' . $model->longitude . '"  data-status="' . $model->status . '"><i class="fa fa-pencil" title="' . trans('app.forms.update') . '"></i></button>&nbsp;';
                                             $btn .= '<form action="' . url('vendors/project/destroy/' . $model->id) . '" method="GET" id="delete_form_' . $model->id . '" style="display:inline-block;">';
                                             $btn .= '<input type="hidden" name="_method" value="DELETE">';
-                                            $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                                            $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash" title="' . trans('app.forms.delete') . '"></i></button>';
                                             $btn .= '</form>';
                                         }
 
@@ -268,7 +269,7 @@ class VendorController extends \BaseController {
                     'name' => 'required|min:3',
                     'address' => 'required|min:5',
                     'council' => 'required|array',
-                    'rating' => 'required|integer:min:1|max:10',
+                    'rating' => 'required|integer|min:1|max:5',
                     'remarks' => 'sometimes|string|min:3',
         ));
 
@@ -359,6 +360,29 @@ class VendorController extends \BaseController {
 
             if ($success) {
                 return "true";
+            }
+        }
+
+        return "false";
+    }
+
+    public function updateProject() {
+        $data = Input::all();
+
+        if (!empty($data['id'])) {
+            $model = VendorProject::find($data['id']);
+            if ($model) {
+                $model->name = $data['name'];
+                $model->company_id = $data['council'];
+                $model->project_category_id = $data['category'];
+                $model->address = $data['address'];
+                $model->latitude = $data['latitude'];
+                $model->longitude = $data['longitude'];
+                $success = $model->save();
+
+                if ($success) {
+                    return "true";
+                }
             }
         }
 

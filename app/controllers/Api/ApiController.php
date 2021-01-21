@@ -84,6 +84,7 @@ class ApiController extends BaseController {
 
             if ($user) {
                 $user = Auth::user();
+
                 $response['status'] = 200;
                 $response['data'] = [
                     'username' => $user->username,
