@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Exception;
 use BaseController;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,97 @@ use HousingSchemeUser;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiController extends BaseController {
+
+    public function SSOUsernameValidate() {
+
+        try {
+            $response = [];
+
+            $data['username'] = Request::get('username');
+
+            $validation_rules = [
+                'username' => 'required|exists:users',
+            ];
+
+            $validator = Validator::make($data, $validation_rules, [])->validate();
+
+            if ($validator->fails()) {
+                return [
+                    'status' => 422,
+                    'data' => $validator->errors()->getMessages(),
+                    'message' => 'Validation Error'
+                ];
+            }
+
+            $response['status'] = 200;
+
+            return Response::json($response);
+        } catch (Exception $e) {
+
+            throw($e);
+        }
+    }
+
+    public function SSOLogin() {
+        try {
+            $data['username'] = Request::get('username');
+            $data['password'] = Request::get('password');
+
+            $validation_rules = [
+                'username' => 'required',
+                'password' => 'required',
+            ];
+
+            $validator = Validator::make($data, $validation_rules, [])->validate();
+
+            // if ($validator->fails()) {
+            //     return [
+            //         'status' => 422,
+            //         'data' => $validator->errors()->getMessages(),
+            //         'message' => 'Validation Error'
+            //     ];
+            // }
+
+            $user = Auth::attempt(array(
+                        'username' => $data['username'],
+                        'password' => $data['password'],
+                        'status' => 1,
+                        'is_active' => 1,
+                        'is_deleted' => 0,
+                            ), false);
+
+            if ($user) {
+                $response['status'] = 200;
+                $response['data'] = [
+                    'username' => $user->username,
+                    'password' => $user->password,
+                    'full_name' => ($user->full_name ? $user->full_name : ''),
+                    'email' => ($user->email ? $user->email : ''),
+                    'phone_no' => ($user->phone_no ? $user->phone_no : ''),
+                    'role_id' => $user->role,
+                    'role' => ($user->role ? $user->getRole->name : ''),
+                    'company_id' => $user->company_id,
+                    'company' => ($user->company_id ? $user->getCOB->name : ''),
+                    'company_short' => ($user->company_id ? strtolower($user->getCOB->short_name) : ''),
+                    'remarks' => ($user->remarks ? $user->remarks : ''),
+                    'start_date' => ($user->start_date ? $user->start_date : ''),
+                    'end_date' => ($user->end_date ? $user->end_date : ''),
+                ];
+            } else {
+                $response = array(
+                    'error' => true,
+                    'message' => 'Login Fail',
+                    'result' => false,
+                );
+            }
+
+
+
+            return Response::json($response);
+        } catch (Exception $e) {
+            throw($e);
+        }
+    }
 
     public function login() {
         $result = array();

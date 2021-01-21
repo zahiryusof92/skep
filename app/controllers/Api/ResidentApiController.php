@@ -4,23 +4,13 @@ namespace Api;
 
 use BaseController;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Session;
-use User;
 use Files;
 use Strata;
 use Defect;
 use DefectCategory;
-use Scoring;
-use AuditTrail;
-use Buyer;
-use Document;
-use Insurance;
 use MeetingDocument;
 use AJKDetails;
-use HousingSchemeUser;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ResidentApiController extends BaseController {
 
@@ -112,6 +102,14 @@ class ResidentApiController extends BaseController {
 
                     return Response::json($response);
                 }
+            } else {
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
+                );
+
+                return Response::json($response);
             }
         }
 
@@ -181,6 +179,14 @@ class ResidentApiController extends BaseController {
 
                     return Response::json($response);
                 }
+            } else {
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
+                );
+
+                return Response::json($response);
             }
         }
 
@@ -225,6 +231,7 @@ class ResidentApiController extends BaseController {
                                 'description' => $defect->description,
                                 'attachment_url' => (!empty($defect->attachment_url) ? asset($defect->attachment_url) : ''),
                                 'status' => ($defect->status ? 'Resolved' : 'Pending'),
+                                'reference_key' => $defect->reference_key,
                                 'created_at' => ($defect->created_at ? $defect->created_at->format('Y-m-d H:i:s') : ''),
                                 'updated_at' => ($defect->updated_at ? $defect->updated_at->format('Y-m-d H:i:s') : '')
                             );
@@ -249,6 +256,14 @@ class ResidentApiController extends BaseController {
 
                     return Response::json($response);
                 }
+            } else {
+                $response = array(
+                    'error' => false,
+                    'message' => 'Success',
+                    'result' => $result,
+                );
+
+                return Response::json($response);
             }
         }
 
@@ -262,12 +277,21 @@ class ResidentApiController extends BaseController {
     }
 
     public function complaintCategory() {
-        $categoryList = DefectCategory::where('is_deleted', 0)->orderBy('name', 'asc')->lists('name', 'id');
-        if (!empty($categoryList)) {
+        $result = array();
+
+        $categoryList = DefectCategory::where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        if (count($categoryList) > 0) {
+            foreach ($categoryList as $category) {
+                $result[] = array(
+                    'id' => $category->id,
+                    'name' => $category->name,
+                );
+            }
+
             $response = array(
                 'error' => false,
                 'message' => 'Success',
-                'result' => $categoryList,
+                'result' => $result,
             );
 
             return Response::json($response);
@@ -283,13 +307,16 @@ class ResidentApiController extends BaseController {
     }
 
     public function addComplaint() {
+        $result = array();
+
         $strata_name = Request::get('strata_name');
+        $reference_key = Request::get('reference_key');
         $defect_category = Request::get('defect_category');
         $name = Request::get('defect_name');
         $description = Request::get('defect_description');
         $attachment = Request::file('defect_attachment');
 
-        if (!empty($strata_name)) {
+        if (!empty($strata_name) && !empty($reference_key)) {
             $strata = Strata::where('name', $strata_name)->first();
             if (count($strata) > 0) {
                 $file = Files::find($strata->file_id);
@@ -311,12 +338,27 @@ class ResidentApiController extends BaseController {
                     $defect->name = $name;
                     $defect->description = $description;
                     $defect->attachment_url = $attachment_url;
+                    $defect->reference_key = $reference_key;
                     $success = $defect->save();
 
                     if ($success) {
+                        $result = array(
+                            'id' => $defect->id,
+                            'defect_category_id' => $defect->defect_category_id,
+                            'defect_category' => ($defect->defect_category_id ? $defect->category->name : ''),
+                            'name' => $defect->name,
+                            'description' => $defect->description,
+                            'attachment_url' => (!empty($defect->attachment_url) ? asset($defect->attachment_url) : ''),
+                            'status' => ($defect->status ? 'Resolved' : 'Pending'),
+                            'reference_key' => $defect->reference_key,
+                            'created_at' => ($defect->created_at ? $defect->created_at->format('Y-m-d H:i:s') : ''),
+                            'updated_at' => ($defect->updated_at ? $defect->updated_at->format('Y-m-d H:i:s') : '')
+                        );
+
                         $response = array(
                             'error' => false,
-                            'message' => 'Success'
+                            'message' => 'Success',
+                            'result' => $result,
                         );
 
                         return Response::json($response);
@@ -336,9 +378,10 @@ class ResidentApiController extends BaseController {
 
     public function deleteComplaint() {
         $id = Request::get('id');
+        $reference_key = Request::get('reference_key');
 
-        if (!empty($id)) {
-            $defect = Defect::find($id);
+        if (!empty($id) && !empty($reference_key)) {
+            $defect = Defect::where('id', $id)->where('reference_key', $reference_key)->first();
             if (count($defect) > 0) {
                 $defect->is_deleted = 1;
                 $success = $defect->save();
