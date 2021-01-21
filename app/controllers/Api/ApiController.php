@@ -27,20 +27,23 @@ class ApiController extends BaseController {
         try {
             $response = [];
 
-            $data['username'] = Request::get('username');
+            $data = \Input::all();
 
             $validation_rules = [
                 'username' => 'required|exists:users',
             ];
 
-            $validator = Validator::make($data, $validation_rules, [])->validate();
+            $validator = \Validator::make($data, $validation_rules, []);
 
             if ($validator->fails()) {
-                return [
-                    'status' => 422,
-                    'data' => $validator->errors()->getMessages(),
-                    'message' => 'Validation Error'
-                ];
+                // return [
+                //     'status' => 422,
+                //     'data' => $validator->errors()->getMessages(),
+                //     'message' => 'Validation Error'
+                // ];
+                $errors = $validator->errors();
+
+                return $errors->toJson();
             }
 
             $response['status'] = 200;
@@ -54,23 +57,22 @@ class ApiController extends BaseController {
 
     public function SSOLogin() {
         try {
-            $data['username'] = Request::get('username');
-            $data['password'] = Request::get('password');
+
+            $data = \Input::all();
 
             $validation_rules = [
                 'username' => 'required',
                 'password' => 'required',
             ];
 
-            $validator = Validator::make($data, $validation_rules, [])->validate();
+            $validator = \Validator::make($data, $validation_rules, []);
 
-            // if ($validator->fails()) {
-            //     return [
-            //         'status' => 422,
-            //         'data' => $validator->errors()->getMessages(),
-            //         'message' => 'Validation Error'
-            //     ];
-            // }
+            if ($validator->fails()) {
+
+                $errors = $validator->errors();
+
+                return $errors->toJson();
+            }
 
             $user = Auth::attempt(array(
                         'username' => $data['username'],
@@ -81,6 +83,7 @@ class ApiController extends BaseController {
                             ), false);
 
             if ($user) {
+                $user = Auth::user();
                 $response['status'] = 200;
                 $response['data'] = [
                     'username' => $user->username,
@@ -104,8 +107,6 @@ class ApiController extends BaseController {
                     'result' => false,
                 );
             }
-
-
 
             return Response::json($response);
         } catch (Exception $e) {
