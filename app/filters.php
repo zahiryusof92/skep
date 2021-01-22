@@ -14,7 +14,7 @@
 App::before(function($request) {
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
-        header('Access-Control-Allow-Origin', 'https://patrick.odesi.tech/');
+        header('Access-Control-Allow-Origin', '*');
         header('Allow', 'GET, POST, OPTIONS');
         header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization, X-Request-With');
         header('Access-Control-Allow-Credentials', 'true');
@@ -26,7 +26,7 @@ App::before(function($request) {
 
 App::after(function($request, $response) {
 
-    $response->headers->set('Access-Control-Allow-Origin', 'https://patrick.odesi.tech/');
+    $response->headers->set('Access-Control-Allow-Origin', '*');
     $response->headers->set('Access-Control-Allow-Headers', 'GET, POST, OPTIONS, PUT, DELETE, X-Requested-With, Content-Type, Authorization');
     $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 
