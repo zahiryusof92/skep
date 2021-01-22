@@ -14,7 +14,7 @@
 App::before(function($request) {
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
-        header('Access-Control-Allow-Origin', 'https://test.odesi.tech/');
+        header('Access-Control-Allow-Origin', 'https://patrick.odesi.tech/');
         header('Allow', 'GET, POST, OPTIONS');
         header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization, X-Request-With');
         header('Access-Control-Allow-Credentials', 'true');
@@ -25,7 +25,12 @@ App::before(function($request) {
 
 
 App::after(function($request, $response) {
-    //
+
+    $response->headers->set('Access-Control-Allow-Origin', 'https://patrick.odesi.tech/');
+    $response->headers->set('Access-Control-Allow-Headers', 'GET, POST, OPTIONS, PUT, DELETE, X-Requested-With, Content-Type, Authorization');
+    $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+
+    return $response;
 });
 
 /*
@@ -51,29 +56,28 @@ Route::filter('authUser', function() {
 });
 
 Route::filter('authMember', function() {
-    
+
     if (Auth::guest()) {
         if (Request::ajax()) {
-            
+
             return Response::make('Unauthorized', 401);
         } else {
             return Redirect::guest('/');
-                    
+
 //            return Redirect::guest('/');
         }
     }
 });
 
 Route::filter('auth.basic', function() {
-    if((app('request')->header('php-auth-user') != null && app('request')->header('php-auth-pw') != null
-    )) {
-        $input = array('username' => app('request')->header('php-auth-user'), 
-        'password' => app('request')->header('php-auth-pw'));
+    if ((app('request')->header('php-auth-user') != null && app('request')->header('php-auth-pw') != null
+            )) {
+        $input = array('username' => app('request')->header('php-auth-user'),
+            'password' => app('request')->header('php-auth-pw'));
         Input::merge($input);
-    return Auth::basic('username');
+        return Auth::basic('username');
     } else {
         return Auth::basic();
-
     }
 });
 
