@@ -2,9 +2,8 @@
 
 namespace Helper;
 
-use Exception;
-use Env;
-use URL;
+// use Exception;
+use Illuminate\Support\Facades\Config;
 
 use Helper\KCurl;
 
@@ -23,7 +22,7 @@ class OAuth
     
     public function updateSimpleProfile($client_data) {
         
-        try {
+        // try {
             $data = [
                 'username'   => $client_data['username'],
                 'password'   => $client_data['password'],
@@ -33,14 +32,14 @@ class OAuth
             ];
 
             $response['content'] = (string) ((new KCurl())->requestPost($this->getHeaders(), 
-                                    config('constant.module.auth.sso.update_profile_url'),
+                                    Config::get('constant.module.auth.sso.update_profile_url'),
                                     json_encode($data)));
+                                    
+        // } catch(Exception $e) {
 
-        } catch(Exception $e) {
-
-            throw($e);
+        //     throw($e);
         
-        }
+        // }
 
         return $response;
     }
