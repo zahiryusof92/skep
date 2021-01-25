@@ -277,7 +277,7 @@ class UserController extends BaseController {
                 /**
                  * call back to vendor portal to update info
                  */
-                $content = (new OAuth())->updateSimpleProfile($user);
+                (new OAuth())->updateSimpleProfile($user);
                 
                 if ($success) {
                     
