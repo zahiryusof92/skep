@@ -36,38 +36,38 @@ return [
                         'from_api'
                     ],
                     'special_validation' => [
-                        'file_no'   => 'required',
-                        'year'      => 'required|numeric',
-                        'month'     => 'required|numeric',
-                        'from_api'    => 'required',
-                        'check'    => 'required',
-                        'summary'    => 'required',
-                        'report'    => 'required',
-                        'report.mf'    => 'required',
-                        'report.sf'    => 'required',
-                        'income'    => 'required',
-                        'income.main'    => 'required',
-                        'utility'    => 'required',
-                        'utility.bhg_a'    => 'required',
-                        'utility.bhg_a.main'    => 'required',
-                        'utility.bhg_b'    => 'required',
-                        'utility.bhg_b.main'    => 'required',
-                        'contract'    => 'required',
-                        'contract.main'    => 'required',
-                        'repair'    => 'required',
-                        'repair.mf'    => 'required',
-                        'repair.mf.main'    => 'required',
-                        'repair.sf'    => 'required',
-                        'repair.sf.main'    => 'required',
-                        'vandal'    => 'required',
-                        'vandal.mf'    => 'required',
-                        'vandal.mf.main'    => 'required',
-                        'vandal.sf'    => 'required',
-                        'vandal.sf.main'    => 'required',
-                        'staff'    => 'required',
-                        'staff.main'    => 'required',
-                        'admin'    => 'required',
-                        'admin.main'    => 'required',
+                        'file_no' => 'required',
+                        'year' => 'required|numeric',
+                        'month' => 'required|numeric',
+                        'from_api' => 'required',
+                        'check' => 'required',
+                        'summary' => 'required',
+                        'report' => 'required',
+                        'report.mf' => 'required',
+                        'report.sf' => 'required',
+                        'income' => 'required',
+                        'income.main' => 'required',
+                        'utility' => 'required',
+                        'utility.bhg_a' => 'required',
+                        'utility.bhg_a.main' => 'required',
+                        'utility.bhg_b' => 'required',
+                        'utility.bhg_b.main' => 'required',
+                        'contract' => 'required',
+                        'contract.main' => 'required',
+                        'repair' => 'required',
+                        'repair.mf' => 'required',
+                        'repair.mf.main' => 'required',
+                        'repair.sf' => 'required',
+                        'repair.sf.main' => 'required',
+                        'vandal' => 'required',
+                        'vandal.mf' => 'required',
+                        'vandal.mf.main' => 'required',
+                        'vandal.sf' => 'required',
+                        'vandal.sf.main' => 'required',
+                        'staff' => 'required',
+                        'staff.main' => 'required',
+                        'admin' => 'required',
+                        'admin.main' => 'required',
                     ]
                 ],
                 'check' => [
@@ -397,7 +397,6 @@ return [
                         'semasa',
                         'hadapan',
                         'tertunggak',
-
                     ],
                     'extra' => [
                         'is_custom'
@@ -458,6 +457,11 @@ return [
                         'name' => 'required'
                     ]
                 ],
+            ]
+        ],
+        'auth' => [
+            'sso' => [
+                'update_profile_url' => "https://patrick.odesi.tech/api/admin/auth/profile/update_simple"
             ]
         ],
     ],
@@ -555,7 +559,6 @@ return [
             'income_denda_undang_undang_kecil' => 'DENDA UNDANG-UNDANG KECIL',
             'income_denda_lewat_bayar_maintain_sinking_fee' => 'DENDA LEWAT BAYAR MAINTENANCE FEE @ SINKING FUND',
             'income_bil_meter_air_pemilik_pemilik' => 'BIL METER AIR PEMILIK-PEMILIK(DI BAWAH AKAUN METER PUKAL SAHAJA)',
-            
             'sum_bill_air' => 'Bil Air',
             'sum_bill_elektrik' => 'Bil. Elektrik',
             'sum_caruman_insuran' => 'Caruman Insuran',
@@ -571,19 +574,16 @@ return [
             'sum_pentadbiran' => 'Pentadbiran Termasuk telefon, internet, alat tulis pejabat, petty cash, sewaan mesin fotokopi, fi audit, caj bank dan lain-lain',
             'sum_fi_ejen_pengurusan' => 'Fi Ejen Pengurusan',
             'sum_lain_lain' => 'Lain-Lain-sekiranya ada Termasuk sila senaraikan',
-
             'report_utility' => 'UTILITI (BAHAGIAN A SAHAJA)',
             'report_contract' => 'PENYENGGARAAN',
             'report_repair' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN',
             'report_vandalisme' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN (VANDALISME)',
             'report_staff' => 'PEKERJA',
             'report_admin' => 'PENTADBIRAN',
-
             'utility_bil_air' => 'BIL AIR METER PUKAL',
             'utility_bil_elektrik' => 'BIL ELEKTRIK HARTA BERSAMA',
             'utility_bil_meter_air' => 'BIL METER AIR PEMILIK-PEMILIK (DI BAWAH AKAUN METER PUKAL SAHAJA)',
             'utility_bil_cukai_tanah' => 'BIL CUKAI TANAH',
-
             'contract_fi_firma_kompeten_lif' => 'FI FIRMA KOMPETEN LIF',
             'contract_pembersihan_kontrak' => 'PEMBERSIHAN (KONTRAK)',
             'contract_keselamatan' => 'KESELAMATAN',
@@ -599,7 +599,6 @@ return [
             'contract_uji_peralatan_pemadam_kebakaran' => 'UJI PERALATAN/ALAT PEMADAM KEBAKARAN',
             'contract_kutipan_sampah_pukal' => 'KUTIPAN SAMPAH PUKAL',
             'contract_kawalan_serangga' => 'KAWALAN SERANGGA',
-            
             'repair_lif' => 'LIF',
             'repair_tangki_air' => 'TANGKI AIR',
             'repair_bumbung' => 'BUMBUNG',
@@ -619,7 +618,6 @@ return [
             'repair_cctv' => 'CCTV',
             'repair_pelekat_kenderaan' => 'PELEKAT KENDERAAN',
             'repair_genset' => 'GENSET',
-            
             'vandal_lif' => 'LIF',
             'vandal_wayar_bumi' => 'WAYAR BUMI',
             'vandal_pendawaian_elektrik' => 'PENDAWAIAN ELEKTRIK',
@@ -629,16 +627,12 @@ return [
             'vandal_sistem_kad_akses' => 'SISTEM KAD AKSES',
             'vandal_cctv' => 'CCTV',
             'vandal_genset' => 'GENSET',
-
-            
             'staff_pegawal_keselamatan' => 'PENGAWAL KESELAMATAN',
             'staff_pembersihan' => 'PEMBERSIHAN',
             'staff_rencam' => 'RENCAM',
             'staff_kerani' => 'KERANI',
             'staff_juruteknik' => 'JURUTEKNIK',
             'staff_penyelia' => 'PENYELIA',
-            
-            
             'admin_telefon_n_internet' => 'TELEFON & INTERNET',
             'admin_peralatan' => 'PERALATAN',
             'admin_alat_tulis_perjabat' => 'ALAT TULIS PEJABAT',
@@ -654,7 +648,6 @@ return [
             'admin_perbelanjaan_mesyuarat' => 'PERBELANJAAN MESYUARAT',
             'admin_elaun_jmb_mc' => 'ELAUN JMB/MC',
             'admin_lain_lain_tuntutan_jmb_mc' => 'LAIN-LAIN TUNTUTAN JMB/MC',
-            
         ]
     ]
 ];

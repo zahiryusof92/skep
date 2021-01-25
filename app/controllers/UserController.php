@@ -1,5 +1,7 @@
 <?php
 
+use Helper\OAuth;
+
 class UserController extends BaseController {
 
     public function changeLanguage($lang) {
@@ -273,6 +275,8 @@ class UserController extends BaseController {
                 $success = $user->save();
 
                 if ($success) {
+                    (new OAuth())->updateSimpleProfile($user);
+                    
                     Session::forget('full_name');
                     Session::put('full_name', $user['full_name']);
 
@@ -301,7 +305,8 @@ class UserController extends BaseController {
             'image' => ""
         );
 
-        return View::make('user_en.change_password', $viewData);}
+        return View::make('user_en.change_password', $viewData);
+    }
 
     public function checkPasswordProfile() {
         $data = Input::all();
