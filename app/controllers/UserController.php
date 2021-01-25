@@ -277,8 +277,8 @@ class UserController extends BaseController {
                 /**
                  * call back to vendor portal to update info
                  */
-                (new OAuth())->updateSimpleProfile($user);
-                
+                $content = (new OAuth())->updateSimpleProfile($user);
+                dd($content);
                 if ($success) {
                     
                     Session::forget('full_name');
