@@ -630,7 +630,7 @@ class PrintController extends BaseController {
 
         return View::make('print_en.purchaser', $viewData);
     }
-    
+
     public function printTenant() {
         $tenant = array();
         $data = Input::all();
@@ -1288,6 +1288,41 @@ class PrintController extends BaseController {
 
             return View::make('print_en.print_finance_file', $viewData);
         }
+    }
+
+    public function printLandTitle($cob_id, $land_title_id) {
+        if (!AccessGroup::hasAccess(60)) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
+        
+        if (!empty($cob_id) && $cob_id == 'all') {
+            $cob_id = '';
+        }
+        if (!empty($land_title_id) && $land_title_id == 'all') {
+            $land_title_id = '';
+        }
+        $file_info = Files::getLandTitleReportByCOB($cob_id, $land_title_id);
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.land_title'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => '',
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'land_title_id' => $land_title_id,
+            'image' => ''
+        );
+
+        return View::make('print_en.land_title', $viewData);
     }
 
 }

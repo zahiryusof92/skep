@@ -169,6 +169,7 @@ return array(
             "parliment" => "Parlimen",
             "vp" => "Sebelum VP vs Selepas VP",
             "management_list" => "Senarai Pengurusan",
+            "land_title" => "Kategori Tanah",
         ),
         "agm" => array(
             "submission" => "Penyerahan AGM",
@@ -869,7 +870,7 @@ return array(
                 'pending' => 'Pending',
                 'inprogress' => 'In Progress',
                 'complete' => 'Complete',
-                'update_status' => 'Update Status',
+                'update_status' => 'Update Status'
             ],
             'write_review' => 'Type your review',
             'submit_review' => 'Submit Review',
@@ -937,6 +938,8 @@ return array(
         'pay_now' => 'Bayar Sekarang',
         'pay' => 'Pembayaran',
         'payment' => 'Teruskan ke Pembayaran',
+        'bank_transfer' => 'Bank Transfer',
+        'points' => 'Points',
         'category' => [
             'no' => 'No.',
             'cob' => 'Majlis',

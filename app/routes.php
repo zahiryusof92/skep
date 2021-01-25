@@ -683,6 +683,10 @@ Route::post('/reporting/managementList', 'ReportController@managementList')->bef
 Route::get('/reporting/getManagementList', 'ReportController@getManagementList')->before('authMember');
 Route::post('/print/managementList', 'PrintController@printManagementList')->before('authMember');
 
+// land title
+Route::get('/reporting/landTitle', 'ReportController@landTitle')->before('authMember');
+Route::get('/print/landTitle/{cob_id}/{land_title_id}', 'PrintController@printLandTitle')->before('authMember');
+
 // -- COB -- //
 Route::get('cob/get/{id}', 'CobController@get');
 Route::get('cob/{id}/get-data', 'CobController@getData');

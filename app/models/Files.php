@@ -1610,7 +1610,7 @@ class Files extends Eloquent {
                 $commercial = $commercial + $sum_commercial;
                 $count_less10 = $count_less10 + ($count_residential_less10 + $count_commercial_less10);
                 $count_more10 = $count_more10 + ($count_residential_more10 + $count_commercial_more10);
-                $count_all = $count_all + ($count_residential + $count_commercial);                
+                $count_all = $count_all + ($count_residential + $count_commercial);
                 $sum_less10 = $sum_less10 + ($sum_residential_less10 + $sum_commercial_less10);
                 $sum_more10 = $sum_more10 + ($sum_residential_more10 + $sum_commercial_more10);
                 $sum_all = $sum_all + ($sum_residential + $sum_commercial);
@@ -1634,6 +1634,57 @@ class Files extends Eloquent {
             'sum_all' => $sum_all,
             'total_all' => $total_all
         );
+
+        return $result;
+    }
+
+    public static function getLandTitleReportByCOB($cob_id = NULL, $land_title_id = NULL) {
+        $result = array();
+
+        if (!empty($cob_id)) {
+            $company = Company::where('id', $cob_id)->get();
+        } else {
+            if (!Auth::user()->getAdmin()) {
+                $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                } else {
+                    $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                }
+            }
+        }
+        if (!empty($land_title_id)) {
+            $category = Category::where('id', $land_title_id)->get();
+        } else {
+            $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+        }
+
+        if ($company) {
+            foreach ($company as $cob) {
+                $dataCat = [];
+                foreach ($category as $cat) {
+                    $total_cat_file = DB::table('strata')
+                            ->join('files', 'strata.file_id', '=', 'files.id')
+                            ->where('files.company_id', $cob->id)
+                            ->where('strata.category', $cat->id)
+                            ->where('files.is_deleted', 0)
+                            ->count();
+
+                    $dataCat[$cat->id] = array(
+                        'id' => $cat->id,
+                        'name' => $cat->description,
+                        'total' => $total_cat_file,
+                    );
+                }
+
+                $result[] = array(
+                    'id' => $cob->id,
+                    'company' => $cob,
+                    'category' => $dataCat
+                );
+            }
+        }
 
         return $result;
     }

@@ -489,6 +489,14 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
+                    
+                    @if (AccessGroup::hasAccess(60))
+                    <li id="land_title_report_list">
+                        <a class="left-menu-link" href="{{ URL::action('ReportController@landTitle') }}">
+                            {{ trans('app.menus.reporting.land_title') }}
+                        </a>
+                    </li>
+                    @endif
 
                 </ul>
             </li>
