@@ -1896,4 +1896,56 @@ class ReportController extends BaseController {
         return View::make('report_en.rating_summary', $viewData);
     }
 
+    public function landTitle() {
+        if (!AccessGroup::hasAccess(60)) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+
+            return View::make('404_en', $viewData);
+        }
+
+        $data = Input::all();
+
+        if (!Auth::user()->getAdmin()) {
+            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+        $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+
+        $cob_id = '';
+        $land_title_id = '';
+        if (isset($data['cob_id']) && !empty($data['cob_id'])) {
+            $cob_id = $data['cob_id'];
+        }
+        if (isset($data['land_title_id']) && !empty($data['land_title_id'])) {
+            $land_title_id = $data['land_title_id'];
+        }
+        $file_info = Files::getLandTitleReportByCOB($cob_id, $land_title_id);
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.land_title'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'land_title_report_list',
+            'cob' => $cob,
+            'category' => $category,
+            'file_info' => $file_info,
+            'cob_id' => $cob_id,
+            'land_title_id' => $land_title_id,
+            'image' => ''
+        );
+
+        return View::make('report_en.land_title', $viewData);
+    }
+
 }
