@@ -36,14 +36,13 @@ class ApiController extends BaseController {
             $validator = \Validator::make($data, $validation_rules, []);
 
             if ($validator->fails()) {
-                // return [
-                //     'status' => 422,
-                //     'data' => $validator->errors()->getMessages(),
-                //     'message' => 'Validation Error'
-                // ];
                 $errors = $validator->errors();
 
-                return $errors->toJson();
+                return [
+                    'status' => 422,
+                    'data' => $errors->toJson(),
+                    'message' => 'Validation Error'
+                ];
             }
 
             $response['status'] = 200;
@@ -71,7 +70,11 @@ class ApiController extends BaseController {
 
                 $errors = $validator->errors();
 
-                return $errors->toJson();
+                return [
+                    'status' => 422,
+                    'data' => $errors->toJson(),
+                    'message' => 'Validation Error'
+                ];
             }
 
             $user = Auth::attempt(array(
@@ -101,6 +104,25 @@ class ApiController extends BaseController {
                     'start_date' => ($user->start_date ? $user->start_date : ''),
                     'end_date' => ($user->end_date ? $user->end_date : ''),
                 ];
+                // $strata = Files::join('company', 'files.company_id', '=', 'company.id')
+                //             ->join('strata', 'files.id', '=', 'strata.file_id')
+                //             ->where('files.id', $user->file_id)
+                //             ->where('files.company_id', $user->company_id)
+                //             ->where('files.is_active', '!=', 2)
+                //             ->where('files.is_deleted', 0)
+                //             -get();
+
+                $strata = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->where('files.id', $user->file_id)
+                        ->where('files.company_id', $user->company_id)
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0)
+                        ->get();
+                $response['data']['building'] = array();
+                foreach ($strata as $key => $val) {
+                    array_push($response['data']['building'], $val->name);
+                }
             } else {
                 $response = array(
                     'error' => true,
@@ -109,10 +131,53 @@ class ApiController extends BaseController {
                 );
             }
 
+
+
             return Response::json($response);
         } catch (Exception $e) {
             throw($e);
         }
+    }
+
+    public function updateSimpleProfileInfo() {
+        $data = \Input::all();
+
+        $validation_rules = [
+            'username' => 'required',
+            'password' => 'required',
+            'full_name' => 'required',
+            'email' => 'required',
+        ];
+
+        $validator = \Validator::make($data, $validation_rules, []);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+
+            return [
+                'status' => 422,
+                'data' => $errors->toJson(),
+                'message' => 'Validation Error'
+            ];
+        }
+
+        $user = User::where('username', $data['username'])->first();
+        if (isset($user)) {
+            $user->password = $data['password'];
+            $user->full_name = $data['full_name'];
+            $user->email = $data['email'];
+            $user->phone_no = $data['phone_no'];
+
+            $user->save();
+        }
+
+        $response = array(
+            'error' => false,
+            'message' => 'Success',
+            'result' => $user,
+        );
+
+        return Response::json($response);
     }
 
     public function login() {

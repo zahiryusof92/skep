@@ -797,6 +797,7 @@ Route::get('/{cob}/logout', 'UserController@logout')->before('authMember');
 Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('sso/username-checking', 'Api\ApiController@SSOUsernameValidate');
     Route::post('sso/login', 'Api\ApiController@SSOLogin');
+    Route::post('profile/update_simple', 'Api\ApiController@updateSimpleProfileInfo');
     Route::post('/login', 'Api\ApiController@login');
 });
 
