@@ -47,7 +47,11 @@
             }
             .star-checked {
                 color: orange;
-            }    
+            }
+            .modal-open .select2-container--open { 
+                z-index: 999999 !important; 
+                width:100% !important; 
+            }
         </style>
 
         <!-- Vendors Scripts -->

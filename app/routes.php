@@ -719,6 +719,9 @@ Route::post('/inactiveFinanceList', 'FinanceController@inactiveFinanceList')->be
 Route::post('/activeFinanceList', 'FinanceController@activeFinanceList')->before('authMember');
 Route::post('/deleteFinanceList', 'FinanceController@deleteFinanceList')->before('authMember');
 
+// import Files
+Route::post('/importFinanceFile', 'ImportController@importFinanceFile')->before('authMember');
+
 Route::get('/addFinanceFileList', 'FinanceController@addFinanceFileList')->before('authMember');
 Route::post('/submitAddFinanceFile', 'FinanceController@submitAddFinanceFile')->before('authMember');
 Route::get('/editFinanceFileList/{id}', 'FinanceController@editFinanceFileList')->before('authMember');

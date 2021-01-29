@@ -486,7 +486,7 @@ class FinanceController extends BaseController {
         }
         $file = Files::where('is_deleted', 0)->get();
         $year = Files::getVPYear();
-
+        
         $viewData = array(
             'title' => trans('app.menus.cob.finance_file_list'),
             'panel_nav_active' => 'cob_panel',

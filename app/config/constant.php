@@ -2,6 +2,11 @@
 
 return [
     'module' => [
+        'auth' => [
+            'sso' => [
+                'update_profile_url' => "https://patrick.odesi.tech/api/admin/auth/profile/update_simple"
+            ]
+        ],
         'finance' => [
             'tabs' => [
                 'main' => [
@@ -41,7 +46,7 @@ return [
                         'month' => 'required|numeric',
                         'from_api' => 'required',
                         'check' => 'required',
-                        'summary' => 'required',
+                        // 'summary' => 'required',
                         'report' => 'required',
                         'report.mf' => 'required',
                         'report.sf' => 'required',

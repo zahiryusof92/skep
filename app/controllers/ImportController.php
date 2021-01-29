@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\DB; 
+
 class ImportController extends BaseController {
 
     public function showView($name) {
@@ -116,6 +118,7 @@ class ImportController extends BaseController {
                                                 $buyer->sinking_fund = $row['21'];
                                                 $buyer->remarks = $row['22'];
                                                 $buyer->save();
+                                                
                                             }
                                         }
                                     }
@@ -287,7 +290,7 @@ class ImportController extends BaseController {
                 $data = Excel::load($path, function($reader) {
                             
                         })->get();
-
+                        
                 if (!empty($data) && $data->count()) {
                     foreach ($data->toArray() as $row) {
                         if (!empty($row)) {
@@ -1695,6 +1698,405 @@ class ImportController extends BaseController {
         } else {
             print "false";
         }
+    }
+
+    public function importFinanceFile() {
+        
+        
+        DB::transaction(function() {
+            if (Request::ajax()) {
+                $file = Input::file('import_file');
+                $file_id = Input::get('import_file_id');
+                $month = Input::get('import_month');
+                $year = Input::get('import_year');
+                $status = Input::get('status');
+                
+                if ($file) {
+
+                    $path = $file->getRealPath();
+                    $data = Excel::load($path, function($reader) {
+                                
+                            })->get();
+                            
+                    /** Find Finance File */
+                    $finance_file = Finance::with(['file','financeAdmin','financeCheck','financeContract','financeIncome',
+                                            'financeRepair','financeReportPerbelanjaan','financeReport','financeStaff',
+                                            'financeUtility','financeVandal'])
+                                            ->where(compact('file_id'))
+                                            ->where(compact('month'))
+                                            ->where(compact('year'))
+                                            ->where('is_deleted',0)
+                                            ->first();
+                                            
+                    if (!empty($finance_file) && !empty($data) && $data->count()) {
+                        /**
+                         * Finance data loop
+                         */
+                        foreach ($data as $row) {
+                            $title = strtolower($row->getTitle());
+                            if($title == 'sheet1' && $row->count()) {
+                                /** Finance Check */
+                                $check_data = $row[0];
+                                $finance_check = $finance_file->financeCheck->first();
+                                $finance_check->date = $check_data[0];
+                                $finance_check->name = $check_data[1];
+                                $finance_check->position = $check_data[2];
+                                $finance_check->is_active = (strtolower($check_data[3]) == "yes")? "1" : "0";
+                                $finance_check->remarks = $check_data[4];
+                                $finance_check->save();
+                                
+                            } else if($title == 'report mf' && $row->count()) {
+                                /** Finance Report MF And Perbelanjaan */
+                                $report_main = $row[0];
+                                
+                                $report_mf = $finance_file->financeReport()->where('type','MF')->first();
+                                $report_mf->fee_sebulan = $report_main[0];
+                                $report_mf->unit = $report_main[1];
+                                $report_mf->fee_semasa = $report_main[2];
+                                $report_mf->no_akaun = $report_main[3];
+                                $report_mf->nama_bank = $report_main[4];
+                                $report_mf->baki_bank_awal = $report_main[5];
+                                $report_mf->baki_bank_akhir = $report_main[6];
+                                $report_mf->save();
+                                
+                            } else if($title == 'report sf' && $row->count()) {
+                                /** Finance Report SF And Perbelanjaan */
+                                $report_main = $row[0];
+                                $report_sf = $finance_file->financeReport()->where('type','SF')->first();
+                                $report_sf->fee_sebulan = $report_main[0];
+                                $report_sf->unit = $report_main[1];
+                                $report_sf->fee_semasa = $report_main[2];
+                                $report_sf->no_akaun = $report_main[3];
+                                $report_sf->nama_bank = $report_main[4];
+                                $report_sf->baki_bank_awal = $report_main[5];
+                                $report_sf->baki_bank_akhir = $report_main[6];
+                                $report_sf->save();
+
+                                $perkara_count = $row->count(); 
+                                $current_num_perbelanjaan = $finance_file->financeReportPerbelanjaan()->where('type','SF')->count();
+                                $current_sort_perbelanjaan = $finance_file->financeReportPerbelanjaan()->where('type','SF')->count();
+                                for($i = 8; $i < $perkara_count;$i++) {
+                                    $perbelanjaan = $finance_file->financeReportPerbelanjaan()->where('type','SF')->where('name',$row[$i][0])->first();
+                                    
+                                    if(empty($perbelanjaan) == false) {
+                                        $perbelanjaan->amount = $row[$i][1];
+                                        $perbelanjaan->save();
+
+                                    } else {
+                                        $current_num_perbelanjaan += 1;
+                                        $new_perbelanja = new FinanceReportPerbelanjaan();
+                                        $new_perbelanja->finance_file_id = $report_sf->finance_file_id;
+                                        $new_perbelanja->type = $report_sf->type;
+                                        $new_perbelanja->name = $row[$i][0];
+                                        $new_perbelanja->amount = $row[$i][1];
+                                        $new_perbelanja->report_key = 'custom'. $current_num_perbelanjaan;
+                                        $new_perbelanja->sort_no = $current_sort_perbelanjaan;
+                                        $new_perbelanja->is_custom = 1;
+                                        $new_perbelanja->save();
+
+                                        $current_sort_perbelanjaan += 1;
+                                    }
+                                }
+                                
+                            } else if($title == 'income' && $row->count()) {
+                                /** Finance Income */
+                                $incomes = $finance_file->financeIncome();
+                                
+
+                                $perkara_count = $row->count(); 
+                                $current_sort_income = $incomes->count();
+                                for($i = 0; $i < $perkara_count;$i++) {
+                                    $income_first_col = $row[$i][0];
+                                    $income = $finance_file->financeIncome()->where('name',$income_first_col)->first();
+                                    
+                                    if(empty($income)) {
+                                        $income = new FinanceIncome();
+                                        $income->finance_file_id = $finance_file->getKey();
+                                        $income->name = $income_first_col;
+                                        $income->sort_no = $current_sort_income;
+                                        $income->is_custom = 1;
+
+                                        $current_sort_income += 1;
+                                    }
+                                    $income->tunggakan = $row[$i][1];
+                                    $income->semasa = $row[$i][2];
+                                    $income->hadapan = $row[$i][3];
+
+                                    $income->save();
+                                }
+                                
+                            } else if($title == 'utility' && $row->count()) {
+                                /** Finance Utility */
+
+                                $type_a = "BHG_A";
+                                $type_b = "BHG_B";
+                                $perkara_count = $row->count(); 
+                                $current_sort_utility_a = $finance_file->financeUtility()->where('type', $type_a)->count();
+                                $current_sort_utility_sf = $finance_file->financeUtility()->where('type', $type_b)->count();
+                                for($i = 1; $i < $perkara_count;$i++) {
+
+                                    $utility_first_col_a = $row[$i][0];
+                                    $utility_first_col_b = $row[$i][6];
+                                    /** Utility BHG A */
+                                    if(empty($utility_first_col_a) == false) {
+                                        $utility_a = $finance_file->financeUtility()->where('type',$type_a)->where('name',$utility_first_col_a)->first();
+                                        if(empty($utility_a)) {
+                                            $utility_a = new FinanceUtility();
+                                            $utility_a->finance_file_id = $finance_file->getKey();
+                                            $utility_a->type = $type_a;
+                                            $utility_a->name = $utility_first_col_a;
+                                            $utility_a->sort_no = $current_sort_utility_a;
+                                            $utility_a->is_custom = 1;
+
+                                            $current_sort_utility_a += 1;
+                                        }
+                                        $utility_a->tunggakan = $row[$i][1];
+                                        $utility_a->semasa = $row[$i][2];
+                                        $utility_a->hadapan = $row[$i][3];
+                                        $utility_a->tertunggak = $row[$i][4];
+
+                                        $utility_a->save();
+
+                                    }
+                                    /** Utility BHG B */
+                                    if(empty($utility_first_col_b) == false) {
+                                        $utility_b = $finance_file->financeUtility()->where('type',$type_b)->where('name',$utility_first_col_b)->first();
+                                        if(empty($utility_b)) {
+                                            $utility_b = new FinanceUtility();
+                                            $utility_b->finance_file_id = $finance_file->getKey();
+                                            $utility_b->type = $type_b;
+                                            $utility_b->name = $utility_first_col_b;
+                                            $utility_b->sort_no = $current_sort_utility_sf;
+                                            $utility_b->is_custom = 1;
+
+                                            $current_sort_utility_sf += 1;
+                                        }
+                                        $utility_b->tunggakan = $row[$i][7];
+                                        $utility_b->semasa = $row[$i][8];
+                                        $utility_b->hadapan = $row[$i][9];
+                                        $utility_b->tertunggak = $row[$i][10];
+
+                                        $utility_b->save();
+
+                                    }
+                                }
+                                
+                            } else if($title == 'contract' && $row->count()) {
+                                /** Finance Contract */
+                                $contracts = $finance_file->financeContract();
+
+                                $perkara_count = $row->count(); 
+                                $current_sort_contract = $contracts->count();
+                                for($i = 0; $i < $perkara_count;$i++) {
+                                    $contract_first_col = $row[$i][0];
+                                    $contract = $finance_file->financeContract()->where('name',$contract_first_col)->first();
+                                    if(empty($contract)) {
+                                        $contract = new FinanceContract();
+                                        $contract->finance_file_id = $finance_file->getKey();
+                                        $contract->name = $contract_first_col;
+                                        $contract->sort_no = $current_sort_contract;
+                                        $contract->is_custom = 1;
+
+                                        $current_sort_contract += 1;
+                                    }
+                                    $contract->tunggakan = $row[$i][1];
+                                    $contract->semasa = $row[$i][2];
+                                    $contract->hadapan = $row[$i][3];
+                                    $contract->tertunggak = $row[$i][4];
+
+                                    $contract->save();
+                                }
+                                
+                            } else if($title == 'repair' && $row->count()) {
+                                /** Finance Repair */
+  
+                                $type_mf = "MF";
+                                $type_sf = "SF";
+                                $perkara_count = $row->count(); 
+                                $current_sort_repair_mf = $finance_file->financeRepair()->where('type', $type_mf)->count();
+                                $current_sort_repair_sf = $finance_file->financeRepair()->where('type', $type_sf)->count();
+                                for($i = 1; $i < $perkara_count;$i++) {
+
+                                    $repair_first_col_mf = $row[$i][0];
+                                    $repair_first_col_sf = $row[$i][6];
+                                    /** Repair MF */
+                                    if(empty($repair_first_col_mf) == false) {
+                                        $repair_mf = $finance_file->financeRepair()->where('type',$type_mf)->where('name',$repair_first_col_mf)->first();
+                                        if(empty($repair_mf)) {
+                                            $repair_mf = new FinanceRepair();
+                                            $repair_mf->finance_file_id = $finance_file->getKey();
+                                            $repair_mf->type = $type_mf;
+                                            $repair_mf->name = $repair_first_col_mf;
+                                            $repair_mf->sort_no = $current_sort_repair_mf;
+                                            $repair_mf->is_custom = 1;
+
+                                            $current_sort_repair_mf += 1;
+                                        }
+                                        
+                                        $repair_mf->tunggakan = $row[$i][1];
+                                        $repair_mf->semasa = $row[$i][2];
+                                        $repair_mf->hadapan = $row[$i][3];
+                                        $repair_mf->tertunggak = $row[$i][4];
+
+                                        $repair_mf->save();
+
+                                    }
+                                    /** Repair SF */
+                                    if(empty($repair_first_col_sf) == false) {
+                                        $repair_sf = $finance_file->financeRepair()->where('type',$type_sf)->where('name',$repair_first_col_sf)->first();
+                                        if(empty($repair_sf)) {
+                                            $repair_sf = new FinanceRepair();
+                                            $repair_sf->finance_file_id = $finance_file->getKey();
+                                            $repair_sf->type = $type_sf;
+                                            $repair_sf->name = $repair_first_col_sf;
+                                            $repair_sf->sort_no = $current_sort_repair_sf;
+                                            $repair_sf->is_custom = 1;
+
+                                            $current_sort_repair_sf += 1;
+                                        }
+                                        $repair_sf->tunggakan = $row[$i][7];
+                                        $repair_sf->semasa = $row[$i][8];
+                                        $repair_sf->hadapan = $row[$i][9];
+                                        $repair_sf->tertunggak = $row[$i][10];
+
+                                        $repair_sf->save();
+
+                                    }
+                                }
+                                
+                            } else if($title == 'vandalisme' && $row->count()) {
+                                /** Finance Vandalisme */
+    
+                                $type_mf = "MF";
+                                $type_sf = "SF";
+                                $perkara_count = $row->count(); 
+                                $current_sort_vandal_mf = $finance_file->financeVandal()->where('type', $type_mf)->count();
+                                $current_sort_vandal_sf = $finance_file->financeVandal()->where('type', $type_sf)->count();
+                                for($i = 1; $i < $perkara_count;$i++) {
+
+                                    $vandal_first_col_mf = $row[$i][0];
+                                    $vandal_first_col_sf = $row[$i][6];
+                                    /** Vandal MF */
+                                    if(empty($vandal_first_col_mf) == false) {
+                                        $vandal_mf = $finance_file->financeVandal()->where('type',$type_mf)->where('name',$vandal_first_col_mf)->first();
+                                        if(empty($vandal_mf)) {
+                                            $vandal_mf = new FinanceVandal();
+                                            $vandal_mf->finance_file_id = $finance_file->getKey();
+                                            $vandal_mf->type = $type_mf;
+                                            $vandal_mf->name = $vandal_first_col_mf;
+                                            $vandal_mf->sort_no = $current_sort_vandal_mf;
+                                            $vandal_mf->is_custom = 1;
+
+                                            $current_sort_vandal_mf += 1;
+                                        }
+                                        $vandal_mf->tunggakan = $row[$i][1];
+                                        $vandal_mf->semasa = $row[$i][2];
+                                        $vandal_mf->hadapan = $row[$i][3];
+                                        $vandal_mf->tertunggak = $row[$i][4];
+
+                                        $vandal_mf->save();
+
+                                    }
+                                    /** Vandal SF */
+                                    if(empty($vandal_first_col_sf) == false) {
+                                        $vandal_sf = $finance_file->financeVandal()->where('type',$type_sf)->where('name',$vandal_first_col_sf)->first();
+                                        if(empty($vandal_sf)) {
+                                            $vandal_sf = new FinanceVandal();
+                                            $vandal_sf->finance_file_id = $finance_file->getKey();
+                                            $vandal_sf->type = $type_sf;
+                                            $vandal_sf->name = $vandal_first_col_sf;
+                                            $vandal_sf->sort_no = $current_sort_vandal_sf;
+                                            $vandal_sf->is_custom = 1;
+
+                                            $current_sort_vandal_sf += 1;
+                                        }
+                                        $vandal_sf->tunggakan = $row[$i][7];
+                                        $vandal_sf->semasa = $row[$i][8];
+                                        $vandal_sf->hadapan = $row[$i][9];
+                                        $vandal_sf->tertunggak = $row[$i][10];
+
+                                        $vandal_sf->save();
+
+                                    }
+                                }
+                                
+                            } else if($title == 'staff' && $row->count()) {
+                                /** Finance Staff */
+                                $staffs = $finance_file->financeStaff();
+
+                                $perkara_count = $row->count(); 
+                                $current_sort_staff = $staffs->count();
+                                for($i = 0; $i < $perkara_count;$i++) {
+                                    $staff_first_col = $row[$i][0];
+                                    $staff = $finance_file->financeStaff()->where('name',$staff_first_col)->first();
+                                    if(empty($staff)) {
+                                        $staff = new FinanceStaff();
+                                        $staff->finance_file_id = $finance_file->getKey();
+                                        $staff->name = $staff_first_col;
+                                        $staff->sort_no = $current_sort_staff;
+                                        $staff->is_custom = 1;
+
+                                        $current_sort_staff += 1;
+                                    }
+                                    $staff->gaji_per_orang = $row[$i][1];
+                                    $staff->bil_pekerja = $row[$i][2];
+                                    $staff->tunggakan = $row[$i][3];
+                                    $staff->semasa = $row[$i][4];
+                                    $staff->hadapan = $row[$i][5];
+                                    $staff->tertunggak = $row[$i][6];
+
+                                    $staff->save();
+                                }
+                                
+                            } else if($title == 'admin' && $row->count()) {
+                                /** Finance Admin */
+                                $admins = $finance_file->financeAdmin();
+
+                                $perkara_count = $row->count(); 
+                                $current_sort_admin = $admins->count();
+                                for($i = 0; $i < $perkara_count;$i++) {
+                                    $admin_first_col = $row[$i][0];
+                                    $admin = $finance_file->financeAdmin()->where('name',$admin_first_col)->first();
+                                    if(empty($admin)) {
+                                        $admin = new FinanceAdmin();
+                                        $admin->finance_file_id = $finance_file->getKey();
+                                        $admin->name = $admin_first_col;
+                                        $admin->sort_no = $current_sort_admin;
+                                        $admin->is_custom = 1;
+
+                                        $current_sort_admin += 1;
+                                    }
+                                    $admin->tunggakan = $row[$i][1];
+                                    $admin->semasa = $row[$i][2];
+                                    $admin->hadapan = $row[$i][3];
+                                    $admin->tertunggak = $row[$i][4];
+
+                                    $admin->save();
+                                }
+                                
+                            }
+                        }
+
+                        # Audit Trail
+                        $remarks = $finance_file->file->file_no . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB Finance";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+
+                        print "true";
+                    } else {
+                        print "empty_data";
+                    }
+                } else {
+                    print "empty_file";
+                }
+            } else {
+                print "false";
+            }
+        });
+        
     }
 
 }

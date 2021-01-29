@@ -186,10 +186,14 @@ class FinanceValidatorController extends BaseController {
     public function addExtraValidationRules() {
         $response = [
             "validate_fields" => [
-                "finance_file_id" => 'required'
+                'file_no'   => 'required',
+                'year'      => 'required|numeric',
+                'month'     => 'required|numeric',
+                // "finance_file_id" => 'required'
             ],
             'custom_messages' => [
-                "finance_file_id" => $this->others['messages']['finance_file_id']
+                'file_no'   => $this->others['messages']['file_no'],
+                // "finance_file_id" => $this->others['messages']['finance_file_id']
             ]
         ];
 
@@ -201,7 +205,11 @@ class FinanceValidatorController extends BaseController {
         $customMessages = $this->getCustomMessages('main');
 
         if ($is_update) {
-            $validation_rules = ['id' => 'required'];
+            $validation_rules = [
+                'file_no' => 'required',
+                'year'      => 'required|numeric',
+                'month'     => 'required|numeric',
+            ];
         }
 
         $validator = Validator::make($data, $validation_rules, [], $customMessages);
@@ -231,7 +239,7 @@ class FinanceValidatorController extends BaseController {
             $validation_rules = array_merge($validation_rules, $add_extra_rules['validate_fields']);
             $customMessages = array_merge($customMessages, $add_extra_rules['custom_messages']);
         }
-
+        
         $validator = Validator::make($data, $validation_rules, [], $customMessages);
 
         if ($validator->fails()) {
