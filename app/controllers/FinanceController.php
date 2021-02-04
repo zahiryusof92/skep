@@ -482,17 +482,20 @@ class FinanceController extends BaseController {
         
         $user = Auth::user();
         
-        if(!in_array($user->role,[1,2])) {
-            $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*', 'strata.id as strata_id'])
-                    ->where('files.id', $user->file_id)
-                    ->where('files.company_id', $user->company_id)
-                    ->where('files.is_active', '!=', 2)
-                    ->where('files.is_deleted', 0);
+        if (!$user->getAdmin()) {
+            if (!empty($user->file_id)) {
+                $file = Files::where('id', $user->file_id)->where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $file = Files::where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
         } else {
-            $file = Files::where('is_deleted', 0)->get();
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
         }
+        
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
