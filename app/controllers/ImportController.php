@@ -1808,21 +1808,23 @@ class ImportController extends BaseController {
                                 for($i = 0; $i < $perkara_count;$i++) {
                                     $income_first_col = $row[$i][0];
                                     $income = $finance_file->financeIncome()->where('name',$income_first_col)->first();
-                                    
-                                    if(empty($income)) {
-                                        $income = new FinanceIncome();
-                                        $income->finance_file_id = $finance_file->getKey();
-                                        $income->name = $income_first_col;
-                                        $income->sort_no = $current_sort_income;
-                                        $income->is_custom = 1;
+                                    if($income_first_col != null) {
+                                        if(empty($income)) {
+                                            $income = new FinanceIncome();
+                                            $income->finance_file_id = $finance_file->getKey();
+                                            $income->name = $income_first_col;
+                                            $income->sort_no = $current_sort_income;
+                                            $income->is_custom = 1;
+    
+                                            $current_sort_income += 1;
+                                        }
+                                        $income->tunggakan = $row[$i][1];
+                                        $income->semasa = $row[$i][2];
+                                        $income->hadapan = $row[$i][3];
+    
+                                        $income->save();
 
-                                        $current_sort_income += 1;
                                     }
-                                    $income->tunggakan = $row[$i][1];
-                                    $income->semasa = $row[$i][2];
-                                    $income->hadapan = $row[$i][3];
-
-                                    $income->save();
                                 }
                                 
                             } else if($title == 'utility' && $row->count()) {
@@ -1840,43 +1842,48 @@ class ImportController extends BaseController {
                                     /** Utility BHG A */
                                     if(empty($utility_first_col_a) == false) {
                                         $utility_a = $finance_file->financeUtility()->where('type',$type_a)->where('name',$utility_first_col_a)->first();
-                                        if(empty($utility_a)) {
-                                            $utility_a = new FinanceUtility();
-                                            $utility_a->finance_file_id = $finance_file->getKey();
-                                            $utility_a->type = $type_a;
-                                            $utility_a->name = $utility_first_col_a;
-                                            $utility_a->sort_no = $current_sort_utility_a;
-                                            $utility_a->is_custom = 1;
-
-                                            $current_sort_utility_a += 1;
-                                        }
-                                        $utility_a->tunggakan = $row[$i][1];
-                                        $utility_a->semasa = $row[$i][2];
-                                        $utility_a->hadapan = $row[$i][3];
-                                        $utility_a->tertunggak = $row[$i][4];
-
-                                        $utility_a->save();
+                                        
+                                            if(empty($utility_a)) {
+                                                $utility_a = new FinanceUtility();
+                                                $utility_a->finance_file_id = $finance_file->getKey();
+                                                $utility_a->type = $type_a;
+                                                $utility_a->name = $utility_first_col_a;
+                                                $utility_a->sort_no = $current_sort_utility_a;
+                                                $utility_a->is_custom = 1;
+    
+                                                $current_sort_utility_a += 1;
+                                            }
+                                            $utility_a->tunggakan = $row[$i][1];
+                                            $utility_a->semasa = $row[$i][2];
+                                            $utility_a->hadapan = $row[$i][3];
+                                            $utility_a->tertunggak = $row[$i][4];
+    
+                                            $utility_a->save();
+                                        
 
                                     }
                                     /** Utility BHG B */
                                     if(empty($utility_first_col_b) == false) {
                                         $utility_b = $finance_file->financeUtility()->where('type',$type_b)->where('name',$utility_first_col_b)->first();
-                                        if(empty($utility_b)) {
-                                            $utility_b = new FinanceUtility();
-                                            $utility_b->finance_file_id = $finance_file->getKey();
-                                            $utility_b->type = $type_b;
-                                            $utility_b->name = $utility_first_col_b;
-                                            $utility_b->sort_no = $current_sort_utility_sf;
-                                            $utility_b->is_custom = 1;
-
-                                            $current_sort_utility_sf += 1;
-                                        }
-                                        $utility_b->tunggakan = $row[$i][7];
-                                        $utility_b->semasa = $row[$i][8];
-                                        $utility_b->hadapan = $row[$i][9];
-                                        $utility_b->tertunggak = $row[$i][10];
-
-                                        $utility_b->save();
+                                        
+                                            if(empty($utility_b)) {
+                                                $utility_b = new FinanceUtility();
+                                                $utility_b->finance_file_id = $finance_file->getKey();
+                                                $utility_b->type = $type_b;
+                                                $utility_b->name = $utility_first_col_b;
+                                                $utility_b->sort_no = $current_sort_utility_sf;
+                                                $utility_b->is_custom = 1;
+    
+                                                $current_sort_utility_sf += 1;
+                                            }
+                                            $utility_b->tunggakan = $row[$i][7];
+                                            $utility_b->semasa = $row[$i][8];
+                                            $utility_b->hadapan = $row[$i][9];
+                                            $utility_b->tertunggak = $row[$i][10];
+    
+                                            $utility_b->save();
+                                        
+                                        
 
                                     }
                                 }
@@ -1890,21 +1897,23 @@ class ImportController extends BaseController {
                                 for($i = 0; $i < $perkara_count;$i++) {
                                     $contract_first_col = $row[$i][0];
                                     $contract = $finance_file->financeContract()->where('name',$contract_first_col)->first();
-                                    if(empty($contract)) {
-                                        $contract = new FinanceContract();
-                                        $contract->finance_file_id = $finance_file->getKey();
-                                        $contract->name = $contract_first_col;
-                                        $contract->sort_no = $current_sort_contract;
-                                        $contract->is_custom = 1;
+                                    if($contract_first_col != null) {
+                                        if(empty($contract)) {
+                                            $contract = new FinanceContract();
+                                            $contract->finance_file_id = $finance_file->getKey();
+                                            $contract->name = $contract_first_col;
+                                            $contract->sort_no = $current_sort_contract;
+                                            $contract->is_custom = 1;
 
-                                        $current_sort_contract += 1;
+                                            $current_sort_contract += 1;
+                                        }
+                                        $contract->tunggakan = $row[$i][1];
+                                        $contract->semasa = $row[$i][2];
+                                        $contract->hadapan = $row[$i][3];
+                                        $contract->tertunggak = $row[$i][4];
+
+                                        $contract->save();
                                     }
-                                    $contract->tunggakan = $row[$i][1];
-                                    $contract->semasa = $row[$i][2];
-                                    $contract->hadapan = $row[$i][3];
-                                    $contract->tertunggak = $row[$i][4];
-
-                                    $contract->save();
                                 }
                                 
                             } else if($title == 'repair' && $row->count()) {
@@ -2029,23 +2038,26 @@ class ImportController extends BaseController {
                                 for($i = 0; $i < $perkara_count;$i++) {
                                     $staff_first_col = $row[$i][0];
                                     $staff = $finance_file->financeStaff()->where('name',$staff_first_col)->first();
-                                    if(empty($staff)) {
-                                        $staff = new FinanceStaff();
-                                        $staff->finance_file_id = $finance_file->getKey();
-                                        $staff->name = $staff_first_col;
-                                        $staff->sort_no = $current_sort_staff;
-                                        $staff->is_custom = 1;
+                                    
+                                    if(empty($staff_first_col) == false) {
+                                        if(empty($staff)) {
+                                            $staff = new FinanceStaff();
+                                            $staff->finance_file_id = $finance_file->getKey();
+                                            $staff->name = $staff_first_col;
+                                            $staff->sort_no = $current_sort_staff;
+                                            $staff->is_custom = 1;
 
-                                        $current_sort_staff += 1;
+                                            $current_sort_staff += 1;
+                                        }
+                                        $staff->gaji_per_orang = $row[$i][1];
+                                        $staff->bil_pekerja = $row[$i][2];
+                                        $staff->tunggakan = $row[$i][3];
+                                        $staff->semasa = $row[$i][4];
+                                        $staff->hadapan = $row[$i][5];
+                                        $staff->tertunggak = $row[$i][6];
+
+                                        $staff->save();
                                     }
-                                    $staff->gaji_per_orang = $row[$i][1];
-                                    $staff->bil_pekerja = $row[$i][2];
-                                    $staff->tunggakan = $row[$i][3];
-                                    $staff->semasa = $row[$i][4];
-                                    $staff->hadapan = $row[$i][5];
-                                    $staff->tertunggak = $row[$i][6];
-
-                                    $staff->save();
                                 }
                                 
                             } else if($title == 'admin' && $row->count()) {
@@ -2057,21 +2069,24 @@ class ImportController extends BaseController {
                                 for($i = 0; $i < $perkara_count;$i++) {
                                     $admin_first_col = $row[$i][0];
                                     $admin = $finance_file->financeAdmin()->where('name',$admin_first_col)->first();
-                                    if(empty($admin)) {
-                                        $admin = new FinanceAdmin();
-                                        $admin->finance_file_id = $finance_file->getKey();
-                                        $admin->name = $admin_first_col;
-                                        $admin->sort_no = $current_sort_admin;
-                                        $admin->is_custom = 1;
+                                    
+                                    if(empty($admin_first_col) == false) {
+                                        if(empty($admin)) {
+                                            $admin = new FinanceAdmin();
+                                            $admin->finance_file_id = $finance_file->getKey();
+                                            $admin->name = $admin_first_col;
+                                            $admin->sort_no = $current_sort_admin;
+                                            $admin->is_custom = 1;
 
-                                        $current_sort_admin += 1;
+                                            $current_sort_admin += 1;
+                                        }
+                                        $admin->tunggakan = $row[$i][1];
+                                        $admin->semasa = $row[$i][2];
+                                        $admin->hadapan = $row[$i][3];
+                                        $admin->tertunggak = $row[$i][4];
+
+                                        $admin->save();
                                     }
-                                    $admin->tunggakan = $row[$i][1];
-                                    $admin->semasa = $row[$i][2];
-                                    $admin->hadapan = $row[$i][3];
-                                    $admin->tertunggak = $row[$i][4];
-
-                                    $admin->save();
                                 }
                                 
                             }
