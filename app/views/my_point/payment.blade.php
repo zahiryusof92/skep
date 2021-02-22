@@ -30,7 +30,21 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group {{ $errors->has('terms') ? 'has-danger' : '' }}">
+                            <div class="checkbox">
+                                <span style="color: red;">* </span>
+                                <label>                                    
+                                    <input type="checkbox" value="1" name="terms" id="terms">
+                                    Agree with the <a href="https://odesi.tech" target="_blank">terms and conditions</a>
+                                </label>
+                            </div>
+                            <br/>
+                            @include('alert.feedback', ['field' => 'terms'])
+                        </div>
+                    </div>
+                </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary" id="submit_button">{{ trans('app.my_point.pay_now') }}</button>
                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ route('myPoint.index') }}'">{{ trans('app.forms.cancel') }}</button>

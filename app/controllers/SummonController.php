@@ -152,15 +152,7 @@ class SummonController extends \BaseController {
 
             return View::make('summon.index', $viewData);
         } else {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-
-            return View::make('404_en', $viewData);
+            return Redirect::to('/')->with('error', trans('app.errors.occurred'));
         }
     }
 
@@ -206,7 +198,7 @@ class SummonController extends \BaseController {
                 return View::make('summon.create', $viewData);
             }
         } else {
-            return Redirect::to('summon')->with('error', trans('app.errors.occurred'));
+            return Redirect::to('/')->with('error', trans('app.errors.occurred'));
         }
     }
 
@@ -346,12 +338,20 @@ class SummonController extends \BaseController {
                     $type = $model->type;
                     $durationOverdue = $model->durationTitle();
 
-                    $amount = '';
+                    $cash = 0;
+                    $amount = 0;
+                    $eligible_pay = false;
+
+                    $available_point = Auth::user()->getTotalPoint();
                     if ($model->status == Summon::DRAFT) {
                         if ($model->category_id && $model->company_id) {
                             $cat = Category::find($model->category_id);
                             if ($cat) {
+                                $cash = $cat->getSummonCash($model->company_id);
                                 $amount = $cat->getSummonAmount($model->company_id);
+                                if ($available_point >= $amount) {
+                                    $eligible_pay = true;
+                                }
                             }
                         }
                     }
@@ -380,7 +380,9 @@ class SummonController extends \BaseController {
                         'type' => $type,
                         'model' => $model,
                         'attachment' => json_decode($model->attachment),
+                        'cash' => $cash,
                         'amount' => $amount,
+                        'eligible_pay' => $eligible_pay
                     );
 
                     return View::make('summon.show', $viewData);
@@ -430,7 +432,7 @@ class SummonController extends \BaseController {
             }
         }
 
-        return Redirect::to('summon')->with('error', trans('app.errors.occurred'));
+        return Redirect::to('/')->with('error', trans('app.errors.occurred'));
     }
 
     /**
@@ -550,6 +552,8 @@ class SummonController extends \BaseController {
                         }
                     }
                 }
+
+                return Redirect::to('summon')->with('success', trans('app.successes.updated_successfully'));
             }
         }
 
@@ -587,35 +591,53 @@ class SummonController extends \BaseController {
     public function orders() {
         $data = Input::all();
 
-        $summon = Summon::find($data['summon']);
-        if ($summon) {
-            $description = 'Created Summon for ' . $summon->ic_no;
+        $rules = array(
+            'payment_method' => 'required'
+        );
 
-            $model = new Orders();
-            $model->user_id = Auth::user()->id;
-            $model->reference_id = $summon->id;
-            $model->type = Orders::SUMMON;
-            $model->description = $description;
-            $model->amount = $data['amount'];
-            $success = $model->save();
+        $validator = Validator::make($data, $rules);
 
-            if ($success) {
-                return Redirect::to('summon/payment')->with('orderID', $model->id);
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator)->withInput($data);
+        } else {
+            $summon = Summon::find($data['summon']);
+            if ($summon) {
+                $description = 'Created Summon for ' . $summon->ic_no;
+                $ref_no = date('YmdHis') . $summon->id;
+
+                $model = new Orders();
+                $model->user_id = Auth::user()->id;
+                $model->reference_id = $summon->id;
+                $model->reference_no = $ref_no;
+                $model->type = Orders::SUMMON;
+                $model->description = $description;
+                $model->amount = $data['amount'];
+                $model->payment_method = $data['payment_method'];
+                $success = $model->save();
+
+                if ($success) {
+                    return Redirect::to('summon/payment')->with('orderID', $model->id);
+                }
             }
-        }
 
-        return Redirect::back()->with('error', trans('app.errors.occurred'));
+            return Redirect::back()->with('error', trans('app.errors.occurred'));
+        }
     }
 
     public function payment() {
-        $eligible_pay = false;
+        $eligible_pay = true;
 
         $model = Orders::find(Session::get('orderID'));
-        $available_point = Auth::user()->getTotalPoint();
 
-        if (!empty($model)) {
-            if ($available_point >= $model->amount) {
-                $eligible_pay = true;
+        if ($model) {
+            if ($model->payment_method == Orders::POINT) {
+                $available_point = Auth::user()->getTotalPoint();
+                $total_amount = $model->getSummonPoint();
+                if ($available_point < $total_amount) {
+                    $eligible_pay = false;
+                }
+            } else {
+                $total_amount = $model->amount;
             }
 
             $viewData = array(
@@ -625,7 +647,8 @@ class SummonController extends \BaseController {
                 'sub_nav_active' => 'summon_list',
                 'model' => $model,
                 'image' => '',
-                'eligible_pay' => $eligible_pay
+                'eligible_pay' => $eligible_pay,
+                'total_amount' => $total_amount
             );
 
             return View::make('summon.payment', $viewData);
@@ -638,41 +661,76 @@ class SummonController extends \BaseController {
         $data = Input::all();
 
         $model = Orders::find($data['order_id']);
-        $available_point = Auth::user()->getTotalPoint();
 
         if ($model) {
-            if ($available_point >= $model->amount) {
-                $model->payment_method = Orders::POINT;
-                $model->status = Summon::APPROVED;
-                $success = $model->save();
+            $total_amount = $data['amount'];
 
-                if ($success) {
-                    if ($model->status == Summon::APPROVED) {
-                        $summon = Summon::find($model->reference_id);
-                        if ($summon) {
-                            $summon->status = Summon::PENDING;
-                            $summon->save();
+            if ($model->payment_method == Orders::POINT) {
+                $available_point = Auth::user()->getTotalPoint();
+                if ($available_point >= $total_amount) {
+                    $model->status = Summon::APPROVED;
+                    $success = $model->save();
+
+                    if ($success) {
+                        if ($model->status == Summon::APPROVED) {
+                            $summon = Summon::find($model->reference_id);
+                            if ($summon) {
+                                $summon->status = Summon::PENDING;
+                                $summon->save();
+                            }
+
+                            $ref_no = date('YmdHis') . $model->id;
+
+                            $transaction = new PointTransaction();
+                            $transaction->user_id = $model->user_id;
+                            $transaction->order_id = $model->id;
+                            $transaction->reference_no = $ref_no;
+                            $transaction->type = $model->type;
+                            $transaction->is_debit = false;
+                            $transaction->point_availabe = Auth::user()->getTotalPoint();
+                            $transaction->point_usage = $total_amount;
+                            $transaction->point_balance = Auth::user()->getTotalPoint() - $total_amount;
+                            $transaction->description = $model->description;
+                            $transaction->amount = $model->amount;
+                            $transaction->rate = $model->getSummonRate();
+                            $transaction->save();
                         }
 
-                        $ref_no = date('YmdHis') . $model->id;
-
-                        $transaction = new PointTransaction();
-                        $transaction->user_id = $model->user_id;
-                        $transaction->order_id = $model->id;
-                        $transaction->reference_no = $ref_no;
-                        $transaction->type = $model->type;
-                        $transaction->is_debit = false;
-                        $transaction->point_availabe = Auth::user()->getTotalPoint();
-                        $transaction->point_usage = $model->amount;
-                        $transaction->point_balance = Auth::user()->getTotalPoint() - $model->amount;
-                        $transaction->description = $model->description;
-                        $transaction->save();
+                        return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
                     }
-
-                    return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
+                } else {
+                    return Redirect::to('summon/' . $model->reference_id)->with('error', trans('app.my_point.not_enough'))->withInput($data);
                 }
             } else {
-                return Redirect::to('summon/' . $model->reference_id)->with('error', trans('app.my_point.not_enough'))->withInput($data);
+                $rules = array(
+                    'payment_method' => 'required',
+                    'terms' => 'required'
+                );
+
+                $validator = Validator::make($data, $rules);
+
+                if ($validator->fails()) {
+                    return Redirect::to('summon/payment')->with('orderID', $model->id)->withErrors($validator)->withInput($data);
+                } else {
+                    $model->status = Summon::APPROVED;
+                    $success = $model->save();
+
+                    if ($success) {
+                        if ($model->status == Summon::APPROVED) {
+                            $summon = Summon::find($model->reference_id);
+                            if ($summon) {
+                                $summon->status = Summon::PENDING;
+                                $summon->save();
+                            }
+
+                            Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
+                                $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                            });
+                        }
+
+                        return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
+                    }
+                }
             }
         }
 

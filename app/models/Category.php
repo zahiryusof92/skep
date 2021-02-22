@@ -36,6 +36,22 @@ class Category extends Eloquent {
         return $total;
     }
 
+    public function getSummonCash($company_id) {
+        $total = 0;
+
+        if ($company_id) {
+            $category = SummonRate::where('category_id', $this->id)->where('company_id', $company_id)->first();
+            if ($category) {
+                $total = $category->amount;
+                if ($total > 0) {
+                    return $total;
+                }
+            }
+        }
+
+        return $total;
+    }
+
     public static function findWhere($array, $matching) {
         foreach ($array as $item) {
             $is_match = true;

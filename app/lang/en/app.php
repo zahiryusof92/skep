@@ -932,10 +932,12 @@ return array(
         'action' => 'Action',
         'action_by' => 'Action By',
         'action_date' => 'Action Date',
-        'amount' => 'Amount to Pay (Points)',
+        'amount' => 'Amount to Pay',
         'pay_now' => 'Pay Now',
         'pay' => 'Payment',
         'payment' => 'Proceed to Payment',
+        'bank_transfer' => 'Bank Transfer',
+        'points' => 'Points',
         'category' => [
             'no' => 'No.',
             'cob' => 'Council',
