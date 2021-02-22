@@ -37,7 +37,23 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.admin_status') }}</label>
+                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.code') }}</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="code" class="form-control select2">
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @if (count($codeList)> 0)
+                                    @foreach ($codeList as $value => $name)
+                                    <option value="{{ $value }}">{{ $name }} ({{ $value }})</option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                                <div id="code_error" style="display:none;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.status') }}</label>
                             </div>
                             <div class="col-md-4">
                                 <select id="is_active" class="form-control">
@@ -50,7 +66,7 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="form-actions">
                             <?php if ($insert_permission == 1) { ?>
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="addLandTitle()">{{ trans('app.forms.save') }}</button>
+                                <button type="button" class="btn btn-primary" id="submit_button" onclick="addLandTitle()">{{ trans('app.forms.save') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("SettingController@landTitle") }}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
@@ -69,13 +85,20 @@ foreach ($user_permission as $permission) {
         $("#loading").css("display", "inline-block");
 
         var description = $("#description").val(),
-            is_active = $("#is_active").val();
+                code = $("#code").val(),
+                is_active = $("#is_active").val();
 
         var error = 0;
 
         if (description.trim() == "") {
             $("#description_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Land Title"]) }}</span>');
             $("#description_error").css("display", "block");
+            error = 1;
+        }
+
+        if (code.trim() == "") {
+            $("#code_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Code"]) }}</span>');
+            $("#code_error").css("display", "block");
             error = 1;
         }
 
@@ -91,6 +114,7 @@ foreach ($user_permission as $permission) {
                 type: "POST",
                 data: {
                     description: description,
+                    code: code,
                     is_active: is_active
 
                 },
