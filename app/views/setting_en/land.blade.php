@@ -31,10 +31,11 @@ foreach ($user_permission as $permission) {
                     <table class="table table-hover nowrap" id="land" width="100%">
                         <thead>
                             <tr>
-                                <th style="width:70%;">{{ trans('app.forms.land_title') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.status') }}</th>
+                                <th style="width:65%;">{{ trans('app.forms.land_title') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.code') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                 <?php if ($update_permission == 1) { ?>
-                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                <th style="width:15%;">{{ trans('app.forms.action') }}</th>
                                 <?php } ?>
                             </tr>
                         </thead>

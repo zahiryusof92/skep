@@ -211,7 +211,7 @@ class UserController extends BaseController {
                                 ), $remember);
 
                 if ($auth) {
-                    if (Auth::user()->getAdmin()) {
+                    if (Auth::user()->getAdmin() || Auth::user()->isLawyer()) {
                         $user_account = User::where('id', Auth::user()->id)->first();
                         if ($user_account) {
                             Session::put('id', $user_account['id']);
@@ -274,8 +274,12 @@ class UserController extends BaseController {
                 $user->phone_no = $data['phone_no'];
                 $success = $user->save();
 
+                /**
+                 * call back to vendor portal to update info
+                 */
+                (new OAuth())->updateSimpleProfile($user);
+                
                 if ($success) {
-                    (new OAuth())->updateSimpleProfile($user);
                     
                     Session::forget('full_name');
                     Session::put('full_name', $user['full_name']);

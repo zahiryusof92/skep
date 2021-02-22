@@ -479,14 +479,30 @@ class FinanceController extends BaseController {
     public function financeList() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        
+        $user = Auth::user();
+        
+        if (!$user->getAdmin()) {
+            if (!empty($user->file_id)) {
+                $file = Files::where('id', $user->file_id)->where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $file = Files::where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            } else {
+                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+            }
+        }
+        
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
-        $file = Files::where('is_deleted', 0)->get();
         $year = Files::getVPYear();
-
+        
         $viewData = array(
             'title' => trans('app.menus.cob.finance_file_list'),
             'panel_nav_active' => 'cob_panel',
@@ -1546,7 +1562,7 @@ class FinanceController extends BaseController {
                 $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                 $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . $files->file_no . "</a>",
+                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
                     date('d/m/Y', strtotime($filelists->date)),
                     $filelists->name,
                     number_format($filelists->amount, 2),
