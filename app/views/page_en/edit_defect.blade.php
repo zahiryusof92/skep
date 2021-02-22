@@ -102,7 +102,7 @@ foreach ($user_permission as $permissions) {
                     </form>
 
                     <form>
-                        @if (Auth::user()->getAdmin() || strtolower(Auth::user()->getRole->name) == 'cob manager' || strtolower(Auth::user()->getRole->name) == 'cob')
+                        @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isCOBManager())
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">

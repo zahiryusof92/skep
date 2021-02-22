@@ -554,7 +554,8 @@ return array(
         "to" => "To",
         "is_paid" => "Paid Version",
         "conversion" => "RM1 equal to what point",
-        "rate" => "Point"
+        "rate" => "Point",
+        "code" => "Code",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

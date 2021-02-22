@@ -851,5 +851,13 @@ Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')
 Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before(['auth.basic', 'authMember']);
 Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before(['auth.basic', 'authMember']);
 
+/*
+ * Cronjob
+ */
+Route::get('cronjob/createFileByCob/{cob}', 'CronjobController@createFileByCob');
+Route::get('cronjob/createFile/{id}', 'CronjobController@createFile');
+Route::get('cronjob/updateFile/{id}', 'CronjobController@updateFile');
+Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
+
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');

@@ -1562,7 +1562,7 @@ class FinanceController extends BaseController {
                 $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                 $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . $files->file_no . "</a>",
+                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
                     date('d/m/Y', strtotime($filelists->date)),
                     $filelists->name,
                     number_format($filelists->amount, 2),
