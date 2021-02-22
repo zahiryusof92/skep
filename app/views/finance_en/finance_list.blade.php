@@ -23,6 +23,12 @@ foreach ($user_permission as $permission) {
                     <button class="btn btn-success" data-toggle="modal" data-target="#importForm">
                         {{ trans('app.buttons.import_finance_files') }} &nbsp;<i class="fa fa-upload"></i>
                     </button>
+                    &nbsp;
+                    <a href="{{asset('files/finance_template.xlsx')}}" target="_blank">
+                        <button type="button" class="btn btn-warning">
+                            {{ trans('app.forms.download_csv_template') }} &nbsp;<i class="fa fa-download"></i>
+                        </button>
+                    </a>
                 </div>
             </div>
             <br/>
@@ -48,9 +54,7 @@ foreach ($user_permission as $permission) {
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
                                             <select name="import_file_id" id="import_file_id" class="form-control select2">
-                                                @if (count($file) > 1)
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                @endif
                                                 @foreach ($file as $files)
                                                 <option value="{{ $files->id }}">{{ $files->file_no }}</option>
                                                 @endforeach

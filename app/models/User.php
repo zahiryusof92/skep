@@ -70,7 +70,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return $this->belongsTo('Company', 'company_id');
     }
 
-    public function isAdmin() {
+    public function isSuperadmin() {
         if (stripos($this->getRole->name, Role::SUPERADMIN) !== FALSE) {
             return true;
         }
