@@ -169,6 +169,7 @@ return array(
             "parliment" => "Parliament",
             "vp" => "Before VP vs After VP",
             "management_list" => "Management List",
+            "land_title" => "Land Category",
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -242,6 +243,7 @@ return array(
         "logo" => "Logo",
         "navbar_image" => "Navbar Image",
         "cob" => "COB",
+        "finance" => "Finance",
         "jmb" => "JMB",
         "mc" => "MC",
         "form_type" => "Form Type",
@@ -390,6 +392,7 @@ return array(
         "file_approval" => "File Approval",
         "import_cob_files" => "Import COB Files",
         "import_cob_files_before_vp" => "Import COB Files Before VP",
+        "import_finance_files" => "Import Finance Files",
         "excel_file" => "Excel File",
         "all" => "All",
         "detail" => "Detail",
@@ -551,7 +554,8 @@ return array(
         "to" => "To",
         "is_paid" => "Paid Version",
         "conversion" => "RM1 equal to what point",
-        "rate" => "Point"
+        "rate" => "Point",
+        "code" => "Code",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -811,6 +815,7 @@ return array(
         "update_access_group" => "Update Access Group",
         "import_cob_files" => "Import COB Files",
         "import_cob_files_before_vp" => "Import COB Files Before VP",
+        "import_finance_files" => "Import Finance Files",
         "add_memo" => "Add Memo",
         "update_memo" => "Update Memo",
         "add_buyer" => "Add Buyer",
@@ -874,6 +879,7 @@ return array(
             'write_review' => 'Type your review',
             'submit_review' => 'Submit Review',
             'add_project' => 'Add Project',
+            'update_project' => 'Edit Project',
         ],
         'property_agents' => [
             'title' => 'PMC',

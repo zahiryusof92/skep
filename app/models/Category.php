@@ -4,6 +4,17 @@ class Category extends Eloquent {
 
     protected $table = 'category';
 
+    public static function codeList() {
+        $list = [
+            "L" => "Low",
+            "ML" => "Medium Low",
+            "MH" => "Medium High",
+            "H" => "High"
+        ];
+
+        return $list;
+    }
+
     public function strata() {
         return $this->belongsTo('Strata', 'category');
     }

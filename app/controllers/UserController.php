@@ -1,5 +1,7 @@
 <?php
 
+use Helper\OAuth;
+
 class UserController extends BaseController {
 
     public function changeLanguage($lang) {
@@ -272,7 +274,13 @@ class UserController extends BaseController {
                 $user->phone_no = $data['phone_no'];
                 $success = $user->save();
 
+                /**
+                 * call back to vendor portal to update info
+                 */
+                (new OAuth())->updateSimpleProfile($user);
+                
                 if ($success) {
+                    
                     Session::forget('full_name');
                     Session::put('full_name', $user['full_name']);
 

@@ -70,7 +70,7 @@
                                 <div class="form-group {{ $errors->has('rating') ? 'has-danger' : '' }}">
                                     <label class="form-control-label"><span style="color: red;">*</span> {{ trans('app.directory.vendors.rating') }}</label>
                                     <small class="text-muted">{{ trans('app.directory.vendors.rating_help') }}</small>
-                                    <input type="number" class="form-control" placeholder="{{ trans('app.directory.vendors.rating') }}" id="rating" name="rating" value="{{ Input::old('rating') ? Input::old('rating') : $model->rating }}" min="1" max="10"/>
+                                    <input type="number" class="form-control" placeholder="{{ trans('app.directory.vendors.rating') }}" id="rating" name="rating" value="{{ Input::old('rating') ? Input::old('rating') : $model->rating }}"/>
                                     @if($errors->has('rating'))
                                     <span class="help-block text-danger">{{ $errors->first('rating') }}</span>
                                     @endif

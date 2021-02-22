@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Exception;
 use BaseController;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,164 @@ use HousingSchemeUser;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiController extends BaseController {
+
+    public function SSOUsernameValidate() {
+
+        try {
+            $response = [];
+
+            $data = \Input::all();
+
+            $validation_rules = [
+                'username' => 'required|exists:users',
+            ];
+
+            $validator = \Validator::make($data, $validation_rules, []);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors();
+
+                return [
+                    'status' => 422,
+                    'data' => $errors->toJson(),
+                    'message' => 'Validation Error'
+                ];
+            }
+
+            $response['status'] = 200;
+
+            return Response::json($response);
+        } catch (Exception $e) {
+
+            throw($e);
+        }
+    }
+
+    public function SSOLogin() {
+        try {
+
+            $data = \Input::all();
+
+            $validation_rules = [
+                'username' => 'required',
+                'password' => 'required',
+            ];
+
+            $validator = \Validator::make($data, $validation_rules, []);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors();
+
+                return [
+                    'status' => 422,
+                    'data' => $errors->toJson(),
+                    'message' => 'Validation Error'
+                ];
+            }
+
+            $user = Auth::attempt(array(
+                        'username' => $data['username'],
+                        'password' => $data['password'],
+                        'status' => 1,
+                        'is_active' => 1,
+                        'is_deleted' => 0,
+                            ), false);
+
+            if ($user) {
+                $user = Auth::user();
+
+                $response['status'] = 200;
+                $response['data'] = [
+                    'username' => $user->username,
+                    'password' => $user->password,
+                    'full_name' => ($user->full_name ? $user->full_name : ''),
+                    'email' => ($user->email ? $user->email : ''),
+                    'phone_no' => ($user->phone_no ? $user->phone_no : ''),
+                    'role_id' => $user->role,
+                    'role' => ($user->role ? $user->getRole->name : ''),
+                    'company_id' => $user->company_id,
+                    'company' => ($user->company_id ? $user->getCOB->name : ''),
+                    'company_short' => ($user->company_id ? strtolower($user->getCOB->short_name) : ''),
+                    'remarks' => ($user->remarks ? $user->remarks : ''),
+                    'start_date' => ($user->start_date ? $user->start_date : ''),
+                    'end_date' => ($user->end_date ? $user->end_date : ''),
+                ];
+                // $strata = Files::join('company', 'files.company_id', '=', 'company.id')
+                //             ->join('strata', 'files.id', '=', 'strata.file_id')
+                //             ->where('files.id', $user->file_id)
+                //             ->where('files.company_id', $user->company_id)
+                //             ->where('files.is_active', '!=', 2)
+                //             ->where('files.is_deleted', 0)
+                //             -get();
+
+                $strata = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->where('files.id', $user->file_id)
+                        ->where('files.company_id', $user->company_id)
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0)
+                        ->get();
+                $response['data']['building'] = array();
+                foreach ($strata as $key => $val) {
+                    array_push($response['data']['building'], $val->name);
+                }
+            } else {
+                $response = array(
+                    'error' => true,
+                    'message' => 'Login Fail',
+                    'result' => false,
+                );
+            }
+
+
+
+            return Response::json($response);
+        } catch (Exception $e) {
+            throw($e);
+        }
+    }
+
+    public function updateSimpleProfileInfo() {
+        $data = \Input::all();
+
+        $validation_rules = [
+            'username' => 'required',
+            'password' => 'required',
+            'full_name' => 'required',
+            'email' => 'required',
+        ];
+
+        $validator = \Validator::make($data, $validation_rules, []);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+
+            return [
+                'status' => 422,
+                'data' => $errors->toJson(),
+                'message' => 'Validation Error'
+            ];
+        }
+
+        $user = User::where('username', $data['username'])->first();
+        if (isset($user)) {
+            $user->password = $data['password'];
+            $user->full_name = $data['full_name'];
+            $user->email = $data['email'];
+            $user->phone_no = $data['phone_no'];
+
+            $user->save();
+        }
+
+        $response = array(
+            'error' => false,
+            'message' => 'Success',
+            'result' => $user,
+        );
+
+        return Response::json($response);
+    }
 
     public function login() {
         $result = array();

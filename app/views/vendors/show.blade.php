@@ -119,7 +119,7 @@
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.name') }}</label>
                                             <input type="text" class="form-control" id="name" name="name" placeholder=""/>
-                                            <span class="help-block text-danger" id="name_error" style="display: none;"></span>
+                                            <span class="help-block text-danger name_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                                 @endforeach
                                                 @endif
                                             </select>
-                                            <span class="help-block text-danger" id="category_error" style="display: none;"></span>
+                                            <span class="help-block text-danger category_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -151,7 +151,7 @@
                                                 @endforeach
                                                 @endif
                                             </select>
-                                            <span class="help-block text-danger" id="council_error" style="display: none;"></span>
+                                            <span class="help-block text-danger council_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -160,7 +160,7 @@
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.address') }}</label>
                                             <textarea class="form-control" id="address" name="address" placeholder="" rows="4"></textarea>
-                                            <span class="help-block text-danger" id="address_error" style="display: none;"></span>
+                                            <span class="help-block text-danger address_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -169,7 +169,7 @@
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.latitude') }}</label>
                                             <input type="text" class="form-control" id="latitude" name="latitude" placeholder=""/>
-                                            <span class="help-block text-danger" id="latitude_error" style="display: none;"></span>
+                                            <span class="help-block text-danger latitude_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -178,7 +178,7 @@
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.longitude') }}</label>
                                             <input type="text" class="form-control" id="longitude" name="longitude" placeholder=""/>
-                                            <span class="help-block text-danger" id="longitude_error" style="display: none;"></span>
+                                            <span class="help-block text-danger longitude_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -192,15 +192,151 @@
                                                 <option value="{{ VendorProject::INPROGRESS }}">{{ trans('app.directory.vendors.project.inprogress') }}</option>
                                                 <option value="{{ VendorProject::COMPLETE }}">{{ trans('app.directory.vendors.project.complete') }}</option>
                                             </select>
-                                            <span class="help-block text-danger" id="status_error" style="display: none;"></span>
+                                            <span class="help-block text-danger status_error" style="display: none;"></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                <button id="submit_button" type="button" class="btn btn-primary" onclick="submitProject()">{{ trans('app.forms.submit') }}</button>
-                                <button id="cancel_button" type="button" class="btn btn-danger" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
+                                <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                <button type="button" class="btn btn-primary submit_button" onclick="submitProject()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-danger cancel_button" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modal fade modal" id="updateProjectForm" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog" role="document">
+                    <form>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ trans('app.directory.vendors.update_project') }}</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.name') }}</label>
+                                            <input type="text" class="form-control" id="update_name" name="name" placeholder=""/>
+                                            <span class="help-block text-danger name_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.category') }}</label>
+                                            <select class="form-control" id="update_category" name="category">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @if(count($category) > 0)
+                                                @foreach ($category as $value => $name)
+                                                <option value="{{ $value }}">{{ $name }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            <span class="help-block text-danger category_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.council') }}</label>
+                                            <select class="form-control" id="update_council" name="council">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @if(count($council) > 0)
+                                                @foreach ($council as $value => $name)
+                                                <option value="{{ $value }}">{{ $name }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            <span class="help-block text-danger council_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.address') }}</label>
+                                            <textarea class="form-control" id="update_address" name="address" placeholder="" rows="4"></textarea>
+                                            <span class="help-block text-danger address_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.latitude') }}</label>
+                                            <input type="text" class="form-control" id="update_latitude" name="latitude" placeholder=""/>
+                                            <span class="help-block text-danger latitude_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.longitude') }}</label>
+                                            <input type="text" class="form-control" id="update_longitude" name="longitude" placeholder=""/>
+                                            <span class="help-block text-danger longitude_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="hidden" id="update_id" name="update_id"/>
+                                <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                <button type="button" class="btn btn-primary submit_button" onclick="submitUpdate()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-danger cancel_button" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modal fade" id="updateStatusForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog">
+                    <form class="form-horizontal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{{ trans('app.forms.update_file_no') }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.status') }}</label>
+                                            <select class="form-control" id="change_status" name="change_status">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                <option value="{{ VendorProject::PENDING }}">{{ trans('app.directory.vendors.project.pending') }}</option>
+                                                <option value="{{ VendorProject::INPROGRESS }}">{{ trans('app.directory.vendors.project.inprogress') }}</option>
+                                                <option value="{{ VendorProject::COMPLETE }}">{{ trans('app.directory.vendors.project.complete') }}</option>
+                                            </select>
+                                            <span class="help-block text-danger status_error" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="hidden" id="change_id" name="change_id"/>
+                                <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                <button type="button" class="btn btn-primary submit_button" onclick="submitStatus()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-danger cancel_button" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
                             </div>
                         </div>
                     </form>
@@ -296,47 +432,6 @@
     <!-- End -->
 </div>
 
-<div class="modal fade" id="updateStatusForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <form class="form-horizontal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{ trans('app.forms.update_file_no') }}</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label><span style="color: red;">*</span> {{ trans('app.directory.vendors.project.status') }}</label>
-                                <select class="form-control" id="update_status" name="update_status">
-                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    <option value="{{ VendorProject::PENDING }}">{{ trans('app.directory.vendors.project.pending') }}</option>
-                                    <option value="{{ VendorProject::INPROGRESS }}">{{ trans('app.directory.vendors.project.inprogress') }}</option>
-                                    <option value="{{ VendorProject::COMPLETE }}">{{ trans('app.directory.vendors.project.complete') }}</option>
-                                </select>
-                                <span class="help-block text-danger" id="update_status_error" style="display: none;"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="hidden" name="project_id" id="project_id"/>
-                    <img id="loading_status" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                    <button id="submit_button_status" type="button" class="btn btn-primary" onclick="submitStatus()">{{ trans('app.forms.submit') }}</button>
-                    <button id="cancel_button_status" type="button" class="btn btn-danger" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
     $(document).ready(function () {
         $('#vendors_detail_table').DataTable({
@@ -377,16 +472,16 @@
     });
 
     function submitProject() {
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#cancel_button").attr("disabled", "disabled");
-        $("#name_error").css("display", "none");
-        $("#council_error").css("display", "none");
-        $("#category_error").css("display", "none");
-        $("#address_error").css("display", "none");
-        $("#latitude_error").css("display", "none");
-        $("#longitude_error").css("display", "none");
-        $("#status_error").css("display", "none");
+        $(".loading").css("display", "inline-block");
+        $(".submit_button").attr("disabled", "disabled");
+        $(".cancel_button").attr("disabled", "disabled");
+        $(".name_error").css("display", "none");
+        $(".council_error").css("display", "none");
+        $(".category_error").css("display", "none");
+        $(".address_error").css("display", "none");
+        $(".latitude_error").css("display", "none");
+        $(".longitude_error").css("display", "none");
+        $(".status_error").css("display", "none");
 
         var name = $("#name").val(),
                 council = $("#council").val(),
@@ -399,45 +494,38 @@
         var error = 0;
 
         if (name.trim() == "") {
-            $("#name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-            $("#name_error").css("display", "block");
-            $("#name").focus();
+            $(".name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
+            $(".name_error").css("display", "block");
             error = 1;
         }
         if (council.trim() == "") {
-            $("#council_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Council"]) }}</span>');
-            $("#council_error").css("display", "block");
-            $("#council").focus();
+            $(".council_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Council"]) }}</span>');
+            $(".council_error").css("display", "block");
             error = 1;
         }
         if (category.trim() == "") {
-            $("#category_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Category"]) }}</span>');
-            $("#category_error").css("display", "block");
-            $("#category").focus();
+            $(".category_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Category"]) }}</span>');
+            $(".category_error").css("display", "block");
             error = 1;
         }
         if (address.trim() == "") {
-            $("#address_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Address"]) }}</span>');
-            $("#address_error").css("display", "block");
-            $("#address").focus();
+            $(".address_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Address"]) }}</span>');
+            $(".address_error").css("display", "block");
             error = 1;
         }
         if (latitude.trim() == "") {
-            $("#latitude_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Latitude"]) }}</span>');
-            $("#latitude_error").css("display", "block");
-            $("#latitude").focus();
+            $(".latitude_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Latitude"]) }}</span>');
+            $(".latitude_error").css("display", "block");
             error = 1;
         }
         if (longitude.trim() == "") {
-            $("#longitude_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Longitude"]) }}</span>');
-            $("#longitude_error").css("display", "block");
-            $("#longitude").focus();
+            $(".longitude_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Longitude"]) }}</span>');
+            $(".longitude_error").css("display", "block");
             error = 1;
         }
         if (status.trim() == "") {
-            $("#status_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Status"]) }}</span>');
-            $("#status_error").css("display", "block");
-            $("#status").focus();
+            $(".status_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Status"]) }}</span>');
+            $(".status_error").css("display", "block");
             error = 1;
         }
 
@@ -457,9 +545,9 @@
                 },
                 success: function (data) {
                     $('#formProjectModal').modal('hide');
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#cancel_button").removeAttr("disabled");
+                    $(".loading").css("display", "none");
+                    $(".submit_button").removeAttr("disabled");
+                    $(".cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
                             location.reload();
@@ -470,42 +558,43 @@
                 }
             });
         } else {
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-            $("#cancel_button").removeAttr("disabled");
+            $("#name").focus();
+            $(".loading").css("display", "none");
+            $(".submit_button").removeAttr("disabled");
+            $(".cancel_button").removeAttr("disabled");
         }
     }
 
     $(document).on("click", ".modal-update-status", function () {
-        $("#update_status_error").css("display", "none");
+        $(".status_error").css("display", "none");
 
         var id = $(this).data('id'),
                 status = $(this).data('status');
 
-        $(".modal-footer #project_id").val(id);
-        $(".modal-body #update_status").val(status);
+        $("#change_id").val(id);
+        $("#change_status").val(status);
 
     });
 
     function submitStatus() {
-        $("#loading_status").css("display", "inline-block");
-        $("#submit_button_status").attr("disabled", "disabled");
-        $("#cancel_button_status").attr("disabled", "disabled");
-        $("#update_status_error").css("display", "none");
+        $(".loading").css("display", "inline-block");
+        $(".submit_button").attr("disabled", "disabled");
+        $(".cancel_button").attr("disabled", "disabled");
+        $(".status_error").css("display", "none");
 
-        var id = $("#project_id").val(),
-                status = $("#update_status").val();
+        var id = $("#change_id").val(),
+                status = $("#change_status").val();
 
         var error = 0;
 
         if (status.trim() == "") {
-            $("#update_status_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Status"]) }}</span>');
-            $("#update_status_error").css("display", "block");
-            $("#update_status").focus();
+            $(".status_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Status"]) }}</span>');
+            $(".status_error").css("display", "block");
             error = 1;
         }
 
         if (error == 0) {
+            alert(status);
             $.ajax({
                 url: "{{ url('vendors/project/status') }}",
                 type: "POST",
@@ -515,9 +604,9 @@
                 },
                 success: function (data) {
                     $('#updateStatusForm').modal('hide');
-                    $("#loading_status").css("display", "none");
-                    $("#submit_button_status").removeAttr("disabled");
-                    $("#cancel_button_status").removeAttr("disabled");
+                    $(".loading").css("display", "none");
+                    $(".submit_button").removeAttr("disabled");
+                    $(".cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>", function () {
                             location.reload();
@@ -528,9 +617,119 @@
                 }
             });
         } else {
-            $("#loading_status").css("display", "none");
-            $("#submit_button_status").removeAttr("disabled");
-            $("#cancel_button_status").removeAttr("disabled");
+            $("#change_status").focus();
+            $(".loading").css("display", "none");
+            $(".submit_button").removeAttr("disabled");
+            $(".cancel_button").removeAttr("disabled");
+        }
+    }
+
+    $(document).on("click", ".modal-update-project", function () {
+        $(".status_error").css("display", "none");
+
+        var id = $(this).data('id'),
+                name = $(this).data("name"),
+                council = $(this).data("council"),
+                category = $(this).data("category"),
+                address = $(this).data("address"),
+                latitude = $(this).data("latitude"),
+                longitude = $(this).data("longitude"),
+                status = $(this).data("status");
+
+        $("#update_id").val(id);
+        $("#update_name").val(name);
+        $("#update_council").val(council);
+        $("#update_category").val(category);
+        $("#update_address").val(address);
+        $("#update_latitude").val(latitude);
+        $("#update_longitude").val(longitude);
+        $("#update_status").val(status);
+    });
+
+    function submitUpdate() {
+        $(".loading").css("display", "inline-block");
+        $(".submit_button").attr("disabled", "disabled");
+        $(".cancel_button").attr("disabled", "disabled");
+        $(".name_error").css("display", "none");
+        $(".council_error").css("display", "none");
+        $(".category_error").css("display", "none");
+        $(".address_error").css("display", "none");
+        $(".latitude_error").css("display", "none");
+        $(".longitude_error").css("display", "none");
+
+        var id = $("#update_id").val(),
+                name = $("#update_name").val(),
+                council = $("#update_council").val(),
+                category = $("#update_category").val(),
+                address = $("#update_address").val(),
+                latitude = $("#update_latitude").val(),
+                longitude = $("#update_longitude").val();
+
+        var error = 0;
+
+        if (name.trim() == "") {
+            $(".name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
+            $(".name_error").css("display", "block");
+            error = 1;
+        }
+        if (council.trim() == "") {
+            $(".council_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Council"]) }}</span>');
+            $(".council_error").css("display", "block");
+            error = 1;
+        }
+        if (category.trim() == "") {
+            $(".category_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Category"]) }}</span>');
+            $(".category_error").css("display", "block");
+            error = 1;
+        }
+        if (address.trim() == "") {
+            $(".address_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Address"]) }}</span>');
+            $(".address_error").css("display", "block");
+            error = 1;
+        }
+        if (latitude.trim() == "") {
+            $(".latitude_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Latitude"]) }}</span>');
+            $(".latitude_error").css("display", "block");
+            error = 1;
+        }
+        if (longitude.trim() == "") {
+            $(".longitude_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Longitude"]) }}</span>');
+            $(".longitude_error").css("display", "block");
+            error = 1;
+        }
+
+        if (error == 0) {
+            $.ajax({
+                url: "{{ url('vendors/project/update') }}",
+                type: "POST",
+                data: {
+                    id: id,
+                    name: name,
+                    council: council,
+                    category: category,
+                    address: address,
+                    latitude: latitude,
+                    longitude: longitude
+                },
+                success: function (data) {
+                    $('#updateProjectForm').modal('hide');
+                    $(".loading").css("display", "none");
+                    $(".submit_button").removeAttr("disabled");
+                    $(".cancel_button").removeAttr("disabled");
+                    if (data.trim() == "true") {
+                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                            location.reload();
+                        });
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        } else {
+            $("#update_name").focus();
+            $(".loading").css("display", "none");
+            $(".submit_button").removeAttr("disabled");
+            $(".cancel_button").removeAttr("disabled");
         }
     }
 </script>
