@@ -19,6 +19,8 @@ class FinanceController extends BaseController {
                 $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
+        
+        $year = Files::getVPYear();
 
         $viewData = array(
             'title' => trans('app.menus.cob.add_finance_file_list'),
@@ -28,6 +30,7 @@ class FinanceController extends BaseController {
             'user_permission' => $user_permission,
             'image' => "",
             'file_no' => $file_no,
+            'year' => $year,
             'month' => Finance::monthList()
         );
 

@@ -45,10 +45,9 @@ foreach ($user_permission as $permission) {
                                 <div class="form-group">
                                     <label><span style="color: red;">*</span> {{ trans('app.forms.year') }}</label>
                                     <select id="year" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @for ($i = 2012; $i <= date('Y'); $i++)
-                                        <option value="{{ $i }}">{{ $i}}</option>
-                                        @endfor
+                                        @foreach ($year as $value => $years)
+                                        <option value="{{ $value }}">{{ $years }}</option>
+                                        @endforeach
                                     </select>
                                     <div id="year_error" style="display:none;"></div>
                                 </div>
