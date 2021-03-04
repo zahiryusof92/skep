@@ -67,7 +67,7 @@ foreach ($user_permission as $permission) {
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.forms.month') }}</label>
-                                            <select name="import_month" id="import_month" class="form-control">
+                                            <select name="import_month" id="import_month" class="form-control select2">
                                                 @if (count($month) > 1)
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @endif
@@ -83,7 +83,7 @@ foreach ($user_permission as $permission) {
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label><span style="color: red;">*</span> {{ trans('app.forms.year') }}</label>
-                                            <select name="import_year" id="import_year" class="form-control">
+                                            <select name="import_year" id="import_year" class="form-control select2">
                                                 @foreach ($year as $value => $years)
                                                     <option value="{{ $value }}">{{ $years }}</option>
                                                 @endforeach
