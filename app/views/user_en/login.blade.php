@@ -76,6 +76,7 @@ if (isset($cob) && !empty($cob)) {
 
                 {{Form::close()}}
 
+                <p style="text-align: center;"><a href="https://odesi.tech/terms.html" target="_blank">{{ trans('User Terms & Conditions') }}</a></p>
                 <h6 class="text-center padding-top-5">&copy; {{ date('Y') }} ODESI ECOB SDN BHD. All rights reserved.</h6>
             </div>
         </div>        

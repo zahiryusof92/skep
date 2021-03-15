@@ -119,6 +119,18 @@
         <!-- Google Map -->
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlZt8wLuj_w2qWw03-qEYWdWf5nPnvokA&callback=initMap" type="text/javascript"></script>
 
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XT54L4WFR"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-9XT54L4WFR');
+        </script>
+
     </head>
 
     <body id="" class="theme-default">
@@ -133,22 +145,24 @@
         <!-- BEGIN CONTENT -->
         <section class="page-content">
             @yield('content')
+
+            @include('layout.english_layout.footer')
         </section>
         <!-- END CONTENT -->
 
         <div class="main-backdrop"><!-- --></div>
 
         <script>
-$(document).ready(function () {
-    $(".numeric-only").on('keypress', function (e) {
-        var keyCode = e.which ? e.which : e.keyCode;
-        if (!(keyCode >= 48 && keyCode <= 57)) {
-            return false;
-        }
-    });
+            $(document).ready(function () {
+                $(".numeric-only").on('keypress', function (e) {
+                    var keyCode = e.which ? e.which : e.keyCode;
+                    if (!(keyCode >= 48 && keyCode <= 57)) {
+                        return false;
+                    }
+                });
 
-    $('.select2').select2();
-});
+                $('.select2').select2();
+            });
         </script>
     </body>
 </html>
