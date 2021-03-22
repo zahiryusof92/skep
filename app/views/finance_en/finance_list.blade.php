@@ -11,6 +11,7 @@ foreach ($user_permission as $permission) {
     }
 }
 ?>
+
 <div class="page-content-inner">
     <section class="panel panel-style">
         <div class="panel-heading">

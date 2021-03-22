@@ -469,7 +469,7 @@ class Files extends Eloquent {
 
     public static function getVPYear() {
         $min_year = Files::where('year', '>', 0)->min('year');
-        $max_year = Files::where('year', '>', 0)->max('year');
+        $max_year = date('Y');
 
         $year = array('' => trans('app.forms.please_select'));
         for ($max_year; $max_year >= $min_year; $max_year--) {

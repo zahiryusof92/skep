@@ -908,7 +908,7 @@ class SettingController extends BaseController {
         }
     }
 
-//state
+    //state
     public function state() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -935,6 +935,7 @@ class SettingController extends BaseController {
             'main_nav_active' => 'master_main',
             'sub_nav_active' => 'state_list',
             'user_permission' => $user_permission,
+            'codeList' => State::codeList(),
             'image' => ""
         );
 
@@ -948,6 +949,7 @@ class SettingController extends BaseController {
 
             $state = new State();
             $state->name = $data['name'];
+            $state->code = $data['code'];
             $state->sort_no = $data['sort_no'];
             $state->is_active = $is_active;
             $success = $state->save();
@@ -987,6 +989,7 @@ class SettingController extends BaseController {
 
                 $data_raw = array(
                     $states->name,
+                    $states->code,
                     $states->sort_no,
                     $status,
                     $button
@@ -1097,6 +1100,7 @@ class SettingController extends BaseController {
             'sub_nav_active' => 'state_list',
             'user_permission' => $user_permission,
             'state' => $state,
+            'codeList' => State::codeList(),
             'image' => ""
         );
 
@@ -1110,6 +1114,7 @@ class SettingController extends BaseController {
 
             $state = State::find($id);
             $state->name = $data['name'];
+            $state->code = $data['code'];
             $state->sort_no = $data['sort_no'];
             $state->is_active = $data['is_active'];
             $success = $state->save();
@@ -1380,6 +1385,7 @@ class SettingController extends BaseController {
             'main_nav_active' => 'master_main',
             'sub_nav_active' => 'category_list',
             'user_permission' => $user_permission,
+            'codeList' => Category::codeList(),
             'image' => ""
         );
 
@@ -1389,12 +1395,10 @@ class SettingController extends BaseController {
     public function submitCategory() {
         $data = Input::all();
         if (Request::ajax()) {
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-
             $category = new Category();
-            $category->description = $description;
-            $category->is_active = $is_active;
+            $category->description = $data['description'];
+            $category->code = $data['code'];
+            $category->is_active = $data['is_active'];
             $success = $category->save();
 
             if ($success) {
@@ -1432,6 +1436,7 @@ class SettingController extends BaseController {
 
                 $data_raw = array(
                     $categories->description,
+                    $categories->code,
                     $status,
                     $button
                 );
@@ -1541,6 +1546,7 @@ class SettingController extends BaseController {
             'sub_nav_active' => 'category_list',
             'user_permission' => $user_permission,
             'category' => $category,
+            'codeList' => Category::codeList(),
             'image' => ""
         );
 
@@ -1550,13 +1556,10 @@ class SettingController extends BaseController {
     public function submitUpdateCategory() {
         $data = Input::all();
         if (Request::ajax()) {
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-            $id = $data['id'];
-
-            $category = Category::find($id);
-            $category->description = $description;
-            $category->is_active = $is_active;
+            $category = Category::find($data['id']);
+            $category->description = $data['description'];
+            $category->code = $data['code'];
+            $category->is_active = $data['is_active'];
             $success = $category->save();
 
             if ($success) {
@@ -1602,6 +1605,7 @@ class SettingController extends BaseController {
             'main_nav_active' => 'master_main',
             'sub_nav_active' => 'land_list',
             'user_permission' => $user_permission,
+            'codeList' => LandTitle::codeList(),
             'image' => ""
         );
 
@@ -1611,12 +1615,10 @@ class SettingController extends BaseController {
     public function submitLandTitle() {
         $data = Input::all();
         if (Request::ajax()) {
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-
             $land = new LandTitle();
-            $land->description = $description;
-            $land->is_active = $is_active;
+            $land->description = $data['description'];
+            $land->code = $data['code'];
+            $land->is_active = $data['is_active'];
             $success = $land->save();
 
             if ($success) {
@@ -1654,6 +1656,7 @@ class SettingController extends BaseController {
 
                 $data_raw = array(
                     $lands->description,
+                    $lands->code,
                     $status,
                     $button
                 );
@@ -1763,6 +1766,7 @@ class SettingController extends BaseController {
             'sub_nav_active' => 'land_list',
             'user_permission' => $user_permission,
             'land' => $land,
+            'codeList' => LandTitle::codeList(),
             'image' => ""
         );
 
@@ -1772,13 +1776,10 @@ class SettingController extends BaseController {
     public function submitUpdateLandTitle() {
         $data = Input::all();
         if (Request::ajax()) {
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-            $id = $data['id'];
-
-            $land = LandTitle::find($id);
-            $land->description = $description;
-            $land->is_active = $is_active;
+            $land = LandTitle::find($data['id']);
+            $land->description = $data['description'];
+            $land->code = $data['code'];
+            $land->is_active = $data['is_active'];
             $success = $land->save();
 
             if ($success) {
@@ -2385,12 +2386,10 @@ class SettingController extends BaseController {
     public function submitParliment() {
         $data = Input::all();
         if (Request::ajax()) {
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-
             $parliment = new Parliment();
-            $parliment->description = $description;
-            $parliment->is_active = $is_active;
+            $parliment->description = $data['description'];
+            $parliment->code = $data['code'];
+            $parliment->is_active = $data['is_active'];
             $success = $parliment->save();
 
             if ($success) {
@@ -2428,6 +2427,7 @@ class SettingController extends BaseController {
 
                 $data_raw = array(
                     $parliments->description,
+                    $parliments->code,
                     $status,
                     $button
                 );
@@ -2546,13 +2546,10 @@ class SettingController extends BaseController {
     public function submitUpdateParliment() {
         $data = Input::all();
         if (Request::ajax()) {
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-            $id = $data['id'];
-
-            $parliment = Parliment::find($id);
-            $parliment->description = $description;
-            $parliment->is_active = $is_active;
+            $parliment = Parliment::find($data['id']);
+            $parliment->description = $data['description'];
+            $parliment->code = $data['code'];
+            $parliment->is_active = $data['is_active'];
             $success = $parliment->save();
 
             if ($success) {
@@ -2611,14 +2608,11 @@ class SettingController extends BaseController {
     public function submitDun() {
         $data = Input::all();
         if (Request::ajax()) {
-            $parliament = $data['parliament'];
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-
             $dun = new Dun();
-            $dun->parliament = $parliament;
-            $dun->description = $description;
-            $dun->is_active = $is_active;
+            $dun->parliament = $data['parliament'];
+            $dun->description = $data['description'];
+            $dun->code = $data['code'];
+            $dun->is_active = $data['is_active'];
             $success = $dun->save();
 
             if ($success) {
@@ -2659,6 +2653,7 @@ class SettingController extends BaseController {
                 $data_raw = array(
                     $duns->description,
                     ($duns->parliament ? $parliament->description : ''),
+                    $duns->code,
                     $status,
                     $button
                 );
@@ -2779,15 +2774,11 @@ class SettingController extends BaseController {
     public function submitUpdateDun() {
         $data = Input::all();
         if (Request::ajax()) {
-            $parliament = $data['parliament'];
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-            $id = $data['id'];
-
-            $dun = Dun::find($id);
-            $dun->parliament = $parliament;
-            $dun->description = $description;
-            $dun->is_active = $is_active;
+            $dun = Dun::find($data['id']);
+            $dun->parliament = $data['parliament'];
+            $dun->description = $data['description'];
+            $dun->code = $data['code'];
+            $dun->is_active = $data['is_active'];
             $success = $dun->save();
 
             if ($success) {

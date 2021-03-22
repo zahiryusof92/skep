@@ -37,7 +37,7 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.admin_status') }}</label>
+                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.status') }}</label>
                             </div>
                             <div class="col-md-4">
                                 <select id="is_active" class="form-control">
