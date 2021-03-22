@@ -1447,7 +1447,7 @@ body.single-page .page-content .page-content-inner.background-repeated {
 
 @media (max-width: 991px) {
     body.single-page .single-page-block {
-        padding: 0px 20px;
+        padding: 55px 20px;
     }
     body.single-page .single-page-block .single-page-block-inner {
         padding: 40px 20px 20px;
