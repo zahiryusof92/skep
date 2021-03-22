@@ -105,7 +105,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;<input type="file" name="form_file" id="form_file" />
                                     <div id="validation-errors_form_file"></div>
                                     @if ($form->file_url != "")
-                                    <a href="{{asset($form->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}</button></a>
+                                    <a href="{{asset($form->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}</button></a>
                                     <?php if ($update_permission == 1) { ?>
                                         <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteFormFile('{{$form->id}}')"><i class="fa fa-times"></i></button>
                                     <?php } ?>
@@ -133,7 +133,7 @@ foreach ($user_permission as $permission) {
                         <div class="form-actions">
                             <?php if ($update_permission == 1) { ?>
                                 <input type="hidden" id="form_file_url" value="{{$form->file_url}}"/>
-                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitEditForm()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditForm()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@form') }}'">{{ trans('app.forms.cancel') }}</button>
                         </div>

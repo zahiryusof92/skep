@@ -23,7 +23,7 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addMemo') }}'" type="button" class="btn btn-primary margin-bottom-25">
+                        <button onclick="window.location = '{{ URL::action('AdminController@addMemo') }}'" type="button" class="btn btn-own margin-bottom-25">
                             {{ trans('app.buttons.add_memo') }}
                         </button>
                     <?php } ?>

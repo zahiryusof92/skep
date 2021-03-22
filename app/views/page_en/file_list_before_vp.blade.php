@@ -72,7 +72,7 @@ foreach ($user_permission as $permission) {
                             <div class="modal-footer">
                                 <input type="hidden" name="status" id="status" value="3"/>
                                 <img id="loading_import" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                <button id="submit_button_import" class="btn btn-primary" type="submit">
+                                <button id="submit_button_import" class="btn btn-own" type="submit">
                                     {{ trans('app.forms.submit') }}
                                 </button>
                                 <button data-dismiss="modal" id="cancel_button_import" class="btn btn-default" type="button">
@@ -339,7 +339,7 @@ foreach ($user_permission as $permission) {
                 <div class="modal-footer">
                     <input type="hidden" name="file_id" id="file_id"/>
                     <img id="loading_update_file_no" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                    <button id="submit_button_update_file_no" class="btn btn-primary" type="submit">
+                    <button id="submit_button_update_file_no" class="btn btn-own" type="submit">
                         {{ trans('app.forms.submit') }}
                     </button>
                     <button data-dismiss="modal" id="cancel_button_update_file_no" class="btn btn-default" type="button">

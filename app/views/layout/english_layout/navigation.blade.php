@@ -28,13 +28,13 @@ if (!Auth::user()->getAdmin()) {
     <div class="left-menu-inner scroll-pane">
         <div id="image_nav">
 
-            @if ($image == "")
+            {{-- @if ($image == "")
             @if ($company->nav_image_url != "")
             <img src="{{asset($company->nav_image_url)}}" style="width: 100%;" alt="" />
             @endif
             @else
             <img src="{{asset($image)}}" style="width: 100%;" alt="" />
-            @endif
+            @endif --}}
         </div>
         <ul class="left-menu-list left-menu-list-root list-unstyled">
 
@@ -48,7 +48,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(1))
             <li class="left-menu-list-submenu" id="cob_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-file"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/setting.png')}}"/>
                     {{ trans('app.menus.cob.maintenance') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="cob_main">
@@ -116,7 +116,7 @@ if (!Auth::user()->getAdmin()) {
             @if (AccessGroup::hasAccess(45))
             <li class="left-menu-list-link" id="defect_list">
                 <a class="left-menu-link" href="{{ URL::action('AdminController@defect') }}">
-                    <i class="left-menu-link-icon fa fa-comments"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/complaint.png')}}"/>
                     {{ trans('app.menus.agm.defect') }}
                 </a>
             </li>
@@ -125,7 +125,7 @@ if (!Auth::user()->getAdmin()) {
             @if (AccessGroup::hasAccess(46))
             <li class="left-menu-list-link" id="insurance_list">
                 <a class="left-menu-link" href="{{ URL::action('AdminController@insurance', 'All') }}">
-                    <i class="left-menu-link-icon fa fa-medkit"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/protect.png')}}"/>
                     {{ trans('app.menus.agm.insurance') }}
                 </a>
             </li>
@@ -134,7 +134,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(2))
             <li class="left-menu-list-submenu" id="admin_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-user"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/user.png')}}"/>
                     {{ trans('app.menus.administration.administration') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="admin_main">
@@ -194,7 +194,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(3))
             <li class="left-menu-list-submenu" id="master_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-gears"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/setting1.png')}}"/>
                     {{ trans('app.menus.master.setup') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="master_main">
@@ -381,7 +381,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(4))
             <li class="left-menu-list-submenu" id="reporting_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-file-pdf-o"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/report.png')}}"/>
                     {{ trans('app.menus.reporting.reporting') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="reporting_main">
@@ -521,7 +521,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(5))
             <li class="left-menu-list-submenu" id="agm_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-sitemap"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/agm.png')}}"/>
                     {{ trans('app.menus.agm.submission') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="agm_main">
@@ -573,7 +573,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(6))
             <li class="left-menu-list-submenu" id="form_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-file-text-o"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/form.png')}}"/>
                     {{ trans('app.menus.form.management') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="form_main">
@@ -591,7 +591,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(8))
             <li class="left-menu-list-submenu" id="directory_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-folder-open"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/dir.png')}}"/>
                     {{ trans('app.directory.title') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="directory_main">
@@ -675,7 +675,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(7))
             <li class="left-menu-list-submenu" id="change_cob_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-exchange"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/exchange.png')}}"/>
                     {{ trans('app.menus.change_cob') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="change_cob_main">
@@ -697,7 +697,9 @@ if (!Auth::user()->getAdmin()) {
             @endif
 
         </ul>
-
+        <div class="bottom-logo">
+            <img src="{{asset('assets/common/img/odesi/logo.png')}}">
+        </div>
     </div>
 </nav>
 <!-- END SIDE NAVIGATION -->

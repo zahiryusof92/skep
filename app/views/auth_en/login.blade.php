@@ -6,7 +6,7 @@
 $company = Company::orderBy('id')->first();
 ?>
 
-<div class="page-content-inner" style="background-image: url({{asset('assets/common/img/temp/login/4.jpg')}})">
+<div class="page-content-inner" style="background-image: url({{asset('assets/common/img/temp/login/5.jpg')}})">
 
     <!-- Login Page -->
 
@@ -76,7 +76,7 @@ $company = Company::orderBy('id')->first();
                     </div>
                 </div>
                 <div class="form-actions text-center">
-                    <button type="submit" class="btn btn-primary width-150">{{ trans('app.forms.login') }}</button>
+                    <button type="submit" class="btn btn-own width-150">{{ trans('app.forms.login') }}</button>
                 </div>
 
                 {{Form::close()}}

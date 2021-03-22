@@ -84,7 +84,7 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="form-actions">
                             <?php if ($insert_permission == 1) { ?>
-                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitFinanceSupport()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitFinanceSupport()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@financeSupport')}}'">{{ trans('app.forms.cancel') }}</button>
                         </div>

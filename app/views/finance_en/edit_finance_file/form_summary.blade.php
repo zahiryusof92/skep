@@ -5,12 +5,12 @@ $prefix = 'sum_';
 <div class="row">
     <div class="col-lg-12">
 
-        <h6>{{ trans("app.forms.summary") }}</h6>
+        {{-- <h6>{{ trans("app.forms.summary") }}</h6> --}}
 
         <form id="form_summary">
 
             <div class="row">
-                <table class="table table-sm" style="font-size: 12px;" style="width: 100%">
+                <table class="table table-sm borderless" style="font-size: 12px;" style="width: 100%">
                     <tbody>
                         <?php
                         $no = 1;

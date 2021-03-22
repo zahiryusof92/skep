@@ -11,7 +11,7 @@
             @if (AccessGroup::hasInsert(58))
             <div class="row">
                 <div class="col-lg-12">
-                    <button onclick="window.location = '{{ URL::action('VendorController@create') }}'" type="button" class="btn btn-primary margin-bottom-25">
+                    <button onclick="window.location = '{{ URL::action('VendorController@create') }}'" type="button" class="btn btn-own margin-bottom-25">
                         {{ trans('app.directory.vendors.create') }}
                     </button>
                 </div>

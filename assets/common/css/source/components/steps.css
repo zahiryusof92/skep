@@ -1,18 +1,25 @@
 /*
  * COMPONENTS STEPS
  */
+
 .step-block {
     color: #827ca1;
     background-color: #ffffff;
     padding: 20px;
     -webkit-border-radius: 3px;
-            border-radius: 3px;
+    border-radius: 3px;
     display: block;
+    border-top: solid #3a3b3b !important;
+    -webkit-box-shadow: 3px 3px 5px 0px #ccc;
+    /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow: 3px 3px 5px 0px #ccc;
+    /* Firefox 3.5 - 3.6 */
+    box-shadow: 3px 3px 5px 0px #ccc;
 }
 
 .step-block .step-digit {
     float: left;
-    margin-right: 20px;
+    margin-right: 15px;
     font-size: 42px;
     width: 56px;
     line-height: 55px;
@@ -36,7 +43,13 @@
     margin-bottom: 5px;
 }
 
-.step-block.step-default, .step-block.step-primary, .step-block.step-secondary, .step-block.step-success, .step-block.step-info, .step-block.step-warning, .step-block.step-danger {
+.step-block.step-default,
+.step-block.step-primary,
+.step-block.step-secondary,
+.step-block.step-success,
+.step-block.step-info,
+.step-block.step-warning,
+.step-block.step-danger {
     color: #ffffff !important;
 }
 
@@ -82,7 +95,7 @@
 
 .step-block.step-squared {
     -webkit-border-radius: 0px;
-            border-radius: 0px;
+    border-radius: 0px;
 }
 
 @media (max-width: 991px) {
@@ -101,7 +114,7 @@
     border-bottom-width: 3px;
     border-bottom-style: solid;
     -webkit-border-radius: 0px;
-            border-radius: 0px;
+    border-radius: 0px;
 }
 
 .panel-heading .step-block .step-digit {
@@ -143,7 +156,8 @@
     display: inline-block;
 }
 
-.steps-inline:before, .steps-inline:after {
+.steps-inline:before,
+.steps-inline:after {
     content: " ";
     display: table;
 }
@@ -158,21 +172,21 @@
     color: #acb7bf;
     text-align: center;
     -webkit-border-radius: 0px;
-            border-radius: 0px;
+    border-radius: 0px;
     padding: 0px 15px;
 }
 
 .steps-inline .step-block:first-child {
     border-right-width: 1px;
     -webkit-border-radius: 100px 0px 0px 100px;
-            border-radius: 100px 0px 0px 100px;
+    border-radius: 100px 0px 0px 100px;
     padding-left: 18px;
 }
 
 .steps-inline .step-block:last-child {
     border-left-width: 0px;
     -webkit-border-radius: 0px 100px 100px 0px;
-            border-radius: 0px 100px 100px 0px;
+    border-radius: 0px 100px 100px 0px;
     padding-right: 18px;
 }
 

@@ -25,123 +25,136 @@ foreach ($user_permission as $permission) {
 </style>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    {{-- <section class="panel panel-with-borders"> --}}
+    <section class="panel panel-style">
         <div class="panel-heading">
-            <h3>{{ $title }}</h3>
-        </div>
-        <div class="panel-body">
             <div class="row">
-                <div class="col-lg-12">
-                    <a href="{{ url('print/financeFile', $financefiledata->id) }}" target="_blank" class="btn btn-sm btn-success margin-inline pull-right">Print <i class="fa fa-print"></i></a>
+                <div class="col-md-10">
+                    <h3>{{ $title }}</h3>
                 </div>
-                <div class="col-lg-12">
-                    <table class="table table-bordered">
-                        <tbody>
-                            <tr>
-                                <td>{{ trans("app.forms.finance_management") }}</td>
-                                <td>{{ $financefiledata->file->file_no }}</td>
-                                <td>{{ trans("app.forms.finance_management_id") }}</td>
-                                <td>{{ $financefiledata->id }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ trans("app.forms.year") }}</td>
-                                <td>{{ $financefiledata->year }}</td>
-                                <td>{{ trans("app.forms.month") }}</td>
-                                <td>{{ $financefiledata->monthName() }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ trans("app.forms.strata") }}</td>
-                                <td colspan="3">{{ $financefiledata->file->strata->strataName() }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="col-md-2">
+                    <a href="{{ url('print/financeFile', $financefiledata->id) }}" target="_blank" class="btn btn-sm btn-own margin-inline pull-right">Print</a>
                 </div>
             </div>
+        </div>
+        <div class="panel-body">
+            <section class="panel">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>{{ trans("app.forms.finance_management") }}
+                                    <div></div></td>
+                                    <td>{{ $financefiledata->file->file_no }}</td>
+                                    <td>{{ trans("app.forms.finance_management_id") }}</td>
+                                    <td>{{ $financefiledata->id }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ trans("app.forms.year") }}</td>
+                                    <td>{{ $financefiledata->year }}</td>
+                                    <td>{{ trans("app.forms.month") }}</td>
+                                    <td>{{ $financefiledata->monthName() }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ trans("app.forms.strata") }}</td>
+                                    <td colspan="3">{{ $financefiledata->file->strata->strataName() }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
-            <hr/>
+    
+    <section class="panel panel-style">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 id="tab_title"></h3>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
 
             <div id="updateFinanceFile">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
-                                    <br/>
-                                    <span style="font-weight: bold; color: red; font-style: italic; display: none;" id="check_mandatory_fields">* {{ trans('app.forms.check_mandatory_fields') }}</span>
-                                </div>
-                            </div>
-                        </div>
                         <ul class="nav nav-pills nav-justified" id="financeTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{ trans("app.forms.check") }}</a>
+                                <a class="nav-link active custom-tab" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{ trans("app.forms.check") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="summary-tab" data-toggle="tab" href="#summary" role="tab" aria-controls="summary" aria-selected="false">{{ trans("app.forms.summary") }}</a>
+                                <a class="nav-link custom-tab" id="summary-tab" data-toggle="tab" href="#summary" role="tab" aria-controls="summary" aria-selected="false">{{ trans("app.forms.summary") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="mfreport-tab" data-toggle="tab" href="#mfreport" role="tab" aria-controls="mfreport" aria-selected="false">{{ trans("app.forms.mf_report") }}</a>
+                                <a class="nav-link custom-tab" id="mfreport-tab" data-toggle="tab" href="#mfreport" role="tab" aria-controls="mfreport" aria-selected="false">{{ trans("app.forms.mf_report") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="sfreport-tab" data-toggle="tab" href="#sfreport" role="tab" aria-controls="sfreport" aria-selected="false">{{ trans("app.forms.sf_report") }}</a>
+                                <a class="nav-link custom-tab" id="sfreport-tab" data-toggle="tab" href="#sfreport" role="tab" aria-controls="sfreport" aria-selected="false">{{ trans("app.forms.sf_report") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="income-tab" data-toggle="tab" href="#income" role="tab" aria-controls="income" aria-selected="false">{{ trans("app.forms.income") }}</a>
+                                <a class="nav-link custom-tab" id="income-tab" data-toggle="tab" href="#income" role="tab" aria-controls="income" aria-selected="false">{{ trans("app.forms.income") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="utility-tab" data-toggle="tab" href="#utility" role="tab" aria-controls="utility" aria-selected="false">{{ trans("app.forms.utility") }}</a>
+                                <a class="nav-link custom-tab" id="utility-tab" data-toggle="tab" href="#utility" role="tab" aria-controls="utility" aria-selected="false">{{ trans("app.forms.utility") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="contractexp-tab" data-toggle="tab" href="#contractexp" role="tab" aria-controls="contractexp" aria-selected="false">{{ trans("app.forms.contract_expire") }}</a>
+                                <a class="nav-link custom-tab" id="contractexp-tab" data-toggle="tab" href="#contractexp" role="tab" aria-controls="contractexp" aria-selected="false">{{ trans("app.forms.contract_expire") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="repair-tab" data-toggle="tab" href="#repair" role="tab" aria-controls="repair" aria-selected="false">{{ trans("app.forms.repair") }}</a>
+                                <a class="nav-link custom-tab" id="repair-tab" data-toggle="tab" href="#repair" role="tab" aria-controls="repair" aria-selected="false">{{ trans("app.forms.repair") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="vandalisme-tab" data-toggle="tab" href="#vandalisme" role="tab" aria-controls="vandalisme" aria-selected="false">{{ trans("app.forms.vandalism") }}</a>
+                                <a class="nav-link custom-tab" id="vandalisme-tab" data-toggle="tab" href="#vandalisme" role="tab" aria-controls="vandalisme" aria-selected="false">{{ trans("app.forms.vandalism") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="staff-tab" data-toggle="tab" href="#staff" role="tab" aria-controls="staff" aria-selected="false">{{ trans("app.forms.staff") }}</a>
+                                <a class="nav-link custom-tab" id="staff-tab" data-toggle="tab" href="#staff" role="tab" aria-controls="staff" aria-selected="false">{{ trans("app.forms.staff") }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="admin-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">{{ trans("app.forms.admin") }}</a>
+                                <a class="nav-link custom-tab" id="admin-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">{{ trans("app.forms.admin") }}</a>
                             </li>
                         </ul>
-                        <div class="tab-content padding-vertical-20" id="financeTabContent">
-                            <div class="tab-pane fade active show in" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                @include('finance_en.edit_finance_file.form_check')
+                        
+                        <section class="panel panel-pad">
+                            <div class="tab-content padding-vertical-10" id="financeTabContent">
+                                <div class="tab-pane fade active show in" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                    @include('finance_en.edit_finance_file.form_check')
+                                </div>
+                                <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+                                    @include('finance_en.edit_finance_file.form_summary')
+                                </div>
+                                <div class="tab-pane fade" id="mfreport" role="tabpanel" aria-labelledby="mfreport-tab">
+                                    @include('finance_en.edit_finance_file.form_mfreport')
+                                </div>
+                                <div class="tab-pane fade" id="income" role="tabpanel" aria-labelledby="income-tab">
+                                    @include('finance_en.edit_finance_file.form_income')
+                                </div>
+                                <div class="tab-pane fade" id="sfreport" role="tabpanel" aria-labelledby="sfreport-tab">
+                                    @include('finance_en.edit_finance_file.form_sfreport')
+                                </div>
+                                <div class="tab-pane fade" id="utility" role="tabpanel" aria-labelledby="utility-tab">
+                                    @include('finance_en.edit_finance_file.form_utility')
+                                </div>
+                                <div class="tab-pane fade" id="contractexp" role="tabpanel" aria-labelledby="contractexp-tab">
+                                    @include('finance_en.edit_finance_file.form_contractexp')
+                                </div>
+                                <div class="tab-pane fade" id="repair" role="tabpanel" aria-labelledby="repair-tab">
+                                    @include('finance_en.edit_finance_file.form_repair')
+                                </div>
+                                <div class="tab-pane fade" id="vandalisme" role="tabpanel" aria-labelledby="vandalisme-tab">
+                                    @include('finance_en.edit_finance_file.form_vandalisme')
+                                </div>
+                                <div class="tab-pane fade" id="staff" role="tabpanel" aria-labelledby="staff-tab">
+                                    @include('finance_en.edit_finance_file.form_staff')
+                                </div>
+                                <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
+                                    @include('finance_en.edit_finance_file.form_admin')
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
-                                @include('finance_en.edit_finance_file.form_summary')
-                            </div>
-                            <div class="tab-pane fade" id="mfreport" role="tabpanel" aria-labelledby="mfreport-tab">
-                                @include('finance_en.edit_finance_file.form_mfreport')
-                            </div>
-                            <div class="tab-pane fade" id="income" role="tabpanel" aria-labelledby="income-tab">
-                                @include('finance_en.edit_finance_file.form_income')
-                            </div>
-                            <div class="tab-pane fade" id="sfreport" role="tabpanel" aria-labelledby="sfreport-tab">
-                                @include('finance_en.edit_finance_file.form_sfreport')
-                            </div>
-                            <div class="tab-pane fade" id="utility" role="tabpanel" aria-labelledby="utility-tab">
-                                @include('finance_en.edit_finance_file.form_utility')
-                            </div>
-                            <div class="tab-pane fade" id="contractexp" role="tabpanel" aria-labelledby="contractexp-tab">
-                                @include('finance_en.edit_finance_file.form_contractexp')
-                            </div>
-                            <div class="tab-pane fade" id="repair" role="tabpanel" aria-labelledby="repair-tab">
-                                @include('finance_en.edit_finance_file.form_repair')
-                            </div>
-                            <div class="tab-pane fade" id="vandalisme" role="tabpanel" aria-labelledby="vandalisme-tab">
-                                @include('finance_en.edit_finance_file.form_vandalisme')
-                            </div>
-                            <div class="tab-pane fade" id="staff" role="tabpanel" aria-labelledby="staff-tab">
-                                @include('finance_en.edit_finance_file.form_staff')
-                            </div>
-                            <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
-                                @include('finance_en.edit_finance_file.form_admin')
-                            </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -158,13 +171,46 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
             window.location.hash = $(e.target).attr('href');
+            setTabTitle();
         });
 
         if (window.location.hash) {
             $('#financeTab a[href="' + window.location.hash + '"]').tab('show');
+            setTabTitle();
         }
     });
 
+    function setTabTitle() {
+        var title = '';
+        if (window.location.hash == '#home') {
+            title = 'Check';
+        } else if (window.location.hash == '#summary') {
+            title = 'Summary';
+        } else if (window.location.hash == '#mfreport') {
+            title = 'MF Report';
+        } else if (window.location.hash == '#sfreport') {
+            title = 'SF Report';
+        } else if (window.location.hash == '#income') {
+            title = 'Income';
+        } else if (window.location.hash == '#utility') {
+            title = 'Utility';
+        } else if (window.location.hash == '#contractexp') {
+            title = 'Contract';
+        } else if (window.location.hash == '#repair') {
+            title = 'Repair';
+        } else if (window.location.hash == '#vandalisme') {
+            title = 'Vandalisme';
+        } else if (window.location.hash == '#staff') {
+            title = 'Staff';
+        } else if (window.location.hash == '#admin') {
+            title = 'Admin';
+        } else {
+            title = 'Check';
+        }
+        $('#tab_title').text(title);
+
+    }
+    
     function submitForm() {
         if (window.location.hash == '#home') {
             submitCheck();

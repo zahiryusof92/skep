@@ -10,7 +10,7 @@ $prefix = 'contract_';
         <form id="form_contract">
 
             <div class="row">
-                <table class="table table-sm" id="dynamic_form_contract" style="font-size: 12px;">
+                <table class="table table-sm borderless" id="dynamic_form_contract" style="font-size: 12px;">
                     <thead>
                         <tr>
                             <th width="5%">&nbsp;</th>
@@ -59,7 +59,7 @@ $prefix = 'contract_';
                         @endforeach
 
                         <tr>
-                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowContract()" class="btn btn-primary btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowContract()" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
                         </tr>
 
                         <tr>
@@ -79,7 +79,7 @@ $prefix = 'contract_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitContract()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitContract()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>    
                 </div>
             <?php } ?>

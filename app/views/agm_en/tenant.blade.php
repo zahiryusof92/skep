@@ -23,7 +23,7 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AgmController@addTenant') }}'" type="button" class="btn btn-primary">
+                        <button onclick="window.location = '{{ URL::action('AgmController@addTenant') }}'" type="button" class="btn btn-own">
                             {{ trans('app.buttons.add_tenant') }}
                         </button>
                         &nbsp;
@@ -81,7 +81,7 @@ foreach ($user_permission as $permission) {
                                         </div>
                                         <div class="modal-footer">
                                             <img id="loading_import" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                            <button id="submit_button_import" class="btn btn-primary" type="submit">
+                                            <button id="submit_button_import" class="btn btn-own" type="submit">
                                                 {{ trans('app.forms.submit') }}
                                             </button>
                                             <button data-dismiss="modal" id="cancel_button_import" class="btn btn-default" type="button">

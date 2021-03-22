@@ -58,7 +58,7 @@
                             </div>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="submitChangePassword()">{{ trans('app.forms.submit') }}</button>
+                            <button type="button" class="btn btn-own" id="submit_button" onclick="submitChangePassword()">{{ trans('app.forms.submit') }}</button>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
                     </form>
@@ -140,6 +140,7 @@
                                 url: "{{ URL::action('UserController@submitChangePassword') }}",
                                 type: "POST",
                                 data: {
+                                    old_password: old_password,
                                     new_password: new_password
                                 },
                                 success: function (data) {

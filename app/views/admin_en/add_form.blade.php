@@ -127,7 +127,7 @@ foreach ($user_permission as $permission) {
                         <div class="form-actions">
                             <?php if ($insert_permission == 1) { ?>
                                 <input type="hidden" id="form_file_url" value=""/>
-                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitAddForm()">{{ trans("app.forms.submit") }}</button>
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddForm()">{{ trans("app.forms.submit") }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@form') }}'">{{ trans("app.forms.cancel") }}</button>
                         </div>

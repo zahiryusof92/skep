@@ -180,7 +180,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-actions">
-                                                <button type="button" class="btn btn-primary" id="submit_button" onclick="updateHouseScheme()">{{ trans('app.forms.submit') }}</button>
+                                                <button type="button" class="btn btn-own" id="submit_button" onclick="updateHouseScheme()">{{ trans('app.forms.submit') }}</button>
                                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                             </div>
                                         </form>
@@ -454,7 +454,7 @@
                                                         <div id="validation-errors_strata_file"></div>
                                                         @if ($strata->file_url != "")
                                                         <br/>
-                                                        <a href="{{$strata->file_url}}" target="_blank"><button button type="button" class="btn btn-sm btn-primary">{{ trans('app.forms.view_file') }}</button></a>
+                                                        <a href="{{$strata->file_url}}" target="_blank"><button button type="button" class="btn btn-sm btn-own">{{ trans('app.forms.view_file') }}</button></a>
                                                         <button type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
                                                         @endif
                                                     </div>
@@ -834,7 +834,7 @@
                                     </div>
                                     <div class="form-actions">
                                         <input type="hidden" id="strata_file_url" value="{{$strata->file_url}}"/>
-                                        <button type="button" class="btn btn-primary" id="submit_button" onclick="updateStrata()">{{ trans('app.forms.submit') }}</button>
+                                        <button type="button" class="btn btn-own" id="submit_button" onclick="updateStrata()">{{ trans('app.forms.submit') }}</button>
                                         <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                     </div>
                                 </form>
@@ -1758,7 +1758,7 @@
                                     </div>
                                     @endif
                                     <div class="form-actions">
-                                        <button type="button" class="btn btn-primary" id="submit_button" onclick="updateManagement()">{{ trans('app.forms.submit') }}</button>
+                                        <button type="button" class="btn btn-own" id="submit_button" onclick="updateManagement()">{{ trans('app.forms.submit') }}</button>
                                         <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                     </div>
                                 </form>
@@ -1810,7 +1810,7 @@
                                         <div class="col-lg-12">
                                             <h6>2. {{ trans('app.forms.delivery_document_of_each_meeting') }}</h6>
                                             <div class="table-responsive">
-                                                <button type="button" class="btn btn-primary pull-right margin-bottom-25" onclick="addAGMDetails()">
+                                                <button type="button" class="btn btn-own pull-right margin-bottom-25" onclick="addAGMDetails()">
                                                     {{ trans('app.forms.add') }}
                                                 </button>
                                                 <br/><br/>
@@ -1860,7 +1860,7 @@
                                         <div class="col-lg-12">
                                             <h6>{{ trans('app.forms.additional_info') }}</h6>
                                             <div class="table-responsive">
-                                                <button type="button" class="btn btn-primary pull-right margin-bottom-25" onclick="addAJKDetails()">
+                                                <button type="button" class="btn btn-own pull-right margin-bottom-25" onclick="addAJKDetails()">
                                                     {{ trans('app.forms.add') }}
                                                 </button>
                                                 <br/><br/>
@@ -1890,7 +1890,7 @@
                                         </div>
                                     </div>
                                     <div class="form-actions">
-                                        <button type="button" class="btn btn-primary" id="submit_button" onclick="updateMonitoring()">{{ trans('app.forms.submit') }}</button>
+                                        <button type="button" class="btn btn-own" id="submit_button" onclick="updateMonitoring()">{{ trans('app.forms.submit') }}</button>
                                         <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                     </div>
                                 </form>
@@ -2009,7 +2009,7 @@
                                             </div>
                                             <div class="form-actions">
                                                 <input type="hidden" id="others_image_url" value="{{$other_details->image_url}}"/>
-                                                <button type="button" class="btn btn-primary" id="submit_button" onclick="updateOtherDetails()">{{ trans('app.forms.submit') }}</button>
+                                                <button type="button" class="btn btn-own" id="submit_button" onclick="updateOtherDetails()">{{ trans('app.forms.submit') }}</button>
                                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                             </div>
                                         </form>
@@ -2229,7 +2229,7 @@
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="addAGMDetail()">
+                    <button type="button" class="btn btn-own" onclick="addAGMDetail()">
                         {{ trans('app.forms.submit') }}
                     </button>
                 </form>
@@ -2438,7 +2438,7 @@
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="editAGMDetail()">
+                    <button type="button" class="btn btn-own" onclick="editAGMDetail()">
                         {{ trans('app.forms.submit') }}
                     </button>
                 </form>
@@ -2501,7 +2501,7 @@
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
-                    <button id="submit_button" onclick="addAJKDetail()" type="button" class="btn btn-primary">
+                    <button id="submit_button" onclick="addAJKDetail()" type="button" class="btn btn-own">
                         {{ trans('app.forms.submit') }}
                     </button>
                 </div>
@@ -2565,7 +2565,7 @@
                     <button type="button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
-                    <button id="submit_button" onclick="editAJK()" type="button" class="btn btn-primary">
+                    <button id="submit_button" onclick="editAJK()" type="button" class="btn btn-own">
                         {{ trans('app.forms.submit') }}
                     </button>
                 </div>

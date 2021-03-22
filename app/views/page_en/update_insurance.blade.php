@@ -54,7 +54,7 @@ foreach ($user_permission as $permission) {
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="update_insurance" role="tabpanel">
                                 <?php if ($update_permission) { ?>
-                                    <button onclick="window.location = '{{ URL::action('AdminController@addInsurance', [$file->id]) }}'" type="button" class="btn btn-primary margin-bottom-25">
+                                    <button onclick="window.location = '{{ URL::action('AdminController@addInsurance', [$file->id]) }}'" type="button" class="btn btn-own margin-bottom-25">
                                         {{ trans('app.buttons.add_insurance') }}
                                     </button>
                                 <?php } ?>

@@ -1,8 +1,10 @@
 /*
  * BASIC TABLES
  */
+
 .table thead th {
-    border-bottom: 1px solid #eceff4;
+    /* border-bottom: 1px solid #eceff4; */
+    border-bottom: none;
     outline: none !important;
 }
 
@@ -10,11 +12,13 @@
     background: #f2f4f8;
 }
 
-.table td, .table th {
+.table td,
+.table th {
     border-color: #eceff4;
 }
 
-.table td:focus, .table th:focus {
+.table td:focus,
+.table th:focus {
     background-color: #eceff4;
 }
 
@@ -34,7 +38,7 @@
     background: #eceff4;
 }
 
-.table.table-striped tbody tr:nth-of-type(odd) {
+.table.table-striped tbody tr:nth-of-type(even) {
     background: #f2f4f8;
 }
 
@@ -42,14 +46,24 @@
     border-bottom-color: #514d6a;
 }
 
-.table-inverse th, .table-inverse td {
+.table-inverse th,
+.table-inverse td {
     border-top-color: #514d6a;
 }
 
-.table-inverse th, .table-inverse td, .table-inverse thead th {
+.table-inverse th,
+.table-inverse td,
+.table-inverse thead th {
     background: #38354a;
 }
 
-.table-inverse th:focus, .table-inverse td:focus, .table-inverse thead th:focus {
+.table-inverse th:focus,
+.table-inverse td:focus,
+.table-inverse thead th:focus {
     background: #2b2838;
+}
+
+.borderless td,
+.borderless th {
+    border: none;
 }

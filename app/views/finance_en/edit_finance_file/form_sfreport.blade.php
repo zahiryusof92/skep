@@ -12,7 +12,7 @@ $count = 0;
         <form id="form_reportSF">
 
             <div class="row">
-                <table class="table table-sm" style="font-size: 12px;">
+                <table class="table table-sm borderless" style="font-size: 12px;">
                     <tbody>
                         <tr>
                             <td class="padding-table" width="25%">
@@ -62,7 +62,7 @@ $count = 0;
             <hr>
 
             <div class="row">
-                <table id="dynamic_form_sfr" class="table table-sm" style="font-size: 12px;">
+                <table id="dynamic_form_sfr" class="table table-sm borderless" style="font-size: 12px;">
                     <thead>
                         <tr>
                             <th width="20%" style="text-align: center">JUMLAH PERBELANJAAN</th>
@@ -106,7 +106,7 @@ $count = 0;
             <hr/>
 
             <div class="row">
-                <table class="table table-sm" style="font-size: 12px;">
+                <table class="table table-sm borderless" style="font-size: 12px;">
                     <tbody>
                         <tr>
                             <td class="padding-table" width="20%">
@@ -147,7 +147,7 @@ $count = 0;
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitSFReport()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitSFReport()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>   
                 </div>
             <?php } ?>

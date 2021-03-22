@@ -389,7 +389,7 @@
                             </div>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="addAccessGroup()">{{ trans('app.forms.save') }}</button>
+                            <button type="button" class="btn btn-own" id="submit_button" onclick="addAccessGroup()">{{ trans('app.forms.save') }}</button>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("AdminController@accessGroup") }}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
                     </form>

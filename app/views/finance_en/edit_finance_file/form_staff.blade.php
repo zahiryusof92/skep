@@ -10,7 +10,7 @@ $prefix = 'staff_';
         <form id="form_staff">
 
             <div class="row">
-                <table class="table table-sm" id="dynamic_form_staff" style="font-size: 12px;">
+                <table class="table table-sm borderless" id="dynamic_form_staff" style="font-size: 12px;">
                     <thead>
                         <tr>
                             <th width="5%">&nbsp;</th>
@@ -92,7 +92,7 @@ $prefix = 'staff_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitStaff()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitStaff()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>   
                 </div>
             <?php } ?>

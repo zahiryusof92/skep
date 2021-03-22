@@ -57,7 +57,7 @@ foreach ($user_permission as $permission) {
                                     <div class="col-lg-12">
                                         <div class="table-responsive">
                                             <?php if ($update_permission == 1) { ?>
-                                                <button onclick="window.location = '{{ URL::action('AdminController@addBuyer', $files->id) }}'" type="button" class="btn btn-primary">
+                                                <button onclick="window.location = '{{ URL::action('AdminController@addBuyer', $files->id) }}'" type="button" class="btn btn-own">
                                                     {{ trans('app.buttons.add_buyer') }}  &nbsp;<i class="fa fa-plus-circle"></i>
                                                 </button>
                                                 &nbsp;
@@ -102,7 +102,7 @@ foreach ($user_permission as $permission) {
                                                                 <div class="modal-footer">
                                                                     <input type="hidden" name="file_id" id="file_id" value="{{ $files->id }}"/>
                                                                     <img id="loading_import" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                                                    <button id="submit_button_import" class="btn btn-primary" type="submit">
+                                                                    <button id="submit_button_import" class="btn btn-own" type="submit">
                                                                         {{ trans('app.forms.submit') }}
                                                                     </button>
                                                                     <button data-dismiss="modal" id="cancel_button_import" class="btn btn-default" type="button">

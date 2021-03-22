@@ -108,7 +108,7 @@ foreach ($user_permission as $permission) {
                         <div class="form-actions">
                             <a href='{{ url("cob/get/{$name}") }}' class="btn btn-default" id="cancel_button">{{ trans('app.forms.cancel') }}</a>
                             <?php if ($insert_permission == 1) { ?>
-                                <input type="submit" value="{{ trans('general.label_save') }}" class="btn btn-primary">
+                                <input type="submit" value="{{ trans('general.label_save') }}" class="btn btn-own">
                             <?php } ?>
                         </div>
                     </form>
