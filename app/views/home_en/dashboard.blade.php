@@ -20,7 +20,7 @@ foreach ($user_permission as $permission) {
         <div class="panel-body">
             <div class="widget widget-four background-transparent">
                 <div class="row">
-                    <div class="col-xs-15 col-sm-15 col-md-15 col-lg-15">
+                    <div class="col-xs-12 col-sm-12 col-md-15 col-lg-15">
                         <div class="step-block">
                             <span class="step-digit">
                                 <img src="{{asset('assets/common/img/icon/strata.png')}}"/>
@@ -31,10 +31,11 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-15 col-sm-15 col-md-15 col-lg-15">
+
+                    <div class="col-xs-12 col-sm-12 col-md-15 col-lg-15">
                         <div class="step-block">
                             <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/hirercy.png')}}"/>
+                                <img src="{{asset('assets/common/img/icon/hirechy.png')}}"/>
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">JMB</span>
@@ -44,7 +45,7 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-15 col-sm-15 col-md-15 col-lg-15">
+                    <div class="col-xs-12 col-sm-12 col-md-15 col-lg-15">
                         <div class="step-block">
                             <span class="step-digit">
                                 <img src="{{asset('assets/common/img/icon/profile.png')}}"/>
@@ -57,7 +58,7 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-15 col-sm-15 col-md-15 col-lg-15">
+                    <div class="col-xs-12 col-sm-12 col-md-15 col-lg-15">
                         <div class="step-block">
                             <span class="step-digit">
                                 <img src="{{asset('assets/common/img/icon/key.png')}}"/>
@@ -70,10 +71,10 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-15 col-sm-15 col-md-15 col-lg-15">
+                    <div class="col-xs-12 col-sm-12 col-md-15 col-lg-15">
                         <div class="step-block">
                             <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/home.png')}}"/>
+                                <img src="{{asset('assets/common/img/icon/tenant.png')}}"/>
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">Tenant</span>

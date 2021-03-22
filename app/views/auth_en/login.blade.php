@@ -6,7 +6,7 @@
 $company = Company::orderBy('id')->first();
 ?>
 
-<div class="page-content-inner" style="background-image: url({{asset('assets/common/img/temp/login/5.jpg')}})">
+<div class="page-content-inner" style="background-image: {{asset('assets/common/img/temp/login/5.jpg')}}">
 
     <!-- Login Page -->
 
