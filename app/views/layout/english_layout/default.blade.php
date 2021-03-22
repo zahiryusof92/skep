@@ -148,16 +148,7 @@
 
             @include('layout.english_layout.footer')
         </section>
-        <footer>
-            <div class="footer-container">
-                <div class="copyright bg-white">
-                  <p>
-                    &copy; <span id="copy-year">2021 </span>ODESI eCOB SDN BHD All Rights Reserved.
-                  </p>
-                </div>
-
-            </div>
-        </footer>
+        
         <!-- END CONTENT -->
         <div class="main-backdrop"><!-- --></div>
 

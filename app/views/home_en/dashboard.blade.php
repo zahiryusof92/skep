@@ -40,7 +40,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">JMB</span>
                                 <p>
-                                     465
+                                    465
                                 </p>
                             </div>
                         </div>
@@ -66,7 +66,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">Owner</span>
                                 <p>
-                                     765
+                                    765
                                 </p>
                             </div>
                         </div>
@@ -79,33 +79,21 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">Tenant</span>
                                 <p>
-                                     1000
+                                    1000
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        
+
 
             <div class="row">
                 <div class="col-lg-6">
                     <div class="margin-bottom-50 chart-custom">
                         <!--<h4 class="text-center">Star Rating of Development Area</h4>-->
                         <!--<div class="chart-pie-chart"></div>-->
-                        <div id="rating_star"></div>
-                        {{-- <br/> --}}
-
-                        {{-- <span>{{ trans('app.forms.total_development_area') }} {{ $data['total_strata'] }}</span>
-                        <br/>
-                        @if ($data['total_strata'] > 0 && $data['total_rating'] > 0)
-                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} ({{ number_format((( $data['total_rating'] / $data['total_strata']) * 100), 2) }}%)</span>
-                        <br/>
-                        @else 
-                        <span>{{ trans('app.forms.total_sample_percentage') }} {{ $data['total_rating'] }} (0%)</span>
-                        <br/>
-                        @endif --}}
-                        {{-- <span>{{ trans('app.forms.total_no_information') }} {{ $data['total_strata'] - $data['total_rating'] }}</span> --}}
+                        <div id="rating_star"></div>                            
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -232,7 +220,7 @@ foreach ($user_permission as $permission) {
                                             </tr>
                                         </thead>
                                         <tbody>
-    
+
                                         </tbody>
                                     </table>
                                 </div>

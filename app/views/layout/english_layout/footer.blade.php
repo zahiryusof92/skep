@@ -1,4 +1,4 @@
-<footer style="margin-top: 15px;">
+<footer style="margin-top: 15px; padding-left: 0px;">
     <div class="row">
         <div class="col-lg-6">
             <div class="pull-left">
