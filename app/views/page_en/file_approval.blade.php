@@ -86,7 +86,7 @@ foreach ($user_permission as $permission) {
                                                 </div>
                                             </div>
                                             <div class="form-actions">
-                                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitFileApproval()">{{ trans('app.forms.submit') }}</button>
+                                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitFileApproval()">{{ trans('app.forms.submit') }}</button>
                                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                             </div>
                                         </form>

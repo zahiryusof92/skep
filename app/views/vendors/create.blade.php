@@ -90,7 +90,7 @@
 
                         @if (AccessGroup::hasInsert(58))
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" id="submit_button">{{ trans('app.forms.submit') }}</button>
+                            <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ route('vendors.index') }}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
                         @endif

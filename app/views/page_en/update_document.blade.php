@@ -57,7 +57,7 @@ foreach ($user_permission as $permission) {
                                     <div class="col-lg-12">
                                         <div class="table-responsive">
                                             <?php if ($update_permission == 1) { ?>
-                                                <button onclick="window.location = '{{ URL::action('AdminController@addDocument', $files->id) }}'" type="button" class="btn btn-primary">
+                                                <button onclick="window.location = '{{ URL::action('AdminController@addDocument', $files->id) }}'" type="button" class="btn btn-own">
                                                     {{ trans('app.buttons.add_document') }}
                                                 </button>
                                                 <br/><br/>

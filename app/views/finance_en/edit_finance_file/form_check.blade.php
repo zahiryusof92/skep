@@ -1,7 +1,7 @@
 <div class="row">    
     <div class="col-lg-12">
 
-        <h6>{{ trans("app.forms.check") }}</h6>
+        {{-- <h6>{{ trans("app.forms.check") }}</h6> --}}
 
         <form id="form_check">
 
@@ -44,7 +44,7 @@
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitCheck()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitCheck()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                 </div>
             <?php } ?>

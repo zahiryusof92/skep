@@ -27,7 +27,7 @@ foreach ($user_permission as $permissions) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission) { ?>
-                        <button onclick="window.location = '{{ URL::action('SettingController@addDefectCategory') }}'" type="button" class="btn btn-primary">
+                        <button onclick="window.location = '{{ URL::action('SettingController@addDefectCategory') }}'" type="button" class="btn btn-own">
                             {{ trans('app.buttons.add_defect_category') }}
                         </button>
                         <br/><br/>

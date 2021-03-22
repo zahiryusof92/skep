@@ -12,7 +12,7 @@ $prefix3 = 'utilab_';
         <form id="form_utility">
 
             <div class="row">
-                <table class="table table-sm" id="dynamic_form_utility" style="font-size: 12px;">
+                <table class="table table-sm borderless" id="dynamic_form_utility" style="font-size: 12px;">
                     <thead>
                         <tr>
                             <th width="5%">&nbsp;</th>
@@ -110,7 +110,7 @@ $prefix3 = 'utilab_';
                         @endforeach
 
                         <tr>
-                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility()" class="btn btn-primary btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility()" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
                         </tr>
 
                         <tr>
@@ -141,7 +141,7 @@ $prefix3 = 'utilab_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitUtility()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitUtility()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>   
                 </div>
             <?php } ?>

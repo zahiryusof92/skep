@@ -24,7 +24,7 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <?php if ($insert_permission == 1) { ?>
-                    <button onclick="window.location = '{{ URL::action('SettingController@addDeveloper') }}'" type="button" class="btn btn-primary">
+                    <button onclick="window.location = '{{ URL::action('SettingController@addDeveloper') }}'" type="button" class="btn btn-own">
                         {{ trans('app.buttons.add_developer') }}
                     </button>
                     <br/><br/>

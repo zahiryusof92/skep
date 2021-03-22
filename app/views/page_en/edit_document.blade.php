@@ -111,7 +111,7 @@ foreach ($user_permission as $permission) {
                                                         &nbsp;<input type="file" name="document_file" id="document_file" />
                                                         <div id="validation-errors_document_file"></div>
                                                         @if ($document->file_url != "")
-                                                        <a href="{{asset($document->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
+                                                        <a href="{{asset($document->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
                                                         <?php if ($update_permission == 1) { ?>
                                                             <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDocumentFile('{{$document->id}}')"><i class="fa fa-times"></i></button>
                                                         <?php } ?>
@@ -153,7 +153,7 @@ foreach ($user_permission as $permission) {
                                             <div class="form-actions">
                                                 <?php if ($update_permission == 1) { ?>
                                                     <input type="hidden" id="document_file_url" value="{{$document->file_url}}"/>
-                                                    <button type="button" class="btn btn-primary" id="submit_button" onclick="submitEditDocument()">{{ trans('app.forms.submit') }}</button>
+                                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditDocument()">{{ trans('app.forms.submit') }}</button>
                                                 <?php } ?>
                                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', $document->file_id) }}'">{{ trans('app.forms.cancel') }}</button>
                                                 <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>

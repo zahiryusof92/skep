@@ -205,7 +205,7 @@ foreach ($user_permission as $permission) {
                             <input type="hidden" id="image_url" value=""/>
                             <input type="hidden" id="nav_image_url" value=""/>
                             <?php if ($insert_permission == 1) { ?>
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="addCompany()">{{ trans('app.forms.submit') }}</button>
+                            <button type="button" class="btn btn-own" id="submit_button" onclick="addCompany()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@company')}}'">{{ trans('app.forms.cancel') }}</button>
                         </div>

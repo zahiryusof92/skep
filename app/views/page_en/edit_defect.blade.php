@@ -91,7 +91,7 @@ foreach ($user_permission as $permissions) {
                                     <input type="file" name="defect_attachment" id="defect_attachment" />
                                     <div id="validation-errors_defect_attachment"></div>
                                     @if ($defect->attachment_url != "")
-                                    <a href="{{asset($defect->attachment_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
+                                    <a href="{{asset($defect->attachment_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
                                     <?php if ($update_permission) { ?>
                                         <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDefectAttachment('{{$defect->id}}')"><i class="fa fa-times"></i></button>
                                     <?php } ?>
@@ -123,7 +123,7 @@ foreach ($user_permission as $permissions) {
                         <div class="form-actions">
                             <?php if ($update_permission) { ?>
                                 <input type="hidden" id="defect_attachment_url" value="{{$defect->attachment_url}}"/>
-                                <button type="button" class="btn btn-primary" id="submit_button" onclick="submitEditDefect()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditDefect()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
                             <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>

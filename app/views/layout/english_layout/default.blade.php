@@ -39,11 +39,11 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/common/css/source/ratingstar/rating.css')}}">
 
         <style>
-            body {
+            /* body {
                 background: #ffffff !important;
-            }
+            } */
             .panel {
-                background: #eceff4 !important;
+                background: #ffffff !important;
             }
             .star-checked {
                 color: orange;
@@ -134,8 +134,17 @@
         <section class="page-content">
             @yield('content')
         </section>
-        <!-- END CONTENT -->
+        <footer>
+            <div class="footer-container">
+                <div class="copyright bg-white">
+                  <p>
+                    &copy; <span id="copy-year">2021 </span>ODESI eCOB SDN BHD All Rights Reserved.
+                  </p>
+                </div>
 
+            </div>
+        </footer>
+        <!-- END CONTENT -->
         <div class="main-backdrop"><!-- --></div>
 
         <script>

@@ -9,7 +9,7 @@ $prefix = 'income_';
 
         <form id="form_income">
             <div class="row">
-                <table class="table table-sm" id="dynamic_form_income" style="font-size: 12px;">
+                <table class="table table-sm borderless" id="dynamic_form_income" style="font-size: 12px;">
                     <thead>
                         <tr>
                             <th width="5%">&nbsp;</th>
@@ -73,7 +73,7 @@ $prefix = 'income_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitIncome()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitIncome()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>    
                 </div>
             <?php } ?>

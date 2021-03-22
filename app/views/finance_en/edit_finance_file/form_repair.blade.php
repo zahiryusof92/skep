@@ -11,7 +11,7 @@ $prefix2 = 'repair_singkingfund_';
         <form id="form_repair">
 
             <div class="row">
-                <table class="table table-sm" id="dynamic_form_repair_a" style="font-size: 12px;">
+                <table class="table table-sm borderless" id="dynamic_form_repair_a" style="font-size: 12px;">
                     <thead>
                         <tr>
                             <th width="5%">&nbsp;</th>
@@ -151,7 +151,7 @@ $prefix2 = 'repair_singkingfund_';
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
                     <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
-                    <button type="button"class="btn btn-primary submit_button" onclick="submitRepair()">{{ trans("app.forms.submit") }}</button>
+                    <button type="button"class="btn btn-own submit_button" onclick="submitRepair()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                 </div>
             <?php } ?>

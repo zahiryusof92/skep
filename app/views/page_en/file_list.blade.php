@@ -13,156 +13,156 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
-            <h3>{{$title}}</h3>
+            <div class="row">
+                <div class="col-md-10">
+                    <h3>{{$title}}</h3>
+                </div>
+                
+                @if (Auth::user()->getAdmin())
+                    <div class="col-md-2">
+                        <button class="btn btn-own margin-inline pull-right" data-toggle="modal" data-target="#importForm">
+                            {{ trans('app.buttons.import_cob_files') }}
+                        </button>
+                    </div>
+                    <br/>
+        
+                    <div class="modal fade" id="importForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                        <div class="modal-dialog">
+                            <form id="form_import" enctype="multipart/form-data" class="form-horizontal" data-parsley-validate>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">{{ trans('app.forms.import_cob_files') }}</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
+                                                    <select name="import_company" id="import_company" class="form-control">
+                                                        @if (count($cob) > 1)
+                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                        @endif
+                                                        @foreach ($cob as $companies)
+                                                        <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div id="import_company_error" style="display: none;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label><span style="color: red;">*</span> {{ trans('app.forms.excel_file') }}</label>
+                                                    <input type="file" name="import_file" id="import_file" class="form-control form-control-file"/>
+                                                    <div id="import_file_error" style="display: none;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="hidden" name="status" id="status" value="1"/>
+                                        <img id="loading_import" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                        <button id="submit_button_import" class="btn btn-own" type="submit">
+                                            {{ trans('app.forms.submit') }}
+                                        </button>
+                                        <button data-dismiss="modal" id="cancel_button_import" class="btn btn-default" type="button">
+                                            {{ trans('app.forms.cancel') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                <!-- modal -->
+                <script>
+                    $("#form_import").on('submit', (function (e) {
+                        e.preventDefault();
+
+                        $('#loading_import').css("display", "inline-block");
+                        $("#submit_button_import").attr("disabled", "disabled");
+                        $("#cancel_button_import").attr("disabled", "disabled");
+                        $("#import_company_error").css("display", "none");
+                        $("#import_file_error").css("display", "none");
+
+                        var import_company = $("#import_company").val(),
+                                import_file = $("#import_file").val();
+
+                        var error = 0;
+
+                        if (import_company.trim() == "") {
+                            $("#import_company_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"COB"]) }}</span>');
+                            $("#import_company_error").css("display", "block");
+                            error = 1;
+                        }
+                        if (import_file.trim() == "") {
+                            $("#import_file_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.file", ["attribute"=>"Excel File"]) }}</span>');
+                            $("#import_file_error").css("display", "block");
+                            error = 1;
+                        }
+
+                        if (error == 0) {
+                            var formData = new FormData(this);
+                            $.ajax({
+                                url: "{{ URL::action('ImportController@importCOBFile') }}",
+                                type: "POST",
+                                data: formData,
+                                async: true,
+                                contentType: false, // The content type used when sending data to the server.
+                                cache: false, // To unable request pages to be cached
+                                processData: false,
+                                success: function (data) { //function to be called if request succeeds
+                                    console.log(data);
+
+                                    $('#loading_import').css("display", "none");
+                                    $("#submit_button_import").removeAttr("disabled");
+                                    $("#cancel_button_import").removeAttr("disabled");
+
+                                    if (data.trim() === "true") {
+                                        $("#importForm").modal("hide");
+                                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.import_successfully') }}</span>", function () {
+                                            window.location.reload();
+                                        });
+                                    } else if (data.trim() === "empty_file") {
+                                        $("#importForm").modal("hide");
+                                        $("#import_file_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.file", ["attribute"=>"Excel File"]) }}</span>');
+                                        $("#import_file_error").css("display", "block");
+                                    } else if (data.trim() === "empty_data") {
+                                        $("#importForm").modal("hide");
+                                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.empty_or_exist') }}</span>", function () {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        $("#importForm").modal("hide");
+                                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>", function () {
+                                            window.location.reload();
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            $("#import_company").focus();
+                            $('#loading_import').css("display", "none");
+                            $("#submit_button_import").removeAttr("disabled");
+                            $("#cancel_button_import").removeAttr("disabled");
+                        }
+                    }));
+                </script>
+                @endif
+            </div>
         </div>
         <div class="panel-body">
-
-            @if (Auth::user()->getAdmin())
-            <div class="row">
-                <div class="col-lg-12">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#importForm">
-                        {{ trans('app.buttons.import_cob_files') }} &nbsp;<i class="fa fa-upload"></i>
-                    </button>
-                </div>
-            </div>
-
-            <br/>
-
-            <div class="modal fade" id="importForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                <div class="modal-dialog">
-                    <form id="form_import" enctype="multipart/form-data" class="form-horizontal" data-parsley-validate>
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">{{ trans('app.forms.import_cob_files') }}</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
-                                            <select name="import_company" id="import_company" class="form-control">
-                                                @if (count($cob) > 1)
-                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                @endif
-                                                @foreach ($cob as $companies)
-                                                <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
-                                                @endforeach
-                                            </select>
-                                            <div id="import_company_error" style="display: none;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label><span style="color: red;">*</span> {{ trans('app.forms.excel_file') }}</label>
-                                            <input type="file" name="import_file" id="import_file" class="form-control form-control-file"/>
-                                            <div id="import_file_error" style="display: none;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <input type="hidden" name="status" id="status" value="1"/>
-                                <img id="loading_import" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                <button id="submit_button_import" class="btn btn-primary" type="submit">
-                                    {{ trans('app.forms.submit') }}
-                                </button>
-                                <button data-dismiss="modal" id="cancel_button_import" class="btn btn-default" type="button">
-                                    {{ trans('app.forms.cancel') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!-- modal -->
-
-            <script>
-                $("#form_import").on('submit', (function (e) {
-                    e.preventDefault();
-
-                    $('#loading_import').css("display", "inline-block");
-                    $("#submit_button_import").attr("disabled", "disabled");
-                    $("#cancel_button_import").attr("disabled", "disabled");
-                    $("#import_company_error").css("display", "none");
-                    $("#import_file_error").css("display", "none");
-
-                    var import_company = $("#import_company").val(),
-                            import_file = $("#import_file").val();
-
-                    var error = 0;
-
-                    if (import_company.trim() == "") {
-                        $("#import_company_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"COB"]) }}</span>');
-                        $("#import_company_error").css("display", "block");
-                        error = 1;
-                    }
-                    if (import_file.trim() == "") {
-                        $("#import_file_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.file", ["attribute"=>"Excel File"]) }}</span>');
-                        $("#import_file_error").css("display", "block");
-                        error = 1;
-                    }
-
-                    if (error == 0) {
-                        var formData = new FormData(this);
-                        $.ajax({
-                            url: "{{ URL::action('ImportController@importCOBFile') }}",
-                            type: "POST",
-                            data: formData,
-                            async: true,
-                            contentType: false, // The content type used when sending data to the server.
-                            cache: false, // To unable request pages to be cached
-                            processData: false,
-                            success: function (data) { //function to be called if request succeeds
-                                console.log(data);
-
-                                $('#loading_import').css("display", "none");
-                                $("#submit_button_import").removeAttr("disabled");
-                                $("#cancel_button_import").removeAttr("disabled");
-
-                                if (data.trim() === "true") {
-                                    $("#importForm").modal("hide");
-                                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.import_successfully') }}</span>", function () {
-                                        window.location.reload();
-                                    });
-                                } else if (data.trim() === "empty_file") {
-                                    $("#importForm").modal("hide");
-                                    $("#import_file_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.file", ["attribute"=>"Excel File"]) }}</span>');
-                                    $("#import_file_error").css("display", "block");
-                                } else if (data.trim() === "empty_data") {
-                                    $("#importForm").modal("hide");
-                                    bootbox.alert("<span style='color:red;'>{{ trans('app.errors.empty_or_exist') }}</span>", function () {
-                                        window.location.reload();
-                                    });
-                                } else {
-                                    $("#importForm").modal("hide");
-                                    bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>", function () {
-                                        window.location.reload();
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        $("#import_company").focus();
-                        $('#loading_import').css("display", "none");
-                        $("#submit_button_import").removeAttr("disabled");
-                        $("#cancel_button_import").removeAttr("disabled");
-                    }
-                }));
-            </script>
-            @endif
-
-            <div class="row">
+            <section class="panel panel-pad">
+            <div class="row padding-vertical-10">
                 <div class="col-lg-12 text-center">
                     <form>
                         <div class="row">
@@ -200,7 +200,7 @@ foreach ($user_permission as $permission) {
 
             <div class="row">
                 <div class="col-lg-12">
-                    <table class="table table-hover" id="filelist" width="100%">
+                    <table class="table table-hover table-own table-striped" id="filelist" width="100%">
                         <thead>
                             <tr>                                
                                 <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
@@ -216,6 +216,7 @@ foreach ($user_permission as $permission) {
                     </table>
                 </div>
             </div>
+            </section>
         </div>
     </section>
     <!-- End  -->
@@ -343,7 +344,7 @@ foreach ($user_permission as $permission) {
                 <div class="modal-footer">
                     <input type="hidden" name="file_id" id="file_id"/>
                     <img id="loading_update_file_no" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                    <button id="submit_button_update_file_no" class="btn btn-primary" type="submit">
+                    <button id="submit_button_update_file_no" class="btn btn-own" type="submit">
                         {{ trans('app.forms.submit') }}
                     </button>
                     <button data-dismiss="modal" id="cancel_button_update_file_no" class="btn btn-default" type="button">

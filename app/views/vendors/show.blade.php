@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="pull-right">
                                     <input type="hidden" name="id" value="{{ $model->id }}"/>
-                                    <button class="btn btn-sm btn-primary">{{ trans('app.directory.vendors.submit_review') }}  <i class="fa fa-send-o margin-left-5"></i></button>
+                                    <button class="btn btn-sm btn-own">{{ trans('app.directory.vendors.submit_review') }}  <i class="fa fa-send-o margin-left-5"></i></button>
                                 </div>
                             </form>
                         </dd>                        
@@ -93,7 +93,7 @@
 
             <div class="row margin-bottom-20">
                 <div class="col-lg-6">    
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#formProjectModal">
+                    <button class="btn btn-own" data-toggle="modal" data-target="#formProjectModal">
                         {{ trans('app.directory.vendors.add_project') }} <i class="fa fa-plus-circle margin-left-5"></i>
                     </button>
                 </div>
@@ -199,7 +199,7 @@
                             </div>
                             <div class="modal-footer">
                                 <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                <button type="button" class="btn btn-primary submit_button" onclick="submitProject()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-own submit_button" onclick="submitProject()">{{ trans('app.forms.submit') }}</button>
                                 <button type="button" class="btn btn-danger cancel_button" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
                             </div>
                         </div>
@@ -294,7 +294,7 @@
                             <div class="modal-footer">
                                 <input type="hidden" id="update_id" name="update_id"/>
                                 <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                <button type="button" class="btn btn-primary submit_button" onclick="submitUpdate()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-own submit_button" onclick="submitUpdate()">{{ trans('app.forms.submit') }}</button>
                                 <button type="button" class="btn btn-danger cancel_button" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
                             </div>
                         </div>
@@ -335,7 +335,7 @@
                             <div class="modal-footer">
                                 <input type="hidden" id="change_id" name="change_id"/>
                                 <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                <button type="button" class="btn btn-primary submit_button" onclick="submitStatus()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-own submit_button" onclick="submitStatus()">{{ trans('app.forms.submit') }}</button>
                                 <button type="button" class="btn btn-danger cancel_button" data-dismiss="modal">{{ trans('app.forms.cancel') }}</button>
                             </div>
                         </div>

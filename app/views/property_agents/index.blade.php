@@ -11,7 +11,7 @@
             @if (AccessGroup::hasInsert(59))
             <div class="row">
                 <div class="col-lg-12">
-                    <button onclick="window.location = '{{ URL::action('PropertyAgentController@create') }}'" type="button" class="btn btn-primary margin-bottom-25">
+                    <button onclick="window.location = '{{ URL::action('PropertyAgentController@create') }}'" type="button" class="btn btn-own margin-bottom-25">
                         {{ trans('app.directory.property_agents.create') }}
                     </button>
                 </div>

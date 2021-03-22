@@ -82,7 +82,7 @@ $company = Company::orderBy('id')->first();
                         <div id="company_error" style="display:none;"></div>
                     </div>
                     <div class="form-actions text-center">
-                        <button type="button" class="btn btn-primary width-150" id="submit_button" onclick="register()">{{ trans('app.forms.register') }}</button>
+                        <button type="button" class="btn btn-own width-150" id="submit_button" onclick="register()">{{ trans('app.forms.register') }}</button>
                     </div>
                     <a href="{{URL::action('UserController@login')}}">{{ trans('app.forms.login') }}</a>
                 </form>

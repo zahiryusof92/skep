@@ -70,7 +70,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>&nbsp;</label><br/>
-                                    <button type="submit" class="btn btn-primary" id="submit_button">{{ trans('app.forms.submit') }}</button>
+                                    <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
                                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@landTitle") }}'"">{{ trans('app.buttons.reset') }}</button>
                                     <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                 </div>

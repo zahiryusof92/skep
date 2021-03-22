@@ -209,7 +209,7 @@ foreach ($user_permission as $permission) {
                             <input type="hidden" id="image_url" value="{{$company->image_url}}"/>
                             <input type="hidden" id="nav_image_url" value="{{$company->nav_image_url}}"/>
                             <?php if ($update_permission == 1) { ?>
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="editCompany()">{{ trans('app.forms.submit') }}</button>
+                            <button type="button" class="btn btn-own" id="submit_button" onclick="editCompany()">{{ trans('app.forms.submit') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@editCompany')}}'">{{ trans('app.forms.cancel') }}</button>
                         </div>

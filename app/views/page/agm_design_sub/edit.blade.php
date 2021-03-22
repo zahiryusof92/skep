@@ -115,7 +115,7 @@ foreach ($user_permission as $permission) {
                         <div class="form-actions">
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("AgmController@agmDesignSub") }}'">{{ trans('app.forms.cancel') }}</button>
                             <?php if ($insert_permission == 1) { ?>
-                                <input type="submit" value="{{ trans('general.label_save') }}" class="btn btn-primary">
+                                <input type="submit" value="{{ trans('general.label_save') }}" class="btn btn-own">
                             <?php } ?>
                         </div>
                     </form>

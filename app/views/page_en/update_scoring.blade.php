@@ -68,7 +68,7 @@ foreach ($user_permission as $permission) {
                                                 </div>
                                                 <?php if ($update_permission == 1) { ?>
                                                     <div class="col-md-2">
-                                                        <button onclick="addSurveyForm()" type="button" class="btn btn-primary">
+                                                        <button onclick="addSurveyForm()" type="button" class="btn btn-own">
                                                             {{ trans('app.forms.add') }}
                                                         </button>
                                                     </div>
@@ -527,7 +527,7 @@ foreach ($user_permission as $permission) {
                     <button type="button" id="cancel_button" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
-                    <button type="button" id="submit_button" class="btn btn-primary" onclick="addScoring()">
+                    <button type="button" id="submit_button" class="btn btn-own" onclick="addScoring()">
                         {{ trans('app.forms.submit') }}
                     </button>
                 </form>
@@ -954,7 +954,7 @@ foreach ($user_permission as $permission) {
                     <button type="button" id="cancel_button_edit" class="btn" data-dismiss="modal">
                         {{ trans('app.forms.close') }}
                     </button>
-                    <button type="button" id="submit_button_edit" class="btn btn-primary" onclick="editScoring()">
+                    <button type="button" id="submit_button_edit" class="btn btn-own" onclick="editScoring()">
                         {{ trans('app.forms.submit') }}
                     </button>
                 </form>

@@ -64,7 +64,7 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="form-actions">
                             <?php if ($update_permission == 1) { ?>
-                            <button type="button" class="btn btn-primary" id="submit_button" onclick="updateDun()">{{ trans('app.forms.save') }}</button>
+                            <button type="button" class="btn btn-own" id="submit_button" onclick="updateDun()">{{ trans('app.forms.save') }}</button>
                             <?php } ?>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("SettingController@dun") }}'">{{ trans('app.forms.cancel') }}</button>
                         </div>

@@ -147,7 +147,7 @@ foreach ($user_permission as $permission) {
                                             <div class="form-actions">
                                                 <?php if ($update_permission == 1) { ?>
                                                     <input type="hidden" id="document_file_url" value=""/>
-                                                    <button type="button" class="btn btn-primary" id="submit_button" onclick="submitAddDocument()">{{ trans('app.forms.submit') }}</button>
+                                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddDocument()">{{ trans('app.forms.submit') }}</button>
                                                 <?php } ?>
                                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', $files->id) }}'">{{ trans('app.forms.cancel') }}</button>
                                                 <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>

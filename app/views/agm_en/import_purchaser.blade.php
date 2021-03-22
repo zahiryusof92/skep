@@ -36,7 +36,7 @@ foreach ($user_permission as $permission) {
                         <div class="col-md-8">
                             <div class="form-group">
                                 <?php if ($insert_permission == 1) { ?>
-                                    <button type="submit" class="btn btn-primary" id="upload_button">
+                                    <button type="submit" class="btn btn-own" id="upload_button">
                                         {{ trans('app.forms.upload') }}
                                     </button>
                                 <?php } ?>
@@ -91,7 +91,7 @@ foreach ($user_permission as $permission) {
                     </div>
                     <?php if ($insert_permission == 1) { ?>
                         <br/>
-                        <button id="submit_buyer_button" type="button" class="btn btn-primary" onclick="submitUploadPurchaser()">{{ trans('app.forms.submit') }}</button>
+                        <button id="submit_buyer_button" type="button" class="btn btn-own" onclick="submitUploadPurchaser()">{{ trans('app.forms.submit') }}</button>
                         <img id="loading" src="{{ asset('assets/common/img/input-spinner.gif') }}" style="display:none;"/>
                     <?php } ?>
                     @endif
