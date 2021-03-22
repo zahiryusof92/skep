@@ -31,11 +31,12 @@ foreach ($user_permission as $permission) {
                     <table class="table table-hover nowrap" id="state" width="100%">
                         <thead>
                             <tr>
-                                <th style="width:70%;">{{ trans('app.forms.state') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.sort_no') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.status') }}</th>
+                                <th style="width:55%;">{{ trans('app.forms.state') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.code') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.sort_no') }}</th>
+                                <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                 <?php if ($update_permission == 1) { ?>
-                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                <th style="width:15%;">{{ trans('app.forms.action') }}</th>
                                 <?php } ?>
                             </tr>
                         </thead>
@@ -56,8 +57,14 @@ foreach ($user_permission as $permission) {
         oTable = $('#state').DataTable({
             "sAjaxSource": "{{URL::action('SettingController@getState')}}",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "order": [[ 0, "asc" ]],
-            responsive: true
+            "order": [[ 2, "asc" ]],
+            responsive: true,
+            "aoColumnDefs": [
+                {
+                    "bSortable": false,
+                    "aTargets": [-1]
+                }
+            ]
         });
     });
 

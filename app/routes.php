@@ -468,16 +468,15 @@ Route::post('/submitUpdateFormtype', 'SettingController@submitUpdateFormtype')->
 Route::post('/deleteFormtype/{id}', 'SettingController@deleteFormtype')->before('authMember');
 
 //category
-Route::get('/category', 'SettingController@category')->before('authMember');
-Route::get('/addCategory', 'SettingController@addCategory')->before('authMember');
-Route::post('/submitCategory', 'SettingController@submitCategory')->before('authMember');
-Route::get('/getCategory', 'SettingController@getCategory')->before('authMember');
-Route::post('/activeCategory', 'SettingController@activeCategory')->before('authMember');
-Route::post('/inactiveCategory', 'SettingController@inactiveCategory')->before('authMember');
-Route::get('/updateCategory/{id}', 'SettingController@updateCategory')->before('authMember');
-Route::post('/submitUpdateCategory', 'SettingController@submitUpdateCategory')->before('authMember');
-Route::post('/deleteCategory/{id}', 'SettingController@deleteCategory')->before('authMember');
-
+//Route::get('/category', 'SettingController@category')->before('authMember');
+//Route::get('/addCategory', 'SettingController@addCategory')->before('authMember');
+//Route::post('/submitCategory', 'SettingController@submitCategory')->before('authMember');
+//Route::get('/getCategory', 'SettingController@getCategory')->before('authMember');
+//Route::post('/activeCategory', 'SettingController@activeCategory')->before('authMember');
+//Route::post('/inactiveCategory', 'SettingController@inactiveCategory')->before('authMember');
+//Route::get('/updateCategory/{id}', 'SettingController@updateCategory')->before('authMember');
+//Route::post('/submitUpdateCategory', 'SettingController@submitUpdateCategory')->before('authMember');
+//Route::post('/deleteCategory/{id}', 'SettingController@deleteCategory')->before('authMember');
 //land
 Route::get('/landTitle', 'SettingController@landTitle')->before('authMember');
 Route::get('/addLandTitle', 'SettingController@addLandTitle')->before('authMember');
@@ -780,10 +779,40 @@ Route::get('/updateAgmPurchaseSub/{id}', 'AgmController@updateAgmPurchaseSub')->
 Route::post('/submitUpdateAgmPurchaseSub', 'AgmController@submitUpdateAgmPurchaseSub')->before('authMember');
 Route::post('/deleteAgmPurchaseSub/{id}', 'AgmController@deleteAgmPurchaseSub')->before('authMember');
 
-/*
- * Directory Route Start
- */
+
 Route::group(array('before' => 'authMember'), function() {
+    /*
+     * Category Setup Start
+     */
+    Route::post('category/active', 'CategoryController@active');
+    Route::post('category/inactive', 'CategoryController@inactive');
+    Route::resource('category', 'CategoryController', ['except' => 'show']);
+    /*
+     * Category Setup End
+     */
+
+    /*
+     * Conversion Rate Start
+     */
+    Route::resource('conversion', 'ConversionController', ['except' => 'create', 'show', 'destroy']);
+    /*
+     * Conversion Rate End
+     */
+
+    /*
+     * Point Package Start
+     */
+    Route::post('pointPackage/active', 'PointPackageController@active');
+    Route::post('pointPackage/inactive', 'PointPackageController@inactive');
+    Route::resource('pointPackage', 'PointPackageController', ['except' => 'show']);
+    /*
+     * Point Package Rate End
+     */
+
+
+    /*
+     * Directory Route Start
+     */
     Route::post('/vendors/review', 'VendorController@review');
     Route::post('/vendors/project', 'VendorController@project');
     Route::post('/vendors/project/update', 'VendorController@updateProject');
@@ -791,10 +820,35 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('/vendors/project/destroy/{id}', 'VendorController@destroyProject');
     Route::resource('vendors', 'VendorController');
     Route::resource('propertyAgents', 'PropertyAgentController');
+    /*
+     * Directory Route End
+     */
+
+    /*
+     * Summon Start
+     */
+    Route::post('summon/purchaser', 'SummonController@purchaser');
+    Route::get('summon/create/{type}', ['as' => 'summon.create', 'uses' => 'SummonController@create']);
+    Route::post('summon/orders', 'SummonController@orders');
+    Route::get('summon/payment', 'SummonController@payment');
+    Route::post('summon/submitPay', 'SummonController@submitPay');
+    Route::resource('summon', 'SummonController', ['except' => 'create']);
+    /*
+     * Summon End
+     */
+
+    /*
+     * My Point Start
+     */
+    Route::get('myPoint/reload', 'MyPointController@reload');
+    Route::post('myPoint/orders', 'MyPointController@orders');
+    Route::get('myPoint/payment', 'MyPointController@payment');
+    Route::post('myPoint/submitPay', 'MyPointController@submitPay');
+    Route::resource('myPoint', 'MyPointController');
+    /*
+     * My Point End
+     */
 });
-/*
- * Directory Route End
- */
 
 Route::get('/{cob}', 'UserController@login')->before('guest');
 Route::get('/{cob}/login', 'UserController@login')->before('guest');
@@ -850,6 +904,14 @@ Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->befo
 Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before(['auth.basic', 'authMember']);
 Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before(['auth.basic', 'authMember']);
 Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before(['auth.basic', 'authMember']);
+
+/*
+ * Cronjob
+ */
+Route::get('cronjob/createFileByCob/{cob}', 'CronjobController@createFileByCob');
+Route::get('cronjob/createFile/{id}', 'CronjobController@createFile');
+Route::get('cronjob/updateFile/{id}', 'CronjobController@updateFile');
+Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
 
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');

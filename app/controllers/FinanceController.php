@@ -19,6 +19,8 @@ class FinanceController extends BaseController {
                 $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
+        
+        $year = Files::getVPYear();
 
         $viewData = array(
             'title' => trans('app.menus.cob.add_finance_file_list'),
@@ -28,6 +30,7 @@ class FinanceController extends BaseController {
             'user_permission' => $user_permission,
             'image' => "",
             'file_no' => $file_no,
+            'year' => $year,
             'month' => Finance::monthList()
         );
 
@@ -1562,7 +1565,7 @@ class FinanceController extends BaseController {
                 $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                 $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . $files->file_no . "</a>",
+                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
                     date('d/m/Y', strtotime($filelists->date)),
                     $filelists->name,
                     number_format($filelists->amount, 2),

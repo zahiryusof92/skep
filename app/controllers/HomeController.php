@@ -17,6 +17,19 @@ class HomeController extends BaseController {
      */
 
     public function home() {
+
+        if (Auth::user()->isLawyer()) {
+            $viewData = array(
+                'title' => trans('app.app_name_short'),
+                'panel_nav_active' => 'home_panel',
+                'main_nav_active' => 'home_main',
+                'sub_nav_active' => 'home',
+                'image' => ""
+            );
+
+            return View::make('home_en.dashboard_lawyer', $viewData);
+        }
+
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $data = Files::getDashboardData();
 
