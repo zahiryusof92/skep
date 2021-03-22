@@ -31,6 +31,7 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
+
                     <div class="col-xs-12 col-sm-12 col-md-15 col-lg-15">
                         <div class="step-block">
                             <span class="step-digit">
