@@ -75,7 +75,6 @@ foreach ($user_permission as $permission) {
                         <div class="step-block">
                             <span class="step-digit">
                                 <img src="{{asset('assets/common/img/icon/tenant1.png')}}"/>
-                            </span>
                             <div class="step-desc">
                                 <span class="step-title">Tenant</span>
                                 <p>
