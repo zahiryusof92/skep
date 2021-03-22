@@ -10,8 +10,7 @@ if (isset($cob) && !empty($cob)) {
 }
 ?>
 
-{{-- <div class="page-content-inner" style="background-image: url({{asset('assets/common/img/temp/login/5.jpg')}})"> --}}
-<div class="page-content-inner" style="background-image: linear-gradient( rgb(39 34 34 / 80%), rgb(0 0 0 / 80%) ), url(http://localhost:8000/assets/common/img/temp/login/5.jpg);">
+<div class="page-content-inner" style="background-image: linear-gradient( rgb(39 34 34 / 80%), rgb(0 0 0 / 80%) ), url({{asset('assets/common/img/temp/login/5.jpg')}})">
     
     <!-- Login Page -->
     <div class="single-page-block">
@@ -77,15 +76,13 @@ if (isset($cob) && !empty($cob)) {
                 </div>
 
                 {{Form::close()}}
-
-                <p style="text-align: center;"><a href="https://odesi.tech/terms.html" target="_blank">{{ trans('User Terms & Conditions') }}</a></p>
-                <h6 class="text-center padding-top-5">&copy; {{ date('Y') }} ODESI ECOB SDN BHD. All rights reserved.</h6>
-
+                
             </div>
         </div>   
         <div class="copyright">
             <img src="{{asset('assets/common/img/odesi/logo.png')}}" />
             <h6 class="text-center padding-top-5">&copy; {{ date('Y') }} ODESI eCOB SDN BHD. All Rights Reserved.</h6>
+            <p style="text-align: center;"><a href="https://odesi.tech/terms.html" target="_blank">{{ trans('User Terms & Conditions') }}</a></p>
         </div>     
     </div>
     <!-- End Login Page -->
@@ -101,11 +98,11 @@ if (isset($cob) && !empty($cob)) {
         // Add class to body for change layout settings
         $('body').addClass('single-page single-page-inverse');
 
-        // $('#password').password({
-        //     eyeClass: '',
-        //     eyeOpenClass: 'icmn-eye',
-        //     eyeCloseClass: 'icmn-eye-blocked'
-        // });
+         $('#password').password({
+             eyeClass: '',
+             eyeOpenClass: 'icmn-eye',
+             eyeCloseClass: 'icmn-eye-blocked'
+         });
 
         // Set Background Image for Form Block
         function setImage() {
