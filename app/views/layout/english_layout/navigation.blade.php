@@ -28,13 +28,6 @@ if (!Auth::user()->getAdmin()) {
     <div class="left-menu-inner scroll-pane">
         <div id="image_nav">
 
-            {{-- @if ($image == "")
-            @if ($company->nav_image_url != "")
-            <img src="{{asset($company->nav_image_url)}}" style="width: 100%;" alt="" />
-            @endif
-            @else
-            <img src="{{asset($image)}}" style="width: 100%;" alt="" />
-            @endif --}}
         </div>
         <ul class="left-menu-list left-menu-list-root list-unstyled">
 
