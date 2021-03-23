@@ -351,7 +351,8 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (Auth::user()->isSuperadmin())
+                    @if (AccessGroup::hasAccess(61))
+                    @if (Auth::user()->isSuperadmin())                    
                     <li id="point_package_list">
                         <a class="left-menu-link" href="{{ route('pointPackage.index') }}">
                             {{ trans('app.point_package.title') }}
@@ -365,6 +366,7 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.master.conversion') }}
                         </a>
                     </li>
+                    @endif
                     @endif
 
                 </ul>
@@ -609,7 +611,9 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Module::hasAccess(9))
             <!-- Summon Start -->
+            @if (AccessGroup::hasAccess(61))
             @if (Auth::user()->isJMB())
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -663,7 +667,9 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-            <!-- Summon End -->
+            @endif
+            <!-- Summon End -->            
+            @endif
 
             @if (Module::hasAccess(7))
             <li class="left-menu-list-submenu" id="change_cob_panel">
