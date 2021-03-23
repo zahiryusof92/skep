@@ -27,7 +27,7 @@ foreach ($user_permission as $permission) {
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">Strata</span>
-                                <p>24 467</p>
+                                <p>{{ $data['total_strata'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">JMB</span>
                                 <p>
-                                    465
+                                    {{ $data['total_jmb'] }}
                                 </p>
                             </div>
                         </div>
@@ -53,7 +53,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">MC</span>
                                 <p>
-                                    <span>160.32</span>
+                                    {{ $data['total_mc'] }}
                                 </p>
                             </div>
                         </div>
@@ -66,7 +66,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">Owner</span>
                                 <p>
-                                    765
+                                    {{ $data['total_owner'] }}
                                 </p>
                             </div>
                         </div>
@@ -79,7 +79,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">Tenant</span>
                                 <p>
-                                    1000
+                                    {{ $data['total_tenant'] }}
                                 </p>
                             </div>
                         </div>

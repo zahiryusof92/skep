@@ -881,6 +881,20 @@ class Files extends Eloquent {
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($active)
                         ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
             } else {
                 $total_developer = DB::table('developer')
                         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
@@ -951,6 +965,18 @@ class Files extends Eloquent {
 
                 $total_rating = DB::table('scoring_quality_index')
                         ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($active)
                         ->count();
@@ -1017,6 +1043,16 @@ class Files extends Eloquent {
                         ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                         ->where($active)
                         ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
             } else {
                 $total_developer = DB::table('developer')
                         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
@@ -1090,6 +1126,18 @@ class Files extends Eloquent {
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where($active)
                         ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
             }
         }
 
@@ -1113,6 +1161,10 @@ class Files extends Eloquent {
             'rating' => $rating,
             'management' => $management,
             'total_strata' => $total_strata,
+            'total_jmb' => $total_jmb,
+            'total_mc' => $total_mc,
+            'total_owner' => $total_owner,
+            'total_tenant' => $total_tenant,
             'total_rating' => $total_rating
         );
 
