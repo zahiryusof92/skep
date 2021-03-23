@@ -467,16 +467,6 @@ Route::get('/updateFormtype/{id}', 'SettingController@updateFormtype')->before('
 Route::post('/submitUpdateFormtype', 'SettingController@submitUpdateFormtype')->before('authMember');
 Route::post('/deleteFormtype/{id}', 'SettingController@deleteFormtype')->before('authMember');
 
-//category
-//Route::get('/category', 'SettingController@category')->before('authMember');
-//Route::get('/addCategory', 'SettingController@addCategory')->before('authMember');
-//Route::post('/submitCategory', 'SettingController@submitCategory')->before('authMember');
-//Route::get('/getCategory', 'SettingController@getCategory')->before('authMember');
-//Route::post('/activeCategory', 'SettingController@activeCategory')->before('authMember');
-//Route::post('/inactiveCategory', 'SettingController@inactiveCategory')->before('authMember');
-//Route::get('/updateCategory/{id}', 'SettingController@updateCategory')->before('authMember');
-//Route::post('/submitUpdateCategory', 'SettingController@submitUpdateCategory')->before('authMember');
-//Route::post('/deleteCategory/{id}', 'SettingController@deleteCategory')->before('authMember');
 //land
 Route::get('/landTitle', 'SettingController@landTitle')->before('authMember');
 Route::get('/addLandTitle', 'SettingController@addLandTitle')->before('authMember');
