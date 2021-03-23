@@ -719,6 +719,18 @@ nav.left-menu .left-menu-block .left-menu-block-item {
     }
 }
 
+@media (max-width: 767px) {
+    nav.left-menu .left-menu-inner {
+        top: 75px;
+    }
+}
+
+@media (max-width: 450px) {
+    .menu-info-block .margin-top-10 {
+        margin-top: 0;
+    }
+}
+
 
 /*
  * COLORFUL MENU

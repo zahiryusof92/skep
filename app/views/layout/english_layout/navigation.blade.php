@@ -20,7 +20,7 @@ if (!Auth::user()->getAdmin()) {
 ?>
 <!-- BEGIN SIDE NAVIGATION -->
 <nav class="left-menu" left-menu>
-    <div class="logo-container">
+    <div class="logo-container hidden-sm-down">
         <div class="logo">
             <a href="{{URL::action('HomeController@home')}}"><img src="{{asset($company->image_url)}}" alt=""/></a>
         </div>
@@ -40,7 +40,7 @@ if (!Auth::user()->getAdmin()) {
 
             <li class="left-menu-list-link hidden-md-up">
                 <a class="left-menu-link" href="{{ URL::action('HomeController@home') }}">
-                    <i class="left-menu-link-icon fa fa-home"><!-- --></i>
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/home.png')}}"/>
                     {{ trans('app.menus.home') }}
                 </a>
             </li>
