@@ -15,73 +15,75 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="add_fileprefix">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-10">
+                    <div class="col-lg-12">
+                        <form id="add_fileprefix">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            @if (Auth::user()->getAdmin())
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
-                                    <select id="company" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($cob as $companies)
-                                        <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="company_error" style="display:none;"></div>
+                            <div class="row">
+                                @if (Auth::user()->getAdmin())
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
+                                        <select id="company" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($cob as $companies)
+                                            <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="company_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                @else
+                                <input type="hidden" id="company" value="{{ Auth::user()->company_id }}">
+                                @endif
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.file_number') }}</label>
+                                        <select id="file_no" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($file_no as $files)
+                                            <option value="{{$files->description}}">{{$files->description}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_no_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.description') }}</label>
+                                        <input id="description" class="form-control" placeholder="{{ trans('app.forms.description') }}" type="text">
+                                        <div id="description_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                            @else
-                            <input type="hidden" id="company" value="{{ Auth::user()->company_id }}">
-                            @endif
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.file_number') }}</label>
-                                    <select id="file_no" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($file_no as $files)
-                                        <option value="{{$files->description}}">{{$files->description}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="file_no_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="file_already_exists_error" style="display: none;"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.description') }}</label>
-                                    <input id="description" class="form-control" placeholder="{{ trans('app.forms.description') }}" type="text">
-                                    <div id="description_error" style="display:none;"></div>
-                                </div>
+                            <div class="form-actions">
+                                <?php if ($insert_permission == 1) { ?>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="addFile()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@addFile')}}'">{{ trans('app.forms.cancel') }}</button>
+                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="file_already_exists_error" style="display: none;"></div>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <?php if ($insert_permission == 1) { ?>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="addFile()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@addFile')}}'">{{ trans('app.forms.cancel') }}</button>
-                            <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

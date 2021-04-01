@@ -68,6 +68,10 @@ class Files extends Eloquent {
         return $this->hasOne('Management', 'file_id');
     }
 
+    public function managementDeveloper() {
+        return $this->hasOne('ManagementDeveloper', 'file_id');
+    }
+
     public function managementJMB() {
         return $this->hasOne('ManagementJMB', 'file_id');
     }

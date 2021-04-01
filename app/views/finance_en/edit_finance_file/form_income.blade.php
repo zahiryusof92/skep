@@ -2,7 +2,7 @@
 $prefix = 'income_';
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>3. LAPORAN PENDAPATAN</h6>

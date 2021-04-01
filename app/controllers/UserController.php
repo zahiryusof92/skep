@@ -1,5 +1,6 @@
 <?php
 
+use Helper\KCurl;
 use Helper\OAuth;
 
 class UserController extends BaseController {
@@ -154,6 +155,22 @@ class UserController extends BaseController {
                                     ), $remember);
 
                     if ($auth) {
+                        ## EAI Call
+                        // $url = $this->eai_domain . $this->eai_route['auth']['login'];
+                        // $api_data['username'] = $username;
+                        // $api_data['password'] = $password;
+                        // $headers =  [
+                        //     "Content-Type: application/json",
+                        //     "Accept: application/json",
+                        // ];
+                        // $response = json_decode((string) ((new KCurl())->requestPost($headers, 
+                        //                         $url,
+                        //                         json_encode($api_data))));
+                        
+                        // if(empty($response->status) == false && $response->status == 200) {
+                        //     setcookie("eai_session", $response->token, time() + (86400 *24*7));
+                        // }
+
                         $user_account = User::where('id', Auth::user()->id)->first();
                         if ($user_account) {
                             if ($user_account->getRole->name == 'JMB' || $user_account->getRole->name == 'MC') {
@@ -211,6 +228,22 @@ class UserController extends BaseController {
                                 ), $remember);
 
                 if ($auth) {
+                    ## EAI Call
+                    // $url = $this->eai_domain . $this->eai_route['auth']['login'];
+                    // $api_data['username'] = $username;
+                    // $api_data['password'] = $password;
+                    // $headers =  [
+                    //     "Content-Type: application/json",
+                    //     "Accept: application/json",
+                    // ];
+                    // $response = json_decode((string) ((new KCurl())->requestPost($headers, 
+                    //                         $url,
+                    //                         json_encode($api_data))));
+                    
+                    // if(empty($response->status) == false && $response->status == 200) {
+                    //     setcookie("eai_session", $response->token, time() + (86400 *24*7));
+                    // }
+
                     if (Auth::user()->getAdmin() || Auth::user()->isLawyer()) {
                         $user_account = User::where('id', Auth::user()->id)->first();
                         if ($user_account) {
@@ -267,30 +300,42 @@ class UserController extends BaseController {
     public function submitEditProfile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $user = User::find(Auth::User()->id);
-            if (count($user) > 0) {
-                $user->full_name = $data['name'];
-                $user->email = $data['email'];
-                $user->phone_no = $data['phone_no'];
-                $success = $user->save();
-
-                /**
-                 * call back to vendor portal to update info
-                 */
-                (new OAuth())->updateSimpleProfile($user);
-                
-                if ($success) {
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['profile']['update'];
+            $data['id'] = Auth::User()->id;
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $user = User::find(Auth::User()->id);
+                if (count($user) > 0) {
+                    $user->full_name = $data['name'];
+                    $user->email = $data['email'];
+                    $user->phone_no = $data['phone_no'];
+                    $success = $user->save();
+    
+                    /**
+                     * call back to vendor portal to update info
+                     */
+                    (new OAuth())->updateSimpleProfile($user);
                     
-                    Session::forget('full_name');
-                    Session::put('full_name', $user['full_name']);
-
-                    print "true";
+                    if ($success) {
+                        
+                        Session::forget('full_name');
+                        Session::put('full_name', $user['full_name']);
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -335,17 +380,29 @@ class UserController extends BaseController {
     public function submitChangePassword() {
         $data = Input::all();
         if (Request::ajax()) {
-            $new_password = $data['new_password'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['profile']['password_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $user = User::find(Auth::User()->id);
-            $user->password = Hash::make($new_password);
-            $success = $user->save();
+                $new_password = $data['new_password'];
 
-            if ($success) {
-                print "true";
-            } else {
-                print "false";
-            }
+                $user = User::find(Auth::User()->id);
+                $user->password = Hash::make($new_password);
+                $success = $user->save();
+
+                if ($success) {
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 

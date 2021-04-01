@@ -51,10 +51,236 @@ foreach ($user_permission as $permission) {
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
                         </ul>
-                        <section class="panel panel-pad">
-                            <div class="tab-content padding-vertical-20">
-                                <div class="tab-pane active" id="management" role="tabpanel">
-                                    <form id="management">
+                        <div class="tab-content padding-vertical-20">
+                            <div class="tab-pane active" id="management" role="tabpanel">
+                                <section class="panel panel-pad">
+                                    <form id="management padding-vertical-20">
+                                        @if (count($management_developer) <= 0)
+                                            <div class="row padding-vertical-20">
+                                                <div class="col-lg-12">
+                                                    <input type="checkbox" name="is_developer" id="is_developer"/>
+                                                    <label><h4> {{ trans('app.forms.developer') }}</h4></label>
+                                                    <!-- developer Form -->
+                                                    <div id="developer_form" style="display:none">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.developer') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" id="developer_name" value="{{$house_scheme->name}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.address') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="developer_address1" value="{{$house_scheme->address1}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="developer_address2" value="{{$house_scheme->address2}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="developer_address3" value="{{$house_scheme->address3}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" id="developer_address4" value="{{$house_scheme->address4}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.city') }}</label>
+                                                                    <select class="form-control" id="developer_city">
+                                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                        @foreach ($city as $cities)
+                                                                        <option value="{{$cities->id}}" {{($house_scheme->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.postcode') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="developer_poscode" value="{{$house_scheme->poscode}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.state') }}</label>
+                                                                    <select class="form-control" id="developer_state">
+                                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                        @foreach ($state as $states)
+                                                                        <option value="{{$states->id}}" {{($house_scheme->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.country') }}</label>
+                                                                    <select class="form-control" id="developer_country">
+                                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                        @foreach ($country as $countries)
+                                                                        <option value="{{$countries->id}}" {{($house_scheme->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="developer_phone_no" value="{{$house_scheme->phone_no}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="developer_fax_no" value="{{$house_scheme->fax_no}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.remarks') }}</label>
+                                                                    <textarea class="form-control" rows="3" id="developer_remarks">{{$house_scheme->remarks}}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="row padding-vertical-20">
+                                                <div class="col-lg-12">
+                                                    <input type="checkbox" name="is_developer" id="is_developer" {{($management->is_developer == 1 ? " checked" : "")}}/>
+                                                    <label><h4> {{ trans('app.forms.developer') }}</h4></label>
+                                                    <!-- developer Form -->
+                                                    <div id="developer_form">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.developer') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" id="developer_name" value="{{$management_developer->name}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.address') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="developer_address1" value="{{$management_developer->address_1}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="developer_address2"  value="{{$management_developer->address_2}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="developer_address3"  value="{{$management_developer->address_3}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" id="developer_address4"  value="{{$management_developer->address_4}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.city') }}</label>
+                                                                    <select class="form-control" id="developer_city">
+                                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                        @foreach ($city as $cities)
+                                                                        <option value="{{$cities->id}}" {{($management_developer->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.postcode') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="developer_poscode"  value="{{$management_developer->poscode}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.state') }}</label>
+                                                                    <select class="form-control" id="developer_state">
+                                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                        @foreach ($state as $states)
+                                                                        <option value="{{$states->id}}" {{($management_developer->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.country') }}</label>
+                                                                    <select class="form-control" id="developer_country">
+                                                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                        @foreach ($country as $countries)
+                                                                        <option value="{{$countries->id}}" {{($management_developer->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="developer_phone_no" value="{{$management_developer->phone_no}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="developer_fax_no" value="{{$management_developer->fax_no}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.remarks') }}</label>
+                                                                    <textarea class="form-control" rows="3" id="developer_remarks">{{$management_developer->remarks}}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        <hr/>
                                         @if (count($management_jmb) <= 0)
                                         <div class="row">
                                             <div class="col-lg-12">
@@ -1060,7 +1286,7 @@ foreach ($user_permission as $permission) {
                                             <?php if ($update_permission == 1) { ?>
                                                 <button type="button" class="btn btn-own" id="submit_button" onclick="updateManagement()">{{ trans('app.forms.submit') }}</button>
                                             <?php } ?>
-    
+
                                             @if ($file->is_active != 2)
                                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                             @else
@@ -1068,9 +1294,9 @@ foreach ($user_permission as $permission) {
                                             @endif
                                         </div>
                                     </form>
-                                </div>
+                                </section>
                             </div>
-                        </section>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1145,6 +1371,13 @@ foreach ($user_permission as $permission) {
     });
 
     $(document).ready(function () {
+        $('#is_developer').click(function () {
+            if ($(this).is(':checked')) {
+                $("#developer_form").fadeIn(500);
+            } else {
+                $("#developer_form").fadeOut(0);
+            }
+        });
         $('#is_jmb').click(function () {
             if ($(this).is(':checked')) {
                 $("#jmb_form").fadeIn(500);
@@ -1178,6 +1411,20 @@ foreach ($user_permission as $permission) {
     function updateManagement() {
         changes = false;
         $("#loading").css("display", "inline-block");
+
+        //developer
+        var developer_name = $("#developer_name").val(),
+                developer_address1 = $("#developer_address1").val(),
+                developer_address2 = $("#developer_address2").val(),
+                developer_address3 = $("#developer_address3").val(),
+                developer_address4 = $("#developer_address4").val(),
+                developer_city = $("#developer_city").val(),
+                developer_poscode = $("#developer_poscode").val(),
+                developer_state = $("#developer_state").val(),
+                developer_country = $("#developer_country").val(),
+                developer_fax_no = $("#developer_fax_no").val(),
+                developer_phone_no = $("#developer_phone_no").val(),
+                developer_remarks = $("#developer_remarks").val();
 
         //jmb
         var jmb_date_formed = $("#jmb_date_formed").val(),
@@ -1236,10 +1483,17 @@ foreach ($user_permission as $permission) {
                 others_phone_no = $("#others_phone_no").val(),
                 others_fax_no = $("#others_fax_no").val(),
                 others_email = $("#others_email").val(),
+                is_developer,
                 is_jmb,
                 is_mc,
                 is_agent,
                 is_others;
+
+        if (document.getElementById('is_developer').checked) {
+            is_developer = 1;
+        } else {
+            is_developer = 0;
+        }
 
         if (document.getElementById('is_jmb').checked) {
             is_jmb = 1;
@@ -1269,6 +1523,20 @@ foreach ($user_permission as $permission) {
                 url: "{{ URL::action('AdminController@submitUpdateManagement') }}",
                 type: "POST",
                 data: {
+                    //developer
+                    is_developer: is_developer,
+                    developer_name: developer_name,
+                    developer_address1: developer_address1,
+                    developer_address2: developer_address2,
+                    developer_address3: developer_address3,
+                    developer_address4: developer_address4,
+                    developer_city: developer_city,
+                    developer_poscode: developer_poscode,
+                    developer_state: developer_state,
+                    developer_country: developer_country,
+                    developer_fax_no: developer_fax_no,
+                    developer_phone_no: developer_phone_no,
+                    developer_remarks: developer_remarks,
                     //jmb
                     is_jmb: is_jmb,
                     jmb_date_formed: jmb_date_formed,

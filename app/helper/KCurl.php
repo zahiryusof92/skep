@@ -3,12 +3,32 @@
 namespace Helper;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cookie;
 
 class KCurl
 {
-    public function requestPost($header, $url, $data) {
+    public function getHeaders($file) {
+        $headers =  [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            'Authorization' => "Authorization: Bearer ". $_COOKIE["eai_session"],
+        ];
+
+        if($file) {
+            array_shift($headers);
+        }
+
+        return $headers;
+    }
+
+    public function requestPost($header = null, $url, $data, $file = false) {
         try {
-          
+            if($header == null) {
+                $header = $this->getHeaders($file);
+            }
+            
             $ch = curl_init();
             
             curl_setopt($ch, CURLOPT_URL, $url);

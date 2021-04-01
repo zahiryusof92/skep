@@ -13,166 +13,168 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Vertical Form -->
-                    <form id="add_user">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <!-- Vertical Form -->
+                        <form id="add_user">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.username') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.username') }}" id="username" value="{{$user->username}}" disabled>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.username') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.username') }}" id="username" value="{{$user->username}}" disabled>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.full_name') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.full_name') }}" id="name" value="{{$user->full_name}}">
-                                    <div id="name_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.full_name') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.full_name') }}" id="name" value="{{$user->full_name}}">
+                                        <div id="name_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{$user->email}}">
-                                    <div id="email_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{$user->email}}">
+                                        <div id="email_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.phone_number') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{$user->phone_no}}">
-                                    <div id="phone_no_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{$user->phone_no}}">
+                                        <div id="phone_no_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.access_group') }}</label>
-                                    <select id="role" class="form-control select2" onchange="showExpiryDate(this)">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($role as $value => $name)
-                                        <option value="{{ $name }}" {{($user->role == $value ? " selected" : "")}}>{{ $name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="role_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.access_group') }}</label>
+                                        <select id="role" class="form-control select2" onchange="showExpiryDate(this)">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($role as $value => $name)
+                                            <option value="{{ $name }}" {{($user->role == $value ? " selected" : "")}}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="role_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" id="expiry_date" style="display: none;">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.date_start') }}</label>
-                                    <label class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_start') }}" id="start_date_raw" value="{{ (!empty($user->start_date) ? date('d-m-Y', strtotime($user->start_date)) : '') }}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <input type="hidden" id="start_date" value=""/>
-                                    <div id="start_date_error" style="display:none;"></div>
+                            <div class="row" id="expiry_date" style="display: none;">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.date_start') }}</label>
+                                        <label class="input-group">
+                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_start') }}" id="start_date_raw" value="{{ (!empty($user->start_date) ? date('d-m-Y', strtotime($user->start_date)) : '') }}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <input type="hidden" id="start_date" value=""/>
+                                        <div id="start_date_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.date_end') }}</label>
+                                        <label class="input-group">
+                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_end') }}" id="end_date_raw" value="{{ (!empty($user->end_date) ? date('d-m-Y', strtotime($user->end_date)) : '') }}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <input type="hidden" id="end_date" value="{{ $user->end_date }}"/>
+                                        <div id="end_date_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.date_end') }}</label>
-                                    <label class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_end') }}" id="end_date_raw" value="{{ (!empty($user->end_date) ? date('d-m-Y', strtotime($user->end_date)) : '') }}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <input type="hidden" id="end_date" value="{{ $user->end_date }}"/>
-                                    <div id="end_date_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
+                                        <select id="company" class="form-control select2" onchange="findFile()">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($company as $companies)
+                                            <option value="{{$companies->id}}" {{ $user->company_id == $companies->id ? 'selected' : '' }}>{{$companies->name}} ({{$companies->short_name}})</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="company_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
-                                    <select id="company" class="form-control select2" onchange="findFile()">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($company as $companies)
-                                        <option value="{{$companies->id}}" {{ $user->company_id == $companies->id ? 'selected' : '' }}>{{$companies->name}} ({{$companies->short_name}})</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="company_error" style="display:none;"></div>
+                            <div class="row" id="file_form" style="display: none;">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.files') }}</label>
+                                        <select id="file_id" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($files as $file)
+                                            <option value="{{$file->id}}" {{ $user->file_id == $file->id ? 'selected' : '' }}>{{ $file->file_no }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_id_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" id="file_form" style="display: none;">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.files') }}</label>
-                                    <select id="file_id" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $file)
-                                        <option value="{{$file->id}}" {{ $user->file_id == $file->id ? 'selected' : '' }}>{{ $file->file_no }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="file_id_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.status') }}</label>
+                                        <select id="is_active" class="form-control">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            <option value="1" {{($user->is_active == 1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
+                                            <option value="0" {{($user->is_active == 0 ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
+                                        </select>
+                                        <div id="is_active_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.status') }}</label>
-                                    <select id="is_active" class="form-control">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        <option value="1" {{($user->is_active == 1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
-                                        <option value="0" {{($user->is_active == 0 ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
-                                    </select>
-                                    <div id="is_active_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.remarks') }}</label>
+                                        <textarea class="form-control" rows="3" placeholder="{{ trans('app.forms.remarks') }}" id="remarks">{{$user->remarks}}</textarea>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.remarks') }}</label>
-                                    <textarea class="form-control" rows="3" placeholder="{{ trans('app.forms.remarks') }}" id="remarks">{{$user->remarks}}</textarea>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.new_password') }}</label>
+                                        <input type="password" class="form-control" placeholder="{{ trans('app.forms.new_password') }}" id="password" autocomplete="new-password">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.new_password') }}</label>
-                                    <input type="password" class="form-control" placeholder="{{ trans('app.forms.new_password') }}" id="password" autocomplete="new-password">
-                                </div>
+                            <div class="form-actions">
+                                <?php if ($update_permission == 1) { ?>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="updateUser()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@user')}}'">{{ trans('app.forms.cancel') }}</button>
                             </div>
-                        </div>
-                        <div class="form-actions">
-                            <?php if ($update_permission == 1) { ?>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="updateUser()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@user')}}'">{{ trans('app.forms.cancel') }}</button>
-                        </div>
-                    </form>
-                    <!-- End Vertical Form -->
+                        </form>
+                        <!-- End Vertical Form -->
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

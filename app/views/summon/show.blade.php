@@ -186,7 +186,7 @@
                                     @include('alert.feedback', ['field' => 'status'])
                                 </div>
                             </dd>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-own">
                                 {{ trans('app.forms.submit') }}
                             </button>
                         </dl>
@@ -230,7 +230,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-own">
                                         {{ trans('app.summon.payment') }}
                                     </button>
                                     <button type="button" class="btn btn-danger" onclick="window.location = '{{ route('summon.index') }}'">                                

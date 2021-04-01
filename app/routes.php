@@ -905,3 +905,11 @@ Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
 
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
+
+
+
+Route::group(array('prefix' => 'api/v1/export'), function() {
+    Route::get('councilFacility', 'ExportController@exportCouncilFacility');
+    Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
+
+});

@@ -1,5 +1,7 @@
 <?php
 
+use Helper\KCurl;
+
 class AgmController extends BaseController {
 
     public function AJK() {
@@ -663,7 +665,7 @@ class AgmController extends BaseController {
         }
     }
 
-    public function importPurchaser() {
+    public function importPurchaser() { 
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
@@ -1928,28 +1930,39 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $document = Document::find($id);
-            if ($document) {
-                $document->is_deleted = 1;
-                $deleted = $document->save();
-                if ($deleted) {
-                    # Audit Trail
-                    $remarks = 'Document: ' . $document->name_en . ' has been deleted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Document";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    print "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $document = Document::find($id);
+                if ($document) {
+                    $document->is_deleted = 1;
+                    $deleted = $document->save();
+                    if ($deleted) {
+                        # Audit Trail
+                        $remarks = 'Document: ' . $document->name_en . ' has been deleted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "Document";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -1957,29 +1970,41 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $document = Document::find($id);
-            if ($document) {
-                $document->file_url = "";
-                $deleted = $document->save();
-
-                if ($deleted) {
-                    # Audit Trail
-                    $remarks = 'Document: ' . $document->name_en . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Document";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    print "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['file_delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $document = Document::find($id);
+                if ($document) {
+                    $document->file_url = "";
+                    $deleted = $document->save();
+    
+                    if ($deleted) {
+                        # Audit Trail
+                        $remarks = 'Document: ' . $document->name_en . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "Document";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2019,29 +2044,42 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $document = new Document();
-            $document->file_id = $data['file_id'];
-            $document->document_type_id = $data['document_type'];
-            $document->name = $data['name'];
-            $document->remarks = $data['remarks'];
-            $document->is_hidden = $data['is_hidden'];
-            $document->is_readonly = $data['is_readonly'];
-            $document->file_url = $data['document_url'];
-            $success = $document->save();
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $document = new Document();
+                $document->file_id = $data['file_id'];
+                $document->document_type_id = $data['document_type'];
+                $document->name = $data['name'];
+                $document->remarks = $data['remarks'];
+                $document->is_hidden = $data['is_hidden'];
+                $document->is_readonly = $data['is_readonly'];
+                $document->file_url = $data['document_url'];
+                $success = $document->save();
 
-            if ($success) {
-                # Audit Trail
-                $remarks = 'Document: ' . $document->name_en . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Document";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if ($success) {
+                    # Audit Trail
+                    $remarks = 'Document: ' . $document->name_en . ' has been inserted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Document";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
 
-                print "true";
-            } else {
-                print "false";
-            }
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 

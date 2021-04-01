@@ -15,49 +15,51 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
-                    <button onclick="window.location = '{{ URL::action('SettingController@addPark') }}'" type="button" class="btn btn-own">
-                        {{ trans('app.buttons.add_park') }}
-                    </button>
-                    <br/><br/>
-                    <?php } ?>
-                    <div class="row">
-                        <div class="form-group">
-                            <label  class="col-md-offset-2 col-md-1 control-label">{{ trans('app.forms.dun') }}:</label>
-                            <div class="col-sm-3">
-                                <select id="duns" class="form-control">
-                                    <option value="">{{ trans('app.forms.all') }}</option>
-                                    @foreach ($dun as $duns)
-                                    <option value="{{$duns->description}}">{{$duns->description}}</option>
-                                    @endforeach
-                                </select>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <?php if ($insert_permission == 1) { ?>
+                        <button onclick="window.location = '{{ URL::action('SettingController@addPark') }}'" type="button" class="btn btn-own">
+                            {{ trans('app.buttons.add_park') }}
+                        </button>
+                        <br/><br/>
+                        <?php } ?>
+                        <div class="row">
+                            <div class="form-group">
+                                <label  class="col-md-offset-2 col-md-1 control-label">{{ trans('app.forms.dun') }}:</label>
+                                <div class="col-sm-3">
+                                    <select id="duns" class="form-control">
+                                        <option value="">{{ trans('app.forms.all') }}</option>
+                                        @foreach ($dun as $duns)
+                                        <option value="{{$duns->description}}">{{$duns->description}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <table class="table table-hover nowrap" id="park" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:40%;">{{ trans('app.forms.park') }}</th>
-                                <th style="width:40%;">{{ trans('app.forms.dun') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.status') }}</th>
-                                <?php if ($update_permission == 1) { ?>
-                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                        <table class="table table-hover nowrap table-own table-striped" id="park" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:40%;">{{ trans('app.forms.park') }}</th>
+                                    <th style="width:40%;">{{ trans('app.forms.dun') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.status') }}</th>
+                                    <?php if ($update_permission == 1) { ?>
+                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                    <?php } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->

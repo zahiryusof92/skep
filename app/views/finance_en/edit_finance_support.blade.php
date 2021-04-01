@@ -15,83 +15,85 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="add_finance_support" class="form-horizontal" name="add_fileprefix">
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label class="form-control-label" style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form id="add_finance_support" class="form-horizontal" name="add_fileprefix">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label class="form-control-label" style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select id="file_id" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($file_no as $files)
+                                        <option value="{{$files->id}}" {{($files->id == $financesupportdata->file_id ? " selected" : "")}}>{{$files->file_no}}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="file_no_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <select id="file_id" class="form-control select2">
-                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    @foreach ($file_no as $files)
-                                    <option value="{{$files->id}}" {{($files->id == $financesupportdata->file_id ? " selected" : "")}}>{{$files->file_no}}</option>
-                                    @endforeach
-                                </select>
-                                <div id="file_no_error" style="display:none;"></div>
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label><span style="color: red;">*</span> {{ trans('app.forms.name') }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label><span style="color: red;">*</span> {{ trans('app.forms.name') }}</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input id="name" class="form-control" type="text" value="{{ $financesupportdata->name }}">
+                                    <div id="name_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-8">
-                                <input id="name" class="form-control" type="text" value="{{ $financesupportdata->name }}">
-                                <div id="name_error" style="display:none;"></div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label><span style="color: red;">*</span> {{ trans("app.forms.date") }}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input id="date" class="form-control" type="text" value="{{ date('d/m/Y', strtotime($financesupportdata->date)) }}">
+                                    <input type="hidden" name="mirror_date" id="mirror_date" value="{{ $financesupportdata->date }}">
+                                    <div id="date_error" style="display:none;"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label><span style="color: red;">*</span> {{ trans("app.forms.date") }}</label>
-                            </div>
-                            <div class="col-md-4">
-                                <input id="date" class="form-control" type="text" value="{{ date('d/m/Y', strtotime($financesupportdata->date)) }}">
-                                <input type="hidden" name="mirror_date" id="mirror_date" value="{{ $financesupportdata->date }}">
-                                <div id="date_error" style="display:none;"></div>
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label><span style="color: red;">*</span> {{ trans("app.forms.amount") }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label><span style="color: red;">*</span> {{ trans("app.forms.amount") }}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input id="amount" class="form-control" placeholder="0.00" type="text" value="{{ $financesupportdata->amount }}">
+                                    <div id="amount_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <input id="amount" class="form-control" placeholder="0.00" type="text" value="{{ $financesupportdata->amount }}">
-                                <div id="amount_error" style="display:none;"></div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label><span style="color: red;">*</span> {{ trans("app.forms.remarks") }}</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <textarea name="remark" id="remark" class="form-control" rows="5">{{ $financesupportdata->remark }}</textarea>
+                                    <div id="remark_error" style="display:none;"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label><span style="color: red;">*</span> {{ trans("app.forms.remarks") }}</label>
+                            <div class="form-actions">
+                                <input type="hidden" id="id" name="id" value="{{ $financesupportdata->id }}">
+                                <?php if ($insert_permission == 1) { ?>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitFinanceSupport()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@financeSupport')}}'">{{ trans('app.forms.cancel') }}</button>
                             </div>
-                            <div class="col-md-8">
-                                <textarea name="remark" id="remark" class="form-control" rows="5">{{ $financesupportdata->remark }}</textarea>
-                                <div id="remark_error" style="display:none;"></div>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <input type="hidden" id="id" name="id" value="{{ $financesupportdata->id }}">
-                            <?php if ($insert_permission == 1) { ?>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitFinanceSupport()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@financeSupport')}}'">{{ trans('app.forms.cancel') }}</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

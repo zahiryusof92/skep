@@ -19,79 +19,81 @@ foreach ($user_permission as $permissions) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php if ($insert_permission) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addInsurance', ['All']) }}'" type="button" class="btn btn-own margin-bottom-25">
-                            {{ trans('app.buttons.add_insurance') }}
-                        </button>
-                    <?php } ?>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <?php if ($insert_permission) { ?>
+                            <button onclick="window.location = '{{ URL::action('AdminController@addInsurance', ['All']) }}'" type="button" class="btn btn-own margin-bottom-25">
+                                {{ trans('app.buttons.add_insurance') }}
+                            </button>
+                        <?php } ?>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <form>
-                        <div class="row">
-                            @if ($files)
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_no" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $files_no)
-                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
-                                        @endforeach
-                                    </select>
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <form>
+                            <div class="row">
+                                @if ($files)
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_no" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($files as $files_no)
+                                            <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            @endif
-                            
-                            @if ($filename)
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.file_name') }}</label>
-                                    <select id="file_name" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($filename as $name)
-                                        <option value="{{ $name->name }}">{{ $name->name }}</option>
-                                        @endforeach
-                                    </select>
+                                @endif
+                                
+                                @if ($filename)
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_name') }}</label>
+                                        <select id="file_name" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($filename as $name)
+                                            <option value="{{ $name->name }}">{{ $name->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
+                                @endif
+                                
                             </div>
-                            @endif
-                            
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <hr/>
+                <hr/>
 
-            <div class="row">
-                <div class="col-lg-12">                    
-                    <table class="table table-hover" id="insurance" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
-                                <th style="width:25%;">{{ trans('app.forms.file_name') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.insurance_provider') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.remarks') }}</th>
-                                <?php if ($update_permission) { ?>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-lg-12">                    
+                        <table class="table table-hover table-own table-striped" id="insurance" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:25%;">{{ trans('app.forms.file_name') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.insurance_provider') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.remarks') }}</th>
+                                    <?php if ($update_permission) { ?>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                        <?php } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->

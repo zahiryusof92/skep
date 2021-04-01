@@ -13,72 +13,74 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="update_formtype" class="form-horizontal">
-                        <div class="form-group row">
-                            <div class="col-md-2">
-                                <label class="form-control-label" style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form id="update_formtype" class="form-horizontal">
+                            <div class="form-group row">
+                                <div class="col-md-2">
+                                    <label class="form-control-label" style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.form_type_bi') }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.form_type_bi') }}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input id="bi_type" class="form-control" type="text" value="{{ $formtype->name_en }}">
+                                    <div id="bi_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <input id="bi_type" class="form-control" type="text" value="{{ $formtype->name_en }}">
-                                <div id="bi_error" style="display:none;"></div>
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.form_type_bm') }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.form_type_bm') }}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input id="bm_type" class="form-control" type="text" value="{{ $formtype->name_my }}">
+                                    <div id="bm_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <input id="bm_type" class="form-control" type="text" value="{{ $formtype->name_my }}">
-                                <div id="bm_error" style="display:none;"></div>
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.sort_no') }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.sort_no') }}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <input id="sort_no" class="form-control" placeholder="{{ trans('app.forms.sort_no') }}" type="text" value="{{ $formtype->sort_no }}">
+                                    <div id="sort_no_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <input id="sort_no" class="form-control" placeholder="{{ trans('app.forms.sort_no') }}" type="text" value="{{ $formtype->sort_no }}">
-                                <div id="sort_no_error" style="display:none;"></div>
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.status') }}</label>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.status') }}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <select id="is_active" class="form-control">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        <option value="1" {{($formtype->is_active==1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
+                                        <option value="0" {{($formtype->is_active==0 ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
+                                    </select>
+                                    <div id="is_active_error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <select id="is_active" class="form-control">
-                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    <option value="1" {{($formtype->is_active==1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
-                                    <option value="0" {{($formtype->is_active==0 ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
-                                </select>
-                                <div id="is_active_error" style="display:none;"></div>
+                            <div class="form-actions">
+                                <?php if ($update_permission == 1) { ?>
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="updateFormtype()">{{ trans('app.forms.save') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("SettingController@formtype") }}'" >{{ trans('app.forms.cancel') }}</button>
                             </div>
-                        </div>
-                        <div class="form-actions">
-                            <?php if ($update_permission == 1) { ?>
-                            <button type="button" class="btn btn-own" id="submit_button" onclick="updateFormtype()">{{ trans('app.forms.save') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("SettingController@formtype") }}'" >{{ trans('app.forms.cancel') }}</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

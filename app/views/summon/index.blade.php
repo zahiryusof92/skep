@@ -13,7 +13,7 @@
             @if (Auth::user()->isJMB())
             <div class="row">
                 <div class="col-lg-12">
-                    <a class="btn btn-primary-outline margin-bottom-25" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">
+                    <a class="btn btn-own-outline margin-bottom-25" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">
                         {{ trans('app.summon.letter_of_reminder') }}
                     </a> 
                     <a class="btn btn-success-outline margin-bottom-25 margin-left-10" href="{{ route('summon.create', Summon::LETTER_OF_DEMAND) }}">

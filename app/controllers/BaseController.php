@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+
 class BaseController extends Controller {
 
     public function __construct() {
@@ -13,6 +15,8 @@ class BaseController extends Controller {
 
         $locale = Session::get('lang');
         App::setLocale($locale);
+        $this->eai_domain = Config::get('constant.eai.domain');
+        $this->eai_route = Config::get('constant.eai.route');
     }
 
     /**

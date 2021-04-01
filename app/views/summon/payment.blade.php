@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="submit_button" {{ (!$eligible_pay ? 'disabled' : '') }}>{{ trans('app.summon.pay_now') }}</button>
+                    <button type="submit" class="btn btn-own" id="submit_button" {{ (!$eligible_pay ? 'disabled' : '') }}>{{ trans('app.summon.pay_now') }}</button>
                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ route('summon.index') }}'">{{ trans('app.forms.cancel') }}</button>
                 </div>
             </form>
@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="submit_button" {{ (!$eligible_pay ? 'disabled' : '') }}>{{ trans('app.summon.pay_now') }}</button>
+                    <button type="submit" class="btn btn-own" id="submit_button" {{ (!$eligible_pay ? 'disabled' : '') }}>{{ trans('app.summon.pay_now') }}</button>
                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ route('summon.index') }}'">{{ trans('app.forms.cancel') }}</button>
                 </div>
             </form>

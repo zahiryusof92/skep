@@ -13,206 +13,208 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Vertical Form -->
-                    <form id="company">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.company_name') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.company_name') }}" id="name">
-                                    <div id="name_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.short_name') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.short_name') }}" id="short_name">
-                                    <div id="short_name_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.roc_rob_number') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.roc_rob_number') }}" id="rob_roc_no">
-                                    <div id="rob_roc_no_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.address') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address1') }}" id="address1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="address2">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="address3">
-                                    <div id="address_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.city') }}</label>
-                                    <select class="form-control" id="city">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($city as $cities)
-                                        <option value="{{$cities->id}}">{{$cities->description}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="city_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.postcode') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="poscode">
-                                    <div id="poscode_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.state') }}</label>
-                                    <select class="form-control" id="state">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($state as $states)
-                                        <option value="{{$states->id}}">{{$states->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="state_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.country') }}</label>
-                                    <select class="form-control" id="country">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($country as $countries)
-                                        <option value="{{$countries->id}}">{{$countries->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="country_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.office_phone_number') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.office_phone_number') }}" id="phone_no">
-                                    <div id="phone_no_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.fax_number') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="fax_no">
-                                    <div id="fax_no_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.email') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email">
-                                    <div id="email_error" style="display:none;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <form id="upload" enctype="multipart/form-data" method="post" action="{{url('logoImage')}}" autocomplete="off">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.logo') }}</label>
-                                    <br />
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <input type="file" name="image" id="image" />
-                                    <br />
-                                    <!--<small>Max image size: MB</small>-->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <div id="output">
-
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <!-- Vertical Form -->
+                        <form id="company">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
                                     </div>
-                                    <div id="validation-errors"></div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                    <form id="upload_nav_image" enctype="multipart/form-data" method="post" action="{{url('navbarImage')}}" autocomplete="off">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.navbar_image') }}</label>
-                                    <br />
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <input type="file" name="nav_image" id="nav_image" />
-                                    <br />
-                                    <!--<small>Max image size: MB</small>-->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <div id="output_nav_image">
-
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.company_name') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.company_name') }}" id="name">
+                                        <div id="name_error" style="display:none;"></div>
                                     </div>
-                                    <div id="nav_validation-errors"></div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                    <form role="form">
-                        <div class="form-actions">
-                            <input type="hidden" id="image_url" value=""/>
-                            <input type="hidden" id="nav_image_url" value=""/>
-                            <?php if ($insert_permission == 1) { ?>
-                            <button type="button" class="btn btn-own" id="submit_button" onclick="addCompany()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@company')}}'">{{ trans('app.forms.cancel') }}</button>
-                        </div>
-                    </form>
-                    <!-- End Vertical Form -->
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.short_name') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.short_name') }}" id="short_name">
+                                        <div id="short_name_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.roc_rob_number') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.roc_rob_number') }}" id="rob_roc_no">
+                                        <div id="rob_roc_no_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.address') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address1') }}" id="address1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="address2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="address3">
+                                        <div id="address_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.city') }}</label>
+                                        <select class="form-control" id="city">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($city as $cities)
+                                            <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="city_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.postcode') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="poscode">
+                                        <div id="poscode_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.state') }}</label>
+                                        <select class="form-control" id="state">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($state as $states)
+                                            <option value="{{$states->id}}">{{$states->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="state_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.country') }}</label>
+                                        <select class="form-control" id="country">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($country as $countries)
+                                            <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="country_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.office_phone_number') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.office_phone_number') }}" id="phone_no">
+                                        <div id="phone_no_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="fax_no">
+                                        <div id="fax_no_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.email') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email">
+                                        <div id="email_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form id="upload" enctype="multipart/form-data" method="post" action="{{url('logoImage')}}" autocomplete="off">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.logo') }}</label>
+                                        <br />
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                        <input type="file" name="image" id="image" />
+                                        <br />
+                                        <!--<small>Max image size: MB</small>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <div id="output">
+
+                                        </div>
+                                        <div id="validation-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form id="upload_nav_image" enctype="multipart/form-data" method="post" action="{{url('navbarImage')}}" autocomplete="off">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.navbar_image') }}</label>
+                                        <br />
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                        <input type="file" name="nav_image" id="nav_image" />
+                                        <br />
+                                        <!--<small>Max image size: MB</small>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <div id="output_nav_image">
+
+                                        </div>
+                                        <div id="nav_validation-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form role="form">
+                            <div class="form-actions">
+                                <input type="hidden" id="image_url" value=""/>
+                                <input type="hidden" id="nav_image_url" value=""/>
+                                <?php if ($insert_permission == 1) { ?>
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="addCompany()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@company')}}'">{{ trans('app.forms.cancel') }}</button>
+                            </div>
+                        </form>
+                        <!-- End Vertical Form -->
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

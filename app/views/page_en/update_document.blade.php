@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -24,62 +24,64 @@ foreach ($user_permission as $permission) {
                     <div id="update_files_lists">
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@house', $files->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@house', $files->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@strata', $files->id)}}">{{ trans('app.forms.developed_area') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@strata', $files->id)}}">{{ trans('app.forms.developed_area') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@management', $files->id)}}">{{ trans('app.forms.management') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $files->id)}}">{{ trans('app.forms.management') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@monitoring', $files->id)}}">{{ trans('app.forms.monitoring') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $files->id)}}">{{ trans('app.forms.monitoring') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@others', $files->id)}}">{{ trans('app.forms.others') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $files->id)}}">{{ trans('app.forms.others') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@scoring', $files->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $files->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@buyer', $files->id)}}">{{ trans('app.forms.buyer_list') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@buyer', $files->id)}}">{{ trans('app.forms.buyer_list') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active">{{ trans('app.forms.document') }}</a>
+                                <a class="nav-link active custom-tab">{{ trans('app.forms.document') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@insurance', $files->id)}}">{{ trans('app.forms.insurance') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $files->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="document_tab" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="table-responsive">
-                                            <?php if ($update_permission == 1) { ?>
-                                                <button onclick="window.location = '{{ URL::action('AdminController@addDocument', $files->id) }}'" type="button" class="btn btn-own">
-                                                    {{ trans('app.buttons.add_document') }}
-                                                </button>
-                                                <br/><br/>
-                                            <?php } ?>
-                                            <table class="table table-hover nowrap" id="document" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width:25%;">{{ trans('app.forms.document_type') }}</th>
-                                                        <th style="width:45%;">{{ trans('app.forms.document_name') }}</th>
-                                                        <th style="width:10%;">{{ trans('app.forms.hidden') }}</th>
-                                                        <th style="width:10%;">{{ trans('app.forms.read_only') }}</th>
-                                                        <?php if ($update_permission == 1) { ?>
-                                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                                            <?php } ?>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
+                                        <div class="col-lg-12">
+                                            <div class="table-responsive">
+                                                <?php if ($update_permission == 1) { ?>
+                                                    <button onclick="window.location = '{{ URL::action('AdminController@addDocument', $files->id) }}'" type="button" class="btn btn-own">
+                                                        {{ trans('app.buttons.add_document') }}
+                                                    </button>
+                                                    <br/><br/>
+                                                <?php } ?>
+                                                <table class="table table-hover nowrap table-own table-striped" id="document" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:25%;">{{ trans('app.forms.document_type') }}</th>
+                                                            <th style="width:45%;">{{ trans('app.forms.document_name') }}</th>
+                                                            <th style="width:10%;">{{ trans('app.forms.hidden') }}</th>
+                                                            <th style="width:10%;">{{ trans('app.forms.read_only') }}</th>
+                                                            <?php if ($update_permission == 1) { ?>
+                                                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                                                <?php } ?>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </section>
                             </div>
                         </div>
                     </div>

@@ -1563,6 +1563,10 @@ body.single-page-inverse .single-page-block-header .single-page-block-header-men
     width: 100px;
 }
 
+.note-editor .note-btn {
+    background-color: #515757 !important;
+}
+
 .btn-own {
     background-color: #ffe051 !important;
     border-color: #ffe051 !important;
@@ -1851,7 +1855,13 @@ body.single-page-inverse .single-page-block-header .single-page-block-header-men
 .nav-pills .nav-item.open .nav-link:hover,
 .nav-pills .nav-link.active,
 .nav-pills .nav-link.active:focus,
-.nav-pills .nav-link.active:hover {
+.nav-pills .nav-link.active:hover,
+.nav-tabs .nav-item.open .nav-link,
+.nav-tabs .nav-item.open .nav-link:focus,
+.nav-tabs .nav-item.open .nav-link:hover,
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-link.active:focus,
+.nav-tabs .nav-link.active:hover {
     color: #000;
     background-color: #fbdd51 !important;
 }

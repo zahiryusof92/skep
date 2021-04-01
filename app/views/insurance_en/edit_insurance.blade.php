@@ -12,154 +12,156 @@ foreach ($user_permission as $permissions) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form class="form-horizontal">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_id" class="form-control select2" name="file_id">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $file_no)
-                                        <option value="{{$file_no->id}}"  {{ $insurance->file_id == $file_no->id ? 'selected' : '' }}>{{$file_no->file_no}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="file_id_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_id" class="form-control select2" name="file_id">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($files as $file_no)
+                                            <option value="{{$file_no->id}}"  {{ $insurance->file_id == $file_no->id ? 'selected' : '' }}>{{$file_no->file_no}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_id_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.insurance_provider') }}</label>
-                                    <select id="insurance_provider" class="form-control select2" name="insurance_provider">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($insuranceProvider as $provider)
-                                        <option value="{{ $provider->id }}"  {{ $insurance->insurance_provider_id == $provider->id ? 'selected' : '' }}>{{ $provider->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="insurance_provider_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.insurance_provider') }}</label>
+                                        <select id="insurance_provider" class="form-control select2" name="insurance_provider">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($insuranceProvider as $provider)
+                                            <option value="{{ $provider->id }}"  {{ $insurance->insurance_provider_id == $provider->id ? 'selected' : '' }}>{{ $provider->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="insurance_provider_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ trans('app.forms.public_liability_coverage') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.public_liability_coverage') }}" id="public_liability_coverage" value="{{ $insurance->public_liability_coverage }}"/>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.public_liability_coverage') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.public_liability_coverage') }}" id="public_liability_coverage" value="{{ $insurance->public_liability_coverage }}"/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ trans('app.forms.premium_per_year') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="plc_premium_per_year" value="{{ $insurance->plc_premium_per_year }}"/>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.premium_per_year') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="plc_premium_per_year" value="{{ $insurance->plc_premium_per_year }}"/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.validity') }}</label>
+                                        <label class="input-group">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.from") }}" id="plc_validity_from_raw" value="{{ (($insurance->plc_validity_from && $insurance->plc_validity_from != '0000-00-00') ? date('d-m-Y', strtotime($insurance->plc_validity_from)) : '') }}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <input type="hidden" id="plc_validity_from" value="{{ $insurance->plc_validity_from }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label">&nbsp;</label>
+                                        <label class="input-group">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.to") }}" id="plc_validity_to_raw" value="{{ (($insurance->plc_validity_to && $insurance->plc_validity_to != '0000-00-00') ? date('d-m-Y', strtotime($insurance->plc_validity_to)) : '') }}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <input type="hidden" id="plc_validity_to" value="{{ $insurance->plc_validity_to }}">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ trans('app.forms.validity') }}</label>
-                                    <label class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.from") }}" id="plc_validity_from_raw" value="{{ (($insurance->plc_validity_from && $insurance->plc_validity_from != '0000-00-00') ? date('d-m-Y', strtotime($insurance->plc_validity_from)) : '') }}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <input type="hidden" id="plc_validity_from" value="{{ $insurance->plc_validity_from }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">&nbsp;</label>
-                                    <label class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.to") }}" id="plc_validity_to_raw" value="{{ (($insurance->plc_validity_to && $insurance->plc_validity_to != '0000-00-00') ? date('d-m-Y', strtotime($insurance->plc_validity_to)) : '') }}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <input type="hidden" id="plc_validity_to" value="{{ $insurance->plc_validity_to }}">
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ trans('app.forms.fire_insurance_coverage') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.fire_insurance_coverage') }}" id="fire_insurance_coverage" value="{{ $insurance->fire_insurance_coverage }}"/>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.fire_insurance_coverage') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fire_insurance_coverage') }}" id="fire_insurance_coverage" value="{{ $insurance->fire_insurance_coverage }}"/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ trans('app.forms.premium_per_year') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="fic_premium_per_year" value="{{ $insurance->fic_premium_per_year }}"/>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.premium_per_year') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="fic_premium_per_year" value="{{ $insurance->fic_premium_per_year }}"/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.validity') }}</label>
+                                        <label class="input-group">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.from") }}" id="fic_validity_from_raw" value="{{ (($insurance->fic_validity_from && $insurance->fic_validity_from != '0000-00-00') ? date('d-m-Y', strtotime($insurance->fic_validity_from)) : '') }}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <input type="hidden" id="fic_validity_from" value="{{ $insurance->fic_validity_from }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label class="form-control-label">&nbsp;</label>
+                                        <label class="input-group">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.to") }}" id="fic_validity_to_raw" value="{{ (($insurance->fic_validity_to && $insurance->fic_validity_to != '0000-00-00') ? date('d-m-Y', strtotime($insurance->fic_validity_to)) : '') }}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <input type="hidden" id="fic_validity_to" value="{{ $insurance->fic_validity_to }}">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ trans('app.forms.validity') }}</label>
-                                    <label class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.from") }}" id="fic_validity_from_raw" value="{{ (($insurance->fic_validity_from && $insurance->fic_validity_from != '0000-00-00') ? date('d-m-Y', strtotime($insurance->fic_validity_from)) : '') }}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <input type="hidden" id="fic_validity_from" value="{{ $insurance->fic_validity_from }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">&nbsp;</label>
-                                    <label class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.to") }}" id="fic_validity_to_raw" value="{{ (($insurance->fic_validity_to && $insurance->fic_validity_to != '0000-00-00') ? date('d-m-Y', strtotime($insurance->fic_validity_to)) : '') }}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <input type="hidden" id="fic_validity_to" value="{{ $insurance->fic_validity_to }}">
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="form-label">{{ trans('app.forms.remarks') }}</label>
-                                    <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}">{{ $insurance->remarks }}</textarea>
-                                    <div id="remarks_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('app.forms.remarks') }}</label>
+                                        <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}">{{ $insurance->remarks }}</textarea>
+                                        <div id="remarks_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-actions">
-                            <?php if ($update_permission) { ?>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditInsurance()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@insurance', ['All']) }}'">{{ trans('app.forms.cancel') }}</button>
-                            <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                        </div>
-                    </form>
+                            <div class="form-actions">
+                                <?php if ($update_permission) { ?>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditInsurance()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@insurance', ['All']) }}'">{{ trans('app.forms.cancel') }}</button>
+                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

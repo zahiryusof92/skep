@@ -51,11 +51,11 @@ foreach ($user_permission as $permission) {
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
                         </ul>
-                        <section class="panel panel-pad">
-                            <div class="tab-content padding-vertical-20">
-                                <div class="tab-pane active" id="strata" role="tabpanel">
-                                    <!-- strata Form -->
-                                    <div class="row">
+                        <div class="tab-content padding-vertical-20">
+                            <div class="tab-pane active" id="strata" role="tabpanel">
+                                <!-- strata Form -->
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
                                             <h4>{{ trans('app.forms.detail') }}</h4>
                                             <form id="strata">
@@ -850,7 +850,7 @@ foreach ($user_permission as $permission) {
                                             <?php if ($update_permission == 1) { ?>
                                                 <button type="button" class="btn btn-own" id="submit_button" onclick="updateStrata()">{{ trans('app.forms.submit') }}</button>
                                             <?php } ?>
-    
+
                                             @if ($file->is_active != 2)
                                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
                                             @else
@@ -858,10 +858,10 @@ foreach ($user_permission as $permission) {
                                             @endif
                                         </div>
                                     </form>
-                                </div>
-                                <!-- End Form -->
+                                </section>
                             </div>
-                        </section>
+                            <!-- End Form -->
+                        </div>
                     </div>
                 </div>
             </div>

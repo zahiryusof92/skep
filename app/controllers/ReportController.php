@@ -410,15 +410,22 @@ class ReportController extends BaseController {
         }
 
         if (count($file) > 0) {
-            foreach ($file as $files) {
-                $strata = Strata::where('file_id', $files->id)->get();
-
+            // foreach ($file as $files) {
+                $file_ids = array_pluck($file, 'id');
+                // $strata = Strata::where('file_id', $files->id)->get();
+                $strata = Strata::with(['parliment','duns','parks','file'])->whereIn('file_id', $file_ids)->get();
+                
                 if (count($strata) > 0) {
-                    foreach ($strata as $stratas) {
-                        $parliament = Parliment::find($stratas->parliament);
-                        $dun = Dun::find($stratas->dun);
-                        $park = Park::find($stratas->park);
-                        $files = Files::find($stratas->file_id);
+                    // foreach ($strata as $stratas) {
+                    $strata->reduce(function ($carry, $stratas) use(&$data){
+                        // $parliament = Parliment::find($stratas->parliament);
+                        // $dun = Dun::find($stratas->dun);
+                        // $park = Park::find($stratas->park);
+                        // $files = Files::find($stratas->file_id);
+                        $parliament = $stratas->parliment;
+                        $dun = $stratas->duns;
+                        $park =$stratas->parks;
+                        $files = $stratas->file;
 
                         if (count($parliament) > 0) {
                             $parliament_name = $parliament->description;
@@ -431,7 +438,7 @@ class ReportController extends BaseController {
                             $dun_name = "-";
                         }
                         if (count($park) > 0) {
-                            $park_name = $dun->description;
+                            $park_name = $park->description;
                         } else {
                             $park_name = "-";
                         }
@@ -450,9 +457,9 @@ class ReportController extends BaseController {
                         );
 
                         array_push($data, $data_raw);
-                    }
+                    });
                 }
-            }
+            // }
 
             $output_raw = array(
                 "aaData" => $data
@@ -1784,23 +1791,24 @@ class ReportController extends BaseController {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
 
             if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
 
         if (count($files) > 0) {
             $data = array();
-            foreach ($files as $file) {
+            
+            $files->reduce(function ($carry, $file) use(&$data){
                 if ($file->managementJMB) {
                     $data_raw = array(
                         $file->company->short_name,
@@ -1860,7 +1868,69 @@ class ReportController extends BaseController {
 
                     array_push($data, $data_raw);
                 }
-            }
+            });
+
+            // foreach ($files as $file) {
+            //     if ($file->managementJMB) {
+            //         $data_raw = array(
+            //             $file->company->short_name,
+            //             $file->file_no,
+            //             $file->strata->name,
+            //             'JMB',
+            //             $file->managementJMB->name,
+            //             ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+            //             $file->managementJMB->email,
+            //             $file->managementJMB->phone_no
+            //         );
+
+            //         array_push($data, $data_raw);
+            //     }
+
+            //     if ($file->managementMC) {
+            //         $data_raw = array(
+            //             $file->company->short_name,
+            //             $file->file_no,
+            //             $file->strata->name,
+            //             'MC',
+            //             $file->managementMC->name,
+            //             ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+            //             $file->managementMC->email,
+            //             $file->managementMC->phone_no
+            //         );
+
+            //         array_push($data, $data_raw);
+            //     }
+
+            //     if ($file->managementAgent) {
+            //         $data_raw = array(
+            //             $file->company->short_name,
+            //             $file->file_no,
+            //             $file->strata->name,
+            //             'Agent',
+            //             $file->managementAgent->name,
+            //             ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
+            //             $file->managementAgent->email,
+            //             $file->managementAgent->phone_no
+            //         );
+
+            //         array_push($data, $data_raw);
+            //     }
+
+            //     if ($file->managementOthers) {
+            //         $data_raw = array(
+            //             $file->company->short_name,
+            //             $file->file_no,
+            //             $file->strata->name,
+            //             'Others',
+            //             $file->managementOthers->name,
+            //             ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
+            //             $file->managementOthers->email,
+            //             $file->managementOthers->phone_no
+            //         );
+
+            //         array_push($data, $data_raw);
+            //     }
+            // }
             $output_raw = array(
                 "aaData" => $data
             );

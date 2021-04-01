@@ -13,127 +13,129 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="formSubmit" class="form-horizontal" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans("app.forms.mandatory_fields") }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form id="formSubmit" class="form-horizontal" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans("app.forms.mandatory_fields") }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        @if (Auth::user()->getAdmin())
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.cob") }}</label>
-                                    <select id="company" class="form-control select2">
-                                        <option value="">{{ trans("app.forms.please_select") }}</option>
-                                        @foreach ($cob as $companies)
-                                        <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="company_error" style="display:none;"></div>
+                            @if (Auth::user()->getAdmin())
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.cob") }}</label>
+                                        <select id="company" class="form-control select2">
+                                            <option value="">{{ trans("app.forms.please_select") }}</option>
+                                            @foreach ($cob as $companies)
+                                            <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="company_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @else
-                        <input type="hidden" id="company" value="{{ Auth::user()->company_id }}">
-                        @endif
+                            @else
+                            <input type="hidden" id="company" value="{{ Auth::user()->company_id }}">
+                            @endif
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans("app.forms.form_type") }}</label>
-                                    <select id="form_type" class="form-control select2" name="form_type">
-                                        <option value="">{{ trans("app.forms.please_select") }}</option>
-                                        @foreach ($formtype as $ft)
-                                        <option value="{{$ft->id}}">{{$ft->name_en}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="form_type_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans("app.forms.form_type") }}</label>
+                                        <select id="form_type" class="form-control select2" name="form_type">
+                                            <option value="">{{ trans("app.forms.please_select") }}</option>
+                                            @foreach ($formtype as $ft)
+                                            <option value="{{$ft->id}}">{{$ft->name_en}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="form_type_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.form_name_bi") }}</label>
-                                    <input id="name_en" name="name_en" class="form-control" type="text">
-                                    <div id="name_en_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.form_name_bi") }}</label>
+                                        <input id="name_en" name="name_en" class="form-control" type="text">
+                                        <div id="name_en_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.form_name_bm") }}</label>
-                                    <input id="name_my" name="name_my" class="form-control" type="text">
-                                    <div id="name_my_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.form_name_bm") }}</label>
+                                        <input id="name_my" name="name_my" class="form-control" type="text">
+                                        <div id="name_my_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.sort_no") }}</label>
-                                    <input id="sort_no" class="form-control" name="sort_no" type="text">
-                                    <div id="sort_no_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.sort_no") }}</label>
+                                        <input id="sort_no" class="form-control" name="sort_no" type="text">
+                                        <div id="sort_no_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
 
-                    <form id="upload_form_file" enctype="multipart/form-data" method="post" action="{{ url('uploadFormFile') }}" autocomplete="off">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.upload_file") }}</label>
-                                    <br/>
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <button type="button" id="clear_form_file" class="btn btn-xs btn-danger" onclick="clearFormFile()" style="display: none;"><i class="fa fa-times"></i></button>
-                                    &nbsp;<input type="file" name="form_file" id="form_file" />
-                                    <div id="validation-errors_form_file"></div>
+                        <form id="upload_form_file" enctype="multipart/form-data" method="post" action="{{ url('uploadFormFile') }}" autocomplete="off">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.upload_file") }}</label>
+                                        <br/>
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                        <button type="button" id="clear_form_file" class="btn btn-xs btn-danger" onclick="clearFormFile()" style="display: none;"><i class="fa fa-times"></i></button>
+                                        &nbsp;<input type="file" name="form_file" id="form_file" />
+                                        <div id="validation-errors_form_file"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
 
-                    <form>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.status") }}</label>
-                                    <select id="is_active" class="form-control" name="is_active">
-                                        <option value="">{{ trans("app.forms.please_select") }}</option>
-                                        <option value="1">{{ trans("app.forms.active") }}</option>
-                                        <option value="0">{{ trans("app.forms.inactive") }}</option>
-                                    </select>
-                                    <div id="is_active_error" style="display:none;"></div>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans("app.forms.status") }}</label>
+                                        <select id="is_active" class="form-control" name="is_active">
+                                            <option value="">{{ trans("app.forms.please_select") }}</option>
+                                            <option value="1">{{ trans("app.forms.active") }}</option>
+                                            <option value="0">{{ trans("app.forms.inactive") }}</option>
+                                        </select>
+                                        <div id="is_active_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-actions">
-                            <?php if ($insert_permission == 1) { ?>
-                                <input type="hidden" id="form_file_url" value=""/>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddForm()">{{ trans("app.forms.submit") }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@form') }}'">{{ trans("app.forms.cancel") }}</button>
-                        </div>
-                    </form>
+                            <div class="form-actions">
+                                <?php if ($insert_permission == 1) { ?>
+                                    <input type="hidden" id="form_file_url" value=""/>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddForm()">{{ trans("app.forms.submit") }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@form') }}'">{{ trans("app.forms.cancel") }}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

@@ -5,7 +5,7 @@
 <?php $company = Company::find(Auth::user()->company_id); ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -31,7 +31,7 @@
                                 <form action="{{ URL::action('PrintController@printVp') }}" method="GET" class="form-horizontal" target="_blank">
                                     <input type="hidden" name="cob_id" value="{{ $cob_id }}"/>
                                     <input type="hidden" name="year" value="{{ $year_id }}"/>
-                                    <button type="submit" class="btn btn-danger" target="_blank" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                    <button type="submit" class="btn btn-own" target="_blank" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -40,40 +40,42 @@
 
                 <hr/>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <form action="{{ url('/reporting/vp') }}" method="GET" class="form-horizontal">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <select class="form-control select2" id="cob_id" name="cob_id">
-                                            @if (count($cob) > 1)
-                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @endif
-                                            @foreach ($cob as $cobs)
-                                            <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
-                                            @endforeach
-                                        </select>
+                <section class="panel panel-pad">
+                    <div class="row padding-vertical-20">
+                        <div class="col-lg-12">
+                            <form action="{{ url('/reporting/vp') }}" method="GET" class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <select class="form-control select2" id="cob_id" name="cob_id">
+                                                @if (count($cob) > 1)
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @endif
+                                                @foreach ($cob as $cobs)
+                                                <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <select class="form-control select2" id="year" name="year">
+                                                @foreach ($year as $value => $years)
+                                                <option value="{{ $value }}" {{ ($value == $year_id ? 'selected' : '') }}>{{ $years }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
+                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@vp") }}'"">{{ trans('app.buttons.reset') }}</button>
+                                        <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <select class="form-control select2" id="year" name="year">
-                                            @foreach ($year as $value => $years)
-                                            <option value="{{ $value }}" {{ ($value == $year_id ? 'selected' : '') }}>{{ $years }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
-                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@vp") }}'"">{{ trans('app.buttons.reset') }}</button>
-                                    <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                </section>
 
                 <?php
                 if ($file_info) {

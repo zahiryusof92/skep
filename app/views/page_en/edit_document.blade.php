@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -24,143 +24,145 @@ foreach ($user_permission as $permission) {
                     <div id="update_files_lists">
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@house', $files->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@house', $files->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@strata', $files->id)}}">{{ trans('app.forms.developed_area') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@strata', $files->id)}}">{{ trans('app.forms.developed_area') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@management', $files->id)}}">{{ trans('app.forms.management') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $files->id)}}">{{ trans('app.forms.management') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@monitoring', $files->id)}}">{{ trans('app.forms.monitoring') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $files->id)}}">{{ trans('app.forms.monitoring') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@others', $files->id)}}">{{ trans('app.forms.others') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $files->id)}}">{{ trans('app.forms.others') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@scoring', $files->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $files->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@buyer', $files->id)}}">{{ trans('app.forms.buyer_list') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@buyer', $files->id)}}">{{ trans('app.forms.buyer_list') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active">{{ trans('app.forms.document') }}</a>
+                                <a class="nav-link active custom-tab">{{ trans('app.forms.document') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@insurance', $files->id)}}">{{ trans('app.forms.insurance') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $files->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="document_tab" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <form id="documentSubmit" class="form-horizontal" enctype="multipart/form-data">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
+                                        <div class="col-lg-12">
+                                            <form id="documentSubmit" class="form-horizontal" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label><span style="color: red;">*</span> {{ trans('app.forms.document_type') }}</label>
-                                                        <select id="document_type" class="form-control select2" name="document_type">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($documentType as $dt)
-                                                            <option value="{{$dt->id}}" {{ $document->document_type_id == $dt->id ? 'selected' : '' }}>{{$dt->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="document_type_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label><span style="color: red;">*</span> {{ trans('app.forms.document_type') }}</label>
+                                                            <select id="document_type" class="form-control select2" name="document_type">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($documentType as $dt)
+                                                                <option value="{{$dt->id}}" {{ $document->document_type_id == $dt->id ? 'selected' : '' }}>{{$dt->name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="document_type_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.document_name') }}</label>
-                                                        <input id="name" name="name" class="form-control" type="text" placeholder="{{ trans('app.forms.document_name') }}" value="{{ $document->name }}">
-                                                        <div id="name_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.document_name') }}</label>
+                                                            <input id="name" name="name" class="form-control" type="text" placeholder="{{ trans('app.forms.document_name') }}" value="{{ $document->name }}">
+                                                            <div id="name_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label">{{ trans('app.forms.remarks') }}</label>
-                                                        <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}">{{ $document->remarks }}</textarea>
-                                                        <div id="name_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label">{{ trans('app.forms.remarks') }}</label>
+                                                            <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}">{{ $document->remarks }}</textarea>
+                                                            <div id="name_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
 
-                                        <form id="upload_document_file" enctype="multipart/form-data" method="post" action="{{ url('uploadDocumentFile') }}" autocomplete="off">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.upload_file') }}</label>
-                                                        <br/>
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                                        <button type="button" id="clear_document_file" class="btn btn-xs btn-danger" onclick="clearDocumentFile()" style="display: none;"><i class="fa fa-times"></i></button>
-                                                        &nbsp;<input type="file" name="document_file" id="document_file" />
-                                                        <div id="validation-errors_document_file"></div>
-                                                        @if ($document->file_url != "")
-                                                        <a href="{{asset($document->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
-                                                        <?php if ($update_permission == 1) { ?>
-                                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDocumentFile('{{$document->id}}')"><i class="fa fa-times"></i></button>
-                                                        <?php } ?>
-                                                        @endif
+                                            <form id="upload_document_file" enctype="multipart/form-data" method="post" action="{{ url('uploadDocumentFile') }}" autocomplete="off">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.upload_file') }}</label>
+                                                            <br/>
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                            <button type="button" id="clear_document_file" class="btn btn-xs btn-danger" onclick="clearDocumentFile()" style="display: none;"><i class="fa fa-times"></i></button>
+                                                            &nbsp;<input type="file" name="document_file" id="document_file" />
+                                                            <div id="validation-errors_document_file"></div>
+                                                            @if ($document->file_url != "")
+                                                            <a href="{{asset($document->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
+                                                            <?php if ($update_permission == 1) { ?>
+                                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDocumentFile('{{$document->id}}')"><i class="fa fa-times"></i></button>
+                                                            <?php } ?>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
 
-                                        <form>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.hidden') }}</label>
-                                                        <select id="is_hidden" class="form-control" name="is_hidden">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="1" {{ $document->is_hidden == '1' ? 'selected' : '' }}>{{ trans("app.forms.yes") }}</option>
-                                                            <option value="0" {{ $document->is_hidden == '0' ? 'selected' : '' }}>{{ trans("app.forms.no") }}</option>
-                                                        </select>
-                                                        <div id="is_hidden_error" style="display:none;"></div>
+                                            <form>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.hidden') }}</label>
+                                                            <select id="is_hidden" class="form-control" name="is_hidden">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                <option value="1" {{ $document->is_hidden == '1' ? 'selected' : '' }}>{{ trans("app.forms.yes") }}</option>
+                                                                <option value="0" {{ $document->is_hidden == '0' ? 'selected' : '' }}>{{ trans("app.forms.no") }}</option>
+                                                            </select>
+                                                            <div id="is_hidden_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.read_only') }}</label>
-                                                        <select id="is_readonly" class="form-control" name="is_readonly">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            <option value="1" {{ $document->is_readonly == '1' ? 'selected' : '' }}>{{ trans("app.forms.yes") }}</option>
-                                                            <option value="0" {{ $document->is_readonly == '0' ? 'selected' : '' }}>{{ trans("app.forms.no") }}</option>
-                                                        </select>
-                                                        <div id="is_readonly_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.read_only') }}</label>
+                                                            <select id="is_readonly" class="form-control" name="is_readonly">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                <option value="1" {{ $document->is_readonly == '1' ? 'selected' : '' }}>{{ trans("app.forms.yes") }}</option>
+                                                                <option value="0" {{ $document->is_readonly == '0' ? 'selected' : '' }}>{{ trans("app.forms.no") }}</option>
+                                                            </select>
+                                                            <div id="is_readonly_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="form-actions">
-                                                <?php if ($update_permission == 1) { ?>
-                                                    <input type="hidden" id="document_file_url" value="{{$document->file_url}}"/>
-                                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditDocument()">{{ trans('app.forms.submit') }}</button>
-                                                <?php } ?>
-                                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', $document->file_id) }}'">{{ trans('app.forms.cancel') }}</button>
-                                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                            </div>
-                                        </form>
+                                                <div class="form-actions">
+                                                    <?php if ($update_permission == 1) { ?>
+                                                        <input type="hidden" id="document_file_url" value="{{$document->file_url}}"/>
+                                                        <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditDocument()">{{ trans('app.forms.submit') }}</button>
+                                                    <?php } ?>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', $document->file_id) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
+                                </section>
                             </div>
                         </div>
                     </div>

@@ -5,7 +5,7 @@
 <?php $company = Company::find(Auth::user()->company_id); ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -29,7 +29,7 @@
                             </td>
                             <td class="text-center">
                                 <a href="{{URL::action('PrintController@printDun', $cob_id ? $cob_id : 'all')}}" target="_blank">
-                                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                    <button type="button" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
                         </tr>
@@ -38,96 +38,98 @@
 
                 <hr/>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <form action="{{ url('/reporting/dun') }}" method="GET" class="form-horizontal">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <select class="form-control select2" id="cob_id" name="cob_id" required="">
-                                            @if (count($cob) > 1)
-                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @endif
-                                            @foreach ($cob as $cobs)
-                                            <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
-                                            @endforeach
-                                        </select>
+                <section class="panel panel-pad">
+                    <div class="row padding-vertical-15">
+                        <div class="col-lg-12">
+                            <form action="{{ url('/reporting/dun') }}" method="GET" class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <select class="form-control select2" id="cob_id" name="cob_id" required="">
+                                                @if (count($cob) > 1)
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @endif
+                                                @foreach ($cob as $cobs)
+                                                <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
+                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@dun") }}'"">{{ trans('app.buttons.reset') }}</button>
+                                        <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
-                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@dun") }}'"">{{ trans('app.buttons.reset') }}</button>
-                                    <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
 
-                @if ($file_info)
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p>LAPORAN</p>
-                        <table border="1" id="dun_report_table" width="100%">
-                            <thead>
-                                <tr>
-                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">COB</th>
-                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">DUN</th>
-                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">KATEGORI</th>
-                                    <th style="width:10%; text-align: center !important; vertical-align:middle !important;">TOTAL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $dunChart = array();
-                                $totalChart = array();                                
-                                ?>
-                                @foreach ($file_info as $file)                                
-                                @if ($file['dun'])
-                                @foreach ($file['dun'] as $dun)
+                    @if ($file_info)
+                    <div class="row padding-bottom-15">
+                        <div class="col-lg-12">
+                            <p>LAPORAN</p>
+                            <table border="1" id="dun_report_table" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%; text-align: center !important; vertical-align:middle !important;">COB</th>
+                                        <th style="width:30%; text-align: center !important; vertical-align:middle !important;">DUN</th>
+                                        <th style="width:30%; text-align: center !important; vertical-align:middle !important;">KATEGORI</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $dunChart = array();
+                                    $totalChart = array();                                
+                                    ?>
+                                    @foreach ($file_info as $file)                                
+                                    @if ($file['dun'])
+                                    @foreach ($file['dun'] as $dun)
 
-                                <?php
-                                $dunChart[] = array(
-                                    $dun['name']
-                                );
-                                ?>
+                                    <?php
+                                    $dunChart[] = array(
+                                        $dun['name']
+                                    );
+                                    ?>
 
-                                @if ($dun['category'])
-                                @foreach ($dun['category'] as $cat)
+                                    @if ($dun['category'])
+                                    @foreach ($dun['category'] as $cat)
 
-                                <?php
-                                $totalChart[$cat['id']][] = array(
-                                    $cat['total']
-                                );
-                                ?>
-                                <tr>
-                                    <td rowspan="" style="text-align: left !important; vertical-align:middle !important;">&nbsp; {{ $file['company']['name'] }}</td>
-                                    <td rowspan="" style="text-align: center !important; vertical-align:middle !important;">{{ $dun['name'] }}</td>
-                                    <td rowspan="" style="text-align: center !important; vertical-align:middle !important;">{{ $cat['name'] }}</td>
-                                    <td rowspan="" style="text-align: center !important; vertical-align:middle !important;">{{ $cat['total'] }}</td>
-                                </tr>
-                                @endforeach
-                                @endif                                
-                                @endforeach
-                                @endif
-                                @endforeach
+                                    <?php
+                                    $totalChart[$cat['id']][] = array(
+                                        $cat['total']
+                                    );
+                                    ?>
+                                    <tr>
+                                        <td rowspan="" style="text-align: left !important; vertical-align:middle !important;">&nbsp; {{ $file['company']['name'] }}</td>
+                                        <td rowspan="" style="text-align: center !important; vertical-align:middle !important;">{{ $dun['name'] }}</td>
+                                        <td rowspan="" style="text-align: center !important; vertical-align:middle !important;">{{ $cat['name'] }}</td>
+                                        <td rowspan="" style="text-align: center !important; vertical-align:middle !important;">{{ $cat['total'] }}</td>
+                                    </tr>
+                                    @endforeach
+                                    @endif                                
+                                    @endforeach
+                                    @endif
+                                    @endforeach
 
-                                @if ($category)
-                                <?php $catChart = array(); ?>
-                                @foreach ($category as $cats)
-                                <?php
-                                $catChart[] = array(
-                                    'name' => $cats->description,
-                                    'data' => ($totalChart ? $totalChart[$cats->id] : 0)
-                                );
-                                ?>
-                                @endforeach
-                                @endif
-                            </tbody>
-                        </table>
+                                    @if ($category)
+                                    <?php $catChart = array(); ?>
+                                    @foreach ($category as $cats)
+                                    <?php
+                                    $catChart[] = array(
+                                        'name' => $cats->description,
+                                        'data' => ($totalChart ? $totalChart[$cats->id] : 0)
+                                    );
+                                    ?>
+                                    @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                @endif
+                    @endif
+                </section>
 
                 <hr/>
 
