@@ -1,5 +1,7 @@
 <?php
 
+use Helper\KCurl;
+
 class ImageController extends BaseController {
 
     public function logoImage() {
@@ -39,21 +41,32 @@ class ImageController extends BaseController {
     public function uploadOthersImage() {
         $file = Input::file('image');
 
-        if (!empty($file)) {
-            $input = array('image' => $file);
-            $rules = array(
-                'image' => 'image'
-            );
-            $validator = Validator::make($input, $rules);
-            if ($validator->fails()) {
-                return Response::json(['success' => false, 'errors' => $validator->getMessageBag()->toArray()]);
-            } else {
-                $destinationPath = 'uploads/images';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-                Input::file('image')->move($destinationPath, $filename);
-                return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+        ## EAI Call
+        // $url = $this->eai_domain . $this->eai_route['file']['cob']['others']['image_upload'];
+        $data['image'] = curl_file_create($_FILES['image']['tmp_name'], $_FILES['image']['type'], $_FILES['image']['name']);
+        
+        // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+        //                         $url,
+        //                         $data, true)));
+                                
+        // if(empty($response->status) == false && $response->status == 200) {
+
+            if (!empty($file)) {
+                $input = array('image' => $file);
+                $rules = array(
+                    'image' => 'image'
+                );
+                $validator = Validator::make($input, $rules);
+                if ($validator->fails()) {
+                    return Response::json(['success' => false, 'errors' => $validator->getMessageBag()->toArray()]);
+                } else {
+                    $destinationPath = 'uploads/images';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    Input::file('image')->move($destinationPath, $filename);
+                    return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                }
             }
-        }
+        // }
     }
 
 }

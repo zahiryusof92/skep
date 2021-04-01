@@ -70,13 +70,6 @@ foreach ($user_permission as $permission) {
 
     
     <section class="panel panel-style">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3 id="tab_title"></h3>
-                </div>
-            </div>
-        </div>
         <div class="panel-body">
 
             <div id="updateFinanceFile">

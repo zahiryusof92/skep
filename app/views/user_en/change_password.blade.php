@@ -4,66 +4,68 @@
 
 <div class="page-content-inner">
     <!-- Basic Form Elements -->
-    <section class="panel">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Horizontal Form -->
-                    <form id="change_password">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <!-- Horizontal Form -->
+                        <form id="change_password">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.username') }}</label>
-                                    <input type="text" class="form-control" value="{{$user->username}}" disabled=""/>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.username') }}</label>
+                                        <input type="text" class="form-control" value="{{$user->username}}" disabled=""/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.old_password') }}</label>
-                                    <input type="password" id="old_password" class="form-control"/>
-                                    <span id="error_old_password" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.please_enter_old_password') }}</span>
-                                    <span id="error_old_password_mismatch" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.wrong_old_password') }}</span>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.old_password') }}</label>
+                                        <input type="password" id="old_password" class="form-control"/>
+                                        <span id="error_old_password" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.please_enter_old_password') }}</span>
+                                        <span id="error_old_password_mismatch" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.wrong_old_password') }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.new_password') }}</label>
-                                    <input type="password" id="new_password" class="form-control"/>
-                                    <span id="error_new_password" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.please_enter_new_password') }}</span>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.new_password') }}</label>
+                                        <input type="password" id="new_password" class="form-control"/>
+                                        <span id="error_new_password" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.please_enter_new_password') }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.retype_password') }}</label>
-                                    <input type="password" id="retype_password" class="form-control"/>
-                                    <span id="error_retype_password" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.please_enter_retype_password') }}</span>
-                                    <span id="error_password_mismatch" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.retype_does_not_match') }}</span>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.retype_password') }}</label>
+                                        <input type="password" id="retype_password" class="form-control"/>
+                                        <span id="error_retype_password" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.please_enter_retype_password') }}</span>
+                                        <span id="error_password_mismatch" style="color:red;font-style:italic;font-size:13px;display:none">{{ trans('app.forms.retype_does_not_match') }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-own" id="submit_button" onclick="submitChangePassword()">{{ trans('app.forms.submit') }}</button>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
-                        </div>
-                    </form>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitChangePassword()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

@@ -1,4 +1,4 @@
-<div class="row">    
+<div class="row padding-vertical-10">    
     <div class="col-lg-12">
 
         {{-- <h6>{{ trans("app.forms.check") }}</h6> --}}

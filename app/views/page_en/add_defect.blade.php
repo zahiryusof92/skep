@@ -12,101 +12,103 @@ foreach ($user_permission as $permissions) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="documentSubmit" class="form-horizontal" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form id="documentSubmit" class="form-horizontal" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_id" class="form-control select2" name="file_id">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $file_no)
-                                        <option value="{{$file_no->id}}">{{$file_no->file_no}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="file_id_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_id" class="form-control select2" name="file_id">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($files as $file_no)
+                                            <option value="{{$file_no->id}}">{{$file_no->file_no}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_id_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.defect_category') }}</label>
-                                    <select id="defect_category" class="form-control select2" name="defect_category">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($defectCategory as $dc)
-                                        <option value="{{$dc->id}}">{{$dc->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="defect_category_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.defect_category') }}</label>
+                                        <select id="defect_category" class="form-control select2" name="defect_category">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($defectCategory as $dc)
+                                            <option value="{{$dc->id}}">{{$dc->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="defect_category_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.defect_name') }}</label>
-                                    <input id="name" name="name" class="form-control" type="text" placeholder="{{ trans('app.forms.defect_name') }}">
-                                    <div id="name_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.defect_name') }}</label>
+                                        <input id="name" name="name" class="form-control" type="text" placeholder="{{ trans('app.forms.defect_name') }}">
+                                        <div id="name_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.defect_description') }}</label>
-                                    <textarea id="description" name="description" rows="5" class="form-control" placeholder="{{ trans('app.forms.defect_description') }}"></textarea>
-                                    <div id="description_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.defect_description') }}</label>
+                                        <textarea id="description" name="description" rows="5" class="form-control" placeholder="{{ trans('app.forms.defect_description') }}"></textarea>
+                                        <div id="description_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
 
-                    <form id="upload_defect_attachment" enctype="multipart/form-data" method="post" action="{{ url('uploadDefectAttachment') }}" autocomplete="off">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.upload_defect_attachment') }}</label>
-                                    <br/>
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <button type="button" id="clear_defect_attachment" class="btn btn-xs btn-danger" onclick="clearDefectAttachment()" style="display: none;"><i class="fa fa-times"></i></button>
-                                    &nbsp;
-                                    <input type="file" name="defect_attachment" id="defect_attachment" />
-                                    <div id="validation-errors_defect_attachment"></div>
+                        <form id="upload_defect_attachment" enctype="multipart/form-data" method="post" action="{{ url('uploadDefectAttachment') }}" autocomplete="off">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.upload_defect_attachment') }}</label>
+                                        <br/>
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                        <button type="button" id="clear_defect_attachment" class="btn btn-xs btn-danger" onclick="clearDefectAttachment()" style="display: none;"><i class="fa fa-times"></i></button>
+                                        &nbsp;
+                                        <input type="file" name="defect_attachment" id="defect_attachment" />
+                                        <div id="validation-errors_defect_attachment"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
 
-                    <form>
-                        <div class="form-actions">
-                            <?php if ($insert_permission) { ?>
-                                <input type="hidden" id="defect_attachment_url" value=""/>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddDefect()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
-                            <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                        </div>
-                    </form>
+                        <form>
+                            <div class="form-actions">
+                                <?php if ($insert_permission) { ?>
+                                    <input type="hidden" id="defect_attachment_url" value=""/>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddDefect()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
+                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

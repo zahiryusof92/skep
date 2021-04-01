@@ -591,12 +591,12 @@ class FinanceController extends BaseController {
                             if (AccessGroup::hasUpdate(38)) {
                                 if ($model->is_active == 1) {
                                     $status = trans('app.forms.active');
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFinanceList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
                                 } else {
                                     $status = trans('app.forms.inactive');
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFinanceList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
                                 }
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceList(\'' . $model->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
+                                $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>&nbsp;';
                             }
 
                             return $button;

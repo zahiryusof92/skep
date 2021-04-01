@@ -5,7 +5,7 @@ class Strata extends Eloquent {
     protected $table = 'strata';
     
     public function file() {
-        return $this->belongsTo('File', 'file_id');
+        return $this->belongsTo('Files', 'file_id');
     }
     
     public function parliment() {

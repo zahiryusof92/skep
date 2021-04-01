@@ -464,11 +464,190 @@ return [
                 ],
             ]
         ],
+        'cob' => [
+            'facility' => [
+                'management_office' => [
+                    'name' => 'management_office',
+                    'title' => 'Management Office'
+                ],
+                'swimming_pool' => [
+                    'name' => 'swimming_pool',
+                    'title' => 'Swimming Pool'
+                ],
+                'surau' => [
+                    'name' => 'surau',
+                    'title' => 'Surau'
+                ],
+                'multipurpose_hall' => [
+                    'name' => 'multipurpose_hall',
+                    'title' => 'Multipurpose Hall'
+                ],
+                'gym' => [
+                    'name' => 'gym',
+                    'title' => 'Gym'
+                ],
+                'playground' => [
+                    'name' => 'playground',
+                    'title' => 'Playground'
+                ],
+                'guardhouse' => [
+                    'name' => 'guardhouse',
+                    'title' => 'Guard House'
+                ],
+                'kindergarten' => [
+                    'name' => 'kindergarten',
+                    'title' => 'KinderGarten'
+                ],
+                'open_space' => [
+                    'name' => 'open_space',
+                    'title' => 'Open Space'
+                ],
+                'lift' => [
+                    'name' => 'lift',
+                    'title' => 'Lift'
+                ],
+                'rubbish_room' => [
+                    'name' => 'rubbish_room',
+                    'title' => 'Rubbish Room'
+                ],
+                'gated' => [
+                    'name' => 'gated',
+                    'title' => 'Gated'
+                ],
+            ]
+        ],
         'auth' => [
             'sso' => [
                 'update_profile_url' => "https://patrick.odesi.tech/api/admin/auth/profile/update_simple"
             ]
         ],
+    ],
+    'eai' => [
+        'domain' => 'http://127.0.0.1:94/api/v1/',
+        'route' => [
+            'auth' => [
+                'login' => 'auth/login',
+            ],
+            'file' => [
+                'cob' => [
+                    'add' => 'file/cob/add',
+                    'import' => 'file/cob/import',
+                    'status_update' => 'file/cob/status/update',
+                    'fileNo_update' => 'file/cob/fileNo/update',
+                    'delete' => 'file/cob/delete',
+                    'prefix' => [
+                        'add' => 'file/cob/prefix/add',
+                        'update' => 'file/cob/prefix/update',
+                        'status_update' => 'file/cob/prefix/status/update',
+                        'delete' => 'file/cob/prefix/delete',
+                    ],
+                    'house' => [
+                        'update' => 'file/cob/house/update',
+                        'add_user' => 'file/cob/house/add_user',
+                        'delete_user' => 'file/cob/house/delete_user',
+                    ],
+                    'strata' => [
+                        'update' => 'file/cob/strata/update',
+                        'file_upload' => 'file/cob/strata/file/upload',
+                        'file_delete' => 'file/cob/strata/file/delete',
+                    ],
+                    'management' => [
+                        'update' => 'file/cob/management/update',
+                    ],
+                    'monitoring' => [
+                        'update' => 'file/cob/monitoring/update',
+                        'agm_detail' => [
+                            'add' => 'file/cob/monitoring/agm_detail/add',
+                            'update' => 'file/cob/monitoring/agm_detail/update',
+                            'delete' => 'file/cob/monitoring/agm_detail/delete',
+                        ],
+                        'ajk_detail' => [
+                            'add' => 'file/cob/monitoring/ajk_detail/add',
+                            'update' => 'file/cob/monitoring/ajk_detail/update',
+                            'delete' => 'file/cob/monitoring/ajk_detail/delete',
+                        ],
+                        'upload' => [
+                            'auditReportFile' => 'file/cob/monitoring/upload/auditReportFile',
+                            'letterIntegrity' => 'file/cob/monitoring/upload/letterIntegrity',
+                            'letterBankruptcy' => 'file/cob/monitoring/upload/letterBankruptcy',
+                            'noticeAgmEgm' => 'file/cob/monitoring/upload/noticeAgmEgm',
+                            'minutesAgmEgm' => 'file/cob/monitoring/upload/minutesAgmEgm',
+                            'minutesAjk' => 'file/cob/monitoring/upload/minutesAjk',
+                            'eligibleVote' => 'file/cob/monitoring/upload/eligibleVote',
+                            'attendMeeting' => 'file/cob/monitoring/upload/attendMeeting',
+                            'proksi' => 'file/cob/monitoring/upload/proksi',
+                            'ajkInfo' => 'file/cob/monitoring/upload/ajkInfo',
+                            'ic' => 'file/cob/monitoring/upload/ic',
+                            'purchaseAggrement' => 'file/cob/monitoring/upload/purchaseAggrement',
+                            'maintenanceStatement' => 'file/cob/monitoring/upload/maintenanceStatement',
+                            'strataTitle' => 'file/cob/monitoring/upload/strataTitle',
+                            'integrityPledge' => 'file/cob/monitoring/upload/integrityPledge',
+                            'reportAuditedFinancial' => 'file/cob/monitoring/upload/reportAuditedFinancial',
+                            'houseRules' => 'file/cob/monitoring/upload/houseRules',
+                        ],
+                        'delete' => [
+                            'auditReportFile' => 'file/cob/monitoring/delete/auditReportFile',
+                            'letterIntegrity' => 'file/cob/monitoring/delete/letterIntegrity',
+                            'letterBankruptcy' => 'file/cob/monitoring/delete/letterBankruptcy',
+                            'noticeAgmEgm' => 'file/cob/monitoring/delete/noticeAgmEgm',
+                            'minutesAgmEgm' => 'file/cob/monitoring/delete/minutesAgmEgm',
+                            'minutesAjk' => 'file/cob/monitoring/delete/minutesAjk',
+                            'eligibleVote' => 'file/cob/monitoring/delete/eligibleVote',
+                            'attendMeeting' => 'file/cob/monitoring/delete/attendMeeting',
+                            'proksi' => 'file/cob/monitoring/delete/proksi',
+                            'ajkInfo' => 'file/cob/monitoring/delete/ajkInfo',
+                            'ic' => 'file/cob/monitoring/delete/ic',
+                            'purchaseAggrement' => 'file/cob/monitoring/delete/purchaseAggrement',
+                            'maintenanceStatement' => 'file/cob/monitoring/delete/maintenanceStatement',
+                            'strataTitle' => 'file/cob/monitoring/delete/strataTitle',
+                            'integrityPledge' => 'file/cob/monitoring/delete/integrityPledge',
+                            'reportAuditedFinancial' => 'file/cob/monitoring/delete/reportAuditedFinancial',
+                            'houseRules' => 'file/cob/monitoring/delete/houseRules',
+                        ],
+                    ],
+                    'others' => [
+                        'update' => 'file/cob/others/update',
+                        'image_upload' => 'file/cob/others/image/upload',
+                        'image_delete' => 'file/cob/others/image/delete',
+                    ],
+                    'scoring' => [
+                        'add' => 'file/cob/scoring/add',
+                        'update' => 'file/cob/scoring/update',
+                        'delete' => 'file/cob/scoring/delete',
+                    ],
+                    'buyer' => [
+                        'add' => 'file/cob/buyer/add',
+                        'update' => 'file/cob/buyer/update',
+                        'delete' => 'file/cob/buyer/delete',
+                        'import' => 'file/cob/buyer/import',
+                    ],
+                    'document' => [
+                        'add' => 'file/cob/document/add',
+                        'update' => 'file/cob/document/update',
+                        'delete' => 'file/cob/document/delete',
+                        'file_upload' => 'file/cob/document/file/upload',
+                        'file_delete' => 'file/cob/document/file/delete',
+                    ],
+                    'insurance' => [
+                        'add' => 'file/cob/insurance/add',
+                        'update' => 'file/cob/insurance/update',
+                        'delete' => 'file/cob/insurance/delete',
+                    ],
+                    
+                ],
+            ],
+            'user' => [
+                'add' => 'user/add',
+                'approve' => 'user/approve',
+                'update' => 'user/update',
+                'status_update' => 'user/status/update',
+                'delete' => 'user/delete',
+            ],
+            'profile' => [
+                'update' => 'profile/update',
+                'password_update' => 'profile/password/update',
+            ],
+        ]
     ],
     'others' => [
         'status' => [

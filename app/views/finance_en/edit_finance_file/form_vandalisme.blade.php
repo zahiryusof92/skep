@@ -3,7 +3,7 @@ $prefix = 'maintenancefee_';
 $prefix2 = 'singkingfund_';
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>4.4 PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN (VANDALISME) a. Guna Duit Maintenance Fee</h6>

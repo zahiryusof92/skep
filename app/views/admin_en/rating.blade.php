@@ -15,67 +15,69 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addRating') }}'" type="button" class="btn btn-own margin-bottom-25">
-                            {{ trans('app.buttons.add_rating') }}
-                        </button>
-                    <?php } ?>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <?php if ($insert_permission == 1) { ?>
+                            <button onclick="window.location = '{{ URL::action('AdminController@addRating') }}'" type="button" class="btn btn-own margin-bottom-25">
+                                {{ trans('app.buttons.add_rating') }}
+                            </button>
+                        <?php } ?>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_no" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $files_no)
-                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
-                                        @endforeach
-                                    </select>
+                
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_no" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($files as $files_no)
+                                            <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <hr/>
-            
-            <div class="row">
-                <div class="col-lg-12">                    
-                    <table class="table table-hover nowrap" id="rating" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:30%;">{{ trans('app.forms.file_no') }}</th>
-                                <th style="width:15%;">{{ trans('app.forms.date') }}</th>
-                                <th style="width:5%;">A (%)</th>
-                                <th style="width:5%;">B (%)</th>
-                                <th style="width:5%;">C (%)</th>
-                                <th style="width:5%;">D (%)</th>
-                                <th style="width:5%;">E (%)</th>
-                                <th style="width:10%;">{{ trans('app.forms.score') }} (%)</th>
-                                <th style="width:10%;">{{ trans('app.forms.rating') }}</th>
-                                <?php if ($update_permission == 1) { ?>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <hr/>
+                
+                <div class="row">
+                    <div class="col-lg-12">                    
+                        <table class="table table-hover nowrap table-own table-striped" id="rating" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.date') }}</th>
+                                    <th style="width:5%;">A (%)</th>
+                                    <th style="width:5%;">B (%)</th>
+                                    <th style="width:5%;">C (%)</th>
+                                    <th style="width:5%;">D (%)</th>
+                                    <th style="width:5%;">E (%)</th>
+                                    <th style="width:10%;">{{ trans('app.forms.score') }} (%)</th>
+                                    <th style="width:10%;">{{ trans('app.forms.rating') }}</th>
+                                    <?php if ($update_permission == 1) { ?>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                        <?php } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->

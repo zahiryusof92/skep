@@ -4,7 +4,7 @@ $prefix = 'sfr_';
 $count = 0;
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINGKING FUND)</h6>

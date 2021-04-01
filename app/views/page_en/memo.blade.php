@@ -15,81 +15,82 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addMemo') }}'" type="button" class="btn btn-own margin-bottom-25">
-                            {{ trans('app.buttons.add_memo') }}
-                        </button>
-                    <?php } ?>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <?php if ($insert_permission == 1) { ?>
+                            <button onclick="window.location = '{{ URL::action('AdminController@addMemo') }}'" type="button" class="btn btn-own margin-bottom-25">
+                                {{ trans('app.buttons.add_memo') }}
+                            </button>
+                        <?php } ?>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <form>
-                        <div class="row">
-                            @if (Auth::user()->getAdmin())
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.cob') }}</label>
-                                    <select id="company" name="company" class="form-control select2">
-                                        @if (count($cob) > 1)
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @endif
-                                        @foreach ($cob as $id => $companies)
-                                        <option value="{{ $id }}">{{ $companies }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="company_error" style="display:none;"></div>
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <form>
+                            <div class="row">
+                                @if (Auth::user()->getAdmin())
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.cob') }}</label>
+                                        <select id="company" name="company" class="form-control select2">
+                                            @if (count($cob) > 1)
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @endif
+                                            @foreach ($cob as $id => $companies)
+                                            <option value="{{ $id }}">{{ $companies }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="company_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                @endif
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.memo_type') }}:</label>
+                                        <select id="memo_type" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.all') }}</option>
+                                            @foreach ($memotype as $memotypes)
+                                            <option value="{{$memotypes->description}}">{{$memotypes->description}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            @endif
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.memo_type') }}:</label>
-                                    <select id="memo_type" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.all') }}</option>
-                                        @foreach ($memotype as $memotypes)
-                                        <option value="{{$memotypes->description}}">{{$memotypes->description}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <hr/>
+                <hr/>
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <table class="table table-hover nowrap" id="memo" width="100%">
-                        <thead>
-                            <tr>                                
-                                <th style="width:10%;">{{ trans('app.forms.memo_date') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.memo_type') }}</th>
-                                <th style="width:30%;">{{ trans('app.forms.subject') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.publish_date') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.expired_date') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.status') }}</th>
-                                <?php if ($update_permission == 1) { ?>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-hover nowrap table-own table-striped" id="memo" width="100%">
+                            <thead>
+                                <tr>                                
+                                    <th style="width:10%;">{{ trans('app.forms.memo_date') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.memo_type') }}</th>
+                                    <th style="width:30%;">{{ trans('app.forms.subject') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.publish_date') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.expired_date') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.status') }}</th>
+                                    <?php if ($update_permission == 1) { ?>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                        <?php } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
         </div>
     </section>
     <!-- End  -->

@@ -7,7 +7,7 @@ $company = Company::find(Auth::user()->company_id);
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -33,38 +33,40 @@ $company = Company::find(Auth::user()->company_id);
                                 <td class="text-center">
                                     <input type="hidden" name="start" id="start">
                                     <input type="hidden" name="end" id="end">
-                                    <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                    <button type="submit" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <hr/>
                     <br/>
-                    <div class="row text-center">
-                        <div class="col-lg-12">
-                            <span style="font-size: 12px;"><b>{{ trans('app.forms.date_audited') }}: </b></span>&nbsp;
-                            <input style="font-size: 12px;" id="date_from" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
-                            <span style="font-size: 12px;" class="margin-right-10">&nbsp; —</span>
-                            <input style="font-size: 12px;" id="date_to" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
+                    <section class="panel panel-pad">
+                        <div class="row text-center padding-vertical-15">
+                            <div class="col-lg-12">
+                                <span style="font-size: 12px;"><b>{{ trans('app.forms.date_audited') }}: </b></span>&nbsp;
+                                <input style="font-size: 12px;" id="date_from" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
+                                <span style="font-size: 12px;" class="margin-right-10">&nbsp; —</span>
+                                <input style="font-size: 12px;" id="date_to" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
+                            </div>
                         </div>
-                    </div>
-                    <br/>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <table class="table table-hover" id="audit_trail" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
-                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
-                                        <th style="width:45%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
-                                        <th style="width:15%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-own table-striped" id="audit_trail" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:20%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
+                                            <th style="width:20%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
+                                            <th style="width:45%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
+                                            <th style="width:15%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </form>
         </div>

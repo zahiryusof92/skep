@@ -2,7 +2,7 @@
 $prefix = 'mfr_';
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>1. LAPORAN RINGKAS PENCAPAIAN KUTIPAN CAJ PENYENGGARAAN (MAINTENANCE FEE)</h6>

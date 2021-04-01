@@ -13,149 +13,151 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Vertical Form -->
-                    <form id="add_memo">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <!-- Vertical Form -->
+                        <form id="add_memo">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @if (Auth::user()->getAdmin())
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
-                                    <select id="company" name="company" class="form-control select2" required="">
-                                        @if (count($cob) > 1)
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @endif
-                                        @foreach ($cob as $id => $companies)
-                                        <option value="{{ $id }}" {{ ($memo->company_id == $id ? 'selected' : '') }}>{{ $companies }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="company_error" style="display:none;"></div>
+                            @if (Auth::user()->getAdmin())
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
+                                        <select id="company" name="company" class="form-control select2" required="">
+                                            @if (count($cob) > 1)
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @endif
+                                            @foreach ($cob as $id => $companies)
+                                            <option value="{{ $id }}" {{ ($memo->company_id == $id ? 'selected' : '') }}>{{ $companies }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="company_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @else
-                        <input type="hidden" id="company" name="company" value="{{ Auth::user()->company_id }}"/>
-                        @endif
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.memo_type') }}</label>
-                                    <select id="memo_type" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($memotype as $memotypes)
-                                        <option value="{{$memotypes->id}}" {{($memo->memo_type_id == $memotypes->id ? " selected" : "")}}>{{$memotypes->description}}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="memo_type_error" style="display:none;"></div>
+                            @else
+                            <input type="hidden" id="company" name="company" value="{{ Auth::user()->company_id }}"/>
+                            @endif
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.memo_type') }}</label>
+                                        <select id="memo_type" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($memotype as $memotypes)
+                                            <option value="{{$memotypes->id}}" {{($memo->memo_type_id == $memotypes->id ? " selected" : "")}}>{{$memotypes->description}}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="memo_type_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans("app.forms.memo_date") }}</label>
-                                    <label class="input-group datepicker-only-init">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.memo_date") }}" id="memo_date" value="{{$memo->memo_date}}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <div id="memo_date_error" style="display:block;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans("app.forms.memo_date") }}</label>
+                                        <label class="input-group datepicker-only-init">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.memo_date") }}" id="memo_date" value="{{$memo->memo_date}}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <div id="memo_date_error" style="display:block;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans("app.forms.publish_date") }}</label>
-                                    <label class="input-group datepicker-only-init">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.publish_date") }}" id="publish_date" value="{{$memo->publish_date}}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
-                                    <div id="publish_date_error" style="display:block;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans("app.forms.publish_date") }}</label>
+                                        <label class="input-group datepicker-only-init">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.publish_date") }}" id="publish_date" value="{{$memo->publish_date}}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        <div id="publish_date_error" style="display:block;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans("app.forms.expired_date") }}</label>
-                                    <label class="input-group datepicker-only-init">
-                                        <input type="text" class="form-control" placeholder="{{ trans("app.forms.expired_date") }}" id="expired_date" value="{{$memo->expired_date}}"/>
-                                        <span class="input-group-addon">
-                                            <i class="icmn-calendar"></i>
-                                        </span>
-                                    </label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans("app.forms.expired_date") }}</label>
+                                        <label class="input-group datepicker-only-init">
+                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.expired_date") }}" id="expired_date" value="{{$memo->expired_date}}"/>
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.subject') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.subject') }}" id="subject" value="{{$memo->subject}}">
-                                    <div id="subject_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.subject') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.subject') }}" id="subject" value="{{$memo->subject}}">
+                                        <div id="subject_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.description') }}</label>
-                                    <textarea id="description">{{$memo->description}}</textarea>
-                                    <div id="description_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.description') }}</label>
+                                        <textarea id="description">{{$memo->description}}</textarea>
+                                        <div id="description_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.status') }}</label>
-                                    <select id="is_active" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        <option value="1" {{($memo->is_active==1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
-                                        <option value="0" {{($memo->is_active==0 ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
-                                    </select>
-                                    <div id="is_active_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.status') }}</label>
+                                        <select id="is_active" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            <option value="1" {{($memo->is_active==1 ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
+                                            <option value="0" {{($memo->is_active==0 ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
+                                        </select>
+                                        <div id="is_active_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.remarks') }}</label>
-                                    <textarea class="form-control" rows="3" id="remarks">{{$memo->remarks}}</textarea>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.remarks') }}</label>
+                                        <textarea class="form-control" rows="3" id="remarks">{{$memo->remarks}}</textarea>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-actions">
-                            <?php if ($update_permission == 1) { ?>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="updateMemo()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@memo')}}'">{{ trans('app.forms.cancel') }}</button>
-                            <div class="text-center" id="loading" style="display:none;">
-                                <img src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                            <div class="form-actions">
+                                <?php if ($update_permission == 1) { ?>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="updateMemo()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@memo')}}'">{{ trans('app.forms.cancel') }}</button>
+                                <div class="text-center" id="loading" style="display:none;">
+                                    <img src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                    <!-- End Vertical Form -->
+                        </form>
+                        <!-- End Vertical Form -->
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

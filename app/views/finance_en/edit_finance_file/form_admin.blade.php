@@ -2,7 +2,7 @@
 $prefix = 'admin_';
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>4.6 LAPORAN PERBELANJAAN PENTADBIRAN</h6>

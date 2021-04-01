@@ -7,7 +7,7 @@ $company = Company::find(Auth::user()->company_id);
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -31,32 +31,34 @@ $company = Company::find(Auth::user()->company_id);
                             </td>
                             <td class="text-center">
                                 <a href="{{URL::action('PrintController@printFileByLocation')}}" target="_blank">
-                                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                    <button type="button" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <hr/>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <br/>
-                        <table class="table table-hover" id="file_location_list" width="100%">
-                            <thead>
-                                <tr>
-                                    <th style="width:20%; text-align: center !important;">{{ trans('app.forms.parliament') }}</th>
-                                    <th style="width:20%; text-align: center !important;">{{ trans('app.forms.dun') }}</th>
-                                    <th style="width:20%; text-align: center !important;">{{ trans('app.forms.park') }}</th>
-                                    <th style="width:20%; text-align: center !important;">{{ trans('app.forms.file_no') }}.</th>
-                                    <th style="width:20%; text-align: center !important;">{{ trans('app.forms.development_area') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <section class="panel panel-pad">
+                    <div class="row padding-vertical-10">
+                        <div class="col-lg-12">
+                            <br/>
+                            <table class="table table-hover table-own table-striped" id="file_location_list" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.parliament') }}</th>
+                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.dun') }}</th>
+                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.park') }}</th>
+                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.file_no') }}.</th>
+                                        <th style="width:20%; text-align: center !important;">{{ trans('app.forms.development_area') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     </section>

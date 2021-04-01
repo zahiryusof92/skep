@@ -19,63 +19,65 @@ foreach ($user_permission as $permissions) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php if ($insert_permission) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addDefect') }}'" type="button" class="btn btn-own margin-bottom-25">
-                            {{ trans('app.buttons.add_defect') }}
-                        </button>
-                    <?php } ?>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <?php if ($insert_permission) { ?>
+                            <button onclick="window.location = '{{ URL::action('AdminController@addDefect') }}'" type="button" class="btn btn-own margin-bottom-25">
+                                {{ trans('app.buttons.add_defect') }}
+                            </button>
+                        <?php } ?>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_no" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($files as $files_no)
-                                        <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
-                                        @endforeach
-                                    </select>
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_no" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($files as $files_no)
+                                            <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <hr/>
+                <hr/>
 
-            <div class="row">
-                <div class="col-lg-12">                    
-                    <table class="table table-hover nowrap" id="defect" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
-                                <th style="width:15%;">{{ trans('app.forms.defect_category') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.defect_name') }}</th>
-                                <th style="width:35%;">{{ trans('app.forms.defect_description') }}</th>
-                                <th style="width:35%;">{{ trans('app.forms.status') }}</th>
-                                <?php if ($update_permission) { ?>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-lg-12">                    
+                        <table class="table table-hover nowrap table-own table-striped" id="defect" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.defect_category') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.defect_name') }}</th>
+                                    <th style="width:35%;">{{ trans('app.forms.defect_description') }}</th>
+                                    <th style="width:35%;">{{ trans('app.forms.status') }}</th>
+                                    <?php if ($update_permission) { ?>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                        <?php } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->

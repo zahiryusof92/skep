@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="submit_button">{{ trans('app.my_point.pay_now') }}</button>
+                    <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.my_point.pay_now') }}</button>
                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ route('myPoint.index') }}'">{{ trans('app.forms.cancel') }}</button>
                 </div>
             </form>

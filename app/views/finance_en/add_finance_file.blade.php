@@ -13,73 +13,75 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="add_fileprefix">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form id="add_fileprefix">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                    <select id="file_id" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($file_no as $files)
-                                        <option value="{{ $files->id }}">{{ $files->file_no }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="file_no_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_id" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($file_no as $files)
+                                            <option value="{{ $files->id }}">{{ $files->file_no }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_no_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.year') }}</label>
+                                        <select id="year" class="form-control select2">
+                                            @foreach ($year as $value => $years)
+                                            <option value="{{ $value }}">{{ $years }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="year_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.month') }}</label>
+                                        <select id="month" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($month as $value => $months)
+                                            <option value="{{ $value }}">{{ $months }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="month_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.year') }}</label>
-                                    <select id="year" class="form-control select2">
-                                        @foreach ($year as $value => $years)
-                                        <option value="{{ $value }}">{{ $years }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="year_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div id="file_already_exists_error" style="display: none;"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.month') }}</label>
-                                    <select id="month" class="form-control select2">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($month as $value => $months)
-                                        <option value="{{ $value }}">{{ $months }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="month_error" style="display:none;"></div>
-                                </div>
+                            <div class="form-actions">
+                                <?php if ($insert_permission) { ?>
+                                    <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddFinanceFile()">{{ trans('app.forms.submit') }}</button>
+                                <?php } ?>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@addFinanceFileList')}}'">{{ trans('app.forms.cancel') }}</button>
+                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div id="file_already_exists_error" style="display: none;"></div>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <?php if ($insert_permission) { ?>
-                                <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddFinanceFile()">{{ trans('app.forms.submit') }}</button>
-                            <?php } ?>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@addFinanceFileList')}}'">{{ trans('app.forms.cancel') }}</button>
-                            <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

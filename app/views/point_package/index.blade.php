@@ -14,7 +14,7 @@
                 <div class="col-lg-12">
 
                     <div class="margin-bottom-30">
-                        <a href="{{ route('pointPackage.create') }}" class="btn btn-primary">
+                        <a href="{{ route('pointPackage.create') }}" class="btn btn-own">
                             {{ trans('app.point_package.add_package') }}
                         </a>
                     </div>

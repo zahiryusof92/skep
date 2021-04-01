@@ -4,7 +4,7 @@ $prefix2 = 'utilb_';
 $prefix3 = 'utilab_';
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>4.1 LAPORAN PERBELANJAAN UTILITI</h6>

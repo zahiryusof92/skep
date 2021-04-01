@@ -2,7 +2,7 @@
 $prefix = 'staff_';
 ?>
 
-<div class="row">
+<div class="row padding-vertical-10">
     <div class="col-lg-12">
 
         <h6>4.5 LAPORAN PERBELANJAAN PEKERJA</h6>

@@ -13,32 +13,34 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <button onclick="window.location = '{{ URL::action('FinanceController@addFinanceSupport') }}'" type="button" class="btn btn-own">
-                        {{ trans('app.buttons.add_finance_support') }}
-                    </button>
-                    <br/><br/>
-                    <table class="table table-hover" id="filelist" width="100%" style="font-size: 13px;">
-                        <thead>
-                            <tr>
-                                <th style="width:30%;">{{ trans('app.forms.file_no') }}.</th>
-                                <th style="width:20%;">{{ trans('app.forms.date') }}</th>
-                                <th style="width:30%;">{{ trans('app.forms.donation_name') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.donation_amount') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <button onclick="window.location = '{{ URL::action('FinanceController@addFinanceSupport') }}'" type="button" class="btn btn-own">
+                            {{ trans('app.buttons.add_finance_support') }}
+                        </button>
+                        <br/><br/>
+                        <table class="table table-hover table-own table-striped" id="filelist" width="100%" style="font-size: 13px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%;">{{ trans('app.forms.file_no') }}.</th>
+                                    <th style="width:20%;">{{ trans('app.forms.date') }}</th>
+                                    <th style="width:30%;">{{ trans('app.forms.donation_name') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.donation_amount') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->

@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" id="submit_button">{{ trans('app.my_point.reload_proceed') }}</button>
+                            <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.my_point.reload_proceed') }}</button>
                             <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ route('myPoint.index') }}'">{{ trans('app.forms.cancel') }}</button>
                         </div>
                     </form>

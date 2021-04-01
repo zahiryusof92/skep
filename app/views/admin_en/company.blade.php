@@ -15,37 +15,39 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <?php if ($insert_permission == 1) { ?>
-                        <button onclick="window.location = '{{ URL::action('AdminController@addCompany') }}'" type="button" class="btn btn-own">
-                            {{ trans("app.buttons.add_company") }}
-                        </button>
-                        <br/><br/>
-                    <?php } ?>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <?php if ($insert_permission == 1) { ?>
+                            <button onclick="window.location = '{{ URL::action('AdminController@addCompany') }}'" type="button" class="btn btn-own">
+                                {{ trans("app.buttons.add_company") }}
+                            </button>
+                            <br/><br/>
+                        <?php } ?>
 
-                    <table class="table table-hover nowrap" id="company" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:40%;">{{ trans("app.forms.full_name") }}</th>
-                                <th style="width:20%;">{{ trans("app.forms.short_name") }}</th>
-                                <th style="width:20%;">{{ trans("app.forms.email") }}</th>
-                                <th style="width:10%;">{{ trans("app.forms.status") }}</th>
-                                <?php if ($update_permission == 1) { ?>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                        <table class="table table-hover nowrap table-own table-striped" id="company" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:40%;">{{ trans("app.forms.full_name") }}</th>
+                                    <th style="width:20%;">{{ trans("app.forms.short_name") }}</th>
+                                    <th style="width:20%;">{{ trans("app.forms.email") }}</th>
+                                    <th style="width:10%;">{{ trans("app.forms.status") }}</th>
+                                    <?php if ($update_permission == 1) { ?>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                        <?php } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->

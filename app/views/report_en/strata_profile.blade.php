@@ -11,84 +11,86 @@ $zone = [
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12 text-center">                    
-                    <div class="row">
-                        
-                        @if (Auth::user()->getAdmin())
-                        @if ($cob)
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>{{ trans('app.forms.cob') }}</label>
-                                <select id="company" class="form-control select2">
-                                    @if (count($cob) > 1)
-                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    @endif
-                                    @foreach ($cob as $companies)
-                                    <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
-                                    @endforeach
-                                </select>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-15">
+                    <div class="col-lg-12 text-center">                    
+                        <div class="row">
+                            
+                            @if (Auth::user()->getAdmin())
+                            @if ($cob)
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.cob') }}</label>
+                                    <select id="company" class="form-control select2">
+                                        @if (count($cob) > 1)
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @endif
+                                        @foreach ($cob as $companies)
+                                        <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        @endif
-                        @endif
+                            @endif
+                            @endif
 
-                        @if ($parliament)
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>{{ trans('app.forms.parliament') }}</label>
-                                <select id="parliament" class="form-control select2">
-                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    @foreach ($parliament as $parliaments)
-                                    <option value="{{$parliaments->description}}">{{$parliaments->description}}</option>
-                                    @endforeach
-                                </select>
+                            @if ($parliament)
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.parliament') }}</label>
+                                    <select id="parliament" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($parliament as $parliaments)
+                                        <option value="{{$parliaments->description}}">{{$parliaments->description}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        @endif
-                        
-                        @if ($zone)
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>{{ trans('app.forms.zone') }}</label>
-                                <select id="zone" class="form-control select2">
-                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    @foreach ($zone as $value => $zon)
-                                    <option value="{{$value}}">{{ ucwords($zon) }}</option>
-                                    @endforeach
-                                </select>
+                            @endif
+                            
+                            @if ($zone)
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.zone') }}</label>
+                                    <select id="zone" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        @foreach ($zone as $value => $zon)
+                                        <option value="{{$value}}">{{ ucwords($zon) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
+                            @endif
+                            
                         </div>
-                        @endif
-                        
                     </div>
                 </div>
-            </div>
 
-            <hr/>
+                <hr/>
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <table class="table table-hover" id="filelist" style="width: 100%">
-                        <thead>
-                            <tr>
-                                <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.file_name') }}</th>
-                                <th style="width:15%;">{{ trans('app.forms.cob') }}</th>
-                                <th style="width:20%;">{{ trans('app.forms.parliament') }}</th>
-                                <th style="width:10%;">{{ trans('app.forms.zone') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-hover table-own table-striped" id="filelist" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.file_name') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.cob') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.parliament') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.zone') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

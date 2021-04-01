@@ -1,5 +1,7 @@
 <?php
 
+use Helper\KCurl;
+
 class AdminController extends BaseController {
 
     public function showView($name) {
@@ -36,7 +38,7 @@ class AdminController extends BaseController {
     }
 
     public function addFilePrefix() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -57,38 +59,51 @@ class AdminController extends BaseController {
             'cob' => $cob,
             'image' => ""
         );
-
+        
         return View::make('cob_en.add_fileprefix', $viewData);
     }
 
     public function submitFilePrefix() {
         $data = Input::all();
         if (Request::ajax()) {
-            $company_id = $data['company_id'];
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-            $sort_no = $data['sort_no'];
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['prefix']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $fileprefix = new FilePrefix();
-            $fileprefix->company_id = $company_id;
-            $fileprefix->description = $description;
-            $fileprefix->sort_no = $sort_no;
-            $fileprefix->is_active = $is_active;
-            $success = $fileprefix->save();
-
-            if ($success) {
-# Audit Trail
-                $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->username;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+                $company_id = $data['company_id'];
+                $description = $data['description'];
+                $is_active = $data['is_active'];
+                $sort_no = $data['sort_no'];
+    
+                $fileprefix = new FilePrefix();
+                $fileprefix->company_id = $company_id;
+                $fileprefix->description = $description;
+                $fileprefix->sort_no = $sort_no;
+                $fileprefix->is_active = $is_active;
+                $success = $fileprefix->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been inserted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Master Setup";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->username;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -145,24 +160,36 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['prefix']['status_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $prefix = FilePrefix::find($id);
-            $prefix->is_active = 0;
-            $updated = $prefix->save();
-            if ($updated) {
-# Audit Trail
-                $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+                $id = $data['id'];
+    
+                $prefix = FilePrefix::find($id);
+                $prefix->is_active = 0;
+                $updated = $prefix->save();
+                if ($updated) {
+                    # Audit Trail
+                    $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Master Setup";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -170,24 +197,36 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $prefix = FilePrefix::find($id);
-            $prefix->is_active = 1;
-            $updated = $prefix->save();
-            if ($updated) {
-# Audit Trail
-                $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['prefix']['status_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $prefix = FilePrefix::find($id);
+                $prefix->is_active = 1;
+                $updated = $prefix->save();
+                if ($updated) {
+                    # Audit Trail
+                    $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Master Setup";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -195,29 +234,41 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['prefix']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $prefix = FilePrefix::find($id);
-            $prefix->is_deleted = 1;
-            $deleted = $prefix->save();
-            if ($deleted) {
-# Audit Trail
-                $remarks = 'COB File Prefix: ' . $prefix->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $id = $data['id'];
 
-                print "true";
-            } else {
-                print "false";
-            }
+                $prefix = FilePrefix::find($id);
+                $prefix->is_deleted = 1;
+                $deleted = $prefix->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'COB File Prefix: ' . $prefix->description . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Master Setup";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
     public function updateFilePrefix($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $prefix = FilePrefix::find($id);
 
@@ -237,36 +288,49 @@ class AdminController extends BaseController {
     public function submitUpdateFilePrefix() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-            $description = $data['description'];
-            $is_active = $data['is_active'];
-            $sort_no = $data['sort_no'];
-
-            $fileprefix = FilePrefix::find($id);
-            $fileprefix->description = $description;
-            $fileprefix->sort_no = $sort_no;
-            $fileprefix->is_active = $is_active;
-            $success = $fileprefix->save();
-
-            if ($success) {
-# Audit Trail
-                $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['prefix']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+                $description = $data['description'];
+                $is_active = $data['is_active'];
+                $sort_no = $data['sort_no'];
+    
+                $fileprefix = FilePrefix::find($id);
+                $fileprefix->description = $description;
+                $fileprefix->sort_no = $sort_no;
+                $fileprefix->is_active = $is_active;
+                $success = $fileprefix->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Master Setup";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
-// add file
+    // add file
     public function addFile() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
@@ -299,73 +363,86 @@ class AdminController extends BaseController {
     public function submitFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $company_id = $data['company_id'];
-            $file_no = $data['file_no'];
-            $description = $data['description'];
-
-            $filename = $file_no . '-' . $description;
-            $year = substr($filename, strpos($filename, "/") + 1);
-
-            $check_file = Files::where('company_id', $company_id)->where('file_no', $filename)->where('is_deleted', 0)->count();
-
-            if ($check_file <= 0) {
-                $files = new Files();
-                $files->company_id = $company_id;
-                $files->file_no = $filename;
-                if (!empty($year)) {
-                    $files->year = $year;
-                } else {
-                    $files->year = '';
-                }
-                $files->is_active = 0;
-                $files->status = 1;
-                $files->approved_by = Auth::user()->id;
-                $files->approved_at = date('Y-m-d H:i:s');
-                $files->created_by = Auth::user()->id;
-                $success = $files->save();
-
-                if ($success) {
-                    $house_scheme = new HouseScheme();
-                    $house_scheme->file_id = $files->id;
-                    $house_scheme->is_active = "-1";
-                    $created1 = $house_scheme->save();
-
-                    if ($created1) {
-                        $strata = new Strata();
-                        $strata->file_id = $files->id;
-                        $created2 = $strata->save();
-
-                        if ($created2) {
-                            $facility = new Facility();
-                            $facility->file_id = $files->id;
-                            $facility->strata_id = $strata->id;
-                            $created3 = $facility->save();
-
-                            if ($created3) {
-                                $management = new Management();
-                                $management->file_id = $files->id;
-                                $created4 = $management->save();
-
-                                if ($created4) {
-                                    $monitor = new Monitoring();
-                                    $monitor->file_id = $files->id;
-                                    $created5 = $monitor->save();
-
-                                    if ($created5) {
-                                        $others = new OtherDetails();
-                                        $others->file_id = $files->id;
-                                        $created6 = $others->save();
-
-                                        if ($created6) {
-# Audit Trail
-                                            $remarks = $files->file_no . ' has been inserted.';
-                                            $auditTrail = new AuditTrail();
-                                            $auditTrail->module = "COB File";
-                                            $auditTrail->remarks = $remarks;
-                                            $auditTrail->audit_by = Auth::user()->id;
-                                            $auditTrail->save();
-
-                                            print "true";
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $company_id = $data['company_id'];
+                $file_no = $data['file_no'];
+                $description = $data['description'];
+    
+                $filename = $file_no . '-' . $description;
+                $year = substr($filename, strpos($filename, "/") + 1);
+    
+                $check_file = Files::where('company_id', $company_id)->where('file_no', $filename)->where('is_deleted', 0)->count();
+    
+                if ($check_file <= 0) {
+                    $files = new Files();
+                    $files->company_id = $company_id;
+                    $files->file_no = $filename;
+                    if (!empty($year)) {
+                        $files->year = $year;
+                    } else {
+                        $files->year = '';
+                    }
+                    $files->is_active = 0;
+                    $files->status = 1;
+                    $files->approved_by = Auth::user()->id;
+                    $files->approved_at = date('Y-m-d H:i:s');
+                    $files->created_by = Auth::user()->id;
+                    $success = $files->save();
+    
+                    if ($success) {
+                        $house_scheme = new HouseScheme();
+                        $house_scheme->file_id = $files->id;
+                        $house_scheme->is_active = "-1";
+                        $created1 = $house_scheme->save();
+    
+                        if ($created1) {
+                            $strata = new Strata();
+                            $strata->file_id = $files->id;
+                            $created2 = $strata->save();
+    
+                            if ($created2) {
+                                $facility = new Facility();
+                                $facility->file_id = $files->id;
+                                $facility->strata_id = $strata->id;
+                                $created3 = $facility->save();
+    
+                                if ($created3) {
+                                    $management = new Management();
+                                    $management->file_id = $files->id;
+                                    $created4 = $management->save();
+    
+                                    if ($created4) {
+                                        $monitor = new Monitoring();
+                                        $monitor->file_id = $files->id;
+                                        $created5 = $monitor->save();
+    
+                                        if ($created5) {
+                                            $others = new OtherDetails();
+                                            $others->file_id = $files->id;
+                                            $created6 = $others->save();
+    
+                                            if ($created6) {
+                                                # Audit Trail
+                                                $remarks = $files->file_no . ' has been inserted.';
+                                                $auditTrail = new AuditTrail();
+                                                $auditTrail->module = "COB File";
+                                                $auditTrail->remarks = $remarks;
+                                                $auditTrail->audit_by = Auth::user()->id;
+                                                $auditTrail->save();
+    
+                                                print "true";
+                                            } else {
+                                                print "false";
+                                            }
                                         } else {
                                             print "false";
                                         }
@@ -385,11 +462,12 @@ class AdminController extends BaseController {
                         print "false";
                     }
                 } else {
-                    print "false";
+                    print "file_already_exists";
                 }
-            } else {
-                print "file_already_exists";
-            }
+
+            // } else {
+            //     print "false";
+            // }
         } else {
             print "false";
         }
@@ -397,7 +475,7 @@ class AdminController extends BaseController {
 
 // file list
     public function fileList() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -485,12 +563,16 @@ class AdminController extends BaseController {
                             if (AccessGroup::hasUpdate(9)) {
                                 if ($model->is_active == 1) {
                                     $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    // $button .= '<a href="#" class="" onclick="inactiveFileList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
                                 } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    // $button .= '<a href="#" class="" onclick="activeFileList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
                                 }
                                 if (Auth::user()->role == 1) {
+                                    // $button .= '<a class="modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '"><img src='. asset("assets/common/img/icon/edit.png") .' width="20px"></a>&nbsp;';
                                     $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
                                 }
+                                // $button .= '<a class="" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>';
                                 $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
 
@@ -501,7 +583,7 @@ class AdminController extends BaseController {
 
 // file list
     public function fileListBeforeVP() {
-//get user permission
+    //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -607,24 +689,35 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $files = Files::find($id);
-            $files->is_active = 0;
-            $updated = $files->save();
-            if ($updated) {
-# Audit Trail
-                $remarks = $files->file_no . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['status_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $files = Files::find($id);
+                $files->is_active = 0;
+                $updated = $files->save();
+                if ($updated) {
+                    # Audit Trail
+                    $remarks = $files->file_no . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -632,24 +725,36 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['status_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $files = Files::find($id);
+                $files->is_active = 1;
+                $updated = $files->save();
+                if ($updated) {
+                    # Audit Trail
+                    $remarks = $files->file_no . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
 
-            $files = Files::find($id);
-            $files->is_active = 1;
-            $updated = $files->save();
-            if ($updated) {
-# Audit Trail
-                $remarks = $files->file_no . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -657,76 +762,51 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $id = $data['id'];
 
-            $files = Files::find($id);
-            if ($files) {
-                $deleted = $files->delete();
-
-                if ($deleted) {
-                    $house_scheme = HouseScheme::where('file_id', $files->id)->delete();
-                    $strata = Strata::where('file_id', $files->id)->delete();
-                    $facility = Facility::where('file_id', $files->id)->delete();
-                    $management = Management::where('file_id', $files->id)->delete();
-                    $monitor = Monitoring::where('file_id', $files->id)->delete();
-                    $others = OtherDetails::where('file_id', $files->id)->delete();
-# Commercial Block
-                    $commercial = Commercial::where('file_id', $files->id)->delete();
-# Residential Block
-                    $residential = Residential::where('file_id', $files->id)->delete();
-# Management JMB
-                    $managementjmb = ManagementJMB::where('file_id', $files->id)->delete();
-# Management MC
-                    $managementmc = ManagementMC::where('file_id', $files->id)->delete();
-# Management Agent
-                    $managementagent = ManagementAgent::where('file_id', $files->id)->delete();
-# Management Other
-                    $managementother = ManagementOthers::where('file_id', $files->id)->delete();
-# Meeting Document
-                    $meetingdocument = MeetingDocument::where('file_id', $files->id)->delete();
-# AJK Detail
-                    $ajkdetail = AJKDetails::where('file_id', $files->id)->delete();
-# Scoring
-                    $scoring = Scoring::where('file_id', $files->id)->delete();
-# Buyer List
-                    $buyerlist = Buyer::where('file_id', $files->id)->delete();
-
-# Audit Trail
-                    $remarks = $files->file_no . ' has been deleted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    print "true";
-                } else {
-                    print "false";
-                }
-            } else {
-                print "false";
-            }
-        } else {
-            print "false";
-        }
-    }
-
-    public function updateFileNo() {
-        $data = Input::all();
-        if (Request::ajax()) {
-
-            $id = $data['file_id'];
-            $file_no = $data['file_no'];
-
-            $check_exist = Files::where('file_no', $file_no)->where('id', '!=', $id)->where('is_deleted', 0)->count();
-            if ($check_exist <= 0) {
                 $files = Files::find($id);
                 if ($files) {
-                    $files->file_no = $data['file_no'];
-                    $updated = $files->save();
-                    if ($updated) {
-# Audit Trail
-                        $remarks = $files->file_no . ' has been updated.';
+                    $deleted = $files->delete();
+
+                    if ($deleted) {
+                        $house_scheme = HouseScheme::where('file_id', $files->id)->delete();
+                        $strata = Strata::where('file_id', $files->id)->delete();
+                        $facility = Facility::where('file_id', $files->id)->delete();
+                        $management = Management::where('file_id', $files->id)->delete();
+                        $monitor = Monitoring::where('file_id', $files->id)->delete();
+                        $others = OtherDetails::where('file_id', $files->id)->delete();
+                        # Commercial Block
+                        $commercial = Commercial::where('file_id', $files->id)->delete();
+                        # Residential Block
+                        $residential = Residential::where('file_id', $files->id)->delete();
+                        # Management JMB
+                        $managementjmb = ManagementJMB::where('file_id', $files->id)->delete();
+                        # Management MC
+                        $managementmc = ManagementMC::where('file_id', $files->id)->delete();
+                        # Management Agent
+                        $managementagent = ManagementAgent::where('file_id', $files->id)->delete();
+                        # Management Other
+                        $managementother = ManagementOthers::where('file_id', $files->id)->delete();
+                        # Meeting Document
+                        $meetingdocument = MeetingDocument::where('file_id', $files->id)->delete();
+                        # AJK Detail
+                        $ajkdetail = AJKDetails::where('file_id', $files->id)->delete();
+                        # Scoring
+                        $scoring = Scoring::where('file_id', $files->id)->delete();
+                        # Buyer List
+                        $buyerlist = Buyer::where('file_id', $files->id)->delete();
+
+                        # Audit Trail
+                        $remarks = $files->file_no . ' has been deleted.';
                         $auditTrail = new AuditTrail();
                         $auditTrail->module = "COB File";
                         $auditTrail->remarks = $remarks;
@@ -737,15 +817,65 @@ class AdminController extends BaseController {
                     } else {
                         print "false";
                     }
+                } else {
+                    print "false";
                 }
-            } else {
-                print "exist";
-            }
+                
+            // } else {
+            //     print "false";
+            // }
+        } else {
+            print "false";
+        }
+    }
+
+    public function updateFileNo() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['fileNo_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['file_id'];
+                $file_no = $data['file_no'];
+    
+                $check_exist = Files::where('file_no', $file_no)->where('id', '!=', $id)->where('is_deleted', 0)->count();
+                if ($check_exist <= 0) {
+                    $files = Files::find($id);
+                    if ($files) {
+                        $files->file_no = $data['file_no'];
+                        $updated = $files->save();
+                        if ($updated) {
+                            # Audit Trail
+                            $remarks = $files->file_no . ' has been updated.';
+                            $auditTrail = new AuditTrail();
+                            $auditTrail->module = "COB File";
+                            $auditTrail->remarks = $remarks;
+                            $auditTrail->audit_by = Auth::user()->id;
+                            $auditTrail->save();
+    
+                            print "true";
+                        } else {
+                            print "false";
+                        }
+                    }
+                } else {
+                    print "exist";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
     public function viewHouse($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $house_scheme = HouseScheme::where('file_id', $file->id)->first();
@@ -775,7 +905,7 @@ class AdminController extends BaseController {
     }
 
     public function house($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $house_scheme = HouseScheme::where('file_id', $file->id)->first();
@@ -810,70 +940,83 @@ class AdminController extends BaseController {
     public function submitUpdateHouseScheme() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-            $name = $data['name'];
-            $developer = $data['developer'];
-            $address1 = $data['address1'];
-            $address2 = $data['address2'];
-            $address3 = $data['address3'];
-            $address4 = $data['address4'];
-            $city = $data['city'];
-            $poscode = $data['poscode'];
-            $state = $data['state'];
-            $country = $data['country'];
-            $phone_no = $data['phone_no'];
-            $fax_no = $data['fax_no'];
-            $remarks = $data['remarks'];
-            $is_active = $data['is_active'];
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['house']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $house_scheme = HouseScheme::find($id);
-            if ($house_scheme) {
-                $files = Files::find($house_scheme->file_id);
-
-                if ($files) {
-                    $files->is_active = $is_active;
-                    $updated = $files->save();
-
-                    if ($updated) {
-                        $house_scheme->name = $name;
-                        $house_scheme->developer = $developer;
-                        $house_scheme->address1 = $address1;
-                        $house_scheme->address2 = $address2;
-                        $house_scheme->address3 = $address3;
-                        $house_scheme->address4 = $address4;
-                        $house_scheme->city = $city;
-                        $house_scheme->poscode = $poscode;
-                        $house_scheme->state = $state;
-                        $house_scheme->country = $country;
-                        $house_scheme->phone_no = $phone_no;
-                        $house_scheme->fax_no = $fax_no;
-                        $house_scheme->remarks = $remarks;
-                        if ($is_active != 2) {
-                            $house_scheme->is_active = $is_active;
-                        }
-                        $success = $house_scheme->save();
-
-                        if ($success) {
-# Audit Trail
-                            $remarks = 'House Info (' . $files->file_no . ') has been updated.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "COB File";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
-
-                            return "true";
+                $id = $data['id'];
+                $name = $data['name'];
+                $developer = $data['developer'];
+                $address1 = $data['address1'];
+                $address2 = $data['address2'];
+                $address3 = $data['address3'];
+                $address4 = $data['address4'];
+                $city = $data['city'];
+                $poscode = $data['poscode'];
+                $state = $data['state'];
+                $country = $data['country'];
+                $phone_no = $data['phone_no'];
+                $fax_no = $data['fax_no'];
+                $remarks = $data['remarks'];
+                $is_active = $data['is_active'];
+    
+                $house_scheme = HouseScheme::find($id);
+                if ($house_scheme) {
+                    $files = Files::find($house_scheme->file_id);
+    
+                    if ($files) {
+                        $files->is_active = $is_active;
+                        $updated = $files->save();
+    
+                        if ($updated) {
+                            $house_scheme->name = $name;
+                            $house_scheme->developer = $developer;
+                            $house_scheme->address1 = $address1;
+                            $house_scheme->address2 = $address2;
+                            $house_scheme->address3 = $address3;
+                            $house_scheme->address4 = $address4;
+                            $house_scheme->city = $city;
+                            $house_scheme->poscode = $poscode;
+                            $house_scheme->state = $state;
+                            $house_scheme->country = $country;
+                            $house_scheme->phone_no = $phone_no;
+                            $house_scheme->fax_no = $fax_no;
+                            $house_scheme->remarks = $remarks;
+                            if ($is_active != 2) {
+                                $house_scheme->is_active = $is_active;
+                            }
+                            $success = $house_scheme->save();
+    
+                            if ($success) {
+                            # Audit Trail
+                                $remarks = 'House Info (' . $files->file_no . ') has been updated.';
+                                $auditTrail = new AuditTrail();
+                                $auditTrail->module = "COB File";
+                                $auditTrail->remarks = $remarks;
+                                $auditTrail->audit_by = Auth::user()->id;
+                                $auditTrail->save();
+    
+                                return "true";
+                            }
                         }
                     }
                 }
-            }
+            // } else {
+            //     return "false";
+            // }
         }
 
         return "false";
     }
 
     public function viewStrata($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $strata = Strata::where('file_id', $file->id)->first();
@@ -936,7 +1079,7 @@ class AdminController extends BaseController {
     }
 
     public function strata($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $strata = Strata::where('file_id', $file->id)->first();
@@ -1041,218 +1184,231 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $strata_id = $data['strata_id'];
-            $file_id = $data['file_id'];
-            $facility_id = $data['facility_id'];
-            $title = $data['strata_title'];
-            $name = $data['strata_name'];
-            $parliament = $data['strata_parliament'];
-            $dun = $data['strata_dun'];
-            $park = $data['strata_park'];
-            $address1 = $data['strata_address1'];
-            $address2 = $data['strata_address2'];
-            $address3 = $data['strata_address3'];
-            $address4 = $data['strata_address4'];
-            $city = $data['strata_city'];
-            $poscode = $data['strata_poscode'];
-            $state = $data['strata_state'];
-            $country = $data['strata_country'];
-            $block_no = $data['strata_block_no'];
-            $floor = $data['strata_floor'];
-            $year = $data['strata_year'];
-            $ownership_no = $data['strata_ownership_no'];
-            $town = $data['strata_town'];
-            $land_area = $data['strata_land_area'];
-            $land_area_unit = $data['strata_land_area_unit'];
-            $lot_no = $data['strata_lot_no'];
-            $date = $data['strata_date'];
-            $land_title = $data['strata_land_title'];
-            $category = $data['strata_category'];
-            $perimeter = $data['strata_perimeter'];
-            $area = $data['strata_area'];
-            $total_share_unit = $data['strata_total_share_unit'];
-            $ccc_no = $data['strata_ccc_no'];
-            $ccc_date = $data['strata_ccc_date'];
-            $is_residential = $data['is_residential'];
-            $is_commercial = $data['is_commercial'];
-            $stratafile = $data['strata_file_url'];
-
-            if (!empty($year)) {
-                $files = Files::find($file_id);
-                if ($files) {
-                    $files->year = $year;
-                    $files->save();
-                }
-            }
-
-            $strata = Strata::find($strata_id);
-            if ($strata) {
-                $strata->title = $title;
-                $strata->name = $name;
-                $strata->parliament = $parliament;
-                $strata->dun = $dun;
-                $strata->park = $park;
-                $strata->address1 = $address1;
-                $strata->address2 = $address2;
-                $strata->address3 = $address3;
-                $strata->address4 = $address4;
-                $strata->poscode = $poscode;
-                $strata->city = $city;
-                $strata->state = $state;
-                $strata->country = $country;
-                $strata->block_no = $block_no;
-                $strata->total_floor = $floor;
-                $strata->year = $year;
-                $strata->town = $town;
-                $strata->area = $area;
-                $strata->land_area = $land_area;
-                $strata->total_share_unit = $total_share_unit;
-                $strata->land_area_unit = $land_area_unit;
-                $strata->lot_no = $lot_no;
-                $strata->ownership_no = $ownership_no;
-                $strata->date = $date;
-                $strata->land_title = $land_title;
-                $strata->category = $category;
-                $strata->perimeter = $perimeter;
-                $strata->ccc_no = $ccc_no;
-                $strata->ccc_date = $ccc_date;
-                $strata->file_url = $stratafile;
-                $strata->is_residential = $is_residential;
-                $strata->is_commercial = $is_commercial;
-                $success = $strata->save();
-
-                if ($success) {
-//residential
-                    $residential_unit_no = $data['residential_unit_no'];
-                    $residential_maintenance_fee = $data['residential_maintenance_fee'];
-                    $residential_maintenance_fee_option = $data['residential_maintenance_fee_option'];
-                    $residential_sinking_fund = $data['residential_sinking_fund'];
-                    $residential_sinking_fund_option = $data['residential_sinking_fund_option'];
-
-//commercial
-                    $commercial_unit_no = $data['commercial_unit_no'];
-                    $commercial_maintenance_fee = $data['commercial_maintenance_fee'];
-                    $commercial_maintenance_fee_option = $data['commercial_maintenance_fee_option'];
-                    $commercial_sinking_fund = $data['commercial_sinking_fund'];
-                    $commercial_sinking_fund_option = $data['commercial_sinking_fund_option'];
-
-//facility
-                    $management_office = $data['management_office'];
-                    $management_office_unit = $data['management_office_unit'];
-                    $swimming_pool = $data['swimming_pool'];
-                    $swimming_pool_unit = $data['swimming_pool_unit'];
-                    $surau = $data['surau'];
-                    $surau_unit = $data['surau_unit'];
-                    $multipurpose_hall = $data['multipurpose_hall'];
-                    $multipurpose_hall_unit = $data['multipurpose_hall_unit'];
-                    $gym = $data['gym'];
-                    $gym_unit = $data['gym_unit'];
-                    $playground = $data['playground'];
-                    $playground_unit = $data['playground_unit'];
-                    $guardhouse = $data['guardhouse'];
-                    $guardhouse_unit = $data['guardhouse_unit'];
-                    $kindergarten = $data['kindergarten'];
-                    $kindergarten_unit = $data['kindergarten_unit'];
-                    $open_space = $data['open_space'];
-                    $open_space_unit = $data['open_space_unit'];
-                    $lift = $data['lift'];
-                    $lift_unit = $data['lift_unit'];
-                    $rubbish_room = $data['rubbish_room'];
-                    $rubbish_room_unit = $data['rubbish_room_unit'];
-                    $gated = $data['gated'];
-                    $gated_unit = $data['gated_unit'];
-                    $others = $data['others'];
-
-                    $residential_old = Residential::where('file_id', $file_id)->where('strata_id', $strata->id)->first();
-                    if ($strata->is_residential == 1) {
-                        if (count($residential_old) > 0) {
-                            $residential_old->delete();
-                        }
-                        $residential = new Residential();
-                        $residential->file_id = $file_id;
-                        $residential->strata_id = $strata->id;
-                        $residential->unit_no = $residential_unit_no;
-                        $residential->maintenance_fee = $residential_maintenance_fee;
-                        $residential->maintenance_fee_option = $residential_maintenance_fee_option;
-                        $residential->sinking_fund = $residential_sinking_fund;
-                        $residential->sinking_fund_option = $residential_sinking_fund_option;
-                        $residential->save();
-                    } else {
-                        if (count($residential_old) > 0) {
-                            $residential_old->delete();
-                        }
-                    }
-
-                    $commercial_old = Commercial::where('file_id', $file_id)->where('strata_id', $strata->id)->first();
-                    if ($strata->is_commercial == 1) {
-                        if (count($commercial_old) > 0) {
-                            $commercial_old->delete();
-                        }
-                        $commercial = new Commercial();
-                        $commercial->file_id = $file_id;
-                        $commercial->strata_id = $strata->id;
-                        $commercial->unit_no = $commercial_unit_no;
-                        $commercial->maintenance_fee = $commercial_maintenance_fee;
-                        $commercial->maintenance_fee_option = $commercial_maintenance_fee_option;
-                        $commercial->sinking_fund = $commercial_sinking_fund;
-                        $commercial->sinking_fund_option = $commercial_sinking_fund_option;
-                        $commercial->save();
-                    } else {
-                        if (count($commercial_old) > 0) {
-                            $commercial_old->delete();
-                        }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['strata']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $strata_id = $data['strata_id'];
+                $file_id = $data['file_id'];
+                $facility_id = $data['facility_id'];
+                $title = $data['strata_title'];
+                $name = $data['strata_name'];
+                $parliament = $data['strata_parliament'];
+                $dun = $data['strata_dun'];
+                $park = $data['strata_park'];
+                $address1 = $data['strata_address1'];
+                $address2 = $data['strata_address2'];
+                $address3 = $data['strata_address3'];
+                $address4 = $data['strata_address4'];
+                $city = $data['strata_city'];
+                $poscode = $data['strata_poscode'];
+                $state = $data['strata_state'];
+                $country = $data['strata_country'];
+                $block_no = $data['strata_block_no'];
+                $floor = $data['strata_floor'];
+                $year = $data['strata_year'];
+                $ownership_no = $data['strata_ownership_no'];
+                $town = $data['strata_town'];
+                $land_area = $data['strata_land_area'];
+                $land_area_unit = $data['strata_land_area_unit'];
+                $lot_no = $data['strata_lot_no'];
+                $date = $data['strata_date'];
+                $land_title = $data['strata_land_title'];
+                $category = $data['strata_category'];
+                $perimeter = $data['strata_perimeter'];
+                $area = $data['strata_area'];
+                $total_share_unit = $data['strata_total_share_unit'];
+                $ccc_no = $data['strata_ccc_no'];
+                $ccc_date = $data['strata_ccc_date'];
+                $is_residential = $data['is_residential'];
+                $is_commercial = $data['is_commercial'];
+                $stratafile = $data['strata_file_url'];
+    
+                if (!empty($year)) {
+                    $files = Files::find($file_id);
+                    if ($files) {
+                        $files->year = $year;
+                        $files->save();
                     }
                 }
-
-                $facility = Facility::find($facility_id);
-                if ($facility) {
-                    $facility->management_office = $management_office;
-                    $facility->management_office_unit = $management_office_unit;
-                    $facility->swimming_pool = $swimming_pool;
-                    $facility->swimming_pool_unit = $swimming_pool_unit;
-                    $facility->surau = $surau;
-                    $facility->surau_unit = $surau_unit;
-                    $facility->multipurpose_hall = $multipurpose_hall;
-                    $facility->multipurpose_hall_unit = $multipurpose_hall_unit;
-                    $facility->gym = $gym;
-                    $facility->gym_unit = $gym_unit;
-                    $facility->playground = $playground;
-                    $facility->playground_unit = $playground_unit;
-                    $facility->guardhouse = $guardhouse;
-                    $facility->guardhouse_unit = $guardhouse_unit;
-                    $facility->kindergarten = $kindergarten;
-                    $facility->kindergarten_unit = $kindergarten_unit;
-                    $facility->open_space = $open_space;
-                    $facility->open_space_unit = $open_space_unit;
-                    $facility->lift = $lift;
-                    $facility->lift_unit = $lift_unit;
-                    $facility->rubbish_room = $rubbish_room;
-                    $facility->rubbish_room_unit = $rubbish_room_unit;
-                    $facility->gated = $gated;
-                    $facility->gated_unit = $gated_unit;
-                    $facility->others = $others;
-                    $saved = $facility->save();
-
-                    if ($saved) {
-# Audit Trail
-                        $file_name = Files::find($strata->file_id);
-                        $remarks = 'Strata Info (' . $file_name->file_no . ') has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB File";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
-
-                        return "true";
+    
+                $strata = Strata::find($strata_id);
+                if ($strata) {
+                    $strata->title = $title;
+                    $strata->name = $name;
+                    $strata->parliament = $parliament;
+                    $strata->dun = $dun;
+                    $strata->park = $park;
+                    $strata->address1 = $address1;
+                    $strata->address2 = $address2;
+                    $strata->address3 = $address3;
+                    $strata->address4 = $address4;
+                    $strata->poscode = $poscode;
+                    $strata->city = $city;
+                    $strata->state = $state;
+                    $strata->country = $country;
+                    $strata->block_no = $block_no;
+                    $strata->total_floor = $floor;
+                    $strata->year = $year;
+                    $strata->town = $town;
+                    $strata->area = $area;
+                    $strata->land_area = $land_area;
+                    $strata->total_share_unit = $total_share_unit;
+                    $strata->land_area_unit = $land_area_unit;
+                    $strata->lot_no = $lot_no;
+                    $strata->ownership_no = $ownership_no;
+                    $strata->date = $date;
+                    $strata->land_title = $land_title;
+                    $strata->category = $category;
+                    $strata->perimeter = $perimeter;
+                    $strata->ccc_no = $ccc_no;
+                    $strata->ccc_date = $ccc_date;
+                    $strata->file_url = $stratafile;
+                    $strata->is_residential = $is_residential;
+                    $strata->is_commercial = $is_commercial;
+                    $success = $strata->save();
+    
+                    if ($success) {
+                        //residential
+                        $residential_unit_no = $data['residential_unit_no'];
+                        $residential_maintenance_fee = $data['residential_maintenance_fee'];
+                        $residential_maintenance_fee_option = $data['residential_maintenance_fee_option'];
+                        $residential_sinking_fund = $data['residential_sinking_fund'];
+                        $residential_sinking_fund_option = $data['residential_sinking_fund_option'];
+    
+                        //commercial
+                        $commercial_unit_no = $data['commercial_unit_no'];
+                        $commercial_maintenance_fee = $data['commercial_maintenance_fee'];
+                        $commercial_maintenance_fee_option = $data['commercial_maintenance_fee_option'];
+                        $commercial_sinking_fund = $data['commercial_sinking_fund'];
+                        $commercial_sinking_fund_option = $data['commercial_sinking_fund_option'];
+    
+                        //facility
+                        $management_office = $data['management_office'];
+                        $management_office_unit = $data['management_office_unit'];
+                        $swimming_pool = $data['swimming_pool'];
+                        $swimming_pool_unit = $data['swimming_pool_unit'];
+                        $surau = $data['surau'];
+                        $surau_unit = $data['surau_unit'];
+                        $multipurpose_hall = $data['multipurpose_hall'];
+                        $multipurpose_hall_unit = $data['multipurpose_hall_unit'];
+                        $gym = $data['gym'];
+                        $gym_unit = $data['gym_unit'];
+                        $playground = $data['playground'];
+                        $playground_unit = $data['playground_unit'];
+                        $guardhouse = $data['guardhouse'];
+                        $guardhouse_unit = $data['guardhouse_unit'];
+                        $kindergarten = $data['kindergarten'];
+                        $kindergarten_unit = $data['kindergarten_unit'];
+                        $open_space = $data['open_space'];
+                        $open_space_unit = $data['open_space_unit'];
+                        $lift = $data['lift'];
+                        $lift_unit = $data['lift_unit'];
+                        $rubbish_room = $data['rubbish_room'];
+                        $rubbish_room_unit = $data['rubbish_room_unit'];
+                        $gated = $data['gated'];
+                        $gated_unit = $data['gated_unit'];
+                        $others = $data['others'];
+    
+                        $residential_old = Residential::where('file_id', $file_id)->where('strata_id', $strata->id)->first();
+                        if ($strata->is_residential == 1) {
+                            if (count($residential_old) > 0) {
+                                $residential_old->delete();
+                            }
+                            $residential = new Residential();
+                            $residential->file_id = $file_id;
+                            $residential->strata_id = $strata->id;
+                            $residential->unit_no = $residential_unit_no;
+                            $residential->maintenance_fee = $residential_maintenance_fee;
+                            $residential->maintenance_fee_option = $residential_maintenance_fee_option;
+                            $residential->sinking_fund = $residential_sinking_fund;
+                            $residential->sinking_fund_option = $residential_sinking_fund_option;
+                            $residential->save();
+                        } else {
+                            if (count($residential_old) > 0) {
+                                $residential_old->delete();
+                            }
+                        }
+    
+                        $commercial_old = Commercial::where('file_id', $file_id)->where('strata_id', $strata->id)->first();
+                        if ($strata->is_commercial == 1) {
+                            if (count($commercial_old) > 0) {
+                                $commercial_old->delete();
+                            }
+                            $commercial = new Commercial();
+                            $commercial->file_id = $file_id;
+                            $commercial->strata_id = $strata->id;
+                            $commercial->unit_no = $commercial_unit_no;
+                            $commercial->maintenance_fee = $commercial_maintenance_fee;
+                            $commercial->maintenance_fee_option = $commercial_maintenance_fee_option;
+                            $commercial->sinking_fund = $commercial_sinking_fund;
+                            $commercial->sinking_fund_option = $commercial_sinking_fund_option;
+                            $commercial->save();
+                        } else {
+                            if (count($commercial_old) > 0) {
+                                $commercial_old->delete();
+                            }
+                        }
+                    }
+    
+                    $facility = Facility::find($facility_id);
+                    if ($facility) {
+                        $facility->management_office = $management_office;
+                        $facility->management_office_unit = $management_office_unit;
+                        $facility->swimming_pool = $swimming_pool;
+                        $facility->swimming_pool_unit = $swimming_pool_unit;
+                        $facility->surau = $surau;
+                        $facility->surau_unit = $surau_unit;
+                        $facility->multipurpose_hall = $multipurpose_hall;
+                        $facility->multipurpose_hall_unit = $multipurpose_hall_unit;
+                        $facility->gym = $gym;
+                        $facility->gym_unit = $gym_unit;
+                        $facility->playground = $playground;
+                        $facility->playground_unit = $playground_unit;
+                        $facility->guardhouse = $guardhouse;
+                        $facility->guardhouse_unit = $guardhouse_unit;
+                        $facility->kindergarten = $kindergarten;
+                        $facility->kindergarten_unit = $kindergarten_unit;
+                        $facility->open_space = $open_space;
+                        $facility->open_space_unit = $open_space_unit;
+                        $facility->lift = $lift;
+                        $facility->lift_unit = $lift_unit;
+                        $facility->rubbish_room = $rubbish_room;
+                        $facility->rubbish_room_unit = $rubbish_room_unit;
+                        $facility->gated = $gated;
+                        $facility->gated_unit = $gated_unit;
+                        $facility->others = $others;
+                        $saved = $facility->save();
+    
+                        if ($saved) {
+                            # Audit Trail
+                            $file_name = Files::find($strata->file_id);
+                            $remarks = 'Strata Info (' . $file_name->file_no . ') has been updated.';
+                            $auditTrail = new AuditTrail();
+                            $auditTrail->module = "COB File";
+                            $auditTrail->remarks = $remarks;
+                            $auditTrail->audit_by = Auth::user()->id;
+                            $auditTrail->save();
+    
+                            return "true";
+                        } else {
+                            return "false";
+                        }
                     } else {
                         return "false";
                     }
                 } else {
-                    return "false";
+                    print "false";
                 }
-            } else {
-                print "false";
-            }
+
+            // } else {
+            //     print "false";
+            // }
         } else {
             print "false";
         }
@@ -1262,33 +1418,47 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['strata']['file_delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $strata = Strata::find($id);
+                $strata->file_url = "";
+                $deleted = $strata->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($strata->file_id);
+                    $remarks = 'Strata Info (' . $file_name->file_no . ') has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
 
-            $strata = Strata::find($id);
-            $strata->file_url = "";
-            $deleted = $strata->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($strata->file_id);
-                $remarks = 'Strata Info (' . $file_name->file_no . ') has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
     public function viewManagement($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $management = Management::where('file_id', $file->id)->first();
+        $management_developer = ManagementDeveloper::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_jmb = ManagementJMB::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_mc = ManagementMC::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_agent = ManagementAgent::where('management_id', $management->id)->where('file_id', $file->id)->first();
@@ -1312,6 +1482,7 @@ class AdminController extends BaseController {
             'file' => $file,
             'agent' => $agent,
             'management' => $management,
+            'management_developer' => $management_developer,
             'management_jmb' => $management_jmb,
             'management_mc' => $management_mc,
             'management_agent' => $management_agent,
@@ -1323,10 +1494,12 @@ class AdminController extends BaseController {
     }
 
     public function management($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
+        $house_scheme = HouseScheme::where('file_id', $file->id)->first();
         $management = Management::where('file_id', $file->id)->first();
+        $management_developer = ManagementDeveloper::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_jmb = ManagementJMB::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_mc = ManagementMC::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_agent = ManagementAgent::where('management_id', $management->id)->where('file_id', $file->id)->first();
@@ -1349,7 +1522,9 @@ class AdminController extends BaseController {
             'state' => $state,
             'file' => $file,
             'agent' => $agent,
+            'house_scheme' => $house_scheme,
             'management' => $management,
+            'management_developer' => $management_developer,
             'management_jmb' => $management_jmb,
             'management_mc' => $management_mc,
             'management_agent' => $management_agent,
@@ -1364,208 +1539,264 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-//jmb
-            $is_jmb = $data['is_jmb'];
-            $jmb_date_formed = $data['jmb_date_formed'];
-            $jmb_certificate_no = $data['jmb_certificate_no'];
-            $jmb_name = $data['jmb_name'];
-            $jmb_address1 = $data['jmb_address1'];
-            $jmb_address2 = $data['jmb_address2'];
-            $jmb_address3 = $data['jmb_address3'];
-            $jmb_city = $data['jmb_city'];
-            $jmb_poscode = $data['jmb_poscode'];
-            $jmb_state = $data['jmb_state'];
-            $jmb_country = $data['jmb_country'];
-            $jmb_phone_no = $data['jmb_phone_no'];
-            $jmb_fax_no = $data['jmb_fax_no'];
-            $jmb_email = $data['jmb_email'];
-
-//mc
-            $is_mc = $data['is_mc'];
-            $mc_date_formed = $data['mc_date_formed'];
-            $mc_certificate_no = $data['mc_certificate_no'];
-            $mc_first_agm = $data['mc_first_agm'];
-            $mc_name = $data['mc_name'];
-            $mc_address1 = $data['mc_address1'];
-            $mc_address2 = $data['mc_address2'];
-            $mc_address3 = $data['mc_address3'];
-            $mc_city = $data['mc_city'];
-            $mc_poscode = $data['mc_poscode'];
-            $mc_state = $data['mc_state'];
-            $mc_country = $data['mc_country'];
-            $mc_phone_no = $data['mc_phone_no'];
-            $mc_fax_no = $data['mc_fax_no'];
-            $mc_email = $data['mc_email'];
-
-//agent
-            $is_agent = $data['is_agent'];
-            $agent_selected_by = $data['agent_selected_by'];
-            $agent_name = $data['agent_name'];
-            $agent_address1 = $data['agent_address1'];
-            $agent_address2 = $data['agent_address2'];
-            $agent_address3 = $data['agent_address3'];
-            $agent_city = $data['agent_city'];
-            $agent_poscode = $data['agent_poscode'];
-            $agent_state = $data['agent_state'];
-            $agent_country = $data['agent_country'];
-            $agent_phone_no = $data['agent_phone_no'];
-            $agent_fax_no = $data['agent_fax_no'];
-            $agent_email = $data['agent_email'];
-
-//others
-            $is_others = $data['is_others'];
-            $others_name = $data['others_name'];
-            $others_address1 = $data['others_address1'];
-            $others_address2 = $data['others_address2'];
-            $others_address3 = $data['others_address3'];
-            $others_city = $data['others_city'];
-            $others_poscode = $data['others_poscode'];
-            $others_state = $data['others_state'];
-            $others_country = $data['others_country'];
-            $others_phone_no = $data['others_phone_no'];
-            $others_fax_no = $data['others_fax_no'];
-            $others_email = $data['others_email'];
-
-//id
-            $file_id = $data['file_id'];
-            $management_id = $data['management_id'];
-
-            $management = Management::find($management_id);
-            $management->is_jmb = $is_jmb;
-            $management->is_mc = $is_mc;
-            $management->is_agent = $is_agent;
-            $management->is_others = $is_others;
-            $success1 = $management->save();
-
-            if ($success1) {
-                $jmb_old = ManagementJMB::where('file_id', $file_id)->where('management_id', $management->id)->first();
-                $mc_old = ManagementMC::where('file_id', $file_id)->where('management_id', $management->id)->first();
-                $agent_old = ManagementAgent::where('file_id', $file_id)->where('management_id', $management->id)->first();
-                $others_old = ManagementOthers::where('file_id', $file_id)->where('management_id', $management->id)->first();
-
-                if ($management->is_jmb == 1) {
-                    if (count($jmb_old) > 0) {
-                        $jmb_old->delete();
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['management']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                //developer
+                $is_developer = $data['is_developer'];
+                $developer_name = $data['developer_name'];
+                $developer_address1 = $data['developer_address1'];
+                $developer_address2 = $data['developer_address2'];
+                $developer_address3 = $data['developer_address3'];
+                $developer_address4 = $data['developer_address4'];
+                $developer_city = $data['developer_city'];
+                $developer_poscode = $data['developer_poscode'];
+                $developer_state = $data['developer_state'];
+                $developer_country = $data['developer_country'];
+                $developer_phone_no = $data['developer_phone_no'];
+                $developer_fax_no = $data['developer_fax_no'];
+                $developer_remarks = $data['developer_remarks'];
+            
+                //jmb
+                $is_jmb = $data['is_jmb'];
+                $jmb_date_formed = $data['jmb_date_formed'];
+                $jmb_certificate_no = $data['jmb_certificate_no'];
+                $jmb_name = $data['jmb_name'];
+                $jmb_address1 = $data['jmb_address1'];
+                $jmb_address2 = $data['jmb_address2'];
+                $jmb_address3 = $data['jmb_address3'];
+                $jmb_city = $data['jmb_city'];
+                $jmb_poscode = $data['jmb_poscode'];
+                $jmb_state = $data['jmb_state'];
+                $jmb_country = $data['jmb_country'];
+                $jmb_phone_no = $data['jmb_phone_no'];
+                $jmb_fax_no = $data['jmb_fax_no'];
+                $jmb_email = $data['jmb_email'];
+    
+                //mc
+                $is_mc = $data['is_mc'];
+                $mc_date_formed = $data['mc_date_formed'];
+                $mc_certificate_no = $data['mc_certificate_no'];
+                $mc_first_agm = $data['mc_first_agm'];
+                $mc_name = $data['mc_name'];
+                $mc_address1 = $data['mc_address1'];
+                $mc_address2 = $data['mc_address2'];
+                $mc_address3 = $data['mc_address3'];
+                $mc_city = $data['mc_city'];
+                $mc_poscode = $data['mc_poscode'];
+                $mc_state = $data['mc_state'];
+                $mc_country = $data['mc_country'];
+                $mc_phone_no = $data['mc_phone_no'];
+                $mc_fax_no = $data['mc_fax_no'];
+                $mc_email = $data['mc_email'];
+    
+                //agent
+                $is_agent = $data['is_agent'];
+                $agent_selected_by = $data['agent_selected_by'];
+                $agent_name = $data['agent_name'];
+                $agent_address1 = $data['agent_address1'];
+                $agent_address2 = $data['agent_address2'];
+                $agent_address3 = $data['agent_address3'];
+                $agent_city = $data['agent_city'];
+                $agent_poscode = $data['agent_poscode'];
+                $agent_state = $data['agent_state'];
+                $agent_country = $data['agent_country'];
+                $agent_phone_no = $data['agent_phone_no'];
+                $agent_fax_no = $data['agent_fax_no'];
+                $agent_email = $data['agent_email'];
+    
+                //others
+                $is_others = $data['is_others'];
+                $others_name = $data['others_name'];
+                $others_address1 = $data['others_address1'];
+                $others_address2 = $data['others_address2'];
+                $others_address3 = $data['others_address3'];
+                $others_city = $data['others_city'];
+                $others_poscode = $data['others_poscode'];
+                $others_state = $data['others_state'];
+                $others_country = $data['others_country'];
+                $others_phone_no = $data['others_phone_no'];
+                $others_fax_no = $data['others_fax_no'];
+                $others_email = $data['others_email'];
+    
+                //id
+                $file_id = $data['file_id'];
+                $management_id = $data['management_id'];
+    
+                $management = Management::find($management_id);
+                $management->is_developer = $is_developer;
+                $management->is_jmb = $is_jmb;
+                $management->is_mc = $is_mc;
+                $management->is_agent = $is_agent;
+                $management->is_others = $is_others;
+                $success1 = $management->save();
+    
+                if ($success1) {
+                    $developer_old = ManagementDeveloper::where('file_id', $file_id)->where('management_id', $management->id)->first();
+                    $jmb_old = ManagementJMB::where('file_id', $file_id)->where('management_id', $management->id)->first();
+                    $mc_old = ManagementMC::where('file_id', $file_id)->where('management_id', $management->id)->first();
+                    $agent_old = ManagementAgent::where('file_id', $file_id)->where('management_id', $management->id)->first();
+                    $others_old = ManagementOthers::where('file_id', $file_id)->where('management_id', $management->id)->first();
+    
+                    if ($management->is_developer == 1) {
+                        if (count($developer_old) > 0) {
+                            $developer_old->delete();
+                        }
+                        $new_developer = new ManagementDeveloper();
+                        $new_developer->file_id = $file_id;
+                        $new_developer->management_id = $management->id;
+                        $new_developer->name = $developer_name;
+                        $new_developer->address_1 = $developer_address1;
+                        $new_developer->address_2 = $developer_address2;
+                        $new_developer->address_3 = $developer_address3;
+                        $new_developer->address_4 = $developer_address4;
+                        $new_developer->city = $developer_city;
+                        $new_developer->poscode = $developer_poscode;
+                        $new_developer->state = $developer_state;
+                        $new_developer->country = $developer_country;
+                        $new_developer->phone_no = $developer_phone_no;
+                        $new_developer->fax_no = $developer_fax_no;
+                        $new_developer->remarks = $developer_remarks;
+                        $new_developer->save();
+                    } else {
+                        if (count($developer_old) > 0) {
+                            $developer_old->delete();
+                        }
                     }
-                    $new_jmb = new ManagementJMB();
-                    $new_jmb->file_id = $file_id;
-                    $new_jmb->management_id = $management->id;
-                    $new_jmb->date_formed = $jmb_date_formed;
-                    $new_jmb->certificate_no = $jmb_certificate_no;
-                    $new_jmb->name = $jmb_name;
-                    $new_jmb->address1 = $jmb_address1;
-                    $new_jmb->address2 = $jmb_address2;
-                    $new_jmb->address3 = $jmb_address3;
-                    $new_jmb->city = $jmb_city;
-                    $new_jmb->poscode = $jmb_poscode;
-                    $new_jmb->state = $jmb_state;
-                    $new_jmb->country = $jmb_country;
-                    $new_jmb->phone_no = $jmb_phone_no;
-                    $new_jmb->fax_no = $jmb_fax_no;
-                    $new_jmb->email = $jmb_email;
-                    $new_jmb->save();
+
+                    if ($management->is_jmb == 1) {
+                        if (count($jmb_old) > 0) {
+                            $jmb_old->delete();
+                        }
+                        $new_jmb = new ManagementJMB();
+                        $new_jmb->file_id = $file_id;
+                        $new_jmb->management_id = $management->id;
+                        $new_jmb->date_formed = $jmb_date_formed;
+                        $new_jmb->certificate_no = $jmb_certificate_no;
+                        $new_jmb->name = $jmb_name;
+                        $new_jmb->address1 = $jmb_address1;
+                        $new_jmb->address2 = $jmb_address2;
+                        $new_jmb->address3 = $jmb_address3;
+                        $new_jmb->city = $jmb_city;
+                        $new_jmb->poscode = $jmb_poscode;
+                        $new_jmb->state = $jmb_state;
+                        $new_jmb->country = $jmb_country;
+                        $new_jmb->phone_no = $jmb_phone_no;
+                        $new_jmb->fax_no = $jmb_fax_no;
+                        $new_jmb->email = $jmb_email;
+                        $new_jmb->save();
+                    } else {
+                        if (count($jmb_old) > 0) {
+                            $jmb_old->delete();
+                        }
+                    }
+    
+                    if ($management->is_mc == 1) {
+                        if (count($mc_old) > 0) {
+                            $mc_old->delete();
+                        }
+                        $new_mc = new ManagementMC();
+                        $new_mc->file_id = $file_id;
+                        $new_mc->management_id = $management->id;
+                        $new_mc->date_formed = $mc_date_formed;
+                        $new_mc->certificate_no = $mc_certificate_no;
+                        $new_mc->first_agm = $mc_first_agm;
+                        $new_mc->name = $mc_name;
+                        $new_mc->address1 = $mc_address1;
+                        $new_mc->address2 = $mc_address2;
+                        $new_mc->address3 = $mc_address3;
+                        $new_mc->city = $mc_city;
+                        $new_mc->poscode = $mc_poscode;
+                        $new_mc->state = $mc_state;
+                        $new_mc->country = $mc_country;
+                        $new_mc->phone_no = $mc_phone_no;
+                        $new_mc->fax_no = $mc_fax_no;
+                        $new_mc->email = $mc_email;
+                        $new_mc->save();
+                    } else {
+                        if (count($mc_old) > 0) {
+                            $mc_old->delete();
+                        }
+                    }
+    
+                    if ($management->is_agent == 1) {
+                        if (count($agent_old) > 0) {
+                            $agent_old->delete();
+                        }
+                        $new_agent = new ManagementAgent();
+                        $new_agent->file_id = $file_id;
+                        $new_agent->management_id = $management->id;
+                        $new_agent->selected_by = $agent_selected_by;
+                        $new_agent->agent = $agent_name;
+                        $new_agent->address1 = $agent_address1;
+                        $new_agent->address2 = $agent_address2;
+                        $new_agent->address3 = $agent_address3;
+                        $new_agent->city = $agent_city;
+                        $new_agent->poscode = $agent_poscode;
+                        $new_agent->state = $agent_state;
+                        $new_agent->country = $agent_country;
+                        $new_agent->phone_no = $agent_phone_no;
+                        $new_agent->fax_no = $agent_fax_no;
+                        $new_agent->email = $agent_email;
+                        $new_agent->save();
+                    } else {
+                        if (count($agent_old) > 0) {
+                            $agent_old->delete();
+                        }
+                    }
+    
+                    if ($management->is_others == 1) {
+                        if (count($others_old) > 0) {
+                            $others_old->delete();
+                        }
+                        $new_others = new ManagementOthers();
+                        $new_others->file_id = $file_id;
+                        $new_others->management_id = $management->id;
+                        $new_others->name = $others_name;
+                        $new_others->address1 = $others_address1;
+                        $new_others->address2 = $others_address2;
+                        $new_others->address3 = $others_address3;
+                        $new_others->city = $others_city;
+                        $new_others->poscode = $others_poscode;
+                        $new_others->state = $others_state;
+                        $new_others->country = $others_country;
+                        $new_others->phone_no = $others_phone_no;
+                        $new_others->fax_no = $others_fax_no;
+                        $new_others->email = $others_email;
+                        $new_others->save();
+                    } else {
+                        if (count($others_old) > 0) {
+                            $others_old->delete();
+                        }
+                    }
+                    # Audit Trail
+                    $file_name = Files::find($management->file_id);
+                    $remarks = 'Management Info (' . $file_name->file_no . ') has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    return "true";
                 } else {
-                    if (count($jmb_old) > 0) {
-                        $jmb_old->delete();
-                    }
+                    print "false";
                 }
+            // } else {
+            //     print "false";
+            // }
 
-                if ($management->is_mc == 1) {
-                    if (count($mc_old) > 0) {
-                        $mc_old->delete();
-                    }
-                    $new_mc = new ManagementMC();
-                    $new_mc->file_id = $file_id;
-                    $new_mc->management_id = $management->id;
-                    $new_mc->date_formed = $mc_date_formed;
-                    $new_mc->certificate_no = $mc_certificate_no;
-                    $new_mc->first_agm = $mc_first_agm;
-                    $new_mc->name = $mc_name;
-                    $new_mc->address1 = $mc_address1;
-                    $new_mc->address2 = $mc_address2;
-                    $new_mc->address3 = $mc_address3;
-                    $new_mc->city = $mc_city;
-                    $new_mc->poscode = $mc_poscode;
-                    $new_mc->state = $mc_state;
-                    $new_mc->country = $mc_country;
-                    $new_mc->phone_no = $mc_phone_no;
-                    $new_mc->fax_no = $mc_fax_no;
-                    $new_mc->email = $mc_email;
-                    $new_mc->save();
-                } else {
-                    if (count($mc_old) > 0) {
-                        $mc_old->delete();
-                    }
-                }
-
-                if ($management->is_agent == 1) {
-                    if (count($agent_old) > 0) {
-                        $agent_old->delete();
-                    }
-                    $new_agent = new ManagementAgent();
-                    $new_agent->file_id = $file_id;
-                    $new_agent->management_id = $management->id;
-                    $new_agent->selected_by = $agent_selected_by;
-                    $new_agent->agent = $agent_name;
-                    $new_agent->address1 = $agent_address1;
-                    $new_agent->address2 = $agent_address2;
-                    $new_agent->address3 = $agent_address3;
-                    $new_agent->city = $agent_city;
-                    $new_agent->poscode = $agent_poscode;
-                    $new_agent->state = $agent_state;
-                    $new_agent->country = $agent_country;
-                    $new_agent->phone_no = $agent_phone_no;
-                    $new_agent->fax_no = $agent_fax_no;
-                    $new_agent->email = $agent_email;
-                    $new_agent->save();
-                } else {
-                    if (count($agent_old) > 0) {
-                        $agent_old->delete();
-                    }
-                }
-
-                if ($management->is_others == 1) {
-                    if (count($others_old) > 0) {
-                        $others_old->delete();
-                    }
-                    $new_others = new ManagementOthers();
-                    $new_others->file_id = $file_id;
-                    $new_others->management_id = $management->id;
-                    $new_others->name = $others_name;
-                    $new_others->address1 = $others_address1;
-                    $new_others->address2 = $others_address2;
-                    $new_others->address3 = $others_address3;
-                    $new_others->city = $others_city;
-                    $new_others->poscode = $others_poscode;
-                    $new_others->state = $others_state;
-                    $new_others->country = $others_country;
-                    $new_others->phone_no = $others_phone_no;
-                    $new_others->fax_no = $others_fax_no;
-                    $new_others->email = $others_email;
-                    $new_others->save();
-                } else {
-                    if (count($others_old) > 0) {
-                        $others_old->delete();
-                    }
-                }
-# Audit Trail
-                $file_name = Files::find($management->file_id);
-                $remarks = 'Management Info (' . $file_name->file_no . ') has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                return "true";
-            } else {
-                print "false";
-            }
         }
     }
 
     public function viewMonitoring($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $monitoring = Monitoring::where('file_id', $files->id)->first();
@@ -1588,7 +1819,7 @@ class AdminController extends BaseController {
     }
 
     public function monitoring($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $monitoring = Monitoring::where('file_id', $file->id)->first();
@@ -1613,33 +1844,46 @@ class AdminController extends BaseController {
     public function submitUpdateMonitoring() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-            $precalculate_plan = $data['precalculate_plan'];
-            $buyer_registration = $data['buyer_registration'];
-            $certificate_series_no = $data['certificate_series_no'];
-            $monitoring_remarks = $data['monitoring_remarks'];
-
-            $monitor = Monitoring::find($id);
-            $monitor->pre_calculate = $precalculate_plan;
-            $monitor->buyer_registration = $buyer_registration;
-            $monitor->certificate_no = $certificate_series_no;
-            $monitor->remarks = $monitoring_remarks;
-            $success = $monitor->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($monitor->file_id);
-                $remarks = 'Monitoring Info (' . $file_name->file_no . ') has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+                $precalculate_plan = $data['precalculate_plan'];
+                $buyer_registration = $data['buyer_registration'];
+                $certificate_series_no = $data['certificate_series_no'];
+                $monitoring_remarks = $data['monitoring_remarks'];
+    
+                $monitor = Monitoring::find($id);
+                $monitor->pre_calculate = $precalculate_plan;
+                $monitor->buyer_registration = $buyer_registration;
+                $monitor->certificate_no = $certificate_series_no;
+                $monitor->remarks = $monitoring_remarks;
+                $success = $monitor->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($monitor->file_id);
+                    $remarks = 'Monitoring Info (' . $file_name->file_no . ') has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -1647,84 +1891,96 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $file_id = $data['file_id'];
-            $agm_date = $data['agm_date'];
-            $agm = $data['agm'];
-            $egm = $data['egm'];
-            $minit_meeting = $data['minit_meeting'];
-            $jmc_copy = $data['jmc_copy'];
-            $ic_list = $data['ic_list'];
-            $attendance_list = $data['attendance_list'];
-            $audited_financial_report = $data['audited_financial_report'];
-            $audit_report = $data['audit_report'];
-            $audit_start = $data['audit_start'];
-            $audit_end = $data['audit_end'];
-            $audit_report_file_url = $data['audit_report_file_url'];
-            $letter_integrity_url = $data['letter_integrity_url'];
-            $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
-            $notice_agm_egm_url = $data['notice_agm_egm_url'];
-            $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
-            $minutes_ajk_url = $data['minutes_ajk_url'];
-            $eligible_vote_url = $data['eligible_vote_url'];
-            $attend_meeting_url = $data['attend_meeting_url'];
-            $proksi_url = $data['proksi_url'];
-            $ajk_info_url = $data['ajk_info_url'];
-            $ic_url = $data['ic_url'];
-            $purchase_aggrement_url = $data['purchase_aggrement_url'];
-            $strata_title_url = $data['strata_title_url'];
-            $maintenance_statement_url = $data['maintenance_statement_url'];
-            $integrity_pledge_url = $data['integrity_pledge_url'];
-            $report_audited_financial_url = $data['report_audited_financial_url'];
-            $house_rules_url = $data['house_rules_url'];
-            $type = $data['type'];
-
-            $agm_detail = new MeetingDocument();
-            $agm_detail->file_id = $file_id;
-            $agm_detail->agm_date = $agm_date;
-            $agm_detail->agm = $agm;
-            $agm_detail->egm = $egm;
-            $agm_detail->minit_meeting = $minit_meeting;
-            $agm_detail->jmc_spa = $jmc_copy;
-            $agm_detail->identity_card = $ic_list;
-            $agm_detail->attendance = $attendance_list;
-            $agm_detail->financial_report = $audited_financial_report;
-            $agm_detail->audit_report = $audit_report;
-            $agm_detail->audit_start_date = $audit_start;
-            $agm_detail->audit_end_date = $audit_end;
-            $agm_detail->audit_report_url = $audit_report_file_url;
-            $agm_detail->letter_integrity_url = $letter_integrity_url;
-            $agm_detail->letter_bankruptcy_url = $letter_bankruptcy_url;
-            $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
-            $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
-            $agm_detail->minutes_ajk_url = $minutes_ajk_url;
-            $agm_detail->eligible_vote_url = $eligible_vote_url;
-            $agm_detail->attend_meeting_url = $attend_meeting_url;
-            $agm_detail->proksi_url = $proksi_url;
-            $agm_detail->ajk_info_url = $ajk_info_url;
-            $agm_detail->ic_url = $ic_url;
-            $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
-            $agm_detail->strata_title_url = $strata_title_url;
-            $agm_detail->maintenance_statement_url = $maintenance_statement_url;
-            $agm_detail->integrity_pledge_url = $integrity_pledge_url;
-            $agm_detail->report_audited_financial_url = $report_audited_financial_url;
-            $agm_detail->house_rules_url = $house_rules_url;
-            $agm_detail->type = $type;
-            $success = $agm_detail->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($agm_detail->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['agm_detail']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $file_id = $data['file_id'];
+                $agm_date = $data['agm_date'];
+                $agm = $data['agm'];
+                $egm = $data['egm'];
+                $minit_meeting = $data['minit_meeting'];
+                $jmc_copy = $data['jmc_copy'];
+                $ic_list = $data['ic_list'];
+                $attendance_list = $data['attendance_list'];
+                $audited_financial_report = $data['audited_financial_report'];
+                $audit_report = $data['audit_report'];
+                $audit_start = $data['audit_start'];
+                $audit_end = $data['audit_end'];
+                $audit_report_file_url = $data['audit_report_file_url'];
+                $letter_integrity_url = $data['letter_integrity_url'];
+                $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
+                $notice_agm_egm_url = $data['notice_agm_egm_url'];
+                $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
+                $minutes_ajk_url = $data['minutes_ajk_url'];
+                $eligible_vote_url = $data['eligible_vote_url'];
+                $attend_meeting_url = $data['attend_meeting_url'];
+                $proksi_url = $data['proksi_url'];
+                $ajk_info_url = $data['ajk_info_url'];
+                $ic_url = $data['ic_url'];
+                $purchase_aggrement_url = $data['purchase_aggrement_url'];
+                $strata_title_url = $data['strata_title_url'];
+                $maintenance_statement_url = $data['maintenance_statement_url'];
+                $integrity_pledge_url = $data['integrity_pledge_url'];
+                $report_audited_financial_url = $data['report_audited_financial_url'];
+                $house_rules_url = $data['house_rules_url'];
+                $type = $data['type'];
+    
+                $agm_detail = new MeetingDocument();
+                $agm_detail->file_id = $file_id;
+                $agm_detail->agm_date = $agm_date;
+                $agm_detail->agm = $agm;
+                $agm_detail->egm = $egm;
+                $agm_detail->minit_meeting = $minit_meeting;
+                $agm_detail->jmc_spa = $jmc_copy;
+                $agm_detail->identity_card = $ic_list;
+                $agm_detail->attendance = $attendance_list;
+                $agm_detail->financial_report = $audited_financial_report;
+                $agm_detail->audit_report = $audit_report;
+                $agm_detail->audit_start_date = $audit_start;
+                $agm_detail->audit_end_date = $audit_end;
+                $agm_detail->audit_report_url = $audit_report_file_url;
+                $agm_detail->letter_integrity_url = $letter_integrity_url;
+                $agm_detail->letter_bankruptcy_url = $letter_bankruptcy_url;
+                $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
+                $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
+                $agm_detail->minutes_ajk_url = $minutes_ajk_url;
+                $agm_detail->eligible_vote_url = $eligible_vote_url;
+                $agm_detail->attend_meeting_url = $attend_meeting_url;
+                $agm_detail->proksi_url = $proksi_url;
+                $agm_detail->ajk_info_url = $ajk_info_url;
+                $agm_detail->ic_url = $ic_url;
+                $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+                $agm_detail->strata_title_url = $strata_title_url;
+                $agm_detail->maintenance_statement_url = $maintenance_statement_url;
+                $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+                $agm_detail->report_audited_financial_url = $report_audited_financial_url;
+                $agm_detail->house_rules_url = $house_rules_url;
+                $agm_detail->type = $type;
+                $success = $agm_detail->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_detail->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been inserted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -1732,81 +1988,93 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-            $agm_date = $data['agm_date'];
-            $agm = $data['agm'];
-            $egm = $data['egm'];
-            $minit_meeting = $data['minit_meeting'];
-            $jmc_copy = $data['jmc_copy'];
-            $ic_list = $data['ic_list'];
-            $attendance_list = $data['attendance_list'];
-            $audited_financial_report = $data['audited_financial_report'];
-            $audit_report = $data['audit_report'];
-            $audit_start = $data['audit_start'];
-            $audit_end = $data['audit_end'];
-            $audit_report_file_url = $data['audit_report_file_url'];
-            $letter_integrity_url = $data['letter_integrity_url'];
-            $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
-            $notice_agm_egm_url = $data['notice_agm_egm_url'];
-            $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
-            $minutes_ajk_url = $data['minutes_ajk_url'];
-            $eligible_vote_url = $data['eligible_vote_url'];
-            $attend_meeting_url = $data['attend_meeting_url'];
-            $proksi_url = $data['proksi_url'];
-            $ajk_info_url = $data['ajk_info_url'];
-            $ic_url = $data['ic_url'];
-            $purchase_aggrement_url = $data['purchase_aggrement_url'];
-            $strata_title_url = $data['strata_title_url'];
-            $maintenance_statement_url = $data['maintenance_statement_url'];
-            $integrity_pledge_url = $data['integrity_pledge_url'];
-            $report_audited_financial_url = $data['report_audited_financial_url'];
-            $house_rules_url = $data['house_rules_url'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['agm_detail']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_detail = MeetingDocument::find($id);
-            $agm_detail->agm_date = $agm_date;
-            $agm_detail->agm = $agm;
-            $agm_detail->egm = $egm;
-            $agm_detail->minit_meeting = $minit_meeting;
-            $agm_detail->jmc_spa = $jmc_copy;
-            $agm_detail->identity_card = $ic_list;
-            $agm_detail->attendance = $attendance_list;
-            $agm_detail->financial_report = $audited_financial_report;
-            $agm_detail->audit_report = $audit_report;
-            $agm_detail->audit_start_date = $audit_start;
-            $agm_detail->audit_end_date = $audit_end;
-            $agm_detail->audit_report_url = $audit_report_file_url;
-            $agm_detail->letter_integrity_url = $letter_integrity_url;
-            $agm_detail->letter_bankruptcy_url = $letter_bankruptcy_url;
-            $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
-            $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
-            $agm_detail->minutes_ajk_url = $minutes_ajk_url;
-            $agm_detail->eligible_vote_url = $eligible_vote_url;
-            $agm_detail->attend_meeting_url = $attend_meeting_url;
-            $agm_detail->proksi_url = $proksi_url;
-            $agm_detail->ajk_info_url = $ajk_info_url;
-            $agm_detail->ic_url = $ic_url;
-            $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
-            $agm_detail->strata_title_url = $strata_title_url;
-            $agm_detail->maintenance_statement_url = $maintenance_statement_url;
-            $agm_detail->integrity_pledge_url = $integrity_pledge_url;
-            $agm_detail->report_audited_financial_url = $report_audited_financial_url;
-            $agm_detail->house_rules_url = $house_rules_url;
-            $success = $agm_detail->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($agm_detail->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+                $id = $data['id'];
+                $agm_date = $data['agm_date'];
+                $agm = $data['agm'];
+                $egm = $data['egm'];
+                $minit_meeting = $data['minit_meeting'];
+                $jmc_copy = $data['jmc_copy'];
+                $ic_list = $data['ic_list'];
+                $attendance_list = $data['attendance_list'];
+                $audited_financial_report = $data['audited_financial_report'];
+                $audit_report = $data['audit_report'];
+                $audit_start = $data['audit_start'];
+                $audit_end = $data['audit_end'];
+                $audit_report_file_url = $data['audit_report_file_url'];
+                $letter_integrity_url = $data['letter_integrity_url'];
+                $letter_bankruptcy_url = $data['letter_bankruptcy_url'];
+                $notice_agm_egm_url = $data['notice_agm_egm_url'];
+                $minutes_agm_egm_url = $data['minutes_agm_egm_url'];
+                $minutes_ajk_url = $data['minutes_ajk_url'];
+                $eligible_vote_url = $data['eligible_vote_url'];
+                $attend_meeting_url = $data['attend_meeting_url'];
+                $proksi_url = $data['proksi_url'];
+                $ajk_info_url = $data['ajk_info_url'];
+                $ic_url = $data['ic_url'];
+                $purchase_aggrement_url = $data['purchase_aggrement_url'];
+                $strata_title_url = $data['strata_title_url'];
+                $maintenance_statement_url = $data['maintenance_statement_url'];
+                $integrity_pledge_url = $data['integrity_pledge_url'];
+                $report_audited_financial_url = $data['report_audited_financial_url'];
+                $house_rules_url = $data['house_rules_url'];
+    
+                $agm_detail = MeetingDocument::find($id);
+                $agm_detail->agm_date = $agm_date;
+                $agm_detail->agm = $agm;
+                $agm_detail->egm = $egm;
+                $agm_detail->minit_meeting = $minit_meeting;
+                $agm_detail->jmc_spa = $jmc_copy;
+                $agm_detail->identity_card = $ic_list;
+                $agm_detail->attendance = $attendance_list;
+                $agm_detail->financial_report = $audited_financial_report;
+                $agm_detail->audit_report = $audit_report;
+                $agm_detail->audit_start_date = $audit_start;
+                $agm_detail->audit_end_date = $audit_end;
+                $agm_detail->audit_report_url = $audit_report_file_url;
+                $agm_detail->letter_integrity_url = $letter_integrity_url;
+                $agm_detail->letter_bankruptcy_url = $letter_bankruptcy_url;
+                $agm_detail->notice_agm_egm_url = $notice_agm_egm_url;
+                $agm_detail->minutes_agm_egm_url = $minutes_agm_egm_url;
+                $agm_detail->minutes_ajk_url = $minutes_ajk_url;
+                $agm_detail->eligible_vote_url = $eligible_vote_url;
+                $agm_detail->attend_meeting_url = $attend_meeting_url;
+                $agm_detail->proksi_url = $proksi_url;
+                $agm_detail->ajk_info_url = $ajk_info_url;
+                $agm_detail->ic_url = $ic_url;
+                $agm_detail->purchase_aggrement_url = $purchase_aggrement_url;
+                $agm_detail->strata_title_url = $strata_title_url;
+                $agm_detail->maintenance_statement_url = $maintenance_statement_url;
+                $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+                $agm_detail->report_audited_financial_url = $report_audited_financial_url;
+                $agm_detail->house_rules_url = $house_rules_url;
+                $success = $agm_detail->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_detail->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2432,26 +2700,38 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->is_deleted = 1;
-            $deleted = $agm_details->save();
-
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['agm_detail']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::findOrFail($id);
+                $agm_details->is_deleted = 1;
+                $deleted = $agm_details->save();
+    
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2459,25 +2739,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->audit_report_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['auditReportFile'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->audit_report_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2485,25 +2777,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->letter_integrity_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['letterIntegrity'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->letter_integrity_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2511,25 +2815,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->letter_bankruptcy_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['letterBankruptcy'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->letter_bankruptcy_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2543,7 +2859,7 @@ class AdminController extends BaseController {
             $agm_details->agm_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2569,7 +2885,7 @@ class AdminController extends BaseController {
             $agm_details->egm_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2595,7 +2911,7 @@ class AdminController extends BaseController {
             $agm_details->minutes_meeting_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2621,7 +2937,7 @@ class AdminController extends BaseController {
             $agm_details->jmc_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2647,7 +2963,7 @@ class AdminController extends BaseController {
             $agm_details->ic_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2673,7 +2989,7 @@ class AdminController extends BaseController {
             $agm_details->attendance_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2699,7 +3015,7 @@ class AdminController extends BaseController {
             $agm_details->audited_financial_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
                 $auditTrail = new AuditTrail();
@@ -2719,34 +3035,46 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $file_id = $data['file_id'];
-            $designation = $data['ajk_designation'];
-            $name = $data['ajk_name'];
-            $phone_no = $data['ajk_phone_no'];
-            $year = $data['ajk_year'];
-
-            $ajk_detail = new AJKDetails();
-            $ajk_detail->file_id = $file_id;
-            $ajk_detail->designation = $designation;
-            $ajk_detail->name = $name;
-            $ajk_detail->phone_no = $phone_no;
-            $ajk_detail->year = $year;
-            $success = $ajk_detail->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($ajk_detail->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['ajk_detail']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $file_id = $data['file_id'];
+                $designation = $data['ajk_designation'];
+                $name = $data['ajk_name'];
+                $phone_no = $data['ajk_phone_no'];
+                $year = $data['ajk_year'];
+    
+                $ajk_detail = new AJKDetails();
+                $ajk_detail->file_id = $file_id;
+                $ajk_detail->designation = $designation;
+                $ajk_detail->name = $name;
+                $ajk_detail->phone_no = $phone_no;
+                $ajk_detail->year = $year;
+                $success = $ajk_detail->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($ajk_detail->file_id);
+                    $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been inserted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2754,33 +3082,45 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['ajk_id_edit'];
-            $designation = $data['ajk_designation'];
-            $name = $data['ajk_name'];
-            $phone_no = $data['ajk_phone_no'];
-            $year = $data['ajk_year'];
-
-            $ajk_detail = AJKDetails::find($id);
-            $ajk_detail->designation = $designation;
-            $ajk_detail->name = $name;
-            $ajk_detail->phone_no = $phone_no;
-            $ajk_detail->year = $year;
-            $success = $ajk_detail->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($ajk_detail->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['ajk_detail']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['ajk_id_edit'];
+                $designation = $data['ajk_designation'];
+                $name = $data['ajk_name'];
+                $phone_no = $data['ajk_phone_no'];
+                $year = $data['ajk_year'];
+    
+                $ajk_detail = AJKDetails::find($id);
+                $ajk_detail->designation = $designation;
+                $ajk_detail->name = $name;
+                $ajk_detail->phone_no = $phone_no;
+                $ajk_detail->year = $year;
+                $success = $ajk_detail->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($ajk_detail->file_id);
+                    $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2834,25 +3174,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $ajk_details = AJKDetails::find($id);
-            $ajk_details->is_deleted = 1;
-            $deleted = $ajk_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($ajk_details->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['ajk_detail']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $ajk_details = AJKDetails::find($id);
+                $ajk_details->is_deleted = 1;
+                $deleted = $ajk_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($ajk_details->file_id);
+                    $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -2901,70 +3253,85 @@ class AdminController extends BaseController {
     public function submitUpdateOtherDetails() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-            $file_id = $data['file_id'];
-            $other_details_name = $data['other_details_name'];
-            $others_image_url = $data['others_image_url'];
-            $latitude = $data['latitude'];
-            $longitude = $data['longitude'];
-            $other_details_description = $data['other_details_description'];
-            $pms_system = $data['pms_system'];
-            $owner_occupied = $data['owner_occupied'];
-            $rented = $data['rented'];
-            $bantuan_lphs = $data['bantuan_lphs'];
-            $bantuan_others = $data['bantuan_others'];
-            $rsku = $data['rsku'];
-            $water_meter = $data['water_meter'];
-            $malay_composition = $data['malay_composition'];
-            $chinese_composition = $data['chinese_composition'];
-            $indian_composition = $data['indian_composition'];
-            $others_composition = $data['others_composition'];
-            $foreigner_composition = $data['foreigner_composition'];
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['others']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            if (!empty($id)) {
-                $others = OtherDetails::find($id);
-            } else {
-                $others = new OtherDetails();
-                $others->file_id = $file_id;
-            }
-
-            if ($others) {
-                $others->name = $other_details_name;
-                $others->image_url = $others_image_url;
-                $others->latitude = $latitude;
-                $others->longitude = $longitude;
-                $others->description = $other_details_description;
-                $others->pms_system = $pms_system;
-                $others->owner_occupied = $owner_occupied;
-                $others->rented = $rented;
-                $others->bantuan_lphs = $bantuan_lphs;
-                $others->bantuan_others = $bantuan_others;
-                $others->rsku = $rsku;
-                $others->water_meter = $water_meter;
-                $others->malay_composition = $malay_composition;
-                $others->chinese_composition = $chinese_composition;
-                $others->indian_composition = $indian_composition;
-                $others->others_composition = $others_composition;
-                $others->foreigner_composition = $foreigner_composition;
-                $success = $others->save();
-
-                if ($success) {
-# Audit Trail
-                    $file_name = Files::find($others->file_id);
-                    $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    print "true";
+                $id = $data['id'];
+                $file_id = $data['file_id'];
+                $other_details_name = $data['other_details_name'];
+                $others_image_url = $data['others_image_url'];
+                $latitude = $data['latitude'];
+                $longitude = $data['longitude'];
+                $other_details_description = $data['other_details_description'];
+                $pms_system = $data['pms_system'];
+                $owner_occupied = $data['owner_occupied'];
+                $rented = $data['rented'];
+                $bantuan_lphs = $data['bantuan_lphs'];
+                $bantuan_others = $data['bantuan_others'];
+                $rsku = $data['rsku'];
+                $water_meter = $data['water_meter'];
+                $malay_composition = $data['malay_composition'];
+                $chinese_composition = $data['chinese_composition'];
+                $indian_composition = $data['indian_composition'];
+                $others_composition = $data['others_composition'];
+                $foreigner_composition = $data['foreigner_composition'];
+    
+                if (!empty($id)) {
+                    $others = OtherDetails::find($id);
+                } else {
+                    $others = new OtherDetails();
+                    $others->file_id = $file_id;
+                }
+    
+                if ($others) {
+                    $others->name = $other_details_name;
+                    $others->image_url = $others_image_url;
+                    $others->latitude = $latitude;
+                    $others->longitude = $longitude;
+                    $others->description = $other_details_description;
+                    $others->pms_system = $pms_system;
+                    $others->owner_occupied = $owner_occupied;
+                    $others->rented = $rented;
+                    $others->bantuan_lphs = $bantuan_lphs;
+                    $others->bantuan_others = $bantuan_others;
+                    $others->rsku = $rsku;
+                    $others->water_meter = $water_meter;
+                    $others->malay_composition = $malay_composition;
+                    $others->chinese_composition = $chinese_composition;
+                    $others->indian_composition = $indian_composition;
+                    $others->others_composition = $others_composition;
+                    $others->foreigner_composition = $foreigner_composition;
+                    $success = $others->save();
+    
+                    if ($success) {
+                    # Audit Trail
+                        $file_name = Files::find($others->file_id);
+                        $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
+
+            
         }
     }
 
@@ -2972,29 +3339,41 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $file_id = $data['file_id'];
-            $housing_scheme = $data['housing_scheme'];
-
-            if (!empty($file_id)) {
-                $check_exist = HousingSchemeUser::where('file_id', $file_id)->where('user_id', $housing_scheme)->where('is_deleted', 0)->count();
-                if ($check_exist > 0) {
-                    print "data_exist";
-                } else {
-                    $hs_user = new HousingSchemeUser();
-                    $hs_user->file_id = $file_id;
-                    $hs_user->user_id = $housing_scheme;
-                    $hs_user->is_deleted = 0;
-                    $success = $hs_user->save();
-
-                    if ($success) {
-                        print "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['house']['add_user'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $file_id = $data['file_id'];
+                $housing_scheme = $data['housing_scheme'];
+    
+                if (!empty($file_id)) {
+                    $check_exist = HousingSchemeUser::where('file_id', $file_id)->where('user_id', $housing_scheme)->where('is_deleted', 0)->count();
+                    if ($check_exist > 0) {
+                        print "data_exist";
                     } else {
-                        print "false";
+                        $hs_user = new HousingSchemeUser();
+                        $hs_user->file_id = $file_id;
+                        $hs_user->user_id = $housing_scheme;
+                        $hs_user->is_deleted = 0;
+                        $success = $hs_user->save();
+    
+                        if ($success) {
+                            print "true";
+                        } else {
+                            print "false";
+                        }
                     }
+                } else {
+                    print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -3039,21 +3418,34 @@ class AdminController extends BaseController {
     public function deleteHousingScheme() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-            $hs_user = HousingSchemeUser::find($id);
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['house']['delete_user'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            if ($hs_user) {
-                $hs_user->is_deleted = 1;
-                $success = $hs_user->save();
-
-                if ($success) {
-                    print "true";
+                $id = $data['id'];
+                $hs_user = HousingSchemeUser::find($id);
+    
+                if ($hs_user) {
+                    $hs_user->is_deleted = 1;
+                    $success = $hs_user->save();
+    
+                    if ($success) {
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -3061,25 +3453,38 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['others']['image_delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $id = $data['id'];
 
-            $others = OtherDetails::find($id);
-            $others->image_url = "";
-            $deleted = $others->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($others->file_id);
-                $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $others = OtherDetails::find($id);
+                $others->image_url = "";
+                $deleted = $others->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($others->file_id);
+                    $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
 
-                print "true";
-            } else {
-                print "false";
-            }
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -3125,122 +3530,51 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $file_id = $data['file_id'];
-            $survey = $data['survey'];
-            $date = $data['date'];
-            $score1 = $data['score1'];
-            $score2 = $data['score2'];
-            $score3 = $data['score3'];
-            $score4 = $data['score4'];
-            $score5 = $data['score5'];
-            $score6 = $data['score6'];
-            $score7 = $data['score7'];
-            $score8 = $data['score8'];
-            $score9 = $data['score9'];
-            $score10 = $data['score10'];
-            $score11 = $data['score11'];
-            $score12 = $data['score12'];
-            $score13 = $data['score13'];
-            $score14 = $data['score14'];
-            $score15 = $data['score15'];
-            $score16 = $data['score16'];
-            $score17 = $data['score17'];
-            $score18 = $data['score18'];
-            $score19 = $data['score19'];
-            $score20 = $data['score20'];
-            $score21 = $data['score21'];
-
-            $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $scorings_E = ((($score19 + $score20 + $score21) / 12) * 10);
-
-            $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
-
-            $scoring = new Scoring();
-            $scoring->file_id = $file_id;
-            $scoring->survey = $survey;
-            $scoring->date = $date;
-            $scoring->score1 = $score1;
-            $scoring->score2 = $score2;
-            $scoring->score3 = $score3;
-            $scoring->score4 = $score4;
-            $scoring->score5 = $score5;
-            $scoring->score6 = $score6;
-            $scoring->score7 = $score7;
-            $scoring->score8 = $score8;
-            $scoring->score9 = $score9;
-            $scoring->score10 = $score10;
-            $scoring->score11 = $score11;
-            $scoring->score12 = $score12;
-            $scoring->score13 = $score13;
-            $scoring->score14 = $score14;
-            $scoring->score15 = $score15;
-            $scoring->score16 = $score16;
-            $scoring->score17 = $score17;
-            $scoring->score18 = $score18;
-            $scoring->score19 = $score19;
-            $scoring->score20 = $score20;
-            $scoring->score21 = $score21;
-            $scoring->total_score = $total_score;
-            $success = $scoring->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($scoring->file_id);
-                $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
-        }
-    }
-
-    public function editScoring() {
-        $data = Input::all();
-        if (Request::ajax()) {
-
-            $id = $data['id'];
-            $date = $data['date'];
-            $score1 = $data['score1'];
-            $score2 = $data['score2'];
-            $score3 = $data['score3'];
-            $score4 = $data['score4'];
-            $score5 = $data['score5'];
-            $score6 = $data['score6'];
-            $score7 = $data['score7'];
-            $score8 = $data['score8'];
-            $score9 = $data['score9'];
-            $score10 = $data['score10'];
-            $score11 = $data['score11'];
-            $score12 = $data['score12'];
-            $score13 = $data['score13'];
-            $score14 = $data['score14'];
-            $score15 = $data['score15'];
-            $score16 = $data['score16'];
-            $score17 = $data['score17'];
-            $score18 = $data['score18'];
-            $score19 = $data['score19'];
-            $score20 = $data['score20'];
-            $score21 = $data['score21'];
-
-            $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $scorings_E = ((($score19 + $score20 + $score21) / 12) * 10);
-
-            $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
-
-            $scoring = Scoring::find($id);
-            if ($scoring) {
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['scoring']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $file_id = $data['file_id'];
+                $survey = $data['survey'];
+                $date = $data['date'];
+                $score1 = $data['score1'];
+                $score2 = $data['score2'];
+                $score3 = $data['score3'];
+                $score4 = $data['score4'];
+                $score5 = $data['score5'];
+                $score6 = $data['score6'];
+                $score7 = $data['score7'];
+                $score8 = $data['score8'];
+                $score9 = $data['score9'];
+                $score10 = $data['score10'];
+                $score11 = $data['score11'];
+                $score12 = $data['score12'];
+                $score13 = $data['score13'];
+                $score14 = $data['score14'];
+                $score15 = $data['score15'];
+                $score16 = $data['score16'];
+                $score17 = $data['score17'];
+                $score18 = $data['score18'];
+                $score19 = $data['score19'];
+                $score20 = $data['score20'];
+                $score21 = $data['score21'];
+    
+                $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
+                $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
+                $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
+                $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
+                $scorings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+    
+                $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
+    
+                $scoring = new Scoring();
+                $scoring->file_id = $file_id;
+                $scoring->survey = $survey;
                 $scoring->date = $date;
                 $scoring->score1 = $score1;
                 $scoring->score2 = $score2;
@@ -3265,24 +3599,119 @@ class AdminController extends BaseController {
                 $scoring->score21 = $score21;
                 $scoring->total_score = $total_score;
                 $success = $scoring->save();
-
+    
                 if ($success) {
-# Audit Trail
+                    # Audit Trail
                     $file_name = Files::find($scoring->file_id);
-                    $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been updated.';
+                    $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been inserted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "COB File";
                     $auditTrail->remarks = $remarks;
                     $auditTrail->audit_by = Auth::user()->id;
                     $auditTrail->save();
-
+    
                     print "true";
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
+        }
+    }
+
+    public function editScoring() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['scoring']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+                $date = $data['date'];
+                $score1 = $data['score1'];
+                $score2 = $data['score2'];
+                $score3 = $data['score3'];
+                $score4 = $data['score4'];
+                $score5 = $data['score5'];
+                $score6 = $data['score6'];
+                $score7 = $data['score7'];
+                $score8 = $data['score8'];
+                $score9 = $data['score9'];
+                $score10 = $data['score10'];
+                $score11 = $data['score11'];
+                $score12 = $data['score12'];
+                $score13 = $data['score13'];
+                $score14 = $data['score14'];
+                $score15 = $data['score15'];
+                $score16 = $data['score16'];
+                $score17 = $data['score17'];
+                $score18 = $data['score18'];
+                $score19 = $data['score19'];
+                $score20 = $data['score20'];
+                $score21 = $data['score21'];
+    
+                $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
+                $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
+                $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
+                $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
+                $scorings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+    
+                $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
+    
+                $scoring = Scoring::find($id);
+                if ($scoring) {
+                    $scoring->date = $date;
+                    $scoring->score1 = $score1;
+                    $scoring->score2 = $score2;
+                    $scoring->score3 = $score3;
+                    $scoring->score4 = $score4;
+                    $scoring->score5 = $score5;
+                    $scoring->score6 = $score6;
+                    $scoring->score7 = $score7;
+                    $scoring->score8 = $score8;
+                    $scoring->score9 = $score9;
+                    $scoring->score10 = $score10;
+                    $scoring->score11 = $score11;
+                    $scoring->score12 = $score12;
+                    $scoring->score13 = $score13;
+                    $scoring->score14 = $score14;
+                    $scoring->score15 = $score15;
+                    $scoring->score16 = $score16;
+                    $scoring->score17 = $score17;
+                    $scoring->score18 = $score18;
+                    $scoring->score19 = $score19;
+                    $scoring->score20 = $score20;
+                    $scoring->score21 = $score21;
+                    $scoring->total_score = $total_score;
+                    $success = $scoring->save();
+    
+                    if ($success) {
+                    # Audit Trail
+                        $file_name = Files::find($scoring->file_id);
+                        $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -3395,25 +3824,38 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['scoring']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $id = $data['id'];
 
-            $scoring = Scoring::find($id);
-            $scoring->is_deleted = 1;
-            $deleted = $scoring->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($scoring->file_id);
-                $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $scoring = Scoring::find($id);
+                $scoring->is_deleted = 1;
+                $deleted = $scoring->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($scoring->file_id);
+                    $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
 
-                print "true";
-            } else {
-                print "false";
-            }
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -3483,72 +3925,85 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $file_id = $data['file_id'];
-            $unit_no = $data['unit_no'];
-            $unit_share = $data['unit_share'];
-            $owner_name = $data['owner_name'];
-            $ic_company_no = $data['ic_company_no'];
-            $address = $data['address'];
-            $phone_no = $data['phone_no'];
-            $email = $data['email'];
-            $race = $data['race'];
-            $nationality = $data['nationality'];
-            $remark = $data['remarks'];
-            $no_petak = $data['no_petak'];
-            $no_petak_aksesori = $data['no_petak_aksesori'];
-            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
-            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
-            $jenis_kegunaan = $data['jenis_kegunaan'];
-            $nama2 = $data['nama2'];
-            $ic_no2 = $data['ic_no2'];
-            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
-            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
-            $sinking_fund = $data['sinking_fund'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['buyer']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $file_id = $data['file_id'];
+                $unit_no = $data['unit_no'];
+                $unit_share = $data['unit_share'];
+                $owner_name = $data['owner_name'];
+                $ic_company_no = $data['ic_company_no'];
+                $address = $data['address'];
+                $phone_no = $data['phone_no'];
+                $email = $data['email'];
+                $race = $data['race'];
+                $nationality = $data['nationality'];
+                $remark = $data['remarks'];
+                $no_petak = $data['no_petak'];
+                $no_petak_aksesori = $data['no_petak_aksesori'];
+                $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+                $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+                $jenis_kegunaan = $data['jenis_kegunaan'];
+                $nama2 = $data['nama2'];
+                $ic_no2 = $data['ic_no2'];
+                $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+                $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+                $sinking_fund = $data['sinking_fund'];
 
-            $checkFile = Files::find($file_id);
+                $checkFile = Files::find($file_id);
 
-            if (count($checkFile) > 0) {
-                $buyer = new Buyer();
-                $buyer->file_id = $file_id;
-                $buyer->unit_no = $unit_no;
-                $buyer->unit_share = $unit_share;
-                $buyer->owner_name = $owner_name;
-                $buyer->ic_company_no = $ic_company_no;
-                $buyer->address = $address;
-                $buyer->phone_no = $phone_no;
-                $buyer->email = $email;
-                $buyer->race_id = $race;
-                $buyer->nationality_id = $nationality;
-                $buyer->remarks = $remark;
-                $buyer->no_petak = $no_petak;
-                $buyer->no_petak_aksesori = $no_petak_aksesori;
-                $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
-                $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
-                $buyer->jenis_kegunaan = $jenis_kegunaan;
-                $buyer->nama2 = $nama2;
-                $buyer->ic_no2 = $ic_no2;
-                $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
-                $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
-                $buyer->sinking_fund = $sinking_fund;
-                $success = $buyer->save();
+                if (count($checkFile) > 0) {
+                    $buyer = new Buyer();
+                    $buyer->file_id = $file_id;
+                    $buyer->unit_no = $unit_no;
+                    $buyer->unit_share = $unit_share;
+                    $buyer->owner_name = $owner_name;
+                    $buyer->ic_company_no = $ic_company_no;
+                    $buyer->address = $address;
+                    $buyer->phone_no = $phone_no;
+                    $buyer->email = $email;
+                    $buyer->race_id = $race;
+                    $buyer->nationality_id = $nationality;
+                    $buyer->remarks = $remark;
+                    $buyer->no_petak = $no_petak;
+                    $buyer->no_petak_aksesori = $no_petak_aksesori;
+                    $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
+                    $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                    $buyer->jenis_kegunaan = $jenis_kegunaan;
+                    $buyer->nama2 = $nama2;
+                    $buyer->ic_no2 = $ic_no2;
+                    $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
+                    $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
+                    $buyer->sinking_fund = $sinking_fund;
+                    $success = $buyer->save();
 
-                if ($success) {
-# Audit Trail
-                    $file_name = Files::find($buyer->file_id);
-                    $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit' . $buyer->unit_no . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    if ($success) {
+                    # Audit Trail
+                        $file_name = Files::find($buyer->file_id);
+                        $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit' . $buyer->unit_no . ' has been inserted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
 
-                    print "true";
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -3581,77 +4036,90 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $file_id = $data['file_id'];
-            $unit_no = $data['unit_no'];
-            $unit_share = $data['unit_share'];
-            $owner_name = $data['owner_name'];
-            $ic_company_no = $data['ic_company_no'];
-            $address = $data['address'];
-            $phone_no = $data['phone_no'];
-            $email = $data['email'];
-            $race = $data['race'];
-            $nationality = $data['nationality'];
-            $remark = $data['remarks'];
-            $no_petak = $data['no_petak'];
-            $no_petak_aksesori = $data['no_petak_aksesori'];
-            $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
-            $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
-            $jenis_kegunaan = $data['jenis_kegunaan'];
-            $nama2 = $data['nama2'];
-            $ic_no2 = $data['ic_no2'];
-            $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
-            $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
-            $sinking_fund = $data['sinking_fund'];
-            $id = $data['id'];
-
-            $checkFile = Files::find($file_id);
-
-            if (count($checkFile) > 0) {
-                $buyer = Buyer::find($id);
-                if (count($buyer) > 0) {
-                    $buyer->file_id = $file_id;
-                    $buyer->unit_no = $unit_no;
-                    $buyer->unit_share = $unit_share;
-                    $buyer->owner_name = $owner_name;
-                    $buyer->ic_company_no = $ic_company_no;
-                    $buyer->address = $address;
-                    $buyer->phone_no = $phone_no;
-                    $buyer->email = $email;
-                    $buyer->race_id = $race;
-                    $buyer->nationality_id = $nationality;
-                    $buyer->remarks = $remark;
-                    $buyer->no_petak = $no_petak;
-                    $buyer->no_petak_aksesori = $no_petak_aksesori;
-                    $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
-                    $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
-                    $buyer->jenis_kegunaan = $jenis_kegunaan;
-                    $buyer->nama2 = $nama2;
-                    $buyer->ic_no2 = $ic_no2;
-                    $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
-                    $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
-                    $buyer->sinking_fund = $sinking_fund;
-                    $success = $buyer->save();
-
-                    if ($success) {
-# Audit Trail
-                        $file_name = Files::find($buyer->file_id);
-                        $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB File";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
-
-                        print "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['buyer']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $file_id = $data['file_id'];
+                $unit_no = $data['unit_no'];
+                $unit_share = $data['unit_share'];
+                $owner_name = $data['owner_name'];
+                $ic_company_no = $data['ic_company_no'];
+                $address = $data['address'];
+                $phone_no = $data['phone_no'];
+                $email = $data['email'];
+                $race = $data['race'];
+                $nationality = $data['nationality'];
+                $remark = $data['remarks'];
+                $no_petak = $data['no_petak'];
+                $no_petak_aksesori = $data['no_petak_aksesori'];
+                $keluasan_lantai_petak = $data['keluasan_lantai_petak'];
+                $keluasan_lantai_petak_aksesori = $data['keluasan_lantai_petak_aksesori'];
+                $jenis_kegunaan = $data['jenis_kegunaan'];
+                $nama2 = $data['nama2'];
+                $ic_no2 = $data['ic_no2'];
+                $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
+                $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
+                $sinking_fund = $data['sinking_fund'];
+                $id = $data['id'];
+    
+                $checkFile = Files::find($file_id);
+    
+                if (count($checkFile) > 0) {
+                    $buyer = Buyer::find($id);
+                    if (count($buyer) > 0) {
+                        $buyer->file_id = $file_id;
+                        $buyer->unit_no = $unit_no;
+                        $buyer->unit_share = $unit_share;
+                        $buyer->owner_name = $owner_name;
+                        $buyer->ic_company_no = $ic_company_no;
+                        $buyer->address = $address;
+                        $buyer->phone_no = $phone_no;
+                        $buyer->email = $email;
+                        $buyer->race_id = $race;
+                        $buyer->nationality_id = $nationality;
+                        $buyer->remarks = $remark;
+                        $buyer->no_petak = $no_petak;
+                        $buyer->no_petak_aksesori = $no_petak_aksesori;
+                        $buyer->keluasan_lantai_petak = $keluasan_lantai_petak;
+                        $buyer->keluasan_lantai_petak_aksesori = $keluasan_lantai_petak_aksesori;
+                        $buyer->jenis_kegunaan = $jenis_kegunaan;
+                        $buyer->nama2 = $nama2;
+                        $buyer->ic_no2 = $ic_no2;
+                        $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
+                        $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
+                        $buyer->sinking_fund = $sinking_fund;
+                        $success = $buyer->save();
+    
+                        if ($success) {
+                    # Audit Trail
+                            $file_name = Files::find($buyer->file_id);
+                            $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been updated.';
+                            $auditTrail = new AuditTrail();
+                            $auditTrail->module = "COB File";
+                            $auditTrail->remarks = $remarks;
+                            $auditTrail->audit_by = Auth::user()->id;
+                            $auditTrail->save();
+    
+                            print "true";
+                        } else {
+                            print "false";
+                        }
                     } else {
                         print "false";
                     }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -3705,30 +4173,43 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $buyer = Buyer::find($id);
-            $buyer->is_deleted = 1;
-            $deleted = $buyer->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($buyer->file_id);
-                $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['buyer']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $id = $data['id'];
+    
+                $buyer = Buyer::find($id);
+                $buyer->is_deleted = 1;
+                $deleted = $buyer->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($buyer->file_id);
+                    $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
     public function importBuyer($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -3833,7 +4314,7 @@ class AdminController extends BaseController {
                                         $success = $buyer->save();
 
                                         if ($success) {
-# Audit Trail
+                # Audit Trail
                                             $file_name = Files::find($buyer->file_id);
                                             $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been inserted.';
                                             $auditTrail = new AuditTrail();
@@ -3935,28 +4416,39 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $document = Document::find($id);
-            if ($document) {
-                $document->is_deleted = 1;
-                $deleted = $document->save();
-                if ($deleted) {
-# Audit Trail
-                    $remarks = 'Document: ' . $document->name_en . ' has been deleted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Document";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    print "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $document = Document::find($id);
+                if ($document) {
+                    $document->is_deleted = 1;
+                    $deleted = $document->save();
+                    if ($deleted) {
+                    # Audit Trail
+                        $remarks = 'Document: ' . $document->name_en . ' has been deleted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "Document";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -3964,29 +4456,42 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['file_delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $id = $data['id'];
 
-            $document = Document::find($id);
-            if ($document) {
-                $document->file_url = "";
-                $deleted = $document->save();
+                $document = Document::find($id);
+                if ($document) {
+                    $document->file_url = "";
+                    $deleted = $document->save();
 
-                if ($deleted) {
-# Audit Trail
-                    $remarks = 'Document: ' . $document->name_en . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Document";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    if ($deleted) {
+                    # Audit Trail
+                        $remarks = 'Document: ' . $document->name_en . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "Document";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
 
-                    print "true";
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -4015,31 +4520,43 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $document = new Document();
-            $document->file_id = $data['file_id'];
-            $document->document_type_id = $data['document_type'];
-            $document->name = $data['name'];
-            $document->remarks = $data['remarks'];
-            $document->is_hidden = $data['is_hidden'];
-            $document->is_readonly = $data['is_readonly'];
-            $document->file_url = $data['document_url'];
-            $success = $document->save();
-
-            if ($success) {
-# Audit Trail
-                $file_name = Files::find($document->file_id);
-                $remarks = 'COB Document (' . $file_name->file_no . ') has been inserted.';
-                $remarks = $document->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $document = new Document();
+                $document->file_id = $data['file_id'];
+                $document->document_type_id = $data['document_type'];
+                $document->name = $data['name'];
+                $document->remarks = $data['remarks'];
+                $document->is_hidden = $data['is_hidden'];
+                $document->is_readonly = $data['is_readonly'];
+                $document->file_url = $data['document_url'];
+                $success = $document->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($document->file_id);
+                    $remarks = 'COB Document (' . $file_name->file_no . ') has been inserted.';
+                    $remarks = $document->id . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -4069,36 +4586,49 @@ class AdminController extends BaseController {
     public function submitEditDocument() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-
-            $document = Document::find($id);
-            if ($document) {
-                $document->document_type_id = $data['document_type'];
-                $document->name = $data['name'];
-                $document->remarks = $data['remarks'];
-                $document->is_hidden = $data['is_hidden'];
-                $document->is_readonly = $data['is_readonly'];
-                $document->file_url = $data['document_url'];
-                $success = $document->save();
-
-                if ($success) {
-# Audit Trail
-                    $file_name = Files::find($document->file_id);
-                    $remarks = 'COB Document (' . $file_name->file_no . ') has been updated.';
-                    $remarks = $document->id . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    return "true";
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $document = Document::find($id);
+                if ($document) {
+                    $document->document_type_id = $data['document_type'];
+                    $document->name = $data['name'];
+                    $document->remarks = $data['remarks'];
+                    $document->is_hidden = $data['is_hidden'];
+                    $document->is_readonly = $data['is_readonly'];
+                    $document->file_url = $data['document_url'];
+                    $success = $document->save();
+    
+                    if ($success) {
+                    # Audit Trail
+                        $file_name = Files::find($document->file_id);
+                        $remarks = 'COB Document (' . $file_name->file_no . ') has been updated.';
+                        $remarks = $document->id . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB File";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        return "true";
+                    } else {
+                        return "false";
+                    }
                 } else {
-                    return "false";
+                    return 'false';
                 }
-            } else {
-                return 'false';
-            }
+            // } else {
+            //     print "false";
+            // }
         } else {
             return "false";
         }
@@ -4246,7 +4776,7 @@ class AdminController extends BaseController {
             $company->is_active = 0;
             $updated = $company->save();
             if ($updated) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Company: ' . $company->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -4271,7 +4801,7 @@ class AdminController extends BaseController {
             $company->is_active = 1;
             $updated = $company->save();
             if ($updated) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Company: ' . $company->description . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -4296,7 +4826,7 @@ class AdminController extends BaseController {
             $company->is_deleted = 1;
             $deleted = $company->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Company: ' . $company->description . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Master Setup";
@@ -4371,7 +4901,7 @@ class AdminController extends BaseController {
             $success = $company->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Organization Profile has been added.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "System Administration";
@@ -4454,7 +4984,7 @@ class AdminController extends BaseController {
                 $success = $company->save();
 
                 if ($success) {
-# Audit Trail
+                # Audit Trail
                     $remarks = 'Organization Profile has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5027,76 +5557,87 @@ class AdminController extends BaseController {
     public function submitUser() {
         $data = Input::all();
         if (Request::ajax()) {
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['user']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+                                    
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $username = $data['username'];
-            $password = $data['password'];
-            $name = $data['name'];
-            $email = $data['email'];
-            $phone_no = $data['phone_no'];
-            $role = $data['role'];
-            $start_date = $data['start_date'];
-            $end_date = $data['end_date'];
-            $file_id = $data['file_id'];
-            $company = $data['company'];
-            $remarks = $data['remarks'];
-            $is_active = $data['is_active'];
-
-            $check_username = User::where('username', $username)->count();
-
-            if ($check_username <= 0) {
-                $getRole = Role::where('name', $role)->first();
-
-                if ($getRole) {
-                    $user = new User();
-                    $user->username = $username;
-                    $user->password = Hash::make($password);
-                    $user->full_name = $name;
-                    $user->email = $email;
-                    $user->phone_no = $phone_no;
-                    $user->role = $getRole->id;
-                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
-                        if (!empty($start_date)) {
-                            $user->start_date = $start_date;
+                $username = $data['username'];
+                $password = $data['password'];
+                $name = $data['name'];
+                $email = $data['email'];
+                $phone_no = $data['phone_no'];
+                $role = $data['role'];
+                $start_date = $data['start_date'];
+                $end_date = $data['end_date'];
+                $file_id = $data['file_id'];
+                $company = $data['company'];
+                $remarks = $data['remarks'];
+                $is_active = $data['is_active'];
+    
+                $check_username = User::where('username', $username)->count();
+    
+                if ($check_username <= 0) {
+                    $getRole = Role::where('name', $role)->first();
+    
+                    if ($getRole) {
+                        $user = new User();
+                        $user->username = $username;
+                        $user->password = Hash::make($password);
+                        $user->full_name = $name;
+                        $user->email = $email;
+                        $user->phone_no = $phone_no;
+                        $user->role = $getRole->id;
+                        if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
+                            if (!empty($start_date)) {
+                                $user->start_date = $start_date;
+                            }
+                            if (!empty($end_date)) {
+                                $user->end_date = $end_date;
+                            }
+                            if (!empty($file_id)) {
+                                $user->file_id = $file_id;
+                            }
+                        } else {
+                            $user->start_date = null;
+                            $user->end_date = null;
+                            $user->file_id = null;
                         }
-                        if (!empty($end_date)) {
-                            $user->end_date = $end_date;
+                        $user->company_id = $company;
+                        $user->remarks = $remarks;
+                        $user->is_active = $is_active;
+                        $user->status = 1;
+                        $user->approved_by = Auth::user()->id;
+                        $user->approved_at = date('Y-m-d H:i:s');
+                        $user->is_deleted = 0;
+                        $success = $user->save();
+    
+                        if ($success) {
+                            # Audit Trail
+                            $remarks = 'User ' . $user->username . ' has been inserted.';
+                            $auditTrail = new AuditTrail();
+                            $auditTrail->module = "System Administration";
+                            $auditTrail->remarks = $remarks;
+                            $auditTrail->audit_by = Auth::user()->id;
+                            $auditTrail->save();
+    
+                            print "true";
+                        } else {
+                            print "false";
                         }
-                        if (!empty($file_id)) {
-                            $user->file_id = $file_id;
-                        }
-                    } else {
-                        $user->start_date = null;
-                        $user->end_date = null;
-                        $user->file_id = null;
-                    }
-                    $user->company_id = $company;
-                    $user->remarks = $remarks;
-                    $user->is_active = $is_active;
-                    $user->status = 1;
-                    $user->approved_by = Auth::user()->id;
-                    $user->approved_at = date('Y-m-d H:i:s');
-                    $user->is_deleted = 0;
-                    $success = $user->save();
-
-                    if ($success) {
-                        # Audit Trail
-                        $remarks = 'User ' . $user->username . ' has been inserted.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "System Administration";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
-
-                        print "true";
                     } else {
                         print "false";
                     }
                 } else {
-                    print "false";
+                    print "username_in_use";
                 }
-            } else {
-                print "username_in_use";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -5192,58 +5733,83 @@ class AdminController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['id'];
-            $status = $data['status'];
-            $remark = $data['remarks'];
+            
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['user']['approve'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                
+                $id = $data['id'];
+                $status = $data['status'];
+                $remark = $data['remarks'];
 
-            $user = User::find($id);
-            $user->status = $status;
-            $user->approved_by = Auth::user()->id;
-            $user->approved_at = date('Y-m-d H:i:s');
-            $user->remarks = $remark;
-            if ($status == 1) {
-                $user->is_active = 1;
-            }
-            $success = $user->save();
+                $user = User::find($id);
+                $user->status = $status;
+                $user->approved_by = Auth::user()->id;
+                $user->approved_at = date('Y-m-d H:i:s');
+                $user->remarks = $remark;
+                if ($status == 1) {
+                    $user->is_active = 1;
+                }
+                $success = $user->save();
 
-            if ($success) {
-                # Audit Trail
-                $remarks = 'User ' . $user->username . ' has been approved.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "System Administration";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if ($success) {
+                    # Audit Trail
+                    $remarks = 'User ' . $user->username . ' has been approved.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "System Administration";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
 
-                print "true";
-            } else {
-                print "false";
-            }
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
     public function inactiveUser() {
         $data = Input::all();
         if (Request::ajax()) {
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['user']['status_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
-
-            $user = User::find($id);
-            $user->is_active = 0;
-            $updated = $user->save();
-            if ($updated) {
-                # Audit Trail
-                $remarks = 'User ' . $user->username . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "System Administration";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+                $id = $data['id'];
+    
+                $user = User::find($id);
+                $user->is_active = 0;
+                $updated = $user->save();
+                if ($updated) {
+                    # Audit Trail
+                    $remarks = 'User ' . $user->username . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "System Administration";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -5251,24 +5817,36 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $user = User::find($id);
-            $user->is_active = 1;
-            $updated = $user->save();
-            if ($updated) {
-                # Audit Trail
-                $remarks = 'User ' . $user->username . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "System Administration";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['user']['status_update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $user = User::find($id);
+                $user->is_active = 1;
+                $updated = $user->save();
+                if ($updated) {
+                    # Audit Trail
+                    $remarks = 'User ' . $user->username . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "System Administration";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -5276,24 +5854,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['user']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $user = User::find($id);
+                $user->is_deleted = 1;
+                $deleted = $user->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'User ' . $user->username . ' has been deleted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "System Administration";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
 
-            $user = User::find($id);
-            $user->is_deleted = 1;
-            $deleted = $user->save();
-            if ($deleted) {
-                # Audit Trail
-                $remarks = 'User ' . $user->username . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "System Administration";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -5404,70 +5995,82 @@ class AdminController extends BaseController {
     public function submitUpdateUser() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-            $name = $data['name'];
-            $email = $data['email'];
-            $phone_no = $data['phone_no'];
-            $remarks = $data['remarks'];
-            $role = $data['role'];
-            $start_date = $data['start_date'];
-            $end_date = $data['end_date'];
-            $file_id = $data['file_id'];
-            $company = $data['company'];
-            $password = $data['password'];
-            $is_active = $data['is_active'];
-
-            $user = User::find($id);
-            if ($user) {
-                $getRole = Role::where('name', $role)->first();
-
-                if ($getRole) {
-                    $user->full_name = $name;
-                    $user->email = $email;
-                    $user->phone_no = $phone_no;
-                    $user->role = $getRole->id;
-                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
-                        if (!empty($start_date)) {
-                            $user->start_date = $start_date;
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['user']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+                $name = $data['name'];
+                $email = $data['email'];
+                $phone_no = $data['phone_no'];
+                $remarks = $data['remarks'];
+                $role = $data['role'];
+                $start_date = $data['start_date'];
+                $end_date = $data['end_date'];
+                $file_id = $data['file_id'];
+                $company = $data['company'];
+                $password = $data['password'];
+                $is_active = $data['is_active'];
+    
+                $user = User::find($id);
+                if ($user) {
+                    $getRole = Role::where('name', $role)->first();
+    
+                    if ($getRole) {
+                        $user->full_name = $name;
+                        $user->email = $email;
+                        $user->phone_no = $phone_no;
+                        $user->role = $getRole->id;
+                        if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
+                            if (!empty($start_date)) {
+                                $user->start_date = $start_date;
+                            }
+                            if (!empty($end_date)) {
+                                $user->end_date = $end_date;
+                            }
+                            if (!empty($file_id)) {
+                                $user->file_id = $file_id;
+                            }
+                        } else {
+                            $user->start_date = null;
+                            $user->end_date = null;
+                            $user->file_id = null;
                         }
-                        if (!empty($end_date)) {
-                            $user->end_date = $end_date;
+                        if (!empty($password)) {
+                            $user->password = Hash::make($password);
                         }
-                        if (!empty($file_id)) {
-                            $user->file_id = $file_id;
+                        $user->company_id = $company;
+                        $user->remarks = $remarks;
+                        $user->is_active = $is_active;
+                        $success = $user->save();
+    
+                        if ($success) {
+                            # Audit Trail
+                            $remarks = 'User ' . $user->username . ' has been updated.';
+                            $auditTrail = new AuditTrail();
+                            $auditTrail->module = "System Administration";
+                            $auditTrail->remarks = $remarks;
+                            $auditTrail->audit_by = Auth::user()->id;
+                            $auditTrail->save();
+    
+                            print "true";
+                        } else {
+                            print "false";
                         }
-                    } else {
-                        $user->start_date = null;
-                        $user->end_date = null;
-                        $user->file_id = null;
-                    }
-                    if (!empty($password)) {
-                        $user->password = Hash::make($password);
-                    }
-                    $user->company_id = $company;
-                    $user->remarks = $remarks;
-                    $user->is_active = $is_active;
-                    $success = $user->save();
-
-                    if ($success) {
-                        # Audit Trail
-                        $remarks = 'User ' . $user->username . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "System Administration";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
-
-                        print "true";
                     } else {
                         print "false";
                     }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6531,25 +7134,36 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->notice_agm_egm_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-                # Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['noticeAgmEgm'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->notice_agm_egm_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6557,25 +7171,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['minutesAgmEgm'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->minutes_agm_egm_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->minutes_agm_egm_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6583,25 +7209,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->minutes_ajk_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['minutesAjk'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->minutes_ajk_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6609,25 +7247,36 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->eligible_vote_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['eligibleVote'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->eligible_vote_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6635,25 +7284,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->attend_meeting_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['attendMeeting'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->attend_meeting_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6661,25 +7322,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->proksi_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['proksi'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->proksi_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6687,25 +7360,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->ajk_info_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['ajkInfo'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->ajk_info_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6713,25 +7398,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->ic_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['ic'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->ic_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6739,25 +7436,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->purchase_aggrement_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['purchaseAggrement'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->purchase_aggrement_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6765,25 +7474,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->strata_title_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['strataTitle'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->strata_title_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6791,25 +7512,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->maintenance_statement_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['maintenanceStatement'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->maintenance_statement_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6817,25 +7550,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->integrity_pledge_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['integrityPledge'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->integrity_pledge_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6843,25 +7588,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->report_audited_financial_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['reportAuditedFinancial'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->report_audited_financial_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                    # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6869,25 +7626,37 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $agm_details = MeetingDocument::find($id);
-            $agm_details->house_rules_url = "";
-            $deleted = $agm_details->save();
-            if ($deleted) {
-# Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['houseRules'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $agm_details = MeetingDocument::find($id);
+                $agm_details->house_rules_url = "";
+                $deleted = $agm_details->save();
+                if ($deleted) {
+                # Audit Trail
+                    $file_name = Files::find($agm_details->file_id);
+                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB File";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
         }
     }
 
@@ -6897,7 +7666,7 @@ class AdminController extends BaseController {
 
 //defect
     public function defect() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -7029,7 +7798,7 @@ class AdminController extends BaseController {
                 $defect->is_deleted = 1;
                 $deleted = $defect->save();
                 if ($deleted) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Defect: ' . $defect->name . ' has been deleted.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Defect";
@@ -7059,7 +7828,7 @@ class AdminController extends BaseController {
                 $deleted = $defect->save();
 
                 if ($deleted) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = 'Defect: ' . $defect->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Defect";
@@ -7078,7 +7847,7 @@ class AdminController extends BaseController {
     }
 
     public function addDefect() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -7141,7 +7910,7 @@ class AdminController extends BaseController {
             $success = $defect->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Defect: ' . $defect->name . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Defect";
@@ -7157,7 +7926,7 @@ class AdminController extends BaseController {
     }
 
     public function updateDefect($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $defect = Defect::find($id);
         if (!Auth::user()->getAdmin()) {
@@ -7227,7 +7996,7 @@ class AdminController extends BaseController {
                 $success = $defect->save();
 
                 if ($success) {
-# Audit Trail
+                # Audit Trail
                     $remarks = $defect->id . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Defect";
@@ -7249,8 +8018,8 @@ class AdminController extends BaseController {
 
     //insurance
     public function insurance($id) {
-//        $filename = Files::getFileName();
-//        return "<pre>" . print_r($filename, true) . "</pre>";
+        //$filename = Files::getFileName();
+        //return "<pre>" . print_r($filename, true) . "</pre>";
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
@@ -7453,28 +8222,40 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
-
-            $insurance = Insurance::find($id);
-            if ($insurance) {
-                $insurance->is_deleted = 1;
-                $deleted = $insurance->save();
-                if ($deleted) {
-                    # Audit Trail
-                    $remarks = 'Insurance: ' . $insurance->name . ' has been deleted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Insurance";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    print "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['delete'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $id = $data['id'];
+    
+                $insurance = Insurance::find($id);
+                if ($insurance) {
+                    $insurance->is_deleted = 1;
+                    $deleted = $insurance->save();
+                    if ($deleted) {
+                        # Audit Trail
+                        $remarks = 'Insurance: ' . $insurance->name . ' has been deleted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "Insurance";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        print "true";
+                    } else {
+                        print "false";
+                    }
                 } else {
                     print "false";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -7564,33 +8345,45 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $insurance = new Insurance();
-            $insurance->file_id = $data['file_id'];
-            $insurance->insurance_provider_id = $data['insurance_provider'];
-            $insurance->public_liability_coverage = $data['public_liability_coverage'];
-            $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
-            $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
-            $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
-            $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
-            $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
-            $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
-            $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
-            $insurance->remarks = $data['remarks'];
-            $success = $insurance->save();
-
-            if ($success) {
-                # Audit Trail
-                $remarks = 'Insurance: ' . $insurance->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Insurance";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
-                print "true";
-            } else {
-                print "false";
-            }
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['add'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+                $insurance = new Insurance();
+                $insurance->file_id = $data['file_id'];
+                $insurance->insurance_provider_id = $data['insurance_provider'];
+                $insurance->public_liability_coverage = $data['public_liability_coverage'];
+                $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
+                $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
+                $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
+                $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
+                $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
+                $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
+                $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
+                $insurance->remarks = $data['remarks'];
+                $success = $insurance->save();
+    
+                if ($success) {
+                    # Audit Trail
+                    $remarks = 'Insurance: ' . $insurance->name . ' has been inserted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "Insurance";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+    
+                    print "true";
+                } else {
+                    print "false";
+                }
+            // } else {
+            //     print "false";
+            // }
+            
         }
     }
 
@@ -7683,39 +8476,51 @@ class AdminController extends BaseController {
     public function submitUpdateInsurance() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
-
-            $insurance = Insurance::find($id);
-            if ($insurance) {
-                $insurance->file_id = $data['file_id'];
-                $insurance->insurance_provider_id = $data['insurance_provider'];
-                $insurance->public_liability_coverage = $data['public_liability_coverage'];
-                $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
-                $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
-                $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
-                $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
-                $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
-                $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
-                $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
-                $insurance->remarks = $data['remarks'];
-                $success = $insurance->save();
-
-                if ($success) {
-                    # Audit Trail
-                    $remarks = $insurance->id . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Insurance";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    return "true";
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['update'];
+            
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            
+            // if(empty($response->status) == false && $response->status == 200) {
+            
+                $id = $data['id'];
+    
+                $insurance = Insurance::find($id);
+                if ($insurance) {
+                    $insurance->file_id = $data['file_id'];
+                    $insurance->insurance_provider_id = $data['insurance_provider'];
+                    $insurance->public_liability_coverage = $data['public_liability_coverage'];
+                    $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
+                    $insurance->plc_validity_from = ($data['plc_validity_from'] ? $data['plc_validity_from'] : null);
+                    $insurance->plc_validity_to = ($data['plc_validity_to'] ? $data['plc_validity_to'] : null);
+                    $insurance->fire_insurance_coverage = $data['fire_insurance_coverage'];
+                    $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
+                    $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
+                    $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
+                    $insurance->remarks = $data['remarks'];
+                    $success = $insurance->save();
+    
+                    if ($success) {
+                        # Audit Trail
+                        $remarks = $insurance->id . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "Insurance";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        return "true";
+                    } else {
+                        return "false";
+                    }
                 } else {
-                    return "false";
+                    return 'false';
                 }
-            } else {
-                return 'false';
-            }
+            // } else {
+            //     print "false";
+            // }
         } else {
             return "false";
         }

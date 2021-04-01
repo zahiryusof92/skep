@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -51,11 +51,10 @@ foreach ($user_permission as $permission) {
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
                         </ul>
-                        
-                        <section class="panel panel-pad">
-                            <div class="tab-content padding-vertical-20">
-                                <div class="tab-pane active" id="others_tab" role="tabpanel">
-                                    <div class="row">
+                        <div class="tab-content padding-vertical-20">
+                            <div class="tab-pane active" id="others_tab" role="tabpanel">
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
                                             <div class="row">
                                                 <div class="col-lg-4">
@@ -329,9 +328,9 @@ foreach ($user_permission as $permission) {
                                             </form>
                                         </div>
                                     </div>
-                                </div>
+                                </section>
                             </div>
-                        </section>
+                        </div>
                     </div>
                 </div>
             </div>

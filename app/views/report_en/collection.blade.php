@@ -5,7 +5,7 @@
 <?php $company = Company::find(Auth::user()->company_id); ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -29,7 +29,7 @@
                             </td>
                             <td class="text-center">
                                 <a href="{{URL::action('PrintController@printCollection', $cob_id ? $cob_id : 'all')}}" target="_blank">
-                                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                    <button type="button" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
                         </tr>
@@ -38,66 +38,68 @@
 
                 <hr/>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <form action="{{ url('/reporting/collection') }}" method="GET" class="form-horizontal">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <select class="form-control select2" id="cob_id" name="cob_id" required="">
-                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($cob as $cobs)
-                                            <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
-                                            @endforeach
-                                        </select>
+                <section class="panel panel-pad">
+                    <div class="row padding-vertical-15">
+                        <div class="col-lg-12">
+                            <form action="{{ url('/reporting/collection') }}" method="GET" class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <select class="form-control select2" id="cob_id" name="cob_id" required="">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @foreach ($cob as $cobs)
+                                                <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
+                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@collection") }}'"">{{ trans('app.buttons.reset') }}</button>
+                                        <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.submit') }}</button>
-                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action("ReportController@collection") }}'"">{{ trans('app.buttons.reset') }}</button>
-                                    <img id="loading" style="display: none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
 
-                @if ($file_info)
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p>LAPORAN</p>
-                        <table border="1" id="collection_report_table" width="100%">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" style="width:40%; text-align: center !important; vertical-align:middle !important;">COB</th>
-                                    <th colspan="3" style="width:60%; text-align: center !important; vertical-align:middle !important;">ZON</th>
-                                </tr>
-                                <tr>
-                                    <th style="width:20%; text-align: center !important; vertical-align:middle !important;">BIRU</th>
-                                    <th style="width:20%; text-align: center !important; vertical-align:middle !important;">KUNING</th>
-                                    <th style="width:20%; text-align: center !important; vertical-align:middle !important;">MERAH</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($file_info as $info)
-                                <tr>
-                                    <td style="text-align: left !important; vertical-align:middle !important;">&nbsp; {{ $info['company_name'] }}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $info['zon_biru'] }}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $info['zon_kuning'] }}</td>
-                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $info['zon_merah'] }}</td>
-                                </tr>
+                    @if ($file_info)
+                    <div class="row padding-bottom-15">
+                        <div class="col-lg-12">
+                            <p>LAPORAN</p>
+                            <table border="1" id="collection_report_table" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2" style="width:40%; text-align: center !important; vertical-align:middle !important;">COB</th>
+                                        <th colspan="3" style="width:60%; text-align: center !important; vertical-align:middle !important;">ZON</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">BIRU</th>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">KUNING</th>
+                                        <th style="width:20%; text-align: center !important; vertical-align:middle !important;">MERAH</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($file_info as $info)
+                                    <tr>
+                                        <td style="text-align: left !important; vertical-align:middle !important;">&nbsp; {{ $info['company_name'] }}</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $info['zon_biru'] }}</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $info['zon_kuning'] }}</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $info['zon_merah'] }}</td>
+                                    </tr>
 
-                                <?php
-                                $category[] = $info['company_name'];
-                                $barBiru[] = $info['zon_biru'];
-                                $barKuning[] = $info['zon_kuning'];
-                                $barMerah[] = $info['zon_merah'];
-                                ?>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                    <?php
+                                    $category[] = $info['company_name'];
+                                    $barBiru[] = $info['zon_biru'];
+                                    $barKuning[] = $info['zon_kuning'];
+                                    $barMerah[] = $info['zon_merah'];
+                                    ?>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </section>
 
                 <?php
                 $barData[] = array(

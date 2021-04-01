@@ -5,79 +5,81 @@
 <div class="page-content-inner">
 
     <!-- Basic Form Elements -->
-    <section class="panel">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <form id="edit_profile">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <form id="edit_profile">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.username') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.username') }}" id="username" value="{{$user->username}}" disabled>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.username') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.username') }}" id="username" value="{{$user->username}}" disabled>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.full_name') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="name" value="{{$user->full_name}}">
-                                    <div id="name_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.full_name') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="name" value="{{$user->full_name}}">
+                                        <div id="name_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><span style="color: red;">*</span> {{ trans('app.forms.email') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{$user->email}}">
-                                    <div id="email_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><span style="color: red;">*</span> {{ trans('app.forms.email') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{$user->email}}">
+                                        <div id="email_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.phone_number') }}</label>
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{$user->phone_no}}">
-                                    <div id="phone_no_error" style="display:none;"></div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{$user->phone_no}}">
+                                        <div id="phone_no_error" style="display:none;"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.company') }}</label>
-                                    <input type="text" class="form-control" id="company" value="{{$company->name}}" disabled="">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.company') }}</label>
+                                        <input type="text" class="form-control" id="company" value="{{$company->name}}" disabled="">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.access_group') }}</label>
-                                    <input type="text" class="form-control" id="role" value="{{$user->getRole->name}}" disabled="">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.access_group') }}</label>
+                                        <input type="text" class="form-control" id="role" value="{{$user->getRole->name}}" disabled="">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-own" id="submit_button" onclick="updateProfile()">{{ trans('app.forms.submit') }}</button>
-                            <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
-                        </div>
-                    </form>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-own" id="submit_button" onclick="updateProfile()">{{ trans('app.forms.submit') }}</button>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

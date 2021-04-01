@@ -2,41 +2,43 @@
 
 @section('content')
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{ $title }}</h3>
         </div>
         <div class="panel-body">
+            <section class="panel panel-pad">
             
-            @if (AccessGroup::hasInsert(59))
-            <div class="row">
-                <div class="col-lg-12">
-                    <button onclick="window.location = '{{ URL::action('PropertyAgentController@create') }}'" type="button" class="btn btn-own margin-bottom-25">
-                        {{ trans('app.directory.property_agents.create') }}
-                    </button>
+                @if (AccessGroup::hasInsert(59))
+                <div class="row padding-vertical-15">
+                    <div class="col-lg-12">
+                        <button onclick="window.location = '{{ URL::action('PropertyAgentController@create') }}'" type="button" class="btn btn-own margin-bottom-25">
+                            {{ trans('app.directory.property_agents.create') }}
+                        </button>
+                    </div>
                 </div>
-            </div>
-            @endif
+                @endif
 
-            <div class="row">
-                <div class="col-lg-12">                    
-                    <table class="table table-hover" id="vendors_table" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:15%;">{{ trans('app.directory.property_agents.company') }}</th>
-                                <th style="width:15%;">{{ trans('app.directory.property_agents.name') }}</th>
-                                <th style="width:20%;">{{ trans('app.directory.property_agents.address') }}</th>
-                                <th style="width:25%;">{{ trans('app.directory.property_agents.council') }}</th>
-                                <th style="width:15%;">{{ trans('app.directory.property_agents.rating') }}</th>
-                                <th style="width:10%;">{{ trans('app.directory.property_agents.action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <div class="row padding-vertical-15">
+                    <div class="col-lg-12">                    
+                        <table class="table table-hover table-own table-striped" id="vendors_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:15%;">{{ trans('app.directory.property_agents.company') }}</th>
+                                    <th style="width:15%;">{{ trans('app.directory.property_agents.name') }}</th>
+                                    <th style="width:20%;">{{ trans('app.directory.property_agents.address') }}</th>
+                                    <th style="width:25%;">{{ trans('app.directory.property_agents.council') }}</th>
+                                    <th style="width:15%;">{{ trans('app.directory.property_agents.rating') }}</th>
+                                    <th style="width:10%;">{{ trans('app.directory.property_agents.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End  -->
