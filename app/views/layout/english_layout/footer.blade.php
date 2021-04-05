@@ -7,7 +7,7 @@
         </div>
         <div class="col-lg-6">
             <div class="pull-right">
-                <strong>&copy; {{ date('Y') }} - {{ trans('ODESI ECOB SDN BHD') }}</strong>. All rights reserved.
+                {{-- <strong>&copy; {{ date('Y') }} - {{ trans('ODESI ECOB SDN BHD') }}</strong>. All rights reserved. --}}
             </div>
         </div>
     </div>
