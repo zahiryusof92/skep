@@ -153,6 +153,9 @@
                                 {{ ($model->action_date ? date('d-M-Y H:i A', strtotime($model->action_date)) : '') }}
                             </dd>
                             @endif
+                            <button type="submit" class="btn btn-own">
+                                {{ trans('app.forms.submit') }}
+                            </button>
                         </dl>
 
                         @if (Auth::user()->isLawyer() || Auth::user()->isCOBManager())                        
@@ -228,6 +231,15 @@
                                             @include('alert.feedback', ['field' => 'payment_method'])
                                         </div>
                                     </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <button type="submit" class="btn btn-own">
+                                        {{ trans('app.summon.payment') }}
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="window.location = '{{ route('summon.index') }}'">                                
+                                        {{ trans('app.forms.back') }}
+                                    </button>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12">
