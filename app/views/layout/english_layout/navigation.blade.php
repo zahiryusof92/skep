@@ -694,7 +694,7 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-
+            
             {{-- <li class="left-menu-list-submenu" id="agm_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
@@ -711,9 +711,13 @@ if (!Auth::user()->getAdmin()) {
             </li> --}}
 
         </ul>
+        
+        @if ($company->short_name != 'MBS')
         <div class="bottom-logo">
             <img src="{{asset('assets/common/img/odesi/logo.png')}}">
         </div>
+        @endif
+        
     </div>
 </nav>
 <!-- END SIDE NAVIGATION -->

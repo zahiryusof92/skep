@@ -80,8 +80,10 @@ if (isset($cob) && !empty($cob)) {
             </div>
         </div>   
         <div class="copyright">
+            @if ($company->short_name != 'MBS')
             <img src="{{asset('assets/common/img/odesi/logo.png')}}" />
             <h6 class="text-center padding-top-5">&copy; {{ date('Y') }} ODESI eCOB SDN BHD. All Rights Reserved.</h6>
+            @endif
             <p style="text-align: center;"><a href="https://odesi.tech/terms.html" target="_blank">{{ trans('User Terms & Conditions') }}</a></p>
         </div>     
     </div>
