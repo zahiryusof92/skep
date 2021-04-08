@@ -94,7 +94,7 @@ class UserController extends BaseController {
 
             if (strpos($actual_link, 'mbs') !== false) {
                 $cob = 'mbs';
-            } else if (strpos($actual_link, 'mbs') !== false) {
+            } else if (strpos($actual_link, 'mps') !== false) {
                 $cob = 'mps';
             }
         }
