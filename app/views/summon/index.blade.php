@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{ $title }}</h3>
         </div>
@@ -10,39 +10,41 @@
             
             @include('alert.bootbox')
 
-            @if (Auth::user()->isJMB())
-            <div class="row">
-                <div class="col-lg-12">
-                    <a class="btn btn-own-outline margin-bottom-25" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">
-                        {{ trans('app.summon.letter_of_reminder') }}
-                    </a> 
-                    <a class="btn btn-success-outline margin-bottom-25 margin-left-10" href="{{ route('summon.create', Summon::LETTER_OF_DEMAND) }}">
-                        {{ trans('app.summon.letter_of_demand') }}
-                    </a> 
+            <section class="panel panel-pad">
+                @if (Auth::user()->isJMB())
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <a class="btn btn-own-outline margin-bottom-25" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">
+                            {{ trans('app.summon.letter_of_reminder') }}
+                        </a> 
+                        <a class="btn btn-success-outline margin-bottom-25 margin-left-10" href="{{ route('summon.create', Summon::LETTER_OF_DEMAND) }}">
+                            {{ trans('app.summon.letter_of_demand') }}
+                        </a> 
+                    </div>
                 </div>
-            </div>
-            @endif
+                @endif
 
-            <div class="row">
-                <div class="col-lg-12">                    
-                    <table class="table table-hover" id="summon_table" width="100%">
-                        <thead>
-                            <tr>
-                                <th style="width:15%;">{{ trans('app.summon.created_at') }}</th>
-                                <th style="width:10%;">{{ trans('app.summon.unit_no') }}</th>
-                                <th style="width:20%;">{{ trans('app.summon.name') }}</th>
-                                <th style="width:15%;">{{ trans('app.summon.phone_no') }}</th>
-                                <th style="width:15%;">{{ trans('app.summon.type') }}</th>
-                                <th style="width:10%;">{{ trans('app.summon.status') }}</th>                                
-                                <th style="width:15%; text-align: center;">{{ trans('app.summon.action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">                    
+                        <table class="table table-hover table-own table-striped" id="summon_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:15%;">{{ trans('app.summon.created_at') }}</th>
+                                    <th style="width:10%;">{{ trans('app.summon.unit_no') }}</th>
+                                    <th style="width:20%;">{{ trans('app.summon.name') }}</th>
+                                    <th style="width:15%;">{{ trans('app.summon.phone_no') }}</th>
+                                    <th style="width:15%;">{{ trans('app.summon.type') }}</th>
+                                    <th style="width:10%;">{{ trans('app.summon.status') }}</th>                                
+                                    <th style="width:15%; text-align: center;">{{ trans('app.summon.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </section>
     <!-- End -->

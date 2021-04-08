@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
     $('#agm_date_raw').datetimepicker({
         widgetPositioning: {
             horizontal: 'left'
@@ -10,7 +10,7 @@ $(document).ready(function () {
             down: "fa fa-arrow-down"
         },
         format: 'DD-MM-YYYY'
-    }).on('dp.change', function () {
+    }).on('dp.change', function() {
         let currentDate = $(this).val().split('-');
         $("#agm_date").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
     });
@@ -26,7 +26,7 @@ $(document).ready(function () {
             down: "fa fa-arrow-down"
         },
         format: 'DD-MM-YYYY'
-    }).on('dp.change', function () {
+    }).on('dp.change', function() {
         let currentDate = $(this).val().split('-');
         $("#audit_start").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
     });
@@ -42,7 +42,7 @@ $(document).ready(function () {
             down: "fa fa-arrow-down"
         },
         format: 'DD-MM-YYYY'
-    }).on('dp.change', function () {
+    }).on('dp.change', function() {
         let currentDate = $(this).val().split('-');
         $("#audit_end").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
     });
@@ -50,15 +50,16 @@ $(document).ready(function () {
     //ADD
 
     // agm_file
-    $('body').delegate('#agm_file', 'change', function () {
+    $('body').delegate('#agm_file', 'change', function() {
         $('#upload_agm_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#agm_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
+                console.log('result', result)
                 if (result.success) {
-                    $("#agm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearAGMFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#agm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearAGMFile()'><i class='fa fa-times'></i></button>").show();
                     $("#agm_file_clear").show();
                     $("#agm_file").css("color", "green");
                     $("#agm_file_url").val(result.file);
@@ -72,15 +73,15 @@ $(document).ready(function () {
     });
 
     // egm_file
-    $('body').delegate('#egm_file', 'change', function () {
+    $('body').delegate('#egm_file', 'change', function() {
         $('#upload_egm_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#egm_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
                 if (result.success) {
-                    $("#egm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearEGMFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#egm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearEGMFile()'><i class='fa fa-times'></i></button>").show();
                     $("#egm_file_clear").show();
                     $("#egm_file").css("color", "green");
                     $("#egm_file_url").val(result.file);
@@ -94,15 +95,15 @@ $(document).ready(function () {
     });
 
     // minutes_meeting_file
-    $('body').delegate('#minutes_meeting_file', 'change', function () {
+    $('body').delegate('#minutes_meeting_file', 'change', function() {
         $('#upload_minutes_meeting_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#minutes_meeting_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
                 if (result.success) {
-                    $("#minutes_meeting_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#minutes_meeting_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
                     $("#minutes_meeting_file_clear").show();
                     $("#minutes_meeting_file").css("color", "green");
                     $("#minutes_meeting_file_url").val(result.file);
@@ -116,15 +117,15 @@ $(document).ready(function () {
     });
 
     // jmc_file
-    $('body').delegate('#jmc_file', 'change', function () {
+    $('body').delegate('#jmc_file', 'change', function() {
         $('#upload_jmc_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#jmc_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
                 if (result.success) {
-                    $("#jmc_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#jmc_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
                     $("#jmc_file_clear").show();
                     $("#jmc_file").css("color", "green");
                     $("#jmc_file_url").val(result.file);
@@ -138,15 +139,15 @@ $(document).ready(function () {
     });
 
     // ic_file
-    $('body').delegate('#ic_file', 'change', function () {
+    $('body').delegate('#ic_file', 'change', function() {
         $('#upload_ic_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#ic_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
                 if (result.success) {
-                    $("#ic_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#ic_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
                     $("#ic_file_clear").show();
                     $("#ic_file").css("color", "green");
                     $("#ic_file_url").val(result.file);
@@ -160,15 +161,15 @@ $(document).ready(function () {
     });
 
     // attendance_file
-    $('body').delegate('#attendance_file', 'change', function () {
+    $('body').delegate('#attendance_file', 'change', function() {
         $('#upload_attendance_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#attendance_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
                 if (result.success) {
-                    $("#attendance_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#attendance_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
                     $("#attendance_file_clear").show();
                     $("#attendance_file").css("color", "green");
                     $("#attendance_file_url").val(result.file);
@@ -182,15 +183,15 @@ $(document).ready(function () {
     });
 
     // audited_financial_file
-    $('body').delegate('#audited_financial_file', 'change', function () {
+    $('body').delegate('#audited_financial_file', 'change', function() {
         $('#upload_audited_financial_file').ajaxForm({
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#audited_financial_file_error").empty().hide();
                 return true;
             },
-            success: function (result) {
+            success: function(result) {
                 if (result.success) {
-                    $("#audited_financial_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i> {{ trans('app.forms.clear') }}</button>").show();
+                    $("#audited_financial_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
                     $("#audited_financial_file_clear").show();
                     $("#audited_financial_file").css("color", "green");
                     $("#audited_financial_file_url").val(result.file);
@@ -204,17 +205,17 @@ $(document).ready(function () {
     });
 
     //upload audit report file
-    $('body').delegate('#audit_report_file', 'change', function () {
+    $('body').delegate('#audit_report_file', 'change', function() {
         $('#upload_audit_report_file').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-errors_audit_report_file").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-errors_audit_report_file").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -233,17 +234,17 @@ $(document).ready(function () {
     });
 
     //upload letter integrity
-    $('body').delegate('#letter_integrity', 'change', function () {
+    $('body').delegate('#letter_integrity', 'change', function() {
         $('#upload_letter_integrity').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-errors_letter_integrity").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-errors_letter_integrity").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -262,17 +263,17 @@ $(document).ready(function () {
     });
 
     //upload letter bankruptcy
-    $('body').delegate('#letter_bankruptcy', 'change', function () {
+    $('body').delegate('#letter_bankruptcy', 'change', function() {
         $('#upload_letter_bankruptcy').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-errors_letter_bankruptcy").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-errors_letter_bankruptcy").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -291,17 +292,17 @@ $(document).ready(function () {
     });
 
     //notice_agm_egm
-    $('body').delegate('#notice_agm_egm', 'change', function () {
+    $('body').delegate('#notice_agm_egm', 'change', function() {
         $('#upload_notice_agm_egm').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-notice_agm_egm").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-notice_agm_egm").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -320,17 +321,17 @@ $(document).ready(function () {
     });
 
     //minutes_agm_egm
-    $('body').delegate('#minutes_agm_egm', 'change', function () {
+    $('body').delegate('#minutes_agm_egm', 'change', function() {
         $('#upload_minutes_agm_egm').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-minutes_agm_egm").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-minutes_agm_egm").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -349,17 +350,17 @@ $(document).ready(function () {
     });
 
     //minutes_ajk
-    $('body').delegate('#minutes_ajk', 'change', function () {
+    $('body').delegate('#minutes_ajk', 'change', function() {
         $('#upload_minutes_ajk').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-minutes_ajk").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-minutes_ajk").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -378,17 +379,17 @@ $(document).ready(function () {
     });
 
     //eligible_vote
-    $('body').delegate('#eligible_vote', 'change', function () {
+    $('body').delegate('#eligible_vote', 'change', function() {
         $('#upload_eligible_vote').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-eligible_vote").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-eligible_vote").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -407,17 +408,17 @@ $(document).ready(function () {
     });
 
     //attend_meeting
-    $('body').delegate('#attend_meeting', 'change', function () {
+    $('body').delegate('#attend_meeting', 'change', function() {
         $('#upload_attend_meeting').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-attend_meeting").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-attend_meeting").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -436,17 +437,17 @@ $(document).ready(function () {
     });
 
     //proksi
-    $('body').delegate('#proksi', 'change', function () {
+    $('body').delegate('#proksi', 'change', function() {
         $('#upload_proksi').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-proksi").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-proksi").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -465,17 +466,17 @@ $(document).ready(function () {
     });
 
     //ajk_info
-    $('body').delegate('#ajk_info', 'change', function () {
+    $('body').delegate('#ajk_info', 'change', function() {
         $('#upload_ajk_info').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-ajk_info").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-ajk_info").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -494,17 +495,17 @@ $(document).ready(function () {
     });
 
     //ic
-    $('body').delegate('#ic', 'change', function () {
+    $('body').delegate('#ic', 'change', function() {
         $('#upload_ic').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-ic").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-ic").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -523,17 +524,17 @@ $(document).ready(function () {
     });
 
     //purchase_aggrement
-    $('body').delegate('#purchase_aggrement', 'change', function () {
+    $('body').delegate('#purchase_aggrement', 'change', function() {
         $('#upload_purchase_aggrement').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-purchase_aggrement").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-purchase_aggrement").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -552,17 +553,17 @@ $(document).ready(function () {
     });
 
     //strata_title
-    $('body').delegate('#strata_title', 'change', function () {
+    $('body').delegate('#strata_title', 'change', function() {
         $('#upload_strata_title').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-strata_title").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-strata_title").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -581,17 +582,17 @@ $(document).ready(function () {
     });
 
     //maintenance_statement
-    $('body').delegate('#maintenance_statement', 'change', function () {
+    $('body').delegate('#maintenance_statement', 'change', function() {
         $('#upload_maintenance_statement').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-maintenance_statement").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-maintenance_statement").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -610,17 +611,17 @@ $(document).ready(function () {
     });
 
     //integrity_pledge
-    $('body').delegate('#integrity_pledge', 'change', function () {
+    $('body').delegate('#integrity_pledge', 'change', function() {
         $('#upload_integrity_pledge').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-integrity_pledge").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-integrity_pledge").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -639,17 +640,17 @@ $(document).ready(function () {
     });
 
     //report_audited_financial
-    $('body').delegate('#report_audited_financial', 'change', function () {
+    $('body').delegate('#report_audited_financial', 'change', function() {
         $('#upload_report_audited_financial').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-report_audited_financial").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-report_audited_financial").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
@@ -668,17 +669,17 @@ $(document).ready(function () {
     });
 
     //house_rules
-    $('body').delegate('#house_rules', 'change', function () {
+    $('body').delegate('#house_rules', 'change', function() {
         $('#upload_house_rules').ajaxForm({
             dataType: 'json',
-            beforeSubmit: function () {
+            beforeSubmit: function() {
                 $("#validation-house_rules").hide().empty();
                 return true;
             },
-            success: function (response) {
+            success: function(response) {
                 if (response.success == false) {
                     var arr = response.errors;
-                    $.each(arr, function (index, value) {
+                    $.each(arr, function(index, value) {
                         if (value.length != 0) {
                             $("#validation-house_rules").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                         }
