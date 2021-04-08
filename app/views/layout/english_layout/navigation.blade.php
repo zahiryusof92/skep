@@ -694,36 +694,6 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-            
-            {{-- <li class="left-menu-list-submenu" id="agm_panel">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
-                    {{ trans('app.transaction.title') }}
-                </a>
-                <ul class="left-menu-list list-unstyled" id="transaction_main">
-
-                    <li id="agmdesignsub_list">
-                        <a class="left-menu-link" href="{{URL::action('TransactionController@index')}}">
-                            {{ trans('app.transaction.list') }}
-                        </a>
-                    </li>
-                </ul>
-            </li> --}}
-
-            {{-- <li class="left-menu-list-submenu" id="agm_panel">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
-                    {{ trans('app.transaction.title') }}
-                </a>
-                <ul class="left-menu-list list-unstyled" id="transaction_main">
-
-                    <li id="agmdesignsub_list">
-                        <a class="left-menu-link" href="{{URL::action('TransactionController@index')}}">
-                            {{ trans('app.transaction.list') }}
-                        </a>
-                    </li>
-                </ul>
-            </li> --}}
 
         </ul>
         
