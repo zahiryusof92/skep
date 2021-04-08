@@ -711,9 +711,9 @@ if (!Auth::user()->getAdmin()) {
             </li> --}}
 
         </ul>
-        {{-- <div class="bottom-logo">
+        <div class="bottom-logo">
             <img src="{{asset('assets/common/img/odesi/logo.png')}}">
-        </div> --}}
+        </div>
     </div>
 </nav>
 <!-- END SIDE NAVIGATION -->

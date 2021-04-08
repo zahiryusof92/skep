@@ -1767,26 +1767,26 @@ class ImportController extends BaseController {
                                 $report_main = $row[0];
                                 
                                 $report_mf = $finance_file->financeReport()->where('type','MF')->first();
-                                $report_mf->fee_sebulan = $report_main[0];
-                                $report_mf->unit = $report_main[1];
-                                $report_mf->fee_semasa = $report_main[2];
-                                $report_mf->no_akaun = $report_main[3];
-                                $report_mf->nama_bank = $report_main[4];
-                                $report_mf->baki_bank_awal = $report_main[5];
-                                $report_mf->baki_bank_akhir = $report_main[6];
+                                $report_mf->fee_sebulan = (empty($report_main[0]) == false)? $report_main[0] : 0;
+                                $report_mf->unit = (empty($report_main[1]) == false)? $report_main[1] : 0;
+                                $report_mf->fee_semasa = (empty($report_main[2]) == false)? $report_main[2] : 0;
+                                $report_mf->no_akaun = (empty($report_main[3]) == false)? $report_main[3] : '';
+                                $report_mf->nama_bank = (empty($report_main[4]) == false)? $report_main[4] : '';
+                                $report_mf->baki_bank_awal = (empty($report_main[5]) == false)? $report_main[5] : 0;
+                                $report_mf->baki_bank_akhir = (empty($report_main[6]) == false)? $report_main[6] : 0;
                                 $report_mf->save();
                                 
                             } else if($title == 'report sf' && $row->count()) {
                                 /** Finance Report SF And Perbelanjaan */
                                 $report_main = $row[0];
                                 $report_sf = $finance_file->financeReport()->where('type','SF')->first();
-                                $report_sf->fee_sebulan = $report_main[0];
-                                $report_sf->unit = $report_main[1];
-                                $report_sf->fee_semasa = $report_main[2];
-                                $report_sf->no_akaun = $report_main[3];
-                                $report_sf->nama_bank = $report_main[4];
-                                $report_sf->baki_bank_awal = $report_main[5];
-                                $report_sf->baki_bank_akhir = $report_main[6];
+                                $report_sf->fee_sebulan = (empty($report_main[0]) == false)? $report_main[0] : 0;
+                                $report_sf->unit = (empty($report_main[1]) == false)? $report_main[1] : 0;
+                                $report_sf->fee_semasa = (empty($report_main[2]) == false)? $report_main[2] : 0;
+                                $report_sf->no_akaun = (empty($report_main[3]) == false)? $report_main[3] : '';
+                                $report_sf->nama_bank = (empty($report_main[4]) == false)? $report_main[4] : '';
+                                $report_sf->baki_bank_awal = (empty($report_main[5]) == false)? $report_main[5] : 0;
+                                $report_sf->baki_bank_akhir = (empty($report_main[6]) == false)? $report_main[6] : 0;
                                 $report_sf->save();
 
                                 $perkara_count = $row->count(); 
@@ -1796,7 +1796,7 @@ class ImportController extends BaseController {
                                     $perbelanjaan = $finance_file->financeReportPerbelanjaan()->where('type','SF')->where('name',$row[$i][0])->first();
                                     
                                     if(empty($perbelanjaan) == false) {
-                                        $perbelanjaan->amount = $row[$i][1];
+                                        $perbelanjaan->amount = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
                                         $perbelanjaan->save();
 
                                     } else {
@@ -1805,7 +1805,7 @@ class ImportController extends BaseController {
                                         $new_perbelanja->finance_file_id = $report_sf->finance_file_id;
                                         $new_perbelanja->type = $report_sf->type;
                                         $new_perbelanja->name = $row[$i][0];
-                                        $new_perbelanja->amount = $row[$i][1];
+                                        $new_perbelanja->amount = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
                                         $new_perbelanja->report_key = 'custom'. $current_num_perbelanjaan;
                                         $new_perbelanja->sort_no = $current_sort_perbelanjaan;
                                         $new_perbelanja->is_custom = 1;
@@ -1835,9 +1835,9 @@ class ImportController extends BaseController {
     
                                             $current_sort_income += 1;
                                         }
-                                        $income->tunggakan = $row[$i][1];
-                                        $income->semasa = $row[$i][2];
-                                        $income->hadapan = $row[$i][3];
+                                        $income->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                        $income->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                        $income->hadapan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
     
                                         $income->save();
 
@@ -1870,10 +1870,10 @@ class ImportController extends BaseController {
     
                                                 $current_sort_utility_a += 1;
                                             }
-                                            $utility_a->tunggakan = $row[$i][1];
-                                            $utility_a->semasa = $row[$i][2];
-                                            $utility_a->hadapan = $row[$i][3];
-                                            $utility_a->tertunggak = $row[$i][4];
+                                            $utility_a->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                            $utility_a->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                            $utility_a->hadapan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
+                                            $utility_a->tertunggak = (empty($row[$i][4]) == false)? $row[$i][4] : 0;
     
                                             $utility_a->save();
                                         
@@ -1893,10 +1893,10 @@ class ImportController extends BaseController {
     
                                                 $current_sort_utility_sf += 1;
                                             }
-                                            $utility_b->tunggakan = $row[$i][7];
-                                            $utility_b->semasa = $row[$i][8];
-                                            $utility_b->hadapan = $row[$i][9];
-                                            $utility_b->tertunggak = $row[$i][10];
+                                            $utility_b->tunggakan = (empty($row[$i][7]) == false)? $row[$i][7] : 0;
+                                            $utility_b->semasa = (empty($row[$i][8]) == false)? $row[$i][8] : 0;
+                                            $utility_b->hadapan = (empty($row[$i][9]) == false)? $row[$i][9] : 0;
+                                            $utility_b->tertunggak = (empty($row[$i][10]) == false)? $row[$i][10] : 0;
     
                                             $utility_b->save();
                                         
@@ -1924,10 +1924,10 @@ class ImportController extends BaseController {
 
                                             $current_sort_contract += 1;
                                         }
-                                        $contract->tunggakan = $row[$i][1];
-                                        $contract->semasa = $row[$i][2];
-                                        $contract->hadapan = $row[$i][3];
-                                        $contract->tertunggak = $row[$i][4];
+                                        $contract->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                        $contract->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                        $contract->hadapan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
+                                        $contract->tertunggak = (empty($row[$i][4]) == false)? $row[$i][4] : 0;
 
                                         $contract->save();
                                     }
@@ -1959,10 +1959,10 @@ class ImportController extends BaseController {
                                             $current_sort_repair_mf += 1;
                                         }
                                         
-                                        $repair_mf->tunggakan = $row[$i][1];
-                                        $repair_mf->semasa = $row[$i][2];
-                                        $repair_mf->hadapan = $row[$i][3];
-                                        $repair_mf->tertunggak = $row[$i][4];
+                                        $repair_mf->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                        $repair_mf->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                        $repair_mf->hadapan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
+                                        $repair_mf->tertunggak = (empty($row[$i][4]) == false)? $row[$i][4] : 0;
 
                                         $repair_mf->save();
 
@@ -1980,10 +1980,10 @@ class ImportController extends BaseController {
 
                                             $current_sort_repair_sf += 1;
                                         }
-                                        $repair_sf->tunggakan = $row[$i][7];
-                                        $repair_sf->semasa = $row[$i][8];
-                                        $repair_sf->hadapan = $row[$i][9];
-                                        $repair_sf->tertunggak = $row[$i][10];
+                                        $repair_sf->tunggakan = (empty($row[$i][7]) == false)? $row[$i][7] : 0;
+                                        $repair_sf->semasa = (empty($row[$i][8]) == false)? $row[$i][8] : 0;
+                                        $repair_sf->hadapan = (empty($row[$i][9]) == false)? $row[$i][9] : 0;
+                                        $repair_sf->tertunggak = (empty($row[$i][10]) == false)? $row[$i][10] : 0;
 
                                         $repair_sf->save();
 
@@ -2015,10 +2015,10 @@ class ImportController extends BaseController {
 
                                             $current_sort_vandal_mf += 1;
                                         }
-                                        $vandal_mf->tunggakan = $row[$i][1];
-                                        $vandal_mf->semasa = $row[$i][2];
-                                        $vandal_mf->hadapan = $row[$i][3];
-                                        $vandal_mf->tertunggak = $row[$i][4];
+                                        $vandal_mf->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                        $vandal_mf->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                        $vandal_mf->hadapan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
+                                        $vandal_mf->tertunggak = (empty($row[$i][4]) == false)? $row[$i][4] : 0;
 
                                         $vandal_mf->save();
 
@@ -2036,10 +2036,10 @@ class ImportController extends BaseController {
 
                                             $current_sort_vandal_sf += 1;
                                         }
-                                        $vandal_sf->tunggakan = $row[$i][7];
-                                        $vandal_sf->semasa = $row[$i][8];
-                                        $vandal_sf->hadapan = $row[$i][9];
-                                        $vandal_sf->tertunggak = $row[$i][10];
+                                        $vandal_sf->tunggakan = (empty($row[$i][7]) == false)? $row[$i][7] : 0;
+                                        $vandal_sf->semasa = (empty($row[$i][8]) == false)? $row[$i][8] : 0;
+                                        $vandal_sf->hadapan = (empty($row[$i][9]) == false)? $row[$i][9] : 0;
+                                        $vandal_sf->tertunggak = (empty($row[$i][10]) == false)? $row[$i][10] : 0;
 
                                         $vandal_sf->save();
 
@@ -2066,12 +2066,12 @@ class ImportController extends BaseController {
 
                                             $current_sort_staff += 1;
                                         }
-                                        $staff->gaji_per_orang = $row[$i][1];
-                                        $staff->bil_pekerja = $row[$i][2];
-                                        $staff->tunggakan = $row[$i][3];
-                                        $staff->semasa = $row[$i][4];
-                                        $staff->hadapan = $row[$i][5];
-                                        $staff->tertunggak = $row[$i][6];
+                                        $staff->gaji_per_orang = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                        $staff->bil_pekerja = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                        $staff->tunggakan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
+                                        $staff->semasa = (empty($row[$i][4]) == false)? $row[$i][4] : 0;
+                                        $staff->hadapan = (empty($row[$i][5]) == false)? $row[$i][5] : 0;
+                                        $staff->tertunggak = (empty($row[$i][6]) == false)? $row[$i][6] : 0;
 
                                         $staff->save();
                                     }
@@ -2097,10 +2097,10 @@ class ImportController extends BaseController {
 
                                             $current_sort_admin += 1;
                                         }
-                                        $admin->tunggakan = $row[$i][1];
-                                        $admin->semasa = $row[$i][2];
-                                        $admin->hadapan = $row[$i][3];
-                                        $admin->tertunggak = $row[$i][4];
+                                        $admin->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
+                                        $admin->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
+                                        $admin->hadapan = (empty($row[$i][3]) == false)? $row[$i][3] : 0;
+                                        $admin->tertunggak = (empty($row[$i][4]) == false)? $row[$i][4] : 0;
 
                                         $admin->save();
                                     }

@@ -17,7 +17,7 @@ $count = 0;
                 </tr>
                 <tr>
                     <td class="text-left">JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])</td>
-                    <td class="text-right"></td>
+                    <td class="text-right" id="{{$prefix}}kutipan"></td>
                     <td class="text-left">JUMLAH SINKING FUND SEPATUT DIKUTIP SEMASA</td>
                     <td class="text-right">{{ number_format($sfreport['fee_semasa'], 2) }}</td>
                 </tr>
@@ -42,17 +42,20 @@ $count = 0;
                 <tr>
                     <td>&nbsp;</td>
                     <td class="text-left">{{ $reportSFs['name'] }}</td>
-                    <td class="text-right">{{ number_format($reportSFs['amount'], 2) }}</td>
+                    <td class="text-right">
+                        <input type="text" class="{{ $prefix . $reportSFs['report_key'] }}" name="{{ $prefix }}amount[]" value="{{ $reportSFs['amount'] }}" hidden>
+                        {{ number_format($reportSFs['amount'], 2) }}
+                    </td>
                 </tr>
                 @endforeach
                 <tr>
                     <td>&nbsp;</td>
                     <td class="text-left">JUMLAH TELAH BAYAR [B]</td>
-                    <td class="text-right"></td>
+                    <td class="text-right" id="{{$prefix . 'bayar_total'}}"></td>
                 </tr>
                 <tr>
                     <td class="text-left" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - (B)</td>
-                    <td class="text-right"></td>
+                    <td class="text-right" id="{{$prefix . 'lebihan_kurangan'}}"></td>
                 </tr>
             </tbody>
         </table>
@@ -75,3 +78,33 @@ $count = 0;
         </table>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        calculateSFR();
+    });
+
+    function calculateSFR() {
+        var sfr_kutipan = $("[id=income_total_income_2]").val();
+        $('#{{ $prefix }}kutipan').text(parseFloat(sfr_kutipan).toFixed(2));
+
+        var sfr_total_income = $("[id=income_semasa_2]").val();
+        $('#{{ $prefix }}total_income').text(parseFloat(sfr_total_income).toFixed(2));
+
+        var sfr_repair = $("[id=repair_singkingfund_total_all]").val();
+        $('#{{ $prefix }}repair').text(parseFloat(sfr_repair).toFixed(2));
+
+        var sfr_vandalisme = $("[id=singkingfund_total_all]").val();
+        $('#{{ $prefix }}vandalisme').text(parseFloat(sfr_vandalisme).toFixed(2));
+
+        var sfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
+        var sfr_bayar_total = 0;
+        for (var i = 0; i < sfr_bayar.length; i++) {
+            sfr_bayar_total += Number(sfr_bayar[i].value);
+        }
+        $('#{{ $prefix }}bayar_total').text(parseFloat(sfr_bayar_total).toFixed(2));
+
+        var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_bayar_total);
+        $('#{{ $prefix }}lebihan_kurangan').text(parseFloat(sfr_lebihan_kurangan).toFixed(2));
+    }
+</script>

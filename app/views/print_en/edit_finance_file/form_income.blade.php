@@ -34,7 +34,10 @@ $prefix = 'income_';
                 $total_all += $total_income;
                 ?>
                 <tr id="income_row{{ ++$count }}">
-                    <td class="text-center">{{ $count }}</td>
+                    <td class="text-center">
+                        {{ $count }}
+                        <input id="income_total_income_{{$count}}" value="{{ $total_income }}" hidden >
+                    </td>
                     <td class="text-left">{{ $incomeFiles['name'] }}</td>
                     <td class="text-right">{{ number_format($incomeFiles['tunggakan'], 2) }}</td>
                     <td class="text-right">{{ number_format($incomeFiles['semasa'], 2) }}</td>
