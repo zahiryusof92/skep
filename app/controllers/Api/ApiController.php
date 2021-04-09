@@ -185,7 +185,7 @@ class ApiController extends BaseController {
 
         $username = Request::get('username');
         $password = Request::get('password');
-
+        
         $auth = Auth::attempt(array(
                     'username' => $username,
                     'password' => $password,
@@ -196,7 +196,7 @@ class ApiController extends BaseController {
 
         if ($auth) {
             $user = User::find(Auth::user()->id);
-
+            
             if ($user) {
                 if ($user->isCOBManagerPaid() || $user->isCOBPaid()) {
                     // Audit Trail
@@ -2065,4 +2065,30 @@ class ApiController extends BaseController {
         return Response::json($response);
     }
 
+    public function getDashboardData() {
+        
+        $user = JWTAuth::parseToken()->authenticate();
+        if($user) {
+
+            $data = Files::getDashboardData();
+            
+            $result[] = array(
+                'data' => $data
+            );
+
+            $response = array(
+                'error' => false,
+                'message' => 'Success',
+                'result' => $result,
+            );
+            return Response::json($response);
+        }
+        $response = array(
+            'error' => true,
+            'message' => 'Fail',
+            'result' => false,
+        );
+
+        return Response::json($response);
+    }
 }

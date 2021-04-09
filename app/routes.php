@@ -902,6 +902,9 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::post('/editRating', 'Api\ApiController@editRating');
 
     Route::post('/search', 'Api\ApiController@search');
+
+
+    Route::get('getDashboardData', 'Api\ApiController@getDashboardData');
 });
 
 Route::group(array('prefix' => 'api/v2'), function() {
