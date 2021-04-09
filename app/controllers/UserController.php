@@ -89,6 +89,15 @@ class UserController extends BaseController {
 
     //member login start
     public function login($cob = '') {
+        if (empty($cob)) {
+            $actual_link = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+            if (strpos($actual_link, 'mbs') !== false) {
+                $cob = 'mbs';
+            } else if (strpos($actual_link, 'mps') !== false) {
+                $cob = 'mps';
+            }
+        }
 
         if (!empty($cob)) {
             $company = Company::where('short_name', $cob)->where('is_deleted', 0)->first();
@@ -166,7 +175,6 @@ class UserController extends BaseController {
                         // $response = json_decode((string) ((new KCurl())->requestPost($headers, 
                         //                         $url,
                         //                         json_encode($api_data))));
-                        
                         // if(empty($response->status) == false && $response->status == 200) {
                         //     setcookie("eai_session", $response->token, time() + (86400 *24*7));
                         // }
@@ -239,7 +247,6 @@ class UserController extends BaseController {
                     // $response = json_decode((string) ((new KCurl())->requestPost($headers, 
                     //                         $url,
                     //                         json_encode($api_data))));
-                    
                     // if(empty($response->status) == false && $response->status == 200) {
                     //     setcookie("eai_session", $response->token, time() + (86400 *24*7));
                     // }
@@ -306,33 +313,32 @@ class UserController extends BaseController {
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
             //                         $url,
             //                         json_encode($data))));
-                                    
             // if(empty($response->status) == false && $response->status == 200) {
-            
-                $user = User::find(Auth::User()->id);
-                if (count($user) > 0) {
-                    $user->full_name = $data['name'];
-                    $user->email = $data['email'];
-                    $user->phone_no = $data['phone_no'];
-                    $success = $user->save();
-    
-                    /**
-                     * call back to vendor portal to update info
-                     */
-                    (new OAuth())->updateSimpleProfile($user);
-                    
-                    if ($success) {
-                        
-                        Session::forget('full_name');
-                        Session::put('full_name', $user['full_name']);
-    
-                        print "true";
-                    } else {
-                        print "false";
-                    }
+
+            $user = User::find(Auth::User()->id);
+            if (count($user) > 0) {
+                $user->full_name = $data['name'];
+                $user->email = $data['email'];
+                $user->phone_no = $data['phone_no'];
+                $success = $user->save();
+
+                /**
+                 * call back to vendor portal to update info
+                 */
+                (new OAuth())->updateSimpleProfile($user);
+
+                if ($success) {
+
+                    Session::forget('full_name');
+                    Session::put('full_name', $user['full_name']);
+
+                    print "true";
                 } else {
                     print "false";
                 }
+            } else {
+                print "false";
+            }
             // } else {
             //     print "false";
             // }
@@ -382,24 +388,22 @@ class UserController extends BaseController {
         if (Request::ajax()) {
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['profile']['password_update'];
-            
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
             //                         $url,
             //                         json_encode($data))));
-                                    
             // if(empty($response->status) == false && $response->status == 200) {
 
-                $new_password = $data['new_password'];
+            $new_password = $data['new_password'];
 
-                $user = User::find(Auth::User()->id);
-                $user->password = Hash::make($new_password);
-                $success = $user->save();
+            $user = User::find(Auth::User()->id);
+            $user->password = Hash::make($new_password);
+            $success = $user->save();
 
-                if ($success) {
-                    print "true";
-                } else {
-                    print "false";
-                }
+            if ($success) {
+                print "true";
+            } else {
+                print "false";
+            }
             // } else {
             //     print "false";
             // }

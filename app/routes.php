@@ -11,6 +11,33 @@
   |
  */
 
+/*
+ * LPHS REPORT START
+ */
+Route::get('/lphs/finance/{council}/{year}', 'LPHSController@finance');
+Route::get('/lphs/developer/{council}', 'LPHSController@developer');
+Route::get('/lphs/strata/{council}', 'LPHSController@strata');
+Route::get('/lphs/jmb/{council}', 'LPHSController@jmb');
+Route::get('/lphs/mc/{council}', 'LPHSController@mc');
+Route::get('/lphs/agent/{council}', 'LPHSController@agent');
+Route::get('/lphs/others/{council}', 'LPHSController@others');
+Route::get('/lphs/agm/{council}', 'LPHSController@agm');
+Route::get('/lphs/owner/{council}', 'LPHSController@owner');
+Route::get('/lphs/tenant/{council}', 'LPHSController@tenant');
+
+/*
+ * LPHS REPORT END
+ */
+
+/*
+ * Clear cache
+ */
+Route::get('clear-cache', function () {
+    Artisan::call('view:clear');
+
+    return Redirect::to('/');
+});
+
 //change COB
 Route::get('/changeCOB/{id}', 'UserController@changeCOB');
 
