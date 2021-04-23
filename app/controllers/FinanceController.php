@@ -24,8 +24,8 @@ class FinanceController extends BaseController {
 
         $viewData = array(
             'title' => trans('app.menus.cob.add_finance_file_list'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'add_finance_list',
             'user_permission' => $user_permission,
             'image' => "",
@@ -508,8 +508,8 @@ class FinanceController extends BaseController {
         
         $viewData = array(
             'title' => trans('app.menus.cob.finance_file_list'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_file_list',
             'user_permission' => $user_permission,
             'cob' => $cob,
@@ -664,8 +664,8 @@ class FinanceController extends BaseController {
 
         $viewData = array(
             'title' => trans('app.menus.cob.edit_finance_file_list'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_file_list',
             'user_permission' => $user_permission,
             'image' => "",
@@ -1529,8 +1529,8 @@ class FinanceController extends BaseController {
 
         $viewData = array(
             'title' => trans('app.menus.cob.finance_support'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'file' => $file,
@@ -1609,8 +1609,8 @@ class FinanceController extends BaseController {
 
         $viewData = array(
             'title' => trans('app.menus.cob.add_finance_support'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'image' => "",
@@ -1677,8 +1677,8 @@ class FinanceController extends BaseController {
 
         $viewData = array(
             'title' => trans('app.menus.cob.edit_finance_support'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'image' => "",

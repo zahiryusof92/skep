@@ -18,6 +18,8 @@ class HomeController extends BaseController {
 
     public function home() {
 
+
+
         if (Auth::user()->isLawyer()) {
             $viewData = array(
                 'title' => trans('app.app_name_short'),
@@ -413,7 +415,82 @@ class HomeController extends BaseController {
                                 $button = '';
                                 if (AccessGroup::hasUpdate(9)) {
                                     $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                }
+
+                                return $button;
+                            })
+                            ->make(true);
+        }
+    }
+
+    public function getInsuranceRemainder() {
+        $expiry = Carbon::now()->addMonth()->toDateString();
+
+        $condition = function ($query1) use ($expiry) {
+            $query1->where('plc_validity_to', '<=', $expiry);
+            $query1->where('files.is_deleted', 0);
+            $query1->where('insurance.is_deleted', 0);
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
+                        ->select(['insurance.*'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            } else {
+                $file = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
+                        ->select(['insurance.*'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($condition);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
+                        ->select(['insurance.*'])
+                        ->where($condition);
+            } else {
+                $file = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
+                        ->select(['insurance.*'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($condition);
+            }
+        }
+
+        if ($file) {
+            return Datatables::of($file)
+                            ->addColumn('cob', function ($model) {
+                                return ($model->file_id ? $model->file->company->short_name : '-');
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return ($model->file_id ? $model->file->file_no : '');
+                            })
+                            ->addColumn('strata', function ($model) {
+                                return ($model->file_id ? $model->file->strata->name : '-');
+                            })
+                            ->addColumn('provider', function ($model) {
+                                return ($model->insurance_provider_id ? $model->provider->name : '-');
+                            })
+                            ->editColumn('plc_validity_to', function ($model) {
+                                return ($model->plc_validity_to ? $model->plc_validity_to : '-');
+                            })
+                            ->addColumn('action', function ($model) {
+                                $button = '';
+                                if (AccessGroup::hasUpdate(46)) {
+                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AdminController@updateInsurance', ['All', $model->id]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                                 }
 
                                 return $button;
@@ -427,10 +504,10 @@ class HomeController extends BaseController {
 
         if (!Auth::user()->getAdmin()) {
             $memo = Memo::where('publish_date', '<=', $today)
-                    ->where(function($query) use ($today) {
+                    ->where(function ($query) use ($today) {
                         $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
                     })
-                    ->where(function($query) {
+                    ->where(function ($query) {
                         $query->where('company_id', Auth::user()->company_id)->orWhere('company_id', 99);
                     })
                     ->where('is_active', 1)
@@ -438,17 +515,17 @@ class HomeController extends BaseController {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $memo = Memo::where('publish_date', '<=', $today)
-                        ->where(function($query) use ($today) {
+                        ->where(function ($query) use ($today) {
                             $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
                         })
                         ->where('is_active', 1)
                         ->where('is_deleted', 0);
             } else {
                 $memo = Memo::where('publish_date', '<=', $today)
-                        ->where(function($query) use ($today) {
+                        ->where(function ($query) use ($today) {
                             $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
                         })
-                        ->where(function($query) {
+                        ->where(function ($query) {
                             $query->where('company_id', Session::get('admin_cob'))->orWhere('company_id', 99);
                         })
                         ->where('is_active', 1)

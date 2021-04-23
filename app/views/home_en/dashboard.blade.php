@@ -216,7 +216,43 @@ foreach ($user_permission as $permission) {
                                                 <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.year') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.action') }}</th>
+                                                <th style="width:5%;">{{ trans('app.forms.action') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>{{ trans('app.forms.insurance') }}</h4>
+                    <div>
+                        <ul class="nav nav-pills nav-justified" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tabInsurance1" role="tab">{{ trans('app.forms.insurance_reminder') }}</a>
+                            </li>
+                        </ul>
+                        <section class="panel panel-pad">
+                            <div class="tab-content padding-vertical-20">
+                                <div class="tab-pane active" id="tabInsurance1" role="tabpanel">
+                                    <table class="table table-hover table-own table-striped" id="insurance_remainder" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                                <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                                <th style="width:25%;">{{ trans('app.forms.scheme_name') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.insurance_provider') }}</th>
+                                                <th style="width:15%;">{{ trans('app.forms.validity') }} {{ trans("app.forms.to") }}</th>
+                                                <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -367,6 +403,24 @@ foreach ($user_permission as $permission) {
                 {data: 'phone_no', name: 'ajk_details.phone_no'},
                 {data: 'month', name: 'ajk_details.month'},
                 {data: 'year', name: 'ajk_details.year'},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
+            ]
+        });
+
+        $('#insurance_remainder').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('HomeController@getInsuranceRemainder') }}",
+            lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
+            pageLength: 5,
+            order: [0, 'asc'],
+            responsive: true,
+            columns: [
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'file_no', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
+                {data: 'provider', name: 'insurance_provider.name'},
+                {data: 'plc_validity_to', name: 'insurance.plc_validity_to'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
