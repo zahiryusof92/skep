@@ -1,6 +1,49 @@
 <?php
 
+use Carbon\Carbon;
+
 class LPHSController extends BaseController {
+
+    public function jmbFiles($cob = null) {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    $counter = 1;
+                    foreach ($council->files as $files) {
+                        if (!$files->jmb) {
+                            $result[$council->short_name][$files->id] = [
+                                'username' => strtolower($council->short_name) . '_' . $counter++,
+                                'password' => 'P@ssw0rd',
+                                'full_name' => '',
+                                'email' => '',
+                                'phone_no' => '',
+                                'start_date' => Carbon::now()->format('Y-m-d'),
+                                'end_date' => Carbon::now()->addMonth(2)->format('Y-m-d'),
+                                'file_id' => $files->id,
+                                'company_id' => $council->id,
+                                'developer_id' => null,
+                                'remarks' => '',
+                                'is_active' => 1,
+                                'is_deleted' => 0,
+                                'status' => 1,
+                                'approved_by' => Auth::user()->id,                                
+                            ];
+                        } else {
+//                            $result[$council->short_name][$files->id] = [
+//                                $files->jmb
+//                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+    }
 
     public function getYear() {
         $min_year = Files::where('year', '>', 0)->min('year');
@@ -325,6 +368,83 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Strata');
     }
 
+    public function management($cob) {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                /*
+                 * Management
+                 */
+                $mc = 0;
+                $jmb = 0;
+                $agent = 0;
+                $others = 0;
+
+                if ($council->files) {
+                    foreach ($council->files as $files) {
+                        /*
+                         * Management
+                         */
+                        if ($files->management) {
+                            /*
+                             * JMB
+                             */
+                            if ($files->management->is_jmb) {
+                                if ($files->management->is_mc && $files->managementMC) {
+                                    
+                                } else if ($files->managementJMB) {
+                                    $jmb++;
+                                }
+                            }
+
+                            /*
+                             * MC
+                             */
+                            if ($files->management->is_mc) {
+                                if ($files->managementMC) {
+                                    $mc++;
+                                }
+                            }
+
+                            /*
+                             * Agent
+                             */
+                            if ($files->management->is_agent) {
+                                if ($files->managementAgent) {
+                                    $agent++;
+                                }
+                            }
+
+                            /*
+                             * Others
+                             */
+                            if ($files->management->is_others) {
+                                if ($files->managementOthers) {
+                                    $others++;
+                                }
+                            }
+                        }
+                    }
+                }
+                $total_council = count($council->files);
+
+                $result[$council->short_name] = [
+                    trans('Council') => $council->short_name,
+                    trans('Total Files') => $total_council,
+                    trans('Total JMB') => $jmb,
+                    trans('Total MC') => $mc,
+                    trans('Total Agent') => $agent,
+                    trans('Total Others') => $others
+                ];
+            }
+        }
+
+        return $this->result($result, $filename = 'Management');
+    }
+
     public function jmb($cob) {
         $result = [];
 
@@ -357,6 +477,15 @@ class LPHSController extends BaseController {
                          * Management
                          */
                         if ($files->management) {
+                            /*
+                             * MC
+                             */
+                            if ($files->management->is_mc) {
+                                if ($files->managementMC) {
+                                    continue;
+                                }
+                            }
+
                             /*
                              * JMB
                              */

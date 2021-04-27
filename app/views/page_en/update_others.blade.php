@@ -259,7 +259,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.water_meter') }}</label>
-                                                                    <select id="water_meter" class="form-control">
+                                                                    <select id="water_meter" class="form-control select2">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="none" {{ ($other_details && $other_details->water_meter == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
                                                                         <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
@@ -465,8 +465,8 @@ foreach ($user_permission as $permission) {
                     indian_composition: indian_composition,
                     others_composition: others_composition,
                     foreigner_composition: foreigner_composition,
-                    file_id : "{{ $file->id }}",
-                    id: "{{$other_details ? $other_details->id : ''}}"
+                    file_id : '{{ $file->id }}',
+                    reference_id: '{{ ($other_details->reference_id ? $other_details->reference_id : $other_details->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

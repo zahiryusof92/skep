@@ -115,10 +115,7 @@
 
         <!-- BlockUI -->
         <script src="{{ asset('assets/common/js/blockUI/blockUI.js')}}"></script>
-
-        <!-- Google Map -->
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlZt8wLuj_w2qWw03-qEYWdWf5nPnvokA&callback=initMap" type="text/javascript"></script>
-
+        
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XT54L4WFR"></script>
         <script>

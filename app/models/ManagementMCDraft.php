@@ -1,8 +1,8 @@
 <?php
 
-class ManagementAgent extends Eloquent {
+class ManagementMCDraft extends Eloquent {
 
-    protected $table = 'management_agent';
+    protected $table = 'management_mc_draft';
 
     /**
      * The attributes that are mass assignable.
@@ -10,7 +10,7 @@ class ManagementAgent extends Eloquent {
      * @var array
      */
     protected $fillable = [
-        'file_id'
+        'file_id',
     ];
 
     public function countries() {

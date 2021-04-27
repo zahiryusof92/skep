@@ -56,7 +56,7 @@ foreach ($user_permission as $permission) {
                                 <section class="panel panel-pad">
                                     <form id="management padding-vertical-20">
                                         @if (count($management_developer) <= 0)
-                                            <div class="row padding-vertical-20">
+                                            <div class="row margin-top-20">
                                                 <div class="col-lg-12">
                                                     <input type="checkbox" name="is_developer" id="is_developer"/>
                                                     <label><h4> {{ trans('app.forms.developer') }}</h4></label>
@@ -1596,8 +1596,8 @@ foreach ($user_permission as $permission) {
                     others_fax_no: others_fax_no,
                     others_email: others_email,
                     //id
-                    management_id: '{{$management->id}}',
-                    file_id: '{{$file->id}}'
+                    file_id: '{{ $file->id }}',
+                    reference_id: '{{ ($management->reference_id ? $management->reference_id : $management->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

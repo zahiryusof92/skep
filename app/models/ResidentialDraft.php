@@ -1,8 +1,8 @@
 <?php
 
-class Residential extends Eloquent {
+class ResidentialDraft extends Eloquent {
 
-    protected $table = 'residential_block';
+    protected $table = 'residential_block_draft';
 
     /**
      * The attributes that are mass assignable.
@@ -10,7 +10,7 @@ class Residential extends Eloquent {
      * @var array
      */
     protected $fillable = [
-        'file_id'
+        'file_id',
     ];
 
     public function mfUnit() {
@@ -19,10 +19,6 @@ class Residential extends Eloquent {
 
     public function sfUnit() {
         return $this->belongsTo('UnitOption', 'sinking_fund_option');
-    }
-    
-    public function draft() {
-        return $this->hasOne('ResidentialDraft', 'reference_id');
     }
 
 }

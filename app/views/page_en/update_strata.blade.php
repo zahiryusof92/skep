@@ -974,7 +974,9 @@ foreach ($user_permission as $permission) {
             }
         });
     });
+</script>
 
+<script>
     function updateStrata() {
         changes = false;
         $("#loading").css("display", "inline-block");
@@ -1008,7 +1010,7 @@ foreach ($user_permission as $permission) {
                 strata_file_url = $("#strata_file_url").val(),
                 strata_total_share_unit = $("#strata_total_share_unit").val(),
                 strata_ccc_no = $("#strata_ccc_no").val(),
-                strata_ccc_date = $("#strata_ccc_date").val(),
+                strata_ccc_date = $("#strata_ccc_date").val(),                
                 //residential
                 residential_unit_no = $("#residential_unit_no").val(),
                 residential_maintenance_fee = $("#residential_maintenance_fee").val(),
@@ -1093,8 +1095,7 @@ foreach ($user_permission as $permission) {
             $.ajax({
                 url: "{{ URL::action('AdminController@submitUpdateStrata') }}",
                 type: "POST",
-                data: {
-                    file_id: '{{$file->id}}',
+                data: {                    
                     strata_title: strata_title,
                     strata_name: strata_name,
                     strata_parliament: strata_parliament,
@@ -1127,7 +1128,6 @@ foreach ($user_permission as $permission) {
                     is_residential: is_residential,
                     is_commercial: is_commercial,
                     strata_file_url: strata_file_url,
-                    strata_id: '{{$strata->id}}',
                     //residential
                     residential_unit_no: residential_unit_no,
                     residential_maintenance_fee: residential_maintenance_fee,
@@ -1166,7 +1166,9 @@ foreach ($user_permission as $permission) {
                     gated: gated,
                     gated_unit: gated_unit,
                     others: others,
-                    facility_id: '{{$facility->id}}'
+                    file_id: '{{ $file->id }}',
+                    strata_reference_id: '{{ ($strata->reference_id ? $strata->reference_id : $strata->id) }}',
+                    facility_reference_id: '{{ ($facility->reference_id ? $facility->reference_id : $facility->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1189,7 +1191,9 @@ foreach ($user_permission as $permission) {
             });
         }
     }
+</script>
 
+<script>
     function findDUN() {
         $.ajax({
             url: "{{URL::action('AdminController@findDUN')}}",

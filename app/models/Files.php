@@ -3,6 +3,10 @@
 class Files extends Eloquent {
 
     protected $table = 'files';
+    
+    public function jmb() {
+        return $this->hasOne('User', 'file_id');
+    }
 
     public function owner() {
         return $this->hasMany('Buyer', 'file_id');

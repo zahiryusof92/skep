@@ -4,6 +4,15 @@ class ManagementDeveloper extends Eloquent {
 
     protected $table = 'management_developer';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'file_id'
+    ];
+
     public function countries() {
         return $this->belongsTo('Country', 'country');
     }

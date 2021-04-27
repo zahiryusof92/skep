@@ -24,6 +24,9 @@ Route::get('/lphs/others/{council}', 'LPHSController@others');
 Route::get('/lphs/agm/{council}', 'LPHSController@agm');
 Route::get('/lphs/owner/{council}', 'LPHSController@owner');
 Route::get('/lphs/tenant/{council}', 'LPHSController@tenant');
+Route::get('/lphs/management/{council}', 'LPHSController@management');
+
+Route::get('/lphs/jmbFiles/{council}', 'LPHSController@jmbFiles');
 
 /*
  * LPHS REPORT END
