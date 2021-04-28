@@ -37,7 +37,7 @@ if (!Auth::user()->getAdmin()) {
                     {{ trans('app.menus.home') }}
                 </a>
             </li>
-
+            
             @if (Module::hasAccess(1))
             <li class="left-menu-list-submenu" id="cob_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -78,10 +78,22 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
+                </ul>
+            </li>
+            @endif
+            
+            @if (Module::hasAccess(1))
+            <li class="left-menu-list-submenu" id="finance_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/finance.png')}}"/>
+                    {{ trans('app.menus.finance.maintenance') }}
+                </a>
+                <ul class="left-menu-list list-unstyled" id="finance_main">
+
                     @if (AccessGroup::hasAccess(37))
                     <li id="add_finance_list">
                         <a class="left-menu-link" href="{{URL::action('FinanceController@addFinanceFileList')}}">
-                            {{ trans('app.menus.cob.add_finance_file_list') }}
+                            {{ trans('app.menus.finance.add_finance_file_list') }}
                         </a>
                     </li>
                     @endif
@@ -89,7 +101,7 @@ if (!Auth::user()->getAdmin()) {
                     @if (AccessGroup::hasAccess(38))
                     <li id="finance_file_list">
                         <a class="left-menu-link" href="{{URL::action('FinanceController@financeList')}}">
-                            {{ trans('app.menus.cob.finance_file_list') }}
+                            {{ trans('app.menus.finance.finance_file_list') }}
                         </a>
                     </li>
                     @endif
@@ -97,7 +109,7 @@ if (!Auth::user()->getAdmin()) {
                     @if (AccessGroup::hasAccess(39))
                     <li id="finance_support_list">
                         <a class="left-menu-link" href="{{URL::action('FinanceController@financeSupport')}}">
-                            {{ trans('app.menus.cob.finance_support') }}
+                            {{ trans('app.menus.finance.finance_support') }}
                         </a>
                     </li>
                     @endif
