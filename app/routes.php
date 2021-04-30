@@ -79,6 +79,7 @@ Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMembe
 Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
 Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 Route::get('/home/getInsuranceRemainder', 'HomeController@getInsuranceRemainder')->before('authMember');
+Route::get('/home/getFileDraftList', 'HomeController@getFileDraftList')->before('authMember');
 
 // --- COB Maintenance --- //
 //file prefix

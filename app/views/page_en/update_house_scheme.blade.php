@@ -32,12 +32,15 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $file->id)}}">{{ trans('app.forms.management') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
                             </li>
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
                             </li>
@@ -50,41 +53,13 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
+                            @endif
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="house_scheme" role="tabpanel">
+
                                 <section class="panel panel-pad">
-
-                                    @if (Auth::user()->getAdmin() || Auth::user()->isCOBManager())
-                                    @if ($house_scheme->draft)
-                                    <div class="row padding-vertical-10">                                    
-                                        <div class="col-lg-12">
-                                            <h4>{{ trans('app.forms.detail') }} <small>{{ trans('DRAFT')}}</small></h4>
-                                            <!-- House Form -->
-                                            <form id="house">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label><span style="color: red;">*</span> {{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="name" value="{{ $house_scheme->draft->name }}">
-                                                            <div id="name_error" style="display:none;"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    @endif
-
-                                    <div class="row padding-vertical-10">                                    
+                                    <div class="row padding-vertical-20">                                    
                                         <div class="col-lg-12">
                                             <h4>{{ trans('app.forms.detail') }}</h4>
                                             <!-- House Form -->
@@ -234,12 +209,27 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <hr/>
                                             </form>
                                         </div>
                                     </div>
+                                    
+                                    <div class="form-actions">
+                                        <?php if ($update_permission == 1) { ?>
+                                            <button type="button" class="btn btn-own" id="submit_button" onclick="updateHouseScheme()">{{ trans('app.forms.submit') }}</button>
+                                        <?php } ?>
+
+                                        @if ($file->is_active != 2)
+                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
+                                        @else
+                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileListBeforeVP')}}'">{{ trans('app.forms.cancel') }}</button>
+                                        @endif
+                                    </div>
                                 </section>
+                                <!-- End House Form -->
+
+                                @if (!Auth::user()->isJMB())
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="row">
@@ -303,59 +293,54 @@ foreach ($user_permission as $permission) {
                                                         $("#form_housing_scheme").on('submit', (function (e) {
                                                             changes = false;
                                                             e.preventDefault();
+                                                        $('#loading_housing_scheme').css("display", "inline-block");
+                                                        $("#submit_button_housing_scheme").attr("disabled", "disabled");
+                                                        $("#cancel_button_housing_scheme").attr("disabled", "disabled");
+                                                        $("#housing_scheme_error").css("display", "none");
+                                                        var housing_scheme = $("#housing_scheme").val();
+                                                        var error = 0;
+                                                        if (housing_scheme.trim() == "") {
+                                                        $("#housing_scheme_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"User"]) }}</span>');
+                                                        $("#housing_scheme_error").css("display", "block");
+                                                        error = 1;
+                                                        }
 
-                                                            $('#loading_housing_scheme').css("display", "inline-block");
-                                                            $("#submit_button_housing_scheme").attr("disabled", "disabled");
-                                                            $("#cancel_button_housing_scheme").attr("disabled", "disabled");
-                                                            $("#housing_scheme_error").css("display", "none");
-
-                                                            var housing_scheme = $("#housing_scheme").val();
-
-                                                            var error = 0;
-
-                                                            if (housing_scheme.trim() == "") {
-                                                                $("#housing_scheme_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"User"]) }}</span>');
-                                                                $("#housing_scheme_error").css("display", "block");
-                                                                error = 1;
-                                                            }
-
-                                                            if (error == 0) {
-                                                                var formData = new FormData(this);
-                                                                $.ajax({
-                                                                    url: "{{ URL::action('AdminController@submitAddHousingScheme') }}",
-                                                                    type: "POST",
-                                                                    data: formData,
-                                                                    async: true,
-                                                                    contentType: false, // The content type used when sending data to the server.
-                                                                    cache: false, // To unable request pages to be cached
-                                                                    processData: false,
-                                                                    success: function (data) { //function to be called if request succeeds
-                                                                        $('#loading_housing_scheme').css("display", "none");
-                                                                        $("#submit_button_housing_scheme").removeAttr("disabled");
-                                                                        $("#cancel_button_housing_scheme").removeAttr("disabled");
-
-                                                                        if (data.trim() === "true") {
-                                                                            $("#houseSchemeForm").modal("hide");
-                                                                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                                                                                window.location.reload();
-                                                                            });
-                                                                        } else if (data.trim() === "data_exist") {
-                                                                            $("#housing_scheme_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"User"]) }}</span>');
-                                                                            $("#housing_scheme_error").css("display", "block");
-                                                                        } else {
-                                                                            $("#houseSchemeForm").modal("hide");
-                                                                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>", function () {
-                                                                                window.location.reload();
-                                                                            });
-                                                                        }
-                                                                    }
-                                                                });
-                                                            } else {
-                                                                $("#housing_scheme").focus();
+                                                        if (error == 0) {
+                                                        var formData = new FormData(this);
+                                                        $.ajax({
+                                                        url: "{{ URL::action('AdminController@submitAddHousingScheme') }}",
+                                                                type: "POST",
+                                                                data: formData,
+                                                                async: true,
+                                                                contentType: false, // The content type used when sending data to the server.
+                                                                cache: false, // To unable request pages to be cached
+                                                                processData: false,
+                                                                success: function (data) { //function to be called if request succeeds
                                                                 $('#loading_housing_scheme').css("display", "none");
                                                                 $("#submit_button_housing_scheme").removeAttr("disabled");
                                                                 $("#cancel_button_housing_scheme").removeAttr("disabled");
-                                                            }
+                                                                if (data.trim() === "true") {
+                                                                $("#houseSchemeForm").modal("hide");
+                                                                bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                                                                window.location.reload();
+                                                                });
+                                                                } else if (data.trim() === "data_exist") {
+                                                                $("#housing_scheme_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"User"]) }}</span>');
+                                                                $("#housing_scheme_error").css("display", "block");
+                                                                } else {
+                                                                $("#houseSchemeForm").modal("hide");
+                                                                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>", function () {
+                                                                window.location.reload();
+                                                                });
+                                                                }
+                                                                }
+                                                        });
+                                                        } else {
+                                                        $("#housing_scheme").focus();
+                                                        $('#loading_housing_scheme').css("display", "none");
+                                                        $("#submit_button_housing_scheme").removeAttr("disabled");
+                                                        $("#cancel_button_housing_scheme").removeAttr("disabled");
+                                                        }
                                                         }));
                                                     </script>
                                                 <?php } ?>
@@ -377,26 +362,13 @@ foreach ($user_permission as $permission) {
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                                </section>
+                                                </section>                                                
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <form>
-                                    <div class="form-actions">
-                                        <?php if ($update_permission == 1) { ?>
-                                            <button type="button" class="btn btn-own" id="submit_button" onclick="updateHouseScheme()">{{ trans('app.forms.submit') }}</button>
-                                        <?php } ?>
-
-                                        @if ($file->is_active != 2)
-                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileList')}}'">{{ trans('app.forms.cancel') }}</button>
-                                        @else
-                                        <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@fileListBeforeVP')}}'">{{ trans('app.forms.cancel') }}</button>
-                                        @endif
-                                    </div>
-                                </form>
-                                <!-- End House Form -->
+                                @endif
+                                
                             </div>
                         </div>
                     </div>

@@ -31,7 +31,7 @@ if (!Auth::user()->getAdmin()) {
         </div>
         <ul class="left-menu-list left-menu-list-root list-unstyled">
 
-            <li class="left-menu-list-link hidden-md-up">
+            <li class="left-menu-list-link" id="home">
                 <a class="left-menu-link" href="{{ URL::action('HomeController@home') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/home.png')}}"/>
                     {{ trans('app.menus.home') }}

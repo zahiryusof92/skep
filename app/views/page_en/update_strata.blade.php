@@ -32,12 +32,15 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $file->id)}}">{{ trans('app.forms.management') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
                             </li>
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
                             </li>
@@ -50,9 +53,11 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
+                            @endif
                         </ul>
                         <div class="tab-content padding-vertical-20">
-                            <div class="tab-pane active" id="strata" role="tabpanel">
+                            <div class="tab-pane active" id="strata" role="tabpanel">                                    
+                                
                                 <!-- strata Form -->
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">

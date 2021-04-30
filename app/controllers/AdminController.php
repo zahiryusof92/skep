@@ -920,6 +920,8 @@ class AdminController extends BaseController {
             if (Auth::user()->isJMB()) {
                 $house_scheme = HouseSchemeDraft::firstOrNew(array('file_id' => $files->id));
                 $house_scheme->reference_id = $data['reference_id'];
+
+                $this->createOrUpdateFileDraft($files);
             } else {
                 $house_scheme = HouseScheme::firstOrNew(array('file_id' => $files->id));
             }
@@ -1186,6 +1188,8 @@ class AdminController extends BaseController {
 
                 $strata->reference_id = $data['strata_reference_id'];
                 $facility->reference_id = $data['facility_reference_id'];
+
+                $this->createOrUpdateFileDraft($files);
             } else {
                 $strata = Strata::firstOrNew(array('file_id' => $files->id));
                 $commercial = Commercial::firstOrNew(array('file_id' => $files->id));
@@ -1470,11 +1474,6 @@ class AdminController extends BaseController {
         if (Auth::user()->isJMB()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
             $management = ManagementDraft::where('file_id', $files->id)->first();
-            $management_developer = ManagementDeveloperDraft::where('file_id', $files->id)->first();
-            $management_jmb = ManagementJMBDraft::where('file_id', $files->id)->first();
-            $management_mc = ManagementMCDraft::where('file_id', $files->id)->first();
-            $management_agent = ManagementAgentDraft::where('file_id', $files->id)->first();
-            $management_others = ManagementOthersDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
 
             if (count($house_scheme) <= 0) {
@@ -1482,11 +1481,6 @@ class AdminController extends BaseController {
             }
             if (count($management) <= 0) {
                 $management = Management::where('file_id', $files->id)->first();
-                $management_developer = ManagementDeveloper::where('file_id', $files->id)->first();
-                $management_jmb = ManagementJMB::where('file_id', $files->id)->first();
-                $management_mc = ManagementMC::where('file_id', $files->id)->first();
-                $management_agent = ManagementAgent::where('file_id', $files->id)->first();
-                $management_others = ManagementOthers::where('file_id', $files->id)->first();
             }
             if (count($image) <= 0) {
                 $image = OtherDetails::where('file_id', $files->id)->first();
@@ -1494,11 +1488,6 @@ class AdminController extends BaseController {
         } else {
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
             $management = Management::where('file_id', $files->id)->first();
-            $management_developer = ManagementDeveloper::where('file_id', $files->id)->first();
-            $management_jmb = ManagementJMB::where('file_id', $files->id)->first();
-            $management_mc = ManagementMC::where('file_id', $files->id)->first();
-            $management_agent = ManagementAgent::where('file_id', $files->id)->first();
-            $management_others = ManagementOthers::where('file_id', $files->id)->first();
             $image = OtherDetails::where('file_id', $files->id)->first();
         }
 
@@ -1520,11 +1509,6 @@ class AdminController extends BaseController {
             'agent' => $agent,
             'house_scheme' => $house_scheme,
             'management' => $management,
-            'management_developer' => $management_developer,
-            'management_jmb' => $management_jmb,
-            'management_mc' => $management_mc,
-            'management_agent' => $management_agent,
-            'management_others' => $management_others,
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
 
@@ -1552,6 +1536,8 @@ class AdminController extends BaseController {
                 $mc = ManagementMCDraft::firstOrNew(array('file_id' => $files->id));
                 $agent = ManagementAgentDraft::firstOrNew(array('file_id' => $files->id));
                 $others = ManagementOthersDraft::firstOrNew(array('file_id' => $files->id));
+
+                $this->createOrUpdateFileDraft($files);
             } else {
                 $management = Management::firstOrNew(array('file_id' => $files->id));
                 $developer = ManagementDeveloper::firstOrNew(array('file_id' => $files->id));
@@ -1805,24 +1791,15 @@ class AdminController extends BaseController {
     }
 
     public function monitoring($id) {
+        if (Auth::user()->isJMB()) {
+            return Redirect::to('updateFile/others/' . $id);
+        }
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail($id);
-
-        if (Auth::user()->isJMB()) {
-            $monitoring = MonitoringDraft::where('file_id', $files->id)->first();
-            $image = OtherDetailsDraft::where('file_id', $files->id)->first();
-            if (count($monitoring) <= 0) {
-                $monitoring = Monitoring::where('file_id', $files->id)->first();
-            }
-            if ($image) {
-                $image = OtherDetails::where('file_id', $files->id)->first();
-            }
-        } else {
-            $monitoring = Monitoring::where('file_id', $files->id)->first();
-            $image = OtherDetails::where('file_id', $files->id)->first();
-        }
-
+        $monitoring = Monitoring::where('file_id', $files->id)->first();
+        $image = OtherDetails::where('file_id', $files->id)->first();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
 
         $viewData = array(
@@ -3219,6 +3196,8 @@ class AdminController extends BaseController {
             if (Auth::user()->isJMB()) {
                 $others = OtherDetailsDraft::firstOrNew(array('file_id' => $files->id));
                 $others->reference_id = $data['reference_id'];
+
+                $this->createOrUpdateFileDraft($files);
             } else {
                 $others = OtherDetails::firstOrNew(array('file_id' => $files->id));
             }
@@ -3444,7 +3423,11 @@ class AdminController extends BaseController {
     }
 
     public function scoring($id) {
-//get user permission
+        if (Auth::user()->isJMB()) {
+            return Redirect::back();
+        }
+
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -3810,7 +3793,11 @@ class AdminController extends BaseController {
     }
 
     public function buyer($id) {
-//get user permission
+        if (Auth::user()->isJMB()) {
+            return Redirect::back();
+        }
+
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
@@ -4260,9 +4247,13 @@ class AdminController extends BaseController {
         }
     }
 
-//document
+    //document
     public function document($id) {
-//get user permission
+        if (Auth::user()->isJMB()) {
+            return Redirect::back();
+        }
+
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
@@ -5095,7 +5086,7 @@ class AdminController extends BaseController {
                 if ($accessgroups->is_paid == 1) {
                     $is_paid = trans('app.forms.yes');
                 }
-                
+
                 $is_admin = trans('app.forms.no');
                 if ($accessgroups->is_admin == 1) {
                     $is_admin = trans('app.forms.yes');
@@ -7905,6 +7896,10 @@ class AdminController extends BaseController {
 
     //insurance
     public function insurance($id) {
+        if (Auth::user()->isJMB()) {
+            return Redirect::back();
+        }
+        
         //$filename = Files::getFileName();
         //return "<pre>" . return_r($filename, true) . "</pre>";
         //get user permission
@@ -8401,6 +8396,16 @@ class AdminController extends BaseController {
             // }
         } else {
             return "false";
+        }
+    }
+
+    public function createOrUpdateFileDraft($files) {
+        if (Auth::user()->isJMB()) {
+            $draft = FileDrafts::firstOrNew(array('file_id' => $files->id));
+            $draft->created_by = Auth::user()->id;
+            $draft->is_deleted = 0;
+            $draft->updated_at = date('Y-m-d H:i:s');
+            $draft->save();
         }
     }
 

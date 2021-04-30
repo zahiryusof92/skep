@@ -4,45 +4,15 @@ use Carbon\Carbon;
 
 class LPHSController extends BaseController {
 
-    public function jmbFiles($cob = null) {
-        $result = [];
-
-        $councils = $this->council($cob);
-
-        if ($councils) {
-            foreach ($councils as $council) {
-                if ($council->files) {
-                    $counter = 1;
-                    foreach ($council->files as $files) {
-                        if (!$files->jmb) {
-                            $result[$council->short_name][$files->id] = [
-                                'username' => strtolower($council->short_name) . '_' . $counter++,
-                                'password' => 'P@ssw0rd',
-                                'full_name' => '',
-                                'email' => '',
-                                'phone_no' => '',
-                                'start_date' => Carbon::now()->format('Y-m-d'),
-                                'end_date' => Carbon::now()->addMonth(2)->format('Y-m-d'),
-                                'file_id' => $files->id,
-                                'company_id' => $council->id,
-                                'developer_id' => null,
-                                'remarks' => '',
-                                'is_active' => 1,
-                                'is_deleted' => 0,
-                                'status' => 1,
-                                'approved_by' => Auth::user()->id,                                
-                            ];
-                        } else {
-//                            $result[$council->short_name][$files->id] = [
-//                                $files->jmb
-//                            ];
-                        }
-                    }
-                }
-            }
+    function randomString($length = 8) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
 
-        return '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+        return $randomString;
     }
 
     public function getYear() {
@@ -67,14 +37,90 @@ class LPHSController extends BaseController {
         return $councils;
     }
 
-    public function result($result, $filename) {
-        Excel::create($filename, function ($excel) use ($filename, $result) {
-            $excel->sheet($filename, function ($sheet) use ($result) {
-                $sheet->fromArray($result);
-            });
-        })->export('xlsx');
+    public function result($result, $filename, $output = 'excel') {
+        if ($output == 'excel') {
+            Excel::create($filename, function ($excel) use ($filename, $result) {
+                $excel->sheet($filename, function ($sheet) use ($result) {
+                    $sheet->fromArray($result);
+                });
+            })->export('xlsx');
+        }
 
         return '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+    }
+
+    public function jmbFiles($cob = null) {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    $file_lists = $council->files->take(1);
+
+                    foreach ($file_lists as $files) {
+                        if (!$files->jmb) {
+
+                            $council_name = $council->short_name;
+                            $file_no = $files->file_no;
+                            $file_name = $files->strata->name;
+                            $username = strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
+                            $password = $this->randomString();
+                            $full_name = $files->file_no;
+                            $email = '';
+                            $phone_no = '';
+                            $role = Role::where('name', Role::JMB)->pluck('id');
+                            $start_date = Carbon::now()->format('Y-m-d');
+                            $end_date = Carbon::now()->addMonth(2)->format('Y-m-d');
+                            $file_id = $files->id;
+                            $company_id = $council->id;
+                            $developer_id = null;
+                            $remarks = 'Created by System';
+                            $is_active = 1;
+                            $is_deleted = 0;
+                            $status = 1;
+                            $approved_by = Auth::user()->id;
+                            $approved_at = Carbon::now()->format('Y-m-d H:i:s');
+
+                            $user = new User();
+                            $user->username = $username;
+                            $user->password = Hash::make($password);
+                            $user->full_name = $full_name;
+                            $user->email = $email;
+                            $user->phone_no = $phone_no;
+                            $user->role = $role;
+                            $user->start_date = $start_date;
+                            $user->end_date = $end_date;
+                            $user->file_id = $file_id;
+                            $user->company_id = $company_id;
+                            $user->developer_id = $developer_id;
+                            $user->remarks = $remarks;
+                            $user->is_active = $is_active;
+                            $user->is_deleted = $is_deleted;
+                            $user->status = $status;
+                            $user->approved_by = $approved_by;
+                            $user->approved_at = $approved_at;
+                            $success = $user->save();
+
+                            if ($success) {
+                                $result[$files->id] = [
+                                    trans('app.menus.reporting.council') => $council_name,
+                                    trans('app.forms.file_no') => $file_no,
+                                    trans('app.forms.file_name') => $file_name,
+                                    trans('app.forms.username') => $username,
+                                    trans('app.forms.password') => $password,
+                                    trans('app.forms.date_start') => $start_date,
+                                    trans('app.forms.date_end') => $end_date
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'JMB_' . $council->short_name, $output = 'excel');
     }
 
     public function finance($cob = null, $year = null) {

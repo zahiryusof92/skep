@@ -23,7 +23,7 @@ class FinanceController extends BaseController {
         $year = Files::getVPYear();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.add_finance_file_list'),
+            'title' => trans('app.menus.finance.add_finance_file_list'),
             'panel_nav_active' => 'finance_panel',
             'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'add_finance_list',
@@ -507,7 +507,7 @@ class FinanceController extends BaseController {
         $year = Files::getVPYear();
         
         $viewData = array(
-            'title' => trans('app.menus.cob.finance_file_list'),
+            'title' => trans('app.menus.finance.finance_file_list'),
             'panel_nav_active' => 'finance_panel',
             'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_file_list',
@@ -663,7 +663,7 @@ class FinanceController extends BaseController {
         $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.edit_finance_file_list'),
+            'title' => trans('app.menus.finance.edit_finance_file_list'),
             'panel_nav_active' => 'finance_panel',
             'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_file_list',
@@ -1528,7 +1528,7 @@ class FinanceController extends BaseController {
         $file = Files::where('is_deleted', 0)->get();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.finance_support'),
+            'title' => trans('app.menus.finance.finance_support'),
             'panel_nav_active' => 'finance_panel',
             'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
@@ -1608,7 +1608,7 @@ class FinanceController extends BaseController {
         }
 
         $viewData = array(
-            'title' => trans('app.menus.cob.add_finance_support'),
+            'title' => trans('app.menus.finance.add_finance_support'),
             'panel_nav_active' => 'finance_panel',
             'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
@@ -1676,7 +1676,7 @@ class FinanceController extends BaseController {
         $financeSupportData = FinanceSupport::where('id', $id)->first();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.edit_finance_support'),
+            'title' => trans('app.menus.finance.edit_finance_support'),
             'panel_nav_active' => 'finance_panel',
             'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',

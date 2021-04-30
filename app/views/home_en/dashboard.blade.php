@@ -87,7 +87,6 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-
             <div class="row">
                 <div class="col-lg-6">
                     <div class="margin-bottom-50 chart-custom">
@@ -102,6 +101,100 @@ foreach ($user_permission as $permission) {
                     </div>
                 </div>
             </div>
+
+            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>{{ trans('app.forms.memo') }}</h4>
+                    <section class="panel panel-pad">                
+                        <div class="row margin-top-20">
+                            <div class="col-lg-12 text-center">
+                                <form>
+                                    <div class="row">
+                                        @if (Auth::user()->getAdmin())
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ trans('app.forms.cob') }}</label>
+                                                <select id="company" class="form-control select2">
+                                                    @if (count($cob) > 1)
+                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                    @endif
+                                                    @foreach ($cob as $companies)
+                                                    <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @endif
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>{{ trans('app.forms.year') }}</label>
+                                                <select id="year" class="form-control select2">
+                                                    @foreach ($year as $value => $years)
+                                                    <option value="{{ $value }}">{{ $years }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-own table-striped" id="file_draft_list" width="100%">
+                                    <thead>
+                                        <tr>                                
+                                            <th style="width:35%;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:35%;">{{ trans('app.forms.name') }}</th>
+                                            <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                            <th style="width:10%;">{{ trans('app.forms.year') }}</th>
+                                            <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <hr/>
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var oTable = $('#file_draft_list').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ajax: "{{ URL::action('HomeController@getFileDraftList') }}",
+                        lengthMenu: [[5, 25, 50, 100, -1], [5, 25, 50, 100, "All"]],
+                        pageLength: 5,
+                        order: [[2, "asc"], [1, 'asc']],
+                        responsive: false,
+                        scrollX: true,
+                        columns: [
+                            {data: 'file_no', name: 'files.file_no'},
+                            {data: 'strata', name: 'strata.name'},
+                            {data: 'cob', name: 'company.short_name'},
+                            {data: 'year', name: 'strata.year'},
+                            {data: 'action', name: 'action', orderable: false, searchable: false}
+                        ]
+                    });
+
+                    $('#company').on('change', function () {
+                        oTable.columns(2).search(this.value).draw();
+                    });
+                    $('#year').on('change', function () {
+                        oTable.columns(3).search(this.value).draw();
+                    });
+                });
+            </script>
+            @endif
 
             <div class="row">
                 <div class="col-lg-12">
