@@ -37,12 +37,6 @@ return array(
             "add_cob_file_prefix" => "Add COB File Prefix",
             "update_cob_file_prefix" => "Update COB File Prefix",
             "update_cob_file" => "Update COB File",
-            "add_finance_file_list" => "Add Finance File List",
-            "edit_finance_file_list" => "Edit Finance File List",
-            "finance_file_list" => "Finance File List",
-            "finance_support" => "Finance Support",
-            "add_finance_support" => "Add Finance Support",
-            "edit_finance_support" => "Edit Finance Support",
         ),
         "finance" => array(
             "maintenance" => "Finance",

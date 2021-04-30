@@ -1,8 +1,8 @@
 <?php
 
-class Strata extends Eloquent {
+class StrataDraft extends Eloquent {
 
-    protected $table = 'strata';
+    protected $table = 'strata_draft';
 
     /**
      * The attributes that are mass assignable.
@@ -71,10 +71,6 @@ class Strata extends Eloquent {
         }
 
         return "(Not Set)";
-    }
-    
-    public function draft() {
-        return $this->hasOne('StrataDraft', 'reference_id');
     }
 
 }

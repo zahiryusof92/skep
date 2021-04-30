@@ -32,12 +32,15 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $file->id)}}">{{ trans('app.forms.management') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
                             </li>
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link active custom-tab" href="{{URL::action('AdminController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
                             </li>
@@ -50,9 +53,11 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
+                            @endif
                         </ul>
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="others_tab" role="tabpanel">
+
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
@@ -73,8 +78,6 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                    <form id="upload_others_image" enctype="multipart/form-data" method="post" action="{{url('uploadOthersImage')}}" autocomplete="off">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -113,8 +116,6 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                         @endif
-                                                    </form>
-                                                    <form>
                                                         @if ($other_details && $other_details->latitude != "0")
                                                         <div class="row">
                                                             <div class="col-md-12">
@@ -259,7 +260,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.water_meter') }}</label>
-                                                                    <select id="water_meter" class="form-control">
+                                                                    <select id="water_meter" class="form-control select2">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="none" {{ ($other_details && $other_details->water_meter == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
                                                                         <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
@@ -329,6 +330,7 @@ foreach ($user_permission as $permission) {
                                         </div>
                                     </div>
                                 </section>
+                                
                             </div>
                         </div>
                     </div>
@@ -465,8 +467,8 @@ foreach ($user_permission as $permission) {
                     indian_composition: indian_composition,
                     others_composition: others_composition,
                     foreigner_composition: foreigner_composition,
-                    file_id : "{{ $file->id }}",
-                    id: "{{$other_details ? $other_details->id : ''}}"
+                    file_id : '{{ $file->id }}',
+                    reference_id: '{{ ($other_details->reference_id ? $other_details->reference_id : $other_details->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

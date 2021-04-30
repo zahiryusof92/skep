@@ -18,7 +18,14 @@ class HomeController extends BaseController {
 
     public function home() {
 
-
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        if (empty(Session::get('admin_cob'))) {
+            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            $cob = Company::where('id', Session::get('admin_cob'))->get();
+        }
+        $year = Files::getVPYear();
+        $data = Files::getDashboardData();
 
         if (Auth::user()->isLawyer()) {
             $viewData = array(
@@ -32,9 +39,6 @@ class HomeController extends BaseController {
             return View::make('home_en.dashboard_lawyer', $viewData);
         }
 
-        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $data = Files::getDashboardData();
-
         $viewData = array(
             'title' => trans('app.app_name_short'),
             'panel_nav_active' => 'home_panel',
@@ -42,6 +46,8 @@ class HomeController extends BaseController {
             'sub_nav_active' => 'home',
             'user_permission' => $user_permission,
             'data' => $data,
+            'cob' => $cob,
+            'year' => $year,
             'image' => ""
         );
 
@@ -568,6 +574,82 @@ class HomeController extends BaseController {
 
             print $result;
         }
+    }
+
+    public function getFileDraftList() {
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0)
+                        ->where('file_drafts.is_deleted', 0);
+            } else {
+                $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0)
+                        ->where('file_drafts.is_deleted', 0);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0)
+                        ->where('file_drafts.is_deleted', 0);
+            } else {
+                $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_active', '!=', 2)
+                        ->where('files.is_deleted', 0)
+                        ->where('file_drafts.is_deleted', 0);
+            }
+        }
+
+        return Datatables::of($file)
+                        ->addColumn('cob', function ($model) {
+                            return ($model->company_id ? $model->company->short_name : '-');
+                        })
+                        ->editColumn('file_no', function ($model) {
+                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $model->id) . "'>" . $model->file_no . "</a>";
+                        })
+                        ->addColumn('strata', function ($model) {
+                            return ($model->strata_id ? $model->strata->name : '-');
+                        })
+                        ->addColumn('year', function ($model) {
+                            return ($model->strata->year != '0' ? $model->strata->year : '');
+                        })
+                        ->addColumn('active', function ($model) {
+                            if ($model->is_active == 1) {
+                                $is_active = trans('app.forms.yes');
+                            } else {
+                                $is_active = trans('app.forms.no');
+                            }
+
+                            return $is_active;
+                        })
+                        ->addColumn('action', function ($model) {
+                            $button = '';
+                            if (AccessGroup::hasUpdate(9)) {
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                            }
+
+                            return $button;
+                        })
+                        ->make(true);
     }
 
     public function getCompanyName() {

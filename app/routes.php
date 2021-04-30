@@ -24,6 +24,9 @@ Route::get('/lphs/others/{council}', 'LPHSController@others');
 Route::get('/lphs/agm/{council}', 'LPHSController@agm');
 Route::get('/lphs/owner/{council}', 'LPHSController@owner');
 Route::get('/lphs/tenant/{council}', 'LPHSController@tenant');
+Route::get('/lphs/management/{council}', 'LPHSController@management');
+
+Route::get('/lphs/jmbFiles/{council}', 'LPHSController@jmbFiles');
 
 /*
  * LPHS REPORT END
@@ -76,6 +79,7 @@ Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMembe
 Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
 Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 Route::get('/home/getInsuranceRemainder', 'HomeController@getInsuranceRemainder')->before('authMember');
+Route::get('/home/getFileDraftList', 'HomeController@getFileDraftList')->before('authMember');
 
 // --- COB Maintenance --- //
 //file prefix

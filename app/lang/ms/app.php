@@ -37,12 +37,6 @@ return array(
             "add_cob_file_prefix" => "Tambah Awalan Fail COB",
             "update_cob_file_prefix" => "Kemas Kini Awalan Fail COB",
             "update_cob_file" => "Kemas Kini Fail COB",
-            "add_finance_file_list" => "Tambah Senarai Fail Kewangan",
-            "edit_finance_file_list" => "Kemas Kini Senarai Fail Kewangan",
-            "finance_file_list" => "Senarai Fail Kewangan",
-            "finance_support" => "Bantuan Kewangan",
-            "add_finance_support" => "Tambah Bantuan Kewangan",
-            "edit_finance_support" => "Kemas Kini Bantuan Kewangan",
         ),
         "finance" => array(
             "maintenance" => "Kewangan",
