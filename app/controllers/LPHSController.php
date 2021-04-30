@@ -57,7 +57,7 @@ class LPHSController extends BaseController {
         if ($councils) {
             foreach ($councils as $council) {
                 if ($council->files) {
-                    $file_lists = $council->files->take(1);
+                    $file_lists = $council->files;
 
                     foreach ($file_lists as $files) {
                         if (!$files->jmb) {
@@ -67,7 +67,7 @@ class LPHSController extends BaseController {
                             $file_name = $files->strata->name;
                             $username = strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
                             $password = $this->randomString();
-                            $full_name = $files->file_no;
+                            $full_name = strtoupper(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
                             $email = '';
                             $phone_no = '';
                             $role = Role::where('name', Role::JMB)->pluck('id');
@@ -120,7 +120,7 @@ class LPHSController extends BaseController {
             }
         }
 
-        return $this->result($result, $filename = 'JMB_' . $council->short_name, $output = 'excel');
+        return $this->result($result, $filename = 'JMB_' . $council->short_name);
     }
 
     public function finance($cob = null, $year = null) {
