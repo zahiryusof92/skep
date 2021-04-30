@@ -119,7 +119,7 @@ class LPHSController extends BaseController {
                 }
             }
         }
-
+      
         return $this->result($result, $filename = 'JMB_' . $council->short_name);
     }
 
