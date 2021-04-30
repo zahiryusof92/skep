@@ -75,7 +75,6 @@ class LPHSController extends BaseController {
                             $end_date = Carbon::now()->addMonth(2)->format('Y-m-d');
                             $file_id = $files->id;
                             $company_id = $council->id;
-                            $developer_id = null;
                             $remarks = 'Created by System';
                             $is_active = 1;
                             $is_deleted = 0;
@@ -94,7 +93,6 @@ class LPHSController extends BaseController {
                             $user->end_date = $end_date;
                             $user->file_id = $file_id;
                             $user->company_id = $company_id;
-                            $user->developer_id = $developer_id;
                             $user->remarks = $remarks;
                             $user->is_active = $is_active;
                             $user->is_deleted = $is_deleted;
