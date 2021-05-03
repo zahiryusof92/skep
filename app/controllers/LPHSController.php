@@ -57,14 +57,6 @@ class LPHSController extends BaseController {
         return 'Success delete';
     }
 
-    public function removeJMB($cob) {
-        $council = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->firstOrFail();
-
-        User::where('company_id', $council->id)->where('remarks', 'Created by System')->delete();
-
-        return 'Success delete';
-    }
-
     public function createJMB($cob) {
         $council = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->firstOrFail();
         $filename = 'JMB_' . $council->short_name;
