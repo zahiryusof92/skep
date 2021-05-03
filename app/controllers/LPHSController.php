@@ -48,77 +48,89 @@ class LPHSController extends BaseController {
 
         return '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
     }
+    
+    public function removeJMB($cob) {
+        $council = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->firstOrFail();
+        
+        User::where('company_id', $council->id)->where('remarks', 'Created by System')->delete();
+        
+        return 'Success delete';
+    }
 
-    public function jmbFiles($cob = null) {
-        $result = [];
+    public function createJMB($cob) {
+        $council = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->firstOrFail();
+        $filename = 'JMB_' . $council->short_name;
 
-        $councils = $this->council($cob);
+        $orders = Files::where('company_id', $council->id)->where('is_deleted', 0)->orderBy('id');
+        Excel::create($filename, function ($excel) use ($orders, $council) {
+            $excel->sheet($council->short_name, function ($sheet) use ($orders, $council) {
 
-        if ($councils) {
-            foreach ($councils as $council) {
-                if ($council->files) {
-                    $file_lists = $council->files;
+                $sheet->appendRow(array(
+                    trans('app.menus.reporting.council'),
+                    trans('app.forms.file_no'),
+                    trans('app.forms.file_name'),
+                    trans('app.forms.username'),
+                    trans('app.forms.password'),
+                    trans('app.forms.date_start'),
+                    trans('app.forms.date_end')
+                ));
 
-                    foreach ($file_lists as $files) {
-                        if (!$files->jmb) {
+                $orders->chunk(500, function ($rows) use ($sheet, $council) {
+                    foreach ($rows as $files) {
+                        $council_name = $council->short_name;
+                        $file_no = $files->file_no;
+                        $file_name = $files->strata->name;
+                        $username = strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
+                        $password = $this->randomString();
+                        $full_name = strtoupper(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
+                        $email = '';
+                        $phone_no = '';
+                        $role = Role::where('name', Role::JMB)->pluck('id');
+                        $start_date = Carbon::now()->format('Y-m-d');
+                        $end_date = Carbon::now()->addMonth(2)->format('Y-m-d');
+                        $file_id = $files->id;
+                        $company_id = $council->id;
+                        $remarks = 'Created by System';
+                        $is_active = 1;
+                        $is_deleted = 0;
+                        $status = 1;
+                        $approved_by = Auth::user()->id;
+                        $approved_at = Carbon::now()->format('Y-m-d H:i:s');
 
-                            $council_name = $council->short_name;
-                            $file_no = $files->file_no;
-                            $file_name = $files->strata->name;
-                            $username = strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
-                            $password = $this->randomString();
-                            $full_name = strtoupper(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
-                            $email = '';
-                            $phone_no = '';
-                            $role = Role::where('name', Role::JMB)->pluck('id');
-                            $start_date = Carbon::now()->format('Y-m-d');
-                            $end_date = Carbon::now()->addMonth(2)->format('Y-m-d');
-                            $file_id = $files->id;
-                            $company_id = $council->id;
-                            $remarks = 'Created by System';
-                            $is_active = 1;
-                            $is_deleted = 0;
-                            $status = 1;
-                            $approved_by = Auth::user()->id;
-                            $approved_at = Carbon::now()->format('Y-m-d H:i:s');
+                        $user = new User();
+                        $user->username = $username;
+                        $user->password = Hash::make($password);
+                        $user->full_name = $full_name;
+                        $user->email = $email;
+                        $user->phone_no = $phone_no;
+                        $user->role = $role;
+                        $user->start_date = $start_date;
+                        $user->end_date = $end_date;
+                        $user->file_id = $file_id;
+                        $user->company_id = $company_id;
+                        $user->remarks = $remarks;
+                        $user->is_active = $is_active;
+                        $user->is_deleted = $is_deleted;
+                        $user->status = $status;
+                        $user->approved_by = $approved_by;
+                        $user->approved_at = $approved_at;
+                        $success = $user->save();
 
-                            $user = new User();
-                            $user->username = $username;
-                            $user->password = Hash::make($password);
-                            $user->full_name = $full_name;
-                            $user->email = $email;
-                            $user->phone_no = $phone_no;
-                            $user->role = $role;
-                            $user->start_date = $start_date;
-                            $user->end_date = $end_date;
-                            $user->file_id = $file_id;
-                            $user->company_id = $company_id;
-                            $user->remarks = $remarks;
-                            $user->is_active = $is_active;
-                            $user->is_deleted = $is_deleted;
-                            $user->status = $status;
-                            $user->approved_by = $approved_by;
-                            $user->approved_at = $approved_at;
-                            $success = $user->save();
-
-                            if ($success) {
-                                $result[$files->id] = [
-                                    trans('app.menus.reporting.council') => $council_name,
-                                    trans('app.forms.file_no') => $file_no,
-                                    trans('app.forms.file_name') => $file_name,
-                                    trans('app.forms.username') => $username,
-                                    trans('app.forms.password') => $password,
-                                    trans('app.forms.date_start') => $start_date,
-                                    trans('app.forms.date_end') => $end_date
-                                ];
-                            }
+                        if ($success) {
+                            $sheet->appendRow(array(
+                                $council_name,
+                                $file_no,
+                                $file_name,
+                                $username,
+                                $password,
+                                $start_date,
+                                $end_date
+                            ));
                         }
                     }
-                }
-            }
-        }
-      
-        return $this->result($result, $filename = 'JMB_' . $council->short_name);
+                });
+            });
+        })->download('xlsx');
     }
 
     public function finance($cob = null, $year = null) {
