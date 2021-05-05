@@ -70,13 +70,16 @@ class LPHSController extends BaseController {
                     if ($file_lists) {
                         foreach ($file_lists as $files) {
                             if (!$files->jmb) {
+                                
+                                $raw_file_no = preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no);
+                                $generated_file_no = str_replace(' ', '', $raw_file_no);
 
                                 $council_name = $council->short_name;
                                 $file_no = $files->file_no;
                                 $file_name = $files->strata->name;
-                                $username = strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
+                                $username = strtolower($generated_file_no);
                                 $password = $this->randomString();
-                                $full_name = strtoupper(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
+                                $full_name = strtoupper($generated_file_no);
                                 $email = '';
                                 $phone_no = '';
                                 $role = Role::where('name', Role::JMB)->pluck('id');
