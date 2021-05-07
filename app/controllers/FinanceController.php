@@ -1566,6 +1566,7 @@ class FinanceController extends BaseController {
 
                 $data_raw = array(
                     "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
+                    $files->strata->strataName(),
                     date('d/m/Y', strtotime($filelists->date)),
                     $filelists->name,
                     number_format($filelists->amount, 2),

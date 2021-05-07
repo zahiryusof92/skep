@@ -20,9 +20,5 @@ class Residential extends Eloquent {
     public function sfUnit() {
         return $this->belongsTo('UnitOption', 'sinking_fund_option');
     }
-    
-    public function draft() {
-        return $this->hasOne('ResidentialDraft', 'reference_id');
-    }
 
 }

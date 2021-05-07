@@ -98,7 +98,7 @@ foreach ($user_permission as $permission) {
                                         </div>
                                     </section>
                                     
-                                    @if (Auth::user()->getAdmin() || strtoupper(Auth::user()->getRole->name) == 'JMB')
+                                    @if (Auth::user()->getAdmin() || Auth::user()->isJMB())
                                     <hr/>
                                     <section class="panel panel-pad">
                                         <div class="row padding-vertical-20">
@@ -158,7 +158,7 @@ foreach ($user_permission as $permission) {
                                     </section>
                                     @endif
                                     
-                                    @if (Auth::user()->getAdmin() || strtoupper(Auth::user()->getRole->name) == 'MC')
+                                    @if (Auth::user()->getAdmin() || Auth::user()->isMC())
                                     <hr/>
                                     <section class="panel panel-pad">
                                         <div class="row padding-vertical-20">

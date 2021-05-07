@@ -78,6 +78,8 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </form>
+                                                    <form id="upload_others_image" enctype="multipart/form-data" method="post" action="{{url('uploadOthersImage')}}" autocomplete="off">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -116,6 +118,8 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                         @endif
+                                                    </form>
+                                                    <form>
                                                         @if ($other_details && $other_details->latitude != "0")
                                                         <div class="row">
                                                             <div class="col-md-12">
@@ -330,7 +334,7 @@ foreach ($user_permission as $permission) {
                                         </div>
                                     </div>
                                 </section>
-                                
+
                             </div>
                         </div>
                     </div>
