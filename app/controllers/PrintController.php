@@ -1129,7 +1129,7 @@ class PrintController extends BaseController {
                             $file->file_no,
                             $file->strata->name,
                             'Agent',
-                            $file->managementAgent->name,
+                            $file->managementAgent->agent,
                             ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
                             $file->managementAgent->email,
                             $file->managementAgent->phone_no
@@ -1189,7 +1189,7 @@ class PrintController extends BaseController {
                             $file->file_no,
                             $file->strata->name,
                             'Agent',
-                            $file->managementAgent->name,
+                            $file->managementAgent->agent,
                             ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
                             $file->managementAgent->email,
                             $file->managementAgent->phone_no

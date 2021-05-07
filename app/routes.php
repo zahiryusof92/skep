@@ -79,7 +79,6 @@ Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMembe
 Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
 Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 Route::get('/home/getInsuranceRemainder', 'HomeController@getInsuranceRemainder')->before('authMember');
-Route::get('/home/getFileDraftList', 'HomeController@getFileDraftList')->before('authMember');
 
 // --- COB Maintenance --- //
 //file prefix
@@ -92,6 +91,19 @@ Route::post('/inactiveFilePrefix', 'AdminController@inactiveFilePrefix')->before
 Route::get('/updateFilePrefix/{id}', 'AdminController@updateFilePrefix')->before('authMember');
 Route::post('/submitUpdateFilePrefix', 'AdminController@submitUpdateFilePrefix')->before('authMember');
 Route::post('/deleteFilePrefix/{id}', 'AdminController@deleteFilePrefix')->before('authMember');
+
+//draft files
+Route::get('/draft/fileList', 'DraftController@fileList')->before('authMember');
+Route::get('/draft/getFileList', 'DraftController@getFileList')->before('authMember');
+Route::get('/draft/houseScheme/{id}', 'DraftController@houseScheme')->before('authMember');
+Route::post('/draft/submitHouseScheme', 'DraftController@submitHouseScheme')->before('authMember');
+Route::get('/draft/strata/{id}', 'DraftController@strata')->before('authMember');
+Route::post('/draft/submitStrata', 'DraftController@submitStrata')->before('authMember');
+Route::get('/draft/management/{id}', 'DraftController@management')->before('authMember');
+Route::post('/draft/submitManagement', 'DraftController@submitManagement')->before('authMember');
+Route::get('/draft/others/{id}', 'DraftController@others')->before('authMember');
+Route::post('/draft/submitOthers', 'DraftController@submitOthers')->before('authMember');
+Route::post('/draft/deleteFile', 'DraftController@deleteFile')->before('authMember');
 
 //add file
 Route::get('/addFile', 'AdminController@addFile')->before('authMember');

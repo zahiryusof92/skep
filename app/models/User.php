@@ -131,7 +131,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         return false;
     }
-    
+
     public function isMC() {
         if (stripos($this->getRole->name, Role::MC) !== FALSE) {
             return true;

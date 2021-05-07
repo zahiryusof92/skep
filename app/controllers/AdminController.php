@@ -439,6 +439,7 @@ class AdminController extends BaseController {
 
 // file list
     public function fileList() {
+//        return '<pre>' . print_r(Files::categoryList(), true) . '</pre>';
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -449,6 +450,8 @@ class AdminController extends BaseController {
 
         $file = Files::where('is_deleted', 0)->get();
         $year = Files::getVPYear();
+        $parkList = Files::parkList();
+        $categoryList = Files::categoryList();
 
         $viewData = array(
             'title' => trans('app.menus.cob.file_list'),
@@ -459,6 +462,8 @@ class AdminController extends BaseController {
             'cob' => $cob,
             'file' => $file,
             'year' => $year,
+            'parkList' => $parkList,
+            'categoryList' => $categoryList,
             'image' => ""
         );
 
@@ -470,6 +475,8 @@ class AdminController extends BaseController {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -478,6 +485,8 @@ class AdminController extends BaseController {
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', '!=', 2)
@@ -487,12 +496,16 @@ class AdminController extends BaseController {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.is_active', '!=', 2)
                         ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', '!=', 2)
@@ -512,6 +525,12 @@ class AdminController extends BaseController {
                         })
                         ->addColumn('year', function ($model) {
                             return ($model->strata->year != '0' ? $model->strata->year : '');
+                        })
+                        ->addColumn('park', function ($model) {
+                            return ($model->strata->park > '0' ? $model->strata->parks->description : '');
+                        })
+                        ->addColumn('category', function ($model) {
+                            return ($model->strata->category > '0' ? $model->strata->categories->description : '');
                         })
                         ->addColumn('active', function ($model) {
                             if ($model->is_active == 1) {
@@ -557,6 +576,8 @@ class AdminController extends BaseController {
 
         $file = Files::where('is_deleted', 0)->get();
         $year = Files::getVPYear();
+        $parkList = Files::parkList();
+        $categoryList = Files::categoryList();
 
         $viewData = array(
             'title' => trans('app.menus.cob.file_list_before_vp'),
@@ -567,6 +588,8 @@ class AdminController extends BaseController {
             'cob' => $cob,
             'file' => $file,
             'year' => $year,
+            'parkList' => $parkList,
+            'categoryList' => $categoryList,
             'image' => ""
         );
 
@@ -578,6 +601,8 @@ class AdminController extends BaseController {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -586,6 +611,8 @@ class AdminController extends BaseController {
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', 2)
@@ -595,12 +622,16 @@ class AdminController extends BaseController {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.is_active', 2)
                         ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->join('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', 2)
@@ -620,6 +651,12 @@ class AdminController extends BaseController {
                         })
                         ->addColumn('year', function ($model) {
                             return ($model->strata->year != '0' ? $model->strata->year : '');
+                        })
+                        ->addColumn('park', function ($model) {
+                            return ($model->strata->parks > '0' ? $model->strata->parks->description : '');
+                        })
+                        ->addColumn('category', function ($model) {
+                            return ($model->strata->category > '0' ? $model->strata->categories->description : '');
                         })
                         ->addColumn('active', function ($model) {
                             if ($model->is_active == 1) {
@@ -7899,7 +7936,7 @@ class AdminController extends BaseController {
         if (Auth::user()->isJMB()) {
             return Redirect::back();
         }
-        
+
         //$filename = Files::getFileName();
         //return "<pre>" . return_r($filename, true) . "</pre>";
         //get user permission

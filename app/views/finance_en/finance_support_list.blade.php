@@ -28,11 +28,12 @@ foreach ($user_permission as $permission) {
                         <table class="table table-hover table-own table-striped" id="filelist" width="100%" style="font-size: 13px;">
                             <thead>
                                 <tr>
-                                    <th style="width:30%;">{{ trans('app.forms.file_no') }}.</th>
-                                    <th style="width:20%;">{{ trans('app.forms.date') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:25%;">{{ trans('app.forms.strata') }}</th> 
+                                    <th style="width:10%;">{{ trans('app.forms.date') }}</th>
                                     <th style="width:30%;">{{ trans('app.forms.donation_name') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.donation_amount') }}</th>
-                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                    <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +56,13 @@ foreach ($user_permission as $permission) {
             "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
             "order": [[0, "asc"]],
             "scrollX": true,
-            "responsive": false
+            "responsive": false,
+            "aoColumnDefs": [
+                {
+                    "bSortable": false,
+                    "aTargets": [-1]
+                }
+            ]
         });
     });
 

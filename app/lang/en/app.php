@@ -37,6 +37,7 @@ return array(
             "add_cob_file_prefix" => "Add COB File Prefix",
             "update_cob_file_prefix" => "Update COB File Prefix",
             "update_cob_file" => "Update COB File",
+            "file_draft_list" => "COB File Draft List",
         ),
         "finance" => array(
             "maintenance" => "Finance",
@@ -561,6 +562,8 @@ return array(
         "code" => "Code",
         "insurance" => "Insurance",
         "insurance_reminder" => "Insurance Reminder",
+        "file_draft" => "Draft COB File",
+        "draft" => "Draft Created by JMB",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -850,6 +853,7 @@ return array(
         "add_defect" => "Add Complaint",
         "add_insurance" => "Add Insurance",
         "reset" => "Reset",
+        "accept" => "Accept",
     ),
     'directory' => [
         'title' => 'Directory',
