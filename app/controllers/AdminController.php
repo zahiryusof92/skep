@@ -439,7 +439,6 @@ class AdminController extends BaseController {
 
 // file list
     public function fileList() {
-//        return '<pre>' . print_r(Files::categoryList(), true) . '</pre>';
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -475,8 +474,8 @@ class AdminController extends BaseController {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -485,8 +484,8 @@ class AdminController extends BaseController {
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', '!=', 2)
@@ -496,16 +495,16 @@ class AdminController extends BaseController {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.is_active', '!=', 2)
                         ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', '!=', 2)
@@ -601,8 +600,8 @@ class AdminController extends BaseController {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
@@ -611,8 +610,8 @@ class AdminController extends BaseController {
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', 2)
@@ -622,16 +621,16 @@ class AdminController extends BaseController {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.is_active', 2)
                         ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->join('park', 'strata.park', '=', 'park.id')
-                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->leftJoin('park', 'strata.park', '=', 'park.id')
+                        ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', 2)
