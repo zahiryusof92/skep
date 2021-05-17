@@ -486,6 +486,10 @@ nav.left-menu .left-menu-list li .left-menu-link:hover .left-menu-link-icon {
     color: #827ca1;
 }
 
+nav.left-menu .left-menu-list li .left-menu-link:hover img.left-menu-link-icon {
+    filter: brightness(0.5);
+}
+
 nav.left-menu .left-menu-list li .left-menu-link .left-menu-link-icon {
     -webkit-transition: all 0.1s ease-in-out;
     -o-transition: all 0.1s ease-in-out;
@@ -495,6 +499,10 @@ nav.left-menu .left-menu-list li .left-menu-link .left-menu-link-icon {
     font-size: 1rem;
     color: #fbdd51;
     margin-right: 5px;
+}
+
+nav.left-menu .left-menu-list li .left-menu-link .left-menu-link-icon::before {
+    margin-left: 4px;
 }
 
 nav.left-menu .left-menu-list li .left-menu-item {

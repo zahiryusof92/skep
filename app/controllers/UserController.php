@@ -234,7 +234,7 @@ class UserController extends BaseController {
                             'is_active' => 1,
                             'is_deleted' => 0,
                                 ), $remember);
-
+                                
                 if ($auth) {
                     ## EAI Call
                     // $url = $this->eai_domain . $this->eai_route['auth']['login'];
@@ -251,7 +251,7 @@ class UserController extends BaseController {
                     //     setcookie("eai_session", $response->token, time() + (86400 *24*7));
                     // }
 
-                    if (Auth::user()->getAdmin() || Auth::user()->isLawyer()) {
+                    if (Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer()) {
                         $user_account = User::where('id', Auth::user()->id)->first();
                         if ($user_account) {
                             Session::put('id', $user_account['id']);
@@ -266,8 +266,12 @@ class UserController extends BaseController {
                             $auditTrail->remarks = $remarks;
                             $auditTrail->audit_by = Auth::user()->id;
                             $auditTrail->save();
-
-                            return Redirect::to('/home');
+                            
+                            if($user_account->isHR()) {
+                                return Redirect::to('/summon/councilSummonList');
+                            } else {
+                                return Redirect::to('/home');
+                            }
                         } else {
                             Auth::logout();
                             return Redirect::to('/login')->with('login_error', trans('app.errors.wrong_username_password'));
@@ -419,7 +423,7 @@ class UserController extends BaseController {
         Session::forget('file_id');
         Auth::logout();
 
-        if (!empty($cob)) {
+        if (!empty($cob) && $cob != 'odesi') {
             return Redirect::to('/' . $cob);
         }
 

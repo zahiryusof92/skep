@@ -10,5 +10,6 @@ class Role extends Eloquent {
     const JMB = 'JMB';
     const MC = 'MC';
     const LAWYER = 'LAWYER';
+    const HR = 'HR';
 
 }
