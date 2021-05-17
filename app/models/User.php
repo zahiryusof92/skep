@@ -140,6 +140,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isMC() {
+        if (stripos($this->getRole->name, Role::MC) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function isLawyer() {
         if (stripos($this->getRole->name, Role::LAWYER) !== FALSE) {
             return true;

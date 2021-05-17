@@ -98,7 +98,7 @@ foreach ($user_permission as $permission) {
                                         </div>
                                     </section>
                                     
-                                    @if (Auth::user()->getAdmin() || strtoupper(Auth::user()->getRole->name) == 'JMB')
+                                    @if (Auth::user()->getAdmin() || Auth::user()->isJMB())
                                     <hr/>
                                     <section class="panel panel-pad">
                                         <div class="row padding-vertical-20">
@@ -158,7 +158,7 @@ foreach ($user_permission as $permission) {
                                     </section>
                                     @endif
                                     
-                                    @if (Auth::user()->getAdmin() || strtoupper(Auth::user()->getRole->name) == 'MC')
+                                    @if (Auth::user()->getAdmin() || Auth::user()->isMC())
                                     <hr/>
                                     <section class="panel panel-pad">
                                         <div class="row padding-vertical-20">
@@ -1229,7 +1229,7 @@ foreach ($user_permission as $permission) {
                     buyer_registration: buyer_registration,
                     certificate_series_no: certificate_series_no,
                     monitoring_remarks: monitoring_remarks,
-                    id: '{{$monitoring->id}}'
+                    file_id: '{{ $file->id }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1359,7 +1359,7 @@ foreach ($user_permission as $permission) {
                     report_audited_financial_url: report_audited_financial_url,
                     house_rules_url: house_rules_url,
                     type: type,
-                    file_id: '{{$file->id}}'
+                    file_id: '{{ $file->id }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1573,7 +1573,7 @@ foreach ($user_permission as $permission) {
                     ajk_name: ajk_name,
                     ajk_phone_no: ajk_phone_no,
                     ajk_year: ajk_year,
-                    file_id: '{{$file->id}}'
+                    file_id: '{{ $file->id }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1658,7 +1658,8 @@ foreach ($user_permission as $permission) {
                     ajk_name: ajk_name,
                     ajk_phone_no: ajk_phone_no,
                     ajk_year: ajk_year,
-                    ajk_id_edit: ajk_id_edit
+                    ajk_id_edit: ajk_id_edit,
+                    file_id: '{{ $file->id }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

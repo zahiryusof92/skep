@@ -32,12 +32,15 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $file->id)}}">{{ trans('app.forms.management') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
                             </li>
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
                             </li>
+                            @if (!Auth::user()->isJMB())
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
                             </li>
@@ -50,9 +53,11 @@ foreach ($user_permission as $permission) {
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
                             </li>
+                            @endif
                         </ul>
                         <div class="tab-content padding-vertical-20">
-                            <div class="tab-pane active" id="strata" role="tabpanel">
+                            <div class="tab-pane active" id="strata" role="tabpanel">                                    
+                                
                                 <!-- strata Form -->
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">
@@ -974,7 +979,9 @@ foreach ($user_permission as $permission) {
             }
         });
     });
+</script>
 
+<script>
     function updateStrata() {
         changes = false;
         $("#loading").css("display", "inline-block");
@@ -1008,7 +1015,7 @@ foreach ($user_permission as $permission) {
                 strata_file_url = $("#strata_file_url").val(),
                 strata_total_share_unit = $("#strata_total_share_unit").val(),
                 strata_ccc_no = $("#strata_ccc_no").val(),
-                strata_ccc_date = $("#strata_ccc_date").val(),
+                strata_ccc_date = $("#strata_ccc_date").val(),                
                 //residential
                 residential_unit_no = $("#residential_unit_no").val(),
                 residential_maintenance_fee = $("#residential_maintenance_fee").val(),
@@ -1093,8 +1100,7 @@ foreach ($user_permission as $permission) {
             $.ajax({
                 url: "{{ URL::action('AdminController@submitUpdateStrata') }}",
                 type: "POST",
-                data: {
-                    file_id: '{{$file->id}}',
+                data: {                    
                     strata_title: strata_title,
                     strata_name: strata_name,
                     strata_parliament: strata_parliament,
@@ -1127,7 +1133,6 @@ foreach ($user_permission as $permission) {
                     is_residential: is_residential,
                     is_commercial: is_commercial,
                     strata_file_url: strata_file_url,
-                    strata_id: '{{$strata->id}}',
                     //residential
                     residential_unit_no: residential_unit_no,
                     residential_maintenance_fee: residential_maintenance_fee,
@@ -1166,7 +1171,9 @@ foreach ($user_permission as $permission) {
                     gated: gated,
                     gated_unit: gated_unit,
                     others: others,
-                    facility_id: '{{$facility->id}}'
+                    file_id: '{{ $file->id }}',
+                    strata_reference_id: '{{ ($strata->reference_id ? $strata->reference_id : $strata->id) }}',
+                    facility_reference_id: '{{ ($facility->reference_id ? $facility->reference_id : $facility->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1189,7 +1196,9 @@ foreach ($user_permission as $permission) {
             });
         }
     }
+</script>
 
+<script>
     function findDUN() {
         $.ajax({
             url: "{{URL::action('AdminController@findDUN')}}",

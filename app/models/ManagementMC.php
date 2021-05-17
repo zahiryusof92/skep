@@ -4,6 +4,15 @@ class ManagementMC extends Eloquent {
 
     protected $table = 'management_mc';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'file_id'
+    ];
+
     public function countries() {
         return $this->belongsTo('Country', 'country');
     }
@@ -15,5 +24,5 @@ class ManagementMC extends Eloquent {
     public function cities() {
         return $this->belongsTo('City', 'city');
     }
-
+    
 }

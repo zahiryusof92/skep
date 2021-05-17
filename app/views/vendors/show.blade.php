@@ -373,6 +373,8 @@
                         <div id="map" style="height: 500px; width: 100%;"></div>                    
                     </div>
                 </div>
+                
+                <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlZt8wLuj_w2qWw03-qEYWdWf5nPnvokA&callback=initMap"></script>
 
                 <script>
                     function initMap() {

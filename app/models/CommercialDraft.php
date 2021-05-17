@@ -1,8 +1,8 @@
 <?php
 
-class Residential extends Eloquent {
+class CommercialDraft extends Eloquent {
 
-    protected $table = 'residential_block';
+    protected $table = 'commercial_block_draft';
 
     /**
      * The attributes that are mass assignable.
@@ -10,7 +10,7 @@ class Residential extends Eloquent {
      * @var array
      */
     protected $fillable = [
-        'file_id'
+        'file_id',
     ];
 
     public function mfUnit() {
