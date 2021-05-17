@@ -1,5 +1,10 @@
 <?php
 
+use Helper\Paydibs;
+
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+
 class MyPointController extends \BaseController {
 
     /**
@@ -193,6 +198,7 @@ class MyPointController extends \BaseController {
             $model = Orders::find($data['order_id']);
             if ($model) {
                 $rules = array(
+                    'payment_gateway' => 'required',
                     'payment_method' => 'required',
                     'terms' => 'required'
                 );
@@ -207,29 +213,57 @@ class MyPointController extends \BaseController {
                     $success = $model->save();
 
                     if ($success) {
+                        $payment_params = '';
+
                         if ($model->status == Orders::APPROVED) {
                             $ref_no = date('YmdHis') . $model->id;
 
-                            $transaction = new PointTransaction();
-                            $transaction->user_id = $model->user_id;
-                            $transaction->order_id = $model->id;
-                            $transaction->reference_no = $ref_no;
-                            $transaction->type = $model->type;
-                            $transaction->is_debit = true;
-                            $transaction->point_availabe = Auth::user()->getTotalPoint();
-                            $transaction->point_usage = $model->package->points;
-                            $transaction->point_balance = Auth::user()->getTotalPoint() + $model->package->points;
-                            $transaction->description = $model->description;
-                            $transaction->amount = $model->package->price;
-                            $transaction->rate = ($model->package->points / $model->package->price);
-                            $transaction->save();
+                            DB::transaction(function () use(&$payment_params, $model, $ref_no, $data) {
+                                $transaction = new PointTransaction();
+                                $transaction->user_id = $model->user_id;
+                                $transaction->order_id = $model->id;
+                                $transaction->reference_no = $ref_no;
+                                $transaction->type = $model->type;
+                                $transaction->is_debit = true;
+                                $transaction->point_availabe = Auth::user()->getTotalPoint();
+                                $transaction->point_usage = $model->package->points;
+                                $transaction->point_balance = Auth::user()->getTotalPoint();
+                                $transaction->description = $model->description;
+                                $transaction->amount = $model->package->price;
+                                $transaction->rate = ($model->package->points / $model->package->price);
+                                $transaction->save();
+
+                                
+                                /** Payment Process */
+                                $payment_data['module_id'] = $transaction->getKey();
+                                $payment_data['module'] = 'point';
+                                $payment_data['reference_no'] = $ref_no;
+                                $payment_data['pay_for'] = 'point';
+                                $payment_data['payment_gateway'] = $data['payment_gateway'];
+                                $payment_data['payment_method'] = $model->payment_method;
+                                $payment_data['description'] = $model->description;
+                                $payment_data['amount'] = $transaction->amount;
+                                $payment_data['order_id'] = $transaction->order_id;
+                                
+                                $payment_params = (new TransactionController())->paymentProcess($payment_data);
+
+                            });
+                        }
+                        if($data['payment_gateway'] == Config::get('constant.module.payment.gateway.paydibs.slug')) {
+                            return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
+
+                        } else {
+                            $redirect_url = $payment_params->item->url;
+                            return Redirect::to($redirect_url);
+                            // Log::info(json_encode($payment_params));
+                            // dd($payment_params);
                         }
 
-                        Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
-                            $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
-                        });
+                        // Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
+                        //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                        // });
 
-                        return Redirect::to('myPoint')->with('success', trans('app.successes.payment_successfully'));
+                        // return Redirect::to('myPoint')->with('success', trans('app.successes.payment_successfully'));
                     }
                 }
             }

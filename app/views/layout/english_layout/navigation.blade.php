@@ -650,19 +650,34 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (Auth::user()->isLawyer() || Auth::user()->isCOBManager())
+            @if (Auth::user()->isHR() || Auth::user()->isLawyer() || Auth::user()->isCOBManager())
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
                     {{ trans('app.summon.title') }}
                 </a>
                 <ul class="left-menu-list list-unstyled" id="summon_main">
-
-                    <li id="summon_list">
-                        <a class="left-menu-link" href="{{ route('summon.index') }}">
-                            {{ trans('app.summon.list') }}
-                        </a>
-                    </li>
+                    @if(Auth::user()->isLawyer() || Auth::user()->isCOBManager())
+                        <li id="summon_list">
+                            <a class="left-menu-link" href="{{ route('summon.index') }}">
+                                {{ trans('app.summon.list') }}
+                            </a>
+                        </li>
+                    @endif
+                    @if(Auth::user()->isHR())
+                        <li id="summon_list">
+                            <a class="left-menu-link" href="{{ URL::action('SummonController@councilSummonList') }}">
+                                {{ trans('app.summon.list') }}
+                            </a>
+                        </li>
+                    @endif
+                    @if(Auth::user()->isHR() || Auth::user()->isCOBManager() )
+                        <li id="summon_list">
+                            <a class="left-menu-link" href="{{ URL::action('SummonController@paidListing') }}">
+                                {{ trans('app.summon.paid') }}
+                            </a>
+                        </li>
+                    @endif
 
                 </ul>
             </li>
@@ -694,7 +709,15 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-
+            
+            @if(Auth::user()->isJMB() || Auth::user()->isHR())
+                <li id="transaction_list">
+                    <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
+                        <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
+                        {{ trans('app.transaction.title') }}
+                    </a>
+                </li>
+            @endif
         </ul>
         
         @if ($company->short_name != 'MBS')

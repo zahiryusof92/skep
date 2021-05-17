@@ -728,6 +728,7 @@ Route::get('/print/ManagementSummary', 'PrintController@printManagementSummary')
 Route::get('/print/CobFileManagement', 'PrintController@printCobFileManagement')->before('authMember');
 
 
+
 // FINANCE FILE LIST
 Route::get('/financeList', 'FinanceController@financeList')->before('authMember');
 Route::get('/getFinanceList', 'FinanceController@getFinanceList')->before('authMember');
@@ -849,6 +850,9 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('summon/orders', 'SummonController@orders');
     Route::get('summon/payment', 'SummonController@payment');
     Route::post('summon/submitPay', 'SummonController@submitPay');
+    Route::post('summon/uploadPayment', 'SummonController@uploadPayment');
+    Route::get('summon/councilSummonList', 'SummonController@councilSummonList');
+    Route::get('summon/paid', 'SummonController@paidListing');
     Route::resource('summon', 'SummonController', ['except' => 'create']);
     /*
      * Summon End
@@ -865,6 +869,23 @@ Route::group(array('before' => 'authMember'), function() {
     /*
      * My Point End
      */
+});
+
+/** Transaction */
+Route::post('transaction/success', 'TransactionController@success');
+
+Route::group(array('prefix' => 'revenue'), function() {
+    Route::get('transaction/pay', 'TransactionController@processRevenueMonster')->before('authMember');
+    Route::post('transaction/success', 'TransactionController@revenueSuccess');
+    Route::get('transaction/getOrderStatus', 'TransactionController@getRevenueTransactionStatus');
+    // Route::get('get', 'TransactionController@getTransaction')->before('authMember');
+    // Route::post('process', 'TransactionController@paymentProcess')->before('authMember');
+});
+
+Route::group(array('prefix' => 'transaction'), function() {
+    Route::get('/', 'TransactionController@index')->before('authMember');
+    Route::get('get', 'TransactionController@getTransaction')->before('authMember');
+    Route::post('process', 'TransactionController@paymentProcess')->before('authMember');
 });
 
 Route::get('/{cob}', 'UserController@login')->before('guest');

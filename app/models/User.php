@@ -124,6 +124,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isHR() {
+        if (stripos($this->getRole->name, Role::HR) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function isJMB() {
         if (stripos($this->getRole->name, Role::JMB) !== FALSE) {
             return true;
@@ -152,12 +160,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function getTotalPoint() {
-        $debit = PointTransaction::where('user_id', $this->id)->where('is_debit', 1)->sum('point_usage');
-        $credit = PointTransaction::where('user_id', $this->id)->where('is_debit', 0)->sum('point_usage');
+        // $debit = PointTransaction::where('user_id', $this->id)->where('is_debit', 1)->sum('point_usage');
+        // $credit = PointTransaction::where('user_id', $this->id)->where('is_debit', 0)->sum('point_usage');
+        $point_transaction = PointTransaction::where('user_id', $this->id)->orderBy('created_at','desc')->first();
+        $balance = round($point_transaction->point_balance, 0);
 
-        $sum_point = $debit - $credit;
-
-        return $sum_point;
+        return $balance;
     }
 
 }

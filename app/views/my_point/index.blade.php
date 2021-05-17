@@ -29,7 +29,7 @@
 
                 <div class="row margin-top-30">
                     <div class="col-md-12">
-                        <table class="table table-hover nowrap" id="point_transaction_table" width="100%">
+                        <table class="table table-hover nowrap table-own table-striped" id="point_transaction_table" width="100%">
                             <thead>
                                 <tr>
                                     <th style="width:20%;">{{ trans('app.my_point.created_at') }}</th>

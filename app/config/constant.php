@@ -521,6 +521,53 @@ return [
                 'update_profile_url' => "https://patrick.odesi.tech/api/admin/auth/profile/update_simple"
             ]
         ],
+        'payment' => [
+            'prefix' => 'eCobS',
+            'gateway' => [
+                'paydibs' => [
+                    'slug' => 'paydibs',
+                    'title' => 'Paydibs',
+                    'merchant_id' => 'TEST',
+                    'merchant_password' => 'test12345',
+                    'pay_request_url' => 'https://dev.paydibs.com/PPGSG/PymtCheckout.aspx',
+                ],
+                'revenue' => [
+                    'slug' => 'revenue',
+                    'title' => 'Revenue Monster',
+                    'client_id' => '1618562074490000151',
+                    'client_secret' => 'RFrAQJJaIvTIZKfVWWCuELucWoPILCLs',
+                    'store_id' => '1618295254553642125',
+                    'nonceStr' => 'MNhrdDgIDlTKdlYXzfhEvqHpGjRhvrPb',
+                    'private_key' => "-----BEGIN RSA PRIVATE KEY-----\nMIIEoQIBAAKCAQB55lfJiCvYt8754qQ0lQP67mJuT+CziOD4znJqqNXZYp+9ANSw\nFOb2zkMEcmwWCaWHc6Nf7AlTCaHhFK6VV7wp9Hpn1ifIShrPiMhpaTldvyUFJI+t\n1y8QLPncvEHgJClKRzQUwsRzt8zB1h6Is7r6qnrOvSq1li4QTo4OVKKrJ8Ge3l5V\nFo8iYx1XQYYLuw4QuhEdUTL8w6x0HMjZv8qqWOCT71YvdrV6sz8ip8ksJ3hO07NL\nEhtXBcO9Q4ll9+1UkoyaQUdenBbjSaYC+L4FPh8BK9Zbiv6SLNeW6o2SU5NTUz8A\n9NzmhHg4rg83KJAZd6byNFHq9+rIrarXH18ZAgMBAAECggEAQCjKv9oaKeDk4YU2\npC5if+qEiEcmn5hFwO74LcdbdyV/qf0L9Pmrbu+1Olv3I8pEA30L2mrjpX8GYu99\nzED3WqXA33JKUhMe9WirA0BM31jB5WkO7pK5xKvHfzTe/1hJGz1K3jp9J+LvtH48\nZ/shSNn99V5/Yj//Urnl7wkA7VAsVoXO/ddSJspdVTUwCBjn21Lo+eekY1YAJZvM\nv2Eo+tppDdUGBQk5DzvMaX0u6TynTecvYvulD4ydEnp0AHLYxuX+AaAI6gDSpU34\nu0LHrNnFl9OZN/5ILhiSLidbT5dNpd/tGJwsf6BwJgY4mkRId/agEKhjnzGDyYCN\ndhyUuQKBgQDU4qT0p2BsqVyBiIxZYnjMlxQvo20J5hjrrbzCg9XutrKJBB8THNgd\nFFvB9lXvc4ANCSejHBKCEZ+RTAnUNYckDEI2qikGyDF5LLXtacCcNJ0OLxzT1L/H\nGoWmc+3CURCHjGjwv8ZKZAWIlk95UZesudLaDQpQFjx3+D8nzJ4YiwKBgQCSlmrr\nGUM/p1FbnSwWstctczcW1M0P93a7SSxlyIDe72TxmjA1lHGEE3sZr0iwdEZXOtFx\njbCtY7noaU19eeSgxwJjNeMQtAfQrwRsyQwsrtIPR6Mm1gApM0eoyDH+7olRtZEX\nUOvMrnvo5FwDVO15b6bCa9UtKUkHtpZUNLf3awKBgGRvVRGTkbtSH7GBAW3+Ni2X\nrU9YU84Sv3kZK2+9kQWhLhPUXPDAb/kwLKYSmLJylFwSEKA0U0sIE3cSH6T9Z/eK\nzQZLOzXW5vhbLq2GcfeAHwSdF4Wc3qmJirpgATDm29yHUs8aOuvHypCJEY+T/fHg\nbWiwNEhaZUbYWLtnHsNHAoGARbWedtr2rgilmgmuc8Tsq0KFSig8tIEcR4hOwsCM\n+Hej63lFv9Ut/n89JUPEL5W79bOU8olNIcexGyMopKkY3pSFQCTaLJFQvh7c3dbm\nIUGpx3Zr0gYm4XDvfQZnMDLDvsW3j/z9hcLcTi56y2LR49QC26ZoJCfkAPUFnFnN\nuq0CgYBuH8wVI62GWQITMwiCePOrXxDKPcD7isize5vDnXyYlhtVHdf9MiHIryqy\n0LLJC9EGlbQVoTti1djUD5jFG+rw79CEy/UJpnnqaEXhinJLmgXzLe2oxcLsg7f3\n/n1nryTv7s0dYbztRWoG+NHqOhDCrajMa7iOSrLVf53QZpPXCA==\n-----END RSA PRIVATE KEY-----",
+                    'public_key' => "-----BEGIN PUBLIC KEY-----\nMIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQB55lfJiCvYt8754qQ0lQP6\n7mJuT+CziOD4znJqqNXZYp+9ANSwFOb2zkMEcmwWCaWHc6Nf7AlTCaHhFK6VV7wp\n9Hpn1ifIShrPiMhpaTldvyUFJI+t1y8QLPncvEHgJClKRzQUwsRzt8zB1h6Is7r6\nqnrOvSq1li4QTo4OVKKrJ8Ge3l5VFo8iYx1XQYYLuw4QuhEdUTL8w6x0HMjZv8qq\nWOCT71YvdrV6sz8ip8ksJ3hO07NLEhtXBcO9Q4ll9+1UkoyaQUdenBbjSaYC+L4F\nPh8BK9Zbiv6SLNeW6o2SU5NTUz8A9NzmhHg4rg83KJAZd6byNFHq9+rIrarXH18Z\nAgMBAAE=\n-----END PUBLIC KEY-----",
+                    'sandbox_client_id' => '1619065365617468809',
+                    'sandbox_client_secret' => 'PNvjbdlJbDYBdSjaqlQnFmcflhKhoyPA',
+                    'sandbox_private_key' => "-----BEGIN RSA PRIVATE KEY-----\nMIIEpQIBAAKCAQEAqQPPaMdnF2EQ5sSuLCzPTKTjRxIPrKVJQNG37Z8I6Y9SnUet\nvnfJi3fGdultAI7nqzzILkXS5gcJXFomeAefJohvPI5xBNAeUZUYvRcGTcynR1ic\noLOCnBy7sXe54pXA0Hz1KSAprmzgAkWGPozKLRKG2pjINVyCMwku5AKwM/EeY1Ad\nzRiaiUqnWYDSLWFFSgSh7EWqbGbUzLJWpGmYzIDnvLgSDTd08b2YvQB5i67LWB1w\ntasI7eUZTiPWZwuKmg021UuYJcuhGCzs9DIpPysQUFDZpzni5bEOu60czhch3XaZ\nQ+MuzXy7m412tS2jUyCS5PjMP+kS9Brovp4PgQIDAQABAoIBAQCeSLM1rYkenAj4\nFboIJO7/GGzBYmjLhv/TdJSMNSRjl5YHNdnBRu25b7KuKm2q2Cqec44Fx957Dpv1\noXflcT3bGGsUi1HM8Bt0y+0fKTD+K2t9pb8JwRPQoBgnW7j6OsUYe+4dVcGzWMNx\nXSsb6T5ud6tTjUHyt3A326HOZ7Yc7W2g6eXpjDC7bDNA15XIT4ZH52yijtC9EN0r\neUVGx2k8FuYZcGTIROI+V4BneocoYHEiiZT4/sVksPZ7uTDczWmD6holPhUk15PH\n1Mjk5krvlp+wgFJwefLmJptum54gfqKw0PbZtJZSWxFCcuqgAYUjePW8x2uGP82m\np+RnDr8BAoGBANMW23SYKGo0UmvZgNugFvqWbyfOCTCYvx9iK5XQYbSDDv3gQ36p\n0bvQEEpRctqAk++R7wlJrFj2u5r4BdUzrMnhAnWwGBC9sAGqH9zwbilMdhANniQM\nXSes1lmp/jDM9V3MNT0QcKyX4svrdDlDHt9dyD6hTMUO/RbdfI5XIgGvAoGBAMz5\nVne9rAIeZGrUCtA+63cu/RlxRmfkVR0BhgQZHdkPhHUBMy6Dhhz0luNhKds6MF/m\nPJZktHvDaj9rAcoeSeef3gygbb8NbVawnjXye/38+lfJ59GykZKDObunegODA5Z9\nJwi8echjCvjoaBFSG2yDXhjHSZ/Tk89ZIaTRyD3PAoGBAMcymbPkZrcaWvEllsEq\nyKR+07RXbTqr2ifuhzzgIWOsDbisKmVcMeyvQsAvLlhd37zDFTTJjleBtrZd+Xsh\nQZxctuqCW6NorbBUb68aQIq+eedaQnK4LCxloP2KOrKop591NoRCgGGPD1np/oqO\n+ZJFuNLJel23cERkjMbyGMhHAoGBAK0MIA0Na4eKYxqxk8OGK0K+v91X/am+YoEP\nhTY2gjV73Ubu0WgGkBYoBK9Im47CzI5aEXKi6KDINQ3/aE5cTean2E5urtiqHFIg\n4CEJa9bdWfj9s6IdELtR4E7mMKOAW2oUlPzSKjqcK2pCw4FEAXUWXz2qGiU9+b8H\nL9k3ZsePAoGAK7DwhqLeMb4uLXWU2ZLUuFHdezvZKedAU6/u/IMEeckxMjs8ZF1K\nv/7DHduYww4Lgs+gqhO+1Y6utSdgYO08qlos8QhWiCLRHROaQlUAHrq2tAlYLrpc\n5PbJXF4hgdk4Q8+TL0nrmLj8UvFUhsq5LrnjcDEGfe/7feEeEM55htI=\n-----END RSA PRIVATE KEY-----",
+                    'sandbox_store_id' => '1619057604454175171'
+                ],
+            ],
+            'pay_for' => [
+                'letter_of_reminder' => [
+                    'slug' => 'letter_of_reminder',
+                    'title' => 'Letter Of Reminder',
+                ],
+                'letter_of_demand' => [
+                    'slug' => 'letter_of_demand',
+                    'title' => 'Letter Of Demand',
+                ],
+                'point' => [
+                    'slug' => 'point',
+                    'title' => 'Point',
+                ],
+            ],
+            'status' => [
+                '0' => 'successful',
+                '1' => 'fail',
+                '2' => 'pending',
+                '3' => 'refunded',
+            ]
+
+        ]
     ],
     'eai' => [
         'domain' => 'http://127.0.0.1:94/api/v1/',

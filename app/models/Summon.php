@@ -8,6 +8,7 @@ class Summon extends Eloquent {
     const PENDING = 1;
     const APPROVED = 2;
     const REJECTED = 3;
+    const INPROGRESS = 4;
     const CANCELED = 99;
     const LETTER_OF_REMINDER = 1;
     const LETTER_OF_DEMAND = 2;
@@ -62,6 +63,8 @@ class Summon extends Eloquent {
 
         if ($this->status == self::PENDING) {
             $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.summon.pending') . '</span>';
+        } else if ($this->status == self::INPROGRESS) {
+            $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.summon.inprogress') . '</span>';
         } else if ($this->status == self::APPROVED) {
             $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.summon.approved') . '</span>';
         } else if ($this->status == self::REJECTED) {
@@ -71,6 +74,10 @@ class Summon extends Eloquent {
         }
 
         return $status;
+    }
+
+    public function company() {
+        return $this->belongsTo('Company', 'company_id');
     }
 
     public function category() {
@@ -83,6 +90,10 @@ class Summon extends Eloquent {
     
     public function user() {
         return $this->belongsTo('User', 'action_by');
+    }
+    
+    public function paidBy() {
+        return $this->belongsTo('User', 'user_id');
     }
 
 }

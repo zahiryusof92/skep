@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+
 class SummonController extends \BaseController {
 
     /**
@@ -10,7 +12,7 @@ class SummonController extends \BaseController {
     public function index() {
         if (Auth::user()->isJMB()) {
             if (Request::ajax()) {
-                $model = Summon::where('user_id', Auth::user()->id)->where('is_deleted', 0);
+                $model = Summon::where('user_id', Auth::user()->id)->where('is_deleted', 0)->orderBy('created_at','desc');
 
                 return Datatables::of($model)
                                 ->editColumn('status', function($model) {
@@ -53,6 +55,7 @@ class SummonController extends \BaseController {
                 'panel_nav_active' => 'summon_panel',
                 'main_nav_active' => 'summon_main',
                 'sub_nav_active' => 'summon_list',
+                'visible' => (Auth::user()->isHR())? 'false' : 'true',
                 'image' => ''
             );
 
@@ -100,6 +103,7 @@ class SummonController extends \BaseController {
                 'panel_nav_active' => 'summon_panel',
                 'main_nav_active' => 'summon_main',
                 'sub_nav_active' => 'summon_list',
+                'visible' => (Auth::user()->isHR()),
                 'image' => ''
             );
 
@@ -110,6 +114,7 @@ class SummonController extends \BaseController {
                         ->where(function($query) {
                             $query->where('status', Summon::PENDING)
                             ->orWhere('status', Summon::APPROVED)
+                            ->orWhere('status', Summon::INPROGRESS)
                             ->orWhere('status', Summon::REJECTED);
                         })
                         ->where('type', Summon::LETTER_OF_REMINDER)
@@ -147,10 +152,176 @@ class SummonController extends \BaseController {
                 'panel_nav_active' => 'summon_panel',
                 'main_nav_active' => 'summon_main',
                 'sub_nav_active' => 'summon_list',
+                'visible' => (Auth::user()->isHR()),
                 'image' => ''
             );
 
             return View::make('summon.index', $viewData);
+        } else {
+            return Redirect::to('/')->with('error', trans('app.errors.occurred'));
+        }
+    }
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function councilSummonList() {
+        if (Auth::user()->isHR()) {
+            if (Request::ajax()) {
+                $model = Summon::join('company', 'summon.company_id', '=', 'company.id')
+                                ->select(['summon.*'])
+                                ->where('summon.type',Summon::LETTER_OF_REMINDER)
+                                ->where('summon.status', SUMMON::PENDING)
+                                ->where('summon.is_deleted', 0)
+                                ->orderBy('summon.created_at','desc');
+
+                return Datatables::of($model)
+                                ->editColumn('status', function($model) {
+                                    return $model->status();
+                                })
+                                ->editColumn('created_at', function($model) {
+                                    $created_at = ($model->created_at ? $model->created_at->format('d-M-Y H:i A') : '');
+
+                                    return $created_at;
+                                })
+                                ->editColumn('type', function ($model) {
+                                    if ($model->type == Summon::LETTER_OF_REMINDER) {
+                                        $title = trans('app.summon.letter_of_reminder');
+                                    } else if ($model->type == Summon::LETTER_OF_DEMAND) {
+                                        $title = trans('app.summon.letter_of_demand');
+                                    }
+
+                                    return $title;
+                                })
+                                ->addColumn('action', function ($model) {
+                                    $btn = '';
+
+                                    return $btn;
+                                })
+                                ->addColumn('cob', function ($model) {
+                                    $title = ($model->company_id ? $model->company->short_name : '-');
+
+                                    return $title;
+                                })
+                                ->addColumn('checkbox', function ($model) {
+                                    $checkbox = '<div class="form-check">';
+                                    $checkbox .= '<input type="checkbox" class="form-check-input" id="select_id" name="select_id.' . $model->id . '">';
+                                    $checkbox .= '</div>';
+                                    if($model->type == SUMMON::LETTER_OF_DEMAND) {
+                                        $checkbox = '';
+                                    }
+                                    return $checkbox;
+                                })
+                                ->addColumn('action', function ($model) {
+                                    $btn = '';
+                                    $btn .= '<a href="' . route('summon.show', $model->id) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
+
+                                    return $btn;
+                                })
+                                ->make(true);
+            }
+            $cob = '';
+
+            if(Auth::user()->isHR()) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+
+            $viewData = array(
+                'title' => trans('app.summon.title'),
+                'panel_nav_active' => 'summon_panel',
+                'main_nav_active' => 'summon_main',
+                'sub_nav_active' => 'summon_list',
+                'visible' => (Auth::user()->isHR()),
+                'cob' => $cob,
+                'image' => ''
+            );
+
+            return View::make('summon.index_all', $viewData);
+        } else {
+            return Redirect::to('/')->with('error', trans('app.errors.occurred'));
+        }
+    }
+    
+    /**
+     * Display a paid listing of the resource.
+     *
+     * @return Response
+     */
+    public function paidListing() {
+        if (Auth::user()->isHR() || Auth::user()->isCOBManager()) {
+            if (Request::ajax()) {
+                $model = SummonConfirmed::join('company', 'summon_confirmed.company_id', '=', 'company.id')
+                                        ->select(['summon_confirmed.*']);
+                if(Auth::user()->isCOBManager()) {
+                    $model = $model->where('summon_confirmed.company_id', Auth::user()->company_id);
+                }
+                $model = $model                                        
+                                ->where('summon_confirmed.is_deleted', 0)
+                                ->orderBy('summon_confirmed.created_at','desc');
+
+                return Datatables::of($model)
+                                ->editColumn('created_at', function($model) {
+                                    $created_at = ($model->created_at ? $model->created_at->format('d-M-Y H:i A') : '');
+
+                                    return $created_at;
+                                })
+                                ->editColumn('amount', function($model) {
+                                    $amount = 'MYR '. $model->amount;
+
+                                    return $amount;
+                                })
+                                ->addColumn('reference_no', function ($model) {
+                                    $ids = explode(',', $model->selected_id);
+                                    $summons = Summon::whereIn('id', $ids)->get();
+
+                                    $text = '';
+
+                                    foreach($summons as $summon) {
+                                        $link = '- <u><a href="' . route('summon.show', $summon->id) . '" target="_blank">' . $summon->unit_no .'-'. $summon->id . '</a></u>';
+                                        $text .= $link . '<br>';
+                                    }
+                                    
+                                    return $text;
+                                })
+                                ->addColumn('attachment', function ($model) {
+                                  
+                                    $files = json_decode($model->attachment);
+
+                                    $text = '';
+
+                                    foreach($files as $file) {
+                                        $filename = explode("attachment/summon/confirm/$model->id/", $file);
+                                        $link = '- <u><a href="' . asset($file) . '" download>' . $filename[1] . '</a></u>';
+                                        $text .= $link . '<br>';
+                                    }
+
+                                    return $text;
+                                })
+                                ->addColumn('cob', function ($model) {
+                                    $title = ($model->company_id ? $model->company->short_name : '-');
+
+                                    return $title;
+                                })
+                                ->make(true);
+            }
+            $cob = '';
+
+            if(Auth::user()->isHR()) {
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+
+            $viewData = array(
+                'title' => trans('app.summon.paid'),
+                'panel_nav_active' => 'summon_panel',
+                'main_nav_active' => 'summon_main',
+                'sub_nav_active' => 'summon_paid',
+                'cob' => $cob,
+                'image' => ''
+            );
+
+            return View::make('summon.paid', $viewData);
         } else {
             return Redirect::to('/')->with('error', trans('app.errors.occurred'));
         }
@@ -430,6 +601,27 @@ class SummonController extends \BaseController {
 
                 return View::make('summon.show', $viewData);
             }
+        } else if (Auth::user()->isHR()) {
+            $model = Summon::find($id);
+            if ($model && $model->type == Summon::LETTER_OF_REMINDER) {
+                $category = ($model->category_id ? $model->category->description : '');
+                $durationOverdue = $model->durationTitle();
+
+                $viewData = array(
+                    'title' => trans('app.summon.letter_of_reminder'),
+                    'panel_nav_active' => 'summon_panel',
+                    'main_nav_active' => 'summon_main',
+                    'sub_nav_active' => 'summon_list',
+                    'image' => '',
+                    'durationOverdue' => $durationOverdue,
+                    'category' => $category,
+                    'type' => $model->type,
+                    'attachment' => json_decode($model->attachment),
+                    'model' => $model
+                );
+
+                return View::make('summon.show', $viewData);
+            }
         }
 
         return Redirect::to('/')->with('error', trans('app.errors.occurred'));
@@ -604,7 +796,7 @@ class SummonController extends \BaseController {
             if ($summon) {
                 $description = 'Created Summon for ' . $summon->ic_no;
                 $ref_no = date('YmdHis') . $summon->id;
-
+                
                 $model = new Orders();
                 $model->user_id = Auth::user()->id;
                 $model->reference_id = $summon->id;
@@ -661,7 +853,7 @@ class SummonController extends \BaseController {
         $data = Input::all();
 
         $model = Orders::find($data['order_id']);
-
+        
         if ($model) {
             $total_amount = $data['amount'];
 
@@ -689,7 +881,7 @@ class SummonController extends \BaseController {
                             $transaction->is_debit = false;
                             $transaction->point_availabe = Auth::user()->getTotalPoint();
                             $transaction->point_usage = $total_amount;
-                            $transaction->point_balance = Auth::user()->getTotalPoint() - $total_amount;
+                            $transaction->point_balance = Auth::user()->getTotalPoint();
                             $transaction->description = $model->description;
                             $transaction->amount = $model->amount;
                             $transaction->rate = $model->getSummonRate();
@@ -703,6 +895,7 @@ class SummonController extends \BaseController {
                 }
             } else {
                 $rules = array(
+                    'payment_gateway' => 'required',
                     'payment_method' => 'required',
                     'terms' => 'required'
                 );
@@ -712,29 +905,120 @@ class SummonController extends \BaseController {
                 if ($validator->fails()) {
                     return Redirect::to('summon/payment')->with('orderID', $model->id)->withErrors($validator)->withInput($data);
                 } else {
-                    $model->status = Summon::APPROVED;
+                    $model->status = Summon::REJECTED;
                     $success = $model->save();
 
+                    /** This need to be in transaction controller */
                     if ($success) {
-                        if ($model->status == Summon::APPROVED) {
-                            $summon = Summon::find($model->reference_id);
-                            if ($summon) {
-                                $summon->status = Summon::PENDING;
-                                $summon->save();
-                            }
+                        // if ($model->status == Summon::APPROVED) {
+                        $summon = Summon::find($model->reference_id);
+                        //     if ($summon) {
+                        //         $summon->status = Summon::PENDING;
+                        //         $summon->save();
+                        //     }
 
-                            Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
-                                $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
-                            });
+                        //     Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
+                        //         $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                        //     });
+                        // }
+
+                        // return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
+                        
+                        /** Payment Process */
+                        $payment_data['module_id'] = $summon->getKey();
+                        $payment_data['module'] = 'summon';
+                        $payment_data['reference_no'] = $model->reference_no;
+                        $payment_data['pay_for'] = ($summon->type == SUMMON::LETTER_OF_REMINDER)? 'letter_of_reminder' : 'letter_of_demand';
+                        $payment_data['payment_gateway'] = $data['payment_gateway'];
+                        $payment_data['payment_method'] = $data['payment_method'];
+                        $payment_data['description'] = $model->description;
+                        $payment_data['amount'] = $model->amount;
+                        $payment_data['order_id'] = $model->getKey();
+                        
+                        $payment_params = (new TransactionController())->paymentProcess($payment_data);
+                        
+                        if($data['payment_gateway'] == Config::get('constant.module.payment.gateway.paydibs.slug')) {
+                            return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
+                        } else {
+                            dd($payment_params);
                         }
-
-                        return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
                     }
                 }
             }
         }
 
         return Redirect::back()->with('error', trans('app.errors.occurred'))->withInput($data);
+    }
+
+    public function uploadPayment() {
+        $data = Input::all();
+
+        $rules = array(
+            'selected_id' => 'required',
+            'amount' => 'required',
+            // 'upload_file' => 'required|mimes:pdf'
+        );
+        $validator = Validator::make($data, $rules);
+        
+        if ($validator->fails()) {
+            return "false";
+        } else {
+            $selected_ids = explode("&",$data['selected_id']);
+            $array_id = [];
+            $company_id = '';
+            foreach($selected_ids as $selected_id) {
+                preg_match_all('!\d+!', $selected_id, $matches);
+                $id = $matches[0][0];
+                array_push($array_id, $id);
+                
+                /** Update Summon Status */
+                $summon = Summon::find($id);
+                $summon->status = Summon::INPROGRESS;
+                $summon->save();
+
+                $company_id = $summon->company_id;
+            }
+
+            $model = new SummonConfirmed();
+            $model->selected_id = implode(',',$array_id);
+            $model->company_id = $company_id;
+            $model->amount = $data['amount'];
+            $model->save();
+
+            
+            /** Process Upload File */
+            $attachment = '';
+            foreach($data['upload_file'] as $key => $file) {
+                $ext = $file->getClientOriginalExtension();
+
+                if($ext != 'pdf') {
+                    $model->delete();
+                    return 'valid_file';
+                }
+
+                $destinationPath = 'attachment/summon/confirm/' . $model->id;
+    
+                $filename = $file->getClientOriginalName();
+                // $filename = $file->getClientOriginalName() . '.' . $ext;
+                $file->move($destinationPath, $filename);
+                $attachment[] = $destinationPath . "/" . $filename;
+        
+            }
+
+            if (!empty($attachment)) {
+                $model->attachment = json_encode($attachment);
+                $success = $model->save();
+
+                return "true";
+            } else {
+                //revert
+                $model->delete();
+
+                return "false";
+            }
+            
+        }
+
     }
 
 }
