@@ -19,13 +19,13 @@ class FinanceController extends BaseController {
                 $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
-        
+
         $year = Files::getVPYear();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.add_finance_file_list'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'title' => trans('app.menus.finance.add_finance_file_list'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'add_finance_list',
             'user_permission' => $user_permission,
             'image' => "",
@@ -482,9 +482,9 @@ class FinanceController extends BaseController {
     public function financeList() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        
+
         $user = Auth::user();
-        
+
         if (!$user->getAdmin()) {
             if (!empty($user->file_id)) {
                 $file = Files::where('id', $user->file_id)->where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
@@ -498,18 +498,18 @@ class FinanceController extends BaseController {
                 $file = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
-        
+
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
         $year = Files::getVPYear();
-        
+
         $viewData = array(
-            'title' => trans('app.menus.cob.finance_file_list'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'title' => trans('app.menus.finance.finance_file_list'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_file_list',
             'user_permission' => $user_permission,
             'cob' => $cob,
@@ -591,12 +591,12 @@ class FinanceController extends BaseController {
                             if (AccessGroup::hasUpdate(38)) {
                                 if ($model->is_active == 1) {
                                     $status = trans('app.forms.active');
-                                    $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
+                                    $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/disable-eye.png") . ' width="20px"></a>&nbsp;';
                                 } else {
                                     $status = trans('app.forms.inactive');
-                                    $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
+                                    $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/eye.png") . ' width="28px"></a>&nbsp;';
                                 }
-                                $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>&nbsp;';
+                                $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/trash.png") . ' width="20px"></a>&nbsp;';
                             }
 
                             return $button;
@@ -663,9 +663,9 @@ class FinanceController extends BaseController {
         $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.edit_finance_file_list'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'title' => trans('app.menus.finance.edit_finance_file_list'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_file_list',
             'user_permission' => $user_permission,
             'image' => "",
@@ -1528,9 +1528,9 @@ class FinanceController extends BaseController {
         $file = Files::where('is_deleted', 0)->get();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.finance_support'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'title' => trans('app.menus.finance.finance_support'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'file' => $file,
@@ -1561,18 +1561,21 @@ class FinanceController extends BaseController {
             $data = Array();
             foreach ($filelist as $filelists) {
                 $files = Files::where('id', $filelists->file_id)->first();
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
+                if ($files) {
+                    $button = "";
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
-                    date('d/m/Y', strtotime($filelists->date)),
-                    $filelists->name,
-                    number_format($filelists->amount, 2),
-                    $button
-                );
+                    $data_raw = array(
+                        "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
+                        ($files->strata ? $files->strata->strataName() : ''),
+                        date('d/m/Y', strtotime($filelists->date)),
+                        $filelists->name,
+                        number_format($filelists->amount, 2),
+                        $button
+                    );
 
-                array_push($data, $data_raw);
+                    array_push($data, $data_raw);
+                }
             }
             $output_raw = array(
                 "aaData" => $data
@@ -1608,9 +1611,9 @@ class FinanceController extends BaseController {
         }
 
         $viewData = array(
-            'title' => trans('app.menus.cob.add_finance_support'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'title' => trans('app.menus.finance.add_finance_support'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'image' => "",
@@ -1637,7 +1640,6 @@ class FinanceController extends BaseController {
                 $finance->remark = $data['remark'];
                 $finance->is_active = $is_active;
                 $success = $finance->save();
-
 
                 if ($success) {
                     # Audit Trail
@@ -1676,9 +1678,9 @@ class FinanceController extends BaseController {
         $financeSupportData = FinanceSupport::where('id', $id)->first();
 
         $viewData = array(
-            'title' => trans('app.menus.cob.edit_finance_support'),
-            'panel_nav_active' => 'cob_panel',
-            'main_nav_active' => 'cob_main',
+            'title' => trans('app.menus.finance.edit_finance_support'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'image' => "",

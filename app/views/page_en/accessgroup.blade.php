@@ -32,8 +32,9 @@ foreach ($user_permission as $permission) {
                         <table class="table table-hover nowrap table-own table-striped" id="accessgroup" width="100%">
                             <thead>
                                 <tr>
-                                    <th style="width:40%;">{{ trans('app.forms.name') }}</th>
+                                    <th style="width:30%;">{{ trans('app.forms.name') }}</th>
                                     <th style="width:30%;">{{ trans('app.forms.remarks') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.is_paid') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.admin_status') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                     <?php if ($update_permission == 1) { ?>

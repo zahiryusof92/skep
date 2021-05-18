@@ -4,6 +4,10 @@ class Files extends Eloquent {
 
     protected $table = 'files';
 
+    public function jmb() {
+        return $this->hasOne('User', 'file_id');
+    }
+
     public function owner() {
         return $this->hasMany('Buyer', 'file_id');
     }
@@ -29,11 +33,11 @@ class Files extends Eloquent {
     }
 
     public function resident() {
-        return $this->hasOne('Residential', 'file_id');
+        return $this->hasOne('Residential', 'file_id')->latest();
     }
 
     public function commercial() {
-        return $this->hasOne('Commercial', 'file_id');
+        return $this->hasOne('Commercial', 'file_id')->latest();
     }
 
     public function facility() {
@@ -1743,6 +1747,130 @@ class Files extends Eloquent {
         }
 
         return $result;
+    }
+
+    public function draft() {
+        return $this->hasOne('FileDrafts', 'file_id');
+    }
+
+    public function hasDraft() {
+        if ($this->houseScheme->draft) {
+            return true;
+        } else if ($this->houseScheme->draft) {
+            return true;
+        } else if ($this->strata->draft) {
+            return true;
+        } else if ($this->management->draft) {
+            return true;
+        } else if ($this->other->draft) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public static function parkList() {
+        $files = '';
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->select(['park.*'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('park.description')
+                        ->groupBy('park.description')
+                        ->lists('description', 'description');
+            } else {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->select(['park.*'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('park.description')
+                        ->groupBy('park.description')
+                        ->lists('description', 'description');
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->select(['park.*'])
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('park.description')
+                        ->groupBy('park.description')
+                        ->lists('description', 'description');
+            } else {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('park', 'strata.park', '=', 'park.id')
+                        ->select(['park.*'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('park.description')
+                        ->groupBy('park.description')
+                        ->lists('description', 'description');
+            }
+        }
+
+        return $files;
+    }
+    
+    public static function categoryList() {
+        $files = '';
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->select(['category.*'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('category.description')
+                        ->groupBy('category.description')
+                        ->lists('description', 'description');
+            } else {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->select(['category.*'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('category.description')
+                        ->groupBy('category.description')
+                        ->lists('description', 'description');
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->select(['category.*'])
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('category.description')
+                        ->groupBy('category.description')
+                        ->lists('description', 'description');
+            } else {
+                $files = Files::join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('category', 'strata.category', '=', 'category.id')
+                        ->select(['category.*'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('category.description')
+                        ->groupBy('category.description')
+                        ->lists('description', 'description');
+            }
+        }
+
+        return $files;
     }
 
 }
