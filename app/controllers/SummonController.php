@@ -853,6 +853,7 @@ class SummonController extends \BaseController {
         $data = Input::all();
 
         $model = Orders::find($data['order_id']);
+        $data['payment_gateway'] = 'revenue';
         
         if ($model) {
             $total_amount = $data['amount'];
