@@ -194,7 +194,7 @@ class MyPointController extends \BaseController {
     public function submitPay() {
         if (Auth::user()->isJMB()) {
             $data = Input::all();
-
+            $data['payment_gateway'] = 'revenue';
             $model = Orders::find($data['order_id']);
             if ($model) {
                 $rules = array(
