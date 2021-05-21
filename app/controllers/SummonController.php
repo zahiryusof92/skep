@@ -941,7 +941,9 @@ class SummonController extends \BaseController {
                         if($data['payment_gateway'] == Config::get('constant.module.payment.gateway.paydibs.slug')) {
                             return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
                         } else {
-                            dd($payment_params);
+                            $redirect_url = $payment_params->item->url;
+                            return Redirect::to($redirect_url);
+                            
                         }
                     }
                 }
