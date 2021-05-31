@@ -78,7 +78,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
                     
-                    @if (Auth::user()->getAdmin() || Auth::user()->isCOBManager())
+                    @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                     <li id="cob_draft_list">
                         <a class="left-menu-link" href="{{URL::action('DraftController@fileList')}}">
                             {{ trans('app.menus.cob.file_draft_list') }}

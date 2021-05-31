@@ -18,7 +18,7 @@ class DraftController extends BaseController {
     }
 
     public function fileList() {
-        if (Auth::user()->getAdmin() || Auth::user()->isCOBManager()) {
+        if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
             if (empty(Session::get('admin_cob'))) {
                 $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
@@ -115,7 +115,7 @@ class DraftController extends BaseController {
     }
 
     public function houseScheme($id) {
-        if (Auth::user()->getAdmin() || Auth::user()->isCOBManager()) {
+        if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
             $files = Files::findOrFail($id);
 
             if (!$files->hasDraft()) {
@@ -198,7 +198,7 @@ class DraftController extends BaseController {
     }
 
     public function strata($id) {
-        if (Auth::user()->getAdmin() || Auth::user()->isCOBManager()) {
+        if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
             $files = Files::findOrFail($id);
 
             if (!$files->strata->draft) {
@@ -401,7 +401,7 @@ class DraftController extends BaseController {
     }
 
     public function management($id) {
-        if (Auth::user()->getAdmin() || Auth::user()->isCOBManager()) {
+        if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
             $files = Files::findOrFail($id);
 
             if (!$files->management->draft) {
@@ -601,7 +601,7 @@ class DraftController extends BaseController {
     }
 
     public function others($id) {
-        if (Auth::user()->getAdmin() || Auth::user()->isCOBManager()) {
+        if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
             $files = Files::findOrFail($id);
 
             if (!$files->other->draft) {
