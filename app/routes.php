@@ -915,6 +915,7 @@ Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('sso/login', 'Api\ApiController@SSOLogin');
     Route::post('profile/update_simple', 'Api\ApiController@updateSimpleProfileInfo');
     Route::post('/login', 'Api\ApiController@login');
+    Route::get('getCouncil', 'Api\ApiController@getCouncil');
 });
 
 Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
@@ -940,7 +941,6 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::post('/editRating', 'Api\ApiController@editRating');
 
     Route::post('/search', 'Api\ApiController@search');
-
 
     Route::get('getDashboardData', 'Api\ApiController@getDashboardData');
 });

@@ -37,7 +37,7 @@ if (!Auth::user()->getAdmin()) {
                     {{ trans('app.menus.home') }}
                 </a>
             </li>
-            
+
             @if (Module::hasAccess(1))
             <li class="left-menu-list-submenu" id="cob_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -77,7 +77,7 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-                    
+
                     @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                     <li id="cob_draft_list">
                         <a class="left-menu-link" href="{{URL::action('DraftController@fileList')}}">
@@ -89,7 +89,7 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-            
+
             @if (Module::hasAccess(1))
             <li class="left-menu-list-submenu" id="finance_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -520,7 +520,7 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-                    
+
                     @if (AccessGroup::hasAccess(60))
                     <li id="land_title_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@landTitle') }}">
@@ -633,7 +633,85 @@ if (!Auth::user()->getAdmin()) {
 
             @if (Module::hasAccess(9))
             <!-- Summon Start -->
-            
+            @if (AccessGroup::hasAccess(61))
+            @if (Auth::user()->isJMB())
+            <li class="left-menu-list-submenu" id="summon_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
+                    {{ trans('app.summon.title') }}
+                </a>
+                <ul class="left-menu-list list-unstyled" id="summon_main">
+
+                    <li id="letter_of_reminder_list">
+                        <a class="left-menu-link" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">
+                            {{ trans('app.summon.letter_of_reminder') }}
+                        </a>
+                    </li>
+
+                    <li id="letter_of_demand_list">
+                        <a class="left-menu-link" href="{{ route('summon.create', Summon::LETTER_OF_DEMAND) }}">
+                            {{ trans('app.summon.letter_of_demand') }}
+                        </a>
+                    </li>
+
+                    <li id="summon_list">
+                        <a class="left-menu-link" href="{{ route('summon.index') }}">
+                            {{ trans('app.summon.list') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li id="my_point_list">
+                <a class="left-menu-link" href="{{ route('myPoint.index') }}">
+                    <i class="left-menu-link-icon fa fa-money"><!-- --></i>
+                    {{ trans('app.my_point.title') }}
+                </a>
+            </li>
+            @endif
+
+            @if (Auth::user()->isHR() || Auth::user()->isLawyer() || Auth::user()->isCOBManager())
+            <li class="left-menu-list-submenu" id="summon_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
+                    {{ trans('app.summon.title') }}
+                </a>
+                <ul class="left-menu-list list-unstyled" id="summon_main">
+                    @if(Auth::user()->isLawyer() || Auth::user()->isCOBManager())
+                    <li id="summon_list">
+                        <a class="left-menu-link" href="{{ route('summon.index') }}">
+                            {{ trans('app.summon.list') }}
+                        </a>
+                    </li>
+                    @endif
+                    @if(Auth::user()->isHR())
+                    <li id="summon_list">
+                        <a class="left-menu-link" href="{{ URL::action('SummonController@councilSummonList') }}">
+                            {{ trans('app.summon.list') }}
+                        </a>
+                    </li>
+                    @endif
+                    @if(Auth::user()->isHR() || Auth::user()->isCOBManager() )
+                    <li id="summon_list">
+                        <a class="left-menu-link" href="{{ URL::action('SummonController@paidListing') }}">
+                            {{ trans('app.summon.paid') }}
+                        </a>
+                    </li>
+                    @endif
+
+                </ul>
+            </li>
+            @endif
+
+            @if(Auth::user()->isJMB() || Auth::user()->isHR())
+            <li id="transaction_list">
+                <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
+                    <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
+                    {{ trans('app.transaction.title') }}
+                </a>
+            </li>
+            @endif
+            @endif
             <!-- Summon End -->            
             @endif
 
@@ -661,13 +739,13 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
         </ul>
-        
+
         @if ($company->short_name != 'MBS')
         <div class="bottom-logo">
             <img src="{{asset('assets/common/img/odesi/logo.png')}}">
         </div>
         @endif
-        
+
     </div>
 </nav>
 <!-- END SIDE NAVIGATION -->
