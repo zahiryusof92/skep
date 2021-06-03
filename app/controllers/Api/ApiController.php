@@ -2103,7 +2103,7 @@ class ApiController extends BaseController {
                     $result[] = array(
                         'name' => $council->name,
                         'short_name' => $council->short_name,
-                        'logo' => $server . $council->image_url,
+                        'logo' => $server . 'assets/common/img/logo/MPS.png',
                         'url' => $server
                     );
                 } else {
