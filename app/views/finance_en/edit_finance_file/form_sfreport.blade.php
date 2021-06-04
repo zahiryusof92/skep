@@ -12,49 +12,77 @@ $count = 0;
         <form id="form_reportSF">
 
             <div class="row">
+                <table id="tbl_reportSF" class="table table-sm borderless" style="font-size: 12px;">
+                    <tbody>
+                        <tr>
+                            <th class="text-center">
+                                <span style="color: red;">*</span> SINGKING FEE SEBULAN (PER UNIT)
+                            </th>
+                            <th>&nbsp;</th>
+                            <th class="text-center">
+                                <span style="color: red;">*</span> JUMLAH UNIT
+                            </th>
+                            <th>&nbsp;</th>
+                            <th class="text-center">
+                                <span style="color: red;">*</span> JUMLAH SINGKING FUND SEPATUT DIKUTIP SEMASA
+                            </th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        <tr>
+                            <td width="25%">
+                                <input type="text" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_sebulan'] }}">
+                            </td>
+                            <td width="5%">&nbsp;</td>
+                            <td width="25%">
+                                <input type="text" name="{{ $prefix }}unit" class="form-control form-control-sm text-right" value="{{ $sfreport['unit'] }}">
+                            </td>
+                            <td width="5%">&nbsp;</td>
+                            <td width="25%">
+                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_semasa'] }}">
+                            </td>
+                            <td width="5%">&nbsp;</td>
+                        </tr>
+                        @if(count($sfreportExtra) > 0)
+                            @foreach ($sfreportExtra as $key => $extra)
+                                <tr id="sfrf_row{{($key+1)}}">
+                                    <td width="25%">
+                                        <input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_sebulan'] }}">
+                                    </td>
+                                    <td width="5%">&nbsp;</td>
+                                    <td width="25%">
+                                        <input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['unit'] }}">
+                                    </td>
+                                    <td width="5%">&nbsp;</td>
+                                    <td width="25%">
+                                        <input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_semasa'] }}">
+                                    </td>
+                                    <td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowSFExtra('sfrf_row{{($key+1)}}')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                                </tr>
+                                
+                            @endforeach
+                        @endif
+                        <tr>
+                            <td class="padding-table text-right" colspan="6"><a href="javascript:void(0);" onclick="addRowSFExtra()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
                 <table class="table table-sm borderless" style="font-size: 12px;">
                     <tbody>
                         <tr>
-                            <td class="padding-table" width="25%">
-                                <span style="color: red;">*</span>SINKING FUND SEBULAN (PER UNIT)
-                            </td>
-                            <td width="30%">
-                                <input type="text" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm" value="{{ $sfreport['fee_sebulan'] }}">
-                            </td>
-                            <td width="5%">&nbsp;</td>
-                            <td class="padding-table" width="25%">
-                                <span style="color: red;">*</span> JUMLAH UNIT
-                            </td>
-                            <td width="15%">
-                                <input type="text" name="{{ $prefix }}unit" class="form-control form-control-sm" value="{{ $sfreport['unit'] }}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])
-                            </td>
+                            <td>JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])</td>
                             <td>
                                 <input type="currency" id="{{ $prefix }}kutipan" name="{{ $prefix }}kutipan" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </td>
-                            <td>&nbsp;</td>
-                            <td class="padding-table">
-                                <span style="color: red;">*</span>JUMLAH SINKING FUND SEPATUT DIKUTIP SEMASA
+                            <td width="5%">&nbsp;</td>
+                            <td width="5%">&nbsp;</td>
+                            <td>
+                                JUMLAH SERVICE FEE BERJAYA DIKUTIP SEMASA
                             </td>
                             <td>
-                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_semasa'] }}">
+                                <input type="currency" id="{{ $prefix }}total_income" name="{{ $prefix }}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </td>
                         </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <th class="padding-table">
-                                JUMLAH SINKING FUND BERJAYA DIKUTIP SEMASA
-                            </th>
-                            <th>
-                                <input type="currency" id="{{ $prefix }}total_income" name="{{ $prefix }}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
-                            </th>
-                        </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -158,6 +186,7 @@ $count = 0;
 </div>
 
 <script type="text/javascript">
+    var rowSFFeesNo = ("{{count($sfreportExtra)}}" > 0)? (Number("{{count($sfreportExtra)}}") + Number(1)) : 1;
     $(document).ready(function () {
         calculateSFR();
     });
@@ -202,6 +231,27 @@ $count = 0;
         $('#' + rowSFRNo).remove();
 
         calculateSFR();
+    }
+
+    function addRowSFExtra() {
+        changes = true;
+
+        $("#tbl_reportSF tr:last").prev().after(
+            '<tr id="sfrf_row' + rowSFFeesNo + '">'+
+                '<td width="25%"><input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td width="5%">&nbsp;</td>'+
+                '<td width="25%"><input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="0"></td>'+
+                '<td width="5%">&nbsp;</td>'+
+                '<td width="25%"><input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowSFExtra(\'mfrf_row' + rowSFFeesNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
+        rowSFFeesNo++;
+    }
+
+    function deleteRowSFExtra(rowSFFeesNo) {
+        changes = true;
+
+        $('#' + rowSFFeesNo).remove();
+
     }
 
     function submitSFReport() {

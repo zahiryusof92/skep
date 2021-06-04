@@ -295,7 +295,8 @@ foreach ($user_permission as $permission) {
                                                 <th style="width:15%;">{{ trans('app.forms.name') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.month') }}</th>
-                                                <th style="width:10%;">{{ trans('app.forms.year') }}</th>
+                                                <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
+                                                <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
                                                 <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
@@ -482,7 +483,8 @@ foreach ($user_permission as $permission) {
                 {data: 'name', name: 'ajk_details.name'},
                 {data: 'phone_no', name: 'ajk_details.phone_no'},
                 {data: 'month', name: 'ajk_details.month'},
-                {data: 'year', name: 'ajk_details.year'},
+                {data: 'start_year', name: 'ajk_details.start_year'},
+                {data: 'end_year', name: 'ajk_details.end_year'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });

@@ -153,7 +153,7 @@ class FinanceController extends BaseController {
                                     $reportSF->type = 'SF';
                                     $reportSF->finance_file_id = $finance->id;
                                     $reportSF->name = $name;
-                                    $reportMF->report_key = $key;
+                                    $reportSF->report_key = $key;
                                     $reportSF->amount = 0;
                                     $reportSF->sort_no = $counter;
                                     $reportSF->save();
@@ -561,6 +561,16 @@ class FinanceController extends BaseController {
             }
         }
 
+        if(!empty(Input::get('start_date'))) {
+            $start_date = Input::get('start_date') . " 00:00:00"; 
+            $file = $file->where('finance_file.created_at','>=',$start_date);
+        }
+
+        if(!empty(Input::get('end_date'))) {
+            $end_date = Input::get('end_date') . " 23:59:59"; 
+            $file = $file->where('finance_file.created_at','<=',$end_date);
+        }
+
         return Datatables::of($file)
                         ->addColumn('cob', function ($model) {
                             return ($model->file_id ? $model->file->company->short_name : '-');
@@ -657,9 +667,11 @@ class FinanceController extends BaseController {
         $financeFileIncome = FinanceIncome::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
 
         $mfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'MF')->first();
+        $mfreportExtra = FinanceReportExtra::where('finance_file_id', $id)->where('type', 'MF')->get();
         $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
 
         $sfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'SF')->first();
+        $sfreportExtra = FinanceReportExtra::where('finance_file_id', $id)->where('type', 'SF')->get();
         $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
 
         $viewData = array(
@@ -684,8 +696,10 @@ class FinanceController extends BaseController {
             'utila' => $financeFileUtilityA,
             'utilb' => $financeFileUtilityB,
             'mfreport' => $mfreport,
+            'mfreportExtra' => $mfreportExtra,
             'reportMF' => $reportMF,
             'sfreport' => $sfreport,
+            'sfreportExtra' => $sfreportExtra,
             'reportSF' => $reportSF,
             'finance_file_id' => $id
         );
@@ -803,6 +817,23 @@ class FinanceController extends BaseController {
                             $frp->save();
                         }
                     }
+
+                    /** MF Report Extra */
+                    if(empty($data[$prefix . 'fee_sebulan_is_custom']) == false) {
+                        $delete_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                        for($i= 0; $i < count($data[$prefix . 'fee_sebulan_is_custom']); $i++) {
+                            if(!empty($data[$prefix . 'fee_sebulan_is_custom'][$i])) {
+                                $frextra = new FinanceReportExtra;
+                                $frextra->type = $type;
+                                $frextra->finance_file_id = $files->id;
+                                $frextra->fee_sebulan = $data[$prefix . 'fee_sebulan_is_custom'][$i];
+                                $frextra->unit = $data[$prefix . 'unit_is_custom'][$i];
+                                $frextra->fee_semasa = $data[$prefix . 'fee_semasa_is_custom'][$i];
+                                $frextra->save();
+
+                            }
+                        }
+                    }
                 }
 
                 # Audit Trail
@@ -855,6 +886,23 @@ class FinanceController extends BaseController {
                             $frp->sort_no = $i;
                             $frp->is_custom = $data[$prefix . 'is_custom'][$i];
                             $frp->save();
+                        }
+                    }
+
+                    /** SF Report Extra */
+                    if(empty($data[$prefix . 'fee_sebulan_is_custom']) == false) {
+                        $delete_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                        for($i= 0; $i < count($data[$prefix . 'fee_sebulan_is_custom']); $i++) {
+                            if(!empty($data[$prefix . 'fee_sebulan_is_custom'][$i])) {
+                                $frextra = new FinanceReportExtra;
+                                $frextra->type = $type;
+                                $frextra->finance_file_id = $files->id;
+                                $frextra->fee_sebulan = $data[$prefix . 'fee_sebulan_is_custom'][$i];
+                                $frextra->unit = $data[$prefix . 'unit_is_custom'][$i];
+                                $frextra->fee_semasa = $data[$prefix . 'fee_semasa_is_custom'][$i];
+                                $frextra->save();
+
+                            }
                         }
                     }
                 }

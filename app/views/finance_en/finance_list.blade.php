@@ -248,6 +248,12 @@ foreach ($user_permission as $permission) {
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <span style="font-size: 12px;"><b>{{ trans('app.forms.date_finance_file') }}: </b></span>&nbsp;
+                                    <input style="font-size: 12px;" id="start_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
+                                    <span style="font-size: 12px;" class="margin-right-10">&nbsp; —</span>
+                                    <input style="font-size: 12px;" id="end_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -287,7 +293,18 @@ foreach ($user_permission as $permission) {
         oTable = $('#filelist').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ URL::action('FinanceController@getFinanceList') }}",
+            ajax: {
+                'url' : "{{ URL::action('FinanceController@getFinanceList') }}",
+                'data': function(data) {
+                    var from_date = $('#start_date').val();
+                    var to_date = $('#end_date').val();
+
+                    // Append to data
+                    data.start_date = from_date;
+                    data.end_date = to_date;
+
+                }
+            },
             lengthMenu: [[15, 30, 50, 100, -1], [15, 30, 50, 100, "All"]],
             pageLength: 30,
             order: [[0, "asc"], [1, 'asc'], [3, 'desc'], [4, 'desc']],
@@ -312,6 +329,42 @@ foreach ($user_permission as $permission) {
         });
         $('#year').on('change', function () {
             oTable.columns(4).search(this.value).draw();
+        });
+        
+        $('#start_date').datetimepicker({
+            widgetPositioning: {
+                horizontal: 'left'
+            },
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+            },
+            format: 'YYYY-MM-DD',
+        }).on('dp.change', function () {
+            oTable.draw();
+            
+        });
+        
+        $('#end_date').datetimepicker({
+            widgetPositioning: {
+                horizontal: 'left'
+            },
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+            },
+            format: 'YYYY-MM-DD',
+        }).on('dp.change', function () {
+            oTable.draw();
+            
         });
     });
 

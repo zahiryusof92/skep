@@ -236,7 +236,8 @@ foreach ($user_permission as $permission) {
                                                                 <th style="width:30%;text-align: center !important;">{{ trans('app.forms.designation') }}</th>
                                                                 <th style="width:30%;">{{ trans('app.forms.name') }}</th>
                                                                 <th style="width:20%;">{{ trans('app.forms.phone_number') }}</th>
-                                                                <th style="width:10%;">{{ trans('app.forms.year') }}</th>
+                                                                <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
+                                                                <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
                                                                 <?php if ($update_permission == 1) { ?>
                                                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                                                 <?php } ?>
@@ -846,9 +847,19 @@ foreach ($user_permission as $permission) {
                             <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.year') }}</label>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.year') }}" id="ajk_year"/>
-                            <div id="ajk_year_error" style="display:none;"></div>
-                            <div id="ajk_year_invalid_error" style="display:none;"></div>
+                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.start_year') }}" id="ajk_start_year"/>
+                            <div id="ajk_start_year_error" style="display:none;"></div>
+                            <div id="ajk_start_year_invalid_error" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.year') }}</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.end_year') }}" id="ajk_end_year"/>
+                            <div id="ajk_end_year_error" style="display:none;"></div>
+                            <div id="ajk_end_year_invalid_error" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
@@ -913,10 +924,18 @@ foreach ($user_permission as $permission) {
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.year') }}</label>
+                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.start_year') }}</label>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.year') }}" id="ajk_year_edit"/>
+                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.start_year') }}" id="ajk_start_year_edit"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.end_year') }}</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.end_year') }}" id="ajk_end_year_edit"/>
                         </div>
                     </div>
                 </div>
@@ -973,7 +992,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -989,7 +1010,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1005,7 +1028,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1021,7 +1046,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1037,7 +1064,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1053,7 +1082,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1156,13 +1187,15 @@ foreach ($user_permission as $permission) {
         var designation = $(this).data('designation');
         var name = $(this).data('name');
         var phone_no = $(this).data('phone_no');
-        var year = $(this).data('year');
+        var start_year = $(this).data('start_year');
+        var end_year = $(this).data('end_year');
 
         $("#ajk_id_edit").val(ajk_id);
         $("#ajk_designation_edit").val(designation);
         $("#ajk_name_edit").val(name);
         $("#ajk_phone_no_edit").val(phone_no);
-        $("#ajk_year_edit").val(year);
+        $("#ajk_start_year_edit").val(start_year);
+        $("#ajk_end_year_edit").val(end_year);
     });
 
     function addAGMDetails(type) {
@@ -1520,7 +1553,8 @@ foreach ($user_permission as $permission) {
         var ajk_designation = $("#ajk_designation").val(),
                 ajk_name = $("#ajk_name").val(),
                 ajk_phone_no = $("#ajk_phone_no").val(),
-                ajk_year = $("#ajk_year").val();
+                ajk_start_year = $("#ajk_start_year").val(),
+                ajk_end_year = $("#ajk_end_year").val();
 
         var error = 0;
 
@@ -1550,17 +1584,31 @@ foreach ($user_permission as $permission) {
             error = 1;
         }
 
-        if (ajk_year.trim() == "") {
-            $("#ajk_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Year"]) }}</span>');
-            $("#ajk_year_error").css("display", "block");
-            $("#ajk_year_invalid_error").css("display", "none");
+        if (ajk_start_year.trim() == "") {
+            $("#ajk_start_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Start Year"]) }}</span>');
+            $("#ajk_start_year_error").css("display", "block");
+            $("#ajk_start_year_invalid_error").css("display", "none");
             error = 1;
         }
 
-        if (isNaN(ajk_year)) {
-            $("#ajk_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Year"]) }}</span>');
-            $("#ajk_year_invalid_error").css("display", "block");
-            $("#ajk_year_error").css("display", "none");
+        if (isNaN(ajk_start_year)) {
+            $("#ajk_start_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Start Year"]) }}</span>');
+            $("#ajk_start_year_invalid_error").css("display", "block");
+            $("#ajk_start_year_error").css("display", "none");
+            error = 1;
+        }
+
+        if (ajk_end_year.trim() == "") {
+            $("#ajk_end_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"End Year"]) }}</span>');
+            $("#ajk_end_year_error").css("display", "block");
+            $("#ajk_end_year_invalid_error").css("display", "none");
+            error = 1;
+        }
+
+        if (isNaN(ajk_end_year)) {
+            $("#ajk_end_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"End Year"]) }}</span>');
+            $("#ajk_end_year_invalid_error").css("display", "block");
+            $("#ajk_end_year_error").css("display", "none");
             error = 1;
         }
 
@@ -1572,7 +1620,8 @@ foreach ($user_permission as $permission) {
                     ajk_designation: ajk_designation,
                     ajk_name: ajk_name,
                     ajk_phone_no: ajk_phone_no,
-                    ajk_year: ajk_year,
+                    ajk_start_year: ajk_start_year,
+                    ajk_end_year: ajk_end_year,
                     file_id: '{{ $file->id }}'
                 },
                 success: function (data) {
@@ -1605,7 +1654,8 @@ foreach ($user_permission as $permission) {
                 ajk_designation = $("#ajk_designation_edit").val(),
                 ajk_name = $("#ajk_name_edit").val(),
                 ajk_phone_no = $("#ajk_phone_no_edit").val(),
-                ajk_year = $("#ajk_year_edit").val();
+                ajk_start_year = $("#ajk_start_year_edit").val(),
+                ajk_end_year = $("#ajk_end_year_edit").val();
 
         var error = 0;
 
@@ -1635,17 +1685,31 @@ foreach ($user_permission as $permission) {
             error = 1;
         }
 
-        if (ajk_year.trim() == "") {
-            $("#ajk_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Year"]) }}</span>');
-            $("#ajk_year_error").css("display", "block");
-            $("#ajk_year_invalid_error").css("display", "none");
+        if (ajk_start_year.trim() == "") {
+            $("#ajk_start_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Start Year"]) }}</span>');
+            $("#ajk_start_year_error").css("display", "block");
+            $("#ajk_start_year_invalid_error").css("display", "none");
             error = 1;
         }
 
-        if (isNaN(ajk_year)) {
-            $("#ajk_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Year"]) }}</span>');
-            $("#ajk_year_invalid_error").css("display", "block");
-            $("#ajk_year_error").css("display", "none");
+        if (isNaN(ajk_start_year)) {
+            $("#ajk_start_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Start Year"]) }}</span>');
+            $("#ajk_start_year_invalid_error").css("display", "block");
+            $("#ajk_start_year_error").css("display", "none");
+            error = 1;
+        }
+
+        if (ajk_end_year.trim() == "") {
+            $("#ajk_end_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"End Year"]) }}</span>');
+            $("#ajk_end_year_error").css("display", "block");
+            $("#ajk_end_year_invalid_error").css("display", "none");
+            error = 1;
+        }
+
+        if (isNaN(ajk_end_year)) {
+            $("#ajk_end_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"End Year"]) }}</span>');
+            $("#ajk_end_year_invalid_error").css("display", "block");
+            $("#ajk_end_year_error").css("display", "none");
             error = 1;
         }
 
@@ -1657,7 +1721,8 @@ foreach ($user_permission as $permission) {
                     ajk_designation: ajk_designation,
                     ajk_name: ajk_name,
                     ajk_phone_no: ajk_phone_no,
-                    ajk_year: ajk_year,
+                    ajk_start_year: ajk_start_year,
+                    ajk_end_year: ajk_end_year,
                     ajk_id_edit: ajk_id_edit,
                     file_id: '{{ $file->id }}'
                 },

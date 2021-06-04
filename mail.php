@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'host' => 'smtp.mail.eu-west-1.awsapps.com',
+	'host' => 'mail.arcortus.com',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return array(
 	|
 	*/
 
-	'port' => 465,
+	'port' => 587,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => 'noreply@odesi.tech', 'name' => 'noreply'),
+	'from' => array('address' => 'no-reply@odesi.tech', 'name' => 'noreply'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ return array(
 	|
 	*/
 
-	'encryption' => 'ssl',
+	'encryption' => 'tls',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return array(
 	|
 	*/
 
-	'username' => 'noreply@odesi.tech',
+	'username' => 'gurjeet@arcortus.com',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return array(
 	|
 	*/
 
-	'password' => 'Noreply@88',
+	'password' => 'Gurjeet010190',
 
 	/*
 	|--------------------------------------------------------------------------

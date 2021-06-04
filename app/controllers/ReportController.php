@@ -635,8 +635,7 @@ class ReportController extends BaseController {
                         ->where('finance_file.is_deleted', 0)
                         ->groupBy('files.id')
                         ->groupBy('finance_file.id')
-                        ->orderBy('files.id')
-                        ->get();
+                        ->orderBy('files.id');
             } else {
                 $files = DB::table('files')
                         ->join('company', 'files.company_id', '=', 'company.id')
@@ -655,8 +654,7 @@ class ReportController extends BaseController {
                         ->where('finance_file.is_deleted', 0)
                         ->groupBy('files.id')
                         ->groupBy('finance_file.id')
-                        ->orderBy('files.id')
-                        ->get();
+                        ->orderBy('files.id');
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
@@ -676,8 +674,7 @@ class ReportController extends BaseController {
                         ->where('finance_file.is_deleted', 0)
                         ->groupBy('files.id')
                         ->groupBy('finance_file.id')
-                        ->orderBy('files.id')
-                        ->get();
+                        ->orderBy('files.id');
             } else {
                 $files = DB::table('files')
                         ->join('company', 'files.company_id', '=', 'company.id')
@@ -696,10 +693,21 @@ class ReportController extends BaseController {
                         ->where('finance_file.is_deleted', 0)
                         ->groupBy('files.id')
                         ->groupBy('finance_file.id')
-                        ->orderBy('files.id')
-                        ->get();
+                        ->orderBy('files.id');
             }
         }
+
+        if(!empty(Input::get('start_date'))) {
+            $start_date = Input::get('start_date') . " 00:00:00"; 
+            $files = $files->where('files.created_at','>=',$start_date);
+        }
+
+        if(!empty(Input::get('end_date'))) {
+            $end_date = Input::get('end_date') . " 23:59:59"; 
+            $files = $files->where('files.created_at','<=',$end_date);
+        }
+
+        $files = $files->get();
 
         if ($files) {
             $data = array();

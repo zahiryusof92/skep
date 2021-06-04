@@ -1089,7 +1089,9 @@ class AdminController extends BaseController {
         if (Auth::user()->isJMB()) {
             $strata = StrataDraft::where('file_id', $files->id)->first();
             $residential = ResidentialDraft::where('file_id', $files->id)->first();
+            $residential_extra = ResidentialExtra::where('file_id', $files->id)->get();
             $commercial = CommercialDraft::where('file_id', $files->id)->first();
+            $commercial_extra = CommercialExtra::where('file_id', $files->id)->get();
             $facility = FacilityDraft::where('file_id', $files->id)->first();
 
             if (count($strata) <= 0) {
@@ -1107,7 +1109,9 @@ class AdminController extends BaseController {
         } else {
             $strata = Strata::where('file_id', $files->id)->first();
             $residential = Residential::where('file_id', $files->id)->first();
+            $residential_extra = ResidentialExtra::where('file_id', $files->id)->get();
             $commercial = Commercial::where('file_id', $files->id)->first();
+            $commercial_extra = CommercialExtra::where('file_id', $files->id)->get();
             $facility = Facility::where('file_id', $files->id)->first();
         }
 
@@ -1157,7 +1161,9 @@ class AdminController extends BaseController {
             'file' => $files,
             'unitoption' => $unitoption,
             'residential' => $residential,
+            'residential_extra' => $residential_extra,
             'commercial' => $commercial,
+            'commercial_extra' => $commercial_extra,
             'designation' => $designation,
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
@@ -1207,7 +1213,6 @@ class AdminController extends BaseController {
     public function submitUpdateStrata() {
         $data = Input::all();
         if (Request::ajax()) {
-
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['file']['cob']['strata']['update'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
@@ -1273,6 +1278,7 @@ class AdminController extends BaseController {
             $residential_maintenance_fee_option = $data['residential_maintenance_fee_option'];
             $residential_sinking_fund = $data['residential_sinking_fund'];
             $residential_sinking_fund_option = $data['residential_sinking_fund_option'];
+
 
             //commercial
             $commercial_unit_no = $data['commercial_unit_no'];
@@ -1355,6 +1361,25 @@ class AdminController extends BaseController {
                 $residential->sinking_fund = $residential_sinking_fund;
                 $residential->sinking_fund_option = $residential_sinking_fund_option;
                 $residential->save();
+                
+                if(empty($data['residential_maintenance_fee_is_custom']) == false) {
+                    $total_residential_custom = count($data['residential_maintenance_fee_is_custom']);
+                    if($total_residential_custom > 0) {
+                        $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
+                        for($i = 0; $i < $total_residential_custom; $i++) {
+                            $custom_residential =  new ResidentialExtra();
+                            $custom_residential->file_id = $residential->file_id;
+                            $custom_residential->strata_id = $residential->strata_id;
+                            $custom_residential->maintenance_fee = $data['residential_maintenance_fee_is_custom'][$i];
+                            $custom_residential->maintenance_fee_option = $data['residential_maintenance_fee_option_is_custom'][$i];
+                            $custom_residential->sinking_fund = $data['residential_sinking_fund_is_custom'][$i];
+                            $custom_residential->sinking_fund_option = $data['residential_sinking_fund_option_is_custom'][$i];
+                            $custom_residential->save();
+                        }
+
+                    }
+                }
+                
             } else {
                 if (Auth::user()->isJMB()) {
                     ResidentialDraft::where('file_id', $files->id)->delete();
@@ -1371,6 +1396,24 @@ class AdminController extends BaseController {
                 $commercial->sinking_fund = $commercial_sinking_fund;
                 $commercial->sinking_fund_option = $commercial_sinking_fund_option;
                 $commercial->save();
+                
+                if(empty($data['commercial_maintenance_fee_is_custom']) == false) {
+                    $total_commercial_custom = count($data['commercial_maintenance_fee_is_custom']);
+                    if($total_commercial_custom > 0) {
+                        $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
+                        for($i = 0; $i < $total_commercial_custom; $i++) {
+                            $custom_commercial =  new CommercialExtra();
+                            $custom_commercial->file_id = $commercial->file_id;
+                            $custom_commercial->strata_id = $commercial->strata_id;
+                            $custom_commercial->maintenance_fee = $data['commercial_maintenance_fee_is_custom'][$i];
+                            $custom_commercial->maintenance_fee_option = $data['commercial_maintenance_fee_option_is_custom'][$i];
+                            $custom_commercial->sinking_fund = $data['commercial_sinking_fund_is_custom'][$i];
+                            $custom_commercial->sinking_fund_option = $data['commercial_sinking_fund_option_is_custom'][$i];
+                            $custom_commercial->save();
+                        }
+
+                    }
+                }
             } else {
                 if (Auth::user()->isJMB()) {
                     CommercialDraft::where('file_id', $files->id)->delete();
@@ -3012,13 +3055,15 @@ class AdminController extends BaseController {
             $designation = $data['ajk_designation'];
             $name = $data['ajk_name'];
             $phone_no = $data['ajk_phone_no'];
-            $year = $data['ajk_year'];
+            $start_year = $data['ajk_start_year'];
+            $end_year = $data['ajk_end_year'];
 
             $ajk_detail->file_id = $files->id;
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
             $ajk_detail->phone_no = $phone_no;
-            $ajk_detail->year = $year;
+            $ajk_detail->start_year = $start_year;
+            $ajk_detail->end_year = $end_year;
             $ajk_detail->save();
 
             # Audit Trail
@@ -3056,12 +3101,14 @@ class AdminController extends BaseController {
             $designation = $data['ajk_designation'];
             $name = $data['ajk_name'];
             $phone_no = $data['ajk_phone_no'];
-            $year = $data['ajk_year'];
+            $start_year = $data['ajk_start_year'];
+            $end_year = $data['ajk_end_year'];
 
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
             $ajk_detail->phone_no = $phone_no;
-            $ajk_detail->year = $year;
+            $ajk_detail->start_year = $start_year;
+            $ajk_detail->end_year = $end_year;
             $ajk_detail->save();
 
             # Audit Trail
@@ -3092,7 +3139,7 @@ class AdminController extends BaseController {
 
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit" data-toggle="modal" data-target="#edit_ajk_details"
-                            data-ajk_id="' . $ajk_details->id . '" data-designation="' . $ajk_details->designation . '" data-name="' . $ajk_details->name . '" data-phone_no="' . $ajk_details->phone_no . '" data-year="' . $ajk_details->year . '">
+                            data-ajk_id="' . $ajk_details->id . '" data-designation="' . $ajk_details->designation . '" data-name="' . $ajk_details->name . '" data-phone_no="' . $ajk_details->phone_no . '" data-start_year="' . $ajk_details->start_year . '" data-end_year="' . $ajk_details->end_year . '">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
@@ -3105,7 +3152,8 @@ class AdminController extends BaseController {
                     $designation->description,
                     $ajk_details->name,
                     $ajk_details->phone_no,
-                    $ajk_details->year,
+                    $ajk_details->start_year,
+                    $ajk_details->end_year,
                     $button
                 );
 
@@ -3187,7 +3235,7 @@ class AdminController extends BaseController {
     public function others($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::findOrFail($id);
+        $files = Files::with(['buyer'])->findOrFail($id);
 
         if (Auth::user()->isJMB()) {
             $other_details = OtherDetailsDraft::where('file_id', $files->id)->first();
@@ -3202,7 +3250,7 @@ class AdminController extends BaseController {
             $other_details = OtherDetails::where('file_id', $files->id)->first();
             $image = OtherDetails::where('file_id', $files->id)->first();
         }
-
+        
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',

@@ -92,7 +92,8 @@ class AgmController extends BaseController {
                     $ajk_details->name,
                     $ajk_details->phone_no,
                     $ajk_details->monthName(),
-                    $ajk_details->year,
+                    $ajk_details->start_year,
+                    $ajk_details->end_year,
                     $button
                 );
 
@@ -157,7 +158,8 @@ class AgmController extends BaseController {
             $name = $data['name'];
             $phone_no = $data['phone_no'];
             $month = $data['month'];
-            $year = $data['year'];
+            $start_year = $data['start_year'];
+            $end_year = $data['end_year'];
             $remarks = $data['remarks'];
 
             $ajk_detail = new AJKDetails();
@@ -166,7 +168,8 @@ class AgmController extends BaseController {
             $ajk_detail->name = $name;
             $ajk_detail->phone_no = $phone_no;
             $ajk_detail->month = $month;
-            $ajk_detail->year = $year;
+            $ajk_detail->start_year = $start_year;
+            $ajk_detail->end_year = $end_year;
             $ajk_detail->remarks = $remarks;
             $success = $ajk_detail->save();
 
@@ -234,7 +237,8 @@ class AgmController extends BaseController {
             $name = $data['name'];
             $phone_no = $data['phone_no'];
             $month = $data['month'];
-            $year = $data['year'];
+            $start_year = $data['start_year'];
+            $end_year = $data['end_year'];
             $remarks = $data['remarks'];
 
             $ajk_detail = AJKDetails::find($id);
@@ -244,7 +248,8 @@ class AgmController extends BaseController {
                 $ajk_detail->name = $name;
                 $ajk_detail->phone_no = $phone_no;
                 $ajk_detail->month = $month;
-                $ajk_detail->year = $year;
+                $ajk_detail->start_year = $start_year;
+                $ajk_detail->end_year = $end_year;
                 $ajk_detail->remarks = $remarks;
                 $success = $ajk_detail->save();
 
@@ -2202,7 +2207,8 @@ class AgmController extends BaseController {
             $agmDesignSub->name = $data['name'];
             $agmDesignSub->phone_number = $data['phone_number'];
             $agmDesignSub->email = $data['email'];
-            $agmDesignSub->ajk_year = $data['ajk_year'];
+            $agmDesignSub->ajk_start_year = $data['ajk_start_year'];
+            $agmDesignSub->ajk_end_year = $data['ajk_end_year'];
             $agmDesignSub->remark = $data['remark'];
             $success = $agmDesignSub->save();
 
@@ -2236,7 +2242,8 @@ class AgmController extends BaseController {
                     $x->name,
                     $x->phone_number,
                     $x->email,
-                    $x->ajk_year,
+                    $x->ajk_start_year,
+                    $x->ajk_end_year,
                     $button
                 );
 
@@ -2365,7 +2372,8 @@ class AgmController extends BaseController {
             $agmDesignSub->name = $data['name'];
             $agmDesignSub->phone_number = $data['phone_number'];
             $agmDesignSub->email = $data['email'];
-            $agmDesignSub->ajk_year = $data['ajk_year'];
+            $agmDesignSub->ajk_start_year = $data['ajk_start_year'];
+            $agmDesignSub->ajk_end_year = $data['ajk_end_year'];
             $agmDesignSub->remark = $data['remark'];
             $success = $agmDesignSub->save();
 
