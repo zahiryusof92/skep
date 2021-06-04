@@ -1217,7 +1217,8 @@ class ApiController extends BaseController {
                             'name' => ($designation->name ? $designation->name : ''),
                             'phone_no' => ($designation->phone_no ? $designation->phone_no : ''),
                             'month' => ($designation->month ? $designation->month : ''),
-                            'year' => ($designation->year ? $designation->year : ''),
+                            'start_year' => ($designation->start_year ? $designation->start_year : ''),
+                            'end_year' => ($designation->end_year ? $designation->end_year : ''),
                             'remarks' => ($designation->remarks ? $designation->remarks : ''),
                             'created_at' => ($designation->created_at ? $designation->created_at->format('Y-m-d H:i:s') : ''),
                             'updated_at' => ($designation->updated_at ? $designation->updated_at->format('Y-m-d H:i:s') : '')

@@ -444,6 +444,14 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group text-right">
+                                                            <a href="javascript:void(0);" onclick="addRowRB()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -490,6 +498,51 @@ foreach ($user_permission as $permission) {
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if(count($residential_extra) > 0)
+                                                        <?php $residential_i = 1; ?>
+                                                        @foreach($residential_extra as $extra)
+                                                        
+                                                            <div id="rbrowmf{{$residential_i}}" class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.maintenance_fee') }}</label>
+                                                                        <div class="form-inline">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" name="residential_maintenance_fee_is_custom[]" value="{{$extra->maintenance_fee}}">
+                                                                            <select class="form-control select2" name="residential_maintenance_fee_option_is_custom[]">
+                                                                                @foreach ($unitoption as $unitoptions)
+                                                                                <option value="{{$unitoptions->id}}" {{($extra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="rbrowsf{{$residential_i}}" class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                        <div class="form-inline">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" name="residential_sinking_fund_is_custom[]" value="{{$extra->sinking_fund}}">
+                                                                            <select class="form-control select2" name="residential_sinking_fund_option_is_custom[]">
+                                                                                @foreach ($unitoption as $unitoptions)
+                                                                                <option value="{{$unitoptions->id}}" {{($extra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <a href="javascript:void(0);" onclick="deleteRowRB({{$residential_i}})" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <?php $residential_i++;?>
+                                                        @endforeach
+                                                    @endif
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group text-right">
+                                                            <a href="javascript:void(0);" onclick="addRowRB()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -543,6 +596,14 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group text-right">
+                                                            <a href="javascript:void(0);" onclick="addRowCB()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -592,6 +653,54 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @if(count($commercial_extra) > 0)
+                                                        <?php $commercial_i = 1; ?>
+                                                        @foreach($commercial_extra as $extra)
+                                                        
+                                                            <div id="cbrowmf{{$commercial_i}}" class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.commercial_fee') }}</label>
+                                                                        <div class="form-inline">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" name="commercial_maintenance_fee_is_custom[]" value="{{$extra->maintenance_fee}}">
+                                                                            <select class="form-control select2" name="commercial_maintenance_fee_option_is_custom[]">
+                                                                                @foreach ($unitoption as $unitoptions)
+                                                                                <option value="{{$unitoptions->id}}" {{($extra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="cbrowsf{{$commercial_i}}" class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                        <div class="form-inline">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" name="commercial_sinking_fund_is_custom[]" value="{{$extra->sinking_fund}}">
+                                                                            <select class="form-control select2" name="commercial_sinking_fund_option_is_custom[]">
+                                                                                @foreach ($unitoption as $unitoptions)
+                                                                                <option value="{{$unitoptions->id}}" {{($extra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <a href="javascript:void(0);" onclick="deleteRowCB({{$commercial_i}})" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <?php $commercial_i++;?>
+                                                        @endforeach
+                                                    @endif
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group text-right">
+                                                            <a href="javascript:void(0);" onclick="addRowCB()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -877,6 +986,8 @@ foreach ($user_permission as $permission) {
 
 <!-- Page Scripts -->
 <script>
+    var rowRBNo = ("{{count($residential_extra)}}" > 0)? (Number("{{count($residential_extra)}}") + Number(1)) : 1;
+    var rowCBNo = ("{{count($commercial_extra)}}" > 0)? (Number("{{count($commercial_extra)}}") + Number(1)) : 1;
     var changes = false;
     $('input, textarea, select').on('keypress change input', function () {
         changes = true;
@@ -929,6 +1040,110 @@ foreach ($user_permission as $permission) {
         }
     }
 
+
+
+    function addRowRB() {
+        changes = true;
+
+        // var rowRBNo = $("#residential_form .row").length;
+        
+        // rowRBNo = rowRBNo - 3;
+        $("#residential_form .row:last").prev().after(
+            '<div id="rbrowmf' + rowRBNo + '" class="row">' + 
+                '<div class="col-md-6">' + 
+                    '<div class="form-group">' +
+                        '<label>{{ trans('app.forms.maintenance_fee') }}</label>' +
+                        '<div class="form-inline">' +
+                            '<input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" name="residential_maintenance_fee_is_custom[]">' +
+                            '<select class="form-control" name="residential_maintenance_fee_option_is_custom[]">'+
+                                '@foreach ($unitoption as $unitoptions)' +
+                                '<option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>' +
+                                '@endforeach'+
+                            '</select>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div id="rbrowsf' + rowRBNo + '" class="row">'+
+                '<div class="col-md-6">'+
+                    '<div class="form-group">'+
+                        '<label>{{ trans('app.forms.sinking_fund') }}</label>'+
+                        '<div class="form-inline">'+
+                            '<input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" name="residential_sinking_fund_is_custom[]">'+
+                            '<select class="form-control" name="residential_sinking_fund_option_is_custom[]">'+
+                                '@foreach ($unitoption as $unitoptions)'+
+                                '<option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>'+
+                                '@endforeach'+
+                            '</select>'+
+                            '<a href="javascript:void(0);" onclick="deleteRowRB(\'' + rowRBNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'
+        );
+        rowRBNo++;
+
+    }
+
+    function deleteRowRB(rowRBNo) {
+        changes = true;
+
+        $('#rbrowmf' + rowRBNo).remove();
+        $('#rbrowsf' + rowRBNo).remove();
+
+    }
+
+    function addRowCB() {
+        changes = true;
+
+        // var rowCBNo = $("#commercial_form .row").length;
+        
+        // rowCBNo = rowCBNo - 3;
+        $("#commercial_form .row:last").prev().after(
+            '<div id="cbrowmf' + rowCBNo + '" class="row">' + 
+                '<div class="col-md-6">' + 
+                    '<div class="form-group">' +
+                        '<label>{{ trans('app.forms.commercial_fee') }}</label>' +
+                        '<div class="form-inline">' +
+                            '<input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" name="commercial_maintenance_fee_is_custom[]">' +
+                            '<select class="form-control" name="commercial_maintenance_fee_option_is_custom[]">'+
+                                '@foreach ($unitoption as $unitoptions)' +
+                                '<option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>' +
+                                '@endforeach'+
+                            '</select>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div id="cbrowsf' + rowCBNo + '" class="row">'+
+                '<div class="col-md-6">'+
+                    '<div class="form-group">'+
+                        '<label>{{ trans('app.forms.sinking_fund') }}</label>'+
+                        '<div class="form-inline">'+
+                            '<input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" name="commercial_sinking_fund_is_custom[]">'+
+                            '<select class="form-control" name="commercial_sinking_fund_option_is_custom[]">'+
+                                '@foreach ($unitoption as $unitoptions)'+
+                                '<option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>'+
+                                '@endforeach'+
+                            '</select>'+
+                            '<a href="javascript:void(0);" onclick="deleteRowCB(\'' + rowCBNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'
+        );
+        rowCBNo++;
+
+    }
+
+    function deleteRowCB(rowCBNo) {
+        changes = true;
+
+        $('#cbrowmf' + rowCBNo).remove();
+        $('#cbrowsf' + rowCBNo).remove();
+
+    }
+
     $(function () {
         $("#strata_date_raw").datetimepicker({
             widgetPositioning: {
@@ -938,7 +1153,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -954,7 +1171,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -985,6 +1204,49 @@ foreach ($user_permission as $permission) {
     function updateStrata() {
         changes = false;
         $("#loading").css("display", "inline-block");
+        var residential_maintenance_fee_is_custom = [];
+        var rmf_is_custom = document.getElementsByName('residential_maintenance_fee_is_custom[]');
+        for(var i = 0; i < rmf_is_custom.length; i++) {
+            console.log(rmf_is_custom[i].value);
+            residential_maintenance_fee_is_custom.push(rmf_is_custom[i].value);
+        }
+        var residential_maintenance_fee_option_is_custom = [];
+        var rmf_option_is_custom = document.getElementsByName('residential_maintenance_fee_option_is_custom[]');
+        for(var i = 0; i < rmf_option_is_custom.length; i++) {
+            residential_maintenance_fee_option_is_custom.push(rmf_option_is_custom[i].value);
+        }
+        var residential_sinking_fund_is_custom = [];
+        var rsf_is_custom = document.getElementsByName('residential_sinking_fund_is_custom[]');
+        for(var i = 0; i < rsf_is_custom.length; i++) {
+            residential_sinking_fund_is_custom.push(rsf_is_custom[i].value);
+        }
+        var residential_sinking_fund_option_is_custom = [];
+        var rsf_option_is_custom = document.getElementsByName('residential_sinking_fund_option_is_custom[]');
+        for(var i = 0; i < rsf_option_is_custom.length; i++) {
+            residential_sinking_fund_option_is_custom.push(rsf_option_is_custom[i].value);
+        }
+        
+        var commercial_maintenance_fee_is_custom = [];
+        var cmf_is_custom = document.getElementsByName('commercial_maintenance_fee_is_custom[]');
+        for(var i = 0; i < cmf_is_custom.length; i++) {
+            console.log(cmf_is_custom[i].value);
+            commercial_maintenance_fee_is_custom.push(cmf_is_custom[i].value);
+        }
+        var commercial_maintenance_fee_option_is_custom = [];
+        var cmf_option_is_custom = document.getElementsByName('commercial_maintenance_fee_option_is_custom[]');
+        for(var i = 0; i < cmf_option_is_custom.length; i++) {
+            commercial_maintenance_fee_option_is_custom.push(cmf_option_is_custom[i].value);
+        }
+        var commercial_sinking_fund_is_custom = [];
+        var csf_is_custom = document.getElementsByName('commercial_sinking_fund_is_custom[]');
+        for(var i = 0; i < csf_is_custom.length; i++) {
+            commercial_sinking_fund_is_custom.push(csf_is_custom[i].value);
+        }
+        var commercial_sinking_fund_option_is_custom = [];
+        var csf_option_is_custom = document.getElementsByName('commercial_sinking_fund_option_is_custom[]');
+        for(var i = 0; i < csf_option_is_custom.length; i++) {
+            commercial_sinking_fund_option_is_custom.push(csf_option_is_custom[i].value);
+        }
 
         var strata_title = $("#strata_title").val(),
                 strata_name = $("#strata_name").val(),
@@ -1139,12 +1401,20 @@ foreach ($user_permission as $permission) {
                     residential_maintenance_fee_option: residential_maintenance_fee_option,
                     residential_sinking_fund: residential_sinking_fund,
                     residential_sinking_fund_option: residential_sinking_fund_option,
+                    "residential_maintenance_fee_is_custom[]" : residential_maintenance_fee_is_custom,
+                    "residential_maintenance_fee_option_is_custom[]" : residential_maintenance_fee_option_is_custom,
+                    "residential_sinking_fund_is_custom[]" : residential_sinking_fund_is_custom,
+                    "residential_sinking_fund_option_is_custom[]" : residential_sinking_fund_option_is_custom,
                     //commercial
                     commercial_unit_no: commercial_unit_no,
                     commercial_maintenance_fee: commercial_maintenance_fee,
                     commercial_maintenance_fee_option: commercial_maintenance_fee_option,
                     commercial_sinking_fund: commercial_sinking_fund,
                     commercial_sinking_fund_option: commercial_sinking_fund_option,
+                    "commercial_maintenance_fee_is_custom[]" : commercial_maintenance_fee_is_custom,
+                    "commercial_maintenance_fee_option_is_custom[]" : commercial_maintenance_fee_option_is_custom,
+                    "commercial_sinking_fund_is_custom[]" : commercial_sinking_fund_is_custom,
+                    "commercial_sinking_fund_option_is_custom[]" : commercial_sinking_fund_option_is_custom,
                     //facility
                     management_office: management_office,
                     management_office_unit: management_office_unit,

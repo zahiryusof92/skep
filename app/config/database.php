@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'skep_selangor',
+			'database'  => 'db_ecob_selangor',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',

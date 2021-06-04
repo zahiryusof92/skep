@@ -15,13 +15,14 @@ $prefix = 'sum_';
                         <?php
                         $no = 1;
                         $total_all = 0;
+                        $tbl_fields = Config::get('constant.others.tbl_fields_name');
                         ?>
-                        @foreach ($summary as $summaries)
-                        <?php $total_all += $summaries['amount']; ?>
+                        @foreach (Config::get('constant.module.finance.tabs.summary.only') as $summaries)
+                        <?php $name = $tbl_fields[$prefix . $summaries];?>
                         <tr>
-                            <td width="5%" class="padding-table text-center"><input type="hidden" name="{{ $prefix }}summary_key[]" value="{{ $summaries->summary_key }}">{{ $no }}</td>
-                            <td width="80%" class="padding-table"><input type="hidden" name="{{ $prefix }}name[]" value="{{ $summaries->name }}">{{ $summaries->name }}</td>
-                            <td width="15%"><input type="currency" oninput="calculateSummaryTotal()" class="form-control form-control-sm text-right" id="{{$prefix.$summaries->summary_key}}" name="{{ $prefix }}amount[]" readonly=""></td>
+                            <td width="5%" class="padding-table text-center"><input type="hidden" name="{{ $prefix }}summary_key[]" value="{{ $summaries }}">{{ $no }}</td>
+                            <td width="80%" class="padding-table"><input type="hidden" name="{{ $prefix }}name[]" value="{{ $name }}">{{ $name }}</td>
+                            <td width="15%"><input type="currency" oninput="calculateSummaryTotal()" class="form-control form-control-sm text-right" id="{{$prefix.$summaries}}" name="{{ $prefix }}amount[]" readonly=""></td>
                         </tr>
                         <?php $no++; ?>
                         @endforeach

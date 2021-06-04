@@ -72,8 +72,8 @@ foreach ($user_permission as $permission) {
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>{{ trans('app.forms.year') }}</label>
-                                        <select id="year" class="form-control select2">
+                                        <label>{{ trans('app.forms.start_year') }}</label>
+                                        <select id="start_year" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @for ($i = 2012; $i <= date('Y'); $i++)
                                             <option value="{{ $i }}">{{ $i}}</option>
@@ -100,7 +100,8 @@ foreach ($user_permission as $permission) {
                                         <th style="width:20%;">{{ trans('app.forms.name') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.month') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.year') }}</th>
+                                        <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
+                                        <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
                                         <?php if ($update_permission == 1) { ?>
                                             <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
@@ -144,7 +145,7 @@ foreach ($user_permission as $permission) {
         $('#month').on('change', function () {
             oTable.columns(5).search(this.value).draw();
         });
-        $('#year').on('change', function () {
+        $('#start_year').on('change', function () {
             oTable.columns(6).search(this.value).draw();
         });
     });

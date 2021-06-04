@@ -99,10 +99,21 @@ foreach ($user_permission as $permission) {
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.year') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.year') }}" id="year" value="{{ $ajk_details->year }}"/>
-                                        <div id="year_error" style="display:none;"></div>
-                                        <div id="year_invalid_error" style="display:none;"></div>
+                                        <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.start_year') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.start_year') }}" id="start_year" value="{{ $ajk_details->start_year }}"/>
+                                        <div id="start_year_error" style="display:none;"></div>
+                                        <div id="start_year_invalid_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.end_year') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.end_year') }}" id="end_year" value="{{ $ajk_details->end_year }}"/>
+                                        <div id="end_year_error" style="display:none;"></div>
+                                        <div id="end_year_invalid_error" style="display:none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -144,15 +155,18 @@ foreach ($user_permission as $permission) {
         $("#phone_no_error").css("display", "none");
         $("#phone_no_invalid_error").css("display", "none");
         $("#month_error").css("display", "none");
-        $("#year_error").css("display", "none");
-        $("#year_invalid_error").css("display", "none");
+        $("#start_year_error").css("display", "none");
+        $("#start_year_invalid_error").css("display", "none");
+        $("#end_year_error").css("display", "none");
+        $("#end_year_invalid_error").css("display", "none");
 
         var file_id = $("#file_id").val(),
                 designation = $("#designation").val(),
                 name = $("#name").val(),
                 phone_no = $("#phone_no").val(),
                 month = $("#month").val(),
-                year = $("#year").val(),
+                start_year = $("#start_year").val(),
+                end_year = $("#end_year").val(),
                 remarks = $("#remarks").val();
 
         var error = 0;
@@ -195,17 +209,31 @@ foreach ($user_permission as $permission) {
             error = 1;
         }
 
-        if (year.trim() == "") {
-            $("#year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Year"]) }}</span>');
-            $("#year_error").css("display", "block");
-            $("#year_invalid_error").css("display", "none");
+        if (start_year.trim() == "") {
+            $("#start_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Start Year"]) }}</span>');
+            $("#start_year_error").css("display", "block");
+            $("#start_year_invalid_error").css("display", "none");
             error = 1;
         }
 
-        if (isNaN(year)) {
-            $("#year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Year"]) }}</span>');
-            $("#year_invalid_error").css("display", "block");
-            $("#year_error").css("display", "none");
+        if (isNaN(start_year)) {
+            $("#start_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Start Year"]) }}</span>');
+            $("#start_year_invalid_error").css("display", "block");
+            $("#start_year_error").css("display", "none");
+            error = 1;
+        }
+
+        if (end_year.trim() == "") {
+            $("#end_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"End Year"]) }}</span>');
+            $("#end_year_error").css("display", "block");
+            $("#end_year_invalid_error").css("display", "none");
+            error = 1;
+        }
+
+        if (isNaN(end_year)) {
+            $("#end_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"End Year"]) }}</span>');
+            $("#end_year_invalid_error").css("display", "block");
+            $("#end_year_error").css("display", "none");
             error = 1;
         }
 
@@ -219,7 +247,8 @@ foreach ($user_permission as $permission) {
                     name: name,
                     phone_no: phone_no,
                     month: month,
-                    year: year,
+                    start_year: start_year,
+                    end_year:end_year,
                     remarks: remarks,
                     id: "{{ $ajk_details->id }}"
                 },

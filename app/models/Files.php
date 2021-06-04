@@ -68,6 +68,10 @@ class Files extends Eloquent {
         return $this->hasMany('Defect', 'file_id');
     }
 
+    public function buyer() {
+        return $this->hasMany('Buyer', 'file_id');
+    }
+
     public function management() {
         return $this->hasOne('Management', 'file_id');
     }

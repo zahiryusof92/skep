@@ -343,11 +343,11 @@ class HomeController extends BaseController {
                 $query2->where('ajk_details.month', '>', '0');
             });
             $query1->where(function ($query3) {
-                $query3->where('ajk_details.year', '>', '0');
+                $query3->where('ajk_details.start_year', '>', '0');
             });
 //            $query1->where(function ($query4) use ($current_month, $current_year) {
 //                $query4->where('ajk_details.month', '>', $current_month);
-//                $query4->where('ajk_details.year', '!=', $current_year);                
+//                $query4->where('ajk_details.start_year', '!=', $current_year);                
 //            });
             $query1->where('ajk_details.is_deleted', 0);
             $query1->where('designation.is_deleted', 0);
@@ -359,7 +359,7 @@ class HomeController extends BaseController {
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.start_year, ajk_details.month) as monthyear")])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($condition);
@@ -368,7 +368,7 @@ class HomeController extends BaseController {
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.start_year, ajk_details.month) as monthyear")])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where($condition);
             }
@@ -378,14 +378,14 @@ class HomeController extends BaseController {
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.start_year, ajk_details.month) as monthyear")])
                         ->where($condition);
             } else {
                 $file = AJKDetails::join('designation', 'ajk_details.designation', '=', 'designation.id')
                         ->join('files', 'ajk_details.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.year, ajk_details.month) as monthyear")])
+                        ->select(['ajk_details.*', 'designation.id as designation_id', 'strata.id as strata_id', DB::raw("CONCAT(ajk_details.start_year, ajk_details.month) as monthyear")])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where($condition);
             }
@@ -414,8 +414,11 @@ class HomeController extends BaseController {
                             ->editColumn('month', function ($model) {
                                 return $model->monthName();
                             })
-                            ->editColumn('year', function ($model) {
-                                return $model->year;
+                            ->editColumn('start_year', function ($model) {
+                                return $model->start_year;
+                            })
+                            ->editColumn('end_year', function ($model) {
+                                return $model->end_year;
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';

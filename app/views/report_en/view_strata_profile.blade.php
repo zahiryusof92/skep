@@ -8,6 +8,7 @@
     <section class="panel panel-with-borders">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
+            <h5 class="text-right">{{ trans('app.forms.created_at') }} : {{date('d/m/Y', strtotime($files->created_at))}}</h5>
         </div>
         <div class="panel-body">
             <div class="invoice-block">

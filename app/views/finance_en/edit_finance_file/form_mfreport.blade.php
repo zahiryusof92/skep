@@ -10,48 +10,75 @@ $prefix = 'mfr_';
         <form id="form_reportMF">
 
             <div class="row">
+                <table id="tbl_reportMF" class="table table-sm borderless" style="font-size: 12px;">
+                    <tbody>
+                        <tr>
+                            <th class="text-center">
+                                <span style="color: red;">*</span> MAINTENANCE FEE SEBULAN (PER UNIT)
+                            </th>
+                            <th>&nbsp;</th>
+                            <th class="text-center">
+                                <span style="color: red;">*</span> JUMLAH UNIT
+                            </th>
+                            <th>&nbsp;</th>
+                            <th class="text-center">
+                                <span style="color: red;">*</span> JUMLAH SERVICE FEE SEPATUT DIKUTIP SEMASA
+                            </th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        <tr>
+                            <td width="25%">
+                                <input type="text" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm text-right" value="{{ $mfreport['fee_sebulan'] }}">
+                            </td>
+                            <td width="5%">&nbsp;</td>
+                            <td width="25%">
+                                <input type="text" name="{{ $prefix }}unit" class="form-control form-control-sm text-right" value="{{ $mfreport['unit'] }}">
+                            </td>
+                            <td width="5%">&nbsp;</td>
+                            <td width="25%">
+                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right text-right" value="{{ $mfreport['fee_semasa'] }}">
+                            </td>
+                            <td width="5%">&nbsp;</td>
+                        </tr>
+                        @if(count($mfreportExtra) > 0)
+                            @foreach ($mfreportExtra as $key => $extra)
+                                <tr id="mfrf_row{{($key+1)}}">
+                                    <td width="25%">
+                                        <input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_sebulan'] }}">
+                                    </td>
+                                    <td width="5%">&nbsp;</td>
+                                    <td width="25%">
+                                        <input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['unit'] }}">
+                                    </td>
+                                    <td width="5%">&nbsp;</td>
+                                    <td width="25%">
+                                        <input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_semasa'] }}">
+                                    </td>
+                                    <td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowMFExtra('mfrf_row{{($key+1)}}')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                                </tr>
+                                
+                            @endforeach
+                        @endif
+                        <tr>
+                            <td class="padding-table text-right" colspan="6"><a href="javascript:void(0);" onclick="addRowMFExtra()" class="btn btn-success btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
                 <table class="table table-sm borderless" style="font-size: 12px;">
                     <tbody>
                         <tr>
-                            <td class="padding-table" width="25%">
-                                <span style="color: red;">*</span> MAINTENANCE FEE SEBULAN (PER UNIT)
-                            </td>
-                            <td width="30%">
-                                <input type="text" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm" value="{{ $mfreport['fee_sebulan'] }}">
-                            </td>
-                            <td width="5%">&nbsp;</td>
-                            <td class="padding-table" width="25%">
-                                <span style="color: red;">*</span> JUMLAH UNIT
-                            </td>
-                            <td width="15%">
-                                <input type="text" name="{{ $prefix }}unit" class="form-control form-control-sm" value="{{ $mfreport['unit'] }}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])
-                            </td>
+                            <td>JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])</td>
                             <td>
                                 <input type="currency" id="{{ $prefix }}kutipan" name="{{ $prefix }}kutipan" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </td>
-                            <td>&nbsp;</td>
-                            <td class="padding-table">
-                                <span style="color: red;">*</span> JUMLAH SERVICE FEE SEPATUT DIKUTIP SEMASA
+                            <td width="5%">&nbsp;</td>
+                            <td width="5%">&nbsp;</td>
+                            <td>
+                                JUMLAH SERVICE FEE BERJAYA DIKUTIP SEMASA
                             </td>
                             <td>
-                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $mfreport['fee_semasa'] }}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <th class="padding-table">
-                                JUMLAH SERVICE FEE BERJAYA DIKUTIP SEMASA
-                            </th>
-                            <th>
                                 <input type="currency" id="{{ $prefix }}total_income" name="{{ $prefix }}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
-                            </th>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -147,6 +174,8 @@ $prefix = 'mfr_';
 </div>
 
 <script type="text/javascript">
+
+    var rowMFFeesNo = ("{{count($mfreportExtra)}}" > 0)? (Number("{{count($mfreportExtra)}}") + Number(1)) : 1;
     $(document).ready(function () {
         calculateMFR();
     });
@@ -185,6 +214,27 @@ $prefix = 'mfr_';
 
         var mfr_lebihan_kurangan = Number(mfr_kutipan) - Number(mfr_bayar_total);
         $('#{{ $prefix }}lebihan_kurangan').val(parseFloat(mfr_lebihan_kurangan).toFixed(2));
+    }
+
+    function addRowMFExtra() {
+        changes = true;
+
+        $("#tbl_reportMF tr:last").prev().after(
+            '<tr id="mfrf_row' + rowMFFeesNo + '">'+
+                '<td width="25%"><input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td width="5%">&nbsp;</td>'+
+                '<td width="25%"><input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="0"></td>'+
+                '<td width="5%">&nbsp;</td>'+
+                '<td width="25%"><input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowMFExtra(\'mfrf_row' + rowMFFeesNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
+        rowMFFeesNo++;
+    }
+
+    function deleteRowMFExtra(rowMFFeesNo) {
+        changes = true;
+
+        $('#' + rowMFFeesNo).remove();
+
     }
 
     function submitMFReport() {

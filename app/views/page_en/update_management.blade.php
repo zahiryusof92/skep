@@ -1332,7 +1332,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1348,7 +1350,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {
@@ -1364,7 +1368,9 @@ foreach ($user_permission as $permission) {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
                 up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
             },
             format: 'DD-MM-YYYY'
         }).on('dp.change', function () {

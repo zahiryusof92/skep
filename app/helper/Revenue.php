@@ -4,6 +4,7 @@ namespace Helper;
 
 use Helper\KCurl;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Facades\Config;
 
@@ -171,6 +172,7 @@ class Revenue
         
 
         $response = (new KCurl())->requestPost($this->getAPIHeader($data_signature), $url, $fields);
+        
         return json_decode($response);
         /** Response need to insert db */
     }

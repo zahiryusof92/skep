@@ -66,7 +66,12 @@ $zone = [
                                 </div>
                             </div>
                             @endif
-                            
+                            <div class="col-lg-12">
+                                <span style="font-size: 12px;"><b>{{ trans('app.forms.date_strata') }}: </b></span>&nbsp;
+                                <input style="font-size: 12px;" id="start_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
+                                <span style="font-size: 12px;" class="margin-right-10">&nbsp; —</span>
+                                <input style="font-size: 12px;" id="end_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -102,7 +107,22 @@ $zone = [
 
     $(document).ready(function () {
         oTable = $('#filelist').DataTable({
+            "bServerSide": true,
+            "bProcessing": true,
             "sAjaxSource": "{{URL::action('ReportController@getStrataProfile')}}",
+            "fnServerData": function ( sSource, aoData, fnCallback ) {
+                // Append to data
+                aoData.push( { "name": "start_date", "value": $('#start_date').val() } );
+                aoData.push( { "name": "end_date", "value": $('#end_date').val() } );
+                
+                $.ajax( {
+                    "dataType": 'json',
+                    "type": "GET",
+                    "url": "{{URL::action('ReportController@getStrataProfile')}}",
+                    "data": aoData,
+                    "success": fnCallback
+                } );
+            },
             "lengthMenu": [
                 [15, 30, 50, 100, -1],
                 [15, 30, 50, 100, "All"]
@@ -123,6 +143,41 @@ $zone = [
         });
         $('#zone').on('change', function () {
             oTable.columns(4).search(this.value).draw();
+        });
+        $('#start_date').datetimepicker({
+            widgetPositioning: {
+                horizontal: 'left'
+            },
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+            },
+            format: 'YYYY-MM-DD',
+        }).on('dp.change', function () {
+            oTable.draw();
+            
+        });
+        
+        $('#end_date').datetimepicker({
+            widgetPositioning: {
+                horizontal: 'left'
+            },
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+            },
+            format: 'YYYY-MM-DD',
+        }).on('dp.change', function () {
+            oTable.draw();
+            
         });
     });
 </script>

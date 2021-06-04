@@ -277,7 +277,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.malay_composition') }}</label>
-                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" id="malay_composition" value="{{$other_details ? $other_details->malay_composition : ''}}">
+                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" id="malay_composition" value="{{Buyer::getCompositionByRace($file->id, 'Malay')}}" disabled="true">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -285,7 +285,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.chinese_composition') }}</label>
-                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.chinese_composition') }}" id="chinese_composition" value="{{$other_details ? $other_details->chinese_composition : ''}}">
+                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.chinese_composition') }}" id="chinese_composition" value="{{Buyer::getCompositionByRace($file->id, 'Chinese')}}" disabled="true">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -293,7 +293,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.indian_composition') }}</label>
-                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.indian_composition') }}" id="indian_composition" value="{{$other_details ? $other_details->indian_composition : ''}}">
+                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.indian_composition') }}" id="indian_composition" value="{{Buyer::getCompositionByRace($file->id, 'Indian')}}" disabled="true">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -301,7 +301,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.others_composition') }}</label>
-                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.others_composition') }}" id="others_composition" value="{{$other_details ? $other_details->others_composition : ''}}">
+                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.others_composition') }}" id="others_composition" value="{{Buyer::getCompositionByRace($file->id, 'Others')}}" disabled="true">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -309,7 +309,7 @@ foreach ($user_permission as $permission) {
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.foreigner_composition') }}</label>
-                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.foreigner_composition') }}" id="foreigner_composition" value="{{$other_details ? $other_details->foreigner_composition : ''}}">
+                                                                    <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.foreigner_composition') }}" id="foreigner_composition" value="{{Buyer::getForeignerComposition($file->id)}}" disabled="true">
                                                                 </div>
                                                             </div>
                                                         </div>

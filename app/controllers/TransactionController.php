@@ -167,8 +167,8 @@ class TransactionController extends BaseController {
             }
             
         });
-
         return $response;
+        // return Redirect::to($response->item->url);
         // return Redirect::to(Config::get('constant.payment.gateway.paydibs.pay_request_url') . $response);
 
     }
