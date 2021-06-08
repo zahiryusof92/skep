@@ -185,7 +185,7 @@ class ApiController extends BaseController {
 
         $username = Request::get('username');
         $password = Request::get('password');
-        
+
         $auth = Auth::attempt(array(
                     'username' => $username,
                     'password' => $password,
@@ -196,7 +196,7 @@ class ApiController extends BaseController {
 
         if ($auth) {
             $user = User::find(Auth::user()->id);
-            
+
             if ($user) {
                 if ($user->isCOBManagerPaid() || $user->isCOBPaid()) {
                     // Audit Trail
@@ -1894,7 +1894,7 @@ class ApiController extends BaseController {
                     $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -1909,7 +1909,7 @@ class ApiController extends BaseController {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -1927,7 +1927,7 @@ class ApiController extends BaseController {
                     $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -1941,7 +1941,7 @@ class ApiController extends BaseController {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -1960,7 +1960,7 @@ class ApiController extends BaseController {
                     $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -1973,7 +1973,7 @@ class ApiController extends BaseController {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -1989,7 +1989,7 @@ class ApiController extends BaseController {
                     $total_files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -2003,7 +2003,7 @@ class ApiController extends BaseController {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->select(['files.*', 'strata.id as strata_id'])
-                            ->where(function($query) use ($keyword) {
+                            ->where(function ($query) use ($keyword) {
                                 $query->where('files.file_no', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('company.short_name', 'LIKE', "%" . $keyword . "%")
                                 ->orWhere('strata.name', 'LIKE', "%" . $keyword . "%")
@@ -2067,12 +2067,12 @@ class ApiController extends BaseController {
     }
 
     public function getDashboardData() {
-        
+
         $user = JWTAuth::parseToken()->authenticate();
-        if($user) {
+        if ($user) {
 
             $data = Files::getDashboardData();
-            
+
             $result[] = array(
                 'data' => $data
             );
@@ -2092,4 +2092,56 @@ class ApiController extends BaseController {
 
         return Response::json($response);
     }
+
+    public function getCouncil() {
+        $councils = \Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('short_name')->get();
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->short_name == 'MPS') {
+                    $server = 'https://ecob.mps.gov.my/';
+
+                    $result[] = array(
+                        'name' => $council->name,
+                        'short_name' => $council->short_name,
+                        'logo' => $server . 'assets/common/img/logo/MPS.png',
+                        'url' => $server
+                    );
+                } else {
+                    $server = 'https://skep.lphs.gov.my/';
+
+                    $result[] = array(
+                        'name' => $council->name,
+                        'short_name' => $council->short_name,
+                        'logo' => $server . $council->image_url,
+                        'url' => $server
+                    );
+                }
+            }
+
+            $result[] = array(
+                'name' => 'Majlis Bandaraya Seremban',
+                'short_name' => 'MBS',
+                'logo' => 'https://mbs.ecob.my/assets/common/img/logo/MBS.png',
+                'url' => 'https://mbs.ecob.my/'
+            );
+
+            $response = array(
+                'error' => false,
+                'message' => 'Success',
+                'result' => $result,
+            );
+
+            return Response::json($response);
+        }
+
+        $response = array(
+            'error' => true,
+            'message' => 'Fail',
+            'result' => false,
+        );
+
+        return Response::json($response);
+    }
+
 }
