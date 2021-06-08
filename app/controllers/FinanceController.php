@@ -819,8 +819,8 @@ class FinanceController extends BaseController {
                     }
 
                     /** MF Report Extra */
+                    $delete_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->delete();
                     if(empty($data[$prefix . 'fee_sebulan_is_custom']) == false) {
-                        $delete_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->delete();
                         for($i= 0; $i < count($data[$prefix . 'fee_sebulan_is_custom']); $i++) {
                             if(!empty($data[$prefix . 'fee_sebulan_is_custom'][$i])) {
                                 $frextra = new FinanceReportExtra;
@@ -890,8 +890,8 @@ class FinanceController extends BaseController {
                     }
 
                     /** SF Report Extra */
+                    $delete_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->delete();
                     if(empty($data[$prefix . 'fee_sebulan_is_custom']) == false) {
-                        $delete_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->delete();
                         for($i= 0; $i < count($data[$prefix . 'fee_sebulan_is_custom']); $i++) {
                             if(!empty($data[$prefix . 'fee_sebulan_is_custom'][$i])) {
                                 $frextra = new FinanceReportExtra;

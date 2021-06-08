@@ -269,6 +269,8 @@ return array(
         "rejected_date" => "Rejected Date",
         "file_no" => "File No",
         "date" => "Date",
+        "date_strata" => "Strata Date",
+        "date_finance_file" => "Finance File Date",
         "date_start" => "Start Date",
         "date_end" => "End Date",
         "access_group" => "Access Group",

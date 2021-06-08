@@ -1362,10 +1362,10 @@ class AdminController extends BaseController {
                 $residential->sinking_fund_option = $residential_sinking_fund_option;
                 $residential->save();
                 
+                $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
                 if(empty($data['residential_maintenance_fee_is_custom']) == false) {
                     $total_residential_custom = count($data['residential_maintenance_fee_is_custom']);
                     if($total_residential_custom > 0) {
-                        $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
                         for($i = 0; $i < $total_residential_custom; $i++) {
                             $custom_residential =  new ResidentialExtra();
                             $custom_residential->file_id = $residential->file_id;
@@ -1397,10 +1397,10 @@ class AdminController extends BaseController {
                 $commercial->sinking_fund_option = $commercial_sinking_fund_option;
                 $commercial->save();
                 
+                $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
                 if(empty($data['commercial_maintenance_fee_is_custom']) == false) {
                     $total_commercial_custom = count($data['commercial_maintenance_fee_is_custom']);
                     if($total_commercial_custom > 0) {
-                        $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
                         for($i = 0; $i < $total_commercial_custom; $i++) {
                             $custom_commercial =  new CommercialExtra();
                             $custom_commercial->file_id = $commercial->file_id;

@@ -1202,12 +1202,12 @@ foreach ($user_permission as $permission) {
 
 <script>
     function updateStrata() {
+        
         changes = false;
         $("#loading").css("display", "inline-block");
         var residential_maintenance_fee_is_custom = [];
         var rmf_is_custom = document.getElementsByName('residential_maintenance_fee_is_custom[]');
         for(var i = 0; i < rmf_is_custom.length; i++) {
-            console.log(rmf_is_custom[i].value);
             residential_maintenance_fee_is_custom.push(rmf_is_custom[i].value);
         }
         var residential_maintenance_fee_option_is_custom = [];
@@ -1229,7 +1229,6 @@ foreach ($user_permission as $permission) {
         var commercial_maintenance_fee_is_custom = [];
         var cmf_is_custom = document.getElementsByName('commercial_maintenance_fee_is_custom[]');
         for(var i = 0; i < cmf_is_custom.length; i++) {
-            console.log(cmf_is_custom[i].value);
             commercial_maintenance_fee_is_custom.push(cmf_is_custom[i].value);
         }
         var commercial_maintenance_fee_option_is_custom = [];
@@ -1357,7 +1356,7 @@ foreach ($user_permission as $permission) {
             $("#strata_park_error").css("display", "block");
             error = 1;
         }
-
+        
         if (error == 0) {
             $.ajax({
                 url: "{{ URL::action('AdminController@submitUpdateStrata') }}",
