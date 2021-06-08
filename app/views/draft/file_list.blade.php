@@ -10,10 +10,11 @@
         <div class="panel-body">
             <section class="panel panel-pad">                
                 <div class="row padding-vertical-10">
+
+                    @if (Auth::user()->getAdmin())
                     <div class="col-lg-12 text-center">
                         <form>
-                            <div class="row">
-                                @if (Auth::user()->getAdmin())
+                            <div class="row">                                
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.cob') }}</label>
@@ -26,14 +27,15 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>
-                                @endif
+                                </div>                                
                             </div>
-                        </form>
+                        </form>                        
                     </div>
-                </div>
 
-                <hr/>
+                    <hr/>
+                    @endif
+
+                </div>
 
                 <div class="row">
                     <div class="col-lg-12">
