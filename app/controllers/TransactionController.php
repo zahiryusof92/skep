@@ -37,7 +37,7 @@ class TransactionController extends BaseController {
      */
     public function getTransaction() {
         if (\Request::ajax()) {
-            if(Auth::user()->isSuperadmin() || Auth::user()->isHR()) {
+            if(Auth::user()->isSuperadmin() || Auth::user()->isHR() || Auth::user()->getAdmin()) {
                 $model = PaymentTransaction::with('moduleable.paidBy')->where('is_deleted', 0);
 
             } else {

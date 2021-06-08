@@ -250,7 +250,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function paidListing() {
-        if (Auth::user()->isHR() || Auth::user()->isCOBManager()) {
+        if (Auth::user()->isHR() || Auth::user()->isCOBManager() || Auth::user()->getAdmin()) {
             if (Request::ajax()) {
                 $model = SummonConfirmed::join('company', 'summon_confirmed.company_id', '=', 'company.id')
                                         ->select(['summon_confirmed.*']);
@@ -601,7 +601,7 @@ class SummonController extends \BaseController {
 
                 return View::make('summon.show', $viewData);
             }
-        } else if (Auth::user()->isHR()) {
+        } else if (Auth::user()->isHR() || Auth::user()->getAdmin()) {
             $model = Summon::find($id);
             if ($model && $model->type == Summon::LETTER_OF_REMINDER) {
                 $category = ($model->category_id ? $model->category->description : '');
