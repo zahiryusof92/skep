@@ -23,7 +23,7 @@ class Revenue
     ];
 
     // identifier for sandbox or production client_id, client_secret, private_key, store_id
-    private $isSandbox = false;
+    private $isSandbox = true;
 
     public function getHeader($auth = false) {
         $header = [
@@ -31,8 +31,8 @@ class Revenue
         ];
 
         if($auth) {
-            $client_id = $this->config['client_id'];
-            $client_secret = $this->config['client_secret'];
+            $client_id = $this->config['sandbox_client_id'];
+            $client_secret = $this->config['sandbox_client_secret'];
             $base64_code = base64_encode("{$client_id}:{$client_secret}");
 
             array_push($header, "Authorization: Basic {$base64_code}");
@@ -76,7 +76,7 @@ class Revenue
             // 'data' => $data,
             'method' => $requestMethod,
             "nonceStr" => $this->config['nonceStr'],
-            "privateKey" => $this->config['private_key'],
+            "privateKey" => $this->config['sandbox_private_key'],
             "requestUrl" => $requestUrl,
             "signType" => "sha256",
             "timestamp" => strval(Carbon::now()->timestamp)
@@ -161,7 +161,7 @@ class Revenue
                 // 'GOBIZ_MY'
             ],
             'type' => 'WEB_PAYMENT', // WEB_PAYMENT / MOBILE_PAYMENT
-            'storeId' => $this->config['store_id'],
+            'storeId' => $this->config['sandbox_store_id'],
             'redirectUrl' => $data['redirect_url'],
             'notifyUrl' => $data['redirect_url'],
             'layoutVersion' => 'v3'
