@@ -336,20 +336,15 @@ class TransactionController extends BaseController {
         $item->save();
         
         $response = (new Revenue())->paymentOnline($data);
-        // return Response::json(compact('response'));
-        // $redirect_url = $response->item->url;
+        
         return $response;
-        // 2021051116300284
-        // 2021051116533284
     }
 
     public function getRevenueTransactionStatus($orderId) {
         // public function getRevenueTransactionStatus() {
         // $response = (new Revenue())->getStatusByOrderID('2021051117364685');
         $response = (new Revenue())->getStatusByOrderID($orderId);
-        // dd($response->item->order->id);
+        
         return ($response);
-        // 2021051117364685
-        // 2021051117364685
     }
 }
