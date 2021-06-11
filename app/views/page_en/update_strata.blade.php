@@ -505,6 +505,16 @@ foreach ($user_permission as $permission) {
                                                         <?php $residential_i = 1; ?>
                                                         @foreach($residential_extra as $extra)
                                                         
+                                                            <div id="rbrowunit{{$residential_i}}" class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
+                                                                        <div class="form-inline">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" name="residential_unit_no_is_custom[]" value="{{$extra->unit_no}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div id="rbrowmf{{$residential_i}}" class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
@@ -657,6 +667,16 @@ foreach ($user_permission as $permission) {
                                                         <?php $commercial_i = 1; ?>
                                                         @foreach($commercial_extra as $extra)
                                                         
+                                                            <div id="cbrowunit{{$commercial_i}}" class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
+                                                                        <div class="form-inline">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" name="commercial_unit_no_is_custom[]" value="{{$extra->unit_no}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div id="cbrowmf{{$commercial_i}}" class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
@@ -1049,6 +1069,14 @@ foreach ($user_permission as $permission) {
         
         // rowRBNo = rowRBNo - 3;
         $("#residential_form .row:last").prev().after(
+            '<div id="rbrowunit' + rowCBNo + '" class="row">'+
+                '<div class="col-md-4">'+
+                    '<div class="form-group">'+
+                        '<label>{{ trans('app.forms.number_of_residential_unit') }}</label>'+
+                        '<input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" name="residential_unit_no_is_custom[]">'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
             '<div id="rbrowmf' + rowRBNo + '" class="row">' + 
                 '<div class="col-md-6">' + 
                     '<div class="form-group">' +
@@ -1088,6 +1116,7 @@ foreach ($user_permission as $permission) {
     function deleteRowRB(rowRBNo) {
         changes = true;
 
+        $('#rbrowunit' + rowRBNo).remove();
         $('#rbrowmf' + rowRBNo).remove();
         $('#rbrowsf' + rowRBNo).remove();
 
@@ -1100,6 +1129,14 @@ foreach ($user_permission as $permission) {
         
         // rowCBNo = rowCBNo - 3;
         $("#commercial_form .row:last").prev().after(
+            '<div id="cbrowunit' + rowCBNo + '" class="row">'+
+                '<div class="col-md-4">'+
+                    '<div class="form-group">'+
+                        '<label>{{ trans('app.forms.number_of_commercial_unit') }}</label>'+
+                        '<input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" name="commercial_unit_no_is_custom[]">'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
             '<div id="cbrowmf' + rowCBNo + '" class="row">' + 
                 '<div class="col-md-6">' + 
                     '<div class="form-group">' +
@@ -1139,6 +1176,7 @@ foreach ($user_permission as $permission) {
     function deleteRowCB(rowCBNo) {
         changes = true;
 
+        $('#cbrowunit' + rowCBNo).remove();
         $('#cbrowmf' + rowCBNo).remove();
         $('#cbrowsf' + rowCBNo).remove();
 
@@ -1205,6 +1243,11 @@ foreach ($user_permission as $permission) {
         
         changes = false;
         $("#loading").css("display", "inline-block");
+        var residential_unit_no_is_custom = [];
+        var rmf_unit_is_custom = document.getElementsByName('residential_unit_no_is_custom[]');
+        for(var i = 0; i < rmf_unit_is_custom.length; i++) {
+            residential_unit_no_is_custom.push(rmf_unit_is_custom[i].value);
+        }
         var residential_maintenance_fee_is_custom = [];
         var rmf_is_custom = document.getElementsByName('residential_maintenance_fee_is_custom[]');
         for(var i = 0; i < rmf_is_custom.length; i++) {
@@ -1226,6 +1269,11 @@ foreach ($user_permission as $permission) {
             residential_sinking_fund_option_is_custom.push(rsf_option_is_custom[i].value);
         }
         
+        var commercial_unit_no_is_custom = [];
+        var cmf_unit_is_custom = document.getElementsByName('commercial_unit_no_is_custom[]');
+        for(var i = 0; i < cmf_unit_is_custom.length; i++) {
+            commercial_unit_no_is_custom.push(cmf_unit_is_custom[i].value);
+        }
         var commercial_maintenance_fee_is_custom = [];
         var cmf_is_custom = document.getElementsByName('commercial_maintenance_fee_is_custom[]');
         for(var i = 0; i < cmf_is_custom.length; i++) {
@@ -1400,6 +1448,7 @@ foreach ($user_permission as $permission) {
                     residential_maintenance_fee_option: residential_maintenance_fee_option,
                     residential_sinking_fund: residential_sinking_fund,
                     residential_sinking_fund_option: residential_sinking_fund_option,
+                    "residential_unit_no_is_custom[]" : residential_unit_no_is_custom,
                     "residential_maintenance_fee_is_custom[]" : residential_maintenance_fee_is_custom,
                     "residential_maintenance_fee_option_is_custom[]" : residential_maintenance_fee_option_is_custom,
                     "residential_sinking_fund_is_custom[]" : residential_sinking_fund_is_custom,
@@ -1410,6 +1459,7 @@ foreach ($user_permission as $permission) {
                     commercial_maintenance_fee_option: commercial_maintenance_fee_option,
                     commercial_sinking_fund: commercial_sinking_fund,
                     commercial_sinking_fund_option: commercial_sinking_fund_option,
+                    "commercial_unit_no_is_custom[]" : commercial_unit_no_is_custom,
                     "commercial_maintenance_fee_is_custom[]" : commercial_maintenance_fee_is_custom,
                     "commercial_maintenance_fee_option_is_custom[]" : commercial_maintenance_fee_option_is_custom,
                     "commercial_sinking_fund_is_custom[]" : commercial_sinking_fund_is_custom,

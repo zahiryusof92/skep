@@ -669,7 +669,7 @@ if (!Auth::user()->getAdmin()) {
                 </a>
             </li>
             @endif
-
+            
             @if (Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer() || Auth::user()->isCOBManager())
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -704,6 +704,15 @@ if (!Auth::user()->getAdmin()) {
             @endif
             @endif
             <!-- Summon End -->            
+            @endif
+            
+            @if(Auth::user()->isJMB() || Auth::user()->isHR() || Auth::user()->getAdmin())
+                <li id="transaction_list">
+                    <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
+                        <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
+                        {{ trans('app.transaction.title') }}
+                    </a>
+                </li>
             @endif
 
             @if (Module::hasAccess(7))

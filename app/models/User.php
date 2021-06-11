@@ -97,7 +97,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function isCOBManager() {
-        if (stripos($this->getRole->name, Role::COB_MANAGER) !== FALSE) {
+        if ((stripos($this->getRole->name, Role::COB_MANAGER) !== FALSE) || (stripos($this->getRole->name, Role::COB_BASIC) !== FALSE) || (stripos($this->getRole->name, Role::COB_BASIC_ADMIN) !== FALSE)
+            || (stripos($this->getRole->name, Role::COB_PREMIUM) !== FALSE) || (stripos($this->getRole->name, Role::COB_PREMIUM_ADMIN) !== FALSE)) {
             return true;
         }
 

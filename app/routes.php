@@ -889,7 +889,7 @@ Route::group(array('before' => 'authMember'), function() {
 });
 
 /** Transaction */
-Route::post('transaction/success', 'TransactionController@success');
+Route::get('transaction/success', 'TransactionController@success');
 
 Route::group(array('prefix' => 'revenue'), function() {
     Route::get('transaction/pay', 'TransactionController@processRevenueMonster')->before('authMember');
