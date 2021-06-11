@@ -11,5 +11,9 @@ class Role extends Eloquent {
     const MC = 'MC';
     const LAWYER = 'LAWYER';
     const HR = 'HR';
+    const COB_BASIC	 = 'COB BASIC';
+    const COB_BASIC_ADMIN = 'COB BASIC ADMIN';
+    const COB_PREMIUM = 'COB PREMIUM';
+    const COB_PREMIUM_ADMIN = 'COB PREMIUM ADMIN';
 
 }

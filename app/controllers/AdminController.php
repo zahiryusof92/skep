@@ -1370,6 +1370,7 @@ class AdminController extends BaseController {
                             $custom_residential =  new ResidentialExtra();
                             $custom_residential->file_id = $residential->file_id;
                             $custom_residential->strata_id = $residential->strata_id;
+                            $custom_residential->unit_no = $data['residential_unit_no_is_custom'][$i];
                             $custom_residential->maintenance_fee = $data['residential_maintenance_fee_is_custom'][$i];
                             $custom_residential->maintenance_fee_option = $data['residential_maintenance_fee_option_is_custom'][$i];
                             $custom_residential->sinking_fund = $data['residential_sinking_fund_is_custom'][$i];
@@ -1405,6 +1406,7 @@ class AdminController extends BaseController {
                             $custom_commercial =  new CommercialExtra();
                             $custom_commercial->file_id = $commercial->file_id;
                             $custom_commercial->strata_id = $commercial->strata_id;
+                            $custom_commercial->unit_no = $data['commercial_unit_no_is_custom'][$i];
                             $custom_commercial->maintenance_fee = $data['commercial_maintenance_fee_is_custom'][$i];
                             $custom_commercial->maintenance_fee_option = $data['commercial_maintenance_fee_option_is_custom'][$i];
                             $custom_commercial->sinking_fund = $data['commercial_sinking_fund_is_custom'][$i];
