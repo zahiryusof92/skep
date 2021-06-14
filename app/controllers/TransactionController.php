@@ -216,7 +216,7 @@ class TransactionController extends BaseController {
                 $point_transaction->save();
 
                 /** send rejected email to payer */
-                Mail::send('emails.point.payment_fail', array('model' => $model), function($message) use ($model) {
+                Mail::send('emails.summon.payment_fail', array('model' => $model), function($message) use ($model) {
                     $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
                 });
 
@@ -231,7 +231,7 @@ class TransactionController extends BaseController {
                 $point_transaction->save();
                 
                 /** send success email to payer */
-                Mail::send('emails.point.payment_success', array('model' => $model), function($message) use ($model) {
+                Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
                     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
                 });
                 
