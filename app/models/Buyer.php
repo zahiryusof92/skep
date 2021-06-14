@@ -23,8 +23,12 @@ class Buyer extends Eloquent {
     }
 
     public static function getCompositionByRace($file_id, $race) {
-        $race_id = Race::where('name_en',$race)->where('is_deleted',0)->first()->id;
-        $total = self::where('file_id',$file_id)->where('is_deleted',0)->where('race_id', $race_id)->count();
+        $race = Race::where('name_en',$race)->where('is_deleted',0)->first();
+        if($race) {
+            $total = self::where('file_id',$file_id)->where('is_deleted',0)->where('race_id', $race->id)->count();
+        } else {
+            $total = 0;
+        }
 
         return $total;
     }
