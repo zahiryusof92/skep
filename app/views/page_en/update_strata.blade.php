@@ -477,7 +477,7 @@ foreach ($user_permission as $permission) {
                                                                 <label>{{ trans('app.forms.maintenance_fee') }}</label>
                                                                 <div class="form-inline">
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" value="{{$residential->maintenance_fee}}">
-                                                                    <select class="form-control select2" id="residential_maintenance_fee_option">
+                                                                    <select class="form-control" id="residential_maintenance_fee_option">
                                                                         @foreach ($unitoption as $unitoptions)
                                                                         <option value="{{$unitoptions->id}}" {{($residential->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                         @endforeach
@@ -492,7 +492,7 @@ foreach ($user_permission as $permission) {
                                                                 <label>{{ trans('app.forms.sinking_fund') }}</label>
                                                                 <div class="form-inline">
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" value="{{$residential->sinking_fund}}">
-                                                                    <select class="form-control select2" id="residential_sinking_fund_option">
+                                                                    <select class="form-control" id="residential_sinking_fund_option">
                                                                         @foreach ($unitoption as $unitoptions)
                                                                         <option value="{{$unitoptions->id}}" {{($residential->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                         @endforeach
@@ -506,12 +506,10 @@ foreach ($user_permission as $permission) {
                                                         @foreach($residential_extra as $extra)
                                                         
                                                             <div id="rbrowunit{{$residential_i}}" class="row">
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
-                                                                        <div class="form-inline">
-                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" name="residential_unit_no_is_custom[]" value="{{$extra->unit_no}}">
-                                                                        </div>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" name="residential_unit_no_is_custom[]" value="{{$extra->unit_no}}">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -521,7 +519,7 @@ foreach ($user_permission as $permission) {
                                                                         <label>{{ trans('app.forms.maintenance_fee') }}</label>
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" name="residential_maintenance_fee_is_custom[]" value="{{$extra->maintenance_fee}}">
-                                                                            <select class="form-control select2" name="residential_maintenance_fee_option_is_custom[]">
+                                                                            <select class="form-control" name="residential_maintenance_fee_option_is_custom[]">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($extra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                                 @endforeach
@@ -536,7 +534,7 @@ foreach ($user_permission as $permission) {
                                                                         <label>{{ trans('app.forms.sinking_fund') }}</label>
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" name="residential_sinking_fund_is_custom[]" value="{{$extra->sinking_fund}}">
-                                                                            <select class="form-control select2" name="residential_sinking_fund_option_is_custom[]">
+                                                                            <select class="form-control" name="residential_sinking_fund_option_is_custom[]">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($extra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                                 @endforeach
@@ -639,7 +637,7 @@ foreach ($user_permission as $permission) {
                                                                 <label>{{ trans('app.forms.commercial_fee') }}</label>
                                                                 <div class="form-inline">
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" value="{{$commercial->maintenance_fee}}">
-                                                                    <select class="form-control select2" id="commercial_maintenance_fee_option">
+                                                                    <select class="form-control" id="commercial_maintenance_fee_option">
                                                                         @foreach ($unitoption as $unitoptions)
                                                                         <option value="{{$unitoptions->id}}" {{($commercial->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                         @endforeach
@@ -654,7 +652,7 @@ foreach ($user_permission as $permission) {
                                                                 <label>{{ trans('app.forms.sinking_fund') }}</label>
                                                                 <div class="form-inline">
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" value="{{$commercial->sinking_fund}}">
-                                                                    <select class="form-control select2" id="commercial_sinking_fund_option">
+                                                                    <select class="form-control" id="commercial_sinking_fund_option">
                                                                         @foreach ($unitoption as $unitoptions)
                                                                         <option value="{{$unitoptions->id}}" {{($commercial->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                         @endforeach
@@ -668,12 +666,10 @@ foreach ($user_permission as $permission) {
                                                         @foreach($commercial_extra as $extra)
                                                         
                                                             <div id="cbrowunit{{$commercial_i}}" class="row">
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
-                                                                        <div class="form-inline">
-                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" name="commercial_unit_no_is_custom[]" value="{{$extra->unit_no}}">
-                                                                        </div>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" name="commercial_unit_no_is_custom[]" value="{{$extra->unit_no}}">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -683,7 +679,7 @@ foreach ($user_permission as $permission) {
                                                                         <label>{{ trans('app.forms.commercial_fee') }}</label>
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" name="commercial_maintenance_fee_is_custom[]" value="{{$extra->maintenance_fee}}">
-                                                                            <select class="form-control select2" name="commercial_maintenance_fee_option_is_custom[]">
+                                                                            <select class="form-control" name="commercial_maintenance_fee_option_is_custom[]">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($extra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                                 @endforeach
@@ -698,7 +694,7 @@ foreach ($user_permission as $permission) {
                                                                         <label>{{ trans('app.forms.sinking_fund') }}</label>
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" name="commercial_sinking_fund_is_custom[]" value="{{$extra->sinking_fund}}">
-                                                                            <select class="form-control select2" name="commercial_sinking_fund_option_is_custom[]">
+                                                                            <select class="form-control" name="commercial_sinking_fund_option_is_custom[]">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($extra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                                 @endforeach

@@ -109,22 +109,8 @@ $zone = [
 
     $(document).ready(function () {
         oTable = $('#filelist').DataTable({
-            "bServerSide": true,
             "bProcessing": true,
             "sAjaxSource": "{{URL::action('ReportController@getStrataProfile')}}",
-            "fnServerData": function ( sSource, aoData, fnCallback ) {
-                // Append to data
-                aoData.push( { "name": "start_date", "value": $('#start_date').val() } );
-                aoData.push( { "name": "end_date", "value": $('#end_date').val() } );
-                
-                $.ajax( {
-                    "dataType": 'json',
-                    "type": "GET",
-                    "url": "{{URL::action('ReportController@getStrataProfile')}}",
-                    "data": aoData,
-                    "success": fnCallback
-                } );
-            },
             "lengthMenu": [
                 [15, 30, 50, 100, -1],
                 [15, 30, 50, 100, "All"]
@@ -134,8 +120,11 @@ $zone = [
                 [3, "asc"]
             ],
             "scrollX": true,
-            "responsive": false
+            "responsive": false,
+            "paging": true,
+            "info": true
         });
+        
 
         $('#company').on('change', function () {
             oTable.columns(2).search(this.value).draw();
@@ -160,7 +149,19 @@ $zone = [
             },
             format: 'YYYY-MM-DD',
         }).on('dp.change', function () {
-            oTable.draw();
+            $.ajax({
+                url: "{{ URL::action('ReportController@getStrataProfile') }}",
+                type: "GET",
+                data: {
+                    start_date: $('#start_date').val(),
+                    end_date: $('#end_date').val(),
+                },
+                success: function (data) {
+                    var rData = JSON.parse(data);
+                    oTable.clear().draw();
+                    oTable.rows.add(rData.aaData).draw(); // Add new data
+                }
+            });
             
         });
         
@@ -178,7 +179,19 @@ $zone = [
             },
             format: 'YYYY-MM-DD',
         }).on('dp.change', function () {
-            oTable.draw();
+            $.ajax({
+                url: "{{ URL::action('ReportController@getStrataProfile') }}",
+                type: "GET",
+                data: {
+                    start_date: $('#start_date').val(),
+                    end_date: $('#end_date').val(),
+                },
+                success: function (data) {
+                    var rData = JSON.parse(data);
+                    oTable.clear().draw();
+                    oTable.rows.add(rData.aaData).draw(); // Add new data
+                }
+            });
             
         });
     });

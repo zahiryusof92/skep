@@ -719,16 +719,16 @@ class ReportController extends BaseController {
                 } else {
                     $zone = 'Merah';
                 }
+                    $data_raw = array(
+                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $file->id) . "'>" . $file->file_no . "</a>",
+                        $file->strata_name,
+                        $file->company_name,
+                        $file->parliment_name,
+                        $zone
+                    );
+    
+                    array_push($data, $data_raw);
 
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $file->id) . "'>" . $file->file_no . "</a>",
-                    $file->strata_name,
-                    $file->company_name,
-                    $file->parliment_name,
-                    $zone
-                );
-
-                array_push($data, $data_raw);
             }
 
             $output_raw = array(

@@ -987,6 +987,7 @@ return array(
         'pay_for' => 'Pay For',
         'user' => 'User',
         'amount' => 'Amount',
+        'payment_method' => 'Payment Method',
         'status' => 'Status'
     ],
     'point_package' => [

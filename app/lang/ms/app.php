@@ -960,6 +960,16 @@ return array(
             'amount' => 'Jumlah (RM)'
         ],
     ],
+    'transaction' => [
+        'title' => 'Transaction',
+        'created_at' => 'Created At',
+        'reference_no' => 'Reference No',
+        'pay_for' => 'Pay For',
+        'user' => 'User',
+        'amount' => 'Amount',
+        'payment_method' => 'Payment Method',
+        'status' => 'Status'
+    ],
     'point_package' => [
         'title' => 'Pakej Points',
         'add_package' => 'Tambah Pakej',

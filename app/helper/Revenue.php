@@ -163,7 +163,7 @@ class Revenue
             'type' => 'WEB_PAYMENT', // WEB_PAYMENT / MOBILE_PAYMENT
             'storeId' => $this->config['sandbox_store_id'],
             'redirectUrl' => $data['redirect_url'],
-            'notifyUrl' => $data['redirect_url'],
+            'notifyUrl' => $data['notify_url'],
             'layoutVersion' => 'v3'
         ];
         $data_signature = $this->generateSignature('post', $url, $postfields);
