@@ -824,7 +824,7 @@ class SummonController extends \BaseController {
         if ($model) {
             if ($model->payment_method == Orders::POINT) {
                 $available_point = Auth::user()->getTotalPoint();
-                $total_amount = ($model->summon->total_overdue * $model->getSummonRate());
+                $total_amount =  $model->getSummonPoint();
                 if ($available_point < $total_amount) {
                     $eligible_pay = false;
                 }
@@ -903,6 +903,12 @@ class SummonController extends \BaseController {
                             $item->payment_method = "Point";
                             $item->status  = PaymentTransaction::SUCCESS;
                             $item->save();
+                          
+                            /** send success email to payer */
+                            Mail::send('emails.point.payment_success', array('model' => $model), function($message) use ($model) {
+                                $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                            });
+                            
                         }
 
                         return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
