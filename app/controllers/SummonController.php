@@ -518,8 +518,8 @@ class SummonController extends \BaseController {
                         if ($model->category_id && $model->company_id) {
                             $cat = Category::find($model->category_id);
                             if ($cat) {
-                                $cash = $cat->getSummonCash($model->company_id);
-                                $amount = $cat->getSummonAmount($model->company_id);
+                                $cash = ($model->total_overdue * $cat->getSummonCash($model->company_id));
+                                $amount = ($model->total_overdue * $cat->getSummonAmount($model->company_id));
                                 if ($available_point >= $amount) {
                                     $eligible_pay = true;
                                 }
@@ -903,7 +903,7 @@ class SummonController extends \BaseController {
                             $item->payment_method = "Point";
                             $item->status  = PaymentTransaction::SUCCESS;
                             $item->save();
-                
+                          
                             /** send success email to payer */
                             Mail::send('emails.point.payment_success', array('model' => $model), function($message) use ($model) {
                                 $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
