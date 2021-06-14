@@ -518,8 +518,8 @@ class SummonController extends \BaseController {
                         if ($model->category_id && $model->company_id) {
                             $cat = Category::find($model->category_id);
                             if ($cat) {
-                                $cash = $cat->getSummonCash($model->company_id);
-                                $amount = $cat->getSummonAmount($model->company_id);
+                                $cash = ($model->total_overdue * $cat->getSummonCash($model->company_id));
+                                $amount = ($model->total_overdue * $cat->getSummonAmount($model->company_id));
                                 if ($available_point >= $amount) {
                                     $eligible_pay = true;
                                 }
@@ -824,7 +824,7 @@ class SummonController extends \BaseController {
         if ($model) {
             if ($model->payment_method == Orders::POINT) {
                 $available_point = Auth::user()->getTotalPoint();
-                $total_amount = $model->getSummonPoint();
+                $total_amount = ($model->summon->total_overdue * $model->getSummonRate());
                 if ($available_point < $total_amount) {
                     $eligible_pay = false;
                 }
@@ -853,7 +853,6 @@ class SummonController extends \BaseController {
         $data = Input::all();
 
         $model = Orders::find($data['order_id']);
-        $data['payment_gateway'] = 'revenue';
         
         if ($model) {
             $total_amount = $data['amount'];
@@ -882,11 +881,28 @@ class SummonController extends \BaseController {
                             $transaction->is_debit = false;
                             $transaction->point_availabe = Auth::user()->getTotalPoint();
                             $transaction->point_usage = $total_amount;
-                            $transaction->point_balance = Auth::user()->getTotalPoint();
+                            $transaction->point_balance = (Auth::user()->getTotalPoint() - $total_amount);
                             $transaction->description = $model->description;
                             $transaction->amount = $model->amount;
                             $transaction->rate = $model->getSummonRate();
                             $transaction->save();
+                            
+                            /** Transaction Data Save */
+                            $item = (new PaymentTransaction());
+                            $item->user_id = Auth::user()->getKey();
+                            $item->moduleable_id = $model->reference_id;
+                            $item->moduleable_type = get_class($summon);
+                            $item->reference_no = $model->reference_no;
+                            $item->transaction_type = 'PAY';
+                            $item->payment_gateway = 'my_point';
+                            $item->pay_for = ($summon->type == 1)? 'letter_of_reminder' : 'letter_of_demand';
+                            $item->description = 'summon paid by point';
+                            $item->amount = $total_amount;
+                            $item->cust_ip = \Request::ip();
+                            /** Payment Method : OB (online banking), CC (credit card), WA (ewallet) */
+                            $item->payment_method = "Point";
+                            $item->status  = PaymentTransaction::SUCCESS;
+                            $item->save();
                         }
 
                         return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
@@ -895,6 +911,7 @@ class SummonController extends \BaseController {
                     return Redirect::to('summon/' . $model->reference_id)->with('error', trans('app.my_point.not_enough'))->withInput($data);
                 }
             } else {
+                $data['payment_gateway'] = 'revenue';
                 $rules = array(
                     'payment_gateway' => 'required',
                     'payment_method' => 'required',

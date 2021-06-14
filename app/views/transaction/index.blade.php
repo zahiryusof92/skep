@@ -21,8 +21,9 @@
                                     <th style="width:10%;">{{ trans('app.transaction.reference_no') }}</th>
                                     <th style="width:10%;">{{ trans('app.transaction.pay_for') }}</th>
                                     <th style="width:20%;">{{ trans('app.transaction.user') }}</th>
-                                    <th style="width:20%;">{{ trans('app.transaction.amount') }}</th>
-                                    <th style="width:20%;">{{ trans('app.transaction.status') }}</th>                               
+                                    <th style="width:10%;">{{ trans('app.transaction.amount') }}</th>
+                                    <th style="width:20%;">{{ trans('app.transaction.payment_method') }}</th>
+                                    <th style="width:10%;">{{ trans('app.transaction.status') }}</th>                               
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,6 +54,7 @@
                 {data: 'pay_for', name: 'pay_for'},
                 {data: 'user', name: 'user'},
                 {data: 'amount', name: 'amount'},
+                {data: 'payment_method', name: 'payment_method'},
                 {data: 'status', name: 'status'},
             ],
             'columnDefs': [

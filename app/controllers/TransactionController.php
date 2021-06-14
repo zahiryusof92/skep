@@ -38,7 +38,16 @@ class TransactionController extends BaseController {
     public function getTransaction() {
         if (\Request::ajax()) {
             if(Auth::user()->isSuperadmin() || Auth::user()->isHR() || Auth::user()->getAdmin()) {
-                $model = PaymentTransaction::with('moduleable.paidBy')->where('is_deleted', 0);
+                $model = PaymentTransaction::with('moduleable.paidBy')
+                                ->where('is_deleted', 0)
+                                ->where('moduleable_type','Summon')
+                                ->where('pay_for','!=',Config::get('constant.module.payment.pay_for.letter_of_demand.slug'));
+
+            } else if(Auth::user()->isLawyer()) {
+                $model = PaymentTransaction::with('moduleable.paidBy')
+                                ->where('is_deleted', 0)
+                                ->where('moduleable_type','Summon')
+                                ->where('pay_for',Config::get('constant.module.payment.pay_for.letter_of_demand.slug'));
 
             } else {
                 $model = PaymentTransaction::with('moduleable.paidBy')->where('user_id', Auth::user()->id)->where('is_deleted', 0);
@@ -57,6 +66,10 @@ class TransactionController extends BaseController {
                                     
                                     return "<span class='label label-$label_class'>$label_text</span>";
                                 })
+                                ->editColumn('reference_no', function($model) {
+                                    $url = ($model->moduleable_type == 'Summon')? url("summon/$model->moduleable_id") : url('/myPoint');
+                                    return "<a href='" . $url . "' target='_blank'><u>$model->reference_no</u></a>";
+                                })
                                 ->editColumn('pay_for', function($model) {
                                     return ucfirst(Config::get('constant.module.payment.pay_for.'. $model->pay_for .'.title'));
                                 })
@@ -64,6 +77,17 @@ class TransactionController extends BaseController {
                                     $created_at = ($model->created_at ? $model->created_at->format('d-M-Y H:i A') : '');
 
                                     return $created_at;
+                                })
+                                ->editColumn('payment_method', function($model) {
+                                    if($model->payment_method == 'CC') {
+                                        $label_text = 'Credit Card';
+                                    } else if($model->payment_method == 'OB') {
+                                        $label_text = 'Online Banking';
+                                    } else {
+                                        $label_text = 'Point';
+                                    }
+                                    
+                                    return "$label_text";
                                 })
                                 ->addColumn('user', function ($model) {
                                     
@@ -100,12 +124,7 @@ class TransactionController extends BaseController {
         if ($validator->fails()) {
             $errors = $validator->errors();
 
-            // return [
-            //     'status' => 422,
-            //     'data' => $errors->toJson(),
-            //     'message' => 'Validation Error'
-            // ];
-        return Redirect::back()->with('error', trans('app.errors.occurred'))->withErrors($validator)->withInput($data);
+            return Redirect::back()->with('error', trans('app.errors.occurred'))->withErrors($validator)->withInput($data);
         }
         
         DB::transaction(function () use(&$response, $data){
@@ -168,8 +187,6 @@ class TransactionController extends BaseController {
             
         });
         return $response;
-        // return Redirect::to($response->item->url);
-        // return Redirect::to(Config::get('constant.payment.gateway.paydibs.pay_request_url') . $response);
 
     }
 
@@ -324,13 +341,13 @@ class TransactionController extends BaseController {
      * Process Revenue payment
      */
     public function processRevenueMonster($orderId, $item) {
-        // public function processRevenueMonster() {
         $reference_no = date('YmdHis') . $orderId;
         $data['transaction_id'] = $reference_no;
         $data['amount'] = round($item->amount,2);
         // $data['transaction_id'] = date('YmdHis') . '123';
         // $data['amount'] = round('1.00',2);
         $data['redirect_url'] = url('transaction/success');
+        $data['notify_url'] = url('revenue/transaction/success');
         
         $item->reference_no = $reference_no;
         $item->save();
@@ -338,6 +355,10 @@ class TransactionController extends BaseController {
         $response = (new Revenue())->paymentOnline($data);
         
         return $response;
+    }
+
+    public function revenueSuccess() {
+        return 'done';
     }
 
     public function getRevenueTransactionStatus($orderId) {

@@ -738,15 +738,6 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-            
-            @if(Auth::user()->isJMB() || Auth::user()->isHR() || Auth::user()->getAdmin())
-                <li id="transaction_list">
-                    <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
-                        <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
-                        {{ trans('app.transaction.title') }}
-                    </a>
-                </li>
-            @endif
         </ul>
 
         @if ($company->short_name != 'MBS')
