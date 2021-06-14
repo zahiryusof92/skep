@@ -209,7 +209,7 @@ class TransactionController extends BaseController {
             if($item->status == PaymentTransaction::FAIL) {
                 $model->status = Orders::REJECTED;
                 $success = $model->save();
-
+ 
                 $point_transaction = $item->moduleable;
                 // $point_transaction->point_balance = $point_transaction->point_balance;
                 $point_transaction->point_usage = 0;

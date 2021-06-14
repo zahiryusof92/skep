@@ -518,8 +518,8 @@ class SummonController extends \BaseController {
                         if ($model->category_id && $model->company_id) {
                             $cat = Category::find($model->category_id);
                             if ($cat) {
-                                $cash = ($model->total_overdue * $cat->getSummonCash($model->company_id));
-                                $amount = ($model->total_overdue * $cat->getSummonAmount($model->company_id));
+                                $cash = $cat->getSummonCash($model->company_id);
+                                $amount = $cat->getSummonAmount($model->company_id);
                                 if ($available_point >= $amount) {
                                     $eligible_pay = true;
                                 }
