@@ -70,6 +70,25 @@ App::down(function()
 
 /*
 |--------------------------------------------------------------------------
+| Application Missing Handler
+|--------------------------------------------------------------------------
+|
+|
+*/
+
+App::missing(function() {
+    $viewData = array(
+		'title' => trans('app.errors.page_not_found'),
+		'panel_nav_active' => '',
+		'main_nav_active' => '',
+		'sub_nav_active' => '',
+		'image' => ""
+	);
+    return Response::view('404_en', $viewData, 404);
+});
+
+/*
+|--------------------------------------------------------------------------
 | Require The Filters File
 |--------------------------------------------------------------------------
 |
