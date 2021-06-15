@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 class ReportController extends BaseController {
 
     //audit trail
@@ -627,7 +629,7 @@ class ReportController extends BaseController {
                         ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
-                        ->where('finance_file.year', date('Y'))
+                        // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
                         ->where('finance_file_income.name', 'SINKING FUND')
                         ->where('finance_file.is_active', 1)
@@ -646,7 +648,7 @@ class ReportController extends BaseController {
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
                         ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         ->where('files.company_id', Auth::user()->company_id)
-                        ->where('finance_file.year', date('Y'))
+                        // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
                         ->where('finance_file_income.name', 'SINKING FUND')
                         ->where('finance_file.is_active', 1)
@@ -666,7 +668,7 @@ class ReportController extends BaseController {
                         ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
                         ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
-                        ->where('finance_file.year', date('Y'))
+                        // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
                         ->where('finance_file_income.name', 'SINKING FUND')
                         ->where('finance_file.is_active', 1)
@@ -685,7 +687,7 @@ class ReportController extends BaseController {
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
                         ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('finance_file.year', date('Y'))
+                        // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
                         ->where('finance_file_income.name', 'SINKING FUND')
                         ->where('finance_file.is_active', 1)
@@ -697,14 +699,31 @@ class ReportController extends BaseController {
             }
         }
 
-        if(!empty(Input::get('start_date'))) {
-            $start_date = Input::get('start_date') . " 00:00:00"; 
-            $files = $files->where('files.created_at','>=',$start_date);
-        }
-
-        if(!empty(Input::get('end_date'))) {
-            $end_date = Input::get('end_date') . " 23:59:59"; 
-            $files = $files->where('files.created_at','<=',$end_date);
+        if(!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
+            $start_date = !empty(Input::get('start_date'))? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0); 
+            $today = !empty(Input::get('end_date'))? Carbon::parse(Input::get('end_date')) : Carbon::now();
+            $files = $files->where(function($query) use($start_date, $today){
+                            $query->where(function($query1) use($start_date) {
+                                $query1->where('finance_file.year','>',$start_date->year)
+                                      ->orWhere(function($query2) use($start_date){
+                                        $query2->where('finance_file.year',$start_date->year)
+                                               ->where(function($query3) use($start_date) {
+                                                   $query3->where('finance_file.month', '>', $start_date->month)
+                                                          ->orWhere('finance_file.month', $start_date->month);
+                                               });
+                                      });
+                            })
+                            ->where(function($query1) use($today) {
+                                $query1->where('finance_file.year','<',$today->year)
+                                      ->orWhere(function($query2) use($today){
+                                        $query2->where('finance_file.year',$today->year)
+                                               ->where(function($query3) use($today) {
+                                                   $query3->where('finance_file.month', '<', $today->month)
+                                                          ->orWhere('finance_file.month', $today->month);
+                                               });
+                                      });
+                            });
+                    });
         }
 
         $files = $files->get();

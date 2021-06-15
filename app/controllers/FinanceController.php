@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 class FinanceController extends BaseController {
 
     // add finance file list
@@ -561,14 +563,31 @@ class FinanceController extends BaseController {
             }
         }
 
-        if(!empty(Input::get('start_date'))) {
-            $start_date = Input::get('start_date') . " 00:00:00"; 
-            $file = $file->where('finance_file.created_at','>=',$start_date);
-        }
-
-        if(!empty(Input::get('end_date'))) {
-            $end_date = Input::get('end_date') . " 23:59:59"; 
-            $file = $file->where('finance_file.created_at','<=',$end_date);
+        if(!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
+            $start_date = !empty(Input::get('start_date'))? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0); 
+            $today = !empty(Input::get('end_date'))? Carbon::parse(Input::get('end_date')) : Carbon::now();
+            $file = $file->where(function($query) use($start_date, $today){
+                            $query->where(function($query1) use($start_date) {
+                                $query1->where('finance_file.year','>',$start_date->year)
+                                      ->orWhere(function($query2) use($start_date){
+                                        $query2->where('finance_file.year',$start_date->year)
+                                               ->where(function($query3) use($start_date) {
+                                                   $query3->where('finance_file.month', '>', $start_date->month)
+                                                          ->orWhere('finance_file.month', $start_date->month);
+                                               });
+                                      });
+                            })
+                            ->where(function($query1) use($today) {
+                                $query1->where('finance_file.year','<',$today->year)
+                                      ->orWhere(function($query2) use($today){
+                                        $query2->where('finance_file.year',$today->year)
+                                               ->where(function($query3) use($today) {
+                                                   $query3->where('finance_file.month', '<', $today->month)
+                                                          ->orWhere('finance_file.month', $today->month);
+                                               });
+                                      });
+                            });
+                    });
         }
 
         return Datatables::of($file)
