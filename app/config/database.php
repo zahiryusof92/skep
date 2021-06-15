@@ -54,12 +54,12 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'localhost',
-			'database'  => 'db_ecob_selangor',
-			'username'  => 'root',
-			'password'  => '',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
+			'host'      => getenv('db_host'),
+            'database'  => getenv('db_name'),
+            'username'  => getenv('db_user'),
+            'password'  => getenv('db_pass'),
+			'charset'   => getenv('db_charset'),
+			'collation' => getenv('db_collation'),
 			'prefix'    => '',
 		),
 
