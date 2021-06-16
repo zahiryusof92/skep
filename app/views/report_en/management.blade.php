@@ -128,51 +128,64 @@
     <!-- End  -->
 </div>
 
+<!-- DataTables Button -->
+<link href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+
 <script>
-    $(document).ready(function () {
-        var oTable = $('#management_list').DataTable({
-            "sAjaxSource": "{{URL::action('ReportController@getManagementList')}}",
-            "lengthMenu": [
-                [15, 30, 50, 100, -1],
-                [15, 30, 50, 100, "All"]
-            ],
-            "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
-            ],
-            "order": [[0, "asc"], [1, "asc"]],
-            "scrollX": true,
-            "responsive": false
-        });
-
-        $('#company').on('change', function () {
-            $.ajax({
-                url: "{{ URL::action('AgmController@getFileListByCOB') }}",
-                type: "POST",
-                data: {
-                    company: $("#company").val()
-                },
-                success: function (data) {
-                    $("#file_no").html(data);
-                    oTable.columns(1).search('').draw();
-                }
-            });
-
-            oTable.columns(0).search(this.value).draw();
-        });
-
-        $('#file_no').on('change', function () {
-            oTable.columns(1).search(this.value).draw();
-        });
-        $('#file_name').on('change', function () {
-            oTable.columns(2).search(this.value).draw();
-        });
-        $('#type').on('change', function () {
-            oTable.columns(3).search(this.value).draw();
-        });
+$(document).ready(function () {
+    var oTable = $('#management_list').DataTable({
+        "sAjaxSource": "{{URL::action('ReportController@getManagementList')}}",
+        "lengthMenu": [
+            [15, 30, 50, 100, -1],
+            [15, 30, 50, 100, "All"]
+        ],
+        "aoColumnDefs": [
+            {
+                "bSortable": false,
+                "aTargets": [-1]
+            }
+        ],
+        "order": [[0, "asc"], [1, "asc"]],
+        "scrollX": true,
+        "responsive": false,
+        "dom": "<'row'<'col-md-12 margin-bottom-10'B>>" +
+                "<'row'<'col-md-6'l><'col-md-6'f>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row'<'col-md-5'i><'col-md-7'p>>",
+        "buttons": [{
+                extend: 'excel',
+                text: 'Export to Excel'
+            }]
     });
-</script>
 
+    $('#company').on('change', function () {
+        $.ajax({
+            url: "{{ URL::action('AgmController@getFileListByCOB') }}",
+            type: "POST",
+            data: {
+                company: $("#company").val()
+            },
+            success: function (data) {
+                $("#file_no").html(data);
+                oTable.columns(1).search('').draw();
+            }
+        });
+
+        oTable.columns(0).search(this.value).draw();
+    });
+
+    $('#file_no').on('change', function () {
+        oTable.columns(1).search(this.value).draw();
+    });
+    $('#file_name').on('change', function () {
+        oTable.columns(2).search(this.value).draw();
+    });
+    $('#type').on('change', function () {
+        oTable.columns(3).search(this.value).draw();
+    });
+});
+</script>
 @stop
