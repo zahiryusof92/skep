@@ -7982,9 +7982,6 @@ class AdminController extends BaseController {
 
     //insurance
     public function insurance($id) {
-        if (Auth::user()->isJMB()) {
-            return Redirect::back();
-        }
 
         //$filename = Files::getFileName();
         //return "<pre>" . return_r($filename, true) . "</pre>";

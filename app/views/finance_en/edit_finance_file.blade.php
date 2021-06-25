@@ -77,7 +77,7 @@ foreach ($user_permission as $permission) {
                     <div class="col-lg-12">
                         <ul class="nav nav-pills nav-justified" id="financeTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active custom-tab" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{ trans("app.forms.check") }}</a>
+                                <a class="nav-link active custom-tab" id="check-tab" data-toggle="tab" href="#check" role="tab" aria-controls="check" aria-selected="true">{{ trans("app.forms.check") }}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link custom-tab" id="summary-tab" data-toggle="tab" href="#summary" role="tab" aria-controls="summary" aria-selected="false">{{ trans("app.forms.summary") }}</a>
@@ -113,7 +113,7 @@ foreach ($user_permission as $permission) {
                         
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-10" id="financeTabContent">
-                                <div class="tab-pane fade active show in" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <div class="tab-pane fade active show in" id="check" role="tabpanel" aria-labelledby="check-tab">
                                     @include('finance_en.edit_finance_file.form_check')
                                 </div>
                                 <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
@@ -175,7 +175,7 @@ foreach ($user_permission as $permission) {
 
     function setTabTitle() {
         var title = '';
-        if (window.location.hash == '#home') {
+        if (window.location.hash == '#check') {
             title = 'Check';
         } else if (window.location.hash == '#summary') {
             title = 'Summary';
@@ -205,7 +205,7 @@ foreach ($user_permission as $permission) {
     }
     
     function submitForm() {
-        if (window.location.hash == '#home') {
+        if (window.location.hash == '#check') {
             submitCheck();
         } else if (window.location.hash == '#summary') {
             submitSummary();
