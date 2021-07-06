@@ -706,13 +706,15 @@ if (!Auth::user()->getAdmin()) {
             <!-- Summon End -->            
             @endif
             
-            @if(Auth::user()->isJMB() || Auth::user()->isHR() || Auth::user()->getAdmin())
+            @if(Auth::user()->isJMB() || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid())
+                @if(!Auth::user()->isJMB() && !Auth::user()->isCOBPaid())
                 <li id="transaction_list">
                     <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
                         <i class="left-menu-link-icon fa fa-credit-card"><!-- --></i>
                         {{ trans('app.transaction.title') }}
                     </a>
                 </li>
+                @endif
             @endif
 
             @if (Module::hasAccess(7))
