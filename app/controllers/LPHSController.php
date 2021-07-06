@@ -1513,4 +1513,27 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Tenant');
     }
 
+    public function updateJMBExpiration($cob = null) {
+        $councils = $this->council($cob);
+        if($councils) {
+            foreach($councils as $council) {
+                $jmb_role = Role::where('name', Role::JMB)->pluck('id');
+                $users = User::where('role',$jmb_role)
+                                ->where('company_id',$council->id)
+                                ->where('remarks','Created by System')
+                                ->where('is_active',1)
+                                ->where('is_deleted',0)
+                                ->get();
+                                
+                foreach($users as $user) {
+                    $user->end_date = '2022-12-31';
+                    $user->save();
+                }
+
+            }
+        }
+
+        return 'update done';
+    }
+
 }

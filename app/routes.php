@@ -27,6 +27,7 @@ Route::get('/lphs/tenant/{council}', 'LPHSController@tenant');
 Route::get('/lphs/management/{council}', 'LPHSController@management');
 Route::get('/lphs/createJMB/{council}', 'LPHSController@createJMB');
 Route::get('/lphs/removeJMB/{council}', 'LPHSController@removeJMB');
+Route::get('/lphs/updateJMBExpiration/{council}', 'LPHSController@updateJMBExpiration');
 
 /*
  * LPHS REPORT END
