@@ -19,9 +19,9 @@ class ResidentApiController extends BaseController {
         $meetingList = array();
 
         $strata_name = Request::get('strata_name');
-        $current_page = (Request::has('page')) ? Request::get('page') : 1;
-        $per_page = (Request::has('per_page')) ? Request::get('per_page') : 10;
-        $from = ($current_page - 1) * $per_page;
+//        $current_page = (Request::has('page')) ? Request::get('page') : 1;
+//        $per_page = (Request::has('per_page')) ? Request::get('per_page') : 10;
+//        $from = ($current_page - 1) * $per_page;
 
         if (!empty($strata_name)) {
             $strata = Strata::where('name', $strata_name)->first();
@@ -34,8 +34,8 @@ class ResidentApiController extends BaseController {
 
                     $meetings = MeetingDocument::where('file_id', $file->id)
                             ->where('is_deleted', 0)
-                            ->skip($from)
-                            ->take($per_page)
+//                            ->skip($from)
+//                            ->take($per_page)
                             ->get();
 
                     if ($meetings) {
@@ -85,11 +85,11 @@ class ResidentApiController extends BaseController {
 
                         $result[] = array(
                             'total' => $total_meetings,
-                            'per_page' => $per_page,
-                            'page' => ceil($current_page),
-                            'last_page' => ceil($total_meetings / $per_page),
-                            'from' => $from + 1,
-                            'to' => ($current_page * $per_page) < $total_meetings ? ($current_page * $per_page) : $total_meetings,
+//                            'per_page' => $per_page,
+//                            'page' => ceil($current_page),
+//                            'last_page' => ceil($total_meetings / $per_page),
+//                            'from' => $from + 1,
+//                            'to' => ($current_page * $per_page) < $total_meetings ? ($current_page * $per_page) : $total_meetings,
                             'data' => $meetingList
                         );
                     }
@@ -127,9 +127,9 @@ class ResidentApiController extends BaseController {
         $designationList = array();
 
         $strata_name = Request::get('strata_name');
-        $current_page = (Request::has('page')) ? Request::get('page') : 1;
-        $per_page = (Request::has('per_page')) ? Request::get('per_page') : 10;
-        $from = ($current_page - 1) * $per_page;
+//        $current_page = (Request::has('page')) ? Request::get('page') : 1;
+//        $per_page = (Request::has('per_page')) ? Request::get('per_page') : 10;
+//        $from = ($current_page - 1) * $per_page;
 
         if (!empty($strata_name)) {
             $strata = Strata::where('name', $strata_name)->first();
@@ -163,11 +163,11 @@ class ResidentApiController extends BaseController {
 
                         $result[] = array(
                             'total' => $total_designations,
-                            'per_page' => $total_designations,
-                            'page' => ceil($current_page),
-                            'last_page' => ceil($total_designations / $per_page),
-                            'from' => $from + 1,
-                            'to' => ($current_page * $per_page) < $total_designations ? ($current_page * $total_designations) : $total_designations,
+//                            'per_page' => $total_designations,
+//                            'page' => ceil($current_page),
+//                            'last_page' => ceil($total_designations / $per_page),
+//                            'from' => $from + 1,
+//                            'to' => ($current_page * $per_page) < $total_designations ? ($current_page * $total_designations) : $total_designations,
                             'data' => $designationList
                         );
                     }
