@@ -92,6 +92,7 @@ Route::post('/inactiveFilePrefix', 'AdminController@inactiveFilePrefix')->before
 Route::get('/updateFilePrefix/{id}', 'AdminController@updateFilePrefix')->before('authMember');
 Route::post('/submitUpdateFilePrefix', 'AdminController@submitUpdateFilePrefix')->before('authMember');
 Route::post('/deleteFilePrefix/{id}', 'AdminController@deleteFilePrefix')->before('authMember');
+Route::get('cob/sync', 'CobSyncController@index')->before('authMember');
 
 //draft files
 Route::get('/draft/fileList', 'DraftController@fileList')->before('authMember');
@@ -887,6 +888,13 @@ Route::group(array('before' => 'authMember'), function() {
     /*
      * My Point End
      */
+    
+    /**
+     * Data Sync
+     */
+    Route::get('cob/get-option', 'CobController@getOption');
+    Route::post('buyer/sync', 'CobSyncController@submitBuyerSync');
+    Route::get('cob/get-property', 'CobSyncController@getProperty');
 });
 
 /** Transaction */

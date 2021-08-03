@@ -569,6 +569,15 @@ return [
 
         ]
     ],
+    'third_party' => [
+        'eagm' => [
+            'api_domain' => getenv('eagm_domain'),
+            'oauth_client_id' => getenv('eagm_oauth_id'),
+            'oauth_client_secret' => getenv('eagm_oauth_secret'),
+            'oauth_username' => getenv('eagm_oauth_username'),
+            'oauth_password' => getenv('eagm_oauth_password'),
+        ]
+    ],
     'eai' => [
         'domain' => 'http://127.0.0.1:94/api/v1/',
         'route' => [

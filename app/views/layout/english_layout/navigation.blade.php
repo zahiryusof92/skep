@@ -86,6 +86,14 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
+                    @if (Auth::user()->getAdmin())
+                    <li id="cob_sync">
+                        <a class="left-menu-link" href="{{URL::action('CobSyncController@index')}}">
+                            COB Sync
+                        </a>
+                    </li>
+                    @endif
+
                 </ul>
             </li>
             @endif

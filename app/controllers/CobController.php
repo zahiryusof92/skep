@@ -149,4 +149,52 @@ class CobController extends BaseController {
         }
     }
 
+    /**
+     * get files options
+     * @param short_name
+     */
+    public function getOption() {
+        $data = Input::all();
+        
+        if (Request::ajax()) {
+            $validation_rules = [
+                'short_name' => 'required|exists:company,short_name',
+            ];
+
+            $validator = \Validator::make($data, $validation_rules, []);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors();
+
+                return [
+                    'status' => 422,
+                    'data' => $errors->toJson(),
+                    'message' => 'Validation Error'
+                ];
+            }
+            $company = Company::where('short_name', $data['short_name'])->first();
+            $files = Files::where('company_id', $company->id)
+                            ->where('status', true)
+                            ->where('is_deleted', false)
+                            ->where('approved_at', '!=', '')
+                            ->get();
+            $data = [];
+            if(count($files) > 0) {
+                foreach($files as $file) {
+                    $new_data = [
+                        'key' => $file->id,
+                        'title' => $file->file_no
+                    ];
+
+                    array_push($data, $new_data);
+                }
+            }
+
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+
+    }
 }
