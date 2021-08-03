@@ -574,6 +574,7 @@ return array(
         "file_draft" => "Draft COB File",
         "draft" => "Draft Created by JMB",
         "created_at" => "Created At",
+        'eagm_property' => 'eAGM Property',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -661,6 +662,9 @@ return array(
             "store" => "COB file prefix added successfully!",
             "update" => "COB file prefix updated successfully!",
             "destroy" => "COB file prefix deleted successfully!"
+        ),
+        "cob_sync" => array(
+            "store" => "COB buyers synced successfully!",
         ),
         "finance_file" => array(
             "store" => "Finance file added successfully!",
@@ -868,6 +872,7 @@ return array(
         "submit_payment" => "Submit Payment",
         "reset" => "Reset",
         "accept" => "Accept",
+        "sync" => "Sync",
     ),
     'directory' => [
         'title' => 'Directory',
