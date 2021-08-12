@@ -17,7 +17,7 @@
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.cob') }}</label>
                                         <select id="company" class="form-control select2">
-                                            @if (count($cob) > 1)
+                                            @if (count($cob) > 0)
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @endif
                                             @foreach ($cob as $companies)
