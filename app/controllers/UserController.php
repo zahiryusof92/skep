@@ -90,7 +90,11 @@ class UserController extends BaseController {
     //member login start
     public function login($cob = '') {
         if (empty($cob)) {
-            $actual_link = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+            $host = '';
+            if (!empty($_SERVER['HTTP_HOST'])) {
+                $host = $_SERVER['HTTP_HOST'];
+            }
+            $actual_link = "$host$_SERVER[REQUEST_URI]";
 
             if (strpos($actual_link, 'mbs') !== false) {
                 $cob = 'mbs';
