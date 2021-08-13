@@ -10,7 +10,7 @@ class ManagementMC extends Eloquent {
      * @var array
      */
     protected $fillable = [
-        'file_id'
+        'file_id' 
     ];
 
     public function countries() {
