@@ -11,7 +11,7 @@ class ManagementDraft extends Eloquent {
      */
     protected $fillable = [
         'file_id',
-        'reference_id',
+        'reference_id', 
     ];
     
     public function developer() {
