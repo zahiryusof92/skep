@@ -22,39 +22,8 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$file->file_no}}</h6>
                     <div id="update_files_lists">
-                        <ul class="nav nav-pills nav-justified" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@house', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@strata', $file->id)}}">{{ trans('app.forms.developed_area') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active custom-tab">{{ trans('app.forms.management') }}</a>
-                            </li>
-                            @if (!Auth::user()->isJMB())
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
-                            </li>
-                            @endif
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
-                            </li>
-                            @if (!Auth::user()->isJMB())
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@buyer', $file->id)}}">{{ trans('app.forms.buyer_list') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@document', $file->id)}}">{{ trans('app.forms.document') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $file->id)}}">{{ trans('app.forms.insurance') }}</a>
-                            </li>
-                            @endif
-                        </ul>
+                        @include('page_en.nav.cob_file', ['files' => $file])
+
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="management" role="tabpanel">
 
