@@ -157,6 +157,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isPreSale() {
+        if (stripos($this->getRole->name, Role::PRE_SALE) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function getLawyer() {
         $lawyer = '';
 

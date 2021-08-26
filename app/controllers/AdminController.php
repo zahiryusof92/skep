@@ -3235,6 +3235,9 @@ class AdminController extends BaseController {
     }
 
     public function others($id) {
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::with(['buyer'])->findOrFail($id);
@@ -3511,6 +3514,9 @@ class AdminController extends BaseController {
     public function scoring($id) {
         if (Auth::user()->isJMB()) {
             return Redirect::back();
+        }
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
         }
 
         //get user permission
@@ -3881,6 +3887,9 @@ class AdminController extends BaseController {
     public function buyer($id) {
         if (Auth::user()->isJMB()) {
             return Redirect::back();
+        }
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
         }
 
         //get user permission
@@ -4360,6 +4369,9 @@ class AdminController extends BaseController {
     }
 
     public function getDocument($id) {
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
         $files = Files::find($id);
         $document = Document::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         if (count($document) > 0) {
@@ -7982,6 +7994,9 @@ class AdminController extends BaseController {
 
     //insurance
     public function insurance($id) {
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
 
         //$filename = Files::getFileName();
         //return "<pre>" . return_r($filename, true) . "</pre>";
