@@ -1325,4 +1325,36 @@ class PrintController extends BaseController {
         return View::make('print_en.land_title', $viewData);
     }
 
+    //print finance support
+    public function financeSupport() {
+        $data = Input::all();
+
+        $company_id = !empty($data['company'])? $data['company'] : '';
+
+        if(!Auth::user()->getAdmin()) {
+            $company_id = Auth::user()->company_id;
+        } else {
+            $company = Company::where('short_name', $company_id)->firstOrFail();
+            $company_id = $company->id;
+        }
+        $query = FinanceSupport::where('is_deleted', 0)
+                                ->where('is_active', 1);
+        if(!empty($company_id)) {
+            $query = $query->where('company_id', $company_id);
+        }
+        $items = $query->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.finance.finance_support'),
+            'panel_nav_active' => 'finance_panel',
+            'main_nav_active' => 'finance_main',
+            'sub_nav_active' => 'finance_support_list',
+            'company_id' => $company_id,
+            'items' => $items
+        );
+
+        return View::make('print_en.finance_support', $viewData);
+
+    }
+
 }

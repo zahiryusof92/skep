@@ -10,7 +10,6 @@
   | and give it the Closure to execute when that URI is requested.
   |
  */
-
 /*
  * LPHS REPORT START
  */
@@ -284,6 +283,15 @@ Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before
 Route::get('/updateInsurance/{id}/{file_id}', 'AdminController@updateInsurance')->before('authMember');
 Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
 Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
+
+//finance_support
+Route::get('/financeSupport/{id}', 'AdminController@financeSupport')->before('authMember');
+Route::get('/getFinanceSupport/{id}', 'AdminController@getFinanceSupport')->before('authMember');
+Route::get('/addFinanceSupport/{id}', 'AdminController@addFinanceSupport')->before('authMember');
+Route::post('/submitAddFinanceSupport', 'AdminController@submitAddFinanceSupport')->before('authMember');
+Route::get('/updateFinanceSupport/{id}', 'AdminController@updateFinanceSupport')->before('authMember');
+Route::post('/submitUpdateFinanceSupport', 'AdminController@submitUpdateFinanceSupport')->before('authMember');
+Route::post('/deleteFinanceSupport/{id}', 'AdminController@deleteFinanceSupport')->before('authMember');
 
 //upload csv
 Route::get('/update/importBuyer/{id}', 'AdminController@importBuyer')->before('authMember');
@@ -746,7 +754,8 @@ Route::get('/print/ManagementSummary', 'PrintController@printManagementSummary')
 //cob file / management
 Route::get('/print/CobFileManagement', 'PrintController@printCobFileManagement')->before('authMember');
 
-
+// finance support
+Route::post('/print/financeSupport', 'PrintController@financeSupport')->before('authMember');
 
 // FINANCE FILE LIST
 Route::get('/financeList', 'FinanceController@financeList')->before('authMember');
@@ -963,6 +972,53 @@ Route::group(array('prefix' => 'api/v2'), function() {
     Route::post('/deleteComplaint', 'Api\ResidentApiController@deleteComplaint');
 });
 
+Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember']), function() {
+    Route::get('dashboard/getAnalyticData', 'Api\DashboardAnalyticController@getAnalyticData');
+    Route::group(array('prefix' => 'cob'), function() {
+        Route::get('insurance/getAnalyticData', 'Api\InsuranceController@getAnalyticData');
+        Route::get('insurance/getListing', 'Api\InsuranceController@getListing');
+        Route::get('management/getAnalyticData', 'Api\ManagementController@getAnalyticData');
+        Route::get('management/getListing', 'Api\ManagementController@getListing');
+        Route::get('other/getAnalyticData', 'Api\OtherController@getAnalyticData');
+        Route::get('other/getListing', 'Api\OtherController@getListing');
+        Route::get('owner/getListing', 'Api\OwnerController@getListing');
+        Route::get('owner/getAnalyticData', 'Api\OwnerController@getAnalyticData');
+        Route::get('scoring/getAnalyticData', 'Api\ScoringController@getAnalyticData');
+        Route::get('scoring/getRatingData', 'Api\ScoringController@getRatingData');
+        Route::get('strata/getListing', 'Api\StrataController@getListing');
+        Route::get('strata/getAnalyticData', 'Api\StrataController@getAnalyticData');
+        Route::get('tenant/getListing', 'Api\TenantController@getListing');
+        Route::get('tenant/getAnalyticData', 'Api\TenantController@getAnalyticData');
+    });
+
+    Route::group(array('prefix' => 'finance'), function() {
+        Route::get('file/getAnalyticData', 'Api\FinanceFileController@getAnalyticData');
+        Route::get('support/getListing', 'Api\FinanceSupportController@getListing');
+        Route::get('support/getAnalyticData', 'Api\FinanceSupportController@getAnalyticData');
+    });
+
+    Route::group(array('prefix' => 'other'), function() {
+        Route::get('agent/getListing', 'Api\AgentController@getListing');
+        Route::get('city/getListing', 'Api\CityController@getListing');
+        Route::get('complaint/getListing', 'Api\ComplaintController@getListing');
+        Route::get('complaint/getAnalyticData', 'Api\ComplaintController@getAnalyticData');
+        Route::get('developer/getListing', 'Api\DeveloperController@getListing');
+        Route::get('developer/getAnalyticData', 'Api\DeveloperController@getAnalyticData');
+        Route::get('dun/getListing', 'Api\DunController@getListing');
+        Route::get('dun/option', 'Api\DunController@option');
+        Route::get('insurance_provider/getListing', 'Api\InsuranceProviderController@getListing');
+        Route::get('insurance_provider/getAnalyticData', 'Api\InsuranceProviderController@getAnalyticData');
+        Route::get('land/getListing', 'Api\LandController@getListing');
+        Route::get('land_category/getListing', 'Api\LandCategoryController@getListing');
+        Route::get('land_category/getAnalyticData', 'Api\LandCategoryController@getAnalyticData');
+        Route::get('park/getListing', 'Api\ParkController@getListing');
+        Route::get('parliment/getListing', 'Api\ParlimentController@getListing');
+        Route::get('parliment/getAnalyticData', 'Api\ParlimentController@getAnalyticData');
+        Route::get('parliment/option', 'Api\ParlimentController@option');
+        Route::get('state/getListing', 'Api\StateController@getListing');
+    });
+});
+
 //API route
 Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before(['auth.basic', 'authMember']);
 Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before(['auth.basic', 'authMember']);
@@ -988,5 +1044,6 @@ Route::get('/{name?}', 'AdminController@showView')->before('authMember');
 Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('councilFacility', 'ExportController@exportCouncilFacility');
     Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
+    Route::get('reporting', 'ExportController@reporting');
 
 });

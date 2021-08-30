@@ -21,15 +21,36 @@ foreach ($user_permission as $permission) {
             <section class="panel panel-pad">
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
+                        <form target="_blank" action="{{ url('/print/financeSupport') }}" method="POST">
                         <button onclick="window.location = '{{ URL::action('FinanceController@addFinanceSupport') }}'" type="button" class="btn btn-own">
                             {{ trans('app.buttons.add_finance_support') }}
                         </button>
+                        <button type="submit" class="btn btn-own float-right">
+                            <i class="fa fa-print"></i>
+                        </button>
                         <br/><br/>
+                        @if (Auth::user()->getAdmin())
+                            <div class="row">
+                                <div class="col-md-6 text-center">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.cob') }}</label>
+                                        <select id="company" name="company" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($cob as $companies)
+                                            <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        </form>
                         <table class="table table-hover table-own table-striped" id="filelist" width="100%" style="font-size: 13px;">
                             <thead>
                                 <tr>
-                                    <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
-                                    <th style="width:25%;">{{ trans('app.forms.strata') }}</th> 
+                                    <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.strata') }}</th> 
                                     <th style="width:10%;">{{ trans('app.forms.date') }}</th>
                                     <th style="width:30%;">{{ trans('app.forms.donation_name') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.donation_amount') }}</th>
@@ -63,6 +84,9 @@ foreach ($user_permission as $permission) {
                     "aTargets": [-1]
                 }
             ]
+        });
+        $('#company').on('change',function() {
+            oTable.columns(0).search(this.value).draw();
         });
     });
 

@@ -36,18 +36,23 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @if(Request::is('update/buyer/*')) active @endif custom-tab" @if(!Request::is('update/buyer/*')) href="{{URL::action('AdminController@buyer', $files->id)}}" @endif>
+        <a class="nav-link @if(Request::is('update/buyer/*') || Request::is('*Buyer/*')) active @endif custom-tab" @if(!Request::is('update/buyer/*') && !Request::is('*Buyer/*')) href="{{URL::action('AdminController@buyer', $files->id)}}" @endif>
             {{ trans('app.forms.buyer_list') }}
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @if(Request::is('update/document/*')) active @endif custom-tab" @if(!Request::is('update/document/*')) href="{{URL::action('AdminController@document', $files->id)}}" @endif>
+        <a class="nav-link @if(Request::is('update/document/*') || Request::is('*Document/*')) active @endif custom-tab" @if(!Request::is('update/document/*') && !Request::is('*Document/*')) href="{{URL::action('AdminController@document', $files->id)}}" @endif>
             {{ trans('app.forms.document') }}
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @if(Request::is('insurance/*')) active @endif custom-tab" @if(!Request::is('insurance/*')) href="{{URL::action('AdminController@insurance', $files->id)}}" @endif>
+        <a class="nav-link @if(Request::is('insurance/*') || Request::is('*Insurance/*')) active @endif custom-tab" @if(!Request::is('insurance/*') && !Request::is('*Insurance/*')) href="{{URL::action('AdminController@insurance', $files->id)}}" @endif>
             {{ trans('app.forms.insurance') }}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @if(Request::is('*financeSupport/*') || Request::is('*FinanceSupport/*')) active @endif custom-tab" @if(!Request::is('*financeSupport/*') && !Request::is('*FinanceSupport/*')) href="{{URL::action('AdminController@financeSupport', $files->id)}}" @endif>
+            {{ trans('app.forms.finance_support') }}
         </a>
     </li>
     @endif

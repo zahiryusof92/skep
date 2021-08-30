@@ -12,35 +12,8 @@
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$files->file_no}}</h6>
                     <div id="update_files_lists">
-                        <ul class="nav nav-pills nav-justified" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@house', $files->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@strata', $files->id)}}">{{ trans('app.forms.developed_area') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@management', $files->id)}}">{{ trans('app.forms.management') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@monitoring', $files->id)}}">{{ trans('app.forms.monitoring') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@others', $files->id)}}">{{ trans('app.forms.others') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@scoring', $files->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active custom-tab">{{ trans('app.forms.buyer_list') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@document', $files->id)}}">{{ trans('app.forms.document') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('AdminController@insurance', $files->id)}}">{{ trans('app.forms.insurance') }}</a>
-                            </li>
-                        </ul>
+                        @include('page_en.nav.cob_file')
+                        
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="buyer_tab" role="tabpanel">
                                 <section class="panel panel-pad">

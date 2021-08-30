@@ -8497,6 +8497,215 @@ class AdminController extends BaseController {
         }
     }
 
+    //finance support
+    public function financeSupport($id) {
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $file = Files::find($id);
+        $image = OtherDetails::where('file_id', $file->id)->first();
+
+        $viewData = array(
+            'title' => trans('app.menus.cob.update_cob_file'),
+            'panel_nav_active' => 'cob_finance_support',
+            'main_nav_active' => 'cob_main',
+            'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
+            'user_permission' => $user_permission,
+            'file' => $file,
+            'image' => (!empty($image->image_url) ? $image->image_url : '')
+        );
+
+        return View::make('page_en.update_finance_support', $viewData);
+    }
+
+    public function getFinanceSupport($id) {
+        $filelist = FinanceSupport::where('file_id', $id)
+                                    ->where('is_deleted', 0)
+                                    ->orderBy('id', 'desc')
+                                    ->get();
+
+        if (count($filelist) > 0) {
+            $data = Array();
+            foreach ($filelist as $filelists) {
+                $files = Files::where('id', $filelists->file_id)->first();
+                if ($files) {
+                    $button = "";
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
+
+                    $data_raw = array(
+                        ($files->company ? $files->company->short_name : ''),
+                        "<a style='text-decoration:underline;' href='" . URL::action('AdminController@updateFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
+                        ($files->strata ? $files->strata->strataName() : ''),
+                        date('d/m/Y', strtotime($filelists->date)),
+                        $filelists->name,
+                        number_format($filelists->amount, 2),
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+            }
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function addFinanceSupport($id) {
+        $file = Files::find($id);
+        $image = OtherDetails::where('file_id', $file->id)->first();
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $viewData = array(
+            'title' => trans('app.menus.cob.update_cob_file'),
+            'panel_nav_active' => 'cob_finance_support',
+            'main_nav_active' => 'cob_main',
+            'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
+            'user_permission' => $user_permission,
+            'files' => $file,
+            'image' => (!empty($image->image_url) ? $image->image_url : '')
+        );
+
+        return View::make('page_en.add_finance_support', $viewData);
+    }
+
+    public function submitAddFinanceSupport() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $file_id = $data['file_id'];
+            $is_active = $data['is_active'];
+
+            $files = Files::find($file_id);
+            if ($files) {
+                $finance = new FinanceSupport();
+                $finance->file_id = $files->id;
+                $finance->company_id = $files->company_id;
+                $finance->date = $data['date'];
+                $finance->name = $data['name'];
+                $finance->amount = $data['amount'];
+                $finance->remark = $data['remark'];
+                $finance->is_active = $is_active;
+                $success = $finance->save();
+
+                if ($success) {
+                    # Audit Trail
+                    $file_name = Files::find($finance->file_id);
+                    $remarks = 'COB Owner List (' . $file_name->file_no . ') has a Finance Support with id : ' . $finance->id . ' has been inserted.';
+                    $auditTrail = new AuditTrail();
+                    $auditTrail->module = "COB Finance Support";
+                    $auditTrail->remarks = $remarks;
+                    $auditTrail->audit_by = Auth::user()->id;
+                    $auditTrail->save();
+                    print "true";
+                } else {
+                    print "false";
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function updateFinanceSupport($id) {
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $item = FinanceSupport::find($id);
+        $file = Files::find($item->file_id);
+        $image = OtherDetails::where('file_id', $file->id)->first();
+
+        $viewData = array(
+            'title' => trans('app.menus.cob.update_cob_file'),
+            'panel_nav_active' => 'cob_finance_support',
+            'main_nav_active' => 'cob_main',
+            'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
+            'user_permission' => $user_permission,
+            'files' => $file,
+            'item' => $item,
+            'image' => (!empty($image->image_url) ? $image->image_url : '')
+        );
+
+        return View::make('page_en.edit_finance_support', $viewData);
+    }
+
+    public function submitUpdateFinanceSupport() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $file_id = $data['file_id'];
+            $id = $data['id'];
+
+            $files = Files::find($file_id);
+            if ($files) {
+                $finance = FinanceSupport::find($id);
+                if ($finance) {
+                    $finance->file_id = $files->id;
+                    $finance->company_id = $files->company_id;
+                    $finance->date = $data['date'];
+                    $finance->name = $data['name'];
+                    $finance->amount = $data['amount'];
+                    $finance->remark = $data['remark'];
+                    $finance->is_active = 1;
+                    $success = $finance->save();
+
+                    if ($success) {
+                        # Audit Trail
+                        $file_name = Files::find($finance->file_id);
+                        $remarks = 'COB Owner List (' . $file_name->file_no . ') has a Finance Support with id : ' . $finance->id . ' has been updated.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "COB Finance Support";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+                        print "true";
+                    } else {
+                        print "false";
+                    }
+                } else {
+                    print "false";
+                }
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteFinanceSupport() {  
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $finance = FinanceSupport::find($id);
+            $finance->is_deleted = 1;
+            $deleted = $finance->save();
+            if ($deleted) {
+                # Audit Trail
+                $file_name = Files::find($finance->file_id);
+                $remarks = 'COB Owner List (' . $file_name->file_no . ') has a Finance Support with id : ' . $finance->id . ' has been deleted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB Finance Support";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
     public function createOrUpdateFileDraft($files) {
         if (Auth::user()->isJMB()) {
             $draft = FileDrafts::firstOrNew(array('file_id' => $files->id));
