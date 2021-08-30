@@ -1591,6 +1591,12 @@ class FinanceController extends BaseController {
 
     public function financeSupport() {
         //get user permission
+
+        if (empty(Session::get('admin_cob'))) {
+            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            $cob = Company::where('id', Session::get('admin_cob'))->get();
+        }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::where('is_deleted', 0)->get();
 
@@ -1601,6 +1607,7 @@ class FinanceController extends BaseController {
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'file' => $file,
+            'cob' => $cob,
             'image' => ""
         );
 
@@ -1633,6 +1640,7 @@ class FinanceController extends BaseController {
                     $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                     $data_raw = array(
+                        ($files->company ? $files->company->short_name : ''),
                         "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
                         ($files->strata ? $files->strata->strataName() : ''),
                         date('d/m/Y', strtotime($filelists->date)),

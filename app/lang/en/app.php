@@ -575,6 +575,7 @@ return array(
         "draft" => "Draft Created by JMB",
         "created_at" => "Created At",
         'eagm_property' => 'eAGM Property',
+        'finance_support' => 'Finance Support',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
