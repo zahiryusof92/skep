@@ -1334,8 +1334,10 @@ class PrintController extends BaseController {
         if(!Auth::user()->getAdmin()) {
             $company_id = Auth::user()->company_id;
         } else {
-            $company = Company::where('short_name', $company_id)->firstOrFail();
-            $company_id = $company->id;
+            if(!empty($company_id)) {
+                $company = Company::where('short_name', $company_id)->firstOrFail();
+                $company_id = $company->id;
+            }
         }
         $query = FinanceSupport::where('is_deleted', 0)
                                 ->where('is_active', 1);
