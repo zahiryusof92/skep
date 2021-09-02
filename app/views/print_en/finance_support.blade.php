@@ -44,7 +44,7 @@ $company = Company::find(Auth::user()->company_id);
                     <tr>
                         <td>{{!empty($item->file())? $item->file->file_no : '-'}}</td>
                         <td>{{!empty($item->file())? $item->file->strata->strataName() : '-'}}</td>
-                        <td>{{date('d/m/Y', strtotime($item->created_at))}}</td>
+                        <td>{{date('d/m/Y', strtotime($item->date))}}</td>
                         <td>{{$item->name}}</td>
                         <td>{{number_format($item->amount, 2)}}</td>
                     </tr>
