@@ -1338,10 +1338,6 @@ class PrintController extends BaseController {
                 $company = Company::where('short_name', $company_id)->firstOrFail();
                 $company_id = $company->id;
             }
-            if(!empty(Session::get('admin_cob'))) {
-                $company_id = Session::get('admin_cob');
-            }
-            
         }
         $query = FinanceSupport::where('is_deleted', 0)
                                 ->where('is_active', 1);
@@ -1349,7 +1345,7 @@ class PrintController extends BaseController {
             $query = $query->where('company_id', $company_id);
         }
         $items = $query->get();
-        
+
         $viewData = array(
             'title' => trans('app.menus.finance.finance_support'),
             'panel_nav_active' => 'finance_panel',
