@@ -42,8 +42,8 @@ $company = Company::find(Auth::user()->company_id);
                     @if (count($items) > 0)
                     @foreach ($items as $item)
                     <tr>
-                        <td>{{!empty($item->file())? $item->file->file_no : '-'}}</td>
-                        <td>{{!empty($item->file())? $item->file->strata->strataName() : '-'}}</td>
+                        <td>{{(empty($item->file()) == false && empty($item->file->file_no) == false)? $item->file->file_no : '-'}}</td>
+                        <td>{{(empty($item->file()) == false && empty($item->file->file_no) == false)? $item->file->strata->strataName() : '-'}}</td>
                         <td>{{date('d/m/Y', strtotime($item->date))}}</td>
                         <td>{{$item->name}}</td>
                         <td>{{number_format($item->amount, 2)}}</td>
