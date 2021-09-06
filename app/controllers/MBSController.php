@@ -35,7 +35,6 @@ class MBSController extends BaseController {
                     ]);
                 }
 
-
                 array_push($data, ['username' => $user->username, 'password' => $new_password]);
             }
         }
