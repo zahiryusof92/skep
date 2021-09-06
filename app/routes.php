@@ -32,6 +32,14 @@ Route::get('/lphs/updateJMBExpiration/{council}', 'LPHSController@updateJMBExpir
  * LPHS REPORT END
  */
 
+/**
+ * MBS
+ */
+Route::get('/mbs/resetJMB/', 'MBSController@resetJMB');
+/**
+ * END MBS
+ */
+
 /*
  * Clear cache
  */
@@ -934,6 +942,7 @@ Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('profile/update_simple', 'Api\ApiController@updateSimpleProfileInfo');
     Route::post('/login', 'Api\ApiController@login');
     Route::get('getCouncil', 'Api\ApiController@getCouncil');
+    Route::post('oauth/token', 'Api\AuthController@token');
 });
 
 Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
