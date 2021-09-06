@@ -20,8 +20,7 @@ class MBSController extends BaseController {
     public function resetJMB() {
         $cob = Company::where('short_name', 'MBS')->first();
         $role = Role::where('name', 'JMB')->first();
-        $users = DB::table('users')
-                    ->where('role', $role->id)
+        $users = User::where('role', $role->id)
                     ->where('company_id', $cob->id)
                     ->where('is_deleted',0)
                     ->get();
@@ -30,8 +29,11 @@ class MBSController extends BaseController {
         if(count($users) > 0) {
             foreach($users as $user) {
                 $new_password = self::generateRandomString();
-                $user->password = Hash::make($new_password);
-                $user->save();
+                if(empty($user->username) == false) {
+                    $user->update([
+                        'password' => Hash::make($new_password)
+                    ]);
+                }
 
                 array_push($data, ['username' => $user->username, 'password' => $new_password]);
             }
