@@ -7994,10 +7994,6 @@ class AdminController extends BaseController {
 
     //insurance
     public function insurance($id) {
-        if (Auth::user()->isPreSale()) {
-            return Redirect::to('update/monitoring/' . $id);
-        }
-
         //$filename = Files::getFileName();
         //return "<pre>" . return_r($filename, true) . "</pre>";
         //get user permission
