@@ -18,7 +18,7 @@ foreach ($user_permission as $permission) {
         <div class="panel-heading">
             @if(Str::lower($company->short_name) == 'mbs')
                 <h4>
-                    <a data-fancybox="gallery" href="{{asset('files/pertandingan_photojournalism.pdf')}}" class="text-primary">
+                    <a href="{{asset('files/pertandingan_photojournalism.pdf')}}" target="_blank" class="text-primary">
                         <u>
                             PERTANDINGAN PHOTOJOURNALISM Sempena Hari Habitat Sedunia Tahun 2021
                         </u>
