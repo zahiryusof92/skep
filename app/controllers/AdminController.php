@@ -3573,11 +3573,11 @@ class AdminController extends BaseController {
             $score20 = $data['score20'];
             $score21 = $data['score21'];
 
-            $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $scorings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+            $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 25) * 25);
+            $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 25) * 25);
+            $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 20) * 20);
+            $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 20) * 20);
+            $scorings_E = ((($score19 + $score20 + $score21) / 15) * 10);
 
             $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
 
@@ -3664,11 +3664,11 @@ class AdminController extends BaseController {
             $score20 = $data['score20'];
             $score21 = $data['score21'];
 
-            $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $scorings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+            $scorings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 25) * 25);
+            $scorings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 25) * 25);
+            $scorings_C = ((($score11 + $score12 + $score13 + $score14) / 20) * 20);
+            $scorings_D = ((($score15 + $score16 + $score17 + $score18) / 20) * 20);
+            $scorings_E = ((($score19 + $score20 + $score21) / 15) * 10);
 
             $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
 
@@ -3741,11 +3741,11 @@ class AdminController extends BaseController {
                         . 'data-id="' . $scorings->id . '"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteScoring(\'' . $scorings->id . '\')"><i class="fa fa-trash"></i></button>';
 
-                $scorings_A = ((($scorings->score1 + $scorings->score2 + $scorings->score3 + $scorings->score4 + $scorings->score5) / 20) * 25);
-                $scorings_B = ((($scorings->score6 + $scorings->score7 + $scorings->score8 + $scorings->score9 + $scorings->score10) / 20) * 25);
-                $scorings_C = ((($scorings->score11 + $scorings->score12 + $scorings->score13 + $scorings->score14) / 16) * 20);
-                $scorings_D = ((($scorings->score15 + $scorings->score16 + $scorings->score17 + $scorings->score18) / 16) * 20);
-                $scorings_E = ((($scorings->score19 + $scorings->score20 + $scorings->score21) / 12) * 10);
+                $scorings_A = ((($scorings->score1 + $scorings->score2 + $scorings->score3 + $scorings->score4 + $scorings->score5) / 25) * 25);
+                $scorings_B = ((($scorings->score6 + $scorings->score7 + $scorings->score8 + $scorings->score9 + $scorings->score10) / 25) * 25);
+                $scorings_C = ((($scorings->score11 + $scorings->score12 + $scorings->score13 + $scorings->score14) / 20) * 20);
+                $scorings_D = ((($scorings->score15 + $scorings->score16 + $scorings->score17 + $scorings->score18) / 20) * 20);
+                $scorings_E = ((($scorings->score19 + $scorings->score20 + $scorings->score21) / 15) * 10);
 
                 if ($scorings->total_score >= 81) {
                     $rating = '<span style="color: orange;">'
@@ -6447,11 +6447,11 @@ class AdminController extends BaseController {
                 $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AdminController@updateRating', $ratings->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteRating(\'' . $ratings->id . '\')"><i class="fa fa-trash"></i></button>';
 
-                $ratings_A = ((($ratings->score1 + $ratings->score2 + $ratings->score3 + $ratings->score4 + $ratings->score5) / 20) * 25);
-                $ratings_B = ((($ratings->score6 + $ratings->score7 + $ratings->score8 + $ratings->score9 + $ratings->score10) / 20) * 25);
-                $ratings_C = ((($ratings->score11 + $ratings->score12 + $ratings->score13 + $ratings->score14) / 16) * 20);
-                $ratings_D = ((($ratings->score15 + $ratings->score16 + $ratings->score17 + $ratings->score18) / 16) * 20);
-                $ratings_E = ((($ratings->score19 + $ratings->score20 + $ratings->score21) / 12) * 10);
+                $ratings_A = ((($ratings->score1 + $ratings->score2 + $ratings->score3 + $ratings->score4 + $ratings->score5) / 25) * 25);
+                $ratings_B = ((($ratings->score6 + $ratings->score7 + $ratings->score8 + $ratings->score9 + $ratings->score10) / 25) * 25);
+                $ratings_C = ((($ratings->score11 + $ratings->score12 + $ratings->score13 + $ratings->score14) / 20) * 20);
+                $ratings_D = ((($ratings->score15 + $ratings->score16 + $ratings->score17 + $ratings->score18) / 20) * 20);
+                $ratings_E = ((($ratings->score19 + $ratings->score20 + $ratings->score21) / 15) * 10);
 
                 if ($ratings->total_score >= 81) {
                     $rating = '<span style="color: orange;">'
@@ -6593,11 +6593,11 @@ class AdminController extends BaseController {
             $score20 = $data['score20'];
             $score21 = $data['score21'];
 
-            $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $ratings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+            $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 25) * 25);
+            $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 25) * 25);
+            $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 20) * 20);
+            $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 20) * 20);
+            $ratings_E = ((($score19 + $score20 + $score21) / 15) * 10);
 
             $total_score = $ratings_A + $ratings_B + $ratings_C + $ratings_D + $ratings_E;
 
@@ -6709,11 +6709,11 @@ class AdminController extends BaseController {
             $score20 = $data['score20'];
             $score21 = $data['score21'];
 
-            $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $ratings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+            $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 25) * 25);
+            $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 25) * 25);
+            $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 20) * 20);
+            $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 20) * 20);
+            $ratings_E = ((($score19 + $score20 + $score21) / 15) * 10);
 
             $total_score = $ratings_A + $ratings_B + $ratings_C + $ratings_D + $ratings_E;
 

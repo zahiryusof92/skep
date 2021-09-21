@@ -4,6 +4,7 @@
 
 <?php
 $update_permission = 0;
+$company = Company::find(Auth::user()->company_id);
 
 foreach ($user_permission as $permission) {
     if ($permission->submodule_id == 9) {
@@ -15,6 +16,15 @@ foreach ($user_permission as $permission) {
 <div class="page-content-inner">
     <section class="panel panel-style">
         <div class="panel-heading">
+            @if(Str::lower($company->short_name) == 'mbs')
+                <h4>
+                    <a data-fancybox="gallery" href="{{asset('files/pertandingan_photojournalism.pdf')}}" class="text-primary">
+                        <u>
+                            PERTANDINGAN PHOTOJOURNALISM Sempena Hari Habitat Sedunia Tahun 2021
+                        </u>
+                    </a>
+                </h4>
+            @endif
             <h3>Dashboard</h3>
         </div>
         <div class="panel-body">
@@ -477,15 +487,23 @@ foreach ($user_permission as $permission) {
             responsive: true,
             columns: [
                 {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strate.name'},
-                {data: 'designation', name: 'designation.description'},
-                {data: 'name', name: 'ajk_details.name'},
-                {data: 'phone_no', name: 'ajk_details.phone_no'},
-                {data: 'month', name: 'ajk_details.month'},
-                {data: 'start_year', name: 'ajk_details.start_year'},
-                {data: 'end_year', name: 'ajk_details.end_year'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'cob', name: 'company.short_name'}
+                // {data: 'file_no', name: 'files.file_no'},
+                // {data: 'strata', name: 'strate.name'},
+                // {data: 'designation', name: 'designation.description'},
+                // {data: 'name', name: 'ajk_details.name'},
+                // {data: 'phone_no', name: 'ajk_details.phone_no'},
+                // {data: 'month', name: 'ajk_details.month'},
+                // {data: 'start_year', name: 'ajk_details.start_year'},
+                // {data: 'end_year', name: 'ajk_details.end_year'},
+                // {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
 
@@ -559,7 +577,13 @@ foreach ($user_permission as $permission) {
             plotBackgroundColor: null,
             plotBorderWidth: null,
             plotShadow: false,
-            type: 'pie'
+            type: 'pie',
+            events: {
+                click: function(evt, item) {
+                    console.log(evt);
+                    console.log(item);
+                }
+            }
         },
         title: {
             text: 'Star Rating of Development Area'

@@ -1536,4 +1536,58 @@ class LPHSController extends BaseController {
         return 'update done';
     }
 
+    public function updateRatingSummary() {
+        if(Auth::check() && Auth::user()->getAdmin()) {
+            $items = Scoring::where('is_deleted', 0)->get();
+
+            foreach($items as $item) {
+                $item_date = date('Y-m-d', strtotime($item->updated_at));
+                if($item_date < date('Y-m-d') && date('Y-m-d') == '2021-09-21') {
+                    $item->score1 = ($item->score1 > 0)? (($item->score1 == 5)? $item->score1 : $item->score1 + 1) : 1;
+                    $item->score2 = ($item->score2 > 0)? (($item->score2 == 5)? $item->score2 : $item->score2 + 1) : 1;
+                    $item->score3 = ($item->score3 > 0)? (($item->score3 == 5)? $item->score3 : $item->score3 + 1) : 1;
+                    $item->score4 = ($item->score4 > 0)? (($item->score4 == 5)? $item->score4 : $item->score4 + 1) : 1;
+                    $item->score5 = ($item->score5 > 0)? (($item->score5 == 5)? $item->score5 : $item->score5 + 1) : 1;
+                    $item->score6 = ($item->score6 > 0)? (($item->score6 == 5)? $item->score6 : $item->score6 + 1) : 1;
+                    $item->score7 = ($item->score7 > 0)? (($item->score7 == 5)? $item->score7 : $item->score7 + 1) : 1;
+                    $item->score8 = ($item->score8 > 0)? (($item->score8 == 5)? $item->score8 : $item->score8 + 1) : 1;
+                    $item->score9 = ($item->score9 > 0)? (($item->score9 == 5)? $item->score9 : $item->score9 + 1) : 1;
+                    $item->score10 = ($item->score10 > 0)? (($item->score10 == 5)? $item->score10 : $item->score10 + 1) : 1;
+                    $item->score11 = ($item->score11 > 0)? (($item->score11 == 5)? $item->score11 : $item->score11 + 1) : 1;
+                    $item->score12 = ($item->score12 > 0)? (($item->score12 == 5)? $item->score12 : $item->score12 + 1) : 1;
+                    $item->score13 = ($item->score13 > 0)? (($item->score13 == 5)? $item->score13 : $item->score13 + 1) : 1;
+                    $item->score14 = ($item->score14 > 0)? (($item->score14 == 5)? $item->score14 : $item->score14 + 1) : 1;
+                    $item->score15 = ($item->score15 > 0)? (($item->score15 == 5)? $item->score15 : $item->score15 + 1) : 1;
+                    $item->score16 = ($item->score16 > 0)? (($item->score16 == 5)? $item->score16 : $item->score16 + 1) : 1;
+                    $item->score17 = ($item->score17 > 0)? (($item->score17 == 5)? $item->score17 : $item->score17 + 1) : 1;
+                    $item->score18 = ($item->score18 > 0)? (($item->score18 == 5)? $item->score18 : $item->score18 + 1) : 1;
+                    $item->score19 = ($item->score19 > 0)? (($item->score19 == 5)? $item->score19 : $item->score19 + 1) : 1;
+                    $item->score20 = ($item->score20 > 0)? (($item->score20 == 5)? $item->score20 : $item->score20 + 1) : 1;
+                    $item->score21 = ($item->score21 > 0)? (($item->score21 == 5)? $item->score21 : $item->score21 + 1) : 1;
+                    $scorings_A = ((($item->score1 + $item->score2 + $item->score3 + $item->score4 + $item->score5) / 25) * 25);
+                    $scorings_B = ((($item->score6 + $item->score7 + $item->score8 + $item->score9 + $item->score10) / 25) * 25);
+                    $scorings_C = ((($item->score11 + $item->score12 + $item->score13 + $item->score14) / 20) * 20);
+                    $scorings_D = ((($item->score15 + $item->score16 + $item->score17 + $item->score18) / 20) * 20);
+                    $scorings_E = ((($item->score19 + $item->score20 + $item->score21) / 15) * 10);
+                    $item->total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
+                    $item->save();
+                }
+            }
+
+            return [
+                'success' => true,
+                'message' => 'done'
+            ];
+        } else {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
+    }
+
 }

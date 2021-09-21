@@ -146,4 +146,71 @@ class Category extends Eloquent {
         return $file;
     }
 
+    public static function getData() {
+        $query = self::where('is_deleted', 0)
+                     ->where('is_active', 1);
+        $items = $query->selectRaw('description as name, code, is_active, created_at')
+                    ->get();
+        return $items;
+    }
+
+    public static function getAnalyticData($request = []) {
+        $active = function ($query) {
+            $query->where('files.is_deleted',0);
+        };
+
+        $query = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company','files.company_id','=','company.id')
+                    ->join('category','strata.category', '=', 'category.id')
+                    ->where($active);
+        $query2 = Company::where('is_deleted', 0)->where('is_active', 1)->where('short_name','!=','LPHS');
+        if(!empty($request['cob'])) {
+            $query = $query->where('company.short_name',$request['cob']);
+            $query2 = $query2->where('short_name',$request['cob']);
+        }
+        $items = $query->selectRaw('company.short_name, count(strata.id) as total_id, category.description as category')
+                      ->groupBy('category.description', 'company.short_name')
+                      ->get();
+        $councils = $query2->get();
+        $category = self::where('is_deleted', 0)->where('is_active', 1)->get();
+        $data = [];
+        $names = array_pluck($category,'description');
+        foreach($councils as $council) {
+            $search_by_council = array_where($items, function($key1, $val1) use($council) {
+                return $val1->short_name == $council->short_name;
+            });
+            $new_data = [
+                'name' => $council->short_name,
+                'data' => []
+            ];
+            if(!empty($search_by_council)) {
+                foreach($names as $name) {
+                    $search_by_category = array_first($search_by_council, function($key, $val) use($name) {
+                        return $val->category == $name;
+                    });
+                    $new_value = 0;
+                    if(!empty($search_by_category)) {
+                        $new_value = $search_by_category->total_id;
+                    }
+                    array_push($new_data['data'],[$new_value]);
+                }
+            } else {
+                foreach($names as $name) {
+                    $new_value = 0;
+                    array_push($new_data['data'],[$new_value]);
+                }
+            }
+            array_push($data, $new_data);
+
+        }
+        
+        $result = array(
+            'name' => $names,
+            'data' => $data,
+        );
+        
+        return $result;
+    }
+
 }

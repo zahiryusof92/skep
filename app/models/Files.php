@@ -104,6 +104,10 @@ class Files extends Eloquent {
         return $this->hasOne('Monitoring', 'file_id');
     }
 
+    public function ajk_details() {
+        return $this->hasMany('AJKDetails', 'file_id');
+    }
+
     public static function getInsuranceReportByCOB($cob_id = NULL) {
         $result = array();
 
@@ -772,37 +776,229 @@ class Files extends Eloquent {
         return $result;
     }
 
+    public static function getAnalyticData() {
+        $active = function ($query) {
+            $query->where('files.is_deleted', 0);
+        };
+
+        $total_files = Files::where('is_deleted', 0)
+                            ->where('status', 1)
+                            ->count();
+        $total_finance_file = DB::table('finance_file')
+                                ->join('files','finance_file.file_id','=','files.id')
+                                ->where('finance_file.is_active', 1)
+                                ->where($active)
+                                ->count();
+        $total_finance_support = DB::table('finance_support')
+                                    ->join('files','finance_support.file_id','=','files.id')
+                                    ->where('finance_support.is_active', 1)
+                                    ->where($active)
+                                    ->count();
+        $total_insurance_provider = DB::table('insurance_provider')
+                                        ->where('is_active', 1)
+                                        ->where('is_deleted', 0)
+                                        ->count();
+        $files_summary = DB::table('files')
+                            ->where('is_deleted', 0)
+                            ->where('status', 1)
+                            ->selectRaw('year, count(id) as total')
+                            ->groupBy('year')
+                            ->get();
+        $file_history_name = [];
+        $file_history = [];
+        foreach($files_summary as $summary) {
+            $year = "Year ". $summary->year;
+            if($summary->year == '0') {
+                $year = 'No Records';
+            }
+            array_push($file_history_name, [$year]);
+            array_push($file_history, [$summary->total]);
+        }
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->where('tenant.is_deleted', 0)
+                        ->count();
+            } else {
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where($active)
+                        ->where('tenant.is_deleted', 0)
+                        ->count();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where($active)
+                        ->where('tenant.is_deleted', 0)
+                        ->count();
+            } else {
+                $total_jmb = DB::table('management_jmb')
+                        ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $total_mc = DB::table('management_mc')
+                        ->join('files', 'management_mc.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $total_strata = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $total_owner = DB::table('buyer')
+                        ->join('files', 'buyer.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->count();
+
+                $total_tenant = DB::table('tenant')
+                        ->join('files', 'tenant.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where($active)
+                        ->where('tenant.is_deleted', 0)
+                        ->count();
+            }
+        }
+
+        $all_summary = array(
+            ['name' => 'Files', 'slug' => 'file', 'y' => $total_files],
+            ['name' => 'Finance Files', 'slug' => 'finance_file', 'y' => $total_finance_file],
+            ['name' => 'Finance Supports', 'slug' => 'finance_support', 'y' => $total_finance_support],
+            ['name' => 'Insurance Providers', 'slug' => 'insurance_provider', 'y' => $total_insurance_provider],
+            
+        );
+        
+        $result = array(
+            'summary' => $all_summary,
+            'file_history_name' => $file_history_name,
+            'file_history' => $file_history,
+            'total_strata' => $total_strata,
+            'total_jmb' => $total_jmb,
+            'total_mc' => $total_mc,
+            'total_owner' => $total_owner,
+            'total_tenant' => $total_tenant,
+        );
+
+        return $result;
+    }
+
     public static function getDashboardData() {
         $active = function ($query) {
             $query->where('files.is_deleted', 0);
         };
 
         $condition5 = function ($query) {
-            $query->where('scoring_quality_index.total_score', '>=', 81)->where('scoring_quality_index.total_score', '<=', 100);
+            $query->where('scoring_quality_index.total_score', '>=', 90)->where('scoring_quality_index.total_score', '<=', 100);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
         };
 
         $condition4 = function ($query) {
-            $query->where('scoring_quality_index.total_score', '>=', 61)->where('scoring_quality_index.total_score', '<=', 80);
+            $query->where('scoring_quality_index.total_score', '>=', 70)->where('scoring_quality_index.total_score', '<=', 89);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
         };
 
         $condition3 = function ($query) {
-            $query->where('scoring_quality_index.total_score', '>=', 41)->where('scoring_quality_index.total_score', '<=', 60);
+            $query->where('scoring_quality_index.total_score', '>=', 50)->where('scoring_quality_index.total_score', '<=', 69);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
         };
 
         $condition2 = function ($query) {
-            $query->where('scoring_quality_index.total_score', '>=', 21)->where('scoring_quality_index.total_score', '<=', 40);
+            $query->where('scoring_quality_index.total_score', '>=', 40)->where('scoring_quality_index.total_score', '<=', 49);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
         };
 
         $condition1 = function ($query) {
-            $query->where('scoring_quality_index.total_score', '>=', 1)->where('scoring_quality_index.total_score', '<=', 20);
+            $query->where('scoring_quality_index.total_score', '>=', 0)->where('scoring_quality_index.total_score', '<=', 39);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
         };
@@ -1168,6 +1364,7 @@ class Files extends Eloquent {
             ['name' => '2 Stars', 'y' => $twoStar],
             ['name' => '1 Star', 'y' => $oneStar]
         );
+        
 
         $result = array(
             'rating' => $rating,
@@ -1237,7 +1434,7 @@ class Files extends Eloquent {
 
                 $condition5 = function ($query) use ($cat) {
                     $query->where('category.id', $cat->id);
-                    $query->where('scoring_quality_index.total_score', '>=', 81)->where('scoring_quality_index.total_score', '<=', 100);
+                    $query->where('scoring_quality_index.total_score', '>=', 90)->where('scoring_quality_index.total_score', '<=', 100);
                     $query->where('scoring_quality_index.is_deleted', 0);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
@@ -1245,7 +1442,7 @@ class Files extends Eloquent {
 
                 $condition4 = function ($query) use ($cat) {
                     $query->where('category.id', $cat->id);
-                    $query->where('scoring_quality_index.total_score', '>=', 61)->where('scoring_quality_index.total_score', '<=', 80);
+                    $query->where('scoring_quality_index.total_score', '>=', 70)->where('scoring_quality_index.total_score', '<=', 89);
                     $query->where('scoring_quality_index.is_deleted', 0);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
@@ -1253,7 +1450,7 @@ class Files extends Eloquent {
 
                 $condition3 = function ($query) use ($cat) {
                     $query->where('category.id', $cat->id);
-                    $query->where('scoring_quality_index.total_score', '>=', 41)->where('scoring_quality_index.total_score', '<=', 60);
+                    $query->where('scoring_quality_index.total_score', '>=', 50)->where('scoring_quality_index.total_score', '<=', 69);
                     $query->where('scoring_quality_index.is_deleted', 0);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
@@ -1261,7 +1458,7 @@ class Files extends Eloquent {
 
                 $condition2 = function ($query) use ($cat) {
                     $query->where('category.id', $cat->id);
-                    $query->where('scoring_quality_index.total_score', '>=', 21)->where('scoring_quality_index.total_score', '<=', 40);
+                    $query->where('scoring_quality_index.total_score', '>=', 40)->where('scoring_quality_index.total_score', '<=', 49);
                     $query->where('scoring_quality_index.is_deleted', 0);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
@@ -1269,7 +1466,7 @@ class Files extends Eloquent {
 
                 $condition1 = function ($query) use ($cat) {
                     $query->where('category.id', $cat->id);
-                    $query->where('scoring_quality_index.total_score', '>=', 1)->where('scoring_quality_index.total_score', '<=', 20);
+                    $query->where('scoring_quality_index.total_score', '>=', 0)->where('scoring_quality_index.total_score', '<=', 39);
                     $query->where('scoring_quality_index.is_deleted', 0);
                     $query->where('files.is_deleted', 0);
                     $query->where('category.is_deleted', 0);
