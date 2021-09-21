@@ -30,6 +30,7 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/datatables/media/css/dataTables.bootstrap4.min.css')}}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/c3/c3.min.css')}}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/chartist/dist/chartist.min.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/fancybox/jquery.fancybox.min.css')}}">
 
         <!-- Clean UI Styles -->
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/common/css/source/main.css')}}">
@@ -95,6 +96,9 @@
         <script src="{{ asset('assets/vendors/gsap/src/minified/TweenMax.min.js')}}"></script>
         <script src="{{ asset('assets/vendors/hackertyper/hackertyper.js')}}"></script>
         <script src="{{ asset('assets/vendors/jquery-countTo/jquery.countTo.js')}}"></script>
+
+        <!-- Fancybox -->
+        <script src="{{ asset('assets/vendors/fancybox/jquery.fancybox.min.js')}}"></script>
 
         <!-- Clean UI Scripts -->
         <script src="{{ asset('assets/common/js/common.js')}}"></script>
