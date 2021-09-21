@@ -233,11 +233,11 @@ foreach ($user_permission as $permission) {
                                 <td>
                                     <p><b>Akaun penyenggaraan</b></p>
                                     <p>
-                                        0. &nbsp;&nbsp; Akaun Penyenggaraan tidak dibuka<br/>
-                                        1. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi sekurang-kurangnya (1) peraturan asas<br/>
-                                        2. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi sekurang-kurangnya (2) peraturan asas<br/>
-                                        3. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi sekurang-kurangnya (3) peraturan asas<br/>
-                                        4. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi semua (4) peraturan asas<br/>
+                                        1. &nbsp;&nbsp; Akaun Penyenggaraan tidak dibuka<br/>
+                                        2. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi sekurang-kurangnya (1) peraturan asas<br/>
+                                        3. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi sekurang-kurangnya (2) peraturan asas<br/>
+                                        4. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi sekurang-kurangnya (3) peraturan asas<br/>
+                                        5. &nbsp;&nbsp; Akaun Penyenggaraan mematuhi semua (4) peraturan asas<br/>
                                     </p>
                                     <p><b><i>*4 Peraturan Asas – Buka Akaun, Deposit, Rekod Aliran Tunai, Pamer</i></b></p>
                                 </td>
@@ -338,11 +338,11 @@ foreach ($user_permission as $permission) {
                                 <td>
                                     <p><b>Rekod Aduan Kerosakkan</b></p>
                                     <p>
-                                        0. &nbsp;&nbsp; Tiada rekod Aduan Kerosakan<br/>
-                                        1. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi sekurang-kurangnya (1) peraturan asas<br/>
-                                        2. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi sekurang-kurangnya (2) peraturan asas<br/>
-                                        3. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi sekurang-kurangnya (3) peraturan asas<br/>
-                                        4. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi semua (4) peraturan asas<br/>
+                                        1. &nbsp;&nbsp; Tiada rekod Aduan Kerosakan<br/>
+                                        2. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi sekurang-kurangnya (1) peraturan asas<br/>
+                                        3. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi sekurang-kurangnya (2) peraturan asas<br/>
+                                        4. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi sekurang-kurangnya (3) peraturan asas<br/>
+                                        5. &nbsp;&nbsp; Rekod kos Penyenggaraan mematuhi semua (4) peraturan asas<br/>
                                     </p>
                                     <p><b><i>*4 Peraturan Asas – Terima, Siasat, Mesyuarat, Tindakan</i></b></p>
                                 </td>
@@ -484,11 +484,11 @@ foreach ($user_permission as $permission) {
                                 <td>
                                     <p><b>Pengurusan Insuran</b></p>
                                     <p>
-                                        0. &nbsp;&nbsp; Tiada pengurusan insuran<br/>
-                                        1. &nbsp;&nbsp; Pengurusan insuran mematuhi sekurang-kurangnya (1) peraturan asas<br/>
-                                        2. &nbsp;&nbsp; Pengurusan insuran mematuhi sekurang-kurangnya (2) peraturan asas<br/>
-                                        3. &nbsp;&nbsp; Pengurusan insuran mematuhi sekurang-kurangnya (3) peraturan asas<br/>
-                                        4. &nbsp;&nbsp; Pengurusan insuran mematuhi semua (4) peraturan asas<br/>
+                                        1. &nbsp;&nbsp; Tiada pengurusan insuran<br/>
+                                        2. &nbsp;&nbsp; Pengurusan insuran mematuhi sekurang-kurangnya (1) peraturan asas<br/>
+                                        3. &nbsp;&nbsp; Pengurusan insuran mematuhi sekurang-kurangnya (2) peraturan asas<br/>
+                                        4. &nbsp;&nbsp; Pengurusan insuran mematuhi sekurang-kurangnya (3) peraturan asas<br/>
+                                        5. &nbsp;&nbsp; Pengurusan insuran mematuhi semua (4) peraturan asas<br/>
                                     </p>
                                     <p><b><i>*4 Peraturan Asas – Kebakaran, Public Liability, Error and omission, Lain-lain Insurance</i></b></p>
                                 </td>

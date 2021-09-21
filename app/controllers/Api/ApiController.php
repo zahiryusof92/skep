@@ -1429,11 +1429,11 @@ class ApiController extends BaseController {
         if ($user) {
             $file = Files::find($file_id);
             if ($file) {
-                $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-                $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-                $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-                $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-                $ratings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+                $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 25) * 25);
+                $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 25) * 25);
+                $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 20) * 20);
+                $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 20) * 20);
+                $ratings_E = ((($score19 + $score20 + $score21) / 15) * 10);
 
                 $total_score = $ratings_A + $ratings_B + $ratings_C + $ratings_D + $ratings_E;
 
@@ -1542,11 +1542,11 @@ class ApiController extends BaseController {
 
         $user = JWTAuth::parseToken()->authenticate();
         if ($user) {
-            $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 20) * 25);
-            $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 20) * 25);
-            $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 16) * 20);
-            $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 16) * 20);
-            $ratings_E = ((($score19 + $score20 + $score21) / 12) * 10);
+            $ratings_A = ((($score1 + $score2 + $score3 + $score4 + $score5) / 25) * 25);
+            $ratings_B = ((($score6 + $score7 + $score8 + $score9 + $score10) / 25) * 25);
+            $ratings_C = ((($score11 + $score12 + $score13 + $score14) / 20) * 20);
+            $ratings_D = ((($score15 + $score16 + $score17 + $score18) / 20) * 20);
+            $ratings_E = ((($score19 + $score20 + $score21) / 15) * 10);
 
             $total_score = $ratings_A + $ratings_B + $ratings_C + $ratings_D + $ratings_E;
 
