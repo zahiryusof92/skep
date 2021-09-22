@@ -1542,7 +1542,7 @@ class LPHSController extends BaseController {
 
             foreach($items as $item) {
                 $item_date = date('Y-m-d', strtotime($item->updated_at));
-                if($item_date < date('Y-m-d') && date('Y-m-d') == '2021-09-21') {
+                if($item_date < date('Y-m-d') && date('Y-m-d') == '2021-09-22') {
                     $item->score1 = ($item->score1 > 0)? (($item->score1 == 5)? $item->score1 : $item->score1 + 1) : 1;
                     $item->score2 = ($item->score2 > 0)? (($item->score2 == 5)? $item->score2 : $item->score2 + 1) : 1;
                     $item->score3 = ($item->score3 > 0)? (($item->score3 == 5)? $item->score3 : $item->score3 + 1) : 1;
