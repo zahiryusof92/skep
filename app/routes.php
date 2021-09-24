@@ -694,6 +694,7 @@ Route::get('/reporting/cobFileManagement', 'ReportController@cobFileManagement')
 // strata profile
 Route::get('/reporting/strataProfile', 'ReportController@strataProfile')->before('authMember');
 Route::get('/reporting/getStrataProfile', 'ReportController@getStrataProfile')->before('authMember');
+Route::get('/reporting/getStrataProfileAnalytic', 'ReportController@getStrataProfileAnalytic')->before('authMember');
 Route::get('/reporting/viewStrataProfile/{id}', 'ReportController@viewStrataProfile')->before('authMember');
 Route::get('/print/strataProfile/{id}', 'PrintController@printStrataProfile')->before('authMember');
 

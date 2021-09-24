@@ -79,6 +79,14 @@ $zone = [
                 </div>
 
                 <hr/>
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="margin-bottom-50 chart-custom">
+                            <div id="pie_chart"></div>                            
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -128,6 +136,22 @@ $zone = [
 
         $('#company').on('change', function () {
             oTable.columns(2).search(this.value).draw();
+            $.ajax({
+                url: "{{URL::action('ReportController@getStrataProfileAnalytic')}}",
+                type: "GET",
+                data: {
+                    cob: this.value,
+                },
+                beforeSend: function () {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
+                success: function (result) {
+                    $.unblockUI();
+                    if (result) {
+                        generatePie(result.data.pie_data);
+                    }
+                }
+            });
         });
         $('#parliament').on('change', function () {
             oTable.columns(3).search(this.value).draw();
@@ -194,7 +218,48 @@ $zone = [
             });
             
         });
+
+        Highcharts.setOptions({
+            colors: ['#24CBE5', '#DDDF00', '#FF0000']
+        });
+        generatePie(<?php echo json_encode($data ? $data['pie_data'] : ''); ?>);
     });
+
+    function generatePie(data) {
+        
+        Highcharts.chart('pie_chart', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                events: {
+                }
+            },
+            title: {
+                text: 'Strata Profile'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}% ({point.y})</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}<br/><b>{point.percentage:.1f} % ({point.y})</b>'
+                    },
+                    showInLegend: true
+                },
+            },
+            series: [{
+                    name: 'Strata Profile',
+                    colorByPoint: true,
+                    data: data
+            }]
+        });
+    }
 </script>
 <!-- End Page Scripts-->
 

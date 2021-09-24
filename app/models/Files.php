@@ -1380,6 +1380,88 @@ class Files extends Eloquent {
         return $result;
     }
 
+    public static function getStrataProfileAnalytic($request = []) {
+        $query = DB::table('files')
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->join('parliment', 'strata.parliament', '=', 'parliment.id')
+                ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
+                ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
+                ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
+                ->selectRaw('files.id, company.short_name, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage');
+                // ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'));
+        
+        // $query2 = Company::where('is_deleted', 0)->where('is_active', 1)->where('short_name','!=','LPHS');
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $query = $query->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id);
+            } else {
+                $query = $query->where('files.company_id', Auth::user()->company_id);
+            }
+        } else {
+            if (!empty(Session::get('admin_cob'))) {
+                $query = $query->where('files.company_id', Session::get('admin_cob'));
+            }
+        }
+        if(!empty($request['cob'])) {
+            $query = $query->where('company.short_name',$request['cob']);
+            // $query2 = $query2->where('short_name',$request['cob']);
+        }
+        $items = $query->where('finance_file_report.type', 'SF')
+                        ->where('finance_file_income.name', 'SINKING FUND')
+                        ->where('finance_file.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_deleted', 0)
+                        ->groupBy('files.id')
+                        ->groupBy('finance_file.id')
+                        ->orderBy('files.id')
+                        ->get();
+        // $councils = $query2->get();
+        $pie_data = [
+            'Biru' => 0,
+            'Kuning' => 0,
+            'Merah' => 0
+        ];
+        // foreach($councils as $council) {
+        //     $search_by_council = array_where($items, function($key1, $val1) use($council) {
+        //         return $val1->short_name == $council->short_name;
+        //     });
+        //     $new_data = [
+        //         'name' => $council->short_name,
+        //         'data' => [0,0,0] // Biru, Kuning, Merah 
+        //     ];
+
+        //     foreach($search_by_council as $item) {
+        //         if ($item->percentage >= 80) {
+        //             $new_data['data'][0] += 1;
+        //         } else if ($item->percentage < 79 && $item->percentage >= 50) {
+        //             $new_data['data'][1] += 1;
+        //         } else {
+        //             $new_data['data'][2] += 1;
+        //         }
+        //     }
+            
+        // }
+        foreach($items as $item) {
+            if ($item->percentage >= 80) {
+                $pie_data['Biru'] += 1;
+            } else if ($item->percentage < 79 && $item->percentage >= 50) {
+                $pie_data['Kuning'] += 1;
+            } else {
+                $pie_data['Merah'] += 1;
+            }
+
+        }
+        
+        $data['pie_data'] = [
+            ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+            ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+            ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+        ];
+        return $data;
+    }
+
     public static function getFileName() {
         $filename = array();
 

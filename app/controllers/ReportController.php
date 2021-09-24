@@ -1,6 +1,8 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 
 class ReportController extends BaseController {
 
@@ -591,6 +593,8 @@ class ReportController extends BaseController {
             }
         }
 
+        $data = Files::getStrataProfileAnalytic();
+
         if ($access_permission) {
             $viewData = array(
                 'title' => trans('app.menus.reporting.strata_profile'),
@@ -600,6 +604,7 @@ class ReportController extends BaseController {
                 'user_permission' => $user_permission,
                 'cob' => $cob,
                 'parliament' => $parliament,
+                'data' => $data,
                 'image' => '',
             );
 
@@ -763,6 +768,21 @@ class ReportController extends BaseController {
 
             $output = json_encode($output_raw);
             return $output;
+        }
+    }
+
+    public function getStrataProfileAnalytic() {
+        try {
+            $request = Request::all();
+            $items = Files::getStrataProfileAnalytic($request);
+            $response = [
+                'success' => true,
+                'data' => $items
+            ];
+
+            return Response::json($response);
+        } catch(Exception $e) {
+            throw($e);
         }
     }
 
