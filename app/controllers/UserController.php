@@ -146,10 +146,10 @@ class UserController extends BaseController {
         ));
 
         $cob = Input::get('cob');
-
+        
         if (isset($cob) && !empty($cob)) {
             $cob_company = Company::where('short_name', $cob)->where('is_main', 0)->first();
-
+            
             if ($cob_company) {
                 if ($validator->fails()) {
                     return Redirect::to('/' . $cob)->withErrors($validator)->withInput();
@@ -166,7 +166,7 @@ class UserController extends BaseController {
                                 'is_active' => 1,
                                 'is_deleted' => 0,
                                     ), $remember);
-
+                                    
                     if ($auth) {
                         ## EAI Call
                         // $url = $this->eai_domain . $this->eai_route['auth']['login'];
@@ -238,7 +238,7 @@ class UserController extends BaseController {
                             'is_active' => 1,
                             'is_deleted' => 0,
                                 ), $remember);
-                                
+                                     
                 if ($auth) {
                     ## EAI Call
                     // $url = $this->eai_domain . $this->eai_route['auth']['login'];
@@ -254,7 +254,7 @@ class UserController extends BaseController {
                     // if(empty($response->status) == false && $response->status == 200) {
                     //     setcookie("eai_session", $response->token, time() + (86400 *24*7));
                     // }
-
+                    
                     if (Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer()) {
                         $user_account = User::where('id', Auth::user()->id)->first();
                         if ($user_account) {
@@ -281,8 +281,26 @@ class UserController extends BaseController {
                             return Redirect::to('/login')->with('login_error', trans('app.errors.wrong_username_password'));
                         }
                     } else {
-                        Auth::logout();
-                        return Redirect::to('/login')->with('login_error', trans('app.errors.wrong_username_password'));
+                        $user_account = User::where('id', Auth::user()->id)->first();
+                        if ($user_account) {
+                            Session::put('id', $user_account['id']);
+                            Session::put('username', $user_account['username']);
+                            Session::put('full_name', $user_account['full_name']);
+                            Session::put('role', $user_account['role']);
+
+                            # Audit Trail
+                            $remarks = 'User ' . Auth::user()->username . ' is signed.';
+                            $auditTrail = new AuditTrail();
+                            $auditTrail->module = "System Administration";
+                            $auditTrail->remarks = $remarks;
+                            $auditTrail->audit_by = Auth::user()->id;
+                            $auditTrail->save();
+                            
+                            return Redirect::to('/home');
+                        } else {
+                            Auth::logout();
+                            return Redirect::to('/login')->with('login_error', trans('app.errors.wrong_username_password'));
+                        }
                     }
                 } else {
                     return Redirect::to('/login')->with('login_error', trans('app.errors.wrong_username_password'));
