@@ -6,7 +6,7 @@ $count = 0;
 
 <div class="row">
     <div class="col-lg-12">
-        <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINGKING FUND)</h6>
+        <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINGING FUND)</h6>
         <table class="table table-sm table-bordered" style="width: 100%">
             <tbody>
                 <tr>

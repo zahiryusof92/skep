@@ -7,7 +7,7 @@ $count = 0;
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
 
-        <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINGKING FUND)</h6>
+        <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINKING FUND)</h6>
 
         <form id="form_reportSF">
 
@@ -16,7 +16,7 @@ $count = 0;
                     <tbody>
                         <tr>
                             <th class="text-center">
-                                <span style="color: red;">*</span> SINGKING FEE SEBULAN (PER UNIT)
+                                <span style="color: red;">*</span> SINKING FEE SEBULAN (PER UNIT)
                             </th>
                             <th>&nbsp;</th>
                             <th class="text-center">
@@ -24,7 +24,7 @@ $count = 0;
                             </th>
                             <th>&nbsp;</th>
                             <th class="text-center">
-                                <span style="color: red;">*</span> JUMLAH SINGKING FUND SEPATUT DIKUTIP SEMASA
+                                <span style="color: red;">*</span> JUMLAH SINKING FUND SEPATUT DIKUTIP SEMASA
                             </th>
                             <th>&nbsp;</th>
                         </tr>
