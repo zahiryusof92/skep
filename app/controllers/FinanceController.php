@@ -520,7 +520,7 @@ class FinanceController extends BaseController {
             'file' => $file,
             'image' => ""
         );
-
+        
         return View::make('finance_en.finance_list', $viewData);
     }
 
@@ -588,6 +588,10 @@ class FinanceController extends BaseController {
                                       });
                             });
                     });
+        }
+        if(!empty(Input::get('month'))) {
+            $month = (substr(Input::get('month'), 0, 1 ) === "0")? str_replace("0", "", Input::get('month')) : Input::get('month');
+            $file = $file->where('month', $month);
         }
 
         return Datatables::of($file)
