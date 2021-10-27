@@ -288,6 +288,14 @@ foreach ($user_permission as $permission) {
     <!-- End  -->
 </div>
 
+<!-- DataTables Button -->
+<link href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+
 <!-- Page Scripts -->
 <script>
     var oTable;
@@ -300,10 +308,12 @@ foreach ($user_permission as $permission) {
                 'data': function(data) {
                     var from_date = $('#start_date').val();
                     var to_date = $('#end_date').val();
+                    var month = $('#month').val();
 
                     // Append to data
                     data.start_date = from_date;
                     data.end_date = to_date;
+                    data.month = month;
 
                 }
             },
@@ -320,6 +330,32 @@ foreach ($user_permission as $permission) {
                 {data: 'year', name: 'finance_file.year'},
                 {data: 'active', name: 'files.is_active', searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
+            ],
+            "dom": "<'row'<'col-md-12 margin-bottom-10'B>>" +
+                "<'row'<'col-md-6'l><'col-md-6'f>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row'<'col-md-5'i><'col-md-7'p>>",
+            "buttons": [
+                {
+                    extend: 'excel',
+                    text: 'Export to Excel',
+                    exportOptions: {
+                        modifier: {
+                            search: 'applied',
+                            order: 'applied'
+                        }
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'Export to PDF',
+                    exportOptions: {
+                        modifier: {
+                            search: 'applied',
+                            order: 'applied'
+                        }
+                    }
+                }
             ]
         });
 
@@ -327,7 +363,7 @@ foreach ($user_permission as $permission) {
             oTable.columns(0).search(this.value).draw();
         });
         $('#month').on('change', function () {
-            oTable.columns(3).search(this.value).draw();
+            oTable.draw();
         });
         $('#year').on('change', function () {
             oTable.columns(4).search(this.value).draw();

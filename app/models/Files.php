@@ -1010,6 +1010,7 @@ class Files extends Eloquent {
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where('developer.is_deleted', 0)
                         ->where($active)
                         ->count();
 
@@ -1108,6 +1109,7 @@ class Files extends Eloquent {
                         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
+                        ->where('developer.is_deleted', 0)
                         ->where($active)
                         ->count();
 
@@ -1194,9 +1196,10 @@ class Files extends Eloquent {
                 $total_developer = DB::table('developer')
                         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('developer.is_deleted', 0)
                         ->where($active)
                         ->count();
-
+                        
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where($active)
@@ -1266,6 +1269,7 @@ class Files extends Eloquent {
                         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('developer.is_deleted', 0)
                         ->where($active)
                         ->count();
 
@@ -1369,6 +1373,8 @@ class Files extends Eloquent {
         $result = array(
             'rating' => $rating,
             'management' => $management,
+            'total_agent' => $total_agent,
+            'total_developer' => $total_developer,
             'total_strata' => $total_strata,
             'total_jmb' => $total_jmb,
             'total_mc' => $total_mc,
@@ -1831,15 +1837,22 @@ class Files extends Eloquent {
 
         if ($company) {
             foreach ($company as $cob) {
+                // $total_developer = DB::table('developer')
+                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.developer')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', $cob->id)
+                //         ->where('developer.is_deleted', 0)
+                //         ->where('files.is_deleted', 0)
+                //         ->groupBy('developer.id')
+                //         ->get();
                 $total_developer = DB::table('developer')
-                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.developer')
+                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('developer.is_deleted', 0)
                         ->where('files.is_deleted', 0)
-                        ->groupBy('developer.id')
-                        ->get();
-
+                        ->count();
+                        
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
@@ -1944,7 +1957,7 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->sum('commercial_block.unit_no');
 
-                $developer = $developer + count($total_developer);
+                $developer = $developer + ($total_developer);
                 $jmb = $jmb + $total_jmb;
                 $mc = $mc + $total_mc;
                 $agent = $agent + $total_agent;
@@ -1957,10 +1970,10 @@ class Files extends Eloquent {
                 $sum_less10 = $sum_less10 + ($sum_residential_less10 + $sum_commercial_less10);
                 $sum_more10 = $sum_more10 + ($sum_residential_more10 + $sum_commercial_more10);
                 $sum_all = $sum_all + ($sum_residential + $sum_commercial);
-                $total_all = $total_all + (count($total_developer) + $total_jmb + $total_mc + $total_agent + $total_others);
+                $total_all = $total_all + (($total_developer) + $total_jmb + $total_mc + $total_agent + $total_others);
             }
         }
-
+        
         $result = array(
             'developer' => $developer,
             'jmb' => $jmb,
