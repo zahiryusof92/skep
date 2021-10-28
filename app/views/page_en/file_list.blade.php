@@ -259,7 +259,16 @@ foreach ($user_permission as $permission) {
         oTable = $('#filelist').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ URL::action('AdminController@getFileList') }}",
+            ajax: {
+                url: "{{ URL::action('AdminController@getFileList') }}",
+                'data': function(data) {
+                    var company = $('#company').val();
+
+                    // Append to data
+                    data.company = company;
+
+                }
+            },
             lengthMenu: [[15, 30, 50, 100, -1], [15, 30, 50, 100, "All"]],
             pageLength: 30,
             order: [[2, "asc"], [1, 'asc']],
@@ -278,7 +287,7 @@ foreach ($user_permission as $permission) {
         });
 
         $('#company').on('change', function () {
-            oTable.columns(2).search(this.value).draw();
+            oTable.draw();
         });
         $('#year').on('change', function () {
             oTable.columns(3).search(this.value).draw();
