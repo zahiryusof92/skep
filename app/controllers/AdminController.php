@@ -879,6 +879,7 @@ class AdminController extends BaseController {
         $image = OtherDetails::where('file_id', $file->id)->first();
 
         $developer = Developer::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $liquidator = Liquidator::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
@@ -890,6 +891,7 @@ class AdminController extends BaseController {
             'sub_nav_active' => ($file->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
             'user_permission' => $user_permission,
             'developer' => $developer,
+            'liquidator' => $liquidator,
             'house_scheme' => $house_scheme,
             'city' => $city,
             'country' => $country,
@@ -921,6 +923,7 @@ class AdminController extends BaseController {
         }
 
         $developer = Developer::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $liquidator = Liquidator::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
@@ -933,6 +936,7 @@ class AdminController extends BaseController {
             'sub_nav_active' => ($files->is_active == 2 ? 'cob_before_vp_list' : 'cob_list'),
             'user_permission' => $user_permission,
             'developer' => $developer,
+            'liquidator' => $liquidator,
             'house_scheme' => $house_scheme,
             'city' => $city,
             'country' => $country,
@@ -968,6 +972,7 @@ class AdminController extends BaseController {
 
             $name = $data['name'];
             $developer = $data['developer'];
+            $liquidator = $data['liquidator'];
             $address1 = $data['address1'];
             $address2 = $data['address2'];
             $address3 = $data['address3'];
@@ -988,6 +993,7 @@ class AdminController extends BaseController {
 
             $house_scheme->name = $name;
             $house_scheme->developer = $developer;
+            $house_scheme->liquidator = $liquidator;
             $house_scheme->address1 = $address1;
             $house_scheme->address2 = $address2;
             $house_scheme->address3 = $address3;

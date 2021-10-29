@@ -67,11 +67,18 @@ $company = Company::find(Auth::user()->company_id);
                                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align: center !important; vertical-align:middle !important;">PEMAJU DAN LIQUIDATOR</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">PEMAJU</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                                         <td style="text-align: center !important; vertical-align:middle !important;"></td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['developer'] }}</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['developer'] / $data['total_all']) * 100), 2) : 0) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">LIQUIDATOR</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;"></td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;"></td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['liquidator'] }}</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ ($data['total_all'] > 0 ? number_format((($data['liquidator'] / $data['total_all']) * 100), 2) : 0) }}</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align: center !important; vertical-align:middle !important;">JMB</td>

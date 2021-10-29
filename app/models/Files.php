@@ -1014,6 +1014,15 @@ class Files extends Eloquent {
                         ->where($active)
                         ->count();
 
+                $total_liquidator = DB::table('liquidators')
+                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('liquidators.is_deleted', 0)
+                        ->where($active)
+                        ->count();
+
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where('files.id', Auth::user()->file_id)
@@ -1110,6 +1119,14 @@ class Files extends Eloquent {
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('developer.is_deleted', 0)
+                        ->where($active)
+                        ->count();
+
+                $total_liquidator = DB::table('liquidators')
+                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('liquidators.is_deleted', 0)
                         ->where($active)
                         ->count();
 
@@ -1199,6 +1216,13 @@ class Files extends Eloquent {
                         ->where('developer.is_deleted', 0)
                         ->where($active)
                         ->count();
+                
+                $total_liquidator = DB::table('liquidators')
+                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('liquidators.is_deleted', 0)
+                        ->where($active)
+                        ->count();
                         
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
@@ -1270,6 +1294,14 @@ class Files extends Eloquent {
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('developer.is_deleted', 0)
+                        ->where($active)
+                        ->count();
+                
+                $total_liquidator = DB::table('liquidators')
+                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('liquidators.is_deleted', 0)
                         ->where($active)
                         ->count();
 
@@ -1355,6 +1387,7 @@ class Files extends Eloquent {
 
         $management = array(
             ['name' => 'Developer', 'y' => $total_developer],
+            ['name' => 'Liquidator', 'y' => $total_liquidator],
             ['name' => 'JMB', 'y' => $total_jmb],
             ['name' => 'MC', 'y' => $total_mc],
             ['name' => 'Agent', 'y' => $total_agent],
@@ -1375,6 +1408,7 @@ class Files extends Eloquent {
             'management' => $management,
             'total_agent' => $total_agent,
             'total_developer' => $total_developer,
+            'total_liquidator' => $total_liquidator,
             'total_strata' => $total_strata,
             'total_jmb' => $total_jmb,
             'total_mc' => $total_mc,
@@ -1811,6 +1845,7 @@ class Files extends Eloquent {
 
     public static function getManagementSummaryCOB() {
         $developer = 0;
+        $liquidator = 0;
         $jmb = 0;
         $mc = 0;
         $agent = 0;
@@ -1850,6 +1885,14 @@ class Files extends Eloquent {
                         ->join('files', 'house_scheme.file_id', '=', 'files.id')
                         ->where('files.company_id', $cob->id)
                         ->where('developer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->count();
+
+                $total_liquidator = DB::table('liquidators')
+                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('liquidators.is_deleted', 0)
                         ->where('files.is_deleted', 0)
                         ->count();
                         
@@ -1957,7 +2000,8 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->sum('commercial_block.unit_no');
 
-                $developer = $developer + ($total_developer);
+                $developer = $developer + $total_developer;
+                $liquidator = $liquidator + $total_liquidator;
                 $jmb = $jmb + $total_jmb;
                 $mc = $mc + $total_mc;
                 $agent = $agent + $total_agent;
@@ -1970,12 +2014,13 @@ class Files extends Eloquent {
                 $sum_less10 = $sum_less10 + ($sum_residential_less10 + $sum_commercial_less10);
                 $sum_more10 = $sum_more10 + ($sum_residential_more10 + $sum_commercial_more10);
                 $sum_all = $sum_all + ($sum_residential + $sum_commercial);
-                $total_all = $total_all + (($total_developer) + $total_jmb + $total_mc + $total_agent + $total_others);
+                $total_all = $total_all + (($total_developer) + $total_liquidator + $total_jmb + $total_mc + $total_agent + $total_others);
             }
         }
         
         $result = array(
             'developer' => $developer,
+            'liquidator' => $liquidator,
             'jmb' => $jmb,
             'mc' => $mc,
             'agent' => $agent,

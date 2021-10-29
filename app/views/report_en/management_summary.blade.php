@@ -52,7 +52,8 @@ $company = Company::find(Auth::user()->company_id);
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;"><= 10 (PETAK)</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">> 10 (PETAK)</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">JUMLAH (PETAK)</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">PEMAJU & LIQUIDATOR</th>
+                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">PEMAJU</th>
+                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">LIQUIDATOR</th>
                                         <th style="width:7%; text-align: center !important; vertical-align:middle !important;">JMB</th>
                                         <th style="width:7%; text-align: center !important; vertical-align:middle !important;">MC</th>
                                         <th style="width:7%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
@@ -67,6 +68,7 @@ $company = Company::find(Auth::user()->company_id);
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_more10'] }} ({{ $data['sum_more10'] }})</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_all'] }} ({{ $data['sum_all'] }})</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['developer'] }}</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['liquidator'] }}</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['jmb'] }}</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['mc'] }}</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['agent'] }}</td>
@@ -125,6 +127,7 @@ $company = Company::find(Auth::user()->company_id);
                 colorByPoint: true,
                 data: [
                     {name: 'Pemaju', y: <?php echo $data['developer']; ?>},
+                    {name: 'Liquidator', y: <?php echo $data['liquidator']; ?>},
                     {name: 'JMB', y: <?php echo $data['jmb']; ?>},
                     {name: 'MC', y: <?php echo $data['mc']; ?>},
                     {name: 'Ejen', y: <?php echo $data['agent']; ?>},

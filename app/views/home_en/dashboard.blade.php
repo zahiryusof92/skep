@@ -115,7 +115,7 @@ foreach ($user_permission as $permission) {
                             <div class="step-desc">
                                 <span class="step-title">{{ trans('Liquidator') }}</span>
                                 <p>
-                                    {{ $data['total_developer'] }}
+                                    {{ $data['total_liquidator'] }}
                                 </p>
                             </div>
                         </div>

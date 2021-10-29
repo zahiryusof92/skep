@@ -552,7 +552,18 @@ Route::get('/updateDeveloper/{id}', 'SettingController@updateDeveloper')->before
 Route::post('/submitUpdateDeveloper', 'SettingController@submitUpdateDeveloper')->before('authMember');
 Route::post('/deleteDeveloper/{id}', 'SettingController@deleteDeveloper')->before('authMember');
 
-//developer
+//liquidator
+Route::get('/liquidator', 'SettingController@liquidator')->before('authMember');
+Route::get('/addLiquidator', 'SettingController@addLiquidator')->before('authMember');
+Route::post('/submitLiquidator', 'SettingController@submitLiquidator')->before('authMember');
+Route::get('/getLiquidator', 'SettingController@getLiquidator')->before('authMember');
+Route::post('/activeLiquidator', 'SettingController@activeLiquidator')->before('authMember');
+Route::post('/inactiveLiquidator', 'SettingController@inactiveLiquidator')->before('authMember');
+Route::get('/updateLiquidator/{id}', 'SettingController@updateLiquidator')->before('authMember');
+Route::post('/submitUpdateLiquidator', 'SettingController@submitUpdateLiquidator')->before('authMember');
+Route::post('/deleteLiquidator/{id}', 'SettingController@deleteLiquidator')->before('authMember');
+
+//agent
 Route::get('/agent', 'SettingController@agent')->before('authMember');
 Route::get('/addAgent', 'SettingController@addAgent')->before('authMember');
 Route::post('/submitAgent', 'SettingController@submitAgent')->before('authMember');
@@ -1056,5 +1067,6 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('councilFacility', 'ExportController@exportCouncilFacility');
     Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
     Route::get('reporting', 'ExportController@reporting');
+    Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
 
 });

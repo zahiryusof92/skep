@@ -79,6 +79,20 @@ foreach ($user_permission as $permission) {
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>{{ trans('app.forms.liquidator') }}</label>
+                                                        <select class="form-control" id="liquidator" disabled="">
+                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                            @foreach ($liquidator as $liquidators)
+                                                            <option value="{{$liquidators->id}}" {{($house_scheme->liquidator == $liquidators->id ? " selected" : "")}}>{{$liquidators->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div id="liquidator_error" style="display:none;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-8">
                                                     <div class="form-group">
                                                         <label>{{ trans('app.forms.address') }}</label>

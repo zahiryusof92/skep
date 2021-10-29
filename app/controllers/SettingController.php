@@ -2074,6 +2074,282 @@ class SettingController extends BaseController {
         }
     }
 
+    //liquidator
+    public function liquidator() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+
+        $viewData = array(
+            'title' => trans('app.menus.master.liquidator_maintenance'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'liquidator_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.liquidator', $viewData);
+    }
+
+    public function addLiquidator() {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
+        $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.master.add_liquidator'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'liquidator_list',
+            'user_permission' => $user_permission,
+            'city' => $city,
+            'country' => $country,
+            'state' => $state,
+            'image' => ""
+        );
+
+        return View::make('setting_en.add_liquidator', $viewData);
+    }
+
+    public function submitLiquidator() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $name = $data['name'];
+            $address1 = $data['address1'];
+            $address2 = $data['address2'];
+            $address3 = $data['address3'];
+            $city = $data['city'];
+            $poscode = $data['poscode'];
+            $state = $data['state'];
+            $country = $data['country'];
+            $phone_no = $data['phone_no'];
+            $fax_no = $data['fax_no'];
+            $remarks = $data['remarks'];
+            $is_active = $data['is_active'];
+
+            $item = new Liquidator();
+            $item->name = $name;
+            $item->address1 = $address1;
+            $item->address2 = $address2;
+            $item->address3 = $address3;
+            $item->city = $city;
+            $item->poscode = $poscode;
+            $item->state = $state;
+            $item->country = $country;
+            $item->phone_no = $phone_no;
+            $item->fax_no = $fax_no;
+            $item->remarks = $remarks;
+            $item->is_active = $is_active;
+            $success = $item->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = $item->name . ' has been inserted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function getLiquidator() {
+        $items = Liquidator::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+        if (count($items) > 0) {
+            $data = Array();
+            foreach ($items as $item) {
+                $button = "";
+                if ($item->is_active == 1) {
+                    $status = trans('app.forms.active');
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLiquidator(\'' . $item->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                } else {
+                    $status = trans('app.forms.inactive');
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLiquidator(\'' . $item->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                }
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateLiquidator', $item->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteLiquidator(\'' . $item->id . '\')"><i class="fa fa-trash"></i></button>';
+
+                $data_raw = array(
+                    $item->name,
+                    $item->phone_no,
+                    $item->fax_no,
+                    $status,
+                    $button
+                );
+
+                array_push($data, $data_raw);
+            }
+            $output_raw = array(
+                "aaData" => $data
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        } else {
+            $output_raw = array(
+                "aaData" => []
+            );
+
+            $output = json_encode($output_raw);
+            return $output;
+        }
+    }
+
+    public function inactiveLiquidator() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $item = Liquidator::find($id);
+            $item->is_active = 0;
+            $updated = $item->save();
+            if ($updated) {
+                # Audit Trail
+                $remarks = $item->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function activeLiquidator() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $item = Liquidator::find($id);
+            $item->is_active = 1;
+            $updated = $item->save();
+            if ($updated) {
+                # Audit Trail
+                $remarks = $item->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function deleteLiquidator() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            $id = $data['id'];
+
+            $item = Liquidator::find($id);
+            $item->is_deleted = 1;
+            $deleted = $item->save();
+            if ($deleted) {
+                # Audit Trail
+                $remarks = $item->name . ' has been deleted.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
+    public function updateLiquidator($id) {
+        //get user permission
+        $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $liquidator = Liquidator::find($id);
+        $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
+        $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+
+        $viewData = array(
+            'title' => trans('app.menus.master.edit_liquidator'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'liquidator_list',
+            'user_permission' => $user_permission,
+            'liquidator' => $liquidator,
+            'city' => $city,
+            'country' => $country,
+            'state' => $state,
+            'image' => ""
+        );
+
+        return View::make('setting_en.update_liquidator', $viewData);
+    }
+
+    public function submitUpdateLiquidator() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = $data['id'];
+            $name = $data['name'];
+            $address1 = $data['address1'];
+            $address2 = $data['address2'];
+            $address3 = $data['address3'];
+            $city = $data['city'];
+            $poscode = $data['poscode'];
+            $state = $data['state'];
+            $country = $data['country'];
+            $phone_no = $data['phone_no'];
+            $fax_no = $data['fax_no'];
+            $remarks = $data['remarks'];
+            $is_active = $data['is_active'];
+
+            $item = Liquidator::find($id);
+            $item->name = $name;
+            $item->address1 = $address1;
+            $item->address2 = $address2;
+            $item->address3 = $address3;
+            $item->city = $city;
+            $item->poscode = $poscode;
+            $item->state = $state;
+            $item->country = $country;
+            $item->phone_no = $phone_no;
+            $item->fax_no = $fax_no;
+            $item->remarks = $remarks;
+            $item->is_active = $is_active;
+            $success = $item->save();
+
+            if ($success) {
+                # Audit Trail
+                $remarks = $item->name . ' has been updated.';
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "Master Setup";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = Auth::user()->id;
+                $auditTrail->save();
+
+                print "true";
+            } else {
+                print "false";
+            }
+        }
+    }
+
     //agent
     public function agent() {
         //get user permission

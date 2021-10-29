@@ -275,6 +275,14 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
+                    @if (AccessGroup::hasAccess(62))
+                    <li id="developer_list">
+                        <a class="left-menu-link" href="{{URL::action('SettingController@liquidator')}}">
+                            {{ trans('app.menus.master.liquidator') }}
+                        </a>
+                    </li>
+                    @endif
+
                     @if (AccessGroup::hasAccess(15))
                     <li id="agent_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@agent')}}">
