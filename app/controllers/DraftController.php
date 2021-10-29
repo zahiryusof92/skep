@@ -126,6 +126,7 @@ class DraftController extends BaseController {
 
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
             $developer = Developer::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+            $liquidator = Liquidator::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
             $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
@@ -137,6 +138,7 @@ class DraftController extends BaseController {
                 'main_nav_active' => 'cob_main',
                 'sub_nav_active' => 'cob_draft_list',
                 'developer' => $developer,
+                'liquidator' => $liquidator,
                 'house_scheme' => $house_scheme,
                 'city' => $city,
                 'country' => $country,
@@ -162,6 +164,7 @@ class DraftController extends BaseController {
                 $house_scheme = HouseScheme::findOrFail($draft_house->reference_id);
                 $house_scheme->name = $draft_house->name;
                 $house_scheme->developer = $draft_house->developer;
+                $house_scheme->liquidator = $draft_house->liquidator;
                 $house_scheme->address1 = $draft_house->address1;
                 $house_scheme->address2 = $draft_house->address2;
                 $house_scheme->address3 = $draft_house->address3;
