@@ -1068,6 +1068,4 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
     Route::get('reporting', 'ExportController@reporting');
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
-    Route::get('ownerByCouncil', 'ExportController@ownerByCouncil');
-    Route::get('JMBActivity', 'ExportController@JMBActivity');
 });
