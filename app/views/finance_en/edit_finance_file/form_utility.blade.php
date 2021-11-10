@@ -1,3 +1,6 @@
+@if(count($utilaOld) > 0 && count($utilbOld) > 0)
+@include('finance_en.show.utility')
+@endif
 <?php
 $prefix = 'util_';
 $prefix2 = 'utilb_';
@@ -7,6 +10,9 @@ $prefix3 = 'utilab_';
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
 
+        @if(count($utilaOld) > 0 && count($utilbOld) > 0)
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>4.1 LAPORAN PERBELANJAAN UTILITI</h6>
 
         <form id="form_utility">

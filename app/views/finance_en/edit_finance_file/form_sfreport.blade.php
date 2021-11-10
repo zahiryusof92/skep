@@ -1,3 +1,6 @@
+@if(!empty($sfreportOld))
+@include('finance_en.show.sf_report')
+@endif
 <?php
 $prefix = 'sfr_';
 
@@ -6,7 +9,9 @@ $count = 0;
 
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
-
+        @if(!empty($sfreportOld))
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINKING FUND)</h6>
 
         <form id="form_reportSF">
@@ -198,14 +203,15 @@ $count = 0;
         var sfr_total_income = $("#updateFinanceFile [id=income_semasa_2]").val();
         $('#{{ $prefix }}total_income').val(parseFloat(sfr_total_income).toFixed(2));
 
-        var sfr_repair = $("#updateFinanceFile [id=repair_singkingfund_total_all]").val();
-        $('#{{ $prefix }}repair').val(parseFloat(sfr_repair).toFixed(2));
+        // var sfr_repair = $("#updateFinanceFile [id=repair_singkingfund_total_all]").val();
+        // $('#{{ $prefix }}repair').val(parseFloat(sfr_repair).toFixed(2));
 
         var sfr_vandalisme = $("#updateFinanceFile [id=singkingfund_total_all]").val();
         $('#{{ $prefix }}vandalisme').val(parseFloat(sfr_vandalisme).toFixed(2));
 
         var sfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var sfr_bayar_total = 0;
+        
         for (var i = 0; i < sfr_bayar.length; i++) {
             sfr_bayar_total += Number(sfr_bayar[i].value);
         }

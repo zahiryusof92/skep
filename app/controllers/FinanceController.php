@@ -629,6 +629,7 @@ class FinanceController extends BaseController {
                                     $status = trans('app.forms.inactive');
                                     $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/eye.png") . ' width="28px"></a>&nbsp;';
                                 }
+                                $button .= '<a href="'. route('finance_file.edit', [$model->id]) .'" class=""><img src=' . asset("assets/common/img/icon/edit.png") . ' width="20px"></a>&nbsp;';
                                 $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/trash.png") . ' width="20px"></a>&nbsp;';
                             }
 
@@ -676,26 +677,44 @@ class FinanceController extends BaseController {
 
         $file_no = Files::where('is_active', 1)->where('is_deleted', 0)->get();
         $financeCheckData = FinanceCheck::where('finance_file_id', $id)->first();
+        $financeCheckOldData = FinanceCheckOld::where('finance_file_id', $id)->first();
         $financeSummary = FinanceSummary::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+        $financeSummaryOld = FinanceSummaryOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
         $financefiledata = Finance::where('id', $id)->first();
         $financeFileAdmin = FinanceAdmin::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+        $financeFileAdminOld = FinanceAdminOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
         $financeFileContract = FinanceContract::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+        $financeFileContractOld = FinanceContractOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
         $financeFileStaff = FinanceStaff::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+        $financeFileStaffOld = FinanceStaffOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
         $financeFileVandalA = FinanceVandal::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $financeFileVandalAOld = FinanceVandalOld::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
         $financeFileVandalB = FinanceVandal::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $financeFileVandalBOld = FinanceVandalOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
         $financeFileRepairA = FinanceRepair::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $financeFileRepairAOld = FinanceRepairOld::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
         $financeFileRepairB = FinanceRepair::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $financeFileRepairBOld = FinanceRepairOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
         $financeFileUtilityA = FinanceUtility::where('finance_file_id', $id)->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
+        $financeFileUtilityAOld = FinanceUtilityOld::where('finance_file_id', $id)->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
         $financeFileUtilityB = FinanceUtility::where('finance_file_id', $id)->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
+        $financeFileUtilityBOld = FinanceUtilityOld::where('finance_file_id', $id)->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
         $financeFileIncome = FinanceIncome::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+        $financeFileIncomeOld = FinanceIncomeOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
 
         $mfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'MF')->first();
+        $mfreportOld = FinanceReportOld::where('finance_file_id', $id)->where('type', 'MF')->first();
         $mfreportExtra = FinanceReportExtra::where('finance_file_id', $id)->where('type', 'MF')->get();
+        $mfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', $id)->where('type', 'MF')->get();
         $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $reportMFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
 
         $sfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'SF')->first();
+        $sfreportOld = FinanceReportOld::where('finance_file_id', $id)->where('type', 'SF')->first();
         $sfreportExtra = FinanceReportExtra::where('finance_file_id', $id)->where('type', 'SF')->get();
+        $sfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', $id)->where('type', 'SF')->get();
         $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $reportSFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
 
         $viewData = array(
             'title' => trans('app.menus.finance.edit_finance_file_list'),
@@ -707,23 +726,41 @@ class FinanceController extends BaseController {
             'file_no' => $file_no,
             'financefiledata' => $financefiledata,
             'checkdata' => $financeCheckData,
+            'checkOldData' => $financeCheckOldData,
             'summary' => $financeSummary,
+            'summaryOld' => $financeSummaryOld,
             'adminFile' => $financeFileAdmin,
+            'adminOldFile' => $financeFileAdminOld,
             'contractFile' => $financeFileContract,
+            'contractOldFile' => $financeFileContractOld,
             'staffFile' => $financeFileStaff,
+            'staffOldFile' => $financeFileStaffOld,
             'vandala' => $financeFileVandalA,
+            'vandalaOld' => $financeFileVandalAOld,
             'vandalb' => $financeFileVandalB,
+            'vandalbOld' => $financeFileVandalBOld,
             'repaira' => $financeFileRepairA,
+            'repairaOld' => $financeFileRepairAOld,
             'repairb' => $financeFileRepairB,
+            'repairbOld' => $financeFileRepairBOld,
             'incomeFile' => $financeFileIncome,
+            'incomeOldFile' => $financeFileIncomeOld,
             'utila' => $financeFileUtilityA,
+            'utilaOld' => $financeFileUtilityAOld,
             'utilb' => $financeFileUtilityB,
+            'utilbOld' => $financeFileUtilityBOld,
             'mfreport' => $mfreport,
+            'mfreportOld' => $mfreportOld,
             'mfreportExtra' => $mfreportExtra,
+            'mfreportExtraOld' => $mfreportExtraOld,
             'reportMF' => $reportMF,
+            'reportMFOld' => $reportMFOld,
             'sfreport' => $sfreport,
+            'sfreportOld' => $sfreportOld,
             'sfreportExtra' => $sfreportExtra,
+            'sfreportExtraOld' => $sfreportExtraOld,
             'reportSF' => $reportSF,
+            'reportSFOld' => $reportSFOld,
             'finance_file_id' => $id
         );
 
@@ -740,6 +777,15 @@ class FinanceController extends BaseController {
             if ($files) {
                 $finance = FinanceCheck::where('finance_file_id', $files->id)->first();
                 if ($finance) {
+                    $old = FinanceCheckOld::firstOrNew(array('finance_file_id' => $files->id));
+                
+                    $old->date = $finance->date;
+                    $old->name = $finance->name;
+                    $old->position = $finance->position;
+                    $old->is_active = $finance->is_active;
+                    $old->remarks = $finance->remarks;
+                    $old->save();
+
                     $finance->date = $data['date'];
                     $finance->name = $data['name'];
                     $finance->position = $data['position'];
@@ -773,6 +819,19 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceSummary::where('finance_file_id', $files->id)->get();
+                if(count($currents) > 0) {
+                    foreach($currents as $current) {
+                        $old = FinanceSummaryOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                    'summary_key' => $current->summary_key));
+    
+                        $old->name = $current->name;
+                        $old->amount = $current->amount;
+                        $old->sort_no = $current->sort_no;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceSummary::where('finance_file_id', $files->id)->delete();
                 if ($remove) {
                     for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
@@ -814,10 +873,51 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
+                if(count($currents) > 0) {
+                    FinanceReportPerbelanjaanOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceReportPerbelanjaanOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                                'type' => $type,
+                                                                                'report_key' => $current->report_key));
+    
+                        $old->name = $current->name;
+                        $old->amount = $current->amount;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+                $extra_currents = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->get();
+                if(count($extra_currents) > 0) {
+                    FinanceReportExtraOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                    foreach($extra_currents as $extra) {
+                        $extra_old = FinanceReportExtraOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                                'type' => $type));
+    
+                        $extra_old->fee_sebulan = $extra->fee_sebulan;
+                        $extra_old->unit = $extra->unit;
+                        $extra_old->fee_semasa = $extra->fee_semasa;
+                        $extra_old->save();
+                    }
+                }
+
                 $remove = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->delete();
                 $finance = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->first();
 
                 if ($remove && $finance) {
+                    $main_old = FinanceReportOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                    'type'=> $type));
+                                                
+                    $main_old->fee_sebulan = $finance->fee_sebulan;
+                    $main_old->unit = $finance->unit;
+                    $main_old->fee_semasa = $finance->fee_semasa;
+                    $main_old->no_akaun = $finance->no_akaun;
+                    $main_old->nama_bank = $finance->nama_bank;
+                    $main_old->baki_bank_awal = $finance->baki_bank_awal;
+                    $main_old->baki_bank_akhir = $finance->baki_bank_akhir;
+                    $main_old->save();
+
                     $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
                     $finance->unit = $data[$prefix . 'unit'];
                     $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
@@ -885,10 +985,51 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
+                if(count($currents) > 0) {
+                    FinanceReportPerbelanjaanOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceReportPerbelanjaanOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                                'type' => $type,
+                                                                                'report_key' => $current->report_key));
+    
+                        $old->name = $current->name;
+                        $old->amount = $current->amount;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+                $extra_currents = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->get();
+                if(count($extra_currents) > 0) {
+                    FinanceReportExtraOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
+                    foreach($extra_currents as $extra) {
+                        $extra_old = FinanceReportExtraOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                                'type' => $type));
+    
+                        $extra_old->fee_sebulan = $extra->fee_sebulan;
+                        $extra_old->unit = $extra->unit;
+                        $extra_old->fee_semasa = $extra->fee_semasa;
+                        $extra_old->save();
+                    }
+                }
+
                 $remove = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->delete();
                 $finance = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->first();
 
                 if ($remove && $finance) {
+                    $main_old = FinanceReportOld::firstOrNew(array('finance_file_id' => $files->id,
+                                                                    'type' => $type));
+                                                
+                    $main_old->fee_sebulan = $finance->fee_sebulan;
+                    $main_old->unit = $finance->unit;
+                    $main_old->fee_semasa = $finance->fee_semasa;
+                    $main_old->no_akaun = $finance->no_akaun;
+                    $main_old->nama_bank = $finance->nama_bank;
+                    $main_old->baki_bank_awal = $finance->baki_bank_awal;
+                    $main_old->baki_bank_akhir = $finance->baki_bank_akhir;
+                    $main_old->save();
+
                     $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
                     $finance->unit = $data[$prefix . 'unit'];
                     $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
@@ -955,6 +1096,23 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceAdmin::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceAdminOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceAdminOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'name' => $current->name]);
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->tertunggak = $current->tertunggak;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceAdmin::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {
@@ -999,6 +1157,22 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceIncome::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceIncomeOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceIncomeOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'name' => $current->name]);
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceIncome::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {
@@ -1045,6 +1219,24 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceUtility::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceUtilityOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceUtilityOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'type' => $current->type,
+                                                            'name' => $current->name]);
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->tertunggak = $current->tertunggak;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceUtility::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {
@@ -1099,6 +1291,24 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceVandal::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceVandalOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceVandalOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'type' => $current->type,
+                                                            'name' => $current->name]);
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->tertunggak = $current->tertunggak;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceVandal::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {
@@ -1153,6 +1363,24 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceRepair::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceRepairOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceRepairOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'type' => $current->type,
+                                                            'name' => $current->name]);
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->tertunggak = $current->tertunggak;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceRepair::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {
@@ -1204,6 +1432,23 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceContract::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceContractOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceContractOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'name' => $current->name]);
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->tertunggak = $current->tertunggak;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceContract::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {
@@ -1248,6 +1493,25 @@ class FinanceController extends BaseController {
 
             $files = Finance::find($id);
             if ($files) {
+                $currents = FinanceStaff::where('finance_file_id', $files->id)->get();
+
+                if(count($currents) > 0) {
+                    FinanceStaffOld::where('finance_file_id', $files->id)->delete();
+                    foreach($currents as $current) {
+                        $old = FinanceStaffOld::firstOrNew(['finance_file_id' => $files->id,
+                                                            'name' => $current->name]);
+                        $old->gaji_per_orang = $current->gaji_per_orang;
+                        $old->bil_pekerja = $current->bil_pekerja;
+                        $old->tunggakan = $current->tunggakan;
+                        $old->semasa = $current->semasa;
+                        $old->hadapan = $current->hadapan;
+                        $old->tertunggak = $current->tertunggak;
+                        $old->sort_no = $current->sort_no;
+                        $old->is_custom = $current->is_custom;
+                        $old->save();
+                    }
+                }
+
                 $remove = FinanceStaff::where('finance_file_id', $files->id)->delete();
 
                 if ($remove) {

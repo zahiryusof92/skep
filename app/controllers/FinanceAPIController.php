@@ -269,17 +269,26 @@ class FinanceAPIController extends BaseController {
                  * create or update check process
                  */
                 $check = new FinanceCheck();
-                $check_clone = new FinanceCheckClone();
                 if($is_update) {
                     $check = FinanceCheck::where('finance_file_id', $finance_id)->first();
                 }else {
                     $check = FinanceCheck::where('finance_file_id', $finance_id)->first();
                     if(empty($check) == true) {
                         $check = new FinanceCheck();
-
                     }
-
                 }
+                
+                if(empty($check->id) == false) {
+                    $check_clone = FinanceCheckOld::firstOrNew(array('finance_file_id' => $finance_id));
+                
+                    $check_clone->date = $check->date;
+                    $check_clone->name = $check->name;
+                    $check_clone->position = $check->position;
+                    $check_clone->is_active = $check->is_active;
+                    $check_clone->remarks = $check->remarks;
+                    $check_clone->save();
+                }
+
                 $check->finance_file_id = $finance_id;
                 $check->date = $params['date'];
                 $check->name = $params['name'];
@@ -287,14 +296,6 @@ class FinanceAPIController extends BaseController {
                 $check->is_active = (empty($params['is_active']) == false)? $params['is_active'] : $this->others['status']['active']['slug'];
                 $check->remarks = $params['remarks'];
                 $check->save();
-                
-                $check_clone->finance_file_id = $finance_id;
-                $check_clone->date = $params['date'];
-                $check_clone->name = $params['name'];
-                $check_clone->position = $params['position'];
-                $check_clone->is_active = (empty($params['is_active']) == false)? $params['is_active'] : $this->others['status']['active']['slug'];
-                $check_clone->remarks = $params['remarks'];
-                $check_clone->save();
 
                 $response = [
                     'status' => 200,
@@ -358,14 +359,6 @@ class FinanceAPIController extends BaseController {
                     $summary->sort_no = $i;
                     $new_data = $summary->save();
 
-                    $summary_clone = new FinanceSummaryClone;
-                    $summary_clone->finance_file_id = $finance_id;
-                    $summary_clone->name = $this->tbl_fields_name[$prefix . $key];
-                    $summary_clone->summary_key = $key;
-                    $summary_clone->amount = (empty($params[$key]) == false)? $params[$key] : 0;
-                    $summary_clone->sort_no = $i;
-                    $summary_clone->save();
-
                     $i++;
 
                 }
@@ -415,8 +408,24 @@ class FinanceAPIController extends BaseController {
                 }
 
                 if($is_update) {
+                    $current_items = FinanceReportPerbelanjaan::where('finance_file_id', $finance_id)->get();
+                    FinanceReportPerbelanjaanOld::where('finance_file_id', $finance_id)->get();
+
+                    foreach($current_items as $current) {
+                        $frp_clone = FinanceReportPerbelanjaanOld::firstOrNew(array('finance_file_id' => $current->finance_file_id, 
+                                                                                'type' => $current->type,
+                                                                                'report_key' => $current->report_key));
+    
+                        $frp_clone->name = $current->name;
+                        $frp_clone->amount = $current->amount;
+                        $frp_clone->sort_no = $current->sort_no;
+                        $frp_clone->is_custom = $current->is_custom;
+                        $frp_clone->save();
+                    }
+
                     FinanceReportPerbelanjaan::where('finance_file_id', $finance_id)->delete();
                 }
+
                 /**
                  * create report process
                  */
@@ -425,6 +434,7 @@ class FinanceAPIController extends BaseController {
                 $prefix = $my_config['prefix'];
 
                 foreach($data['report'] as $key => $val) {
+                    
                     $params_needed = Arr::get($my_config['type'],"$key.only");
                     $extra_params = Arr::get($my_config,"extra");
                     $params_needed = array_merge($params_needed, $extra_params);
@@ -432,9 +442,18 @@ class FinanceAPIController extends BaseController {
                     $type = $my_config['type'][$key]['name'];
                     
                     $report = new FinanceReport();
-                    $report_clone = new FinanceReportClone();
                     if($is_update) {
                         $report = FinanceReport::where('finance_file_id', $finance_id)->where('type', $key)->first();
+                        $report_clone = FinanceReportOld::firstOrNew(array('finance_file_id' => $finance_id, 'type' => $key));
+
+                        $report_clone->fee_sebulan = $report->fee_sebulan;
+                        $report_clone->unit = $report->unit;
+                        $report_clone->fee_semasa = $report->fee_semasa;
+                        $report_clone->no_akaun = $report->no_akaun;
+                        $report_clone->nama_bank = $report->nama_bank;
+                        $report_clone->baki_bank_awal = $report->baki_bank_awal;
+                        $report_clone->baki_bank_akhir = $report->baki_bank_akhir;
+                        $report_clone->save();
                     }
                     $report->finance_file_id = $finance_id;
                     $report->type = $type;
@@ -447,23 +466,12 @@ class FinanceAPIController extends BaseController {
                     $report->baki_bank_akhir = $val['baki_bank_akhir'];
                     $report->save();
 
-                    $report_clone->finance_file_id = $finance_id;
-                    $report_clone->type = $type;
-                    $report_clone->fee_sebulan = $val['fee_sebulan'];
-                    $report_clone->unit = $val['unit'];
-                    $report_clone->fee_semasa = $val['fee_semasa'];
-                    $report_clone->no_akaun = $val['no_akaun'];
-                    $report_clone->nama_bank = $val['nama_bank'];
-                    $report_clone->baki_bank_awal = $val['baki_bank_awal'];
-                    $report_clone->baki_bank_akhir = $val['baki_bank_akhir'];
-                    $report_clone->save();
-
                     if($report) {
                         
                         $normal_params = Arr::except($params,'is_custom');
                         foreach($normal_params as $key2 => $val2) {
                             $frp = new FinanceReportPerbelanjaan();
-                            $frp_clone = new FinanceReportPerbelanjaanClone();
+                            
                             $frp->type = $type;
                             $frp->finance_file_id = $finance_id;
                             $frp->name = $this->tbl_fields_name[$prefix . $key2];
@@ -473,14 +481,6 @@ class FinanceAPIController extends BaseController {
                             $frp->is_custom = 0;
                             $frp->save();
                             
-                            $frp_clone->type = $type;
-                            $frp_clone->finance_file_id = $finance_id;
-                            $frp_clone->name = $this->tbl_fields_name[$prefix . $key2];
-                            $frp_clone->report_key = $key2;
-                            $frp_clone->amount = $val2;
-                            $frp_clone->sort_no = array_search($key2, array_keys($params)) + 1;
-                            $frp_clone->is_custom = 0;
-                            $frp_clone->save();
 
                             $new_data = $frp;
                         }
@@ -493,7 +493,6 @@ class FinanceAPIController extends BaseController {
                             if(empty($params['is_custom']) == false) {
                                 foreach($params['is_custom'] as $key3 => $val3) {
                                     $frp = new FinanceReportPerbelanjaan();
-                                    $frp_clone = new FinanceReportPerbelanjaanClone();
                                     $frp->type = $type;
                                     $frp->finance_file_id = $finance_id;
                                     $frp->name = $val3['name'];
@@ -503,17 +502,36 @@ class FinanceAPIController extends BaseController {
                                     $frp->is_custom = 1;
                                     $frp->save();
 
-                                    $frp_clone->type = $type;
-                                    $frp_clone->finance_file_id = $finance_id;
-                                    $frp_clone->name = $val3['name'];
-                                    $frp_clone->report_key = 'custom'. ($new_data->sort_no + 1);
-                                    $frp_clone->amount = $val3['amount'];
-                                    $frp_clone->sort_no = $new_data->sort_no + (1);
-                                    $frp_clone->is_custom = 1;
-                                    $frp_clone->save();
-
                                     $new_data = $frp;
                                 }
+                            }
+                        }
+
+                        $extra_currents = FinanceReportExtra::where('finance_file_id', $finance_id)->where('type', $key)->get();
+                        if(count($extra_currents) > 0) {
+                            FinanceReportExtraOld::where('finance_file_id', $finance_id)->where('type', $key)->delete();
+                            foreach($extra_currents as $extra) {
+                                $extra_old = FinanceReportExtraOld::firstOrNew(array('finance_file_id' => $finance_id,
+                                                                                        'type' => $key));
+            
+                                $extra_old->fee_sebulan = $extra->fee_sebulan;
+                                $extra_old->unit = $extra->unit;
+                                $extra_old->fee_semasa = $extra->fee_semasa;
+                                $extra_old->save();
+                            }
+                        }
+
+                        $delete_extra_currents = FinanceReportExtra::where('finance_file_id', $finance_id)->where('type', $key)->delete();
+                        if(!empty($val['extra']) && count($val['extra']) > 0) {
+                            foreach($val['extra'] as $extra_val) {
+                                $new_extra = new FinanceReportExtra();
+
+                                $new_extra->finance_file_id = $finance_id;
+                                $new_extra->type = $key;
+                                $new_extra->fee_sebulan = $extra_val['fee_sebulan'];
+                                $new_extra->unit = $extra_val['unit'];
+                                $new_extra->fee_semasa = $extra_val['fee_semasa'];
+                                $new_extra->save();
                             }
                         }
                         
@@ -553,7 +571,7 @@ class FinanceAPIController extends BaseController {
                     $response = $finance;
                     return $finance;
                 }
-
+                
                 if($is_update) {
                     $this->deleteFinanceIncome($finance_id);
                 }
@@ -571,7 +589,6 @@ class FinanceAPIController extends BaseController {
                     foreach($default_params as $key) {
                         $get_key = array_search($key, array_column($data['income']['main'], 'default'));
                         $income = new FinanceIncome();
-                        $income_clone = new FinanceIncomeClone();
                         $tunggakan = $semasa = $hadapan = '';
                         if(!is_bool($get_key) && $get_key >= 0) {
                             $get_array = $data['income']['main'][$get_key];
@@ -581,7 +598,6 @@ class FinanceAPIController extends BaseController {
                             $hadapan = $get_array['hadapan'];
                             
                             $get_array = '';
-
                         } else {
                             $tunggakan = $semasa = $hadapan = 0;
 
@@ -593,17 +609,8 @@ class FinanceAPIController extends BaseController {
                         $income->hadapan = $hadapan;
                         $income->sort_no = ++$count;
                         $income->save();
-                        
-                        $income_clone->finance_file_id = $finance_id;
-                        $income_clone->name = $this->tbl_fields_name[$prefix . $key];
-                        $income_clone->tunggakan = $tunggakan;
-                        $income_clone->semasa = $semasa;
-                        $income_clone->hadapan = $hadapan;
-                        $income_clone->sort_no = ++$count;
-                        $income_clone->save();
 
                         $new_data = $income;
-
                     }
                     
                 }
@@ -611,7 +618,6 @@ class FinanceAPIController extends BaseController {
 
                     foreach($data['income']['is_custom'] as $val) {
                         $income = new FinanceIncome();
-                        $income_clone = new FinanceIncomeClone();
                         $income->finance_file_id = $finance_id;
                         $income->name = $val['name'];
                         $income->tunggakan = $val['tunggakan'];
@@ -620,15 +626,6 @@ class FinanceAPIController extends BaseController {
                         $income->sort_no = ++$count;
                         $income->is_custom = 1;
                         $income->save();
-                        
-                        $income_clone->finance_file_id = $finance_id;
-                        $income_clone->name = $val['name'];
-                        $income_clone->tunggakan = $val['tunggakan'];
-                        $income_clone->semasa = $val['semasa'];
-                        $income_clone->hadapan = $val['hadapan'];
-                        $income_clone->sort_no = ++$count;
-                        $income_clone->is_custom = 1;
-                        $income_clone->save();
 
                         $new_data = $income;
                     }
@@ -687,7 +684,6 @@ class FinanceAPIController extends BaseController {
                         $name = $tunggakan = $semasa = $hadapan = $tertunggak = '';
 
                         $finance = new FinanceUtility;
-                        $finance_clone = new FinanceUtilityClone;
                         //if finance key not found will define default value in it
                         if(!is_bool($get_key) && $get_key >= 0) {
                             $get_array = $val['main'][$get_key];
@@ -720,17 +716,6 @@ class FinanceAPIController extends BaseController {
                         $finance->sort_no = ++$count;
                         $finance->is_custom = 0;
                         $finance->save();
-
-                        $finance_clone->finance_file_id = $finance_id;
-                        $finance_clone->name = $name;
-                        $finance_clone->type = $my_config["type"][$key]['name'];
-                        $finance_clone->tunggakan = $tunggakan;
-                        $finance_clone->semasa = $semasa;
-                        $finance_clone->hadapan = $hadapan;
-                        $finance_clone->tertunggak = $tertunggak;
-                        $finance_clone->sort_no = ++$count;
-                        $finance_clone->is_custom = 0;
-                        $finance_clone->save();
 
                         $new_data = $finance;
 
@@ -766,7 +751,6 @@ class FinanceAPIController extends BaseController {
                                 $params_needed = Arr::only($val2,$params);
         
                                 $finance = new FinanceUtility;
-                                $finance_clone = new FinanceUtilityClone;
                                 $finance->finance_file_id = $finance_id;
                                 $finance->name = $params_needed['name'];
                                 $finance->type = $my_config["type"][$key]['name'];
@@ -777,17 +761,6 @@ class FinanceAPIController extends BaseController {
                                 $finance->sort_no = ++$count;
                                 $finance->is_custom = 1;
                                 $finance->save();
-                                
-                                $finance_clone->finance_file_id = $finance_id;
-                                $finance_clone->name = $params_needed['name'];
-                                $finance_clone->type = $my_config["type"][$key]['name'];
-                                $finance_clone->tunggakan = $params_needed['tunggakan'];
-                                $finance_clone->semasa = $params_needed['semasa'];
-                                $finance_clone->hadapan = $params_needed['hadapan'];
-                                $finance_clone->tertunggak = $params_needed['tertunggak'];
-                                $finance_clone->sort_no = ++$count;
-                                $finance_clone->is_custom = 1;
-                                $finance_clone->save();
                             }
     
                             $new_data = $finance;
@@ -847,7 +820,6 @@ class FinanceAPIController extends BaseController {
                     foreach($default_params as $key) {
                         $get_key = array_search($key, array_column($data['contract']['main'], 'default'));
                         $contract = new FinanceContract();
-                        $contract_clone = new FinanceContractClone();
                         $tunggakan = $semasa = $hadapan = $tertunggak = '';
                         if(!is_bool($get_key) && $get_key >= 0) {
                             $get_array = $data['contract']['main'][$get_key];
@@ -871,15 +843,6 @@ class FinanceAPIController extends BaseController {
                         $contract->tertunggak = $tertunggak;
                         $contract->sort_no = ++$count;
                         $contract->save();
-
-                        $contract_clone->finance_file_id = $finance_id;
-                        $contract_clone->name = $this->tbl_fields_name[$prefix . $key];
-                        $contract_clone->tunggakan = $tunggakan;
-                        $contract_clone->semasa = $semasa;
-                        $contract_clone->hadapan = $hadapan;
-                        $contract_clone->tertunggak = $tertunggak;
-                        $contract_clone->sort_no = ++$count;
-                        $contract_clone->save();
 
                         $new_data = $contract;
                         /**
@@ -932,7 +895,6 @@ class FinanceAPIController extends BaseController {
 
                     foreach($data['contract']['is_custom'] as $val) {
                         $contract = new FinanceContract();
-                        $contract_clone = new FinanceContractClone();
                         $contract->finance_file_id = $finance_id;
                         $contract->name = $val['name'];
                         $contract->tunggakan = $val['tunggakan'];
@@ -942,16 +904,6 @@ class FinanceAPIController extends BaseController {
                         $contract->sort_no = ++$count;
                         $contract->is_custom = 1;
                         $contract->save();
-                        
-                        $contract_clone->finance_file_id = $finance_id;
-                        $contract_clone->name = $val['name'];
-                        $contract_clone->tunggakan = $val['tunggakan'];
-                        $contract_clone->semasa = $val['semasa'];
-                        $contract_clone->hadapan = $val['hadapan'];
-                        $contract_clone->tertunggak = $val['tertunggak'];
-                        $contract_clone->sort_no = ++$count;
-                        $contract_clone->is_custom = 1;
-                        $contract_clone->save();
 
                         $new_data = $contract;
                     }
@@ -1011,7 +963,6 @@ class FinanceAPIController extends BaseController {
                         foreach($default_params as $key1) {
                             $get_key = array_search($key1, array_column($data['repair'][$key]['main'], 'default'));
                             $repair = new FinanceRepair();
-                            $repair_clone = new FinanceRepairClone();
                             $tunggakan = $semasa = $hadapan = $tertunggak = '';
                             if(!is_bool($get_key) && $get_key >= 0) {
                                 $get_array = $data['repair'][$key]['main'][$get_key];
@@ -1036,16 +987,6 @@ class FinanceAPIController extends BaseController {
                             $repair->tertunggak = $tertunggak;
                             $repair->sort_no = ++$count;
                             $repair->save();
-                            
-                            $repair_clone->finance_file_id = $finance_id;
-                            $repair_clone->name = $this->tbl_fields_name[$prefix . $key1];
-                            $repair_clone->type = $my_config['type'][$key]['name'];
-                            $repair_clone->tunggakan = $tunggakan;
-                            $repair_clone->semasa = $semasa;
-                            $repair_clone->hadapan = $hadapan;
-                            $repair_clone->tertunggak = $tertunggak;
-                            $repair_clone->sort_no = ++$count;
-                            $repair_clone->save();
 
                             $new_data = $repair;
 
@@ -1063,7 +1004,6 @@ class FinanceAPIController extends BaseController {
 
                         foreach($data['repair'][$key]['is_custom'] as $val) {
                             $repair = new FinanceRepair();
-                            $repair_clone = new FinanceRepairClone();
                             $repair->finance_file_id = $finance_id;
                             $repair->name = $val['name'];
                             $repair->type = $my_config['type'][$key]['name'];
@@ -1074,17 +1014,6 @@ class FinanceAPIController extends BaseController {
                             $repair->sort_no = ++$count;
                             $repair->is_custom = 1;
                             $repair->save();
-                            
-                            $repair_clone->finance_file_id = $finance_id;
-                            $repair_clone->name = $val['name'];
-                            $repair_clone->type = $my_config['type'][$key]['name'];
-                            $repair_clone->tunggakan = $val['tunggakan'];
-                            $repair_clone->semasa = $val['semasa'];
-                            $repair_clone->hadapan = $val['hadapan'];
-                            $repair_clone->tertunggak = $val['tertunggak'];
-                            $repair_clone->sort_no = ++$count;
-                            $repair_clone->is_custom = 1;
-                            $repair_clone->save();
 
                             $new_data = $repair;
                         }
@@ -1145,7 +1074,6 @@ class FinanceAPIController extends BaseController {
                         foreach($default_params as $key1) {
                             $get_key = array_search($key1, array_column($data['vandal'][$key]['main'], 'default'));
                             $vandal = new FinanceVandal();
-                            $vandal_clone = new FinanceVandalClone();
                             $tunggakan = $semasa = $hadapan = $tertunggak = '';
                             if(!is_bool($get_key) && $get_key >= 0) {
                                 $get_array = $data['vandal'][$key]['main'][$get_key];
@@ -1170,16 +1098,6 @@ class FinanceAPIController extends BaseController {
                             $vandal->tertunggak = $tertunggak;
                             $vandal->sort_no = ++$count;
                             $vandal->save();
-                            
-                            $vandal_clone->finance_file_id = $finance_id;
-                            $vandal_clone->name = $this->tbl_fields_name[$prefix . $key1];
-                            $vandal_clone->type = $my_config['type'][$key]['name'];
-                            $vandal_clone->tunggakan = $tunggakan;
-                            $vandal_clone->semasa = $semasa;
-                            $vandal_clone->hadapan = $hadapan;
-                            $vandal_clone->tertunggak = $tertunggak;
-                            $vandal_clone->sort_no = ++$count;
-                            $vandal_clone->save();
 
                             $new_data = $vandal;
 
@@ -1190,7 +1108,6 @@ class FinanceAPIController extends BaseController {
 
                         foreach($data['vandal'][$key]['is_custom'] as $val) {
                             $vandal = new FinanceVandal();
-                            $vandal_clone = new FinanceVandalClone();
                             $vandal->finance_file_id = $finance_id;
                             $vandal->name = $val['name'];
                             $vandal->type = $my_config['type'][$key]['name'];
@@ -1201,17 +1118,6 @@ class FinanceAPIController extends BaseController {
                             $vandal->sort_no = ++$count;
                             $vandal->is_custom = 1;
                             $vandal->save();
-                            
-                            $vandal_clone->finance_file_id = $finance_id;
-                            $vandal_clone->name = $val['name'];
-                            $vandal_clone->type = $my_config['type'][$key]['name'];
-                            $vandal_clone->tunggakan = $val['tunggakan'];
-                            $vandal_clone->semasa = $val['semasa'];
-                            $vandal_clone->hadapan = $val['hadapan'];
-                            $vandal_clone->tertunggak = $val['tertunggak'];
-                            $vandal_clone->sort_no = ++$count;
-                            $vandal_clone->is_custom = 1;
-                            $vandal_clone->save();
 
                             $new_data = $vandal;
                         }
@@ -1270,7 +1176,6 @@ class FinanceAPIController extends BaseController {
                     foreach($default_params as $key) {
                         $get_key = array_search($key, array_column($data['staff']['main'], 'default'));
                         $staff = new FinanceStaff();
-                        $staff_clone = new FinanceStaffClone();
                         $tunggakan = $semasa = $hadapan = $tertunggak = $gaji_per_orang = $bil_pekerja = '';
                         if(!is_bool($get_key) && $get_key >= 0) {
                             $get_array = $data['staff']['main'][$get_key];
@@ -1298,17 +1203,6 @@ class FinanceAPIController extends BaseController {
                         $staff->tertunggak = $tertunggak;
                         $staff->sort_no = $count;
                         $staff->save();
-                        
-                        $staff_clone->finance_file_id = $finance_id;
-                        $staff_clone->name = $this->tbl_fields_name[$prefix . $key];
-                        $staff_clone->gaji_per_orang = $gaji_per_orang;
-                        $staff_clone->bil_pekerja = $bil_pekerja;
-                        $staff_clone->tunggakan = $tunggakan;
-                        $staff_clone->semasa = $semasa;
-                        $staff_clone->hadapan = $hadapan;
-                        $staff_clone->tertunggak = $tertunggak;
-                        $staff_clone->sort_no = $count;
-                        $staff_clone->save();
                         $count++;
                         $new_data = $staff;
 
@@ -1319,7 +1213,6 @@ class FinanceAPIController extends BaseController {
 
                     foreach($data['staff']['is_custom'] as $val) {
                         $staff = new FinanceStaff();
-                        $staff_clone = new FinanceStaffClone();
                         $staff->finance_file_id = $finance_id;
                         $staff->name = $val['name'];
                         $staff->gaji_per_orang = $val['gaji_per_orang'];
@@ -1331,18 +1224,7 @@ class FinanceAPIController extends BaseController {
                         $staff->sort_no = $count;
                         $staff->is_custom = 1;
                         $staff->save();
-                        
-                        $staff_clone->finance_file_id = $finance_id;
-                        $staff_clone->name = $val['name'];
-                        $staff_clone->gaji_per_orang = $val['gaji_per_orang'];
-                        $staff_clone->bil_pekerja = $val['bil_pekerja'];
-                        $staff_clone->tunggakan = $val['tunggakan'];
-                        $staff_clone->semasa = $val['semasa'];
-                        $staff_clone->hadapan = $val['hadapan'];
-                        $staff_clone->tertunggak = $val['tertunggak'];
-                        $staff_clone->sort_no = $count;
-                        $staff_clone->is_custom = 1;
-                        $staff_clone->save();
+
                         $count++;
                         $new_data = $staff;
                     }
@@ -1400,7 +1282,6 @@ class FinanceAPIController extends BaseController {
                     foreach($default_params as $key) {
                         $get_key = array_search($key, array_column($data['admin']['main'], 'default'));
                         $admin = new FinanceAdmin();
-                        $admin_clone = new FinanceAdminClone();
                         $tunggakan = $semasa = $hadapan = $tertunggak = '';
                         if(!is_bool($get_key) && $get_key >= 0) {
                             $get_array = $data['admin']['main'][$get_key];
@@ -1424,15 +1305,6 @@ class FinanceAPIController extends BaseController {
                         $admin->tertunggak = $tertunggak;
                         $admin->sort_no = $count;
                         $admin->save();
-                        
-                        $admin_clone->finance_file_id = $finance_id;
-                        $admin_clone->name = $this->tbl_fields_name[$prefix . $key];
-                        $admin_clone->tunggakan = $tunggakan;
-                        $admin_clone->semasa = $semasa;
-                        $admin_clone->hadapan = $hadapan;
-                        $admin_clone->tertunggak = $tertunggak;
-                        $admin_clone->sort_no = $count;
-                        $admin_clone->save();
 
                         $count++;
                         $new_data = $admin;
@@ -1444,7 +1316,6 @@ class FinanceAPIController extends BaseController {
 
                     foreach($data['admin']['is_custom'] as $val) {
                         $admin = new FinanceAdmin();
-                        $admin_clone = new FinanceAdminClone();
                         $admin->finance_file_id = $finance_id;
                         $admin->name = $val['name'];
                         $admin->tunggakan = $val['tunggakan'];
@@ -1455,15 +1326,6 @@ class FinanceAPIController extends BaseController {
                         $admin->is_custom = 1;
                         $admin->save();
                         
-                        $admin_clone->finance_file_id = $finance_id;
-                        $admin_clone->name = $val['name'];
-                        $admin_clone->tunggakan = $val['tunggakan'];
-                        $admin_clone->semasa = $val['semasa'];
-                        $admin_clone->hadapan = $val['hadapan'];
-                        $admin_clone->tertunggak = $val['tertunggak'];
-                        $admin_clone->sort_no = $count;
-                        $admin_clone->is_custom = 1;
-                        $admin_clone->save();
                         $count++;
                         $new_data = $admin;
                     }
@@ -1898,7 +1760,6 @@ class FinanceAPIController extends BaseController {
             
             $request_params = Input::all();
             $request_params['summary'] = array();
-            
             DB::transaction(function() use($request_params, &$response) {
                 /*
                 *Process all validation before create process
@@ -2333,6 +2194,17 @@ class FinanceAPIController extends BaseController {
         $response = '';
         try {
 
+            $items = FinanceSummary::where('finance_file_id',$finance_file_id)->get();
+            FinanceSummaryOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $summary_clone = FinanceSummaryOld::firstOrNew(array('finance_file_id' => $finance_file_id, 'summary_key' => $item->summary_key));
+                
+                $summary_clone->name = $item->name;
+                $summary_clone->amount = $item->amount;
+                $summary_clone->sort_no = $item->sort_no;
+                $summary_clone->save();
+            }
+
             $response = FinanceSummary::where('finance_file_id',$finance_file_id)->delete();
 
         } catch (Exception $e) {
@@ -2356,7 +2228,19 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceIncome($finance_file_id) {
         $response = '';
         try {
-            
+            $items = FinanceIncome::where('finance_file_id',$finance_file_id)->get();
+            FinanceIncomeOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceIncomeOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                    'name' => $item->name]);
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();
+            }
+
             $response = FinanceIncome::where('finance_file_id',$finance_file_id)->delete();
 
         } catch (Exception $e) {
@@ -2368,7 +2252,22 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceUtility($finance_file_id) {
         $response = '';
         try {
-            
+            $items = FinanceUtility::where('finance_file_id',$finance_file_id)->get();
+            FinanceUtilityOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceUtilityOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                    'name' => $item->name,
+                                                    'type' => $item->type]);
+                
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->tertunggak = $item->tertunggak;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();
+            }
+
             $response = FinanceUtility::where('finance_file_id',$finance_file_id)->delete();
 
         } catch (Exception $e) {
@@ -2380,7 +2279,20 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceContract($finance_file_id) {
         $response = '';
         try {
-            
+            $items = FinanceContract::where('finance_file_id',$finance_file_id)->get();
+            FinanceContractOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceContractOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                        'name' => $item->name]);
+                     
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->tertunggak = $item->tertunggak;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();                                   
+            }
             $response = FinanceContract::where('finance_file_id',$finance_file_id)->delete();
 
         } catch (Exception $e) {
@@ -2392,6 +2304,21 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceRepair($finance_file_id) {
         $response = '';
         try {
+            $items = FinanceRepair::where('finance_file_id',$finance_file_id)->get();
+            FinanceRepairOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceRepairOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                        'type' => $item->type,
+                                                        'name' => $item->name]);
+                     
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->tertunggak = $item->tertunggak;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();                                   
+            }
             
             $response = FinanceRepair::where('finance_file_id',$finance_file_id)->delete();
 
@@ -2404,6 +2331,21 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceVandal($finance_file_id) {
         $response = '';
         try {
+            $items = FinanceVandal::where('finance_file_id',$finance_file_id)->get();
+            FinanceVandalOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceVandalOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                        'type' => $item->type,
+                                                        'name' => $item->name]);
+                     
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->tertunggak = $item->tertunggak;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();                                   
+            }
             
             $response = FinanceVandal::where('finance_file_id',$finance_file_id)->delete();
 
@@ -2416,6 +2358,22 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceStaff($finance_file_id) {
         $response = '';
         try {
+            $items = FinanceStaff::where('finance_file_id',$finance_file_id)->get();
+            FinanceStaffOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceStaffOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                        'name' => $item->name]);
+                     
+                $old->gaji_per_orang = $item->gaji_per_orang;
+                $old->bil_pekerja = $item->bil_pekerja;
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->tertunggak = $item->tertunggak;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();                                   
+            }
             
             $response = FinanceStaff::where('finance_file_id',$finance_file_id)->delete();
 
@@ -2428,6 +2386,20 @@ class FinanceAPIController extends BaseController {
     public function deleteFinanceAdmin($finance_file_id) {
         $response = '';
         try {
+            $items = FinanceAdmin::where('finance_file_id',$finance_file_id)->get();
+            FinanceAdminOld::where('finance_file_id',$finance_file_id)->delete();
+            foreach($items as $item) {
+                $old = FinanceAdminOld::firstOrNew(['finance_file_id' => $finance_file_id,
+                                                        'name' => $item->name]);
+                     
+                $old->tunggakan = $item->tunggakan;
+                $old->semasa = $item->semasa;
+                $old->hadapan = $item->hadapan;
+                $old->tertunggak = $item->tertunggak;
+                $old->sort_no = $item->sort_no;
+                $old->is_custom = $item->is_custom;
+                $old->save();                                   
+            }
             
             $response = FinanceAdmin::where('finance_file_id',$finance_file_id)->delete();
 

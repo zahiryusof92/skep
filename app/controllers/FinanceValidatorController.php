@@ -306,6 +306,25 @@ class FinanceValidatorController extends BaseController {
                     $validation_rules = array_merge($validation_rules, $extra_validation);
                     $customMessages = array_merge($customMessages, $extra_messages);
                 }
+                
+                if (is_array(Arr::get($data['report'][$key], "extra"))) {
+
+                    foreach (Arr::get($data['report'][$key], "extra") as $key2 => $val2) {
+                        $extra_validation = [
+                            "report.$key.extra" => "required|array",
+                            "report.$key.extra.$key2.fee_sebulan" => "required|regex:/^\d+(\.\d{1,2})?$/",
+                            "report.$key.extra.$key2.unit" => "required",
+                            "report.$key.extra.$key2.fee_semasa" => "required|regex:/^\d+(\.\d{1,2})?$/",
+                        ];
+                        $extra_messages = [
+                            "report.$key.extra.$key2.fee_sebulan" => "Fee Sebulan",
+                            "report.$key.extra.$key2.unit" => "Unit",
+                            "report.$key.extra.$key2.fee_semasa" => "Fee Semasa",
+                        ];
+                    }
+                    $validation_rules = array_merge($validation_rules, $extra_validation);
+                    $customMessages = array_merge($customMessages, $extra_messages);
+                }
             }
             if ($finance_check) {
                 $add_extra_rules = $this->addExtraValidationRules();

@@ -790,7 +790,7 @@ Route::post('/importFinanceFile', 'ImportController@importFinanceFile')->before(
 
 Route::get('/addFinanceFileList', 'FinanceController@addFinanceFileList')->before('authMember');
 Route::post('/submitAddFinanceFile', 'FinanceController@submitAddFinanceFile')->before('authMember');
-Route::get('/editFinanceFileList/{id}', 'FinanceController@editFinanceFileList')->before('authMember');
+Route::get('/editFinanceFileList/{id}', array('as' => 'finance_file.edit', 'uses' => 'FinanceController@editFinanceFileList'))->before('authMember');
 Route::post('/updateFinanceFileList', 'FinanceController@updateFinanceFileList')->before('authMember');
 Route::post('/updateFinanceFile', 'FinanceController@updateFinanceFile')->before('authMember');
 
@@ -1068,5 +1068,4 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
     Route::get('reporting', 'ExportController@reporting');
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
-
 });

@@ -1,8 +1,11 @@
+@if(!empty($checkOldData))
+    @include('finance_en.show.check')
+@endif
 <div class="row padding-vertical-10">    
     <div class="col-lg-12">
-
-        {{-- <h6>{{ trans("app.forms.check") }}</h6> --}}
-
+        @if(!empty($checkOldData))
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <form id="form_check">
 
             <div class="form-group row">

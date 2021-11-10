@@ -27,6 +27,20 @@ class AccessGroup extends Eloquent {
         return $permissions;
     }
 
+    public static function hasAccessModule($module_name) {
+        $permissions = false;
+
+        $user = User::find(Auth::user()->id);
+        if ($user) {
+            $submodule = SubModule::where('name_en', $module_name)->first();
+            if($submodule) {
+                $permissions = self::where('role_id', $user->role)->where('submodule_id', $submodule->id)->where('access_permission', 1)->count();
+            }
+        }
+
+        return $permissions;
+    }
+
     public static function hasAccess($module_id) {
         $permissions = false;
 

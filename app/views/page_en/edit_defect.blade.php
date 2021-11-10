@@ -112,6 +112,7 @@ foreach ($user_permission as $permissions) {
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             <option value="0" {{ $defect->status == '0' ? 'selected' : '' }}>{{ trans('app.forms.pending') }}</option>
                                             <option value="1" {{ $defect->status == '1' ? 'selected' : '' }}>{{ trans('app.forms.resolved') }}</option>
+                                            <option value="2" {{ $defect->status == '2' ? 'selected' : '' }}>{{ trans('app.forms.received') }}</option>
                                         </select>
                                         <div id="status_error" style="display:none;"></div>
                                     </div>

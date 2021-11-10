@@ -13,7 +13,7 @@ class CreateLiquidatorsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('liquidators', function($table)
+		Schema::create('liquidators', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('name')->nullable();

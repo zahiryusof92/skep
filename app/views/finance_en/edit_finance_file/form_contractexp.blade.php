@@ -1,3 +1,6 @@
+@if(count($contractOldFile) > 0)
+@include('finance_en.show.contract')
+@endif
 <?php
 $prefix = 'contract_';
 ?>
@@ -5,6 +8,9 @@ $prefix = 'contract_';
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
 
+        @if(count($contractOldFile) > 0)
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>4.2 LAPORAN PERBELANJAAN PENYENGGARAAN</h6>
 
         <form id="form_contract">
