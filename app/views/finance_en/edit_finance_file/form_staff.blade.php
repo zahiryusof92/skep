@@ -1,3 +1,6 @@
+@if(count($staffOldFile) > 0)
+@include('finance_en.show.staff')
+@endif
 <?php
 $prefix = 'staff_';
 ?>
@@ -5,6 +8,9 @@ $prefix = 'staff_';
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
 
+        @if(count($staffOldFile) > 0)
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>4.5 LAPORAN PERBELANJAAN PEKERJA</h6>
 
         <form id="form_staff">

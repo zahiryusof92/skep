@@ -1,3 +1,6 @@
+@if(count($vandalaOld) > 0 && count($vandalbOld) > 0)
+@include('finance_en.show.vandalisme')
+@endif
 <?php
 $prefix = 'maintenancefee_';
 $prefix2 = 'singkingfund_';
@@ -6,6 +9,9 @@ $prefix2 = 'singkingfund_';
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
 
+        @if(count($vandalaOld) > 0 && count($vandalbOld) > 0)
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>4.4 PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN (VANDALISME) a. Guna Duit Maintenance Fee</h6>
 
         <form id="form_vandal">

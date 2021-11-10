@@ -526,23 +526,15 @@ foreach ($user_permission as $permission) {
             responsive: true,
             columns: [
                 {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'cob', name: 'company.short_name'}
-                // {data: 'file_no', name: 'files.file_no'},
-                // {data: 'strata', name: 'strate.name'},
-                // {data: 'designation', name: 'designation.description'},
-                // {data: 'name', name: 'ajk_details.name'},
-                // {data: 'phone_no', name: 'ajk_details.phone_no'},
-                // {data: 'month', name: 'ajk_details.month'},
-                // {data: 'start_year', name: 'ajk_details.start_year'},
-                // {data: 'end_year', name: 'ajk_details.end_year'},
-                // {data: 'action', name: 'action', orderable: false, searchable: false}
+                {data: 'file_no', name: 'files.file_no'},
+                {data: 'strata', name: 'strate.name'},
+                {data: 'designation', name: 'designation.description'},
+                {data: 'name', name: 'ajk_details.name'},
+                {data: 'phone_no', name: 'ajk_details.phone_no'},
+                {data: 'month', name: 'ajk_details.month'},
+                {data: 'start_year', name: 'ajk_details.start_year'},
+                {data: 'end_year', name: 'ajk_details.end_year'},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
 

@@ -1,10 +1,15 @@
+@if(count($summaryOld) > 0)
+@include('finance_en.show.summary')
+@endif
 <?php
 $prefix = 'sum_';
 ?>
 
 <div class="row">
     <div class="col-lg-12">
-
+        @if(count($summaryOld) > 0)
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         {{-- <h6>{{ trans("app.forms.summary") }}</h6> --}}
 
         <form id="form_summary">

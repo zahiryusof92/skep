@@ -82,6 +82,7 @@ if (!Auth::user()->getAdmin()) {
                     <li id="cob_draft_list">
                         <a class="left-menu-link" href="{{URL::action('DraftController@fileList')}}">
                             {{ trans('app.menus.cob.file_draft_list') }}
+                            <span class="label label-danger"> {{ FileDrafts::getTotalPending() . ' ' . trans('pending') }}</span>
                         </a>
                     </li>
                     @endif
@@ -275,7 +276,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(62))
+                    @if (AccessGroup::hasAccessModule('liquidator'))
                     <li id="developer_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@liquidator')}}">
                             {{ trans('app.menus.master.liquidator') }}

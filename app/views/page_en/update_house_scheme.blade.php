@@ -49,7 +49,7 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                 </div>                                                
-                                                <div class="row">
+                                                <div class="row" id="developer_row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.developer') }}</label>
@@ -63,7 +63,7 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
+                                                <div class="row" id="liquidator_row" style="display: none;">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.liquidator') }}</label>
@@ -194,6 +194,18 @@ foreach ($user_permission as $permission) {
                                                 </div>
 
                                                 <hr/>
+
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                <input type="checkbox" name="is_liquidator" id="is_liquidator" {{($house_scheme->liquidator)? "checked" : "";}}> {{ trans('app.forms.is_liquidator') }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -273,6 +285,38 @@ foreach ($user_permission as $permission) {
                                                     <!-- modal -->
 
                                                     <script>
+                                                        if("{{$house_scheme->liquidator}}" > 0) {
+                                                            $('#liquidator_row').show();
+                                                            $('#developer_row').hide();
+                                                        } else {
+                                                            $('#liquidator_row').hide();
+                                                            $('#developer_row').show();
+                                                        }
+                                                        $('#is_liquidator').on('click', function(e) {
+                                                            // e.preventDefault();
+                                                            if(this.checked) {
+                                                                $('#liquidator_row').show();
+                                                                $('#developer_row').hide();
+                                                            } else {
+                                                                $('#liquidator_row').hide();
+                                                                $('#developer_row').show();
+                                                            }
+                                                            $("#name").val(""),
+                                                            $("#developer").val("").change(),
+                                                            $("#liquidator").val("").change(),
+                                                            $("#address1").val(""),
+                                                            $("#address2").val(""),
+                                                            $("#address3").val(""),
+                                                            $("#address4").val(""),
+                                                            $("#city").val("").change(),
+                                                            $("#poscode").val(""),
+                                                            $("#state").val("").change(),
+                                                            $("#country").val("").change(),
+                                                            $("#phone_no").val(""),
+                                                            $("#fax_no").val(""),
+                                                            $("#remarks").val(""),
+                                                            $("#is_active").val("").change();
+                                                        })
                                                         $("#form_housing_scheme").on('submit', (function (e) {
                                                             changes = false;
                                                             e.preventDefault();

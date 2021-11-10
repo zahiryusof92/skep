@@ -1,3 +1,6 @@
+@if(count($repairaOld) > 0 && count($repairbOld) > 0)
+@include('finance_en.show.repair')
+@endif
 <?php
 $prefix = 'repair_maintenancefee_';
 $prefix2 = 'repair_singkingfund_';
@@ -6,6 +9,9 @@ $prefix2 = 'repair_singkingfund_';
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
 
+        @if(count($repairaOld) > 0 && count($repairbOld) > 0)
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>4.3 PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN a. Guna Duit Maintenance Fee</h6>
 
         <form id="form_repair">
@@ -123,7 +129,7 @@ $prefix2 = 'repair_singkingfund_';
                             <td><input type="currency" id="{{ $prefix2 . 'total_income_' . $countb }}" name="{{ $prefix2 }}total_income[]" class="form-control form-control-sm text-right" value="{{ $totalb_income }}" readonly=""></td>
                             <td><input type="currency" oninput="calculateRepairBTotal('{{ $countb }}')" id="{{ $prefix2 . 'tertunggak_' . $countb }}" name="{{ $prefix2 }}tertunggak[]" class="form-control form-control-sm text-right" value="{{ $repairbs['tertunggak'] }}"></td>
                             @if ($repairbs['is_custom'])
-                            <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowRepairB('repaira_row<?php echo $countb ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                            <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowRepairB('repairb_row<?php echo $countb ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
                             @else
                             <td>&nbsp;</td>
                             @endif
@@ -315,7 +321,6 @@ $prefix2 = 'repair_singkingfund_';
 
     function deleteRowRepairB(rowRepairBNo) {
         changes = true;
-
         $('#' + rowRepairBNo).remove();
 
         calculateRepairBTotal();

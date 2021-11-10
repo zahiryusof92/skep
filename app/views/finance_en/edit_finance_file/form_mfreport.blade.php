@@ -1,10 +1,15 @@
+@if(!empty($mfreportOld))
+@include('finance_en.show.mf_report')
+@endif
 <?php
 $prefix = 'mfr_';
 ?>
 
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
-
+        @if(!empty($mfreportOld))
+            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+        @endif
         <h6>1. LAPORAN RINGKAS PENCAPAIAN KUTIPAN CAJ PENYENGGARAAN (MAINTENANCE FEE)</h6>
 
         <form id="form_reportMF">
