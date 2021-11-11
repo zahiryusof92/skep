@@ -1005,23 +1005,41 @@ class Files extends Eloquent {
 
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $total_developer = DB::table('developer')
-                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('developer.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_developer = DB::table('developer')
+                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.id', Auth::user()->file_id)
+                //         ->where('files.company_id', Auth::user()->company_id)
+                //         ->where('developer.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 0)
+                //         ->where($active)
+                //         ->count();
 
-                $total_liquidator = DB::table('liquidators')
-                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('liquidators.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_liquidator = DB::table('liquidators')
+                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.id', Auth::user()->file_id)
+                //         ->where('files.company_id', Auth::user()->company_id)
+                //         ->where('liquidators.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 1)
+                //         ->where($active)
+                //         ->count();
+                $total_developer = DB::table('house_scheme')
+                                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                    ->where('files.id', Auth::user()->file_id)
+                                    ->where('files.company_id', Auth::user()->company_id)
+                                    ->where('house_scheme.is_deleted', 0)
+                                    ->where('house_scheme.is_liquidator', 0)
+                                    ->where($active)
+                                    ->count();
+                $total_liquidator = DB::table('house_scheme')
+                                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                        ->where('files.id', Auth::user()->file_id)
+                                        ->where('files.company_id', Auth::user()->company_id)
+                                        ->where('house_scheme.is_deleted', 0)
+                                        ->where('house_scheme.is_liquidator', 1)
+                                        ->where($active)
+                                        ->count();
 
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
@@ -1114,21 +1132,37 @@ class Files extends Eloquent {
                         ->where($active)
                         ->count();
             } else {
-                $total_developer = DB::table('developer')
-                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('developer.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_developer = DB::table('developer')
+                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', Auth::user()->company_id)
+                //         ->where('developer.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 0)
+                //         ->where($active)
+                //         ->count();
 
-                $total_liquidator = DB::table('liquidators')
-                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('liquidators.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_liquidator = DB::table('liquidators')
+                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', Auth::user()->company_id)
+                //         ->where('liquidators.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 1)
+                //         ->where($active)
+                //         ->count();
+                $total_developer = DB::table('house_scheme')
+                                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                    ->where('files.company_id', Auth::user()->company_id)
+                                    ->where('house_scheme.is_deleted', 0)
+                                    ->where('house_scheme.is_liquidator', 0)
+                                    ->where($active)
+                                    ->count();
+                $total_liquidator = DB::table('house_scheme')
+                                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                        ->where('files.company_id', Auth::user()->company_id)
+                                        ->where('house_scheme.is_deleted', 0)
+                                        ->where('house_scheme.is_liquidator', 1)
+                                        ->where($active)
+                                        ->count();
 
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
@@ -1210,20 +1244,34 @@ class Files extends Eloquent {
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $total_developer = DB::table('developer')
-                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('developer.is_deleted', 0)
-                        ->where($active)
-                        ->count();
-                
-                $total_liquidator = DB::table('liquidators')
-                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('liquidators.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_developer = DB::table('developer')
+                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('developer.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 0)
+                //         ->where($active)
+                //         ->count();
                         
+                // $total_liquidator = DB::table('liquidators')
+                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('liquidators.is_deleted', 0)
+                //         // ->where('house_scheme.is_liquidator', 1)
+                //         // ->where($active)
+                //         ->count();
+                $total_developer = DB::table('house_scheme')
+                                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                    ->where('house_scheme.is_deleted', 0)
+                                    ->where('house_scheme.is_liquidator', 0)
+                                    ->where($active)
+                                    ->count();
+                $total_liquidator = DB::table('house_scheme')
+                                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                        ->where('house_scheme.is_deleted', 0)
+                                        ->where('house_scheme.is_liquidator', 1)
+                                        ->where($active)
+                                        ->count();
+                                        
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
                         ->where($active)
@@ -1289,21 +1337,37 @@ class Files extends Eloquent {
                         ->where($active)
                         ->count();
             } else {
-                $total_developer = DB::table('developer')
-                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('developer.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_developer = DB::table('developer')
+                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', Session::get('admin_cob'))
+                //         ->where('developer.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 0)
+                //         ->where($active)
+                //         ->count();
                 
-                $total_liquidator = DB::table('liquidators')
-                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('liquidators.is_deleted', 0)
-                        ->where($active)
-                        ->count();
+                // $total_liquidator = DB::table('liquidators')
+                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', Session::get('admin_cob'))
+                //         ->where('liquidators.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 1)
+                //         ->where($active)
+                //         ->count();
+                $total_developer = DB::table('house_scheme')
+                                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                    ->where('house_scheme.is_deleted', 0)
+                                    ->where('house_scheme.is_liquidator', 0)
+                                    ->where('files.company_id', Session::get('admin_cob'))
+                                    ->where($active)
+                                    ->count();
+                $total_liquidator = DB::table('house_scheme')
+                                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                        ->where('house_scheme.is_deleted', 0)
+                                        ->where('house_scheme.is_liquidator', 1)
+                                        ->where('files.company_id', Session::get('admin_cob'))
+                                        ->where($active)
+                                        ->count();
 
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')
@@ -1384,7 +1448,7 @@ class Files extends Eloquent {
                         ->count();
             }
         }
-
+        
         $management = array(
             ['name' => 'Developer', 'y' => $total_developer],
             ['name' => 'Liquidator', 'y' => $total_liquidator],
@@ -1880,21 +1944,37 @@ class Files extends Eloquent {
                 //         ->where('files.is_deleted', 0)
                 //         ->groupBy('developer.id')
                 //         ->get();
-                $total_developer = DB::table('developer')
-                        ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.company_id', $cob->id)
-                        ->where('developer.is_deleted', 0)
-                        ->where('files.is_deleted', 0)
-                        ->count();
+                // $total_developer = DB::table('developer')
+                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', $cob->id)
+                //         ->where('developer.is_deleted', 0)
+                //         ->where('files.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 0)
+                //         ->count();
 
-                $total_liquidator = DB::table('liquidators')
-                        ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                        ->where('files.company_id', $cob->id)
-                        ->where('liquidators.is_deleted', 0)
-                        ->where('files.is_deleted', 0)
-                        ->count();
+                // $total_liquidator = DB::table('liquidators')
+                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
+                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                //         ->where('files.company_id', $cob->id)
+                //         ->where('liquidators.is_deleted', 0)
+                //         ->where('files.is_deleted', 0)
+                //         ->where('house_scheme.is_liquidator', 1)
+                //         ->count();
+                $total_developer = DB::table('house_scheme')
+                                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                    ->where('files.company_id', $cob->id)
+                                    ->where('files.is_deleted', 0)
+                                    ->where('house_scheme.is_deleted', 0)
+                                    ->where('house_scheme.is_liquidator', 0)
+                                    ->count();
+                $total_liquidator = DB::table('house_scheme')
+                                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                        ->where('files.company_id', $cob->id)
+                                        ->where('files.is_deleted', 0)
+                                        ->where('house_scheme.is_deleted', 0)
+                                        ->where('house_scheme.is_liquidator', 1)
+                                        ->count();
                         
                 $total_jmb = DB::table('management_jmb')
                         ->join('files', 'management_jmb.file_id', '=', 'files.id')

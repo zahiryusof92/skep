@@ -276,6 +276,7 @@ return array(
         "access_group" => "Kumpulan Akses",
         "files" => "Fail",
         "remarks" => "Kenyataan",
+        "is_developer" => "Ada Pemaju",
         "is_liquidator" => "Ada Liquidator",
         "rating" => "Penilaian",
         "score" => "Skor",

@@ -280,6 +280,7 @@ return array(
         "access_group" => "Access Group",
         "files" => "Files",
         "remarks" => "Remarks",
+        "is_developer" => "Is Developer",
         "is_liquidator" => "Is Liquidator",
         "rating" => "Rating",
         "score" => "Score",

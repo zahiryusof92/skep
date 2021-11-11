@@ -177,6 +177,21 @@ class DraftController extends BaseController {
                 $house_scheme->fax_no = $draft_house->fax_no;
                 $house_scheme->remarks = $draft_house->remarks;
                 $house_scheme->is_active = $draft_house->is_active;
+                /** Liquidator Info */
+                $house_scheme->liquidator_name = $draft_house->liquidator_name;
+                $house_scheme->liquidator_address1 = $draft_house->liquidator_address1;
+                $house_scheme->liquidator_address2 = $draft_house->liquidator_address2;
+                $house_scheme->liquidator_address3 = $draft_house->liquidator_address3;
+                $house_scheme->liquidator_address4 = $draft_house->liquidator_address4;
+                $house_scheme->liquidator_city = $draft_house->liquidator_city;
+                $house_scheme->liquidator_poscode = $draft_house->liquidator_poscode;
+                $house_scheme->liquidator_state = $draft_house->liquidator_state;
+                $house_scheme->liquidator_country = $draft_house->liquidator_country;
+                $house_scheme->liquidator_phone_no = $draft_house->liquidator_phone_no;
+                $house_scheme->liquidator_fax_no = $draft_house->liquidator_fax_no;
+                $house_scheme->liquidator_remarks = $draft_house->liquidator_remarks;
+                $house_scheme->is_liquidator = $draft_house->is_liquidator;
+                $house_scheme->liquidator_is_active = $draft_house->liquidator_is_active;
                 $house_scheme->save();
 
                 // clear draft
