@@ -985,6 +985,21 @@ class AdminController extends BaseController {
             $fax_no = $data['fax_no'];
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
+            /** Liquidator Info */
+            $liquidator_name = $data['liquidator_name'];
+            $liquidator_address1 = $data['liquidator_address1'];
+            $liquidator_address2 = $data['liquidator_address2'];
+            $liquidator_address3 = $data['liquidator_address3'];
+            $liquidator_address4 = $data['liquidator_address4'];
+            $liquidator_city = $data['liquidator_city'];
+            $liquidator_poscode = $data['liquidator_poscode'];
+            $liquidator_state = $data['liquidator_state'];
+            $liquidator_country = $data['liquidator_country'];
+            $liquidator_phone_no = $data['liquidator_phone_no'];
+            $liquidator_fax_no = $data['liquidator_fax_no'];
+            $liquidator_remarks = $data['liquidator_remarks'];
+            $liquidator_is_active = $data['liquidator_is_active'];
+            $is_liquidator = ($data['is_liquidator'] == 'yes')? 1 : 0;
 
             if (!Auth::user()->isJMB()) {
                 $files->is_active = $is_active;
@@ -1005,8 +1020,25 @@ class AdminController extends BaseController {
             $house_scheme->phone_no = $phone_no;
             $house_scheme->fax_no = $fax_no;
             $house_scheme->remarks = $remarks;
+            /** Liquidator Info */
+            $house_scheme->liquidator_name = $liquidator_name;
+            $house_scheme->liquidator_address1 = $liquidator_address1;
+            $house_scheme->liquidator_address2 = $liquidator_address2;
+            $house_scheme->liquidator_address3 = $liquidator_address3;
+            $house_scheme->liquidator_address4 = $liquidator_address4;
+            $house_scheme->liquidator_city = $liquidator_city;
+            $house_scheme->liquidator_poscode = $liquidator_poscode;
+            $house_scheme->liquidator_state = $liquidator_state;
+            $house_scheme->liquidator_country = $liquidator_country;
+            $house_scheme->liquidator_phone_no = $liquidator_phone_no;
+            $house_scheme->liquidator_fax_no = $liquidator_fax_no;
+            $house_scheme->liquidator_remarks = $liquidator_remarks;
+            $house_scheme->is_liquidator = $is_liquidator;
             if ($is_active != 2) {
                 $house_scheme->is_active = $is_active;
+            }
+            if ($liquidator_is_active != 2) {
+                $house_scheme->liquidator_is_active = $liquidator_is_active;
             }
             $house_scheme->save();
 
