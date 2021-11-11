@@ -173,9 +173,9 @@ foreach ($user_permission as $permission) {
                                                                 <label><span style="color: red;">*</span> {{ trans('app.forms.admin_status') }}</label>
                                                                 <select id="is_active" class="form-control select2">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    <option value="1" {{($house_scheme->is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
-                                                                    <option value="0" {{($house_scheme->is_active == '0' ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
-                                                                    <option value="2" {{($house_scheme->is_active == '2' ? " selected" : "")}}>{{ trans('app.forms.before_vp') }}</option>
+                                                                    <option value="1" {{($file->is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
+                                                                    <option value="0" {{($file->is_active == '0' ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
+                                                                    <option value="2" {{($file->is_active == '2' ? " selected" : "")}}>{{ trans('app.forms.before_vp') }}</option>
                                                                 </select>
                                                                 <div id="is_active_error" style="display:none;"></div>
                                                             </div>
@@ -326,9 +326,9 @@ foreach ($user_permission as $permission) {
                                                                 <label><span style="color: red;">*</span> {{ trans('app.forms.admin_status') }}</label>
                                                                 <select id="liquidator_is_active" class="form-control select2">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    <option value="1" {{($house_scheme->liquidator_is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
-                                                                    <option value="0" {{($house_scheme->liquidator_is_active == '0' ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
-                                                                    <option value="2" {{($house_scheme->liquidator_is_active == '2' ? " selected" : "")}}>{{ trans('app.forms.before_vp') }}</option>
+                                                                    <option value="1" {{($file->is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
+                                                                    <option value="0" {{($file->is_active == '0' ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
+                                                                    <option value="2" {{($file->is_active == '2' ? " selected" : "")}}>{{ trans('app.forms.before_vp') }}</option>
                                                                 </select>
                                                                 <div id="liquidator_is_active_error" style="display:none;"></div>
                                                             </div>
@@ -421,7 +421,39 @@ foreach ($user_permission as $permission) {
                                                     </div>
                                                     <!-- modal -->
 
-                                                    <script> 
+                                                    <script>
+                                                        if("{{$house_scheme->liquidator}}" > 0) {
+                                                            $('#liquidator_row').show();
+                                                            $('#developer_row').hide();
+                                                        } else {
+                                                            $('#liquidator_row').hide();
+                                                            $('#developer_row').show();
+                                                        }
+                                                        $('#is_liquidator').on('click', function(e) {
+                                                            // e.preventDefault();
+                                                            if(this.checked) {
+                                                                $('#liquidator_row').show();
+                                                                $('#developer_row').hide();
+                                                            } else {
+                                                                $('#liquidator_row').hide();
+                                                                $('#developer_row').show();
+                                                            }
+                                                            $("#name").val(""),
+                                                            $("#developer").val("").change(),
+                                                            $("#liquidator").val("").change(),
+                                                            $("#address1").val(""),
+                                                            $("#address2").val(""),
+                                                            $("#address3").val(""),
+                                                            $("#address4").val(""),
+                                                            $("#city").val("").change(),
+                                                            $("#poscode").val(""),
+                                                            $("#state").val("").change(),
+                                                            $("#country").val("").change(),
+                                                            $("#phone_no").val(""),
+                                                            $("#fax_no").val(""),
+                                                            $("#remarks").val(""),
+                                                            $("#is_active").val("").change();
+                                                        })
                                                         $("#form_housing_scheme").on('submit', (function (e) {
                                                             changes = false;
                                                             e.preventDefault();
