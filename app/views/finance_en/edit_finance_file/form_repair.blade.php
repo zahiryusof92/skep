@@ -187,7 +187,7 @@ $prefix2 = 'repair_singkingfund_';
 
         var repaira_hadapan = document.getElementById("{{ $prefix }}hadapan_" + id);
         repaira_sum_hadapan += Number(repaira_hadapan.value);
-
+        
         repaira_sum_total_income += Number(repaira_sum_tunggakan) + Number(repaira_sum_semasa) + Number(repaira_sum_hadapan);
         $('#{{ $prefix }}total_income_' + id).val(parseFloat(repaira_sum_total_income).toFixed(2)); // UPDATE JUMLAH A + B + C
 
@@ -289,6 +289,8 @@ $prefix2 = 'repair_singkingfund_';
 
         var repairb_sum_total_all = Number(repairb_sum_total_tunggakan) + Number(repairb_sum_total_semasa) + Number(repairb_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#{{ $prefix2 }}total_all').val(parseFloat(repairb_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+        $('#sfr_repair').val(parseFloat(repairb_sum_total_all).toFixed(2));
+        
     }
 
     function addRowRepairA() {
