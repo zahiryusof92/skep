@@ -6,10 +6,9 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title id="">{{ trans('app.app_name') }}</title>
 
-        <link rel="apple-touch-icon" type="image/png" sizes="57x57" href="{{asset('assets/common/img/favicon.57x57.png')}}">
-        <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="{{asset('assets/common/img/favicon.72x72.png')}}">
-        <link rel="apple-touch-icon" type="image/png" sizes="114x114" href="{{asset('assets/common/img/favicon.114x114.png')}}">
-        <link rel="apple-touch-icon" type="image/png" sizes="144x144" href="{{asset('assets/common/img/favicon.144x144.png')}}">
+        <link rel="apple-touch-icon" type="image/png" sizes="57x57" href="{{asset('assets/common/img/favicon-57x57.png')}}">
+        <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="{{asset('assets/common/img/favicon-72x72.png')}}">
+        <link rel="apple-touch-icon" type="image/png" sizes="96x96" href="{{asset('assets/common/img/favicon-96x96.png')}}">
         <link rel="icon" type="image/png" href="{{asset('assets/common/img/favicon.png')}}">
         <link href="{{ asset('assets/common/img/favicon.ico') }}" rel="shortcut icon">
 
