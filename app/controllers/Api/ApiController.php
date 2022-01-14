@@ -1287,6 +1287,7 @@ class ApiController extends BaseController {
                         'bantuan_others' => ($file->other->bantuan_others ? true : false),
                         'rsku' => ($file->other->rsku ? $file->other->rsku : ''),
                         'water_meter' => ($file->other->water_meter ? $file->other->water_meter : ''),
+                        'tnb' => ($file->other->tnb ? $file->other->tnb : ''),
                         'malay_composition' => ($file->other->malay_composition ? $file->other->malay_composition : ''),
                         'chinese_composition' => ($file->other->malay_composition ? $file->other->malay_composition : ''),
                         'indian_composition' => ($file->other->indian_composition ? $file->other->indian_composition : ''),

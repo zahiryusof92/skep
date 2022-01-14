@@ -12,6 +12,17 @@ class OtherDetails extends Eloquent {
     protected $fillable = [
         'file_id',
     ];
+
+    public static function tnbLists() {
+        $items = [
+            '' => trans('app.forms.please_select'),
+            'attach' => trans('Attach'),
+            'skim berasingan lot bersama' => trans('Skim Berasingan Lot Bersama'),
+            'skim berasingan lot berasingan' => trans('Skim Berasingan Lot Berasingan')
+        ];
+
+        return $items;
+    }
     
     public function draft() {
         return $this->hasOne('OtherDetailsDraft', 'reference_id');

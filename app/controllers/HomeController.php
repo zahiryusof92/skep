@@ -17,7 +17,9 @@ class HomeController extends BaseController {
      */
 
     public function home() {
-
+        if(Auth::user()->isMPS()) {
+            return Redirect::to('/fileList');
+        }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();

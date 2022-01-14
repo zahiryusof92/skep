@@ -1,15 +1,18 @@
 
 <ul class="nav nav-pills nav-justified" role="tablist">
+    @if(!Auth::user()->isMPS())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('update/house/*')) active @endif custom-tab" @if(!Request::is('update/house/*')) href="{{URL::action('AdminController@house', $files->id)}}" @endif>
             {{ trans('app.forms.housing_scheme') }}
         </a>
     </li>
+    @endif
     <li class="nav-item">
         <a class="nav-link @if(Request::is('update/strata/*')) active @endif custom-tab" @if(!Request::is('update/strata/*')) href="{{URL::action('AdminController@strata', $files->id)}}" @endif>
             {{ trans('app.forms.developed_area') }}
         </a>
     </li>
+    @if(!Auth::user()->isMPS())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('update/management/*')) active @endif custom-tab" @if(!Request::is('update/management/*')) href="{{URL::action('AdminController@management', $files->id)}}" @endif>
             {{ trans('app.forms.management') }}
@@ -29,7 +32,8 @@
         </a>
     </li>
     @endif
-    @if (!Auth::user()->isJMB() && !Auth::user()->isPreSale())
+    @endif
+    @if (!Auth::user()->isJMB() && !Auth::user()->isPreSale() && !Auth::user()->isMPS())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('update/scoring/*')) active @endif custom-tab" @if(!Request::is('update/scoring/*')) href="{{URL::action('AdminController@scoring', $files->id)}}" @endif>
             {{ trans('app.forms.scoring_component_value') }}

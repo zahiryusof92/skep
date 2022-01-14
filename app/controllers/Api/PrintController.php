@@ -398,6 +398,7 @@ class PrintController extends BaseController {
                 $lif = 'TIADA';
                 $lif_unit = 0;
                 $type_meter = '';
+                $tnb = '';
 
                 if ($files) {
                     $pbt = $files->company->short_name;
@@ -426,6 +427,7 @@ class PrintController extends BaseController {
 
                 if ($files->other) {
                     $type_meter = $files->other->water_meter;
+                    $tnb = ucfirst($files->other->tnb);
                 }
 
                 if ($files->finance) {
@@ -476,6 +478,7 @@ class PrintController extends BaseController {
                 'lif' => $lif,
                 'lif_unit' => $lif_unit,
                 'type_meter' => $type_meter,
+                'tnb' => $tnb,
                 'purata_dikutip' => $purata_dikutip
             );
 

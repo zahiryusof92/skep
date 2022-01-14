@@ -889,5 +889,14 @@ return [
             'admin_elaun_jmb_mc' => 'ELAUN JMB/MC',
             'admin_lain_lain_tuntutan_jmb_mc' => 'LAIN-LAIN TUNTUTAN JMB/MC',
         ]
+    ],
+    'analytic' => [
+        'management_type' => [
+            'Developer',
+            'JMB',
+            'MC',
+            'Agent',
+            'Others'
+        ],
     ]
 ];

@@ -483,6 +483,7 @@ return array(
         "rumah_selangorku" => "Rumah Selangorku",
         "none" => "Tiada",
         "water_meter" => "Meter Air",
+        "tnb" => "TNB",
         "bulk" => "Pukal",
         "individual" => "INDIVIDU",
         "malay_composition" => "Komposisi Melayu",

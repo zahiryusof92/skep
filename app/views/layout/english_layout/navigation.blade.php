@@ -30,13 +30,14 @@ if (!Auth::user()->getAdmin()) {
 
         </div>
         <ul class="left-menu-list left-menu-list-root list-unstyled">
-
+            @if(!Auth::user()->isMPS())
             <li class="left-menu-list-link" id="home">
                 <a class="left-menu-link" href="{{ URL::action('HomeController@home') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/home.png')}}"/>
                     {{ trans('app.menus.home') }}
                 </a>
             </li>
+            @endif
 
             @if (Module::hasAccess(1))
             <li class="left-menu-list-submenu" id="cob_panel">
@@ -77,7 +78,8 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
-
+                    
+                    @if(!Auth::user()->isMPS())
                     @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                     <li id="cob_draft_list">
                         <a class="left-menu-link" href="{{URL::action('DraftController@fileList')}}">
@@ -85,6 +87,7 @@ if (!Auth::user()->getAdmin()) {
                             <span class="label label-danger"> {{ FileDrafts::getTotalPending() . ' ' . trans('pending') }}</span>
                         </a>
                     </li>
+                    @endif
                     @endif
 
                     @if (Auth::user()->getAdmin())
@@ -99,7 +102,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (Module::hasAccess(1))
+            @if (Module::hasAccess(1) && !Auth::user()->isMPS())
             <li class="left-menu-list-submenu" id="finance_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/finance.png')}}"/>

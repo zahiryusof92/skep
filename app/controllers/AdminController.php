@@ -905,6 +905,9 @@ class AdminController extends BaseController {
 
     public function house($id) {
         //get user permission
+        if(Auth::user()->isMPS()) {
+            return Redirect::to('update/strata/' . $id);
+        }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail($id);
 
@@ -3297,6 +3300,7 @@ class AdminController extends BaseController {
             $other_details = OtherDetails::where('file_id', $files->id)->first();
             $image = OtherDetails::where('file_id', $files->id)->first();
         }
+        $tnbLists = OtherDetails::tnbLists();
         
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3306,7 +3310,8 @@ class AdminController extends BaseController {
             'user_permission' => $user_permission,
             'file' => $files,
             'other_details' => $other_details,
-            'image' => (!empty($image->image_url) ? $image->image_url : '')
+            'image' => (!empty($image->image_url) ? $image->image_url : ''),
+            'tnbLists' => $tnbLists
         );
 
         return View::make('page_en.update_others', $viewData);
@@ -3345,12 +3350,13 @@ class AdminController extends BaseController {
             $bantuan_others = $data['bantuan_others'];
             $rsku = $data['rsku'];
             $water_meter = $data['water_meter'];
+            $tnb = $data['tnb'];
             $malay_composition = $data['malay_composition'];
             $chinese_composition = $data['chinese_composition'];
             $indian_composition = $data['indian_composition'];
             $others_composition = $data['others_composition'];
             $foreigner_composition = $data['foreigner_composition'];
-
+            
             $others->name = $other_details_name;
             $others->image_url = $others_image_url;
             $others->latitude = $latitude;
@@ -3363,6 +3369,7 @@ class AdminController extends BaseController {
             $others->bantuan_others = $bantuan_others;
             $others->rsku = $rsku;
             $others->water_meter = $water_meter;
+            $others->tnb = $tnb;
             $others->malay_composition = $malay_composition;
             $others->chinese_composition = $chinese_composition;
             $others->indian_composition = $indian_composition;

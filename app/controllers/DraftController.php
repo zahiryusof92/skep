@@ -627,6 +627,7 @@ class DraftController extends BaseController {
             }
 
             $other_details = OtherDetails::where('file_id', $files->id)->first();
+            $tnbLists = OtherDetails::tnbLists();
 
             $viewData = array(
                 'title' => trans('app.menus.cob.update_cob_file'),
@@ -635,7 +636,8 @@ class DraftController extends BaseController {
                 'sub_nav_active' => 'cob_draft_list',
                 'file' => $files,
                 'other_details' => $other_details,
-                'image' => (!empty($files->other->image_url) ? $files->other->image_url : '')
+                'image' => (!empty($files->other->image_url) ? $files->other->image_url : ''),
+                'tnbLists' => $tnbLists
             );
 
             return View::make('draft.others', $viewData);
@@ -664,6 +666,7 @@ class DraftController extends BaseController {
                 $others->bantuan_others = $draft_others->bantuan_others;
                 $others->rsku = $draft_others->rsku;
                 $others->water_meter = $draft_others->water_meter;
+                $others->tnb = $draft_others->tnb;
                 $others->malay_composition = $draft_others->malay_composition;
                 $others->chinese_composition = $draft_others->chinese_composition;
                 $others->indian_composition = $draft_others->indian_composition;

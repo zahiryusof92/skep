@@ -1660,6 +1660,7 @@ class ImportController extends BaseController {
                                         $others_details->bantuan_others = '';
                                         $others_details->rsku = '';
                                         $others_details->water_meter = '';
+                                        $others_details->tnb = '';
                                         $others_details->malay_composition = '';
                                         $others_details->chinese_composition = '';
                                         $others_details->indian_composition = '';
