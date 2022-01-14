@@ -47,13 +47,14 @@
                             <thead>
                                 <tr>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">PIHAK BERKUASA TEMPATAN</th>
-                                    <th style="width:20%; text-align: center !important; vertical-align:middle !important;">NAMA PANGSAPURI</th>
+                                    <th style="width:10%; text-align: center !important; vertical-align:middle !important;">NAMA PANGSAPURI</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">JUMLAH UNIT</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">JUMLAH BLOK</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">BIL. TINGKAT</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LIF</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">BIL. UNIT LIF</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">AKAUN METER AIR</th>
+                                    <th style="width:10%; text-align: center !important; vertical-align:middle !important;">TNB</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">ZON</th>
                                 </tr>
                             </thead>
@@ -67,6 +68,7 @@
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['lif'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['lif_unit'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['type_meter'] }}</td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['tnb'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['zone'] }}</td>
                                 </tr>
                             </tbody>

@@ -245,6 +245,18 @@ foreach ($user_permission as $permission) {
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
+                                                                    <label>{{ trans('app.forms.tnb') }}</label>
+                                                                    <select id="tnb" class="form-control select2">
+                                                                        @foreach ($tnbLists as $key => $val)
+                                                                            <option value="{{ $key }}" {{ ($other_details && $other_details->tnb == $key ? "selected" : "") }}>{{ $val }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
                                                                     <label>{{ trans('app.forms.malay_composition') }}</label>
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" id="malay_composition" value="{{Buyer::getCompositionByRace($file->id, 'Malay')}}" disabled="true">
                                                                 </div>
@@ -410,6 +422,7 @@ foreach ($user_permission as $permission) {
                 bantuan_others = $("#bantuan_others").val(),
                 rsku = $("#rsku").val(),
                 water_meter = $("#water_meter").val(),
+                tnb = $("#tnb").val(),
                 malay_composition = $("#malay_composition").val(),
                 chinese_composition = $("#chinese_composition").val(),
                 indian_composition = $("#indian_composition").val(),
@@ -435,6 +448,7 @@ foreach ($user_permission as $permission) {
                     bantuan_others: bantuan_others,
                     rsku: rsku,
                     water_meter: water_meter,
+                    tnb: tnb,
                     malay_composition: malay_composition,
                     chinese_composition: chinese_composition,
                     indian_composition: indian_composition,

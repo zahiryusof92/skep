@@ -115,6 +115,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isMPS() {
+        if (stripos($this->getRole->name, Role::MPS) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getAdmin() {
         if ($this->getRole->is_admin == 1) {
             return true;

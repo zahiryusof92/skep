@@ -487,6 +487,7 @@ return array(
         "rumah_selangorku" => "Rumah Selangorku",
         "none" => "None",
         "water_meter" => "Water Meter",
+        "tnb" => "TNB",
         "bulk" => "BULK",
         "individual" => "INDIVIDUAL",
         "malay_composition" => "Malay Composition",

@@ -211,6 +211,9 @@ class UserController extends BaseController {
                             $auditTrail->audit_by = Auth::user()->id;
                             $auditTrail->save();
 
+                            if(Auth::user()->isMPS()) {
+                                return Redirect::to('/fileList');
+                            }
                             return Redirect::to('/home');
                         } else {
                             Auth::logout();

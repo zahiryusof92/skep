@@ -193,6 +193,18 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
+                                                                    <label>{{ trans('app.forms.tnb') }}</label>
+                                                                    <select id="tnb" class="form-control select2" disabled="">
+                                                                        @foreach ($tnbLists as $key => $val)
+                                                                            <option value="{{ $key }}" {{ ($other_details && $other_details->tnb == $key ? "selected" : "") }}>{{ $val }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
                                                                     <label>{{ trans('app.forms.malay_composition') }}</label>
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" value="{{$other_details->draft ? $other_details->draft->malay_composition : ''}}" readonly="">
                                                                 </div>
@@ -428,6 +440,18 @@
                                                                         <option value="none" {{ ($other_details && $other_details->water_meter == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
                                                                         <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
                                                                         <option value="INDIVIDUAL" {{ ($other_details && $other_details->water_meter == 'INDIVIDUAL' ? " selected" : "") }}>{{ trans('app.forms.individual') }}</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.tnb') }}</label>
+                                                                    <select id="tnb" class="form-control select2">
+                                                                        @foreach ($tnbLists as $key => $val)
+                                                                            <option value="{{ $key }}" {{ ($other_details && $other_details->tnb == $key ? "selected" : "") }}>{{ $val }}</option>
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
                                                             </div>
