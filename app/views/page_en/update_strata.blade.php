@@ -416,6 +416,7 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                     
+                                                    @if(empty($disabled))
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group text-right">
@@ -423,6 +424,7 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -510,7 +512,9 @@ foreach ($user_permission as $permission) {
                                                                                 <option value="{{$unitoptions->id}}" {{($extra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                                 @endforeach
                                                                             </select>
+                                                                            @if(empty($disabled))
                                                                             <a href="javascript:void(0);" onclick="deleteRowRB({{$residential_i}})" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -518,6 +522,7 @@ foreach ($user_permission as $permission) {
                                                             <?php $residential_i++;?>
                                                         @endforeach
                                                     @endif
+                                                    @if(empty($disabled))
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group text-right">
@@ -525,6 +530,7 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -576,6 +582,7 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                     
+                                                    @if(empty($disabled))
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group text-right">
@@ -583,6 +590,7 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -670,7 +678,9 @@ foreach ($user_permission as $permission) {
                                                                                 <option value="{{$unitoptions->id}}" {{($extra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
                                                                                 @endforeach
                                                                             </select>
+                                                                            @if(empty($disabled))
                                                                             <a href="javascript:void(0);" onclick="deleteRowCB({{$commercial_i}})" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -679,6 +689,7 @@ foreach ($user_permission as $permission) {
                                                         @endforeach
                                                     @endif
                                                     
+                                                    @if(empty($disabled))
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group text-right">
@@ -686,7 +697,7 @@ foreach ($user_permission as $permission) {
                                                             </div>
                                                         </div>
                                                     </div>
-
+                                                    @endif
 
                                                 </div>
                                             </div>
