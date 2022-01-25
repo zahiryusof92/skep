@@ -1655,7 +1655,7 @@ class LPHSController extends BaseController
                                 if ($files->managementDeveloper->city) {
                                     $developer .= ' ' . $files->managementDeveloper->cities->description . ',';
                                 }
-                                if ($files->managementDeveloper->address2) {
+                                if ($files->managementDeveloper->state) {
                                     $developer .= ' ' . $files->managementDeveloper->states->name;
                                 }
                                 if ($files->managementDeveloper->phone_no) {
@@ -1689,7 +1689,7 @@ class LPHSController extends BaseController
                                 if ($files->managementJMB->city) {
                                     $jmb .= ' ' . $files->managementJMB->cities->description . ',';
                                 }
-                                if ($files->managementJMB->address2) {
+                                if ($files->managementJMB->state) {
                                     $jmb .= ' ' . $files->managementJMB->states->name;
                                 }
                                 if ($files->managementJMB->phone_no) {
@@ -1723,7 +1723,7 @@ class LPHSController extends BaseController
                                 if ($files->managementMC->city) {
                                     $mc .= ' ' . $files->managementMC->cities->description . ',';
                                 }
-                                if ($files->managementMC->address2) {
+                                if ($files->managementMC->state) {
                                     $mc .= ' ' . $files->managementMC->states->name;
                                 }
                                 if ($files->managementMC->phone_no) {
@@ -1757,7 +1757,7 @@ class LPHSController extends BaseController
                                 if ($files->managementAgent->city) {
                                     $agent .= ' ' . $files->managementAgent->cities->description . ',';
                                 }
-                                if ($files->managementAgent->address2) {
+                                if ($files->managementAgent->state) {
                                     $agent .= ' ' . $files->managementAgent->states->name;
                                 }
                                 if ($files->managementAgent->phone_no) {
@@ -1791,7 +1791,7 @@ class LPHSController extends BaseController
                                 if ($files->managementOthers->city) {
                                     $others .= ' ' . $files->managementOthers->cities->description . ',';
                                 }
-                                if ($files->managementOthers->address2) {
+                                if ($files->managementOthers->state) {
                                     $others .= ' ' . $files->managementOthers->states->name;
                                 }
                                 if ($files->managementOthers->phone_no) {
