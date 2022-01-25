@@ -2,9 +2,11 @@
 
 use Carbon\Carbon;
 
-class LPHSController extends BaseController {
+class LPHSController extends BaseController
+{
 
-    function randomString($length = 8) {
+    function randomString($length = 8)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -15,7 +17,8 @@ class LPHSController extends BaseController {
         return $randomString;
     }
 
-    public function getYear() {
+    public function getYear()
+    {
         $min_year = Files::where('year', '>', 0)->min('year');
         $max_year = date('Y');
 
@@ -27,7 +30,8 @@ class LPHSController extends BaseController {
         return $year;
     }
 
-    public function council($cob) {
+    public function council($cob)
+    {
         if (!empty($cob) && $cob != 'all') {
             $councils = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->orderBy('short_name')->get();
         } else {
@@ -37,7 +41,8 @@ class LPHSController extends BaseController {
         return $councils;
     }
 
-    public function result($result, $filename, $output = 'excel') {
+    public function result($result, $filename, $output = 'excel')
+    {
         if ($output == 'excel') {
             Excel::create($filename, function ($excel) use ($filename, $result) {
                 $excel->sheet($filename, function ($sheet) use ($result) {
@@ -49,7 +54,8 @@ class LPHSController extends BaseController {
         return '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
     }
 
-    public function removeJMB($cob) {
+    public function removeJMB($cob)
+    {
         $council = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->firstOrFail();
 
         User::where('company_id', $council->id)->where('remarks', 'Created by System')->delete();
@@ -57,7 +63,8 @@ class LPHSController extends BaseController {
         return 'Success delete';
     }
 
-    public function createJMB($cob = null) {
+    public function createJMB($cob = null)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -70,7 +77,7 @@ class LPHSController extends BaseController {
                     if ($file_lists) {
                         foreach ($file_lists as $files) {
                             if (!$files->jmb) {
-                                
+
                                 $raw_file_no = preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no);
                                 $generated_file_no = str_replace(' ', '', $raw_file_no);
 
@@ -134,7 +141,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'JMB_' . $council->short_name);
     }
 
-    public function createJMBBak($cob) {
+    public function createJMBBak($cob)
+    {
         $council = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->firstOrFail();
         $filename = 'JMB_' . $council->short_name;
 
@@ -213,7 +221,8 @@ class LPHSController extends BaseController {
         })->download('xlsx');
     }
 
-    public function finance($cob = null, $year = null) {
+    public function finance($cob = null, $year = null)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -224,24 +233,24 @@ class LPHSController extends BaseController {
                  * Finance
                  */
                 $total_finance = DB::table('finance_file')
-                        ->leftJoin('files', 'finance_file.file_id', '=', 'files.id')
+                    ->leftJoin('files', 'finance_file.file_id', '=', 'files.id')
+                    ->where('finance_file.year', $year)
+                    ->where('files.company_id', $council->id)
+                    ->where('finance_file.company_id', $council->id)
+                    ->where('files.is_deleted', 0)
+                    ->where('finance_file.is_deleted', 0)
+                    ->count();
+
+                for ($month = 1; $month <= 12; $month++) {
+                    $finance = DB::table('finance_file')
+                        ->join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->where('finance_file.month', $month)
                         ->where('finance_file.year', $year)
                         ->where('files.company_id', $council->id)
                         ->where('finance_file.company_id', $council->id)
                         ->where('files.is_deleted', 0)
                         ->where('finance_file.is_deleted', 0)
                         ->count();
-
-                for ($month = 1; $month <= 12; $month++) {
-                    $finance = DB::table('finance_file')
-                            ->join('files', 'finance_file.file_id', '=', 'files.id')
-                            ->where('finance_file.month', $month)
-                            ->where('finance_file.year', $year)
-                            ->where('files.company_id', $council->id)
-                            ->where('finance_file.company_id', $council->id)
-                            ->where('files.is_deleted', 0)
-                            ->where('finance_file.is_deleted', 0)
-                            ->count();
 
                     $financeList[$month] = $finance;
                 }
@@ -273,7 +282,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Finance_' . $year);
     }
 
-    public function developer($cob = null) {
+    public function developer($cob = null)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -295,11 +305,11 @@ class LPHSController extends BaseController {
                          * Developer
                          */
                         $developer = DB::table('developer')
-                                ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                                ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                                ->select('developer.*')
-                                ->where('files.id', $files->id)
-                                ->first();
+                            ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
+                            ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                            ->select('developer.*')
+                            ->where('files.id', $files->id)
+                            ->first();
 
                         if (!empty($developer)) {
                             $total_developer = $total_developer + count($developer);
@@ -349,7 +359,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Developer');
     }
 
-    public function strata($cob = null) {
+    public function strata($cob = null)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -504,7 +515,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Strata');
     }
 
-    public function management($cob) {
+    public function management($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -530,7 +542,6 @@ class LPHSController extends BaseController {
                              */
                             if ($files->management->is_jmb) {
                                 if ($files->management->is_mc && $files->managementMC) {
-                                    
                                 } else if ($files->managementJMB) {
                                     $jmb++;
                                 }
@@ -581,7 +592,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Management');
     }
 
-    public function jmb($cob) {
+    public function jmb($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -706,7 +718,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'JMB');
     }
 
-    public function mc($cob) {
+    public function mc($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -829,7 +842,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'MC');
     }
 
-    public function agent($cob) {
+    public function agent($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -938,7 +952,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Agent');
     }
 
-    public function others($cob) {
+    public function others($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -1040,7 +1055,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Others');
     }
 
-    public function agm($cob) {
+    public function agm($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -1251,7 +1267,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'AGM');
     }
 
-    public function owner($cob) {
+    public function owner($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -1382,7 +1399,8 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Owner');
     }
 
-    public function tenant($cob) {
+    public function tenant($cob)
+    {
         $result = [];
 
         $councils = $this->council($cob);
@@ -1513,57 +1531,58 @@ class LPHSController extends BaseController {
         return $this->result($result, $filename = 'Tenant');
     }
 
-    public function updateJMBExpiration($cob = null) {
+    public function updateJMBExpiration($cob = null)
+    {
         $councils = $this->council($cob);
-        if($councils) {
-            foreach($councils as $council) {
+        if ($councils) {
+            foreach ($councils as $council) {
                 $jmb_role = Role::where('name', Role::JMB)->pluck('id');
-                $users = User::where('role',$jmb_role)
-                                ->where('company_id',$council->id)
-                                ->where('remarks','Created by System')
-                                ->where('is_active',1)
-                                ->where('is_deleted',0)
-                                ->get();
-                                
-                foreach($users as $user) {
+                $users = User::where('role', $jmb_role)
+                    ->where('company_id', $council->id)
+                    ->where('remarks', 'Created by System')
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->get();
+
+                foreach ($users as $user) {
                     $user->end_date = '2022-12-31';
                     $user->save();
                 }
-
             }
         }
 
         return 'update done';
     }
 
-    public function updateRatingSummary() {
-        if(Auth::check() && Auth::user()->getAdmin()) {
+    public function updateRatingSummary()
+    {
+        if (Auth::check() && Auth::user()->getAdmin()) {
             $items = Scoring::where('is_deleted', 0)->get();
 
-            foreach($items as $item) {
+            foreach ($items as $item) {
                 $item_date = date('Y-m-d', strtotime($item->updated_at));
-                if($item_date < date('Y-m-d') && date('Y-m-d') == '2021-09-22') {
-                    $item->score1 = ($item->score1 > 0)? (($item->score1 == 5)? $item->score1 : $item->score1 + 1) : 1;
-                    $item->score2 = ($item->score2 > 0)? (($item->score2 == 5)? $item->score2 : $item->score2 + 1) : 1;
-                    $item->score3 = ($item->score3 > 0)? (($item->score3 == 5)? $item->score3 : $item->score3 + 1) : 1;
-                    $item->score4 = ($item->score4 > 0)? (($item->score4 == 5)? $item->score4 : $item->score4 + 1) : 1;
-                    $item->score5 = ($item->score5 > 0)? (($item->score5 == 5)? $item->score5 : $item->score5 + 1) : 1;
-                    $item->score6 = ($item->score6 > 0)? (($item->score6 == 5)? $item->score6 : $item->score6 + 1) : 1;
-                    $item->score7 = ($item->score7 > 0)? (($item->score7 == 5)? $item->score7 : $item->score7 + 1) : 1;
-                    $item->score8 = ($item->score8 > 0)? (($item->score8 == 5)? $item->score8 : $item->score8 + 1) : 1;
-                    $item->score9 = ($item->score9 > 0)? (($item->score9 == 5)? $item->score9 : $item->score9 + 1) : 1;
-                    $item->score10 = ($item->score10 > 0)? (($item->score10 == 5)? $item->score10 : $item->score10 + 1) : 1;
-                    $item->score11 = ($item->score11 > 0)? (($item->score11 == 5)? $item->score11 : $item->score11 + 1) : 1;
-                    $item->score12 = ($item->score12 > 0)? (($item->score12 == 5)? $item->score12 : $item->score12 + 1) : 1;
-                    $item->score13 = ($item->score13 > 0)? (($item->score13 == 5)? $item->score13 : $item->score13 + 1) : 1;
-                    $item->score14 = ($item->score14 > 0)? (($item->score14 == 5)? $item->score14 : $item->score14 + 1) : 1;
-                    $item->score15 = ($item->score15 > 0)? (($item->score15 == 5)? $item->score15 : $item->score15 + 1) : 1;
-                    $item->score16 = ($item->score16 > 0)? (($item->score16 == 5)? $item->score16 : $item->score16 + 1) : 1;
-                    $item->score17 = ($item->score17 > 0)? (($item->score17 == 5)? $item->score17 : $item->score17 + 1) : 1;
-                    $item->score18 = ($item->score18 > 0)? (($item->score18 == 5)? $item->score18 : $item->score18 + 1) : 1;
-                    $item->score19 = ($item->score19 > 0)? (($item->score19 == 5)? $item->score19 : $item->score19 + 1) : 1;
-                    $item->score20 = ($item->score20 > 0)? (($item->score20 == 5)? $item->score20 : $item->score20 + 1) : 1;
-                    $item->score21 = ($item->score21 > 0)? (($item->score21 == 5)? $item->score21 : $item->score21 + 1) : 1;
+                if ($item_date < date('Y-m-d') && date('Y-m-d') == '2021-09-22') {
+                    $item->score1 = ($item->score1 > 0) ? (($item->score1 == 5) ? $item->score1 : $item->score1 + 1) : 1;
+                    $item->score2 = ($item->score2 > 0) ? (($item->score2 == 5) ? $item->score2 : $item->score2 + 1) : 1;
+                    $item->score3 = ($item->score3 > 0) ? (($item->score3 == 5) ? $item->score3 : $item->score3 + 1) : 1;
+                    $item->score4 = ($item->score4 > 0) ? (($item->score4 == 5) ? $item->score4 : $item->score4 + 1) : 1;
+                    $item->score5 = ($item->score5 > 0) ? (($item->score5 == 5) ? $item->score5 : $item->score5 + 1) : 1;
+                    $item->score6 = ($item->score6 > 0) ? (($item->score6 == 5) ? $item->score6 : $item->score6 + 1) : 1;
+                    $item->score7 = ($item->score7 > 0) ? (($item->score7 == 5) ? $item->score7 : $item->score7 + 1) : 1;
+                    $item->score8 = ($item->score8 > 0) ? (($item->score8 == 5) ? $item->score8 : $item->score8 + 1) : 1;
+                    $item->score9 = ($item->score9 > 0) ? (($item->score9 == 5) ? $item->score9 : $item->score9 + 1) : 1;
+                    $item->score10 = ($item->score10 > 0) ? (($item->score10 == 5) ? $item->score10 : $item->score10 + 1) : 1;
+                    $item->score11 = ($item->score11 > 0) ? (($item->score11 == 5) ? $item->score11 : $item->score11 + 1) : 1;
+                    $item->score12 = ($item->score12 > 0) ? (($item->score12 == 5) ? $item->score12 : $item->score12 + 1) : 1;
+                    $item->score13 = ($item->score13 > 0) ? (($item->score13 == 5) ? $item->score13 : $item->score13 + 1) : 1;
+                    $item->score14 = ($item->score14 > 0) ? (($item->score14 == 5) ? $item->score14 : $item->score14 + 1) : 1;
+                    $item->score15 = ($item->score15 > 0) ? (($item->score15 == 5) ? $item->score15 : $item->score15 + 1) : 1;
+                    $item->score16 = ($item->score16 > 0) ? (($item->score16 == 5) ? $item->score16 : $item->score16 + 1) : 1;
+                    $item->score17 = ($item->score17 > 0) ? (($item->score17 == 5) ? $item->score17 : $item->score17 + 1) : 1;
+                    $item->score18 = ($item->score18 > 0) ? (($item->score18 == 5) ? $item->score18 : $item->score18 + 1) : 1;
+                    $item->score19 = ($item->score19 > 0) ? (($item->score19 == 5) ? $item->score19 : $item->score19 + 1) : 1;
+                    $item->score20 = ($item->score20 > 0) ? (($item->score20 == 5) ? $item->score20 : $item->score20 + 1) : 1;
+                    $item->score21 = ($item->score21 > 0) ? (($item->score21 == 5) ? $item->score21 : $item->score21 + 1) : 1;
                     $scorings_A = ((($item->score1 + $item->score2 + $item->score3 + $item->score4 + $item->score5) / 25) * 25);
                     $scorings_B = ((($item->score6 + $item->score7 + $item->score8 + $item->score9 + $item->score10) / 25) * 25);
                     $scorings_C = ((($item->score11 + $item->score12 + $item->score13 + $item->score14) / 20) * 20);
@@ -1590,4 +1609,235 @@ class LPHSController extends BaseController {
         }
     }
 
+    public function odesiLife($cob = null)
+    {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $files) {
+                        if ($files->strata) {
+                            $total_unit = 0;
+                            if ($files->strata->residential) {
+                                if ($files->strata->residential->unit_no > 0) {
+                                    $total_unit = $total_unit + $files->strata->residential->unit_no;
+                                }
+                            }
+                            if ($files->strata->commercial) {
+                                if ($files->strata->commercial->unit_no > 0) {
+                                    $total_unit = $total_unit + $files->strata->commercial->unit_no;
+                                }
+                            }
+
+                            $developer = '';
+                            if ($files->managementDeveloper) {
+                                if ($files->managementDeveloper->name) {
+                                    $developer .= $files->managementDeveloper->name;
+                                }
+                                if ($files->managementDeveloper->address_1) {
+                                    $developer .= ' ' . $files->managementDeveloper->address_1;
+                                }
+                                if ($files->managementDeveloper->address_2) {
+                                    $developer .= ' ' . $files->managementDeveloper->address_2;
+                                }
+                                if ($files->managementDeveloper->address_3) {
+                                    $developer .= ' ' . $files->managementDeveloper->address_3;
+                                }
+                                if ($files->managementDeveloper->address_4) {
+                                    $developer .= ' ' . $files->managementDeveloper->address_4;
+                                }
+                                if ($files->managementDeveloper->poscode) {
+                                    $developer .= ' ' . $files->managementDeveloper->poscode;
+                                }
+                                if ($files->managementDeveloper->city) {
+                                    $developer .= ' ' . $files->managementDeveloper->cities->description . ',';
+                                }
+                                if ($files->managementDeveloper->address2) {
+                                    $developer .= ' ' . $files->managementDeveloper->states->name;
+                                }
+                                if ($files->managementDeveloper->phone_no) {
+                                    $developer .= ' | ' . $files->managementDeveloper->phone_no;
+                                }
+                                if ($files->managementDeveloper->email) {
+                                    $developer .= ' | ' . $files->managementDeveloper->email;
+                                }
+                            }
+
+                            $jmb = '';
+                            if ($files->managementJMB) {
+                                if ($files->managementJMB->name) {
+                                    $jmb .= $files->managementJMB->name;
+                                }
+                                if ($files->managementJMB->address1) {
+                                    $jmb .= ' ' . $files->managementJMB->address1;
+                                }
+                                if ($files->managementJMB->address2) {
+                                    $jmb .= ' ' . $files->managementJMB->address2;
+                                }
+                                if ($files->managementJMB->address3) {
+                                    $jmb .= ' ' . $files->managementJMB->address3;
+                                }
+                                if ($files->managementJMB->address4) {
+                                    $jmb .= ' ' . $files->managementJMB->address4;
+                                }
+                                if ($files->managementJMB->poscode) {
+                                    $jmb .= ' ' . $files->managementJMB->poscode;
+                                }
+                                if ($files->managementJMB->city) {
+                                    $jmb .= ' ' . $files->managementJMB->cities->description . ',';
+                                }
+                                if ($files->managementJMB->address2) {
+                                    $jmb .= ' ' . $files->managementJMB->states->name;
+                                }
+                                if ($files->managementJMB->phone_no) {
+                                    $jmb .= ' | ' . $files->managementJMB->phone_no;
+                                }
+                                if ($files->managementJMB->email) {
+                                    $jmb .= ' | ' . $files->managementJMB->email;
+                                }
+                            }
+
+                            $mc = '';
+                            if ($files->managementMC) {
+                                if ($files->managementMC->name) {
+                                    $mc .= $files->managementMC->name;
+                                }
+                                if ($files->managementMC->address1) {
+                                    $mc .= ' ' . $files->managementMC->address1;
+                                }
+                                if ($files->managementMC->address2) {
+                                    $mc .= ' ' . $files->managementMC->address2;
+                                }
+                                if ($files->managementMC->address3) {
+                                    $mc .= ' ' . $files->managementMC->address3;
+                                }
+                                if ($files->managementMC->address4) {
+                                    $mc .= ' ' . $files->managementMC->address4;
+                                }
+                                if ($files->managementMC->poscode) {
+                                    $mc .= ' ' . $files->managementMC->poscode;
+                                }
+                                if ($files->managementMC->city) {
+                                    $mc .= ' ' . $files->managementMC->cities->description . ',';
+                                }
+                                if ($files->managementMC->address2) {
+                                    $mc .= ' ' . $files->managementMC->states->name;
+                                }
+                                if ($files->managementMC->phone_no) {
+                                    $mc .= ' | ' . $files->managementMC->phone_no;
+                                }
+                                if ($files->managementMC->email) {
+                                    $mc .= ' | ' . $files->managementMC->email;
+                                }
+                            }
+
+                            $agent = '';
+                            if ($files->managementAgent) {
+                                if ($files->managementAgent->name) {
+                                    $agent .= $files->managementAgent->name;
+                                }
+                                if ($files->managementAgent->address1) {
+                                    $agent .= ' ' . $files->managementAgent->address1;
+                                }
+                                if ($files->managementAgent->address2) {
+                                    $agent .= ' ' . $files->managementAgent->address2;
+                                }
+                                if ($files->managementAgent->address3) {
+                                    $agent .= ' ' . $files->managementAgent->address3;
+                                }
+                                if ($files->managementAgent->address4) {
+                                    $agent .= ' ' . $files->managementAgent->address4;
+                                }
+                                if ($files->managementAgent->poscode) {
+                                    $agent .= ' ' . $files->managementAgent->poscode;
+                                }
+                                if ($files->managementAgent->city) {
+                                    $agent .= ' ' . $files->managementAgent->cities->description . ',';
+                                }
+                                if ($files->managementAgent->address2) {
+                                    $agent .= ' ' . $files->managementAgent->states->name;
+                                }
+                                if ($files->managementAgent->phone_no) {
+                                    $agent .= ' | ' . $files->managementAgent->phone_no;
+                                }
+                                if ($files->managementAgent->email) {
+                                    $agent .= ' | ' . $files->managementAgent->email;
+                                }
+                            }
+
+                            $others = '';
+                            if ($files->managementOthers) {
+                                if ($files->managementOthers->name) {
+                                    $others .= $files->managementOthers->name;
+                                }
+                                if ($files->managementOthers->address1) {
+                                    $others .= ' ' . $files->managementOthers->address1;
+                                }
+                                if ($files->managementOthers->address2) {
+                                    $others .= ' ' . $files->managementOthers->address2;
+                                }
+                                if ($files->managementOthers->address3) {
+                                    $others .= ' ' . $files->managementOthers->address3;
+                                }
+                                if ($files->managementOthers->address4) {
+                                    $others .= ' ' . $files->managementOthers->address4;
+                                }
+                                if ($files->managementOthers->poscode) {
+                                    $others .= ' ' . $files->managementOthers->poscode;
+                                }
+                                if ($files->managementOthers->city) {
+                                    $others .= ' ' . $files->managementOthers->cities->description . ',';
+                                }
+                                if ($files->managementOthers->address2) {
+                                    $others .= ' ' . $files->managementOthers->states->name;
+                                }
+                                if ($files->managementOthers->phone_no) {
+                                    $others .= ' | ' . $files->managementOthers->phone_no;
+                                }
+                                if ($files->managementOthers->email) {
+                                    $others .= ' | ' . $files->managementOthers->email;
+                                }
+                            }
+
+                            $person_in_charge = '';
+                            if ($files->personInCharge) {
+                                foreach ($files->personInCharge as $pic) {
+                                    if ($pic->user->full_name) {
+                                        $person_in_charge .= $pic->user->full_name;
+                                    }
+                                    if ($pic->user->phone_no) {
+                                        $person_in_charge .= ' | ' . $pic->user->phone_no;
+                                    }
+                                    if ($pic->user->phone_no) {
+                                        $person_in_charge .= ' | ' . $pic->user->email . ' | ';
+                                    }
+                                }
+                            }
+
+                            $result[$files->id] = [
+                                trans('Council') => $council->name . ' (' . $council->short_name . ')',
+                                trans('Building Name') => $files->strata->name,
+                                trans('Category') => ($files->strata->categories ? $files->strata->categories->description : ''),
+                                trans('Land Title') => ($files->strata->landTitle ? $files->strata->landTitle->description : ''),
+                                trans('Number of Block') => $files->strata->block_no,
+                                trans('Floor') => $files->strata->total_floor,
+                                trans('Total Unit') => $total_unit,
+                                trans('Developer') => $developer,
+                                trans('JMB') => $jmb,
+                                trans('MC') => $mc,
+                                trans('Agent') => $agent,
+                                trans('Others') => $others,
+                                trans('Person In Charge') => $person_in_charge,
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = strtoupper($cob));
+    }
 }

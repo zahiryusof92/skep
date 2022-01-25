@@ -108,6 +108,10 @@ class Files extends Eloquent {
         return $this->hasMany('AJKDetails', 'file_id');
     }
 
+    public function personInCharge() {
+        return $this->hasMany('HousingSchemeUser', 'file_id');
+    }
+
     public static function getInsuranceReportByCOB($cob_id = NULL) {
         $result = array();
 
