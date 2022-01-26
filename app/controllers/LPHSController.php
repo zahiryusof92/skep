@@ -1867,6 +1867,13 @@ class LPHSController extends BaseController
                             $result[] = [
                                 trans('Council') => $council->name . ' (' . $council->short_name . ')',
                                 trans('Building Name') => $files->strata->name,
+                                trans('Address 1') => $files->strata->address1,
+                                trans('Address 2') => $files->strata->address2,
+                                trans('Address 3') => $files->strata->address3,
+                                trans('Address 4') => $files->strata->address4,
+                                trans('Postcode') => $files->strata->poscode,
+                                trans('City') => ($files->strata->city ? $files->strata->cities->description : ''),
+                                trans('State') => ($files->strata->state ? $files->strata->states->name : ''),
                                 trans('Land Title') => ($files->strata->landTitle ? $files->strata->landTitle->description : ''),
                                 trans('Category') => ($files->strata->categories ? $files->strata->categories->description : ''),
                                 trans('No. of Block') => $files->strata->block_no,
