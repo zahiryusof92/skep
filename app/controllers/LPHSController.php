@@ -1632,211 +1632,313 @@ class LPHSController extends BaseController
                                 }
                             }
 
-                            $developer = '';
+                            $developer_name = '';
+                            $developer_address1 = '';
+                            $developer_address2 = '';
+                            $developer_address3 = '';
+                            $developer_address4 = '';
+                            $developer_postcode = '';
+                            $developer_city = '';
+                            $developer_state = '';
+                            $developer_phone_no = '';
+                            $developer_email = '';
                             if ($files->managementDeveloper) {
                                 if ($files->managementDeveloper->name) {
-                                    $developer .= $files->managementDeveloper->name;
+                                    $developer_name = $files->managementDeveloper->name;
                                 }
                                 if ($files->managementDeveloper->address_1) {
-                                    $developer .= ' ' . $files->managementDeveloper->address_1;
+                                    $developer_address1 = $files->managementDeveloper->address_1;
                                 }
                                 if ($files->managementDeveloper->address_2) {
-                                    $developer .= ' ' . $files->managementDeveloper->address_2;
+                                    $developer_address2 = $files->managementDeveloper->address_2;
                                 }
                                 if ($files->managementDeveloper->address_3) {
-                                    $developer .= ' ' . $files->managementDeveloper->address_3;
+                                    $developer_address3 = $files->managementDeveloper->address_3;
                                 }
                                 if ($files->managementDeveloper->address_4) {
-                                    $developer .= ' ' . $files->managementDeveloper->address_4;
+                                    $developer_address4 = $files->managementDeveloper->address_4;
                                 }
                                 if ($files->managementDeveloper->poscode) {
-                                    $developer .= ' ' . $files->managementDeveloper->poscode;
+                                    $developer_postcode = $files->managementDeveloper->poscode;
                                 }
                                 if ($files->managementDeveloper->city) {
-                                    $developer .= ' ' . $files->managementDeveloper->cities->description . ',';
+                                    $developer_city = $files->managementDeveloper->cities->description;
                                 }
                                 if ($files->managementDeveloper->state) {
-                                    $developer .= ' ' . $files->managementDeveloper->states->name;
+                                    $developer_state = $files->managementDeveloper->states->name;
                                 }
                                 if ($files->managementDeveloper->phone_no) {
-                                    $developer .= ' | ' . $files->managementDeveloper->phone_no;
+                                    $developer_phone_no = $files->managementDeveloper->phone_no;
                                 }
                                 if ($files->managementDeveloper->email) {
-                                    $developer .= ' | ' . $files->managementDeveloper->email;
+                                    $developer_email = $files->managementDeveloper->email;
                                 }
                             }
 
-                            $jmb = '';
+                            $jmb_name = '';
+                            $jmb_address1 = '';
+                            $jmb_address2 = '';
+                            $jmb_address3 = '';
+                            $jmb_address4 = '';
+                            $jmb_postcode = '';
+                            $jmb_city = '';
+                            $jmb_state = '';
+                            $jmb_phone_no = '';
+                            $jmb_email = '';
                             if ($files->managementJMB) {
                                 if ($files->managementJMB->name) {
-                                    $jmb .= $files->managementJMB->name;
+                                    $jmb_name = $files->managementJMB->name;
                                 }
                                 if ($files->managementJMB->address1) {
-                                    $jmb .= ' ' . $files->managementJMB->address1;
+                                    $jmb_address1 = $files->managementJMB->address1;
                                 }
                                 if ($files->managementJMB->address2) {
-                                    $jmb .= ' ' . $files->managementJMB->address2;
+                                    $jmb_address2 = $files->managementJMB->address2;
                                 }
                                 if ($files->managementJMB->address3) {
-                                    $jmb .= ' ' . $files->managementJMB->address3;
+                                    $jmb_address3 = $files->managementJMB->address3;
                                 }
                                 if ($files->managementJMB->address4) {
-                                    $jmb .= ' ' . $files->managementJMB->address4;
+                                    $jmb_address4 = $files->managementJMB->address4;
                                 }
                                 if ($files->managementJMB->poscode) {
-                                    $jmb .= ' ' . $files->managementJMB->poscode;
+                                    $jmb_postcode = $files->managementJMB->poscode;
                                 }
                                 if ($files->managementJMB->city) {
-                                    $jmb .= ' ' . $files->managementJMB->cities->description . ',';
+                                    $jmb_city = $files->managementJMB->cities->description;
                                 }
                                 if ($files->managementJMB->state) {
-                                    $jmb .= ' ' . $files->managementJMB->states->name;
+                                    $jmb_state = $files->managementJMB->states->name;
                                 }
                                 if ($files->managementJMB->phone_no) {
-                                    $jmb .= ' | ' . $files->managementJMB->phone_no;
+                                    $jmb_phone_no = $files->managementJMB->phone_no;
                                 }
                                 if ($files->managementJMB->email) {
-                                    $jmb .= ' | ' . $files->managementJMB->email;
+                                    $jmb_email = $files->managementJMB->email;
                                 }
                             }
 
-                            $mc = '';
+                            $mc_name = '';
+                            $mc_address1 = '';
+                            $mc_address2 = '';
+                            $mc_address3 = '';
+                            $mc_address4 = '';
+                            $mc_postcode = '';
+                            $mc_city = '';
+                            $mc_state = '';
+                            $mc_phone_no = '';
+                            $mc_email = '';
                             if ($files->managementMC) {
                                 if ($files->managementMC->name) {
-                                    $mc .= $files->managementMC->name;
+                                    $mc_name = $files->managementMC->name;
                                 }
                                 if ($files->managementMC->address1) {
-                                    $mc .= ' ' . $files->managementMC->address1;
+                                    $mc_address1 = $files->managementMC->address1;
                                 }
                                 if ($files->managementMC->address2) {
-                                    $mc .= ' ' . $files->managementMC->address2;
+                                    $mc_address2 = $files->managementMC->address2;
                                 }
                                 if ($files->managementMC->address3) {
-                                    $mc .= ' ' . $files->managementMC->address3;
+                                    $mc_address3 = $files->managementMC->address3;
                                 }
                                 if ($files->managementMC->address4) {
-                                    $mc .= ' ' . $files->managementMC->address4;
+                                    $mc_address4 = $files->managementMC->address4;
                                 }
                                 if ($files->managementMC->poscode) {
-                                    $mc .= ' ' . $files->managementMC->poscode;
+                                    $mc_postcode = $files->managementMC->poscode;
                                 }
                                 if ($files->managementMC->city) {
-                                    $mc .= ' ' . $files->managementMC->cities->description . ',';
+                                    $mc_city = $files->managementMC->cities->description;
                                 }
                                 if ($files->managementMC->state) {
-                                    $mc .= ' ' . $files->managementMC->states->name;
+                                    $mc_state = $files->managementMC->states->name;
                                 }
                                 if ($files->managementMC->phone_no) {
-                                    $mc .= ' | ' . $files->managementMC->phone_no;
+                                    $mc_phone_no = $files->managementMC->phone_no;
                                 }
                                 if ($files->managementMC->email) {
-                                    $mc .= ' | ' . $files->managementMC->email;
+                                    $mc_email = $files->managementMC->email;
                                 }
                             }
 
-                            $agent = '';
+                            $agent_name = '';
+                            $agent_address1 = '';
+                            $agent_address2 = '';
+                            $agent_address3 = '';
+                            $agent_address4 = '';
+                            $agent_postcode = '';
+                            $agent_city = '';
+                            $agent_state = '';
+                            $agent_phone_no = '';
+                            $agent_email = '';
                             if ($files->managementAgent) {
                                 if ($files->managementAgent->name) {
-                                    $agent .= $files->managementAgent->name;
+                                    $agent_name = $files->managementAgent->name;
                                 }
                                 if ($files->managementAgent->address1) {
-                                    $agent .= ' ' . $files->managementAgent->address1;
+                                    $agent_address1 = $files->managementAgent->address1;
                                 }
                                 if ($files->managementAgent->address2) {
-                                    $agent .= ' ' . $files->managementAgent->address2;
+                                    $agent_address2 = $files->managementAgent->address2;
                                 }
                                 if ($files->managementAgent->address3) {
-                                    $agent .= ' ' . $files->managementAgent->address3;
+                                    $agent_address3 = $files->managementAgent->address3;
                                 }
                                 if ($files->managementAgent->address4) {
-                                    $agent .= ' ' . $files->managementAgent->address4;
+                                    $agent_address4 = $files->managementAgent->address4;
                                 }
                                 if ($files->managementAgent->poscode) {
-                                    $agent .= ' ' . $files->managementAgent->poscode;
+                                    $agent_postcode = $files->managementAgent->poscode;
                                 }
                                 if ($files->managementAgent->city) {
-                                    $agent .= ' ' . $files->managementAgent->cities->description . ',';
+                                    $agent_city = $files->managementAgent->cities->description;
                                 }
                                 if ($files->managementAgent->state) {
-                                    $agent .= ' ' . $files->managementAgent->states->name;
+                                    $agent_state = $files->managementAgent->states->name;
                                 }
                                 if ($files->managementAgent->phone_no) {
-                                    $agent .= ' | ' . $files->managementAgent->phone_no;
+                                    $agent_phone_no = $files->managementAgent->phone_no;
                                 }
                                 if ($files->managementAgent->email) {
-                                    $agent .= ' | ' . $files->managementAgent->email;
+                                    $agent_email = $files->managementAgent->email;
                                 }
                             }
 
-                            $others = '';
+                            $others_name = '';
+                            $others_address1 = '';
+                            $others_address2 = '';
+                            $others_address3 = '';
+                            $others_address4 = '';
+                            $others_postcode = '';
+                            $others_city = '';
+                            $others_state = '';
+                            $others_phone_no = '';
+                            $others_email = '';
                             if ($files->managementOthers) {
                                 if ($files->managementOthers->name) {
-                                    $others .= $files->managementOthers->name;
+                                    $others_name = $files->managementOthers->name;
                                 }
                                 if ($files->managementOthers->address1) {
-                                    $others .= ' ' . $files->managementOthers->address1;
+                                    $others_address1 = $files->managementOthers->address1;
                                 }
                                 if ($files->managementOthers->address2) {
-                                    $others .= ' ' . $files->managementOthers->address2;
+                                    $others_address2 = $files->managementOthers->address2;
                                 }
                                 if ($files->managementOthers->address3) {
-                                    $others .= ' ' . $files->managementOthers->address3;
+                                    $others_address3 = $files->managementOthers->address3;
                                 }
                                 if ($files->managementOthers->address4) {
-                                    $others .= ' ' . $files->managementOthers->address4;
+                                    $others_address4 = $files->managementOthers->address4;
                                 }
                                 if ($files->managementOthers->poscode) {
-                                    $others .= ' ' . $files->managementOthers->poscode;
+                                    $others_postcode = $files->managementOthers->poscode;
                                 }
                                 if ($files->managementOthers->city) {
-                                    $others .= ' ' . $files->managementOthers->cities->description . ',';
+                                    $others_city = $files->managementOthers->cities->description;
                                 }
                                 if ($files->managementOthers->state) {
-                                    $others .= ' ' . $files->managementOthers->states->name;
+                                    $others_state = $files->managementOthers->states->name;
                                 }
                                 if ($files->managementOthers->phone_no) {
-                                    $others .= ' | ' . $files->managementOthers->phone_no;
+                                    $others_phone_no = $files->managementOthers->phone_no;
                                 }
                                 if ($files->managementOthers->email) {
-                                    $others .= ' | ' . $files->managementOthers->email;
+                                    $others_email = $files->managementOthers->email;
                                 }
                             }
 
-                            $person_in_charge = '';
+                            $pic_name = '';
+                            $pic_phone_no = '';
+                            $pic_email = '';
                             if ($files->personInCharge) {
                                 foreach ($files->personInCharge as $pic) {
                                     if ($pic->user->full_name) {
-                                        $person_in_charge .= $pic->user->full_name;
+                                        $pic_name = $pic->user->full_name;
                                     }
                                     if ($pic->user->phone_no) {
-                                        $person_in_charge .= ' | ' . $pic->user->phone_no;
+                                        $pic_phone_no = $pic->user->phone_no;
                                     }
-                                    if ($pic->user->phone_no) {
-                                        $person_in_charge .= ' | ' . $pic->user->email . ' | ';
+                                    if ($pic->user->email) {
+                                        $pic_email = $pic->user->email;
                                     }
                                 }
                             }
 
-                            $result[$files->id] = [
+                            $result[] = [
                                 trans('Council') => $council->name . ' (' . $council->short_name . ')',
                                 trans('Building Name') => $files->strata->name,
-                                trans('Category') => ($files->strata->categories ? $files->strata->categories->description : ''),
                                 trans('Land Title') => ($files->strata->landTitle ? $files->strata->landTitle->description : ''),
-                                trans('Number of Block') => $files->strata->block_no,
-                                trans('Floor') => $files->strata->total_floor,
+                                trans('Category') => ($files->strata->categories ? $files->strata->categories->description : ''),
+                                trans('No. of Block') => $files->strata->block_no,
+                                trans('Total Floor') => $files->strata->total_floor,
                                 trans('Total Unit') => $total_unit,
-                                trans('Developer') => $developer,
-                                trans('JMB') => $jmb,
-                                trans('MC') => $mc,
-                                trans('Agent') => $agent,
-                                trans('Others') => $others,
-                                trans('Person In Charge') => $person_in_charge,
+
+                                trans('PIC Name') => $pic_name,
+                                trans('PIC Phone No') => $pic_phone_no,
+                                trans('PIC E-mail') => $pic_email,
+
+                                trans('Developer Name') => $developer_name,
+                                trans('Developer Address 1') => $developer_address1,
+                                trans('Developer Address 2') => $developer_address2,
+                                trans('Developer Address 3') => $developer_address3,
+                                trans('Developer Address 4') => $developer_address4,
+                                trans('Developer Postcode') => $developer_postcode,
+                                trans('Developer City') => $developer_city,
+                                trans('Developer State') => $developer_state,
+                                trans('Developer Phone No') => $developer_phone_no,
+                                trans('Developer E-mail') => $developer_email,
+
+                                trans('JMB Name') => $jmb_name,
+                                trans('JMB Address 1') => $jmb_address1,
+                                trans('JMB Address 2') => $jmb_address2,
+                                trans('JMB Address 3') => $jmb_address3,
+                                trans('JMB Address 4') => $jmb_address4,
+                                trans('JMB Postcode') => $jmb_postcode,
+                                trans('JMB City') => $jmb_city,
+                                trans('JMB State') => $jmb_state,
+                                trans('JMB Phone No') => $jmb_phone_no,
+                                trans('JMB E-mail') => $jmb_email,
+
+                                trans('MC Name') => $mc_name,
+                                trans('MC Address 1') => $mc_address1,
+                                trans('MC Address 2') => $mc_address2,
+                                trans('MC Address 3') => $mc_address3,
+                                trans('MC Address 4') => $mc_address4,
+                                trans('MC Postcode') => $mc_postcode,
+                                trans('MC City') => $mc_city,
+                                trans('MC State') => $mc_state,
+                                trans('MC Phone No') => $mc_phone_no,
+                                trans('MC E-mail') => $mc_email,
+
+                                trans('Agent Name') => $agent_name,
+                                trans('Agent Address 1') => $agent_address1,
+                                trans('Agent Address 2') => $agent_address2,
+                                trans('Agent Address 3') => $agent_address3,
+                                trans('Agent Address 4') => $agent_address4,
+                                trans('Agent Postcode') => $agent_postcode,
+                                trans('Agent City') => $agent_city,
+                                trans('Agent State') => $agent_state,
+                                trans('Agent Phone No') => $agent_phone_no,
+                                trans('Agent E-mail') => $agent_email,
+
+                                trans('Others Name') => $others_name,
+                                trans('Others Address 1') => $others_address1,
+                                trans('Others Address 2') => $others_address2,
+                                trans('Others Address 3') => $others_address3,
+                                trans('Others Address 4') => $others_address4,
+                                trans('Others Postcode') => $others_postcode,
+                                trans('Others City') => $others_city,
+                                trans('Others State') => $others_state,
+                                trans('Others Phone No') => $others_phone_no,
+                                trans('Others E-mail') => $others_email,
                             ];
                         }
                     }
                 }
             }
         }
+
+        // return '<pre>' . print_r($result, true) . '</pre>';
 
         return $this->result($result, $filename = strtoupper($cob));
     }
