@@ -12,7 +12,7 @@ class BuyerSync
     {
         $item = $data['item'];
         $file_id = $data['file_id'];
-        $buyer = Buyer::where('email', $item['owner_email'])->first();
+        $buyer = Buyer::where('email', $item['owner_email'])->where('file_id', $file_id)->first();
         if(empty($buyer)) {
             $buyer = new Buyer();
             $buyer->file_id = $file_id;
