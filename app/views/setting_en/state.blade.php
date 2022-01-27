@@ -58,9 +58,9 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#state').DataTable({
             "sAjaxSource": "{{URL::action('SettingController@getState')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[ 2, "asc" ]],
-            responsive: true,
+            "responsive": true,
             "aoColumnDefs": [
                 {
                     "bSortable": false,

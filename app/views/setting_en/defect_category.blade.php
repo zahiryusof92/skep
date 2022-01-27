@@ -61,9 +61,9 @@ foreach ($user_permission as $permissions) {
     $(document).ready(function () {
         oTable = $('#defect_category').DataTable({
             "sAjaxSource": "{{URL::action('SettingController@getDefectCategory')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[1, "asc"]],
-            responsive: true
+            "responsive": true
         });
     });
 

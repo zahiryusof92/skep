@@ -104,7 +104,7 @@ foreach ($user_permission as $permission) {
             processing: true,
             serverSide: true,
             ajax: "{{ URL::action('AdminController@getMemo') }}",
-            lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
+            lengthMenu: [[5, 10, 50], [5, 10, 50]],
             pageLength: 5,
             order: [[0, "desc"]],
             responsive: true,

@@ -119,10 +119,7 @@ $zone = [
         oTable = $('#filelist').DataTable({
             "bProcessing": true,
             "sAjaxSource": "{{URL::action('ReportController@getStrataProfile')}}",
-            "lengthMenu": [
-                [15, 30, 50, 100, -1],
-                [15, 30, 50, 100, "All"]
-            ],
+            "lengthMenu": [[15, 30, 50], [15, 30, 50]],
             "sorting": [
                 [2, "asc"],
                 [3, "asc"]

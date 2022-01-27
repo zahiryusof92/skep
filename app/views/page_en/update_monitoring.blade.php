@@ -1069,7 +1069,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         $('#agm_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM', $file->id)}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
@@ -1082,7 +1082,7 @@ foreach ($user_permission as $permission) {
         
         $('#agm_by_mc_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGMByMC', $file->id)}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
@@ -1095,7 +1095,7 @@ foreach ($user_permission as $permission) {
         
         $('#ajk_details_list').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAJK', $file->id)}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,
             "aoColumnDefs": [

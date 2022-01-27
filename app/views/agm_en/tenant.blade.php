@@ -262,6 +262,7 @@ foreach ($user_permission as $permission) {
                 {data: 'race', name: 'tenant.race_id'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
+            lengthMenu: [[10, 25, 50], [10, 25, 50]],
             order: [[0, "asc"], [1, "asc"], [3, "asc"]],
             responsive: false
         });

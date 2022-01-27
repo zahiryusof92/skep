@@ -69,7 +69,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{ URL::action('DraftController@getFileList') }}",
-            lengthMenu: [[15, 30, 50, 100, -1], [15, 30, 50, 100, "All"]],
+            lengthMenu: [[15, 30, 50], [15, 30, 50]],
             pageLength: 30,
             order: [[2, "asc"], [1, 'asc']],
             responsive: false,

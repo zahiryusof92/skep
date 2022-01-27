@@ -57,9 +57,9 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#fileprefix').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getFilePrefix')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[15, 30, 50], [15, 30, 50]],
             "order": [[ 0, "asc" ]],
-            responsive: true,
+            "responsive": true,
             "aoColumnDefs": [
                 {
                     "bSortable": false,

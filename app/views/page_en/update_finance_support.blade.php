@@ -81,7 +81,7 @@ foreach ($user_permission as $permission) {
     $(financeSupport).ready(function () {
         oTable = $('#financeSupport').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getFinanceSupport', $file->id)}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,
             "aoColumnDefs": [

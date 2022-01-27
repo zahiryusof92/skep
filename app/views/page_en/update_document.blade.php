@@ -71,7 +71,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#document').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getDocument', $files->id)}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[2, "asc"]],
             "responsive": true,
             "aoColumnDefs": [

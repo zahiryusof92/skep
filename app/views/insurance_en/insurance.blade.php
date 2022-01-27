@@ -105,7 +105,7 @@ foreach ($user_permission as $permissions) {
     $(insurance).ready(function () {
         oTable = $('#insurance').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getInsurance', 'All')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,
             "aoColumnDefs": [
