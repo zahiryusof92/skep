@@ -798,6 +798,7 @@ class ReportController extends BaseController {
 
         if ($access_permission) {
             $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
+            $tnb = '';
 
             $files = Files::find($id);
             if ($files) {
@@ -842,6 +843,7 @@ class ReportController extends BaseController {
 
                 if ($files->other) {
                     $type_meter = $files->other->water_meter;
+                    $tnb = ucfirst($files->other->tnb);
                 }
 
                 if ($files->finance) {
@@ -892,6 +894,7 @@ class ReportController extends BaseController {
                 'lif' => $lif,
                 'lif_unit' => $lif_unit,
                 'type_meter' => $type_meter,
+                'tnb' => $tnb,
                 'purata_dikutip' => $purata_dikutip
             );
 
