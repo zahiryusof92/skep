@@ -8,4 +8,8 @@ class Company extends Eloquent {
         return $this->hasMany('Files', 'company_id')->orderBy('files.id');
     }
 
+    public function users() {
+        return $this->hasMany('User', 'company_id');
+    }
+
 }

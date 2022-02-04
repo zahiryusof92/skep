@@ -193,4 +193,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return $balance;
     }
 
+    public function auditTrails() {
+        return $this->hasMany('AuditTrail', 'audit_by')->orderBy('id');
+    }
+
+    public function hasSignedIn() {
+        return $this->hasOne('AuditTrail', 'audit_by')->where('remarks', 'like', '%' . 'is signed' . '%');
+    }
+
 }
