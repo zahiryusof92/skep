@@ -54,5 +54,7 @@ class BuyerSync
             $auditTrail->save();
 
         }
+
+        $job->delete();
     }
 }

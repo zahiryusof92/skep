@@ -1,5 +1,7 @@
 <?php
 
+namespace Api;
+
 use Carbon\Carbon;
 
 class PrintController extends BaseController {
