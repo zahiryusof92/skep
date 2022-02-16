@@ -44,7 +44,7 @@ class AdminController extends BaseController {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_hidden', false)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
             }
@@ -328,7 +328,7 @@ class AdminController extends BaseController {
             $file_no = FilePrefix::where('is_active', 1)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_hidden', false)->where('is_deleted', 0)->orderBy('name')->get();
                 $file_no = FilePrefix::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -442,7 +442,7 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
-            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_hidden', false)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
@@ -499,7 +499,8 @@ class AdminController extends BaseController {
                         ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
                         ->where('files.is_active', '!=', 2)
-                        ->where('files.is_deleted', 0);
+                        ->where('files.is_deleted', 0)
+                        ->where('company.is_hidden', false);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
@@ -572,7 +573,7 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
-            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_hidden', false)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
@@ -629,7 +630,8 @@ class AdminController extends BaseController {
                         ->leftJoin('category', 'strata.category', '=', 'category.id')
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.is_active', 2)
-                        ->where('files.is_deleted', 0);
+                        ->where('files.is_deleted', 0)
+                        ->where('company.is_hidden', false);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
@@ -4929,6 +4931,7 @@ class AdminController extends BaseController {
             $email = $data['email'];
             $image_url = $data['image_url'];
             $nav_image_url = $data['nav_image_url'];
+            $is_hidden = $data['is_hidden'];
 
             $company = new Company();
             $company->name = $name;
@@ -4946,6 +4949,7 @@ class AdminController extends BaseController {
             $company->email = $email;
             $company->image_url = $image_url;
             $company->nav_image_url = $nav_image_url;
+            $company->is_hidden = $is_hidden;
             $success = $company->save();
 
             if ($success) {
@@ -5011,6 +5015,7 @@ class AdminController extends BaseController {
             $email = $data['email'];
             $image_url = $data['image_url'];
             $nav_image_url = $data['nav_image_url'];
+            $is_hidden = $data['is_hidden'];
 
             $company = Company::find($id);
             if (count($company) > 0) {
@@ -5029,6 +5034,7 @@ class AdminController extends BaseController {
                 $company->email = $email;
                 $company->image_url = $image_url;
                 $company->nav_image_url = $nav_image_url;
+                $company->is_hidden = $is_hidden;
                 $success = $company->save();
 
                 if ($success) {

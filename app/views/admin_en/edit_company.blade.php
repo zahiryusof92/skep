@@ -204,6 +204,19 @@ foreach ($user_permission as $permission) {
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('Hidden') }}</label>
+                                        <select class="form-control" id="is_hidden">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            <option value="1" {{ ($company->is_hidden ? "selected" : "") }}>{{ trans('Yes') }}</option>
+                                            <option value="0" {{ (!$company->is_hidden ? "selected" : "") }}>{{ trans('No') }}</option>
+                                        </select>
+                                        <div id="is_hidden_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                         <form role="form">
                             <div class="form-actions">
@@ -361,7 +374,8 @@ foreach ($user_permission as $permission) {
                 fax_no = $("#fax_no").val(),
                 email = $("#email").val(),
                 image_url = $("#image_url").val(),
-                nav_image_url = $("#nav_image_url").val();
+                nav_image_url = $("#nav_image_url").val(),
+                is_hidden = $("#is_hidden").val();
 
         var error = 0;
 
@@ -410,6 +424,11 @@ foreach ($user_permission as $permission) {
             $("#email_error").css("display", "block");
             error = 1;
         }
+        if (is_hidden.trim() == "") {
+            $("#is_hidden_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"hidden"]) }}</span>');
+            $("#is_hidden_error").css("display", "block");
+            error = 1;
+        }
 
         if (error == 0) {
             $.ajax({
@@ -431,6 +450,7 @@ foreach ($user_permission as $permission) {
                     email: email,
                     image_url: image_url,
                     nav_image_url: nav_image_url,
+                    is_hidden: is_hidden,
                     id: '{{$company->id}}'
 
                 },

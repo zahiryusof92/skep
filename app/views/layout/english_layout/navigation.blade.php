@@ -747,7 +747,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(35))
                     <?php
-                    $jmb = Company::where('is_active', 1)->where('short_name', '!=', '')->where('is_deleted', 0)->orderBy('short_name')->get();
+                    $jmb = Company::where('is_active', 1)->where('short_name', '!=', '')->where('is_hidden', false)->where('is_deleted', 0)->orderBy('short_name')->get();
                     ?>
 
                     @foreach ($jmb as $cob)

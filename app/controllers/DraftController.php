@@ -20,7 +20,7 @@ class DraftController extends BaseController {
     public function fileList() {
         if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
             if (empty(Session::get('admin_cob'))) {
-                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_hidden', false)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->get();
             }
@@ -70,7 +70,8 @@ class DraftController extends BaseController {
                         ->select(['files.*', 'strata.id as strata_id'])
                         ->where('files.is_active', '!=', 2)
                         ->where('files.is_deleted', 0)
-                        ->where('file_drafts.is_deleted', 0);
+                        ->where('file_drafts.is_deleted', 0)
+                        ->where('company.is_hidden', false);
             } else {
                 $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
                         ->join('company', 'files.company_id', '=', 'company.id')
