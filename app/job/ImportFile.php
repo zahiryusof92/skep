@@ -221,6 +221,7 @@ class ImportFile
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
             if(empty($house_scheme)) {
                 $house_scheme = new HouseScheme();
+                $house_scheme->file_id = $files->id;
             }
             $house_scheme->name = $name;
             $house_scheme->developer = $developer;
@@ -591,6 +592,7 @@ class ImportFile
             $strata = Strata::where('file_id', $files->id)->first();
             if(empty($strata)) {
                 $strata = new Strata();
+                $strata->file_id = $files->id;
             }
             $strata->title = $strata_title;
             $strata->name = $strata_name;
@@ -689,6 +691,7 @@ class ImportFile
                     $residential = Residential::where('file_id', $files->id)->first();
                     if(empty($residential)) {
                         $residential = new Residential();
+                        $residential->file_id = $files->id;
                     }
                     $residential->strata_id = $strata->id;
                     $residential->unit_no = $residential_unit_no;
@@ -761,6 +764,7 @@ class ImportFile
                     $commercial = Commercial::where('file_id', $files->id)->first();
                     if(empty($commercial)) {
                         $commercial = new Commercial();
+                        $commercial->file_id = $files->id;
                     }
                     $commercial->strata_id = $strata->id;
                     $commercial->unit_no = $commercial_unit_no;
@@ -774,6 +778,7 @@ class ImportFile
                 $facility = Facility::where('file_id', $files->id)->first();
                 if(empty($facility)) {
                     $facility = new Facility();
+                    $facility->file_id = $files->id;
                 }
                 $facility->strata_id = $strata->id;
                 $facility->save();
@@ -822,6 +827,7 @@ class ImportFile
             $management = Management::where('file_id', $files->id)->first();
             if(empty($management)) {
                 $management = new Management();
+                $management->file_id = $files->id;
             }
             $management->is_jmb = $is_jmb;
             $management->is_mc = $is_mc;
@@ -952,6 +958,7 @@ class ImportFile
                     $new_jmb = ManagementJMB::where('file_id', $files->id)->first();
                     if(empty($new_jmb)) {
                         $new_jmb = new ManagementJMB();
+                        $new_jmb->file_id = $files->id;
                     }
                     $new_jmb->management_id = $management->id;
                     $new_jmb->date_formed = $jmb_date_formed;
@@ -1104,6 +1111,7 @@ class ImportFile
                     $new_mc = ManagementMC::where('file_id', $files->id)->first();
                     if(empty($new_mc)) {
                         $new_mc = new ManagementMC();
+                        $new_mc->file_id = $files->id;
                     }
                     $new_mc->management_id = $management->id;
                     $new_mc->date_formed = $mc_date_formed;
@@ -1236,6 +1244,7 @@ class ImportFile
                     $new_agent = ManagementAgent::where('file_id', $files->id)->first();
                     if(empty($new_agent)) {
                         $new_agent = new ManagementAgent();
+                        $new_agent->file_id = $files->id;
                     }
                     $new_agent->management_id = $management->id;
                     $new_agent->selected_by = $agent_selected_by;
@@ -1361,6 +1370,7 @@ class ImportFile
                     $new_others = ManagementOthers::where('file_id', $files->id)->first();
                     if(empty($new_others)) {
                         $new_others = new ManagementOthers();
+                        $new_others->file_id = $files->id;
                     }
                     $new_others->management_id = $management->id;
                     $new_others->name = $others_name;
@@ -1399,6 +1409,7 @@ class ImportFile
             $monitor = Monitoring::where('file_id', $files->id)->first();
             if(empty($monitor)) {
                 $monitor = new Monitoring();
+                $monitor->file_id = $files->id;
             }
             $monitor->pre_calculate = $precalculate_plan;
             $monitor->buyer_registration = $buyer_registration;
@@ -1424,6 +1435,7 @@ class ImportFile
             $others_details = OtherDetails::where('file_id', $files->id)->first();
             if(empty($others_details)) {
                 $others_details = new OtherDetails();
+                $others_details->file_id = $files->id;
             }
             $others_details->name = $other_details_name;
             $others_details->image_url = '';
