@@ -125,7 +125,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#ajk_details_list').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getAJK')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[5, 'desc'], [6, 'desc']],
             "responsive": true,
             "aoColumnDefs": [

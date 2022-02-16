@@ -224,7 +224,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{ URL::action('SummonController@councilSummonList') }}",
-            lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
+            lengthMenu: [[5, 10, 50], [5, 10, 50]],
             pageLength: 10,
             order: [[0, "desc"]],
             responsive: true,

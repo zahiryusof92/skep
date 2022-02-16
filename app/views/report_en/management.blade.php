@@ -138,10 +138,7 @@
 $(document).ready(function () {
     var oTable = $('#management_list').DataTable({
         "sAjaxSource": "{{URL::action('ReportController@getManagementList')}}",
-        "lengthMenu": [
-            [15, 30, 50, 100, -1],
-            [15, 30, 50, 100, "All"]
-        ],
+        "lengthMenu": [[15, 30, 50], [15, 30, 50]],
         "aoColumnDefs": [
             {
                 "bSortable": false,

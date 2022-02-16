@@ -89,7 +89,7 @@ $company = Company::find(Auth::user()->company_id);
             },
             "dom": '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
             "order": [[0, "desc"]],
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "pageLength": 25,
             "scrollX": true,
             "responsive": false,

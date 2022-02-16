@@ -74,7 +74,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#filelist').DataTable({
             "sAjaxSource": "{{URL::action('FinanceController@getFinanceSupportList')}}",
-            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
+            "lengthMenu": [[15, 30, 50], [15, 30, 50]],
             "order": [[0, "asc"]],
             "scrollX": true,
             "responsive": false,

@@ -57,7 +57,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('myPoint.index') }}",
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            lengthMenu: [[10, 25, 50], [10, 25, 50]],
             pageLength: 25,
             order: [[0, "desc"]],
             responsive: true,

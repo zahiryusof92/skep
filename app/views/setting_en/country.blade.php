@@ -57,9 +57,9 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#country').DataTable({
             "sAjaxSource": "{{URL::action('SettingController@getCountry')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[ 0, "asc" ]],
-            responsive: true
+            "responsive": true
         });
     });
 

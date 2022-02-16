@@ -209,7 +209,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable = $('#agm_remainder').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGMRemainder')}}",
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[3, "desc"]],
             "pageLength": 5,
             "responsive": true,
@@ -226,7 +226,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable1 = $('#never_agm').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getNeverAGM')}}",
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[1, "asc"]],
             "pageLength": 5,
             "responsive": true,
@@ -242,7 +242,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable2 = $('#more_12months').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM12Months')}}",
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[3, "desc"]],
             "pageLength": 5,
             "responsive": true,
@@ -258,7 +258,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable3 = $('#more_15months').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getAGM15Months')}}",
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[3, "desc"]],
             "pageLength": 5,
             "responsive": true,
@@ -274,7 +274,7 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         oTable4 = $('#memo').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getMemoHome')}}",
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[1, "desc"]],
             "pageLength": 5,
             "responsive": true
@@ -283,7 +283,7 @@ foreach ($user_permission as $permission) {
     var oTable5;
     oTable5 = $('#designation_remainder').DataTable({
         "sAjaxSource": "{{URL::action('AgmController@getDesignationRemainder')}}",
-        "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+        "lengthMenu": [[10, 25, 50], [10, 25, 50]],
         "order": [[6, 'desc'], [7, 'desc']],
         "pageLength": 5,
         "responsive": true

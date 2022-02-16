@@ -71,7 +71,7 @@ $company = Company::find(Auth::user()->company_id);
     $(document).ready(function () {
         oTable = $('#file_location_list').DataTable({
             "sAjaxSource": "{{URL::action('ReportController@getFileByLocation')}}",
-            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "pageLength": 50,
             "order": [[0, "asc"]],
             "scrollX": true,
