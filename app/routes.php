@@ -30,6 +30,9 @@ Route::get('/lphs/updateJMBExpiration/{council}', 'LPHSController@updateJMBExpir
 Route::get('/lphs/update/rating', 'LPHSController@updateRatingSummary');
 Route::get('/lphs/odesiLife/{council}', 'LPHSController@odesiLife');
 
+Route::get('/lphs/JMBMCSignIn/{council}', 'LPHSController@JMBMCSignIn');
+Route::get('/lphs/updateByUser/{council}', 'LPHSController@updateByUser');
+
 /*
  * LPHS REPORT END
  */

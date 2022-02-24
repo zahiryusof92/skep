@@ -44,7 +44,7 @@ class LPHSController extends BaseController
     public function result($result, $filename, $output = 'excel')
     {
         if ($output == 'excel') {
-            Excel::create($filename, function ($excel) use ($filename, $result) {
+            Excel::create($filename . '_' . date('YmdHis'), function ($excel) use ($filename, $result) {
                 $excel->sheet($filename, function ($sheet) use ($result) {
                     $sheet->fromArray($result);
                 });
@@ -1948,5 +1948,72 @@ class LPHSController extends BaseController
         // return '<pre>' . print_r($result, true) . '</pre>';
 
         return $this->result($result, $filename = strtoupper($cob));
+    }
+
+    public function JMBMCSignIn($cob = null)
+    {
+        $result = [];
+
+        $council = Company::where('short_name', $cob)->first();
+        if ($council) {
+            $users = User::where('company_id', $council->id)
+                ->where('file_id', '!=', '')
+                ->orderBy('file_id')
+                ->get();
+
+            if ($users) {
+                foreach ($users as $user) {
+                    if ($user->hasSignedIn) {
+                        $file = Files::find($user->file_id);
+                        if ($file) {
+                            $auditTrails = AuditTrail::where('audit_by', $user->id)
+                                ->where('remarks', 'like', '%' . $file->file_no . '%')
+                                ->get();
+
+                            $result[] = [
+                                trans('Username') => $user->username,
+                                trans('Name') => $user->full_name,
+                                trans('E-mail') => $user->email,
+                                trans('Phone') => $user->phone_no,
+                                trans('Role') => ($user->isJMB() ? 'JMB' : 'MC'),
+                                trans('Start Date') => $user->start_date,
+                                trans('End Date') => $user->end_date,
+                                trans('Remarks') => $user->remarks,
+                                trans('Login At') => $user->hasSignedIn->created_at->format('Y-m-d H:i:s'),
+                                trans('File No.') => $file->file_no,
+                                trans('Strata') => ($file->strata ? $file->strata->name : ''),
+                                trans('Self Update') => ($auditTrails->count() > 0 ? 'Yes' : 'No')
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, strtoupper($cob), 'excel');
+    }
+
+    public function updateByUser($username = null)
+    {
+        $result = [];
+
+        $user = User::where('username', $username)->first();
+        if ($user) {
+            $auditTrails = AuditTrail::where('audit_by', $user->id)->get();
+
+            $result[] = [
+                trans('Username') => $user->username,
+                trans('Name') => $user->full_name,
+                trans('E-mail') => $user->email,
+                trans('Phone') => $user->phone_no,
+                trans('Role') => ($user->isJMB() ? 'JMB' : 'MC'),
+                trans('Start Date') => $user->start_date,
+                trans('End Date') => $user->end_date,
+                trans('Remarks') => $user->remarks,
+                trans('Audit Trail') => $auditTrails->toArray()
+            ];
+        }
+
+        return $this->result($result, strtoupper($username), '');
     }
 }
