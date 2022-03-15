@@ -961,4 +961,59 @@ class FileController extends BaseController {
         }
     }
 
+    public function uploadMemoFile() {
+        $files = Input::file('document_file');
+        ## EAI Call
+        // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['file_upload'];
+        // $data['document_file'] = curl_file_create($_FILES['document_file']['tmp_name'], $_FILES['document_file']['type'], $_FILES['document_file']['name']);
+        
+        // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+        //                         $url,
+        //                         ($data), true)));
+                                
+        // if(empty($response->status) == false && $response->status == 200) {
+            if ($files) {
+                $filename = '';
+                $count = 0;
+
+                foreach($files as $file) {
+                    $data['file'] = $file;
+                    $validation_rules = [
+                        'file' => 'image',
+                    ];
+        
+                    $validator = \Validator::make($data, $validation_rules, []);
+        
+                    if ($validator->fails()) {
+                        $errors = $validator->errors();
+        
+                        return [
+                            'success' => false,
+                            'errors' => $errors,
+                            'message' => 'Validation Error'
+                        ];
+                    }
+                    $destinationPath = 'uploads/memo_files';
+                    $file_name = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $file_name);
+                    $filename .= $destinationPath . "/" . $file_name;
+                    if(!empty($files[$count + 1])) {
+                        $filename .= ',';
+                    }
+                    $count++;
+                } 
+                // $destinationPath = 'uploads/memo_files';
+                // $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                // $upload = $file->move($destinationPath, $filename);
+    
+                if ($upload) {
+                    return Response::json(['success' => true, 'file' => $filename, 'filename' => $filename]);
+                }
+            } else {
+                return Response::json(['success' => false, 'msg' => trans('app.errors.please_upload_valid_file')]);
+            }
+        
+        // }
+    }
+
 }

@@ -572,6 +572,12 @@ class HomeController extends BaseController {
                 $result .= "</div>";
                 $result .= "<div class='modal-body'>";
                 $result .= "<p>" . ($memo->description != "" ? $memo->description : "-") . "</p>";
+                if(!empty($memo->document_file)) {
+                    $files = explode(',', $memo->document_file);
+                    foreach($files as $file) {
+                        $result .= "<img src='". $file ."' style='width:100%;'/><br/><br/>";
+                    }
+                }
                 $result .= "</div>";
             } else {
                 $result = trans('app.errors.no_data_found');

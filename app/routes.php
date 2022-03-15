@@ -621,6 +621,7 @@ Route::post('/inactiveMemoType', 'SettingController@inactiveMemoType')->before('
 Route::get('/updateMemoType/{id}', 'SettingController@updateMemoType')->before('authMember');
 Route::post('/submitUpdateMemoType', 'SettingController@submitUpdateMemoType')->before('authMember');
 Route::post('/deleteMemoType/{id}', 'SettingController@deleteMemoType')->before('authMember');
+Route::post('/uploadMemoFile', array('as' => 'memo.fileUpload', 'uses' => 'FileController@uploadMemoFile'))->before('authMember');
 
 //designation
 Route::get('/designation', 'SettingController@designation')->before('authMember');

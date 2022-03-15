@@ -22,7 +22,7 @@ foreach ($user_permission as $permission) {
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
                         <!-- Vertical Form -->
-                        <form id="add_memo">
+                        <div id="add_memo">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -123,6 +123,34 @@ foreach ($user_permission as $permission) {
                                     </div>
                                 </div>
                             </div>
+
+                            <form id="upload_document_file" enctype="multipart/form-data" method="post" action="{{ url('uploadMemoFile') }}" autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label"> {{ trans('app.forms.upload_file') }}</label>
+                                            <br/>
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                            <button type="button" id="clear_document_file" class="btn btn-xs btn-danger" onclick="clearDocumentFile()" @if(!empty($memo->document_file))style="display: block;" @else style="display: none;" @endif accept=""><i class="fa fa-times"></i></button>
+                                            &nbsp;<input type="file" name="document_file[]" id="document_file" multiple accept="image/*" @if(!empty($memo->document_file))style="display: none;" @endif/>
+                                            <div id="validation-errors_document_file"></div>
+                                            <div id="lbl-files">
+                                                @if(!empty($memo->document_file))
+                                                        <?php
+                                                            $files = explode(',', $memo->document_file);
+                                                        ?>
+                                                        @foreach ($files as $file)
+                                                        <label>
+                                                            {{ substr($file, 19) }} <a href="{{ asset($file) }}" class="btn btn-xs btn-own" title="Download File" download=""><i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}</a>
+                                                        </label>
+                                                        @endforeach
+                                                    <i class='fa fa-check' id='check_document_file' style='color:green;'></i>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -146,6 +174,7 @@ foreach ($user_permission as $permission) {
                             </div>
                             <div class="form-actions">
                                 <?php if ($update_permission == 1) { ?>
+                                    <input type="hidden" id="document_file_url" value="{{ $memo->document_file }}"/>
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="updateMemo()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@memo')}}'">{{ trans('app.forms.cancel') }}</button>
@@ -153,7 +182,7 @@ foreach ($user_permission as $permission) {
                                     <img src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                         <!-- End Vertical Form -->
                     </div>
                 </div>
@@ -211,7 +240,52 @@ foreach ($user_permission as $permission) {
         $('#description').summernote({
             height: 250
         });
+        $("#document_file").css("color", "green");
+        //upload
+        var options = {
+            beforeSubmit: showRequest,
+            success: showResponse,
+            dataType: 'json'
+        };
+        $('body').delegate('#document_file', 'change', function () {
+            $('#upload_document_file').ajaxForm(options).submit();
+        });
     });
+
+    //upload document file
+    function showRequest(formData, jqForm, options) {
+        $("#validation-errors_document_file").hide().empty();
+        return true;
+    }
+    function showResponse(response, statusText, xhr, $form) {
+        if (response.success == false) {
+            var arr = response.errors;
+            $.each(arr, function (index, value) {
+                if (value.length != 0) {
+                    $("#validation-errors_document_file").append('<div class="alert alert-error" style="color:red;"><strong>' + value + '</strong><div>');
+                }
+            });
+            $("#validation-errors_document_file").show();
+            $("#document_file").css("color", "red");
+            $("#clear_document_file").hide();
+        } else {
+            $("#clear_document_file").show();
+            $("#validation-errors_document_file").html("<i class='fa fa-check' id='check_document_file' style='color:green;'></i>");
+            $("#validation-errors_document_file").show();
+            $("#document_file").css("color", "green");
+            $("#document_file_url").val(response.file);
+        }
+    }
+
+    function clearDocumentFile() {
+        $("#document_file").val("");
+        $("#document_file").show();
+        $("#clear_document_file").hide();
+        $("#document_file").css("color", "grey");
+        $("#check_document_file").hide();
+        $('#lbl-files').hide();
+        $('#lbl-files').html("");
+    }
 
     function updateMemo() {
         $("#loading").css("display", "inline-block");
@@ -225,6 +299,7 @@ foreach ($user_permission as $permission) {
                 expired_date = $("#expired_date").val(),
                 subject = $("#subject").val(),
                 description = $("#description").val(),
+                document_file_url = $("#document_file_url").val(),
                 remarks = $("#remarks").val(),
                 is_active = $("#is_active").val();
 
@@ -279,6 +354,7 @@ foreach ($user_permission as $permission) {
                     expired_date: expired_date,
                     subject: subject,
                     description: description,
+                    document_file_url: document_file_url,
                     remarks: remarks,
                     is_active: is_active,
                     id: '{{$memo->id}}'
