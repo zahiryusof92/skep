@@ -6194,6 +6194,7 @@ class AdminController extends BaseController {
             $expired_date = $data['expired_date'];
             $subject = $data['subject'];
             $description = $data['description'];
+            $document_file_url = $data['document_file_url'];
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
@@ -6205,6 +6206,7 @@ class AdminController extends BaseController {
             $memo->expired_date = (!empty($expired_date) ? $expired_date : null);
             $memo->subject = $subject;
             $memo->description = $description;
+            $memo->document_file = $document_file_url;
             $memo->remarks = $remarks;
             $memo->is_active = $is_active;
             $success = $memo->save();
@@ -6406,6 +6408,7 @@ class AdminController extends BaseController {
             $expired_date = $data['expired_date'];
             $subject = $data['subject'];
             $description = $data['description'];
+            $document_file_url = $data['document_file_url'];
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
@@ -6417,6 +6420,7 @@ class AdminController extends BaseController {
             $memo->expired_date = (!empty($expired_date) ? $expired_date : null);
             $memo->subject = $subject;
             $memo->description = $description;
+            $memo->document_file = $document_file_url;
             $memo->remarks = $remarks;
             $memo->is_active = $is_active;
             $success = $memo->save();
