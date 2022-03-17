@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -22,1163 +22,1145 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$file->file_no}}</h6>
                     <div id="update_files_lists">
-                        <ul class="nav nav-pills nav-justified" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewHouse', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewStrata', $file->id)}}">{{ trans('app.forms.developed_area') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active">{{ trans('app.forms.management') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewMonitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewOthers', $file->id)}}">{{ trans('app.forms.others') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewScoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewBuyer', $file->id)}}">{{ trans('app.forms.buyer_list') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@fileApproval', $file->id)}}">{{ trans('app.forms.approval') }}</a>
-                            </li>
-                        </ul>
+                        @include('page_en.nav.cob_file', ['files' => $file, 'is_view' => true])
+
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="management" role="tabpanel">
-                                <form id="management padding-vertical-20">
-                                    @if (count($management_developer) <= 0)
-                                        <div class="row padding-vertical-20">
-                                            <div class="col-lg-12">
-                                                <input type="checkbox" name="is_developer" id="is_developer" disabled=""/>
-                                                <label><h4> {{ trans('app.forms.developer') }}</h4></label>
-                                                <!-- developer Form -->
-                                                <div id="developer_form" style="display:none">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.developer') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" id="developer_name" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.address') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="developer_address1" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="developer_address2" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="developer_address3" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.city') }}</label>
-                                                                <select class="form-control" id="developer_city" disabled="">
-                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    @foreach ($city as $cities)
-                                                                    <option value="{{$cities->id}}">{{$cities->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.postcode') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="developer_poscode" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.state') }}</label>
-                                                                <select class="form-control" id="developer_state" disabled="">
-                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    @foreach ($state as $states)
-                                                                    <option value="{{$states->id}}">{{$states->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.country') }}</label>
-                                                                <select class="form-control" id="developer_country" disabled="">
-                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    @foreach ($country as $countries)
-                                                                    <option value="{{$countries->id}}">{{$countries->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.phone_number') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="developer_phone_no" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.fax_number') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="developer_fax_no" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.remarks') }}</label>
-                                                                <textarea class="form-control" rows="3" id="developer_remarks" readonly></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="row padding-vertical-20">
-                                            <div class="col-lg-12">
-                                                <input type="checkbox" name="is_developer" id="is_developer" {{($management->is_developer == 1 ? " checked" : "")}} disabled=""/>
-                                                <label><h4> {{ trans('app.forms.developer') }}</h4></label>
-                                                <!-- developer Form -->
-                                                <div id="developer_form">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.developer') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" id="developer_name" value="{{$management_developer->name}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.address') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="developer_address1" value="{{$management_developer->address_1}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="developer_address2"  value="{{$management_developer->address_2}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="developer_address3"  value="{{$management_developer->address_3}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.city') }}</label>
-                                                                <select class="form-control" id="developer_city" disabled="">
-                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    @foreach ($city as $cities)
-                                                                    <option value="{{$cities->id}}" {{($management_developer->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.postcode') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="developer_poscode"  value="{{$management_developer->poscode}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.state') }}</label>
-                                                                <select class="form-control" id="developer_state" disabled="">
-                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    @foreach ($state as $states)
-                                                                    <option value="{{$states->id}}" {{($management_developer->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.country') }}</label>
-                                                                <select class="form-control" id="developer_country" disabled="">
-                                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                    @foreach ($country as $countries)
-                                                                    <option value="{{$countries->id}}" {{($management_developer->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.phone_number') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="developer_phone_no" value="{{$management_developer->phone_no}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.fax_number') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="developer_fax_no" value="{{$management_developer->fax_no}}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="form-group">
-                                                                <label>{{ trans('app.forms.remarks') }}</label>
-                                                                <textarea class="form-control" rows="3" id="developer_remarks" readonly>{{$management_developer->remarks}}</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    <hr/>
-                                    @if (count($management_jmb) <= 0)
-                                    <div class="row">
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
-                                            <input type="checkbox" name="is_jmb" id="is_jmb" disabled="">
-                                            <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
-                                            <!-- jmb Form -->
-                                            <div id="jmb_form" style="display:none">
+                                            <form id="management padding-vertical-20">
+                                                @if (count($management_developer) <= 0)
+                                                    <div class="row padding-vertical-20">
+                                                        <div class="col-lg-12">
+                                                            <input type="checkbox" name="is_developer" id="is_developer" disabled=""/>
+                                                            <label><h4> {{ trans('app.forms.developer') }}</h4></label>
+                                                            <!-- developer Form -->
+                                                            <div id="developer_form" style="display:none">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.developer') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" id="developer_name" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.address') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="developer_address1" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="developer_address2" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="developer_address3" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.city') }}</label>
+                                                                            <select class="form-control" id="developer_city" disabled="">
+                                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                                @foreach ($city as $cities)
+                                                                                <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.postcode') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="developer_poscode" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.state') }}</label>
+                                                                            <select class="form-control" id="developer_state" disabled="">
+                                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                                @foreach ($state as $states)
+                                                                                <option value="{{$states->id}}">{{$states->name}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.country') }}</label>
+                                                                            <select class="form-control" id="developer_country" disabled="">
+                                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                                @foreach ($country as $countries)
+                                                                                <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="developer_phone_no" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="developer_fax_no" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.remarks') }}</label>
+                                                                            <textarea class="form-control" rows="3" id="developer_remarks" readonly></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="row padding-vertical-20">
+                                                        <div class="col-lg-12">
+                                                            <input type="checkbox" name="is_developer" id="is_developer" {{($management->is_developer == 1 ? " checked" : "")}} disabled=""/>
+                                                            <label><h4> {{ trans('app.forms.developer') }}</h4></label>
+                                                            <!-- developer Form -->
+                                                            <div id="developer_form">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.developer') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" id="developer_name" value="{{$management_developer->name}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.address') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="developer_address1" value="{{$management_developer->address_1}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="developer_address2"  value="{{$management_developer->address_2}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="developer_address3"  value="{{$management_developer->address_3}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.city') }}</label>
+                                                                            <select class="form-control" id="developer_city" disabled="">
+                                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                                @foreach ($city as $cities)
+                                                                                <option value="{{$cities->id}}" {{($management_developer->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.postcode') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="developer_poscode"  value="{{$management_developer->poscode}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.state') }}</label>
+                                                                            <select class="form-control" id="developer_state" disabled="">
+                                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                                @foreach ($state as $states)
+                                                                                <option value="{{$states->id}}" {{($management_developer->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.country') }}</label>
+                                                                            <select class="form-control" id="developer_country" disabled="">
+                                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                                @foreach ($country as $countries)
+                                                                                <option value="{{$countries->id}}" {{($management_developer->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="developer_phone_no" value="{{$management_developer->phone_no}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="developer_fax_no" value="{{$management_developer->fax_no}}" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.remarks') }}</label>
+                                                                            <textarea class="form-control" rows="3" id="developer_remarks" readonly>{{$management_developer->remarks}}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <hr/>
+                                                @if (count($management_jmb) <= 0)
                                                 <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.date_formed') }}</label>
-                                                            <label class="input-group datepicker-only-init">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="jmb_date_formed" readonly=""d>
-                                                                <span class="input-group-addon">
-                                                                    <i class="icmn-calendar"></i>
-                                                                </span>
-                                                            </label>
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_jmb" id="is_jmb" disabled="">
+                                                        <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
+                                                        <!-- jmb Form -->
+                                                        <div id="jmb_form" style="display:none">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.date_formed') }}</label>
+                                                                        <label class="input-group datepicker-only-init">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="jmb_date_formed" readonly=""d>
+                                                                            <span class="input-group-addon">
+                                                                                <i class="icmn-calendar"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.certificate_series_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" id="jmb_certificate_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="jmb_name" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="jmb_address1" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="jmb_address2" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="jmb_address3" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="jmb_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="jmb_poscode" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="jmb_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}">{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="jmb_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="jmb_phone_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="jmb_fax_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @else
                                                 <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.certificate_series_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" id="jmb_certificate_no" readonly="">
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_jmb" id="is_jmb" {{($management->is_jmb == 1 ? " checked" : "")}} disabled>
+                                                        <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
+                                                        <!-- jmb Form -->
+                                                        <div id="jmb_form">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.date_formed') }}</label>
+                                                                        <label class="input-group datepicker-only-init">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="jmb_date_formed" value="{{$management_jmb->date_formed}}" readonly="">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="icmn-calendar"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.certificate_series_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" id="jmb_certificate_no" value="{{$management_jmb->certificate_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="jmb_name" value="{{$management_jmb->name}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="jmb_address1" value="{{$management_jmb->address1}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="jmb_address2" value="{{$management_jmb->address2}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="jmb_address3" value="{{$management_jmb->address3}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="jmb_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}" {{($management_jmb->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="jmb_poscode" value="{{$management_jmb->poscode}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="jmb_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}" {{($management_jmb->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="jmb_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}" {{($management_jmb->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="jmb_phone_no" value="{{$management_jmb->phone_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="jmb_fax_no" value="{{$management_jmb->fax_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
+                                                <hr/>
+                                                @if (count($management_mc) <= 0)
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="jmb_name" readonly="">
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_mc" id="is_mc" disabled="">
+                                                        <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
+                                                        <!-- jmb Form -->
+                                                        <div id="mc_form" style="display:none">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.date_formed') }}</label>
+                                                                        <label class="input-group datepicker-only-init">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="mc_date_formed" readonly="">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="icmn-calendar"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.first_agm_date') }}</label>
+                                                                        <label class="input-group datepicker-only-init">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.first_agm_date') }}" id="mc_first_agm" readonly="">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="icmn-calendar"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="mc_name" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="mc_address1" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="mc_address2" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="mc_address3" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="mc_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="mc_poscode" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="mc_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}">{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="mc_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="mc_phone_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="mc_fax_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @else
                                                 <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="jmb_address1" readonly="">
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_mc" id="is_mc" {{($management->is_mc == 1 ? " checked" : "")}} disabled>
+                                                        <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
+                                                        <!-- mc Form -->
+                                                        <div id="mc_form">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.date_formed') }}</label>
+                                                                        <label class="input-group datepicker-only-init">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="mc_date_formed" value="{{$management_mc->date_formed}}" readonly="">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="icmn-calendar"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.first_agm_date') }}</label>
+                                                                        <label class="input-group datepicker-only-init">
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.first_agm_date') }}" id="mc_first_agm" value="{{$management_mc->first_agm}}" readonly="">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="icmn-calendar"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="mc_name" value="{{$management_mc->name}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="mc_address1" value="{{$management_mc->address1}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="mc_address2" value="{{$management_mc->address2}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="mc_address3" value="{{$management_mc->address3}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="mc_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}" {{($management_mc->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="mc_poscode" value="{{$management_mc->poscode}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="mc_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}" {{($management_mc->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="mc_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}" {{($management_mc->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="mc_phone_no" value="{{$management_mc->phone_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="mc_fax_no" value="{{$management_mc->fax_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
+                                                <hr/>
+                                                @if(count($management_agent) <= 0)
                                                 <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="jmb_address2" readonly="">
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_agent" id="is_agent" disabled="">
+                                                        <label><h4> {{ trans('app.forms.agent') }}</h4></label>
+                                                        <!-- agent Form -->
+                                                        <div id="agent_form" style="display:none">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.appointed_by') }}</label>
+                                                                        <select class="form-control" id="agent_selected_by" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            <option value="developer">{{ trans('app.forms.developer') }}</option>
+                                                                            <option value="cob">{{ trans('app.forms.cob') }}</option>
+                                                                            <option value="jmb">{{ trans('app.forms.jmb') }}</option>
+                                                                            <option value="mc">{{ trans('app.forms.mc') }}</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <select class="form-control" id="agent_name" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($agent as $agents)
+                                                                            <option value="{{$agents->id}}">{{$agents->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="agent_address1" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="agent_address2" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="agent_address3" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="agent_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="agent_poscode" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="agent_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}">{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="agent_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="agent_phone_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="agent_fax_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @else
                                                 <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="jmb_address3" readonly="">
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_agent" id="is_agent" {{($management->is_agent == 1 ? " checked" : "")}} disabled>
+                                                        <label><h4> {{ trans('app.forms.agent') }}</h4></label>
+                                                        <!-- agent Form -->
+                                                        <div id="agent_form">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.appointed_by') }}</label>
+                                                                        <select class="form-control" id="agent_selected_by" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            <option value="developer" {{($management_agent->selected_by == "developer" ? " selected" : "")}}>{{ trans('app.forms.developer') }}</option>
+                                                                            <option value="cob" {{($management_agent->selected_by == "cob" ? " selected" : "")}}>{{ trans('app.forms.cob') }}</option>
+                                                                            <option value="jmb" {{($management_agent->selected_by == "jmb" ? " selected" : "")}}>{{ trans('app.forms.jmb') }}</option>
+                                                                            <option value="mc" {{($management_agent->selected_by == "mc" ? " selected" : "")}}>{{ trans('app.forms.mc') }}</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <select class="form-control" id="agent_name" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($agent as $agents)
+                                                                            <option value="{{$agents->id}}" {{($management_agent->agent == $agents->id ? " selected" : "")}}>{{$agents->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="agent_address1" value="{{$management_agent->address1}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="agent_address2" value="{{$management_agent->address2}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="agent_address3" value="{{$management_agent->address3}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="agent_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}" {{($management_agent->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="agent_poscode" value="{{$management_agent->address1}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="agent_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}" {{($management_agent->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="agent_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}" {{($management_agent->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="agent_phone_no" value="{{$management_agent->phone_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="agent_fax_no" value="{{$management_agent->fax_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
+                                                <hr/>
+                                                @if (count($management_others) <= 0)
                                                 <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="jmb_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}">{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="jmb_poscode" readonly="">
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_others" id="is_others" disabled="">
+                                                        <label><h4> {{ trans('app.forms.others') }}</h4></label>
+                                                        <!-- jmb Form -->
+                                                        <div id="other_form" style="display:none">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="others_name" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="others_address1" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="others_address2" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="others_address3" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="others_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="others_poscode" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="others_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}">{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="others_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="others_phone_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="others_fax_no" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @else
                                                 <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="jmb_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}">{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="jmb_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}">{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
+                                                    <div class="col-lg-12">
+                                                        <input type="checkbox" name="is_others" id="is_others" {{($management->is_others == 1 ? " checked" : "")}} disabled>
+                                                        <label><h4> {{ trans('app.forms.others') }}</h4></label>
+                                                        <!-- jmb Form -->
+                                                        <div id="other_form">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.name') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="others_name" value="{{$management_others->name}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.address') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="others_address1" value="{{$management_others->address1}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="others_address2" value="{{$management_others->address2}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="others_address3" value="{{$management_others->address3}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.city') }}</label>
+                                                                        <select class="form-control" id="others_city" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($city as $cities)
+                                                                            <option value="{{$cities->id}}" {{($management_others->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="others_poscode" value="{{$management_others->poscode}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.state') }}</label>
+                                                                        <select class="form-control" id="others_state" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($state as $states)
+                                                                            <option value="{{$states->id}}" {{($management_others->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.country') }}</label>
+                                                                        <select class="form-control" id="others_country" disabled="">
+                                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                            @foreach ($country as $countries)
+                                                                            <option value="{{$countries->id}}" {{($management_others->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="others_phone_no" value="{{$management_others->phone_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="others_fax_no" value="{{$management_others->fax_no}}" readonly="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="jmb_phone_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="jmb_fax_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                @endif
+                                            </form>
                                         </div>
                                     </div>
-                                    @else
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_jmb" id="is_jmb" {{($management->is_jmb == 1 ? " checked" : "")}} disabled>
-                                            <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
-                                            <!-- jmb Form -->
-                                            <div id="jmb_form">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.date_formed') }}</label>
-                                                            <label class="input-group datepicker-only-init">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="jmb_date_formed" value="{{$management_jmb->date_formed}}" readonly="">
-                                                                <span class="input-group-addon">
-                                                                    <i class="icmn-calendar"></i>
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.certificate_series_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" id="jmb_certificate_no" value="{{$management_jmb->certificate_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="jmb_name" value="{{$management_jmb->name}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="jmb_address1" value="{{$management_jmb->address1}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="jmb_address2" value="{{$management_jmb->address2}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="jmb_address3" value="{{$management_jmb->address3}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="jmb_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}" {{($management_jmb->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="jmb_poscode" value="{{$management_jmb->poscode}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="jmb_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}" {{($management_jmb->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="jmb_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}" {{($management_jmb->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="jmb_phone_no" value="{{$management_jmb->phone_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="jmb_fax_no" value="{{$management_jmb->fax_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <hr/>
-                                    @if (count($management_mc) <= 0)
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_mc" id="is_mc" disabled="">
-                                            <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
-                                            <!-- jmb Form -->
-                                            <div id="mc_form" style="display:none">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.date_formed') }}</label>
-                                                            <label class="input-group datepicker-only-init">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="mc_date_formed" readonly="">
-                                                                <span class="input-group-addon">
-                                                                    <i class="icmn-calendar"></i>
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.first_agm_date') }}</label>
-                                                            <label class="input-group datepicker-only-init">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.first_agm_date') }}" id="mc_first_agm" readonly="">
-                                                                <span class="input-group-addon">
-                                                                    <i class="icmn-calendar"></i>
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="mc_name" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="mc_address1" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="mc_address2" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="mc_address3" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="mc_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}">{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="mc_poscode" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="mc_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}">{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="mc_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}">{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="mc_phone_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="mc_fax_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_mc" id="is_mc" {{($management->is_mc == 1 ? " checked" : "")}} disabled>
-                                            <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
-                                            <!-- mc Form -->
-                                            <div id="mc_form">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.date_formed') }}</label>
-                                                            <label class="input-group datepicker-only-init">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="mc_date_formed" value="{{$management_mc->date_formed}}" readonly="">
-                                                                <span class="input-group-addon">
-                                                                    <i class="icmn-calendar"></i>
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.first_agm_date') }}</label>
-                                                            <label class="input-group datepicker-only-init">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.first_agm_date') }}" id="mc_first_agm" value="{{$management_mc->first_agm}}" readonly="">
-                                                                <span class="input-group-addon">
-                                                                    <i class="icmn-calendar"></i>
-                                                                </span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="mc_name" value="{{$management_mc->name}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="mc_address1" value="{{$management_mc->address1}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="mc_address2" value="{{$management_mc->address2}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="mc_address3" value="{{$management_mc->address3}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="mc_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}" {{($management_mc->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="mc_poscode" value="{{$management_mc->poscode}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="mc_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}" {{($management_mc->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="mc_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}" {{($management_mc->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="mc_phone_no" value="{{$management_mc->phone_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="mc_fax_no" value="{{$management_mc->fax_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <hr/>
-                                    @if(count($management_agent) <= 0)
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_agent" id="is_agent" disabled="">
-                                            <label><h4> {{ trans('app.forms.agent') }}</h4></label>
-                                            <!-- agent Form -->
-                                            <div id="agent_form" style="display:none">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.appointed_by') }}</label>
-                                                            <select class="form-control" id="agent_selected_by" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                <option value="developer">{{ trans('app.forms.developer') }}</option>
-                                                                <option value="cob">{{ trans('app.forms.cob') }}</option>
-                                                                <option value="jmb">{{ trans('app.forms.jmb') }}</option>
-                                                                <option value="mc">{{ trans('app.forms.mc') }}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <select class="form-control" id="agent_name" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($agent as $agents)
-                                                                <option value="{{$agents->id}}">{{$agents->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="agent_address1" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="agent_address2" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="agent_address3" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="agent_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}">{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="agent_poscode" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="agent_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}">{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="agent_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}">{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="agent_phone_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="agent_fax_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_agent" id="is_agent" {{($management->is_agent == 1 ? " checked" : "")}} disabled>
-                                            <label><h4> {{ trans('app.forms.agent') }}</h4></label>
-                                            <!-- agent Form -->
-                                            <div id="agent_form">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.appointed_by') }}</label>
-                                                            <select class="form-control" id="agent_selected_by" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                <option value="developer" {{($management_agent->selected_by == "developer" ? " selected" : "")}}>{{ trans('app.forms.developer') }}</option>
-                                                                <option value="cob" {{($management_agent->selected_by == "cob" ? " selected" : "")}}>{{ trans('app.forms.cob') }}</option>
-                                                                <option value="jmb" {{($management_agent->selected_by == "jmb" ? " selected" : "")}}>{{ trans('app.forms.jmb') }}</option>
-                                                                <option value="mc" {{($management_agent->selected_by == "mc" ? " selected" : "")}}>{{ trans('app.forms.mc') }}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <select class="form-control" id="agent_name" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($agent as $agents)
-                                                                <option value="{{$agents->id}}" {{($management_agent->agent == $agents->id ? " selected" : "")}}>{{$agents->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="agent_address1" value="{{$management_agent->address1}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="agent_address2" value="{{$management_agent->address2}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="agent_address3" value="{{$management_agent->address3}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="agent_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}" {{($management_agent->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="agent_poscode" value="{{$management_agent->address1}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="agent_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}" {{($management_agent->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="agent_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}" {{($management_agent->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="agent_phone_no" value="{{$management_agent->phone_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="agent_fax_no" value="{{$management_agent->fax_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <hr/>
-                                    @if (count($management_others) <= 0)
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_others" id="is_others" disabled="">
-                                            <label><h4> {{ trans('app.forms.others') }}</h4></label>
-                                            <!-- jmb Form -->
-                                            <div id="other_form" style="display:none">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="others_name" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="others_address1" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="others_address2" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="others_address3" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="others_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}">{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="others_poscode" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="others_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}">{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="others_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}">{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="others_phone_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="others_fax_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="is_others" id="is_others" {{($management->is_others == 1 ? " checked" : "")}} disabled>
-                                            <label><h4> {{ trans('app.forms.others') }}</h4></label>
-                                            <!-- jmb Form -->
-                                            <div id="other_form">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.name') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="others_name" value="{{$management_others->name}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.address') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="others_address1" value="{{$management_others->address1}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="others_address2" value="{{$management_others->address2}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="others_address3" value="{{$management_others->address3}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.city') }}</label>
-                                                            <select class="form-control" id="others_city" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($city as $cities)
-                                                                <option value="{{$cities->id}}" {{($management_others->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.postcode') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="others_poscode" value="{{$management_others->poscode}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.state') }}</label>
-                                                            <select class="form-control" id="others_state" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($state as $states)
-                                                                <option value="{{$states->id}}" {{($management_others->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.country') }}</label>
-                                                            <select class="form-control" id="others_country" disabled="">
-                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                                @foreach ($country as $countries)
-                                                                <option value="{{$countries->id}}" {{($management_others->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="others_phone_no" value="{{$management_others->phone_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.fax_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="others_fax_no" value="{{$management_others->fax_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endif
-                                </form>
+                                </section>
                             </div>
                         </div>
                     </div>

@@ -123,6 +123,7 @@ foreach ($user_permission as $permission) {
 <script>
     var oTable;
     $(document).ready(function () {
+        $('.select2').val(null).trigger("change")
         oTable = $('#ajk_details_list').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getAJK')}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],

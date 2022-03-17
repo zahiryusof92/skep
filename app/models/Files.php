@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 class Files extends Eloquent {
 
     protected $table = 'files';
@@ -110,6 +113,22 @@ class Files extends Eloquent {
 
     public function personInCharge() {
         return $this->hasMany('HousingSchemeUser', 'file_id');
+    }
+
+    public function scopeFile($query) {
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $query = $query->where('files.id', Auth::user()->file_id)
+                                ->where('files.company_id', Auth::user()->company_id);
+            } else {
+                $query = $query->where('files.company_id', Auth::user()->company_id);
+            }
+        } else {
+            if (!empty(Session::get('admin_cob'))) {
+                $query = $query->where('files.company_id', Session::get('admin_cob'));
+            }
+        }
+        return $query->where('files.is_deleted', 0);
     }
 
     public static function getInsuranceReportByCOB($cob_id = NULL) {

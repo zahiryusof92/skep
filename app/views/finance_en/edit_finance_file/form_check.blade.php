@@ -1,6 +1,3 @@
-@if(!empty($checkOldData))
-    @include('finance_en.show.check')
-@endif
 <div class="row padding-vertical-10">    
     <div class="col-lg-12">
         @if(!empty($checkOldData))
@@ -136,3 +133,7 @@
         }
     }
 </script>
+
+@if(!empty($checkOldData))
+    @include('finance_en.show.check')
+@endif

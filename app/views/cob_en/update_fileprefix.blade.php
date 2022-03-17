@@ -72,7 +72,6 @@ foreach ($user_permission as $permission) {
     </section>
     <!-- End -->
 </div>
-
 <!-- Page Scripts -->
 <script>
 
@@ -114,7 +113,7 @@ foreach ($user_permission as $permission) {
                     description: description,
                     sort_no: sort_no,
                     is_active: is_active,
-                    id: '{{$prefix->id}}'
+                    id: '{{ \Helper\Helper::encode($prefix->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

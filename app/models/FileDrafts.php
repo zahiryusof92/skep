@@ -16,7 +16,7 @@ class FileDrafts extends Eloquent {
     ];
 
     public static function getTotalPending() {
-        $query = self::join('files', 'files.id', '=', 'file_drafts.id');
+        $query = self::join('files', 'files.id', '=', 'file_drafts.file_id');
         if(!empty(Session::get('admin_cob'))) {
             $query = $query->where('files.company_id', Session::get('admin_cob'));
         }

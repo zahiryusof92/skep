@@ -40,4 +40,33 @@ class StrataController extends BaseController {
             throw($e);
         }
     }
+
+    public function getOption() {
+        if(Request::ajax()) {
+            $request = Request::all();
+            $options = [];
+            $models = Strata::self()
+                            ->where(function($query) use($request) {
+                                if(!empty($request['term'])) {
+                                    $query->where('strata.name', "like", "%". $request['term'] ."%");
+                                }
+                                if(!empty($request['file_id'])) {
+                                    $query->where('strata.file_id', $request['file_id']);
+                                }
+                            })
+                            ->groupBy(['strata.name'])
+                            ->chunk(200, function($models) use(&$options)
+                            {
+                                foreach ($models as $model)
+                                {
+                                    if(!empty($model->name)) array_push($options, ['id' => $model->name, 'text' => $model->name]);
+                                }
+                            });
+
+            return Response::json(['success' => true, 'message' => trans('Success'), 'results' => $options]);
+
+        }
+
+        return Response::json(['error' => true, 'message' => trans('Fail')]);
+    }
 }

@@ -587,6 +587,11 @@ return array(
         "created_at" => "Created At",
         'eagm_property' => 'eAGM Property',
         'finance_support' => 'Finance Support',
+        "under_ten_units" => "Under 10 Units",
+        "no_management" => "No Management",
+        "under_ten_units" => "Under 10 Units",
+        "no_management" => "No Management",
+        "actual_purchase_price" => "Actual Purchase Price",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

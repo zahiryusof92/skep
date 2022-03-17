@@ -577,6 +577,11 @@ return array(
         "insurance" => "Insurans",
         "insurance_reminder" => "Peringatan Insurans",
         "created_at" => "Tarikh Dicipta",
+        "under_ten_units" => "Kurang Daripada 10 Unit",
+        "no_management" => "Tiada Pengurusan",
+        "actual_purchase_price" => "Harga Belian Sebenar",
+        "under_ten_units" => "Kurang Daripada 10 Unit",
+        "no_management" => "Tiada Pengurusan",
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",

@@ -1,6 +1,3 @@
-@if(count($contractOldFile) > 0)
-@include('finance_en.show.contract')
-@endif
 <?php
 $prefix = 'contract_';
 ?>
@@ -227,3 +224,7 @@ $prefix = 'contract_';
         }
     }
 </script>
+
+@if(count($contractOldFile) > 0)
+@include('finance_en.show.contract')
+@endif

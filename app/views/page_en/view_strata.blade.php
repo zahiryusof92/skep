@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -22,303 +22,281 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$file->file_no}}</h6>
                     <div id="update_files_lists">
-                        <ul class="nav nav-pills nav-justified" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewHouse', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active">{{ trans('app.forms.developed_area') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewManagement', $file->id)}}">{{ trans('app.forms.management') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewMonitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewOthers', $file->id)}}">{{ trans('app.forms.others') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewScoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewBuyer', $file->id)}}">{{ trans('app.forms.buyer_list') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@fileApproval', $file->id)}}">{{ trans('app.forms.approval') }}</a>
-                            </li>
-                        </ul>
+                        @include('page_en.nav.cob_file', ['files' => $file, 'is_view' => true])
+
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="strata" role="tabpanel">
                                 <!-- strata Form -->
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <h4>{{ trans('app.forms.detail') }}</h4>
-                                        <form id="strata">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.name') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="strata_name" value="{{$strata->name}}" readonly="">
-                                                        <div id="strata_name_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.parliament') }}</label>
-                                                        <select class="form-control" id="strata_parliament" onchange="findDUN()" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($parliament as $parliaments)
-                                                            <option value="{{$parliaments->id}}" {{($strata->parliament == $parliaments->id ? " selected" : "")}}>{{$parliaments->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_parliament_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.dun') }}</label>
-                                                        <select class="form-control" id="strata_dun" onchange="findPark()" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($dun as $duns)
-                                                            <option value="{{$duns->id}}" {{($strata->dun == $duns->id ? " selected" : "")}}>{{$duns->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_dun_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.park') }}</label>
-                                                        <select class="form-control" id="strata_park" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($park as $parks)
-                                                            <option value="{{$parks->id}}" {{($strata->park == $parks->id ? " selected" : "")}}>{{$parks->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_park_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.address') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="strata_address1" value="{{$strata->address1}}" readonly="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="strata_address2" value="{{$strata->address2}}" readonly="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="strata_address3" value="{{$strata->address3}}" readonly="">
-                                                        <div id="strata_address_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.city') }}</label>
-                                                        <select class="form-control" id="strata_city" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($city as $cities)
-                                                            <option value="{{$cities->id}}" {{($strata->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_city_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.postcode') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="strata_poscode" value="{{$strata->poscode}}" readonly="">
-                                                        <div id="strata_poscode_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.state') }}</label>
-                                                        <select class="form-control" id="strata_state" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($state as $states)
-                                                            <option value="{{$states->id}}" {{($strata->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_state_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.country') }}</label>
-                                                        <select class="form-control" id="strata_country" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($country as $countries)
-                                                            <option value="{{$countries->id}}" {{($strata->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="starta_country_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.number_of_block') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_block') }}" id="strata_block_no" value="{{$strata->block_no}}" readonly="">
-                                                        <div id="strata_block_no_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.ownership_number') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.ownership_number') }}" id="strata_ownership_no" value="{{$strata->ownership_no}}" readonly="">
-                                                        <div id="strata_ownership_no_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.city_town_district') }}</label>
-                                                        <select class="form-control" id="strata_town" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($city as $cities)
-                                                            <option value="{{$cities->id}}" {{($strata->town == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_town_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.area') }}</label>
-                                                        <select class="form-control" id="strata_area" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($area as $areas)
-                                                            <option value="{{$areas->id}}" {{($strata->area == $areas->id ? " selected" : "")}}>{{$areas->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="strata_area_error" style="display:none;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.total_land_area') }}</label>
-                                                        <div class="form-inline">
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.total_land_area') }}" id="strata_land_area" value="{{$strata->land_area}}" readonly="">
-                                                            <select class="form-control" id="strata_land_area_unit" disabled="">
-                                                                @foreach ($unit as $units)
-                                                                <option value="{{$units->id}}" {{($strata->land_area_unit == $units->id ? " selected" : "")}}>{{$units->description}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            <div id="strata_land_area_error" style="display:none;"></div>
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
+                                        <div class="col-lg-12">
+                                            <h4>{{ trans('app.forms.detail') }}</h4>
+                                            <form id="strata">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.name') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="strata_name" value="{{$strata->name}}" readonly="">
+                                                            <div id="strata_name_error" style="display:none;"></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.lot_number') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.lot_number') }}" id="strata_lot_no" value="{{$strata->lot_no}}" readonly="">
-                                                        <div id="starta_lot_no_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.parliament') }}</label>
+                                                            <select class="form-control" id="strata_parliament" onchange="findDUN()" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($parliament as $parliaments)
+                                                                <option value="{{$parliaments->id}}" {{($strata->parliament == $parliaments->id ? " selected" : "")}}>{{$parliaments->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_parliament_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.dun') }}</label>
+                                                            <select class="form-control" id="strata_dun" onchange="findPark()" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($dun as $duns)
+                                                                <option value="{{$duns->id}}" {{($strata->dun == $duns->id ? " selected" : "")}}>{{$duns->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_dun_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.date_vp') }}</label>
-                                                        <label class="input-group datepicker-only-init">
-                                                            <input type="text" class="form-control" placeholder="{{ trans("app.forms.date") }}" id="strata_date" value="{{$strata->date}}" readonly="">
-                                                            <span class="input-group-addon">
-                                                                <i class="icmn-calendar"></i>
-                                                            </span>
-                                                        </label>
-                                                        <div id="strata_date_error" style="display:block;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label><span style="color: red; font-style: italic;">* </span>{{ trans('app.forms.park') }}</label>
+                                                            <select class="form-control" id="strata_park" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($park as $parks)
+                                                                <option value="{{$parks->id}}" {{($strata->park == $parks->id ? " selected" : "")}}>{{$parks->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_park_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.land_title') }}</label>
-                                                        <select class="form-control" id="strata_land_title" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($land_title as $land_titles)
-                                                            <option value="{{$land_titles->id}}" {{($strata->land_title == $land_titles->id ? " selected" : "")}}>{{$land_titles->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="starta_land_title_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.address') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="strata_address1" value="{{$strata->address1}}" readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.category') }}</label>
-                                                        <select class="form-control" id="strata_category" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($category as $categories)
-                                                            <option value="{{$categories->id}}" {{($strata->category == $categories->id ? " selected" : "")}}>{{$categories->description}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="starta_category_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="strata_address2" value="{{$strata->address2}}" readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.perimeter') }}</label>
-                                                        <select class="form-control" id="strata_perimeter" disabled="">
-                                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                            @foreach ($perimeter as $perimeters)
-                                                            <option value="{{$perimeters->id}}" {{($strata->perimeter == $perimeters->id ? " selected" : "")}}>{{$perimeters->description_en}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div id="starta_perimeter_error" style="display:none;"></div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="strata_address3" value="{{$strata->address3}}" readonly="">
+                                                            <div id="strata_address_error" style="display:none;"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
-                                        <form id="upload_strata_file" enctype="multipart/form-data" method="post" action="{{ url('uploadStrataFile') }}" autocomplete="off">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.upload_file') }}</label>
-                                                        <br/>
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                                        <button type="button" id="clear_strata_file" class="btn btn-xs btn-danger" onclick="clearStrataFile()" style="display: none;"><i class="fa fa-times"></i></button>
-                                                        <!--&nbsp;<input type="file" name="strata_file" id="strata_file" />-->
-                                                        <div id="validation-errors_strata_file"></div>
-                                                        @if ($strata->file_url != "")
-                                                        <br/>
-                                                        <a href="{{asset($strata->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.city') }}</label>
+                                                            <select class="form-control" id="strata_city" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($city as $cities)
+                                                                <option value="{{$cities->id}}" {{($strata->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_city_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.postcode') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="strata_poscode" value="{{$strata->poscode}}" readonly="">
+                                                            <div id="strata_poscode_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.state') }}</label>
+                                                            <select class="form-control" id="strata_state" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($state as $states)
+                                                                <option value="{{$states->id}}" {{($strata->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_state_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.country') }}</label>
+                                                            <select class="form-control" id="strata_country" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($country as $countries)
+                                                                <option value="{{$countries->id}}" {{($strata->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="starta_country_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.number_of_block') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_block') }}" id="strata_block_no" value="{{$strata->block_no}}" readonly="">
+                                                            <div id="strata_block_no_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.ownership_number') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.ownership_number') }}" id="strata_ownership_no" value="{{$strata->ownership_no}}" readonly="">
+                                                            <div id="strata_ownership_no_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.city_town_district') }}</label>
+                                                            <select class="form-control" id="strata_town" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($city as $cities)
+                                                                <option value="{{$cities->id}}" {{($strata->town == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_town_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.area') }}</label>
+                                                            <select class="form-control" id="strata_area" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($area as $areas)
+                                                                <option value="{{$areas->id}}" {{($strata->area == $areas->id ? " selected" : "")}}>{{$areas->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="strata_area_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.total_land_area') }}</label>
+                                                            <div class="form-inline">
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.total_land_area') }}" id="strata_land_area" value="{{$strata->land_area}}" readonly="">
+                                                                <select class="form-control" id="strata_land_area_unit" disabled="">
+                                                                    @foreach ($unit as $units)
+                                                                    <option value="{{$units->id}}" {{($strata->land_area_unit == $units->id ? " selected" : "")}}>{{$units->description}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <div id="strata_land_area_error" style="display:none;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.lot_number') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.lot_number') }}" id="strata_lot_no" value="{{$strata->lot_no}}" readonly="">
+                                                            <div id="starta_lot_no_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.date_vp') }}</label>
+                                                            <label class="input-group datepicker-only-init">
+                                                                <input type="text" class="form-control" placeholder="{{ trans("app.forms.date") }}" id="strata_date" value="{{$strata->date}}" readonly="">
+                                                                <span class="input-group-addon">
+                                                                    <i class="icmn-calendar"></i>
+                                                                </span>
+                                                            </label>
+                                                            <div id="strata_date_error" style="display:block;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.land_title') }}</label>
+                                                            <select class="form-control" id="strata_land_title" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($land_title as $land_titles)
+                                                                <option value="{{$land_titles->id}}" {{($strata->land_title == $land_titles->id ? " selected" : "")}}>{{$land_titles->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="starta_land_title_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.category') }}</label>
+                                                            <select class="form-control" id="strata_category" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($category as $categories)
+                                                                <option value="{{$categories->id}}" {{($strata->category == $categories->id ? " selected" : "")}}>{{$categories->description}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="starta_category_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.perimeter') }}</label>
+                                                            <select class="form-control" id="strata_perimeter" disabled="">
+                                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                                @foreach ($perimeter as $perimeters)
+                                                                <option value="{{$perimeters->id}}" {{($strata->perimeter == $perimeters->id ? " selected" : "")}}>{{$perimeters->description_en}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div id="starta_perimeter_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <form id="upload_strata_file" enctype="multipart/form-data" method="post" action="{{ url('uploadStrataFile') }}" autocomplete="off">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.upload_file') }}</label>
+                                                            <br/>
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                            <button type="button" id="clear_strata_file" class="btn btn-xs btn-danger" onclick="clearStrataFile()" style="display: none;"><i class="fa fa-times"></i></button>
+                                                            <!--&nbsp;<input type="file" name="strata_file" id="strata_file" />-->
+                                                            <div id="validation-errors_strata_file"></div>
+                                                            @if ($strata->file_url != "")
+                                                            <br/>
+                                                            <a href="{{asset($strata->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
 
-                                                        @else
-                                                        <span>{{ trans('app.forms.no_uploaded_file') }}</span>
-                                                        @endif
+                                                            @else
+                                                            <span>{{ trans('app.forms.no_uploaded_file') }}</span>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
+                                </section>
                                 <hr/>
                                 <form>
                                     @if (count($residential) <= 0)

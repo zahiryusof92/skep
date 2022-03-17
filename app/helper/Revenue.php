@@ -15,6 +15,7 @@ class Revenue
     public function __construct()
     {
         $this->config = Config::get('constant.module.payment.gateway.revenue');
+        $this->isSandbox = getenv('payment_gateway_sandbox'); // identifier for sandbox or production client_id, client_secret, private_key, store_id
     }
     
     private static $domains = [
@@ -22,17 +23,14 @@ class Revenue
         'api' => 'open.revenuemonster.my'
     ];
 
-    // identifier for sandbox or production client_id, client_secret, private_key, store_id
-    private $isSandbox = true;
-
     public function getHeader($auth = false) {
         $header = [
             "Content-Type: application/json"
         ];
 
         if($auth) {
-            $client_id = $this->config['sandbox_client_id'];
-            $client_secret = $this->config['sandbox_client_secret'];
+            $client_id = $this->isSandbox? $this->config['sandbox_client_id'] : $this->config['client_id'];
+            $client_secret = $this->isSandbox? $this->config['sandbox_client_secret'] : $this->config['client_secret'];
             $base64_code = base64_encode("{$client_id}:{$client_secret}");
 
             array_push($header, "Authorization: Basic {$base64_code}");
@@ -76,7 +74,7 @@ class Revenue
             // 'data' => $data,
             'method' => $requestMethod,
             "nonceStr" => $this->config['nonceStr'],
-            "privateKey" => $this->config['sandbox_private_key'],
+            "privateKey" => $this->isSandbox? $this->config['sandbox_private_key'] : $this->config['private_key'],
             "requestUrl" => $requestUrl,
             "signType" => "sha256",
             "timestamp" => strval(Carbon::now()->timestamp)
@@ -142,15 +140,15 @@ class Revenue
         $url = $this->getOpenApiUrl('payment/online', 'api', 'v3');
         $postfields = [
             'order' => [
-                'title' => 'PaymentProcess',
+                'id' => $data['transaction_id'],
+                'title' => $data['title'],
                 'detail' => "TransactionID : {$data['transaction_id']}",
-                'additionalData' => 'Sales',
+                'additionalData' => 'ODESI eCOB Payment',
                 'amount' => ($data['amount'] * 100),
-                'currencyType' => 'MYR',
-                'id' => $data['transaction_id']
+                'currencyType' => 'MYR'
             ],
             'customer' => [
-                'userId' => '1234567',
+                'userId' => $data['user_id'],
                 'email' => '',
                 'countryCode' => '',
                 'phoneNumber' => ''
@@ -161,7 +159,7 @@ class Revenue
                 // 'GOBIZ_MY'
             ],
             'type' => 'WEB_PAYMENT', // WEB_PAYMENT / MOBILE_PAYMENT
-            'storeId' => $this->config['sandbox_store_id'],
+            'storeId' => $this->isSandbox? $this->config['sandbox_store_id'] : $this->config['store_id'],
             'redirectUrl' => $data['redirect_url'],
             'notifyUrl' => $data['notify_url'],
             'layoutVersion' => 'v3'

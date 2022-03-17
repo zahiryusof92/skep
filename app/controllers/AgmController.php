@@ -1,6 +1,8 @@
 <?php
 
+use Helper\Helper;
 use Helper\KCurl;
+use Illuminate\Support\Facades\View;
 
 class AgmController extends BaseController {
 
@@ -23,6 +25,17 @@ class AgmController extends BaseController {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('status', 'asc')->get();
             }
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(30));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
         
         $viewData = array(
@@ -133,6 +146,17 @@ class AgmController extends BaseController {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             }
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(30));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_designation'),
@@ -210,6 +234,17 @@ class AgmController extends BaseController {
         }
 
         $ajk_details = AJKDetails::find($id);
+        $disallow = Helper::isAllow($ajk_details->file_id, 0, !AccessGroup::hasUpdate(30));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_designation'),
@@ -323,6 +358,17 @@ class AgmController extends BaseController {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(31));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $viewData = array(
@@ -439,6 +485,17 @@ class AgmController extends BaseController {
 
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(31));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_purchaser'),
@@ -549,6 +606,17 @@ class AgmController extends BaseController {
 
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow($buyer->file_id, 0, !AccessGroup::hasUpdate(31));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_purchaser'),
@@ -808,6 +876,17 @@ class AgmController extends BaseController {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(43));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.tenant'),
@@ -923,6 +1002,17 @@ class AgmController extends BaseController {
 
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(43));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_tenant'),
@@ -1031,6 +1121,17 @@ class AgmController extends BaseController {
 
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow($tenant->file_id, 0, !AccessGroup::hasUpdate(43));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_tenant'),
@@ -1304,6 +1405,17 @@ class AgmController extends BaseController {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
             }
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(32));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.upload_of_minutes'),
@@ -1499,6 +1611,17 @@ class AgmController extends BaseController {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
             }
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(32));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_minutes'),
@@ -1651,6 +1774,17 @@ class AgmController extends BaseController {
                 } else {
                     $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
                 }
+            }
+            $disallow = Helper::isAllow($meeting_doc->file_id, 0, !AccessGroup::hasUpdate(32));
+            if($disallow) {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+                return View::make('404_en', $viewData);
             }
 
             $viewData = array(
@@ -1837,6 +1971,17 @@ class AgmController extends BaseController {
             }
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(33));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.upload_document'),
@@ -2030,6 +2175,17 @@ class AgmController extends BaseController {
             }
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(33));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_document'),
@@ -2106,6 +2262,17 @@ class AgmController extends BaseController {
             }
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow($document->file_id, 0, !AccessGroup::hasUpdate(33));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_document'),

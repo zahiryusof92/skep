@@ -1,6 +1,3 @@
-@if(!empty($mfreportOld))
-@include('finance_en.show.mf_report')
-@endif
 <?php
 $prefix = 'mfr_';
 ?>
@@ -291,3 +288,7 @@ $prefix = 'mfr_';
         }
     }
 </script>
+
+@if(!empty($mfreportOld))
+@include('finance_en.show.mf_report')
+@endif

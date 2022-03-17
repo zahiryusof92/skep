@@ -1,6 +1,8 @@
 <?php
 
 use Carbon\Carbon;
+use Helper\Helper;
+use Illuminate\Support\Facades\View;
 
 class FinanceController extends BaseController {
 
@@ -23,6 +25,17 @@ class FinanceController extends BaseController {
         }
 
         $year = Files::getVPYear();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(37));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.add_finance_file_list'),
@@ -715,6 +728,17 @@ class FinanceController extends BaseController {
         $sfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', $id)->where('type', 'SF')->get();
         $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
         $reportSFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow($financefiledata->file_id, $financefiledata->company_id);
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.edit_finance_file_list'),
@@ -848,13 +872,13 @@ class FinanceController extends BaseController {
                 }
 
                 # Audit Trail
-//                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
-//
-//                $auditTrail = new AuditTrail();
-//                $auditTrail->module = "COB Finance File";
-//                $auditTrail->remarks = $remarks;
-//                $auditTrail->audit_by = Auth::user()->id;
-//                $auditTrail->save();
+            //                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+            //
+            //                $auditTrail = new AuditTrail();
+            //                $auditTrail->module = "COB Finance File";
+            //                $auditTrail->remarks = $remarks;
+            //                $auditTrail->audit_by = Auth::user()->id;
+            //                $auditTrail->save();
 
                 return "true";
             }
@@ -1952,6 +1976,17 @@ class FinanceController extends BaseController {
                 $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(39));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.add_finance_support'),
@@ -2019,6 +2054,17 @@ class FinanceController extends BaseController {
             }
         }
         $financeSupportData = FinanceSupport::where('id', $id)->first();
+        $disallow = Helper::isAllow($financeSupportData->file_id, $financeSupportData->company_id, !AccessGroup::hasUpdate(39));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.edit_finance_support'),

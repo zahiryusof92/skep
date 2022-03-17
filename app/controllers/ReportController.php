@@ -1,13 +1,27 @@
 <?php
 
 use Carbon\Carbon;
+use Helper\Helper;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\View;
 
 class ReportController extends BaseController {
 
     //audit trail
     public function auditTrail() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
@@ -383,13 +397,28 @@ class ReportController extends BaseController {
     //file by location
     public function fileByLocation() {
         $strata = Strata::get();
-
+        $categoryList = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
+        $facilityList = Config::get('constant.module.cob.facility');
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(25));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
+        
         $viewData = array(
             'title' => trans('app.menus.reporting.file_by_location_report'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'file_by_location_list',
             'strata' => $strata,
+            'categoryList' => $categoryList,
+            'facilityList' => $facilityList,
             'image' => ""
         );
 
@@ -398,92 +427,168 @@ class ReportController extends BaseController {
 
     public function getFileByLocation() {
         $data = Array();
-
+        $request = Request::all();
+        $query = Files::where('is_deleted', 0);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                $query = $query->where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id);
             } else {
-                $file = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+                $query = $query->where('company_id', Auth::user()->company_id);
             }
         } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $file = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+            if (!empty(Session::get('admin_cob'))) {
+                $query = $query->where('company_id', Session::get('admin_cob'));
             }
         }
+        $files = $query->orderBy('id', 'asc')->get();
 
-        if (count($file) > 0) {
-            // foreach ($file as $files) {
-                $file_ids = array_pluck($file, 'id');
-                // $strata = Strata::where('file_id', $files->id)->get();
-                $strata = Strata::with(['parliment','duns','parks','file'])->whereIn('file_id', $file_ids)->get();
+        if($files->count() > 0) {
+            $file_ids = array_pluck($files, "id");
+
+            $strata = Strata::with(['parliment','duns','parks','file','facility'])
+                            ->join('facility', 'strata.id', '=', 'facility.strata_id')
+                            ->whereIn('strata.file_id', $file_ids)
+                            ->select(['strata.*'])
+                            ->where(function($query) use($request){
+                                if(!empty($request['category'])) {
+                                    $query->where('strata.category', $request['category']);
+                                }
+                                if(!empty($request['facility'])) {
+                                    $column = 'facility.'. $request['facility'];
+                                    $query->where("$column", true);
+                                }
+                            })
+                            ->chunk("500", function($models) use(&$data) {
+                                foreach($models as $model) {
+                                    $parliament = $model->parliment;
+                                    $dun = $model->duns;
+                                    $park =$model->parks;
+                                    $files = $model->file;
+            
+                                    if (count($parliament) > 0) {
+                                        $parliament_name = $parliament->description;
+                                    } else {
+                                        $parliament_name = "-";
+                                    }
+                                    if (count($dun) > 0) {
+                                        $dun_name = $dun->description;
+                                    } else {
+                                        $dun_name = "-";
+                                    }
+                                    if (count($park) > 0) {
+                                        $park_name = $park->description;
+                                    } else {
+                                        $park_name = "-";
+                                    }
+                                    if ($model->name == "") {
+                                        $strata_name = "-";
+                                    } else {
+                                        $strata_name = $model->name;
+                                    }
+            
+                                    $data_raw = array(
+                                        $parliament_name,
+                                        $dun_name,
+                                        $park_name,
+                                        $files->file_no,
+                                        $strata_name
+                                    );
+            
+                                    array_push($data, $data_raw);
+                                }
+                            });
+            
+        }
+
+        $output_raw = array(
+            "aaData" => $data
+        );
+
+        $output = json_encode($output_raw);
+        return $output;
+
+        // if (count($file) > 0) {
+        //     // foreach ($file as $files) {
+        //         $file_ids = array_pluck($file, 'id');
+        //         // $strata = Strata::where('file_id', $files->id)->get();
+        //         $strata = Strata::with(['parliment','duns','parks','file'])->whereIn('file_id', $file_ids)->get();
                 
-                if (count($strata) > 0) {
-                    // foreach ($strata as $stratas) {
-                    $strata->reduce(function ($carry, $stratas) use(&$data){
-                        // $parliament = Parliment::find($stratas->parliament);
-                        // $dun = Dun::find($stratas->dun);
-                        // $park = Park::find($stratas->park);
-                        // $files = Files::find($stratas->file_id);
-                        $parliament = $stratas->parliment;
-                        $dun = $stratas->duns;
-                        $park =$stratas->parks;
-                        $files = $stratas->file;
+        //         if (count($strata) > 0) {
+        //             // foreach ($strata as $stratas) {
+        //             $strata->reduce(function ($carry, $stratas) use(&$data){
+        //                 // $parliament = Parliment::find($stratas->parliament);
+        //                 // $dun = Dun::find($stratas->dun);
+        //                 // $park = Park::find($stratas->park);
+        //                 // $files = Files::find($stratas->file_id);
+        //                 $parliament = $stratas->parliment;
+        //                 $dun = $stratas->duns;
+        //                 $park =$stratas->parks;
+        //                 $files = $stratas->file;
 
-                        if (count($parliament) > 0) {
-                            $parliament_name = $parliament->description;
-                        } else {
-                            $parliament_name = "-";
-                        }
-                        if (count($dun) > 0) {
-                            $dun_name = $dun->description;
-                        } else {
-                            $dun_name = "-";
-                        }
-                        if (count($park) > 0) {
-                            $park_name = $park->description;
-                        } else {
-                            $park_name = "-";
-                        }
-                        if ($stratas->name == "") {
-                            $strata_name = "-";
-                        } else {
-                            $strata_name = $stratas->name;
-                        }
+        //                 if (count($parliament) > 0) {
+        //                     $parliament_name = $parliament->description;
+        //                 } else {
+        //                     $parliament_name = "-";
+        //                 }
+        //                 if (count($dun) > 0) {
+        //                     $dun_name = $dun->description;
+        //                 } else {
+        //                     $dun_name = "-";
+        //                 }
+        //                 if (count($park) > 0) {
+        //                     $park_name = $park->description;
+        //                 } else {
+        //                     $park_name = "-";
+        //                 }
+        //                 if ($stratas->name == "") {
+        //                     $strata_name = "-";
+        //                 } else {
+        //                     $strata_name = $stratas->name;
+        //                 }
 
-                        $data_raw = array(
-                            $parliament_name,
-                            $dun_name,
-                            $park_name,
-                            $files->file_no,
-                            $strata_name
-                        );
+        //                 $data_raw = array(
+        //                     $parliament_name,
+        //                     $dun_name,
+        //                     $park_name,
+        //                     $files->file_no,
+        //                     $strata_name
+        //                 );
 
-                        array_push($data, $data_raw);
-                    });
-                }
-            // }
+        //                 array_push($data, $data_raw);
+        //             });
+        //         }
+        //     // }
 
-            $output_raw = array(
-                "aaData" => $data
-            );
+        //     $output_raw = array(
+        //         "aaData" => $data
+        //     );
 
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
+        //     $output = json_encode($output_raw);
+        //     return $output;
+        // } else {
+        //     $output_raw = array(
+        //         "aaData" => []
+        //     );
 
-            $output = json_encode($output_raw);
-            return $output;
-        }
+        //     $output = json_encode($output_raw);
+        //     return $output;
+        // }
     }
 
     //management summary
     public function managementSummary() {
         $data = Files::getManagementSummaryCOB();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(27));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.management_summary_report'),
@@ -500,6 +605,17 @@ class ReportController extends BaseController {
     //cob file / management
     public function cobFileManagement() {
         $data = Files::getManagementSummaryCOB();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(28));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.cob_file_report'),
@@ -514,9 +630,16 @@ class ReportController extends BaseController {
     }
 
     public function ownerTenant() {
-        if (!AccessGroup::hasAccess(49)) {
-            $title = trans('app.errors.page_not_found');
-            return View::make('404_en', compact('title'));
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(49));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $data = Input::all();
@@ -586,30 +709,9 @@ class ReportController extends BaseController {
             }
         }
 
-        $access_permission = 0;
-        foreach ($user_permission as $permission) {
-            if ($permission->submodule_id == 29) {
-                $access_permission = $permission->access_permission;
-            }
-        }
-
         $data = Files::getStrataProfileAnalytic();
-
-        if ($access_permission) {
-            $viewData = array(
-                'title' => trans('app.menus.reporting.strata_profile'),
-                'panel_nav_active' => 'reporting_panel',
-                'main_nav_active' => 'reporting_main',
-                'sub_nav_active' => 'strata_profile_list',
-                'user_permission' => $user_permission,
-                'cob' => $cob,
-                'parliament' => $parliament,
-                'data' => $data,
-                'image' => '',
-            );
-
-            return View::make('report_en.strata_profile', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -619,6 +721,20 @@ class ReportController extends BaseController {
             );
             return View::make('404_en', $viewData);
         }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.strata_profile'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'strata_profile_list',
+            'user_permission' => $user_permission,
+            'cob' => $cob,
+            'parliament' => $parliament,
+            'data' => $data,
+            'image' => '',
+        );
+
+        return View::make('report_en.strata_profile', $viewData);
     }
 
     public function getStrataProfile() {
@@ -631,7 +747,7 @@ class ReportController extends BaseController {
                         ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
                         ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
                         // ->where('finance_file.year', date('Y'))
@@ -651,7 +767,7 @@ class ReportController extends BaseController {
                         ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
                         ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         ->where('files.company_id', Auth::user()->company_id)
                         // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
@@ -672,7 +788,7 @@ class ReportController extends BaseController {
                         ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
                         ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
                         ->where('finance_file_income.name', 'SINKING FUND')
@@ -690,7 +806,7 @@ class ReportController extends BaseController {
                         ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
                         ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
                         ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
+                        ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
                         ->where('files.company_id', Session::get('admin_cob'))
                         // ->where('finance_file.year', date('Y'))
                         ->where('finance_file_report.type', 'SF')
@@ -744,7 +860,7 @@ class ReportController extends BaseController {
                     $zone = 'Merah';
                 }
                     $data_raw = array(
-                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $file->id) . "'>" . $file->file_no . "</a>",
+                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $file->id) . "'>" . $file->file_no . " " . $file->finance_year . "-" . strtoupper(DateTime::createFromFormat('!m', $file->finance_month)->format('M')) . "</a>",
                         $file->strata_name,
                         $file->company_name,
                         $file->parliment_name,
@@ -1208,6 +1324,17 @@ class ReportController extends BaseController {
             $cob_id = '';
             $file_info = Files::getComplaintReportByCOB();
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(51));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.complaint'),
@@ -1254,6 +1381,17 @@ class ReportController extends BaseController {
             $cob_id = '';
             $file_info = Files::getInsuranceReportByCOB();
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(50));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.insurance'),
@@ -1293,6 +1431,17 @@ class ReportController extends BaseController {
         } else {
             $cob_id = '';
             $file_info = Files::getCollectionReportByCOB();
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(52));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $viewData = array(
@@ -1337,6 +1486,17 @@ class ReportController extends BaseController {
             $cob_id = '';
             $file_info = Files::getCouncilReportByCOB();
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(53));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.council'),
@@ -1377,6 +1537,17 @@ class ReportController extends BaseController {
         } else {
             $cob_id = '';
             $file_info = Files::getDunReportByCOB();
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(54));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $viewData = array(
@@ -1419,6 +1590,17 @@ class ReportController extends BaseController {
         } else {
             $cob_id = '';
             $file_info = Files::getParlimentReportByCOB();
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(55));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $viewData = array(
@@ -1474,6 +1656,17 @@ class ReportController extends BaseController {
         }
 
         $file_info = Files::getVPReport($cob_id, $year_id ? $year_id : date('Y'));
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(56));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.vp'),
@@ -1523,6 +1716,17 @@ class ReportController extends BaseController {
         );
 
         $filename = Files::getFileName();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(57));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.management_list'),
@@ -1841,17 +2045,17 @@ class ReportController extends BaseController {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
 
             if (!empty(Auth::user()->file_id)) {
-                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata'])->where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
-                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata'])->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata'])->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-                $files = Files::with(['company','strata','managementJMB','managementMC','managementAgent','managementOthers'])->where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+                $files = Files::with(['company','strata'])->where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
 
@@ -1919,68 +2123,6 @@ class ReportController extends BaseController {
                     array_push($data, $data_raw);
                 }
             });
-
-            // foreach ($files as $file) {
-            //     if ($file->managementJMB) {
-            //         $data_raw = array(
-            //             $file->company->short_name,
-            //             $file->file_no,
-            //             $file->strata->name,
-            //             'JMB',
-            //             $file->managementJMB->name,
-            //             ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
-            //             $file->managementJMB->email,
-            //             $file->managementJMB->phone_no
-            //         );
-
-            //         array_push($data, $data_raw);
-            //     }
-
-            //     if ($file->managementMC) {
-            //         $data_raw = array(
-            //             $file->company->short_name,
-            //             $file->file_no,
-            //             $file->strata->name,
-            //             'MC',
-            //             $file->managementMC->name,
-            //             ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
-            //             $file->managementMC->email,
-            //             $file->managementMC->phone_no
-            //         );
-
-            //         array_push($data, $data_raw);
-            //     }
-
-            //     if ($file->managementAgent) {
-            //         $data_raw = array(
-            //             $file->company->short_name,
-            //             $file->file_no,
-            //             $file->strata->name,
-            //             'Agent',
-            //             $file->managementAgent->name,
-            //             ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
-            //             $file->managementAgent->email,
-            //             $file->managementAgent->phone_no
-            //         );
-
-            //         array_push($data, $data_raw);
-            //     }
-
-            //     if ($file->managementOthers) {
-            //         $data_raw = array(
-            //             $file->company->short_name,
-            //             $file->file_no,
-            //             $file->strata->name,
-            //             'Others',
-            //             $file->managementOthers->name,
-            //             ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
-            //             $file->managementOthers->email,
-            //             $file->managementOthers->phone_no
-            //         );
-
-            //         array_push($data, $data_raw);
-            //     }
-            // }
             $output_raw = array(
                 "aaData" => $data
             );
@@ -1999,8 +2141,18 @@ class ReportController extends BaseController {
 
     //rating summary
     public function ratingSummary() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(26));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $summary_data = Files::getRatingByCategory();
-
         $rating_data = Files::getDashboardData();
 
         $viewData = array(
@@ -2017,7 +2169,8 @@ class ReportController extends BaseController {
     }
 
     public function landTitle() {
-        if (!AccessGroup::hasAccess(60)) {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(60));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -2025,7 +2178,6 @@ class ReportController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
 

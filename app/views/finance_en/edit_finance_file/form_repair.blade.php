@@ -1,6 +1,3 @@
-@if(count($repairaOld) > 0 && count($repairbOld) > 0)
-@include('finance_en.show.repair')
-@endif
 <?php
 $prefix = 'repair_maintenancefee_';
 $prefix2 = 'repair_singkingfund_';
@@ -377,3 +374,7 @@ $prefix2 = 'repair_singkingfund_';
         }
     }
 </script>
+
+@if(count($repairaOld) > 0 && count($repairbOld) > 0)
+@include('finance_en.show.repair')
+@endif

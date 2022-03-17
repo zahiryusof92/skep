@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -22,152 +22,134 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$file->file_no}}</h6>
                     <div id="update_files_lists">
-                        <ul class="nav nav-pills nav-justified" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewHouse', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewStrata', $file->id)}}">{{ trans('app.forms.developed_area') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewManagement', $file->id)}}">{{ trans('app.forms.management') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active">{{ trans('app.forms.monitoring') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewOthers', $file->id)}}">{{ trans('app.forms.others') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewScoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewBuyer', $file->id)}}">{{ trans('app.forms.buyer_list') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@fileApproval', $file->id)}}">{{ trans('app.forms.approval') }}</a>
-                            </li>
-                        </ul>
+                        @include('page_en.nav.cob_file', ['files' => $file, 'is_view' => true])
+
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="monitoring" role="tabpanel">
-                                <form id="monitoring">
-                                    <div class="row">
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
-                                            <h4>{{ trans('app.forms.detail') }}</h4>
-                                            <h6>1. {{ trans('app.forms.delivery_document_of_development_area') }}</h6>
-                                            <div class="form-group row">
-                                                <div class="col-md-3">
-                                                    <label class="form-control-label">{{ trans('app.forms.pre_calculate_plan') }}</label>
+                                            <form id="monitoring">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <h4>{{ trans('app.forms.detail') }}</h4>
+                                                        <h6>1. {{ trans('app.forms.delivery_document_of_development_area') }}</h6>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-3">
+                                                                <label class="form-control-label">{{ trans('app.forms.pre_calculate_plan') }}</label>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <input type="radio" id="precalculate_plan" name="precalculate_plan" value="1" {{($monitoring->pre_calculate == 1 ? " checked" : "")}} disabled>
+                                                                {{ trans('app.forms.yes') }}
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <input type="radio" id="precalculate_plan" name="precalculate_plan" value="0" {{($monitoring->pre_calculate == 0 ? " checked" : "")}} disabled>
+                                                                {{ trans('app.forms.no') }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-3">
+                                                                <label class="form-control-label">{{ trans('app.forms.buyer_registration') }}</label>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <input type="radio" id="buyer_registration" name="buyer_registration" value="1" {{($monitoring->buyer_registration == 1 ? " checked" : "")}} disabled>
+                                                                {{ trans('app.forms.yes') }}
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <input type="radio" id="buyer_registration" name="buyer_registration" value="0" {{($monitoring->buyer_registration == 0 ? " checked" : "")}} disabled>
+                                                                {{ trans('app.forms.no') }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-3">
+                                                                <label class="form-control-label">{{ trans('app.forms.certificate_series_number') }}</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" id="certificate_series_no" value="{{$monitoring->certificate_no}}" readonly="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="precalculate_plan" name="precalculate_plan" value="1" {{($monitoring->pre_calculate == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
+                                                <hr/>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <h6>2. {{ trans('app.forms.delivery_document_of_each_meeting') }}</h6>
+                                                        <div class="table-responsive">
+                                                            <div class="form-group row">
+                                                                <div class="col-md-3">
+                                                                    <label class="form-control-label">{{ trans('app.forms.financial_report_start_month') }}</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <select class="form-control" id="commercial_sinking_fund_option">
+                                                                        <option value="0" selected="">{{ trans('app.forms.all') }}</option>
+                                                                        <option value="1">{{ trans('app.forms.january') }}</option>
+                                                                        <option value="2">{{ trans('app.forms.february') }}</option>
+                                                                        <option value="3">{{ trans('app.forms.march') }}</option>
+                                                                        <option value="4">{{ trans('app.forms.april') }}</option>
+                                                                        <option value="5">{{ trans('app.forms.may') }}</option>
+                                                                        <option value="6">{{ trans('app.forms.june') }}</option>
+                                                                        <option value="7">{{ trans('app.forms.july') }}</option>
+                                                                        <option value="8">{{ trans('app.forms.august') }}</option>
+                                                                        <option value="9">{{ trans('app.forms.september') }}</option>
+                                                                        <option value="10">{{ trans('app.forms.october') }}</option>
+                                                                        <option value="11">{{ trans('app.forms.november') }}</option>
+                                                                        <option value="12">{{ trans('app.forms.december') }}</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <table class="table table-hover nowrap" id="financial_report_list" width="100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
+                                                                        <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
+                                                                        <th style="width:5%;"></th>
+                                                                        <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
+                                                                        <th style="width:5%;"></th>
+                                                                        <th style="width:20%;">{{ trans('app.forms.financial_report') }}</th>
+                                                                        <th style="width:5%;"></th>
+    
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="precalculate_plan" name="precalculate_plan" value="0" {{($monitoring->pre_calculate == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
+                                                <hr/>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <h6>{{ trans('app.forms.additional_info') }}</h6>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover nowrap" id="ajk_details_list" width="100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:30%;text-align: center !important;">{{ trans('app.forms.designation') }}</th>
+                                                                        <th style="width:30%;">{{ trans('app.forms.name') }}</th>
+                                                                        <th style="width:20%;">{{ trans('app.forms.phone_number') }}</th>
+                                                                        <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
+                                                                        <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-3">
-                                                    <label class="form-control-label">{{ trans('app.forms.buyer_registration') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="buyer_registration" name="buyer_registration" value="1" {{($monitoring->buyer_registration == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="buyer_registration" name="buyer_registration" value="0" {{($monitoring->buyer_registration == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-3">
-                                                    <label class="form-control-label">{{ trans('app.forms.certificate_series_number') }}</label>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" id="certificate_series_no" value="{{$monitoring->certificate_no}}" readonly="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <h6>2. {{ trans('app.forms.delivery_document_of_each_meeting') }}</h6>
-                                            <div class="table-responsive">
+                                                <hr/>
                                                 <div class="form-group row">
                                                     <div class="col-md-3">
-                                                        <label class="form-control-label">{{ trans('app.forms.financial_report_start_month') }}</label>
+                                                        <label class="form-control-label">{{ trans('app.forms.remarks') }}</label>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <select class="form-control" id="commercial_sinking_fund_option">
-                                                            <option value="0" selected="">{{ trans('app.forms.all') }}</option>
-                                                            <option value="1">{{ trans('app.forms.january') }}</option>
-                                                            <option value="2">{{ trans('app.forms.february') }}</option>
-                                                            <option value="3">{{ trans('app.forms.march') }}</option>
-                                                            <option value="4">{{ trans('app.forms.april') }}</option>
-                                                            <option value="5">{{ trans('app.forms.may') }}</option>
-                                                            <option value="6">{{ trans('app.forms.june') }}</option>
-                                                            <option value="7">{{ trans('app.forms.july') }}</option>
-                                                            <option value="8">{{ trans('app.forms.august') }}</option>
-                                                            <option value="9">{{ trans('app.forms.september') }}</option>
-                                                            <option value="10">{{ trans('app.forms.october') }}</option>
-                                                            <option value="11">{{ trans('app.forms.november') }}</option>
-                                                            <option value="12">{{ trans('app.forms.december') }}</option>
-                                                        </select>
+                                                    <div class="col-md-4">
+                                                        <textarea class="form-control" rows="3" id="monitoring_remarks" readonly="">{{$monitoring->remarks}}</textarea>
                                                     </div>
                                                 </div>
-                                                <table class="table table-hover nowrap" id="financial_report_list" width="100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width:15%;text-align: center !important;">{{ trans('app.forms.agm_date') }}</th>
-                                                            <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
-                                                            <th style="width:5%;"></th>
-                                                            <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
-                                                            <th style="width:5%;"></th>
-                                                            <th style="width:20%;">{{ trans('app.forms.financial_report') }}</th>
-                                                            <th style="width:5%;"></th>
-
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    <hr/>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <h6>{{ trans('app.forms.additional_info') }}</h6>
-                                            <div class="table-responsive">
-                                                <table class="table table-hover nowrap" id="ajk_details_list" width="100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width:30%;text-align: center !important;">{{ trans('app.forms.designation') }}</th>
-                                                            <th style="width:30%;">{{ trans('app.forms.name') }}</th>
-                                                            <th style="width:20%;">{{ trans('app.forms.phone_number') }}</th>
-                                                            <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
-                                                            <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    <div class="form-group row">
-                                        <div class="col-md-3">
-                                            <label class="form-control-label">{{ trans('app.forms.remarks') }}</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <textarea class="form-control" rows="3" id="monitoring_remarks" readonly="">{{$monitoring->remarks}}</textarea>
-                                        </div>
-                                    </div>
-                                </form>
+                                </section>
                             </div>
                         </div>
                     </div>
