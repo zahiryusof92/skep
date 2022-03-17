@@ -1,6 +1,3 @@
-@if(count($utilaOld) > 0 && count($utilbOld) > 0)
-@include('finance_en.show.utility')
-@endif
 <?php
 $prefix = 'util_';
 $prefix2 = 'utilb_';
@@ -383,3 +380,7 @@ $prefix3 = 'utilab_';
         }
     }
 </script>
+
+@if(count($utilaOld) > 0 && count($utilbOld) > 0)
+@include('finance_en.show.utility')
+@endif

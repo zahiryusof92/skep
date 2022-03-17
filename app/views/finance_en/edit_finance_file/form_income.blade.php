@@ -1,6 +1,4 @@
-@if(count($incomeOldFile) > 0)
-    @include('finance_en.show.income')
-@endif
+
 <?php
 $prefix = 'income_';
 ?>
@@ -215,3 +213,7 @@ $prefix = 'income_';
         }
     }
 </script>
+
+@if(count($incomeOldFile) > 0)
+    @include('finance_en.show.income')
+@endif

@@ -40,6 +40,34 @@ $company = Company::find(Auth::user()->company_id);
                 <hr/>
                 <section class="panel panel-pad">
                     <div class="row padding-vertical-10">
+                        <div class="col-lg-12 text-center">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.category') }}</label>
+                                            <select id="category" class="form-control select2">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @foreach($categoryList as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->description }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.facility') }}</label>
+                                            <select id="facility" class="form-control select2">
+                                                <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                @foreach($facilityList as $facility)
+                                                    <option value="{{ $facility['name'] }}">{{ $facility['title'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                         <div class="col-lg-12">
                             <br/>
                             <table class="table table-hover table-own table-striped" id="file_location_list" width="100%">
@@ -69,19 +97,37 @@ $company = Company::find(Auth::user()->company_id);
 <script>
     var oTable;
     $(document).ready(function () {
+        generateDatatable();
+
+        $('select').on('select2:select', function (e) {
+            oTable.destroy();
+            generateDatatable();
+        });
+        $("[data-toggle=tooltip]").tooltip();
+    });
+
+    function generateDatatable() {
         oTable = $('#file_location_list').DataTable({
             "sAjaxSource": "{{URL::action('ReportController@getFileByLocation')}}",
+            "fnServerData": function ( sSource, aoData, fnCallback ) {
+                aoData.push({"name": 'category', "value": $('#category').val()});
+                aoData.push({"name": 'facility', "value": $('#facility').val()});
+                $.ajax( {
+                    "dataType": 'json', 
+                    "type": "GET", 
+                    "url": sSource, 
+                    "data": aoData, 
+                    "success": fnCallback
+                } );
+            },
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "pageLength": 50,
             "order": [[0, "asc"]],
             "scrollX": true,
             "responsive": false
         });
-    });
 
-    $(function () {
-        $("[data-toggle=tooltip]").tooltip();
-    });
+    }
 </script>
 
 @stop

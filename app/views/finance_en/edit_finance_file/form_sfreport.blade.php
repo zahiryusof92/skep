@@ -1,6 +1,3 @@
-@if(!empty($sfreportOld))
-@include('finance_en.show.sf_report')
-@endif
 <?php
 $prefix = 'sfr_';
 
@@ -309,3 +306,7 @@ $count = 0;
         }
     }
 </script>
+
+@if(!empty($sfreportOld))
+@include('finance_en.show.sf_report')
+@endif

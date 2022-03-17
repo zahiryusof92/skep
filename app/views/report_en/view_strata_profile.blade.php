@@ -54,7 +54,9 @@
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LIF</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">BIL. UNIT LIF</th>
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">AKAUN METER AIR</th>
+                                    @if(str_contains(Request::url(), 'https://ecob.mps.gov.my/'))
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">TNB</th>
+                                    @endif
                                     <th style="width:10%; text-align: center !important; vertical-align:middle !important;">ZON</th>
                                 </tr>
                             </thead>
@@ -68,7 +70,9 @@
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['lif'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['lif_unit'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['type_meter'] }}</td>
+                                    @if(str_contains(Request::url(), 'https://ecob.mps.gov.my/'))
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['tnb'] }}</td>
+                                    @endif
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['zone'] }}</td>
                                 </tr>
                             </tbody>

@@ -1,6 +1,3 @@
-@if(count($staffOldFile) > 0)
-@include('finance_en.show.staff')
-@endif
 <?php
 $prefix = 'staff_';
 ?>
@@ -260,3 +257,7 @@ $prefix = 'staff_';
         }
     }
 </script>
+
+@if(count($staffOldFile) > 0)
+@include('finance_en.show.staff')
+@endif

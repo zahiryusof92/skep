@@ -1,5 +1,8 @@
 <?php
 
+use Helper\Helper;
+use Illuminate\Support\Facades\View;
+
 class CategoryController extends \BaseController {
 
     /**
@@ -42,6 +45,17 @@ class CategoryController extends \BaseController {
                             })
                             ->make(true);
         }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(12));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.category_maintenance'),
@@ -61,6 +75,17 @@ class CategoryController extends \BaseController {
      */
     public function create() {
         $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(12));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_category'),
@@ -164,6 +189,17 @@ class CategoryController extends \BaseController {
         $model = Category::find($id);
         if ($model) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(12));
+            if($disallow) {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+                return View::make('404_en', $viewData);
+            }
 
             $viewData = array(
                 'title' => trans('app.menus.master.edit_category'),

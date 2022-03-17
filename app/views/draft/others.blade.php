@@ -444,6 +444,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @if(str_contains(Request::url(), 'https://ecob.mps.gov.my/'))
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -456,6 +457,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @endif
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">

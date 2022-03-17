@@ -1,6 +1,3 @@
-@if(count($adminOldFile) > 0)
-@include('finance_en.show.admin')
-@endif
 <?php
 $prefix = 'admin_';
 ?>
@@ -227,3 +224,7 @@ $prefix = 'admin_';
         }
     }
 </script>
+
+@if(count($adminOldFile) > 0)
+@include('finance_en.show.admin')
+@endif

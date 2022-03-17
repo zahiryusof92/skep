@@ -253,10 +253,9 @@ class MyPointController extends \BaseController {
                             return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
 
                         } else {
+                            // dd($payment_params);
                             $redirect_url = $payment_params->item->url;
                             return Redirect::to($redirect_url);
-                            // Log::info(json_encode($payment_params));
-                            // dd($payment_params);
                         }
 
                         // Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {

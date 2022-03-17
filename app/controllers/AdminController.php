@@ -1,5 +1,6 @@
 <?php
 
+use Helper\Helper;
 use Helper\KCurl;
 
 class AdminController extends BaseController {
@@ -122,13 +123,13 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($fileprefixs->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveFilePrefix(\'' . $fileprefixs->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveFilePrefix(\'' . Helper::encode($fileprefixs->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFilePrefix(\'' . $fileprefixs->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFilePrefix(\'' . Helper::encode($fileprefixs->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateFilePrefix', $fileprefixs->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFilePrefix(\'' . $fileprefixs->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateFilePrefix', Helper::encode($fileprefixs->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFilePrefix(\'' . Helper::encode($fileprefixs->id) . '\')"><i class="fa fa-trash"></i></button>';
                 $data_raw = array(
                     $fileprefixs->description,
                     $fileprefixs->sort_no,
@@ -165,7 +166,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $prefix = FilePrefix::find($id);
             $prefix->is_active = 0;
@@ -200,7 +201,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $prefix = FilePrefix::find($id);
             $prefix->is_active = 1;
@@ -235,7 +236,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $prefix = FilePrefix::find($id);
             $prefix->is_deleted = 1;
@@ -262,8 +263,8 @@ class AdminController extends BaseController {
     public function updateFilePrefix($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $prefix = FilePrefix::find($id);
-
+        $prefix = FilePrefix::find(Helper::decode($id));
+        
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file_prefix'),
             'panel_nav_active' => 'cob_panel',
@@ -288,7 +289,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $description = $data['description'];
             $is_active = $data['is_active'];
             $sort_no = $data['sort_no'];
@@ -885,7 +886,18 @@ class AdminController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
-
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -933,7 +945,18 @@ class AdminController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $users = User::where('company_id', $files->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1097,7 +1120,18 @@ class AdminController extends BaseController {
         $perimeter = Perimeter::where('is_active', 1)->where('is_deleted', 0)->orderBy('description_en', 'asc')->get();
         $unitoption = UnitOption::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
-
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1185,7 +1219,18 @@ class AdminController extends BaseController {
         $perimeter = Perimeter::where('is_active', 1)->where('is_deleted', 0)->orderBy('description_en', 'asc')->get();
         $unitoption = UnitOption::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1570,7 +1615,18 @@ class AdminController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
-
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1623,7 +1679,18 @@ class AdminController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1896,13 +1963,27 @@ class AdminController extends BaseController {
     }
 
     public function viewMonitoring($id) {
+        if (Auth::user()->isJMB()) {
+            return Redirect::to('updateFile/others/' . $id);
+        }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $monitoring = Monitoring::where('file_id', $files->id)->first();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $image = OtherDetails::where('file_id', $files->id)->first();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1929,7 +2010,18 @@ class AdminController extends BaseController {
         $monitoring = Monitoring::where('file_id', $files->id)->first();
         $image = OtherDetails::where('file_id', $files->id)->first();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3266,7 +3358,18 @@ class AdminController extends BaseController {
         $files = Files::find($id);
         $other_details = OtherDetails::where('file_id', $files->id)->first();
         $image = OtherDetails::where('file_id', $files->id)->first();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3303,7 +3406,18 @@ class AdminController extends BaseController {
             $image = OtherDetails::where('file_id', $files->id)->first();
         }
         $tnbLists = OtherDetails::tnbLists();
+        $disallow = Helper::isAllow($files->id, $files->company_id);
         
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3544,11 +3658,28 @@ class AdminController extends BaseController {
     }
 
     public function viewScoring($id) {
-//get user permission
+        if (Auth::user()->isJMB()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $image = OtherDetails::where('file_id', $files->id)->first();
-
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3564,7 +3695,7 @@ class AdminController extends BaseController {
 
     public function scoring($id) {
         if (Auth::user()->isJMB()) {
-            return Redirect::back();
+            return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
@@ -3574,6 +3705,18 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3915,10 +4058,28 @@ class AdminController extends BaseController {
     }
 
     public function viewBuyer($id) {
-//get user permission
+        //get user permission
+        if (Auth::user()->isJMB()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
+        if (Auth::user()->isPreSale()) {
+            return Redirect::to('update/monitoring/' . $id);
+        }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find($id);
         $image = OtherDetails::where('file_id', $files->id)->first();
+        $disallow = Helper::isAllow($files->id, $files->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3937,7 +4098,7 @@ class AdminController extends BaseController {
 
     public function buyer($id) {
         if (Auth::user()->isJMB()) {
-            return Redirect::back();
+            return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
@@ -3947,6 +4108,18 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3968,6 +4141,17 @@ class AdminController extends BaseController {
         $image = OtherDetails::where('file_id', $file->id)->first();
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasInsert(31));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4067,13 +4251,24 @@ class AdminController extends BaseController {
     }
 
     public function editBuyer($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $buyer = Buyer::find($id);
         $files = Files::find($buyer->file_id);
         $image = OtherDetails::where('file_id', $files->id)->first();
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow($files->id, $files->company_id, !AccessGroup::hasUpdate(31));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4396,7 +4591,7 @@ class AdminController extends BaseController {
     //document
     public function document($id) {
         if (Auth::user()->isJMB()) {
-            return Redirect::back();
+            return Redirect::to('update/monitoring/' . $id);
         }
 
         //get user permission
@@ -4404,6 +4599,18 @@ class AdminController extends BaseController {
         $file = Files::find($id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4424,6 +4631,7 @@ class AdminController extends BaseController {
             return Redirect::to('update/monitoring/' . $id);
         }
         $files = Files::find($id);
+        
         $document = Document::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         if (count($document) > 0) {
             $data = Array();
@@ -4551,10 +4759,21 @@ class AdminController extends BaseController {
 
     public function addDocument($id) {
         $file = Files::find($id);
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasInsert(33));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4614,11 +4833,22 @@ class AdminController extends BaseController {
 
     public function editDocument($id) {
         $file = Files::find($id);
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $document = Document::find($id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($document->file_id, $document->file->company_id, !AccessGroup::hasUpdate(33));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4751,11 +4981,21 @@ class AdminController extends BaseController {
         }
     }
 
-// --- Administrator --- //
+    // --- Administrator --- //
     public function company() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(4));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.administration.organization_profile'),
             'panel_nav_active' => 'admin_panel',
@@ -4892,11 +5132,22 @@ class AdminController extends BaseController {
     }
 
     public function addCompany() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(4));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.add_organization_profile'),
@@ -4969,7 +5220,7 @@ class AdminController extends BaseController {
     }
 
     public function editCompany($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $company = Company::find($id);
@@ -4977,6 +5228,17 @@ class AdminController extends BaseController {
             $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
             $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+            $disallow = Helper::isAllow(0, $id, !AccessGroup::hasUpdate(4));
+            if($disallow) {
+                $viewData = array(
+                    'title' => trans('app.errors.page_not_found'),
+                    'panel_nav_active' => '',
+                    'main_nav_active' => '',
+                    'sub_nav_active' => '',
+                    'image' => ""
+                );
+                return View::make('404_en', $viewData);
+            }
 
             $viewData = array(
                 'title' => trans('app.menus.administration.edit_organization_profile'),
@@ -5056,10 +5318,21 @@ class AdminController extends BaseController {
         }
     }
 
-//Access Group
+    //Access Group
     public function accessGroups() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(5));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.access_group_management'),
@@ -5074,9 +5347,20 @@ class AdminController extends BaseController {
     }
 
     public function addAccessGroup() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $module = Module::get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(5));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.buttons.add_access_group'),
@@ -5193,7 +5477,7 @@ class AdminController extends BaseController {
                     $new_permission->submodule_id = $permission_lists['module_id'];
                     $new_permission->role_id = $role->id;
 
-//default value is 0
+                    //default value is 0
                     $new_permission->access_permission = 0;
                     $new_permission->insert_permission = 0;
                     $new_permission->update_permission = 0;
@@ -5374,6 +5658,17 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $accessgroup = Role::find($id);
         $module = Module::get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(5));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.buttons.update_access_group'),
@@ -5486,7 +5781,7 @@ class AdminController extends BaseController {
                     );
                 }
 
-//delete the access permission in db before add new
+                //delete the access permission in db before add new
                 $deleted = AccessGroup::where('role_id', $role_id)->delete();
 
                 foreach ($permission_list as $permission_lists) {
@@ -5495,7 +5790,7 @@ class AdminController extends BaseController {
                     $new_permission->submodule_id = $permission_lists['module_id'];
                     $new_permission->role_id = $role->id;
 
-//default value is 0
+                    //default value is 0
                     $new_permission->access_permission = 0;
                     $new_permission->insert_permission = 0;
                     $new_permission->update_permission = 0;
@@ -5530,10 +5825,21 @@ class AdminController extends BaseController {
         }
     }
 
-//user
+    //user
     public function user() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.user_management'),
@@ -5551,37 +5857,38 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        if (AccessGroup::hasInsert(6)) {
-            if (!Auth::user()->getAdmin()) {
-                if (Auth::user()->isCOB()) {
-                    if (Auth::user()->getRole->is_paid) {
-                        $role = Role::where(function ($query) {
-                                    $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
-                                })
-                                ->orWhere(function ($query) {
-                                    $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
-                                })
-                                ->where('is_admin', 0)
-                                ->where('is_active', 1)
-                                ->where('is_deleted', 0)
-                                ->orderBy('name')
-                                ->lists('name', 'id');
-                    } else {
-                        $role = Role::where(function ($query) {
-                                    $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
-                                })
-                                ->orWhere(function ($query) {
-                                    $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
-                                })
-                                ->where('is_admin', 0)
-                                ->where('is_active', 1)
-                                ->where('is_deleted', 0)
-                                ->orderBy('name')
-                                ->lists('name', 'id');
-                    }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
+        
+        if (!Auth::user()->getAdmin()) {
+            if (Auth::user()->isCOB()) {
+                if (Auth::user()->getRole->is_paid) {
+                    $role = Role::where(function ($query) {
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function ($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                            })
+                            ->where('is_admin', 0)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->orderBy('name')
+                            ->lists('name', 'id');
                 } else {
                     $role = Role::where(function ($query) {
-                                $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                            })
+                            ->orWhere(function ($query) {
+                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
                             })
                             ->where('is_admin', 0)
                             ->where('is_active', 1)
@@ -5589,41 +5896,40 @@ class AdminController extends BaseController {
                             ->orderBy('name')
                             ->lists('name', 'id');
                 }
-
-                $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             } else {
-                if (empty(Session::get('admin_cob'))) {
-                    $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
-                    $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
-                } else {
-                    $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
-                    $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
-                }
+                $role = Role::where(function ($query) {
+                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                        })
+                        ->where('is_admin', 0)
+                        ->where('is_active', 1)
+                        ->where('is_deleted', 0)
+                        ->orderBy('name')
+                        ->lists('name', 'id');
             }
 
-            $viewData = array(
-                'title' => trans('app.buttons.add_user'),
-                'panel_nav_active' => 'admin_panel',
-                'main_nav_active' => 'admin_main',
-                'sub_nav_active' => 'user_list',
-                'user_permission' => $user_permission,
-                'company' => $company,
-                'role' => $role,
-                'image' => ""
-            );
-
-            return View::make('admin_en.add_user', $viewData);
+            $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+                $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+                $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            }
         }
 
         $viewData = array(
-            'title' => trans('app.errors.page_not_found'),
-            'panel_nav_active' => '',
-            'main_nav_active' => '',
-            'sub_nav_active' => '',
+            'title' => trans('app.buttons.add_user'),
+            'panel_nav_active' => 'admin_panel',
+            'main_nav_active' => 'admin_main',
+            'sub_nav_active' => 'user_list',
+            'user_permission' => $user_permission,
+            'company' => $company,
+            'role' => $role,
             'image' => ""
         );
 
-        return View::make('404_en', $viewData);
+        return View::make('admin_en.add_user', $viewData);
     }
 
     public function submitUser() {
@@ -5784,6 +6090,17 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::find($id);
         $company = Company::find($user->company_id);
+        $disallow = Helper::isAllow(0, $user->company_id, !AccessGroup::hasAccess(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.user_details'),
@@ -6036,6 +6353,17 @@ class AdminController extends BaseController {
         }
 
         $files = Files::where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('file_no')->get();
+        $disallow = Helper::isAllow(0, $user->company_id, !AccessGroup::hasUpdate(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.update_user'),
@@ -6144,6 +6472,17 @@ class AdminController extends BaseController {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.memo_management'),
@@ -6169,6 +6508,17 @@ class AdminController extends BaseController {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.buttons.add_memo'),
@@ -6381,6 +6731,17 @@ class AdminController extends BaseController {
         }
         $memo = Memo::find($id);
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, $memo->company_id, !AccessGroup::hasAccess(6));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.buttons.update_memo'),
@@ -6441,9 +6802,9 @@ class AdminController extends BaseController {
         }
     }
 
-//rating
+    //rating
     public function rating() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -6457,6 +6818,17 @@ class AdminController extends BaseController {
             } else {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(40));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $viewData = array(
@@ -6595,7 +6967,7 @@ class AdminController extends BaseController {
     }
 
     public function addRating() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -6609,6 +6981,17 @@ class AdminController extends BaseController {
             } else {
                 $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
             }
+        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(40));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
         }
 
         $viewData = array(
@@ -6708,7 +7091,7 @@ class AdminController extends BaseController {
     }
 
     public function updateRating($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -6724,6 +7107,17 @@ class AdminController extends BaseController {
             }
         }
         $rating = Scoring::find($id);
+        $disallow = Helper::isAllow(0, $rating->file->company_id, !AccessGroup::hasUpdate(40));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         if ($rating) {
             $viewData = array(
                 'title' => trans('app.menus.administration.edit_rating'),
@@ -6851,11 +7245,22 @@ class AdminController extends BaseController {
         }
     }
 
-//form
+    //form
     public function form() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(41));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.form'),
@@ -7045,7 +7450,7 @@ class AdminController extends BaseController {
     }
 
     public function addForm() {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         if (!Auth::user()->getAdmin()) {
@@ -7059,6 +7464,17 @@ class AdminController extends BaseController {
         }
 
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(41));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.add_form'),
@@ -7105,7 +7521,7 @@ class AdminController extends BaseController {
     }
 
     public function updateForm($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $form = AdminForm::find($id);
 
@@ -7120,6 +7536,17 @@ class AdminController extends BaseController {
         }
 
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, $form->company_id, !AccessGroup::hasUpdate(41));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.edit_form'),
@@ -7699,7 +8126,7 @@ class AdminController extends BaseController {
      * 13 October 2020
      */
 
-//defect
+    //defect
     public function defect() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -7717,28 +8144,8 @@ class AdminController extends BaseController {
             }
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 45) {
-                $permission = $permissions->access_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.agm.defect'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => 'defect_list',
-                'user_permission' => $user_permission,
-                'files' => $files,
-                'defectCategory' => $defectCategory,
-                'image' => ""
-            );
-
-            return View::make('page_en.defect', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(45));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -7748,6 +8155,18 @@ class AdminController extends BaseController {
             );
             return View::make('404_en', $viewData);
         }
+        $viewData = array(
+            'title' => trans('app.menus.agm.defect'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => 'defect_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('page_en.defect', $viewData);
     }
 
     public function getDefect() {
@@ -7898,28 +8317,8 @@ class AdminController extends BaseController {
             }
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 45) {
-                $permission = $permissions->insert_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.agm.add_defect'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => 'defect_list',
-                'user_permission' => $user_permission,
-                'files' => $files,
-                'defectCategory' => $defectCategory,
-                'image' => ""
-            );
-
-            return View::make('page_en.add_defect', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(45));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -7927,9 +8326,20 @@ class AdminController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+        $viewData = array(
+            'title' => trans('app.menus.agm.add_defect'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => 'defect_list',
+            'user_permission' => $user_permission,
+            'files' => $files,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('page_en.add_defect', $viewData);
     }
 
     public function submitAddDefect() {
@@ -7978,29 +8388,8 @@ class AdminController extends BaseController {
             }
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->get();
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 45) {
-                $permission = $permissions->update_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.agm.edit_defect'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => 'defect_list',
-                'user_permission' => $user_permission,
-                'defect' => $defect,
-                'files' => $files,
-                'defectCategory' => $defectCategory,
-                'image' => ""
-            );
-
-            return View::make('page_en.edit_defect', $viewData);
-        } else {
+        $disallow = Helper::isAllow($defect->file_id, 0, !AccessGroup::hasUpdate(45));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -8008,9 +8397,21 @@ class AdminController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+        $viewData = array(
+            'title' => trans('app.menus.agm.edit_defect'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => 'defect_list',
+            'user_permission' => $user_permission,
+            'defect' => $defect,
+            'files' => $files,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('page_en.edit_defect', $viewData);
     }
 
     public function submitUpdateDefect() {
@@ -8075,29 +8476,9 @@ class AdminController extends BaseController {
             }
 
             $filename = Files::getFileName();
-
-            $permission = false;
-            foreach ($user_permission as $permissions) {
-                if ($permissions->submodule_id == 46) {
-                    $permission = $permissions->access_permission;
-                }
-            }
-
-            if ($permission) {
-                $viewData = array(
-                    'title' => trans('app.menus.agm.insurance'),
-                    'panel_nav_active' => '',
-                    'main_nav_active' => '',
-                    'sub_nav_active' => 'insurance_list',
-                    'user_permission' => $user_permission,
-                    'files' => $files,
-                    'filename' => $filename,
-                    'insuranceProvider' => $insuranceProvider,
-                    'image' => ""
-                );
-
-                return View::make('insurance_en.insurance', $viewData);
-            } else {
+            $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(46));
+                
+            if($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
                     'panel_nav_active' => '',
@@ -8105,13 +8486,42 @@ class AdminController extends BaseController {
                     'sub_nav_active' => '',
                     'image' => ""
                 );
-
                 return View::make('404_en', $viewData);
             }
+            
+            $viewData = array(
+                'title' => trans('app.menus.agm.insurance'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => 'insurance_list',
+                'user_permission' => $user_permission,
+                'files' => $files,
+                'filename' => $filename,
+                'insuranceProvider' => $insuranceProvider,
+                'image' => ""
+            );
+
+            return View::make('insurance_en.insurance', $viewData);
+                
         } else {
             $file = Files::find($id);
+            if (Auth::user()->isJMB()) {
+                return Redirect::to('updateFile/others/' . $id);
+            }
             if ($file) {
                 $image = OtherDetails::where('file_id', $file->id)->first();
+                $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasAccess(3));
+                
+                if($disallow) {
+                    $viewData = array(
+                        'title' => trans('app.errors.page_not_found'),
+                        'panel_nav_active' => '',
+                        'main_nav_active' => '',
+                        'sub_nav_active' => '',
+                        'image' => ""
+                    );
+                    return View::make('404_en', $viewData);
+                }
 
                 $viewData = array(
                     'title' => trans('app.menus.cob.update_cob_file'),
@@ -8309,28 +8719,8 @@ class AdminController extends BaseController {
                     $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
                 }
             }
-
-            $permission = false;
-            foreach ($user_permission as $permissions) {
-                if ($permissions->submodule_id == 46) {
-                    $permission = $permissions->insert_permission;
-                }
-            }
-
-            if ($permission) {
-                $viewData = array(
-                    'title' => trans('app.menus.agm.add_insurance'),
-                    'panel_nav_active' => '',
-                    'main_nav_active' => '',
-                    'sub_nav_active' => 'insurance_list',
-                    'user_permission' => $user_permission,
-                    'files' => $files,
-                    'insuranceProvider' => $insuranceProvider,
-                    'image' => ""
-                );
-
-                return View::make('insurance_en.add_insurance', $viewData);
-            } else {
+            $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(46));
+            if($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
                     'panel_nav_active' => '',
@@ -8338,13 +8728,40 @@ class AdminController extends BaseController {
                     'sub_nav_active' => '',
                     'image' => ""
                 );
-
                 return View::make('404_en', $viewData);
             }
+            
+            $viewData = array(
+                'title' => trans('app.menus.agm.add_insurance'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => 'insurance_list',
+                'user_permission' => $user_permission,
+                'files' => $files,
+                'insuranceProvider' => $insuranceProvider,
+                'image' => ""
+            );
+
+            return View::make('insurance_en.add_insurance', $viewData);
+                
         } else {
             $file = Files::find($id);
+            if (Auth::user()->isJMB()) {
+                return Redirect::to('updateFile/others/' . $id);
+            }
             if ($file) {
                 $image = OtherDetails::where('file_id', $file->id)->first();
+                $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(3));
+                if($disallow) {
+                    $viewData = array(
+                        'title' => trans('app.errors.page_not_found'),
+                        'panel_nav_active' => '',
+                        'main_nav_active' => '',
+                        'sub_nav_active' => '',
+                        'image' => ""
+                    );
+                    return View::make('404_en', $viewData);
+                }
 
                 $viewData = array(
                     'title' => trans('app.menus.cob.update_cob_file'),
@@ -8435,29 +8852,8 @@ class AdminController extends BaseController {
                     $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
                 }
             }
-
-            $permission = false;
-            foreach ($user_permission as $permissions) {
-                if ($permissions->submodule_id == 46) {
-                    $permission = $permissions->update_permission;
-                }
-            }
-
-            if ($permission) {
-                $viewData = array(
-                    'title' => trans('app.menus.agm.edit_insurance'),
-                    'panel_nav_active' => '',
-                    'main_nav_active' => '',
-                    'sub_nav_active' => 'insurance_list',
-                    'user_permission' => $user_permission,
-                    'insurance' => $insurance,
-                    'files' => $files,
-                    'insuranceProvider' => $insuranceProvider,
-                    'image' => ""
-                );
-
-                return View::make('insurance_en.edit_insurance', $viewData);
-            } else {
+            $disallow = Helper::isAllow($insurance->file_id, 0, !AccessGroup::hasUpdate(46));
+            if($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
                     'panel_nav_active' => '',
@@ -8465,14 +8861,41 @@ class AdminController extends BaseController {
                     'sub_nav_active' => '',
                     'image' => ""
                 );
-
                 return View::make('404_en', $viewData);
             }
+
+            $viewData = array(
+                'title' => trans('app.menus.agm.edit_insurance'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => 'insurance_list',
+                'user_permission' => $user_permission,
+                'insurance' => $insurance,
+                'files' => $files,
+                'insuranceProvider' => $insuranceProvider,
+                'image' => ""
+            );
+
+            return View::make('insurance_en.edit_insurance', $viewData);
         } else {
             $file = Files::find($id);
+            if (Auth::user()->isJMB()) {
+                return Redirect::to('updateFile/others/' . $id);
+            }
             if ($file) {
                 $insurance = Insurance::where('file_id', $file->id)->first();
                 $image = OtherDetails::where('file_id', $file->id)->first();
+                $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(3));
+                if($disallow) {
+                    $viewData = array(
+                        'title' => trans('app.errors.page_not_found'),
+                        'panel_nav_active' => '',
+                        'main_nav_active' => '',
+                        'sub_nav_active' => '',
+                        'image' => ""
+                    );
+                    return View::make('404_en', $viewData);
+                }
 
                 $viewData = array(
                     'title' => trans('app.menus.cob.update_cob_file'),
@@ -8554,13 +8977,25 @@ class AdminController extends BaseController {
 
     //finance support
     public function financeSupport($id) {
-        if (Auth::user()->isPreSale()) {
+        if (Auth::user()->isJMB() || Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($file->id, $file->company_id);
+        
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -8623,6 +9058,17 @@ class AdminController extends BaseController {
         $image = OtherDetails::where('file_id', $file->id)->first();
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasInsert(39));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -8679,6 +9125,17 @@ class AdminController extends BaseController {
         $item = FinanceSupport::find($id);
         $file = Files::find($item->file_id);
         $image = OtherDetails::where('file_id', $file->id)->first();
+        $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(39));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),

@@ -89,7 +89,7 @@
                                 {{ trans('app.summon.attachment1') }}
                             </dt>
                             <dd class="col-lg-9">
-                                <a href="{{ asset($attachment[0]) }}"><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/' . $model->id . '/', '', $attachment[0]) }}</a><br/>
+                                <a href="{{ asset($attachment[0]) }}" download=""><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/' . $model->id . '/', '', $attachment[0]) }}</a><br/>
                             </dd>
                             @endif
 
@@ -98,7 +98,7 @@
                                 {{ trans('app.summon.attachment2') }}
                             </dt>
                             <dd class="col-lg-9">
-                                <a href="{{ asset($attachment[1]) }}"><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/' . $model->id . '/', '', $attachment[1]) }}</a><br/>
+                                <a href="{{ asset($attachment[1]) }}" download=""><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/' . $model->id . '/', '', $attachment[1]) }}</a><br/>
                             </dd>
                             @endif
 
@@ -107,7 +107,7 @@
                                 {{ trans('app.summon.attachment3') }}
                             </dt>
                             <dd class="col-lg-9">
-                                <a href="{{ asset($attachment[2]) }}"><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/' . $model->id . '/', '', $attachment[2]) }}</a><br/>
+                                <a href="{{ asset($attachment[2]) }}" download=""><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/' . $model->id . '/', '', $attachment[2]) }}</a><br/>
                             </dd>
                             @endif
 
@@ -153,13 +153,10 @@
                                 {{ ($model->action_date ? date('d-M-Y H:i A', strtotime($model->action_date)) : '') }}
                             </dd>
                             @endif
-                            <button type="submit" class="btn btn-own">
-                                {{ trans('app.forms.submit') }}
-                            </button>
                         </dl>
 
                         @if (Auth::user()->isLawyer() || Auth::user()->isCOBManager())                        
-                            @if ($model->status == Summon::INPROGRESS)                    
+                            @if ($model->status == Summon::INPROGRESS || $model->status == Summon::PENDING)                    
                                 <form method="POST" action="{{ route('summon.update', $model->id) }}" enctype="multipart/form-data" novalidate="">
                                     <input type="hidden" name="_method" value="PUT">
 

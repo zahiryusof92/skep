@@ -242,6 +242,7 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @if(str_contains(Request::url(), 'https://ecob.mps.gov.my/'))
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -254,6 +255,9 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @else
+                                                        <input type="hidden" id="tnb" name="tnb" value="">
+                                                        @endif
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">

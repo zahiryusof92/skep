@@ -1,5 +1,8 @@
 <?php
 
+use Helper\Helper;
+use Illuminate\Support\Facades\View;
+
 class SettingController extends BaseController {
 
     public function showView($name) {
@@ -22,6 +25,17 @@ class SettingController extends BaseController {
     public function area() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(10));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.area_maintenance'),
@@ -38,6 +52,17 @@ class SettingController extends BaseController {
     public function addArea() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(10));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_area'),
@@ -198,6 +223,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $area = Area::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(10));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_area'),
@@ -244,6 +280,17 @@ class SettingController extends BaseController {
     public function city() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(11));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.city_maintenance'),
@@ -260,6 +307,17 @@ class SettingController extends BaseController {
     public function addCity() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(11));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_city'),
@@ -420,6 +478,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $city = City::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(11));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_city'),
@@ -466,6 +535,17 @@ class SettingController extends BaseController {
     public function country() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(8));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.country_maintenance'),
@@ -482,6 +562,17 @@ class SettingController extends BaseController {
     public function addCountry() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(8));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_country'),
@@ -643,6 +734,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $country = Country::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(8));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_country'),
@@ -688,6 +790,17 @@ class SettingController extends BaseController {
     public function formtype() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(22));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.form_type_master'),
@@ -704,6 +817,17 @@ class SettingController extends BaseController {
     public function addFormType() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(22));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_form_type'),
@@ -866,6 +990,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(22));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_form_type'),
@@ -912,6 +1047,17 @@ class SettingController extends BaseController {
     public function state() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(9));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.state_maintenance'),
@@ -928,6 +1074,17 @@ class SettingController extends BaseController {
     public function addState() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(9));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_state'),
@@ -1092,6 +1249,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $state = State::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(9));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_state'),
@@ -1139,6 +1307,17 @@ class SettingController extends BaseController {
     public function documenttype() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(23));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.document_type_maintenance'),
@@ -1155,6 +1334,17 @@ class SettingController extends BaseController {
     public function addDocumenttype() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(23));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_document_type'),
@@ -1317,6 +1507,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $documenttype = Documenttype::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(23));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_document_type'),
@@ -1582,6 +1783,17 @@ class SettingController extends BaseController {
     public function landTitle() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(13));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.land_title_maintenance'),
@@ -1598,6 +1810,17 @@ class SettingController extends BaseController {
     public function addLandTitle() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(13));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_land_title'),
@@ -1758,6 +1981,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $land = LandTitle::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(13));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_land_title'),
@@ -1802,6 +2036,17 @@ class SettingController extends BaseController {
     public function developer() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.developer_maintenance'),
@@ -1821,6 +2066,17 @@ class SettingController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_developer'),
@@ -2009,6 +2265,17 @@ class SettingController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_developer'),
@@ -2078,6 +2345,17 @@ class SettingController extends BaseController {
     public function liquidator() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.liquidator_maintenance'),
@@ -2097,6 +2375,17 @@ class SettingController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(14));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_liquidator'),
@@ -2285,6 +2574,17 @@ class SettingController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(14));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_liquidator'),
@@ -2354,6 +2654,17 @@ class SettingController extends BaseController {
     public function agent() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(15));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.agent_maintenance'),
@@ -2373,6 +2684,17 @@ class SettingController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(15));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_agent'),
@@ -2561,6 +2883,17 @@ class SettingController extends BaseController {
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(15));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_agent'),
@@ -2630,6 +2963,17 @@ class SettingController extends BaseController {
     public function parliment() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(16));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.parliament_maintenance'),
@@ -2646,6 +2990,17 @@ class SettingController extends BaseController {
     public function addParliment() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(16));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_parliament'),
@@ -2805,6 +3160,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliment = Parliment::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(16));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_parliament'),
@@ -2849,6 +3215,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(17));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.dun_maintenance'),
@@ -2867,6 +3244,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(17));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_dun'),
@@ -3032,6 +3420,17 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $dun = Dun::find($id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(17));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_dun'),
@@ -3078,6 +3477,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $dun = Dun::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(18));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.park_maintenance'),
@@ -3096,6 +3506,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $dun = Dun::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(18));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_park'),
@@ -3263,6 +3684,17 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $park = Park::find($id);
         $dun = Dun::where('is_active', 1)->where('is_deleted', 0)->get();
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(18));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_park'),
@@ -3312,6 +3744,17 @@ class SettingController extends BaseController {
     public function memoType() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(19));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.memo_type_maintenance'),
@@ -3328,6 +3771,17 @@ class SettingController extends BaseController {
     public function addMemoType() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(19));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_memo_type'),
@@ -3488,6 +3942,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $memoType = MemoType::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(19));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_memo_type'),
@@ -3534,6 +3999,17 @@ class SettingController extends BaseController {
     public function designation() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(20));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.designation_maintenance'),
@@ -3550,6 +4026,17 @@ class SettingController extends BaseController {
     public function addDesignation() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(20));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_designation'),
@@ -3710,6 +4197,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $designation = Designation::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(20));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_designation'),
@@ -3756,6 +4254,17 @@ class SettingController extends BaseController {
     public function unitMeasure() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(21));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.unit_of_measure_maintenance'),
@@ -3772,6 +4281,17 @@ class SettingController extends BaseController {
     public function addUnitMeasure() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(21));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_unit_of_measure'),
@@ -3935,6 +4455,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $unitmeasure = UnitMeasure::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(21));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_unit_of_measure'),
@@ -3981,6 +4512,17 @@ class SettingController extends BaseController {
     public function race() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(42));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.race_maintenance'),
@@ -3997,6 +4539,17 @@ class SettingController extends BaseController {
     public function addRace() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(42));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_race'),
@@ -4160,6 +4713,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $race = Race::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(42));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_race'),
@@ -4206,6 +4770,17 @@ class SettingController extends BaseController {
     public function nationality() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(44));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.nationality_maintenance'),
@@ -4222,6 +4797,17 @@ class SettingController extends BaseController {
     public function addNationality() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(44));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_nationality'),
@@ -4383,6 +4969,17 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $nationality = Nationality::find($id);
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(44));
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_nationality'),
@@ -4428,26 +5025,8 @@ class SettingController extends BaseController {
     public function defectCategory() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 47) {
-                $permission = $permissions->access_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.master.defect_category'),
-                'panel_nav_active' => 'master_panel',
-                'main_nav_active' => 'master_main',
-                'sub_nav_active' => 'defect_category_list',
-                'user_permission' => $user_permission,
-                'image' => ""
-            );
-
-            return View::make('setting_en.defect_category', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(47));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4455,34 +5034,25 @@ class SettingController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+        $viewData = array(
+            'title' => trans('app.menus.master.defect_category'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'defect_category_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.defect_category', $viewData);
     }
 
     public function addDefectCategory() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 47) {
-                $permission = $permissions->insert_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.master.add_defect_category'),
-                'panel_nav_active' => 'master_panel',
-                'main_nav_active' => 'master_main',
-                'sub_nav_active' => 'defect_category_list',
-                'user_permission' => $user_permission,
-                'image' => ""
-            );
-
-            return View::make('setting_en.add_defect_category', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(47));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4490,9 +5060,19 @@ class SettingController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+
+        $viewData = array(
+            'title' => trans('app.menus.master.add_defect_category'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'defect_category_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.add_defect_category', $viewData);
     }
 
     public function submitDefectCategory() {
@@ -4643,27 +5223,8 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $defectCategory = DefectCategory::find($id);
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 47) {
-                $permission = $permissions->update_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.master.edit_defect_category'),
-                'panel_nav_active' => 'master_panel',
-                'main_nav_active' => 'master_main',
-                'sub_nav_active' => 'defect_category_list',
-                'user_permission' => $user_permission,
-                'defectCategory' => $defectCategory,
-                'image' => ""
-            );
-
-            return View::make('setting_en.update_defect_category', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(47));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4671,9 +5232,20 @@ class SettingController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+
+        $viewData = array(
+            'title' => trans('app.menus.master.edit_defect_category'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'defect_category_list',
+            'user_permission' => $user_permission,
+            'defectCategory' => $defectCategory,
+            'image' => ""
+        );
+
+        return View::make('setting_en.update_defect_category', $viewData);
     }
 
     public function submitUpdateDefectCategory() {
@@ -4707,26 +5279,8 @@ class SettingController extends BaseController {
     public function insuranceProvider() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 48) {
-                $permission = $permissions->access_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.master.insurance_provider'),
-                'panel_nav_active' => 'master_panel',
-                'main_nav_active' => 'master_main',
-                'sub_nav_active' => 'insurance_provider_list',
-                'user_permission' => $user_permission,
-                'image' => ""
-            );
-
-            return View::make('setting_en.insurance_provider', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(48));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4734,34 +5288,26 @@ class SettingController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+
+        $viewData = array(
+            'title' => trans('app.menus.master.insurance_provider'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'insurance_provider_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.insurance_provider', $viewData);
     }
 
     public function addInsuranceProvider() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 48) {
-                $permission = $permissions->insert_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.master.add_insurance_provider'),
-                'panel_nav_active' => 'master_panel',
-                'main_nav_active' => 'master_main',
-                'sub_nav_active' => 'insurance_provider_list',
-                'user_permission' => $user_permission,
-                'image' => ""
-            );
-
-            return View::make('setting_en.add_insurance_provider', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(48));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4769,9 +5315,18 @@ class SettingController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+        $viewData = array(
+            'title' => trans('app.menus.master.add_insurance_provider'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'insurance_provider_list',
+            'user_permission' => $user_permission,
+            'image' => ""
+        );
+
+        return View::make('setting_en.add_insurance_provider', $viewData);
     }
 
     public function submitInsuranceProvider() {
@@ -4922,27 +5477,8 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $insuranceProvider = InsuranceProvider::find($id);
-
-        $permission = false;
-        foreach ($user_permission as $permissions) {
-            if ($permissions->submodule_id == 48) {
-                $permission = $permissions->update_permission;
-            }
-        }
-
-        if ($permission) {
-            $viewData = array(
-                'title' => trans('app.menus.master.edit_insurance_provider'),
-                'panel_nav_active' => 'master_panel',
-                'main_nav_active' => 'master_main',
-                'sub_nav_active' => 'insurance_provider_list',
-                'user_permission' => $user_permission,
-                'insuranceProvider' => $insuranceProvider,
-                'image' => ""
-            );
-
-            return View::make('setting_en.update_insurance_provider', $viewData);
-        } else {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(48));
+        if($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4950,9 +5486,19 @@ class SettingController extends BaseController {
                 'sub_nav_active' => '',
                 'image' => ""
             );
-
             return View::make('404_en', $viewData);
         }
+        $viewData = array(
+            'title' => trans('app.menus.master.edit_insurance_provider'),
+            'panel_nav_active' => 'master_panel',
+            'main_nav_active' => 'master_main',
+            'sub_nav_active' => 'insurance_provider_list',
+            'user_permission' => $user_permission,
+            'insuranceProvider' => $insuranceProvider,
+            'image' => ""
+        );
+
+        return View::make('setting_en.update_insurance_provider', $viewData);
     }
 
     public function submitUpdateInsuranceProvider() {

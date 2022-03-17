@@ -13,7 +13,7 @@ foreach ($user_permission as $permission) {
 ?>
 
 <div class="page-content-inner">
-    <section class="panel panel-with-borders">
+    <section class="panel panel-style">
         <div class="panel-heading">
             <h3>{{$title}}</h3>
         </div>
@@ -22,150 +22,128 @@ foreach ($user_permission as $permission) {
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$file->file_no}}</h6>
                     <div id="update_files_lists">
-                        <ul class="nav nav-pills nav-justified" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewHouse', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewStrata', $file->id)}}">{{ trans('app.forms.developed_area') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewManagement', $file->id)}}">{{ trans('app.forms.management') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewMonitoring', $file->id)}}">{{ trans('app.forms.monitoring') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active">{{ trans('app.forms.others') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewScoring', $file->id)}}">{{ trans('app.forms.scoring_component_value') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@viewBuyer', $file->id)}}">{{ trans('app.forms.buyer_list') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{URL::action('AdminController@fileApproval', $file->id)}}">{{ trans('app.forms.approval') }}</a>
-                            </li>
-                        </ul>
+                        @include('page_en.nav.cob_file', ['files' => $file, 'is_view' => true])
+
                         <div class="tab-content padding-vertical-20">
                             <div class="tab-pane active" id="others_tab" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <h4>{{ trans('app.forms.detail') }}</h4>
-                                        <!-- Form -->
-                                        <form id="others">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.name') }}</label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="other_details_name" value="{{$other_details->name}}" readonly="">
+                                <section class="panel panel-pad">
+                                    <div class="row padding-vertical-20">
+                                        <div class="col-lg-12">
+                                            <h4>{{ trans('app.forms.detail') }}</h4>
+                                            <!-- Form -->
+                                            <form id="others">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.name') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="other_details_name" value="{{$other_details->name}}" readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
-                                        <form id="upload_others_image" enctype="multipart/form-data" method="post" action="{{url('uploadOthersImage')}}" autocomplete="off">
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.photo') }}</label>
-                                                        <br />
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                                        <button type="button" id="clear_image" data-toggle="tooltip" data-placement="top" title="Clear" class="btn btn-xs btn-danger" onclick="clearImage()" style="display: none;"><i class="fa fa-times"></i></button>
-                                                        <!--&nbsp;<input type="file" name="image" id="image" />-->
-<!--                                                        <br />
-                                                        <small>Max image size: MB</small>-->
+                                            </form>
+                                            <form id="upload_others_image" enctype="multipart/form-data" method="post" action="{{url('uploadOthersImage')}}" autocomplete="off">
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.photo') }}</label>
+                                                            <br />
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                            <button type="button" id="clear_image" data-toggle="tooltip" data-placement="top" title="Clear" class="btn btn-xs btn-danger" onclick="clearImage()" style="display: none;"><i class="fa fa-times"></i></button>
+                                                            <!--&nbsp;<input type="file" name="image" id="image" />-->
+                                                            <!--                                                        <br />
+                                                            <small>Max image size: MB</small>-->
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @if ($other_details->image_url != "")
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <div id="others_image_output">
-                                                            <a href="{{asset($other_details->image_url)}}" target="_blank"><img src="{{asset($other_details->image_url)}}" style="width:50%; cursor: pointer;"/></a>
+                                                @if ($other_details->image_url != "")
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <div id="others_image_output">
+                                                                <a href="{{asset($other_details->image_url)}}" target="_blank"><img src="{{asset($other_details->image_url)}}" style="width:50%; cursor: pointer;"/></a>
 
+                                                            </div>
+                                                            <div id="validation-errors"></div>
                                                         </div>
-                                                        <div id="validation-errors"></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @else
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <div id="others_image_output">
-                                                            <span>{{ trans('app.forms.no_photo') }}</span>
+                                                @else
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <div id="others_image_output">
+                                                                <span>{{ trans('app.forms.no_photo') }}</span>
+                                                            </div>
+                                                            <div id="validation-errors"></div>
                                                         </div>
-                                                        <div id="validation-errors"></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @endif
-                                        </form>
-                                        <form id="others">
-                                            @if ($other_details->latitude == "0")
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.latitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" readonly="">
+                                                @endif
+                                            </form>
+                                            <form id="others">
+                                                @if ($other_details->latitude == "0")
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.latitude') }} </label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @else
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.latitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" value="{{$other_details->latitude}}"  readonly="">
+                                                @else
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.latitude') }} </label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }} " id="latitude" value="{{$other_details->latitude}}"  readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @endif
-                                            @if ($other_details->longitude == "0")
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.longitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" readonly="">
+                                                @endif
+                                                @if ($other_details->longitude == "0")
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.longitude') }} </label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @else
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.longitude') }} </label>
-                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" value="{{$other_details->longitude}}" readonly="">
+                                                @else
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.longitude') }} </label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }} " id="longitude" value="{{$other_details->longitude}}" readonly="">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @endif
-                                            @if ($other_details->latitude != "0" && $other_details->longitude != "0")
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <a href="https://www.google.com.my/maps/preview?q={{$other_details->latitude}},{{$other_details->longitude}}" target="_blank">
-                                                            <button type="button" class="btn btn-success">
-                                                                <i class="fa fa-map-marker"> {{ trans('app.forms.view_map') }}</i>
-                                                            </button>
-                                                        </a>
+                                                @endif
+                                                @if ($other_details->latitude != "0" && $other_details->longitude != "0")
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <a href="https://www.google.com.my/maps/preview?q={{$other_details->latitude}},{{$other_details->longitude}}" target="_blank">
+                                                                <button type="button" class="btn btn-success">
+                                                                    <i class="fa fa-map-marker"> {{ trans('app.forms.view_map') }}</i>
+                                                                </button>
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            @endif
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{ trans('app.forms.description') }}</label>
-                                                        <textarea class="form-control" rows="3" id="other_details_description" placeholder="{{ trans('app.forms.description') }}" readonly="">{{$other_details->description}}</textarea>
+                                                @endif
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.description') }}</label>
+                                                            <textarea class="form-control" rows="3" id="other_details_description" placeholder="{{ trans('app.forms.description') }}" readonly="">{{$other_details->description}}</textarea>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
+                                </section>
                             </div>
                         </div>
                     </div>

@@ -159,7 +159,7 @@
 
                                     @if ($model->attachment)
                                     @foreach (json_decode($model->attachment) as $attachment)
-                                    <a href="{{ asset($attachment) }}"><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/', '', $attachment) }}</a><br/>
+                                    <a href="{{ asset($attachment) }}" download=""><i class="fa fa-file-pdf-o margin-inline"></i>{{ str_replace('attachment/', '', $attachment) }}</a><br/>
                                     @endforeach
                                     @endif
 

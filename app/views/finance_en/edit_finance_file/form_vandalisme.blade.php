@@ -1,6 +1,3 @@
-@if(count($vandalaOld) > 0 && count($vandalbOld) > 0)
-@include('finance_en.show.vandalisme')
-@endif
 <?php
 $prefix = 'maintenancefee_';
 $prefix2 = 'singkingfund_';
@@ -376,3 +373,7 @@ $prefix2 = 'singkingfund_';
         }
     }
 </script>
+
+@if(count($vandalaOld) > 0 && count($vandalbOld) > 0)
+@include('finance_en.show.vandalisme')
+@endif
