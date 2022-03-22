@@ -1262,28 +1262,28 @@ class PrintController extends BaseController {
     }
 
     public function printFinanceFile($id) {
-        $finance = Finance::find($id);
+        $finance = Finance::find(Helper::decode($id));
         if ($finance) {
             $file_no = Files::where('is_active', 1)->where('is_deleted', 0)->get();
-            $financeCheckData = FinanceCheck::where('finance_file_id', $id)->first();
-            $financeSummary = FinanceSummary::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-            $financefiledata = Finance::where('id', $id)->first();
-            $financeFileAdmin = FinanceAdmin::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-            $financeFileContract = FinanceContract::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-            $financeFileStaff = FinanceStaff::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-            $financeFileVandalA = FinanceVandal::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-            $financeFileVandalB = FinanceVandal::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-            $financeFileRepairA = FinanceRepair::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-            $financeFileRepairB = FinanceRepair::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-            $financeFileUtilityA = FinanceUtility::where('finance_file_id', $id)->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
-            $financeFileUtilityB = FinanceUtility::where('finance_file_id', $id)->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
-            $financeFileIncome = FinanceIncome::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+            $financeCheckData = FinanceCheck::where('finance_file_id', Helper::decode($id))->first();
+            $financeSummary = FinanceSummary::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+            $financefiledata = Finance::where('id', Helper::decode($id))->first();
+            $financeFileAdmin = FinanceAdmin::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+            $financeFileContract = FinanceContract::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+            $financeFileStaff = FinanceStaff::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+            $financeFileVandalA = FinanceVandal::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+            $financeFileVandalB = FinanceVandal::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+            $financeFileRepairA = FinanceRepair::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+            $financeFileRepairB = FinanceRepair::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+            $financeFileUtilityA = FinanceUtility::where('finance_file_id', Helper::decode($id))->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
+            $financeFileUtilityB = FinanceUtility::where('finance_file_id', Helper::decode($id))->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
+            $financeFileIncome = FinanceIncome::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
 
-            $mfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'MF')->first();
-            $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+            $mfreport = FinanceReport::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->first();
+            $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
 
-            $sfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'SF')->first();
-            $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+            $sfreport = FinanceReport::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->first();
+            $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
 
             $viewData = array(
                 'title' => 'Print Finance',
@@ -1308,7 +1308,7 @@ class PrintController extends BaseController {
                 'reportMF' => $reportMF,
                 'sfreport' => $sfreport,
                 'reportSF' => $reportSF,
-                'finance_file_id' => $id
+                'finance_file_id' => Helper::decode($id)
             );
 
             return View::make('print_en.print_finance_file', $viewData);

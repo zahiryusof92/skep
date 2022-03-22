@@ -33,7 +33,7 @@ foreach ($user_permission as $permission) {
                     <h3>{{ $title }}</h3>
                 </div>
                 <div class="col-md-2">
-                    <a href="{{ url('print/financeFile', $financefiledata->id) }}" target="_blank" class="btn btn-sm btn-own margin-inline pull-right">Print</a>
+                    <a href="{{ url('print/financeFile', \Helper\Helper::encode($financefiledata->id)) }}" target="_blank" class="btn btn-sm btn-own margin-inline pull-right">Print</a>
                 </div>
             </div>
         </div>
