@@ -94,7 +94,7 @@ foreach ($user_permission as $permission) {
                 data: {
                     description: description,
                     is_active: is_active,
-                    id: "{{$area->id}}"
+                    id: "{{ \Helper\Helper::encode($area->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

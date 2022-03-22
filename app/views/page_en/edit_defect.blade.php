@@ -94,7 +94,7 @@ foreach ($user_permission as $permissions) {
                                         @if ($defect->attachment_url != "")
                                         <a href="{{asset($defect->attachment_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
                                         <?php if ($update_permission) { ?>
-                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDefectAttachment('{{$defect->id}}')"><i class="fa fa-times"></i></button>
+                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteDefectAttachment('{{ \Helper\Helper::encode($defect->id) }}')"><i class="fa fa-times"></i></button>
                                         <?php } ?>
                                         @endif
                                     </div>
@@ -234,7 +234,7 @@ foreach ($user_permission as $permissions) {
                     description: description,
                     defect_attachment: defect_attachment,
                     status: status,
-                    id: "{{ $defect->id }}"
+                    id: "{{ \Helper\Helper::encode($defect->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

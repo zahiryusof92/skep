@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Helper\Helper;
 
 class HomeController extends BaseController {
     /*
@@ -120,7 +121,7 @@ class HomeController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = '';
                                 if (AccessGroup::hasUpdate(9)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', Helper::encode($model->latestMeetingDocument->id)) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                                 }
 
                                 return $button;
@@ -182,7 +183,7 @@ class HomeController extends BaseController {
                             })
                             ->addColumn('action', function ($model) {
                                 $button = '';
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@house', $model->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@house', Helper::encode($model->id)) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
 
                                 return $button;
                             })
@@ -254,7 +255,7 @@ class HomeController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = '';
                                 if (AccessGroup::hasUpdate(9)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', Helper::encode($model->latestMeetingDocument->id)) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                                 }
 
                                 return $button;
@@ -327,7 +328,7 @@ class HomeController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = '';
                                 if (AccessGroup::hasUpdate(9)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $model->latestMeetingDocument->id) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@editMinutes', Helper::encode($model->latestMeetingDocument->id)) . '\'">' . trans('app.forms.view') . '</button>&nbsp;';
                                 }
 
                                 return $button;
@@ -425,7 +426,7 @@ class HomeController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = '';
                                 if (AccessGroup::hasUpdate(9)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                                 }
 
                                 return $button;
@@ -501,7 +502,7 @@ class HomeController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = '';
                                 if (AccessGroup::hasUpdate(46)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AdminController@updateInsurance', ['All', $model->id]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AdminController@updateInsurance', ['All', Helper::encode($model->id)]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                                 }
 
                                 return $button;
@@ -549,7 +550,7 @@ class HomeController extends BaseController {
                             return ($model->memo_date ? date('d-M-Y', strtotime($model->memo_date)) : '');
                         })
                         ->addColumn('action', function ($model) {
-                            return '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . $model->id . '\')">' . trans('app.forms.view') . '</button>';
+                            return '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.view') . '</button>';
                         })
                         ->make(true);
     }
@@ -559,9 +560,9 @@ class HomeController extends BaseController {
         if (Request::ajax()) {
 
             $result = "";
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memo = Memo::find($id);
+            $memo = Memo::findOrFail($id);
 
             if (count($memo) > 0) {
 

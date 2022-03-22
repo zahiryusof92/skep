@@ -1,5 +1,7 @@
 <?php
 
+use Helper\Helper;
+
 class DraftController extends BaseController {
 
     public function showView($name) {
@@ -89,7 +91,7 @@ class DraftController extends BaseController {
                             return ($model->company_id ? $model->company->short_name : '-');
                         })
                         ->editColumn('file_no', function ($model) {
-                            return "<a style='text-decoration:underline;' href='" . URL::action('DraftController@houseScheme', $model->id) . "'>" . $model->file_no . "</a>";
+                            return "<a style='text-decoration:underline;' href='" . URL::action('DraftController@houseScheme', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
                         })
                         ->addColumn('strata', function ($model) {
                             return ($model->strata_id ? $model->strata->name : '-');
@@ -108,7 +110,7 @@ class DraftController extends BaseController {
                         })
                         ->addColumn('action', function ($model) {
                             $button = '';
-                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFile(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                            $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFile(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                             return $button;
                         })
@@ -117,12 +119,12 @@ class DraftController extends BaseController {
 
     public function houseScheme($id) {
         if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
-            $files = Files::findOrFail($id);
+            $files = Files::findOrFail(Helper::decode($id));
 
             if (!$files->hasDraft()) {
                 return Redirect::to('/draft/fileList');
             } else if (!$files->houseScheme->draft) {
-                return Redirect::to('/draft/strata/' . $files->id);
+                return Redirect::to('/draft/strata/' . Helper::encode($files->id));
             }
 
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
@@ -158,7 +160,7 @@ class DraftController extends BaseController {
     public function submitHouseScheme() {
         $data = Input::all();
         if (Request::ajax()) {
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $draft_house = HouseSchemeDraft::where('file_id', $files->id)->where('is_deleted', 0)->first();
 
             if ($draft_house && !empty($draft_house->reference_id)) {
@@ -218,10 +220,10 @@ class DraftController extends BaseController {
 
     public function strata($id) {
         if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
-            $files = Files::findOrFail($id);
+            $files = Files::findOrFail(Helper::decode($id));
 
             if (!$files->strata->draft) {
-                return Redirect::to('/draft/management/' . $files->id);
+                return Redirect::to('/draft/management/' . Helper::encode($files->id));
             }
 
             $strata = Strata::where('file_id', $files->id)->first();
@@ -280,7 +282,7 @@ class DraftController extends BaseController {
     public function submitStrata() {
         $data = Input::all();
         if (Request::ajax()) {
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $draft_strata = StrataDraft::where('file_id', $files->id)->first();
             $draft_residential = ResidentialDraft::where('file_id', $files->id)->first();
             $draft_commercial = CommercialDraft::where('file_id', $files->id)->first();
@@ -421,10 +423,10 @@ class DraftController extends BaseController {
 
     public function management($id) {
         if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
-            $files = Files::findOrFail($id);
+            $files = Files::findOrFail(Helper::decode($id));
 
             if (!$files->management->draft) {
-                return Redirect::to('/draft/others/' . $files->id);
+                return Redirect::to('/draft/others/' . Helper::encode($files->id));
             }
 
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
@@ -458,7 +460,7 @@ class DraftController extends BaseController {
     public function submitManagement() {
         $data = Input::all();
         if (Request::ajax()) {
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $draft_management = ManagementDraft::where('file_id', $files->id)->first();
             $draft_developer = ManagementDeveloperDraft::where('file_id', $files->id)->first();
             $draft_jmb = ManagementJMBDraft::where('file_id', $files->id)->first();
@@ -621,10 +623,10 @@ class DraftController extends BaseController {
 
     public function others($id) {
         if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
-            $files = Files::findOrFail($id);
+            $files = Files::findOrFail(Helper::decode($id));
 
             if (!$files->other->draft) {
-                return Redirect::to('/draft/houseScheme/' . $files->id);
+                return Redirect::to('/draft/houseScheme/' . Helper::encode($files->id));
             }
 
             $other_details = OtherDetails::where('file_id', $files->id)->first();
@@ -650,7 +652,7 @@ class DraftController extends BaseController {
     public function submitOthers() {
         $data = Input::all();
         if (Request::ajax()) {
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $draft_others = OtherDetailsDraft::where('file_id', $files->id)->first();
 
             if ($draft_others && !empty($draft_others->reference_id)) {
@@ -706,7 +708,7 @@ class DraftController extends BaseController {
     public function deleteFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $files = Files::find($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             if ($files) {
                 $files->draft->is_deleted = true;
                 $files->draft->save();

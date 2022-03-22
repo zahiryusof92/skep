@@ -31,7 +31,7 @@ foreach ($user_permission as $permission) {
                                         <div class="col-lg-12">
                                             <div class="table-responsive">
                                                 <?php if ($update_permission == 1) { ?>
-                                                    <button onclick="window.location = '{{ URL::action('AdminController@addBuyer', $files->id) }}'" type="button" class="btn btn-own">
+                                                    <button onclick="window.location = '{{ URL::action('AdminController@addBuyer', \Helper\Helper::encode($files->id)) }}'" type="button" class="btn btn-own">
                                                         {{ trans('app.buttons.add_buyer') }}  &nbsp;<i class="fa fa-plus-circle"></i>
                                                     </button>
                                                     &nbsp;
@@ -74,7 +74,7 @@ foreach ($user_permission as $permission) {
                                                                         </div>
                                                                     </div>
                                                                     <div class="modal-footer">
-                                                                        <input type="hidden" name="file_id" id="file_id" value="{{ $files->id }}"/>
+                                                                        <input type="hidden" name="file_id" id="file_id" value="{{ \Helper\Helper::encode($files->id) }}"/>
                                                                         <img id="loading_import" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                                         <button id="submit_button_import" class="btn btn-own" type="submit">
                                                                             {{ trans('app.forms.submit') }}
@@ -192,7 +192,7 @@ foreach ($user_permission as $permission) {
 <script>
     $(document).ready(function () {
         $('#buyer_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getBuyerList', $files->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getBuyerList', \Helper\Helper::encode($files->id))}}",
             "order": [[0, "asc"]],
             "aoColumnDefs": [
                 {

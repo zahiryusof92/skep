@@ -30,7 +30,7 @@ foreach ($user_permission as $permission) {
                                     <div class="row padding-vertical-20">
                                         <div class="col-lg-12">   
                                             <?php if ($update_permission) { ?>
-                                                <button onclick="window.location = '{{ URL::action('AdminController@addInsurance', [$file->id]) }}'" type="button" class="btn btn-own margin-bottom-25">
+                                                <button onclick="window.location = '{{ URL::action('AdminController@addInsurance', [\Helper\Helper::encode($file->id)]) }}'" type="button" class="btn btn-own margin-bottom-25">
                                                     {{ trans('app.buttons.add_insurance') }}
                                                 </button>
                                             <?php } ?>                 
@@ -77,7 +77,7 @@ foreach ($user_permission as $permission) {
     var oTable;
     $(insurance).ready(function () {
         oTable = $('#insurance').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getInsurance', $file->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getInsurance', \Helper\Helper::encode($file->id))}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,

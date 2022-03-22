@@ -84,7 +84,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
                             <div class="form-actions">
-                                <input type="hidden" id="id" name="id" value="{{ $financesupportdata->id }}">
+                                <input type="hidden" id="id" name="id" value="{{ \Helper\Helper::encode($financesupportdata->id) }}">
                                 <?php if ($insert_permission == 1) { ?>
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="submitFinanceSupport()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>

@@ -1,5 +1,7 @@
 <?php
 
+use Helper\Helper;
+
 class PointPackageController extends \BaseController {
 
     /**
@@ -28,14 +30,14 @@ class PointPackageController extends \BaseController {
                             ->addColumn('action', function ($model) {
                                 $btn = '';
                                 if ($model->is_active) {
-                                    $btn .= '<button type="button" class="btn btn-xs btn-default" onclick="inactive(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    $btn .= '<button type="button" class="btn btn-xs btn-default" onclick="inactive(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                                 } else {
-                                    $btn .= '<button type="button" class="btn btn-xs btn-info" onclick="active(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    $btn .= '<button type="button" class="btn btn-xs btn-info" onclick="active(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                                 }
-                                $btn .= '<a href="' . route('pointPackage.edit', $model->id) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-                                $btn .= '<form action="' . route('pointPackage.destroy', $model->id) . '" method="POST" id="delete_form_' . $model->id . '" style="display:inline-block;">';
+                                $btn .= '<a href="' . route('pointPackage.edit', Helper::encode($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+                                $btn .= '<form action="' . route('pointPackage.destroy', Helper::encode($model->id)) . '" method="POST" id="delete_form_' . Helper::encode($model->id) . '" style="display:inline-block;">';
                                 $btn .= '<input type="hidden" name="_method" value="DELETE">';
-                                $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                                $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
                                 $btn .= '</form>';
 
                                 return $btn;
@@ -130,7 +132,7 @@ class PointPackageController extends \BaseController {
      * @return Response
      */
     public function edit($id) {
-        $model = PointPackage::find($id);
+        $model = PointPackage::findOrFail(Helper::decode($id));
         if ($model) {
             $viewData = array(
                 'title' => trans('app.point_package.edit_package'),
@@ -168,7 +170,7 @@ class PointPackageController extends \BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
-            $model = PointPackage::find($id);
+            $model = PointPackage::findOrFail(Helper::decode($id));
             if ($model) {
                 $model->name = $data['name'];
                 $model->points = $data['points'];
@@ -199,7 +201,7 @@ class PointPackageController extends \BaseController {
      * @return Response
      */
     public function destroy($id) {
-        $model = PointPackage::find($id);
+        $model = PointPackage::findOrFail(Helper::decode($id));
         if ($model) {
             $model->is_deleted = 1;
             $success = $model->save();
@@ -222,7 +224,7 @@ class PointPackageController extends \BaseController {
     public function inactive() {
         $data = Input::all();
         if (Request::ajax()) {
-            $model = PointPackage::find($data['id']);
+            $model = PointPackage::findOrFail(Helper::decode($data['id']));
             if ($model) {
                 $model->is_active = 0;
                 $success = $model->save();
@@ -245,7 +247,7 @@ class PointPackageController extends \BaseController {
     public function active() {
         $data = Input::all();
         if (Request::ajax()) {
-            $model = PointPackage::find($data['id']);
+            $model = PointPackage::findOrFail(Helper::decode($data['id']));
             if ($model) {
                 $model->is_active = 1;
                 $success = $model->save();

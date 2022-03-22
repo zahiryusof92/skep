@@ -357,7 +357,7 @@ foreach ($user_permission as $permission) {
                     document_file_url: document_file_url,
                     remarks: remarks,
                     is_active: is_active,
-                    id: '{{$memo->id}}'
+                    id: '{{ \Helper\Helper::encode($memo->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

@@ -1068,7 +1068,7 @@ foreach ($user_permission as $permission) {
     
     $(document).ready(function () {
         $('#agm_report_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getAGM', $file->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getAGM', \Helper\Helper::encode($file->id))}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": false,
@@ -1081,7 +1081,7 @@ foreach ($user_permission as $permission) {
         });
         
         $('#agm_by_mc_report_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getAGMByMC', $file->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getAGMByMC', \Helper\Helper::encode($file->id))}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": false,
@@ -1094,7 +1094,7 @@ foreach ($user_permission as $permission) {
         });
         
         $('#ajk_details_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getAJK', $file->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getAJK', \Helper\Helper::encode($file->id))}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,
@@ -1235,7 +1235,7 @@ foreach ($user_permission as $permission) {
                     buyer_registration: buyer_registration,
                     certificate_series_no: certificate_series_no,
                     monitoring_remarks: monitoring_remarks,
-                    file_id: '{{ $file->id }}'
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1249,7 +1249,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@others', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@others', \Helper\Helper::encode($file->id))}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
@@ -1365,7 +1365,7 @@ foreach ($user_permission as $permission) {
                     report_audited_financial_url: report_audited_financial_url,
                     house_rules_url: house_rules_url,
                     type: type,
-                    file_id: '{{ $file->id }}'
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1595,7 +1595,7 @@ foreach ($user_permission as $permission) {
                     ajk_phone_no: ajk_phone_no,
                     ajk_start_year: ajk_start_year,
                     ajk_end_year: ajk_end_year,
-                    file_id: '{{ $file->id }}'
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -1697,7 +1697,7 @@ foreach ($user_permission as $permission) {
                     ajk_start_year: ajk_start_year,
                     ajk_end_year: ajk_end_year,
                     ajk_id_edit: ajk_id_edit,
-                    file_id: '{{ $file->id }}'
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

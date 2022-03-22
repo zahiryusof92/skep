@@ -147,10 +147,10 @@ foreach ($user_permission as $permission) {
 
                                                 <div class="form-actions">
                                                     <?php if ($update_permission) { ?>
-                                                        <input type="hidden" id="file_id" name="file_id" value="{{ $insurance->file->id }}"/>
+                                                        <input type="hidden" id="file_id" name="file_id" value="{{ \Helper\Helper::encode($insurance->file->id) }}"/>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditInsurance()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
-                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action('AdminController@insurance', $insurance->file->id) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action('AdminController@insurance', \Helper\Helper::encode($insurance->file->id)) }}'">{{ trans('app.forms.cancel') }}</button>
                                                     <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                 </div>
                                             </form>
@@ -296,7 +296,7 @@ foreach ($user_permission as $permission) {
                     fic_validity_from: fic_validity_from,
                     fic_validity_to: fic_validity_to,
                     remarks: remarks,
-                    id: "{{ $insurance->id }}"
+                    id: "{{ \Helper\Helper::encode($insurance->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -304,7 +304,7 @@ foreach ($user_permission as $permission) {
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@insurance", [$insurance->file->id]) }}';
+                            window.location = '{{URL::action("AdminController@insurance", [\Helper\Helper::encode($insurance->file->id)]) }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

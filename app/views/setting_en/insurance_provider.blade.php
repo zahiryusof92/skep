@@ -77,7 +77,7 @@ foreach ($user_permission as $permissions) {
             success: function (data) {
                 if (data.trim() == "true") {
                     bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function () {
-                        window.location = "{{URL::action('SettingController@defectCategory')}}";
+                        window.location = "{{URL::action('SettingController@insuranceProvider')}}";
                     });
                 } else {
                     bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
@@ -96,7 +96,7 @@ foreach ($user_permission as $permissions) {
             success: function (data) {
                 if (data.trim() == "true") {
                     bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function () {
-                        window.location = "{{URL::action('SettingController@defectCategory')}}";
+                        window.location = "{{URL::action('SettingController@insuranceProvider')}}";
                     });
                 } else {
                     bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

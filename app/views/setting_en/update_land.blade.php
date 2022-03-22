@@ -118,7 +118,7 @@ foreach ($user_permission as $permission) {
                     description: description,
                     code: code,
                     is_active: is_active,
-                    id: "{{$land->id}}"
+                    id: "{{ \Helper\Helper::encode($land->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

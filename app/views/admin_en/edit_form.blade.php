@@ -108,7 +108,7 @@ foreach ($user_permission as $permission) {
                                         @if ($form->file_url != "")
                                         <a href="{{asset($form->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}</button></a>
                                         <?php if ($update_permission == 1) { ?>
-                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteFormFile('{{$form->id}}')"><i class="fa fa-times"></i></button>
+                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteFormFile('{{ \Helper\Helper::encode($form->id) }}')"><i class="fa fa-times"></i></button>
                                         <?php } ?>
                                         @endif
                                     </div>
@@ -266,7 +266,7 @@ foreach ($user_permission as $permission) {
                     sort_no: sort_no,
                     form_url: form_url,
                     is_active: is_active,
-                    id: '{{ $form->id }}'
+                    id: '{{ \Helper\Helper::encode($form->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

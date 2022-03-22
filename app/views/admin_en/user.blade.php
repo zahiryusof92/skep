@@ -81,7 +81,7 @@ foreach ($user_permission as $permission) {
             },
             success: function(data) {
                 if (data.trim() == "true") {
-                    bootbox.alert("<span style='color:green;'>{ trans('app.successes.statuses.update') }}</span>", function() {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function() {
                         window.location = "{{URL::action('AdminController@user')}}";
                     });
                 } else {
@@ -100,7 +100,7 @@ foreach ($user_permission as $permission) {
             },
             success: function(data) {
                 if (data.trim() == "true") {
-                    bootbox.alert("<span style='color:green;'>{ trans('app.successes.statuses.update') }}</span>", function() {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.statuses.update') }}</span>", function() {
                         window.location = "{{URL::action('AdminController@user')}}";
                     });
                 } else {
@@ -132,7 +132,7 @@ foreach ($user_permission as $permission) {
                     if (data.trim() == "true") {
                         swal({
                             title: "{{ trans('app.successes.deleted_title') }}",
-                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            text: "{{ trans('app.successes.users.destroy') }}",
                             type: "success",
                             confirmButtonClass: "btn-success",
                             closeOnConfirm: false

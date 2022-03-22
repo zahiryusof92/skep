@@ -75,7 +75,7 @@ foreach ($user_permission as $permission) {
                                 <?php if ($insert_permission) { ?>
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddFinanceFile()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
-                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@addFinanceFileList')}}'">{{ trans('app.forms.cancel') }}</button>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('FinanceController@financeList')}}'">{{ trans('app.forms.cancel') }}</button>
                                 <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                             </div>
                         </form>

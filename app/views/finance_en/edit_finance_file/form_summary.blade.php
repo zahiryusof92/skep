@@ -36,7 +36,7 @@ $prefix = 'sum_';
 
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
-                    <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
+                    <input type="hidden" name="finance_file_id" value="{{ \Helper\Helper::encode($financefiledata->id) }}"/>
                 </div>
             <?php } ?>
 

@@ -115,7 +115,7 @@ foreach ($user_permission as $permission) {
                     dun: dun,
                     description: description,
                     is_active: is_active,
-                    id: '{{$park->id}}'
+                    id: '{{ \Helper\Helper::encode($park->id) }}'
 
                 },
                 success: function (data) {

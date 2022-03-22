@@ -129,7 +129,7 @@ foreach ($user_permission as $permission) {
                                                         <input type="hidden" id="document_file_url" value="{{$document->file_url}}"/>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditDocument()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
-                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', $document->file_id) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', \Helper\Helper::encode($document->file_id)) }}'">{{ trans('app.forms.cancel') }}</button>
                                                     <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                 </div>
                                             </form>
@@ -255,7 +255,7 @@ foreach ($user_permission as $permission) {
                     document_url: document_url,
                     is_hidden: is_hidden,
                     is_readonly: is_readonly,
-                    id: "{{ $document->id }}"
+                    id: "{{ \Helper\Helper::encode($document->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -263,7 +263,7 @@ foreach ($user_permission as $permission) {
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.documents.update') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@document", $document->file_id) }}';
+                            window.location = '{{URL::action("AdminController@document", \Helper\Helper::encode($document->file_id)) }}';
                         });
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

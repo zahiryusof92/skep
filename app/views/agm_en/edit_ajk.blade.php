@@ -250,7 +250,7 @@ foreach ($user_permission as $permission) {
                     start_year: start_year,
                     end_year:end_year,
                     remarks: remarks,
-                    id: "{{ $ajk_details->id }}"
+                    id: "{{ \Helper\Helper::encode($ajk_details->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

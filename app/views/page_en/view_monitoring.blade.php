@@ -265,11 +265,11 @@ foreach ($user_permission as $permission) {
 
     $(document).ready(function () {
         $('#financial_report_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getAGM', $file->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getAGM',  \Helper\Helper::encode($file->id) )}}",
             "order": [[0, "desc"]]
         });
         $('#ajk_details_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getAJK', $file->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getAJK',  \Helper\Helper::encode($file->id) )}}",
             "order": [[0, "desc"]]
         });
     });
@@ -601,7 +601,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@others', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@others',  \Helper\Helper::encode($file->id) )}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
@@ -686,7 +686,7 @@ foreach ($user_permission as $permission) {
                     audit_report_file_url: audit_report_file_url,
                     letter_integrity_url: letter_integrity_url,
                     letter_bankruptcy_url: letter_bankruptcy_url,
-                    file_id: '{{$file->id}}'
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -886,7 +886,7 @@ foreach ($user_permission as $permission) {
                     ajk_phone_no: ajk_phone_no,
                     ajk_start_year: ajk_start_year,
                     ajk_end_year: ajk_end_year,
-                    file_id: '{{$file->id}}'
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

@@ -240,7 +240,7 @@ foreach ($user_permission as $permission) {
                     latitude: latitude,
                     longitude: longitude,
                     other_details_description: other_details_description,
-                    id: '{{$other_details->id}}'
+                    id: '{{ \Helper\Helper::encode($other_details->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -254,7 +254,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@scoring', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@scoring', \Helper\Helper::encode($file->id))}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }

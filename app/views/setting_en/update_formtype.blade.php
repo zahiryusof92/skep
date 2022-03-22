@@ -132,7 +132,7 @@ foreach ($user_permission as $permission) {
                     bm_type : bm,
                     sort_no : sort_no,
                     is_active: is_active,
-                    id: "{{$formtype->id}}"
+                    id: "{{ \Helper\Helper::encode($formtype->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

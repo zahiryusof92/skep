@@ -157,7 +157,7 @@
 
                         @if (Auth::user()->isLawyer() || Auth::user()->isCOBManager())                        
                             @if ($model->status == Summon::INPROGRESS || $model->status == Summon::PENDING)                    
-                                <form method="POST" action="{{ route('summon.update', $model->id) }}" enctype="multipart/form-data" novalidate="">
+                                <form method="POST" action="{{ route('summon.update', \Helper\Helper::encode($model->id)) }}" enctype="multipart/form-data" novalidate="">
                                     <input type="hidden" name="_method" value="PUT">
 
                                     <h5>{{ trans('app.forms.action') }}</h5>
@@ -204,7 +204,7 @@
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <p class="page-invoice-amount">
-                                                    <input type="hidden" name="summon" value="{{ $model->id }}"/>
+                                                    <input type="hidden" name="summon" value="{{ \Helper\Helper::encode($model->id) }}"/>
                                                     <input type="hidden" name="amount" value="{{ $cash }}"/>
                                                     <strong>Amount to Pay</strong><br/>
                                                     RM {{ $cash }}

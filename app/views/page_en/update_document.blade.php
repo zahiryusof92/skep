@@ -31,7 +31,7 @@ foreach ($user_permission as $permission) {
                                         <div class="col-lg-12">
                                             <div class="table-responsive">
                                                 <?php if ($update_permission == 1) { ?>
-                                                    <button onclick="window.location = '{{ URL::action('AdminController@addDocument', $files->id) }}'" type="button" class="btn btn-own">
+                                                    <button onclick="window.location = '{{ URL::action('AdminController@addDocument', \Helper\Helper::encode($files->id)) }}'" type="button" class="btn btn-own">
                                                         {{ trans('app.buttons.add_document') }}
                                                     </button>
                                                     <br/><br/>
@@ -70,7 +70,7 @@ foreach ($user_permission as $permission) {
     var oTable;
     $(document).ready(function () {
         oTable = $('#document').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getDocument', $files->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getDocument', \Helper\Helper::encode($files->id))}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[2, "asc"]],
             "responsive": true,

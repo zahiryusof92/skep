@@ -1,5 +1,7 @@
 <?php
 
+use Helper\Helper;
+
 class PrintController extends BaseController {
 
     //audit trail
@@ -337,7 +339,7 @@ class PrintController extends BaseController {
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
         if (isset($id) && !empty($id)) {
-            $file_id = $id;
+            $file_id = Helper::decode($id);
             $owner = Buyer::where('file_id', $file_id)->where('is_deleted', 0)->get();
             $tenant = Tenant::where('file_id', $file_id)->where('is_deleted', 0)->get();
         } else {
@@ -376,7 +378,7 @@ class PrintController extends BaseController {
         if ($access_permission) {
             $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
-            $files = Files::find($id);
+            $files = Files::find(Helper::decode($id));
             if ($files) {
                 $pbt = '';
                 $strata_name = '';
@@ -807,7 +809,7 @@ class PrintController extends BaseController {
 
     public function printInsurance($cob_id) {
         if ($cob_id && $cob_id != 'all') {
-            $file_info = Files::getInsuranceReportByCOB($cob_id);
+            $file_info = Files::getInsuranceReportByCOB(Helper::decode($cob_id));
         } else {
             $file_info = Files::getInsuranceReportByCOB();
         }
@@ -829,7 +831,7 @@ class PrintController extends BaseController {
 
     public function printComplaint($cob_id) {
         if ($cob_id && $cob_id != 'all') {
-            $file_info = Files::getComplaintReportByCOB($cob_id);
+            $file_info = Files::getComplaintReportByCOB(Helper::decode($cob_id));
         } else {
             $file_info = Files::getComplaintReportByCOB();
         }
@@ -851,7 +853,7 @@ class PrintController extends BaseController {
 
     public function printCollection($cob_id) {
         if ($cob_id && $cob_id != 'all') {
-            $file_info = Files::getCollectionReportByCOB($cob_id);
+            $file_info = Files::getCollectionReportByCOB(Helper::decode($cob_id));
         } else {
             $file_info = Files::getCollectionReportByCOB();
         }
@@ -870,7 +872,7 @@ class PrintController extends BaseController {
 
     public function printCouncil($cob_id) {
         if ($cob_id && $cob_id != 'all') {
-            $file_info = Files::getCouncilReportByCOB($cob_id);
+            $file_info = Files::getCouncilReportByCOB(Helper::decode($cob_id));
         } else {
             $file_info = Files::getCouncilReportByCOB();
         }
@@ -889,7 +891,7 @@ class PrintController extends BaseController {
 
     public function printDun($cob_id) {
         if ($cob_id && $cob_id != 'all') {
-            $file_info = Files::getDunReportByCOB($cob_id);
+            $file_info = Files::getDunReportByCOB(Helper::decode($cob_id));
         } else {
             $file_info = Files::getDunReportByCOB();
         }
@@ -912,7 +914,7 @@ class PrintController extends BaseController {
 
     public function printParliment($cob_id) {
         if ($cob_id && $cob_id != 'all') {
-            $file_info = Files::getParlimentReportByCOB($cob_id);
+            $file_info = Files::getParlimentReportByCOB(Helper::decode($cob_id));
         } else {
             $file_info = Files::getParlimentReportByCOB();
         }
@@ -938,10 +940,10 @@ class PrintController extends BaseController {
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
             if (isset($data['year']) && !empty($data['year'])) {
-                $cob_id = $data['cob_id'];
+                $cob_id = Helper::decode($data['cob_id']);
                 $year_id = $data['year'];
             } else {
-                $cob_id = $data['cob_id'];
+                $cob_id = Helper::decode($data['cob_id']);
                 $year_id = '';
             }
         } else {
@@ -1328,6 +1330,8 @@ class PrintController extends BaseController {
         
         if (!empty($cob_id) && $cob_id == 'all') {
             $cob_id = '';
+        } elseif(!empty($cob_id && $cob_id != 'all')) {
+            $cob_id = Helper::decode($cob_id);
         }
         if (!empty($land_title_id) && $land_title_id == 'all') {
             $land_title_id = '';

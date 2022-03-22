@@ -15,7 +15,7 @@
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             @if ($file->houseScheme->draft)
                             <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('DraftController@houseScheme', $file->id)}}">{{ trans('app.forms.housing_scheme') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('DraftController@houseScheme', \Helper\Helper::encode($file->id))}}">{{ trans('app.forms.housing_scheme') }}</a>
                             </li>
                             @endif
                             <li class="nav-item">
@@ -23,12 +23,12 @@
                             </li>
                             @if ($file->management->draft)
                             <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('DraftController@management', $file->id)}}">{{ trans('app.forms.management') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('DraftController@management', \Helper\Helper::encode($file->id))}}">{{ trans('app.forms.management') }}</a>
                             </li>
                             @endif
                             @if ($file->other->draft)
                             <li class="nav-item">
-                                <a class="nav-link custom-tab" href="{{URL::action('DraftController@others', $file->id)}}">{{ trans('app.forms.others') }}</a>
+                                <a class="nav-link custom-tab" href="{{URL::action('DraftController@others', \Helper\Helper::encode($file->id))}}">{{ trans('app.forms.others') }}</a>
                             </li>
                             @endif
                         </ul>
@@ -714,7 +714,7 @@
                                                 url: "{{ URL::action('DraftController@submitStrata') }}",
                                                 type: "POST",
                                                 data: {
-                                                    file_id: '{{ $file->id }}'
+                                                    file_id: '{{ \Helper\Helper::encode($file->id) }}'
                                                 },
                                                 success: function (data) {
                                                     $("#loading").css("display", "none");
@@ -729,7 +729,7 @@
                                                                 align: "center"
                                                             }
                                                         });
-                                                        window.location = "{{URL::action('DraftController@management', $file->id)}}";
+                                                        window.location = "{{URL::action('DraftController@management', \Helper\Helper::encode($file->id))}}";
                                                     } else {
                                                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                                                     }

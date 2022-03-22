@@ -348,14 +348,14 @@ foreach ($user_permission as $permission) {
                     remarks: remarks,
                     password: password,
                     is_active: is_active,
-                    id: '{{$user->id}}'
+                    id: '{{ \Helper\Helper::encode($user->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.users.update') }}}</span>", function () {
+                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.users.update') }}</span>", function () {
                             window.location = '{{URL::action("AdminController@user") }}';
                         });
                     } else {

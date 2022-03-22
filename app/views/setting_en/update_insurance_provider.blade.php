@@ -112,7 +112,7 @@ foreach ($user_permission as $permissions) {
                     name: name,
                     sort_no : sort_no,
                     is_active: is_active,
-                    id: "{{$insuranceProvider->id}}"
+                    id: "{{ \Helper\Helper::encode($insuranceProvider->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

@@ -114,7 +114,7 @@ foreach ($user_permission as $permission) {
                     name: name,
                     sort_no : sort_no,
                     is_active: is_active,
-                    id: "{{$documenttype->id}}"
+                    id: "{{ \Helper\Helper::encode($documenttype->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

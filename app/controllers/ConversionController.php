@@ -1,5 +1,7 @@
 <?php
 
+use Helper\Helper;
+
 class ConversionController extends \BaseController {
 
     /**
@@ -105,7 +107,7 @@ class ConversionController extends \BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
-            $model = Conversion::find($id);
+            $model = Conversion::findOrFail(Helper::decode($id));
             if ($model) {
                 $model->rate = $data['rate'];
                 $success = $model->save();

@@ -29,7 +29,7 @@
                             </td>
                             <td class="text-center">
                                 <form action="{{ URL::action('PrintController@printVp') }}" method="GET" class="form-horizontal" target="_blank">
-                                    <input type="hidden" name="cob_id" value="{{ $cob_id }}"/>
+                                    <input type="hidden" name="cob_id" value="{{ \Helper\Helper::encode($cob_id) }}"/>
                                     <input type="hidden" name="year" value="{{ $year_id }}"/>
                                     <button type="submit" class="btn btn-own" target="_blank" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </form>
@@ -52,7 +52,7 @@
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @endif
                                                 @foreach ($cob as $cobs)
-                                                <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
+                                                <option value="{{ \Helper\Helper::encode($cobs->id) }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

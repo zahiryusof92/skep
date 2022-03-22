@@ -168,7 +168,7 @@ class AdminController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $prefix = FilePrefix::find($id);
+            $prefix = FilePrefix::findOrFail($id);
             $prefix->is_active = 0;
             $updated = $prefix->save();
             if ($updated) {
@@ -203,7 +203,7 @@ class AdminController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $prefix = FilePrefix::find($id);
+            $prefix = FilePrefix::findOrFail($id);
             $prefix->is_active = 1;
             $updated = $prefix->save();
             if ($updated) {
@@ -238,7 +238,7 @@ class AdminController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $prefix = FilePrefix::find($id);
+            $prefix = FilePrefix::findOrFail($id);
             $prefix->is_deleted = 1;
             $deleted = $prefix->save();
             if ($deleted) {
@@ -263,7 +263,7 @@ class AdminController extends BaseController {
     public function updateFilePrefix($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $prefix = FilePrefix::find(Helper::decode($id));
+        $prefix = FilePrefix::findOrFail(Helper::decode($id));
         
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file_prefix'),
@@ -294,7 +294,7 @@ class AdminController extends BaseController {
             $is_active = $data['is_active'];
             $sort_no = $data['sort_no'];
 
-            $fileprefix = FilePrefix::find($id);
+            $fileprefix = FilePrefix::findOrFail($id);
             $fileprefix->description = $description;
             $fileprefix->sort_no = $sort_no;
             $fileprefix->is_active = $is_active;
@@ -523,7 +523,7 @@ class AdminController extends BaseController {
                             return ($model->company_id ? $model->company->short_name : '-');
                         })
                         ->editColumn('file_no', function ($model) {
-                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $model->id) . "'>" . $model->file_no . "</a>";
+                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
                         })
                         ->addColumn('strata', function ($model) {
                             return ($model->strata_id ? $model->strata->name : '-');
@@ -550,18 +550,18 @@ class AdminController extends BaseController {
                             $button = '';
                             if (AccessGroup::hasUpdate(9)) {
                                 if ($model->is_active == 1) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                                    // $button .= '<a href="#" class="" onclick="inactiveFileList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    // $button .= '<a href="#" class="" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
                                 } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                                    // $button .= '<a href="#" class="" onclick="activeFileList(\'' . $model->id . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    // $button .= '<a href="#" class="" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
                                 }
                                 if (Auth::user()->role == 1) {
-                                    // $button .= '<a class="modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '"><img src='. asset("assets/common/img/icon/edit.png") .' width="20px"></a>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                                    // $button .= '<a class="modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '"><img src='. asset("assets/common/img/icon/edit.png") .' width="20px"></a>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
                                 }
-                                // $button .= '<a class="" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>';
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                                // $button .= '<a class="" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>';
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
 
                             return $button;
@@ -650,7 +650,7 @@ class AdminController extends BaseController {
                             return ($model->company_id ? $model->company->short_name : '-');
                         })
                         ->editColumn('file_no', function ($model) {
-                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', $model->id) . "'>" . $model->file_no . "</a>";
+                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
                         })
                         ->addColumn('strata', function ($model) {
                             return ($model->strata_id ? $model->strata->name : '-');
@@ -677,14 +677,14 @@ class AdminController extends BaseController {
                             $button = '';
                             if (AccessGroup::hasUpdate(9)) {
                                 if ($model->is_active == 1) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                                 } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                                 }
                                 if (Auth::user()->role == 1) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . $model->id . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
                                 }
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . $model->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
                             }
 
                             return $button;
@@ -702,9 +702,9 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $files = Files::find($id);
+            $files = Files::findOrFail($id);
             $files->is_active = 0;
             $updated = $files->save();
             if ($updated) {
@@ -736,9 +736,9 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $files = Files::find($id);
+            $files = Files::findOrFail($id);
             $files->is_active = 1;
             $updated = $files->save();
             if ($updated) {
@@ -772,9 +772,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $files = Files::find($id);
+            $files = Files::findOrFail($id);
             if ($files) {
                 $deleted = $files->delete();
 
@@ -840,12 +840,12 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['file_id'];
+            $id = Helper::decode($data['file_id']);
             $file_no = $data['file_no'];
 
             $check_exist = Files::where('file_no', $file_no)->where('id', '!=', $id)->where('is_deleted', 0)->count();
             if ($check_exist <= 0) {
-                $files = Files::find($id);
+                $files = Files::findOrFail($id);
                 if ($files) {
                     $files->file_no = $data['file_no'];
                     $updated = $files->save();
@@ -877,7 +877,7 @@ class AdminController extends BaseController {
     public function viewHouse($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $house_scheme = HouseScheme::where('file_id', $file->id)->first();
         $image = OtherDetails::where('file_id', $file->id)->first();
 
@@ -888,16 +888,6 @@ class AdminController extends BaseController {
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -923,7 +913,7 @@ class AdminController extends BaseController {
             return Redirect::to('update/strata/' . $id);
         }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::findOrFail($id);
+        $files = Files::findOrFail(Helper::decode($id));
 
         if (Auth::user()->isJMB()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
@@ -947,16 +937,6 @@ class AdminController extends BaseController {
         $users = User::where('company_id', $files->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -988,7 +968,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             if (Auth::user()->isJMB()) {
                 $house_scheme = HouseSchemeDraft::firstOrNew(array('file_id' => $files->id));
                 $house_scheme->reference_id = $data['reference_id'];
@@ -1091,7 +1071,7 @@ class AdminController extends BaseController {
     public function viewStrata($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $strata = Strata::where('file_id', $file->id)->first();
         $residential = Residential::where('file_id', $file->id)->where('strata_id', $strata->id)->first();
         $commercial = Commercial::where('file_id', $file->id)->where('strata_id', $strata->id)->first();
@@ -1122,16 +1102,6 @@ class AdminController extends BaseController {
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1165,7 +1135,7 @@ class AdminController extends BaseController {
     public function strata($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::findOrFail($id);
+        $files = Files::findOrFail(Helper::decode($id));
 
         if (Auth::user()->isJMB()) {
             $strata = StrataDraft::where('file_id', $files->id)->first();
@@ -1221,16 +1191,6 @@ class AdminController extends BaseController {
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1312,7 +1272,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             if (Auth::user()->isJMB()) {
                 $strata = StrataDraft::firstOrNew(array('file_id' => $files->id));
                 $commercial = CommercialDraft::firstOrNew(array('file_id' => $files->id));
@@ -1573,9 +1533,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $strata = Strata::find($id);
+            $strata = Strata::findOrFail($id);
             $strata->file_url = "";
             $deleted = $strata->save();
             if ($deleted) {
@@ -1602,7 +1562,7 @@ class AdminController extends BaseController {
     public function viewManagement($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $management = Management::where('file_id', $file->id)->first();
         $management_developer = ManagementDeveloper::where('management_id', $management->id)->where('file_id', $file->id)->first();
         $management_jmb = ManagementJMB::where('management_id', $management->id)->where('file_id', $file->id)->first();
@@ -1617,16 +1577,6 @@ class AdminController extends BaseController {
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1653,7 +1603,7 @@ class AdminController extends BaseController {
     public function management($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::findOrFail($id);
+        $files = Files::findOrFail(Helper::decode($id));
 
         if (Auth::user()->isJMB()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
@@ -1681,16 +1631,7 @@ class AdminController extends BaseController {
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1721,7 +1662,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             if (Auth::user()->isJMB()) {
                 $management = ManagementDraft::firstOrNew(array('file_id' => $files->id));
                 $management->reference_id = $data['reference_id'];
@@ -1968,22 +1909,12 @@ class AdminController extends BaseController {
         }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::find($id);
+        $files = Files::findOrFail(Helper::decode($id));
         $monitoring = Monitoring::where('file_id', $files->id)->first();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2006,22 +1937,12 @@ class AdminController extends BaseController {
 
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::findOrFail($id);
+        $files = Files::findOrFail(Helper::decode($id));
         $monitoring = Monitoring::where('file_id', $files->id)->first();
         $image = OtherDetails::where('file_id', $files->id)->first();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2048,7 +1969,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $monitor = Monitoring::firstOrNew(array('file_id' => $files->id));
 
             $precalculate_plan = $data['precalculate_plan'];
@@ -2091,7 +2012,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $agm_detail = new MeetingDocument();
 
             $agm_date = $data['agm_date'];
@@ -2185,7 +2106,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_detail = MeetingDocument::findOrFail($data['id']);
+            $agm_detail = MeetingDocument::findOrFail(Helper::decode($data['id']));
 
             $agm_date = $data['agm_date'];
             $agm = $data['agm'];
@@ -2273,7 +2194,7 @@ class AdminController extends BaseController {
             $result = "";
             $result_new = "";
 
-            $agm = MeetingDocument::find($data['id']);
+            $agm = MeetingDocument::findOrFail(Helper::decode($data['id']));
 
             if (count($agm) > 0) {
                 $result .= '<form>';
@@ -2370,7 +2291,7 @@ class AdminController extends BaseController {
                 $result .= '<div id="validation-errors_audit_report_file_edit"></div><div id="view_audit_report_file_edit"></div>';
                 if ($agm->audit_report_url != "") {
                     $result .= '<div id="report_edit"><a href="' . asset($agm->audit_report_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditReport(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditReport(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result .= '</div>';
                 $result .= '</div>';
@@ -2385,7 +2306,7 @@ class AdminController extends BaseController {
                 $result .= '<div id="validation-errors_letter_integrity_edit"></div>';
                 if ($agm->letter_integrity_url != "") {
                     $result .= '<div id="integrity_edit"><a href="' . asset($agm->letter_integrity_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterIntegrity(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterIntegrity(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result .= '</div>';
                 $result .= '</div>';
@@ -2400,7 +2321,7 @@ class AdminController extends BaseController {
                 $result .= '<div id="validation-errors_letter_bankruptcy_edit"></div>';
                 if ($agm->letter_bankruptcy_url != "") {
                     $result .= '<div id="bankruptcy_edit"><a href="' . asset($agm->letter_bankruptcy_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterBankruptcy(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterBankruptcy(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result .= '</div>';
                 $result .= '</div>';
@@ -2416,7 +2337,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-notice_agm_egm_edit"></div>';
                 if ($agm->notice_agm_egm_url != "") {
                     $result_new .= '<div id="btn_notice_agm_egm_edit"><a href="' . asset($agm->notice_agm_egm_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteNoticeAgmEgm(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteNoticeAgmEgm(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2431,7 +2352,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-minutes_agm_egm_edit"></div>';
                 if ($agm->minutes_agm_egm_url != "") {
                     $result_new .= '<div id="btn_minutes_agm_egm_edit"><a href="' . asset($agm->minutes_agm_egm_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgm(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgm(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2446,7 +2367,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-minutes_ajk_edit"></div>';
                 if ($agm->minutes_ajk_url != "") {
                     $result_new .= '<div id="btn_minutes_ajk_edit"><a href="' . asset($agm->minutes_ajk_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAjk(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAjk(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2461,7 +2382,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-eligible_vote_edit"></div>';
                 if ($agm->eligible_vote_url != "") {
                     $result_new .= '<div id="btn_eligible_vote_edit"><a href="' . asset($agm->eligible_vote_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEligibleVote(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEligibleVote(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2476,7 +2397,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-attend_meeting_edit"></div>';
                 if ($agm->attend_meeting_url != "") {
                     $result_new .= '<div id="btn_attend_meeting_edit"><a href="' . asset($agm->attend_meeting_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendMeeting(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendMeeting(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2491,7 +2412,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-proksi_edit"></div>';
                 if ($agm->proksi_url != "") {
                     $result_new .= '<div id="btn_proksi_edit"><a href="' . asset($agm->proksi_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteProksi(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteProksi(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2506,7 +2427,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-ajk_info_edit"></div>';
                 if ($agm->ajk_info_url != "") {
                     $result_new .= '<div id="btn_ajk_info_edit"><a href="' . asset($agm->ajk_info_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAjkInfo(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAjkInfo(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2521,7 +2442,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-ic_edit"></div>';
                 if ($agm->ic_url != "") {
                     $result_new .= '<div id="btn_ic_edit"><a href="' . asset($agm->ic_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIc(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIc(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2537,7 +2458,7 @@ class AdminController extends BaseController {
                     $result_new .= '<div id="validation-purchase_aggrement_edit"></div>';
                     if ($agm->purchase_aggrement_url != "") {
                         $result_new .= '<div id="btn_purchase_aggrement_edit"><a href="' . asset($agm->purchase_aggrement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                        $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                        $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                     }
                     $result_new .= '</div>';
                     $result_new .= '</div>';
@@ -2554,7 +2475,7 @@ class AdminController extends BaseController {
                     $result_new .= '<div id="validation-strata_title_edit"></div>';
                     if ($agm->strata_title_url != "") {
                         $result_new .= '<div id="btn_strata_title_edit"><a href="' . asset($agm->strata_title_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                        $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                        $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                     }
                     $result_new .= '</div>';
                     $result_new .= '</div>';
@@ -2570,7 +2491,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-maintenance_statement_edit"></div>';
                 if ($agm->maintenance_statement_url != "") {
                     $result_new .= '<div id="btn_maintenance_statement_edit"><a href="' . asset($agm->maintenance_statement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMaintenanceStatement(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMaintenanceStatement(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2585,7 +2506,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-integrity_pledge_edit"></div>';
                 if ($agm->integrity_pledge_url != "") {
                     $result_new .= '<div id="btn_integrity_pledge_edit"><a href="' . asset($agm->integrity_pledge_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2600,7 +2521,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-report_audited_financial_edit"></div>';
                 if ($agm->report_audited_financial_url != "") {
                     $result_new .= '<div id="btn_report_audited_financial_edit"><a href="' . asset($agm->report_audited_financial_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancial(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancial(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2615,7 +2536,7 @@ class AdminController extends BaseController {
                 $result_new .= '<div id="validation-house_rules_edit"></div>';
                 if ($agm->house_rules_url != "") {
                     $result_new .= '<div id="btn_house_rules_edit"><a href="' . asset($agm->house_rules_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
-                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteHouseRules(\'' . $agm->id . '\')"><i class="fa fa-times"></i></button></div>';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteHouseRules(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -2634,21 +2555,21 @@ class AdminController extends BaseController {
     }
 
     public function getAGM($file_id) {
-        $agm_detail = MeetingDocument::where('file_id', $file_id)->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($agm_detail) > 0) {
             $data = Array();
             foreach ($agm_detail as $agm_details) {
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . $agm_details->id . '\')"
-                            data-agm_id="' . $agm_details->id . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
+                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
+                            data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
                             data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
                             data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
                             data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . $agm_details->id . '\')">
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
                                 <i class="fa fa-trash""></i>
                             </button>';
 
@@ -2758,21 +2679,21 @@ class AdminController extends BaseController {
     }
 
     public function getAGMByMC($file_id) {
-        $agm_detail = MeetingDocument::where('file_id', $file_id)->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($agm_detail) > 0) {
             $data = Array();
             foreach ($agm_detail as $agm_details) {
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . $agm_details->id . '\')"
-                            data-agm_id="' . $agm_details->id . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
+                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
+                            data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
                             data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
                             data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
                             data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . $agm_details->id . '\')">
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
                                 <i class="fa fa-trash""></i>
                             </button>';
 
@@ -2892,7 +2813,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->is_deleted = 1;
             $deleted = $agm_details->save();
 
@@ -2927,7 +2848,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->audit_report_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -2961,7 +2882,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->letter_integrity_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -2995,7 +2916,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->letter_bankruptcy_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3021,7 +2942,7 @@ class AdminController extends BaseController {
     public function deleteAGMFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->agm_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3044,7 +2965,7 @@ class AdminController extends BaseController {
     public function deleteEGMFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->egm_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3067,7 +2988,7 @@ class AdminController extends BaseController {
     public function deleteMinutesMeetingFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->minutes_meeting_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3090,7 +3011,7 @@ class AdminController extends BaseController {
     public function deleteJMCFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->jmc_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3113,7 +3034,7 @@ class AdminController extends BaseController {
     public function deleteICFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::find($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->ic_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3136,7 +3057,7 @@ class AdminController extends BaseController {
     public function deleteAttendanceFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->attendance_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3159,7 +3080,7 @@ class AdminController extends BaseController {
     public function deleteAuditedFinancialFile() {
         $data = Input::all();
         if (Request::ajax()) {
-            $agm_details = MeetingDocument::findOrFail($data['id']);
+            $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
             $agm_details->audited_financial_file_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -3190,7 +3111,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $ajk_detail = new AJKDetails();
 
             $designation = $data['ajk_designation'];
@@ -3236,7 +3157,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             $ajk_detail = AJKDetails::firstOrNew(array('file_id' => $files->id, 'id' => $data['ajk_id_edit']));
 
             $designation = $data['ajk_designation'];
@@ -3271,7 +3192,7 @@ class AdminController extends BaseController {
     }
 
     public function getAJK($file_id) {
-        $ajk_detail = AJKDetails::where('file_id', $file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $ajk_detail = AJKDetails::where('file_id', Helper::decode($file_id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($ajk_detail) > 0) {
             $data = Array();
@@ -3284,7 +3205,7 @@ class AdminController extends BaseController {
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $ajk_details->id . '\')">
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . Helper::encode($ajk_details->id) . '\')">
                                 <i class="fa fa-trash"></i>
                             </button>
                             &nbsp';
@@ -3327,9 +3248,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $ajk_details = AJKDetails::find($id);
+            $ajk_details = AJKDetails::findOrFail($id);
             $ajk_details->is_deleted = 1;
             $deleted = $ajk_details->save();
             if ($deleted) {
@@ -3355,21 +3276,11 @@ class AdminController extends BaseController {
     public function viewOthers($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::find($id);
+        $files = Files::find(Helper::decode($id));
         $other_details = OtherDetails::where('file_id', $files->id)->first();
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3390,7 +3301,7 @@ class AdminController extends BaseController {
         }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::with(['buyer'])->findOrFail($id);
+        $files = Files::with(['buyer'])->findOrFail(Helper::decode($id));
 
         if (Auth::user()->isJMB()) {
             $other_details = OtherDetailsDraft::where('file_id', $files->id)->first();
@@ -3408,16 +3319,6 @@ class AdminController extends BaseController {
         $tnbLists = OtherDetails::tnbLists();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3444,7 +3345,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail($data['file_id']);
+            $files = Files::findOrFail(Helper::decode($data['file_id']));
             if (Auth::user()->isJMB()) {
                 $others = OtherDetailsDraft::firstOrNew(array('file_id' => $files->id));
                 $others->reference_id = $data['reference_id'];
@@ -3522,7 +3423,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $housing_scheme = $data['housing_scheme'];
 
             if (!empty($file_id)) {
@@ -3552,7 +3453,7 @@ class AdminController extends BaseController {
     }
 
     public function getHousingScheme($file_id) {
-        $user = HousingSchemeUser::where('file_id', $file_id)->where('is_deleted', 0)->get();
+        $user = HousingSchemeUser::where('file_id', Helper::decode($file_id))->where('is_deleted', 0)->get();
 
         if (count($user) > 0) {
             $data = Array();
@@ -3561,7 +3462,7 @@ class AdminController extends BaseController {
 
                 if ($hs_user) {
                     $button = "";
-                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteHousingScheme(\'' . $users->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteHousingScheme(\'' . Helper::encode($users->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                     $data_raw = array(
                         $hs_user->full_name,
@@ -3600,8 +3501,8 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
-            $hs_user = HousingSchemeUser::find($id);
+            $id = Helper::decode($data['id']);
+            $hs_user = HousingSchemeUser::findOrFail($id);
 
             if ($hs_user) {
                 $hs_user->is_deleted = 1;
@@ -3632,9 +3533,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $others = OtherDetails::find($id);
+            $others = OtherDetails::findOrFail($id);
             $others->image_url = "";
             $deleted = $others->save();
             if ($deleted) {
@@ -3666,20 +3567,10 @@ class AdminController extends BaseController {
         }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::find($id);
+        $files = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3703,20 +3594,10 @@ class AdminController extends BaseController {
 
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3742,7 +3623,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $survey = $data['survey'];
             $date = $data['date'];
             $score1 = $data['score1'];
@@ -3834,7 +3715,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $date = $data['date'];
             $score1 = $data['score1'];
             $score2 = $data['score2'];
@@ -3866,7 +3747,7 @@ class AdminController extends BaseController {
 
             $total_score = $scorings_A + $scorings_B + $scorings_C + $scorings_D + $scorings_E;
 
-            $scoring = Scoring::find($id);
+            $scoring = Scoring::findOrFail($id);
             if ($scoring) {
                 $scoring->date = $date;
                 $scoring->score1 = $score1;
@@ -3917,7 +3798,7 @@ class AdminController extends BaseController {
     }
 
     public function getScoring($id) {
-        $scoring = Scoring::where('file_id', $id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $scoring = Scoring::where('file_id', Helper::decode($id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($scoring) > 0) {
             $data = Array();
@@ -3932,8 +3813,8 @@ class AdminController extends BaseController {
                         . 'data-score13="' . $scorings->score13 . '" data-score14="' . $scorings->score14 . '" data-score15="' . $scorings->score15 . '"'
                         . 'data-score16="' . $scorings->score16 . '" data-score17="' . $scorings->score17 . '" data-score18="' . $scorings->score18 . '"'
                         . 'data-score19="' . $scorings->score19 . '" data-score20="' . $scorings->score20 . '" data-score21="' . $scorings->score21 . '"'
-                        . 'data-id="' . $scorings->id . '"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteScoring(\'' . $scorings->id . '\')"><i class="fa fa-trash"></i></button>';
+                        . 'data-id="' . Helper::encode($scorings->id) . '"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteScoring(\'' . Helper::encode($scorings->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $scorings_A = ((($scorings->score1 + $scorings->score2 + $scorings->score3 + $scorings->score4 + $scorings->score5) / 25) * 25);
                 $scorings_B = ((($scorings->score6 + $scorings->score7 + $scorings->score8 + $scorings->score9 + $scorings->score10) / 25) * 25);
@@ -4032,9 +3913,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $scoring = Scoring::find($id);
+            $scoring = Scoring::findOrFail($id);
             $scoring->is_deleted = 1;
             $deleted = $scoring->save();
             if ($deleted) {
@@ -4066,20 +3947,10 @@ class AdminController extends BaseController {
             return Redirect::to('update/monitoring/' . $id);
         }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::find($id);
+        $files = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4106,20 +3977,10 @@ class AdminController extends BaseController {
 
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
-        $disallow = Helper::isAllow($file->id, $file->company_id);
+        $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasAccess(31));
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4137,21 +3998,11 @@ class AdminController extends BaseController {
     }
 
     public function addBuyer($id) {
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasInsert(31));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4178,7 +4029,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $unit_no = $data['unit_no'];
             $unit_share = $data['unit_share'];
             $owner_name = $data['owner_name'];
@@ -4200,7 +4051,7 @@ class AdminController extends BaseController {
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
 
-            $checkFile = Files::find($file_id);
+            $checkFile = Files::findOrFail($file_id);
 
             if (count($checkFile) > 0) {
                 $buyer = new Buyer();
@@ -4253,22 +4104,12 @@ class AdminController extends BaseController {
     public function editBuyer($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $buyer = Buyer::find($id);
+        $buyer = Buyer::findOrFail(Helper::decode($id));
         $files = Files::find($buyer->file_id);
         $image = OtherDetails::where('file_id', $files->id)->first();
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id, !AccessGroup::hasUpdate(31));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4297,7 +4138,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $unit_no = $data['unit_no'];
             $unit_share = $data['unit_share'];
             $owner_name = $data['owner_name'];
@@ -4320,7 +4161,7 @@ class AdminController extends BaseController {
             $sinking_fund = $data['sinking_fund'];
             $id = $data['id'];
 
-            $checkFile = Files::find($file_id);
+            $checkFile = Files::findOrFail($file_id);
 
             if (count($checkFile) > 0) {
                 $buyer = Buyer::find($id);
@@ -4375,18 +4216,18 @@ class AdminController extends BaseController {
     }
 
     public function getBuyerList($file_id) {
-        $buyer_list = Buyer::where('file_id', $file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $buyer_list = Buyer::where('file_id', Helper::decode($file_id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($buyer_list) > 0) {
             $data = Array();
             $no = 1;
             foreach ($buyer_list as $buyer_lists) {
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AdminController@editBuyer', $buyer_lists->id) . '\'">
+                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AdminController@editBuyer', Helper::encode($buyer_lists->id)) . '\'">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteBuyer(\'' . $buyer_lists->id . '\')">
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteBuyer(\'' . Helper::encode($buyer_lists->id) . '\')">
                                 <i class="fa fa-trash"></i>
                             </button>
                             &nbsp';
@@ -4430,9 +4271,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $buyer = Buyer::find($id);
+            $buyer = Buyer::findOrFail($id);
             $buyer->is_deleted = 1;
             $deleted = $buyer->save();
             if ($deleted) {
@@ -4480,15 +4321,14 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $files = Files::find($id);
-
+            $files = Files::findOrFail(Helper::decode($id));
             if ($files) {
                 $getAllBuyer = $data['getAllBuyer'];
 
                 if (!empty($getAllBuyer)) {
                     foreach ($getAllBuyer as $buyerList) {
 
-// 1. File No.
+                        // 1. File No.
                         $file_no = '';
                         if (isset($buyerList[0]) && !empty($buyerList[0])) {
                             $file_no = trim($buyerList[0]);
@@ -4499,7 +4339,7 @@ class AdminController extends BaseController {
                             if ($check_file_id) {
                                 $files_id = $check_file_id->id;
 
-// 2. Unit No.
+                                // 2. Unit No.
                                 $unit_no = '';
                                 if (isset($buyerList[1]) && !empty($buyerList[1])) {
                                     $unit_no = trim($buyerList[1]);
@@ -4596,21 +4436,11 @@ class AdminController extends BaseController {
 
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4630,7 +4460,7 @@ class AdminController extends BaseController {
         if (Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
-        $files = Files::find($id);
+        $files = Files::findOrFail(Helper::decode($id));
         
         $document = Document::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         if (count($document) > 0) {
@@ -4649,8 +4479,8 @@ class AdminController extends BaseController {
                     $is_readonly = trans('app.forms.no');
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@editDocument', $documents->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $documents->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@editDocument', Helper::encode($documents->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . Helper::encode($documents->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $documents->type->name,
@@ -4689,9 +4519,9 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $document = Document::find($id);
+            $document = Document::findOrFail($id);
             if ($document) {
                 $document->is_deleted = 1;
                 $deleted = $document->save();
@@ -4728,9 +4558,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $document = Document::find($id);
+            $document = Document::findOrFail($id);
             if ($document) {
                 $document->file_url = "";
                 $deleted = $document->save();
@@ -4758,22 +4588,12 @@ class AdminController extends BaseController {
     }
 
     public function addDocument($id) {
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasInsert(33));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4801,7 +4621,7 @@ class AdminController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
 
             $document = new Document();
-            $document->file_id = $data['file_id'];
+            $document->file_id = Helper::decode($data['file_id']);
             $document->document_type_id = $data['document_type'];
             $document->name = $data['name'];
             $document->remarks = $data['remarks'];
@@ -4832,23 +4652,13 @@ class AdminController extends BaseController {
     }
 
     public function editDocument($id) {
-        $file = Files::find($id);
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $document = Document::find($id);
+        $document = Document::findOrFail(Helper::decode($id));
+        $file = Files::find($document->file_id);
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($document->file_id, $document->file->company_id, !AccessGroup::hasUpdate(33));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4876,9 +4686,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $document = Document::find($id);
+            $document = Document::findOrFail($id);
             if ($document) {
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
@@ -4915,9 +4725,9 @@ class AdminController extends BaseController {
     }
 
     public function fileApproval($id) {
-//get user permission
+        //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::find($id);
+        $files = Files::findOrFail(Helper::decode($id));
         if ($files->status == 1) {
             $status = trans('app.forms.approved');
         } else if ($files->status == 2) {
@@ -4949,7 +4759,7 @@ class AdminController extends BaseController {
     public function submitFileApproval() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $status = $data['approval_status'];
             $remarks = $data['approval_remarks'];
 
@@ -4959,7 +4769,7 @@ class AdminController extends BaseController {
                 $is_active = 0;
             }
 
-            $files = Files::find($id);
+            $files = Files::findOrFail($id);
             if (count($files) > 0) {
                 $files->is_active = $is_active;
                 $files->status = $status;
@@ -4986,16 +4796,6 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(4));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.administration.organization_profile'),
             'panel_nav_active' => 'admin_panel',
@@ -5021,14 +4821,14 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($companies->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveCompany(\'' . $companies->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveCompany(\'' . Helper::encode($companies->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCompany(\'' . $companies->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCompany(\'' . Helper::encode($companies->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@editCompany', $companies->id) . '\'">' . trans('app.forms.edit') . ' <i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteCompany(\'' . $companies->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@editCompany', Helper::encode($companies->id)) . '\'">' . trans('app.forms.edit') . ' <i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteCompany(\'' . Helper::encode($companies->id) . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $companies->name,
@@ -5060,9 +4860,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $company = Company::find($id);
+            $company = Company::findOrFail($id);
             $company->is_active = 0;
             $updated = $company->save();
             if ($updated) {
@@ -5085,9 +4885,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $company = Company::find($id);
+            $company = Company::findOrFail($id);
             $company->is_active = 1;
             $updated = $company->save();
             if ($updated) {
@@ -5110,9 +4910,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $company = Company::find($id);
+            $company = Company::findOrFail($id);
             $company->is_deleted = 1;
             $deleted = $company->save();
             if ($deleted) {
@@ -5138,16 +4938,6 @@ class AdminController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(4));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.add_organization_profile'),
@@ -5223,12 +5013,13 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        $company = Company::find($id);
+        $company = Company::findOrFail(Helper::decode($id));
+        
         if ($company) {
             $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
             $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
-            $disallow = Helper::isAllow(0, $id, !AccessGroup::hasUpdate(4));
+            $disallow = Helper::isAllow(0, $company->id, !AccessGroup::hasUpdate(4));
             if($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
@@ -5261,7 +5052,7 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $name = $data['name'];
             $short_name = $data['short_name'];
             $rob_roc_no = $data['rob_roc_no'];
@@ -5279,7 +5070,7 @@ class AdminController extends BaseController {
             $nav_image_url = $data['nav_image_url'];
             $is_hidden = $data['is_hidden'];
 
-            $company = Company::find($id);
+            $company = Company::findOrFail($id);
             if (count($company) > 0) {
                 $company->name = $name;
                 $company->short_name = $short_name;
@@ -5323,16 +5114,6 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(5));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.access_group_management'),
@@ -5351,16 +5132,6 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $module = Module::get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(5));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.buttons.add_access_group'),
@@ -5494,19 +5265,19 @@ class AdminController extends BaseController {
                         }
                     }
                     $saved = $new_permission->save();
-                }
-                if ($saved) {
-                    # Audit Trail
-                    $remarks = 'Access Permission for ' . $role->name . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "System Administration";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
-
-                    return "true";
-                } else {
-                    return "false";
+                    if ($saved) {
+                        # Audit Trail
+                        $remarks = 'Access Permission for ' . $role->name . ' has been inserted.';
+                        $auditTrail = new AuditTrail();
+                        $auditTrail->module = "System Administration";
+                        $auditTrail->remarks = $remarks;
+                        $auditTrail->audit_by = Auth::user()->id;
+                        $auditTrail->save();
+    
+                        return "true";
+                    } else {
+                        return "false";
+                    }
                 }
             }
         }
@@ -5531,13 +5302,13 @@ class AdminController extends BaseController {
 
                 if ($accessgroups->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAccessGroup(\'' . $accessgroups->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAccessGroup(\'' . Helper::encode($accessgroups->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAccessGroup(\'' . $accessgroups->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAccessGroup(\'' . Helper::encode($accessgroups->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateAccessGroup', $accessgroups->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteAccessGroup(\'' . $accessgroups->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateAccessGroup', Helper::encode($accessgroups->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteAccessGroup(\'' . Helper::encode($accessgroups->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $accessgroups->name,
@@ -5570,9 +5341,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $role = Role::find($id);
+            $role = Role::findOrFail($id);
             if (count($role) > 0) {
                 $role->is_active = 0;
                 $updated = $role->save();
@@ -5599,9 +5370,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $role = Role::find($id);
+            $role = Role::findOrFail($id);
             if (count($role) > 0) {
                 $role->is_active = 1;
                 $updated = $role->save();
@@ -5628,9 +5399,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $role = Role::find($id);
+            $role = Role::findOrFail($id);
             if (count($role) > 0) {
                 $role->is_deleted = 1;
                 $deleted = $role->save();
@@ -5656,19 +5427,9 @@ class AdminController extends BaseController {
     public function updateAccessGroup($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $accessgroup = Role::find($id);
+        $accessgroup = Role::findOrFail(Helper::decode($id));
         $module = Module::get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(5));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.buttons.update_access_group'),
@@ -5689,14 +5450,14 @@ class AdminController extends BaseController {
 
         if (Request::ajax()) {
 
-            $role_id = $data['role_id'];
+            $role_id = Helper::decode($data['role_id']);
             $description = $data['description'];
             $is_paid = $data['is_paid'];
             $is_admin = $data['is_admin'];
             $is_active = $data['is_active'];
             $remarks = $data['remarks'];
 
-            $role = Role::find($role_id);
+            $role = Role::findOrFail($role_id);
             $role->name = $description;
             $role->is_paid = $is_paid;
             $role->is_admin = $is_admin;
@@ -5809,7 +5570,7 @@ class AdminController extends BaseController {
                     $saved = $new_permission->save();
                 }
                 if ($saved) {
-# Audit Trail
+            # Audit Trail
                     $remarks = 'Access Permission for ' . $role->name . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "System Administration";
@@ -5830,16 +5591,6 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.user_management'),
@@ -5858,16 +5609,6 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         
         if (!Auth::user()->getAdmin()) {
             if (Auth::user()->isCOB()) {
@@ -6037,12 +5778,12 @@ class AdminController extends BaseController {
                 if ($users->is_active == 1) {
                     $is_active = trans('app.forms.yes');
                     if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . $users->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . Helper::encode($users->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                     }
                 } else {
                     $is_active = trans('app.forms.no');
                     if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . $users->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . Helper::encode($users->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                     }
                 }
 
@@ -6053,9 +5794,9 @@ class AdminController extends BaseController {
                 } else {
                     $status = trans('app.forms.rejected');
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', $users->id) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', $users->id) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . $users->id . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', Helper::encode($users->id)) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', Helper::encode($users->id)) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . Helper::encode($users->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $users->username,
@@ -6088,19 +5829,9 @@ class AdminController extends BaseController {
     public function getUserDetails($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $user = User::find($id);
+        $user = User::findOrFail(Helper::decode($id));
         $company = Company::find($user->company_id);
         $disallow = Helper::isAllow(0, $user->company_id, !AccessGroup::hasAccess(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.user_details'),
@@ -6128,11 +5859,11 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $status = $data['status'];
             $remark = $data['remarks'];
 
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             $user->status = $status;
             $user->approved_by = Auth::user()->id;
             $user->approved_at = date('Y-m-d H:i:s');
@@ -6171,9 +5902,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             $user->is_active = 0;
             $updated = $user->save();
             if ($updated) {
@@ -6206,9 +5937,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             $user->is_active = 1;
             $updated = $user->save();
             if ($updated) {
@@ -6241,9 +5972,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             $user->is_deleted = 1;
             $deleted = $user->save();
             if ($deleted) {
@@ -6301,69 +6032,53 @@ class AdminController extends BaseController {
     public function updateUser($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $user = User::find($id);
-
+        $user = User::findOrFail(Helper::decode($id));
+        $query_role = Role::where('is_active', 1)
+                            ->where('is_deleted', 0);
         if (!Auth::user()->getAdmin()) {
             if (Auth::user()->isCOB()) {
                 if (Auth::user()->getRole->is_paid) {
-                    $role = Role::where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
-                            })
-                            ->orWhere(function ($query) {
-                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
-                            })
-                            ->where('is_admin', 0)
-                            ->where('is_active', 1)
-                            ->where('is_deleted', 0)
-                            ->orderBy('name')
-                            ->lists('name', 'id');
+                    $query_role = $query_role->where(function ($query) {
+                                    $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                                })
+                                ->orWhere(function ($query) {
+                                    $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                                })
+                                ->where('is_admin', 0);
                 } else {
-                    $role = Role::where(function ($query) {
+                    $query_role = $query_role->where(function ($query) {
                                 $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
                             })
                             ->orWhere(function ($query) {
                                 $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
                             })
-                            ->where('is_admin', 0)
-                            ->where('is_active', 1)
-                            ->where('is_deleted', 0)
-                            ->orderBy('name')
-                            ->lists('name', 'id');
+                            ->where('is_admin', 0);
                 }
             } else {
-                $role = Role::where(function ($query) {
+                $query_role = $query_role->where(function ($query) {
                             $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
                         })
-                        ->where('is_admin', 0)
-                        ->where('is_active', 1)
-                        ->where('is_deleted', 0)
-                        ->orderBy('name')
-                        ->lists('name', 'id');
+                        ->where('is_admin', 0);
             }
 
-            $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            // $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
-            if (empty(Session::get('admin_cob'))) {
-                $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
-                $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
-            } else {
-                $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
-                $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            // if (empty(Session::get('admin_cob'))) {
+            //     // $company = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            // } else {
+            //     $query_role = $query_role->where('is_admin', 0);
+            //     // $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            // }
+            if(!empty(Session::get('admin_cob'))) {
+                $query_role = $query_role->where('is_admin', 0);
             }
         }
 
+        $role = $query_role->orderBy('name')
+                        ->lists('name', 'id');
+        $company = Company::self()->orderBy('name')->get();
         $files = Files::where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('file_no')->get();
         $disallow = Helper::isAllow(0, $user->company_id, !AccessGroup::hasUpdate(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.update_user'),
@@ -6390,7 +6105,7 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $name = $data['name'];
             $email = $data['email'];
             $phone_no = $data['phone_no'];
@@ -6403,7 +6118,7 @@ class AdminController extends BaseController {
             $password = $data['password'];
             $is_active = $data['is_active'];
 
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             if ($user) {
                 $getRole = Role::where('name', $role)->first();
 
@@ -6472,17 +6187,7 @@ class AdminController extends BaseController {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(7));
 
         $viewData = array(
             'title' => trans('app.menus.administration.memo_management'),
@@ -6508,17 +6213,8 @@ class AdminController extends BaseController {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(7));
+
 
         $viewData = array(
             'title' => trans('app.buttons.add_memo'),
@@ -6632,12 +6328,12 @@ class AdminController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = "";
                                 if ($model->is_active) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemo(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemo(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                                 } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemo(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemo(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                                 }
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateMemo', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemo(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>';
+                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateMemo', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemo(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                                 return $button;
                             })
@@ -6649,9 +6345,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memo = Memo::find($id);
+            $memo = Memo::findOrFail($id);
             $memo->is_active = 0;
             $updated = $memo->save();
             if ($updated) {
@@ -6674,9 +6370,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memo = Memo::find($id);
+            $memo = Memo::findOrFail($id);
             $memo->is_active = 1;
             $updated = $memo->save();
             if ($updated) {
@@ -6699,9 +6395,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memo = Memo::find($id);
+            $memo = Memo::findOrFail($id);
             $memo->is_deleted = 1;
             $deleted = $memo->save();
             if ($deleted) {
@@ -6729,19 +6425,9 @@ class AdminController extends BaseController {
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
-        $memo = Memo::find($id);
+        $memo = Memo::findOrFail(Helper::decode($id));
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow(0, $memo->company_id, !AccessGroup::hasAccess(6));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow(0, $memo->company_id, !AccessGroup::hasAccess(7));
 
         $viewData = array(
             'title' => trans('app.buttons.update_memo'),
@@ -6761,7 +6447,7 @@ class AdminController extends BaseController {
     public function submitUpdateMemo() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $company = $data['company'];
             $memo_type = $data['memo_type'];
             $memo_date = $data['memo_date'];
@@ -6773,7 +6459,7 @@ class AdminController extends BaseController {
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
-            $memo = Memo::find($id);
+            $memo = Memo::findOrFail($id);
             $memo->company_id = $company;
             $memo->memo_type_id = $memo_type;
             $memo->memo_date = $memo_date;
@@ -6806,30 +6492,8 @@ class AdminController extends BaseController {
     public function rating() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        }
+        $files = Files::file()->orderBy('year', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(40));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.rating'),
@@ -6875,8 +6539,8 @@ class AdminController extends BaseController {
                     }
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AdminController@updateRating', $ratings->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteRating(\'' . $ratings->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AdminController@updateRating', Helper::encode($ratings->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteRating(\'' . Helper::encode($ratings->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $ratings_A = ((($ratings->score1 + $ratings->score2 + $ratings->score3 + $ratings->score4 + $ratings->score5) / 25) * 25);
                 $ratings_B = ((($ratings->score6 + $ratings->score7 + $ratings->score8 + $ratings->score9 + $ratings->score10) / 25) * 25);
@@ -6983,16 +6647,6 @@ class AdminController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(40));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.add_rating'),
@@ -7072,7 +6726,7 @@ class AdminController extends BaseController {
             $success = $scoring->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($scoring->file_id);
                 $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . ' has been inserted.';
                 $auditTrail = new AuditTrail();
@@ -7093,31 +6747,9 @@ class AdminController extends BaseController {
     public function updateRating($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-        $rating = Scoring::find($id);
+        $files = Files::file()->orderBy('id', 'asc')->get();
+        $rating = Scoring::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, $rating->file->company_id, !AccessGroup::hasUpdate(40));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         if ($rating) {
             $viewData = array(
                 'title' => trans('app.menus.administration.edit_rating'),
@@ -7138,7 +6770,7 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $date = $data['date'];
             $score1 = $data['score1'];
             $score2 = $data['score2'];
@@ -7170,7 +6802,7 @@ class AdminController extends BaseController {
 
             $total_score = $ratings_A + $ratings_B + $ratings_C + $ratings_D + $ratings_E;
 
-            $scoring = Scoring::find($id);
+            $scoring = Scoring::findOrFail($id);
             if ($scoring) {
                 $scoring->date = $date;
                 $scoring->score1 = $score1;
@@ -7198,7 +6830,7 @@ class AdminController extends BaseController {
                 $success = $scoring->save();
 
                 if ($success) {
-# Audit Trail
+                    # Audit Trail
                     $file_name = Files::find($scoring->file_id);
                     $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . ' has been updated.';
                     $auditTrail = new AuditTrail();
@@ -7223,13 +6855,13 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $scoring = Scoring::find($id);
+            $scoring = Scoring::findOrFail($id);
             $scoring->is_deleted = 1;
             $deleted = $scoring->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $file_name = Files::find($scoring->file_id);
                 $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . ' has been deleted.';
                 $auditTrail = new AuditTrail();
@@ -7251,16 +6883,6 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(41));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.form'),
@@ -7311,14 +6933,14 @@ class AdminController extends BaseController {
                 $button = "";
                 if ($forms->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveForm(\'' . $forms->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveForm(\'' . Helper::encode($forms->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeForm(\'' . $forms->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeForm(\'' . Helper::encode($forms->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateForm', $forms->id) . '\'">' . trans('app.forms.edit') . ' <i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteForm(\'' . $forms->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateForm', Helper::encode($forms->id)) . '\'">' . trans('app.forms.edit') . ' <i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteForm(\'' . Helper::encode($forms->id) . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     ($forms->company ? $forms->company->short_name : '<i>(not set)</i>'),
@@ -7352,13 +6974,13 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $form = AdminForm::find($id);
+            $form = AdminForm::findOrFail($id);
             $form->is_active = 0;
             $updated = $form->save();
             if ($updated) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -7377,13 +6999,13 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $form = AdminForm::find($id);
+            $form = AdminForm::findOrFail($id);
             $form->is_active = 1;
             $updated = $form->save();
             if ($updated) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -7402,13 +7024,13 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $form = AdminForm::find($id);
+            $form = AdminForm::findOrFail($id);
             $form->is_deleted = 1;
             $deleted = $form->save();
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been deleted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -7427,14 +7049,14 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $form = AdminForm::find($id);
+            $form = AdminForm::findOrFail($id);
             $form->file_url = "";
             $deleted = $form->save();
 
             if ($deleted) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -7452,29 +7074,9 @@ class AdminController extends BaseController {
     public function addForm() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
-        if (!Auth::user()->getAdmin()) {
-            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-            } else {
-                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-            }
-        }
-
+        $cob = Company::self()->orderBy('name')->get();
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(41));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.add_form'),
@@ -7505,7 +7107,7 @@ class AdminController extends BaseController {
             $success = $form->save();
 
             if ($success) {
-# Audit Trail
+                # Audit Trail
                 $remarks = 'Form: ' . $form->name_en . ' has been inserted.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "Form";
@@ -7523,30 +7125,21 @@ class AdminController extends BaseController {
     public function updateForm($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $form = AdminForm::find($id);
+        $form = AdminForm::findOrFail(Helper::decode($id));
 
-        if (!Auth::user()->getAdmin()) {
-            $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-            } else {
-                $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-            }
-        }
+        // if (!Auth::user()->getAdmin()) {
+        //     $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        // } else {
+        //     if (empty(Session::get('admin_cob'))) {
+        //         $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        //     } else {
+        //         $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        //     }
+        // }
 
+        $cob = Company::self()->orderBy('name')->get();
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, $form->company_id, !AccessGroup::hasUpdate(41));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.administration.edit_form'),
@@ -7566,9 +7159,9 @@ class AdminController extends BaseController {
     public function submitUpdateForm() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $form = AdminForm::find($id);
+            $form = AdminForm::findOrFail($id);
             if ($form) {
                 $form->company_id = $data['company_id'];
                 $form->form_type_id = $data['form_type'];
@@ -7580,7 +7173,7 @@ class AdminController extends BaseController {
                 $success = $form->save();
 
                 if ($success) {
-# Audit Trail
+                    # Audit Trail
                     $remarks = $form->id . ' has been updated.';
                     $auditTrail = new AuditTrail();
                     $auditTrail->module = "Form";
@@ -7630,9 +7223,9 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->notice_agm_egm_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7666,9 +7259,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->minutes_agm_egm_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7702,9 +7295,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->minutes_ajk_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7737,9 +7330,9 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->eligible_vote_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7773,9 +7366,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->attend_meeting_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7809,9 +7402,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->proksi_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7845,9 +7438,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->ajk_info_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7881,9 +7474,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->ic_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7917,9 +7510,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->purchase_aggrement_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7953,9 +7546,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->strata_title_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -7989,9 +7582,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->maintenance_statement_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -8025,9 +7618,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->integrity_pledge_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -8061,9 +7654,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->report_audited_financial_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -8097,9 +7690,9 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->house_rules_url = "";
             $deleted = $agm_details->save();
             if ($deleted) {
@@ -8145,16 +7738,6 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(45));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.agm.defect'),
             'panel_nav_active' => '',
@@ -8210,8 +7793,8 @@ class AdminController extends BaseController {
                     $status = trans('app.forms.resolved');
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateDefect', $defects->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefect(\'' . $defects->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateDefect', Helper::encode($defects->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefect(\'' . Helper::encode($defects->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     (!empty($defects->file_id) ? $defects->file->file_no : '<i>(not set)</i>'),
@@ -8245,9 +7828,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defect = Defect::find($id);
+            $defect = Defect::findOrFail($id);
             if ($defect) {
                 $defect->is_deleted = 1;
                 $deleted = $defect->save();
@@ -8274,9 +7857,9 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defect = Defect::find($id);
+            $defect = Defect::findOrFail($id);
             if ($defect) {
                 $defect->attachment_url = "";
                 $deleted = $defect->save();
@@ -8318,16 +7901,6 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(45));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.agm.add_defect'),
             'panel_nav_active' => '',
@@ -8373,7 +7946,7 @@ class AdminController extends BaseController {
     public function updateDefect($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $defect = Defect::find($id);
+        $defect = Defect::findOrFail(Helper::decode($id));
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
@@ -8388,17 +7961,7 @@ class AdminController extends BaseController {
             }
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow($defect->file_id, 0, !AccessGroup::hasUpdate(45));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow($defect->file_id, $defect->file->company_id, !AccessGroup::hasUpdate(45));
         $viewData = array(
             'title' => trans('app.menus.agm.edit_defect'),
             'panel_nav_active' => '',
@@ -8417,9 +7980,9 @@ class AdminController extends BaseController {
     public function submitUpdateDefect() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defect = Defect::find($id);
+            $defect = Defect::findOrFail($id);
             if ($defect) {
                 $defect->file_id = $data['file_id'];
                 $defect->defect_category_id = $data['defect_category'];
@@ -8504,7 +8067,7 @@ class AdminController extends BaseController {
             return View::make('insurance_en.insurance', $viewData);
                 
         } else {
-            $file = Files::find($id);
+            $file = Files::findOrFail(Helper::decode($id));
             if (Auth::user()->isJMB()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
@@ -8591,8 +8154,8 @@ class AdminController extends BaseController {
                         $status = trans('app.forms.resolved');
                     }
 
-                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', ['All', $insurances->id]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', ['All', Helper::encode($insurances->id)]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . Helper::encode($insurances->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                     $data_raw = array(
                         (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
@@ -8620,7 +8183,7 @@ class AdminController extends BaseController {
                 return $output;
             }
         } else {
-            $insurance = Insurance::where('file_id', $id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            $insurance = Insurance::where('file_id', Helper::decode($id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
             if ($insurance) {
                 $data = Array();
@@ -8632,8 +8195,8 @@ class AdminController extends BaseController {
                         $status = trans('app.forms.resolved');
                     }
 
-                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', [$insurances->file->id, $insurances->id]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . $insurances->id . '\')"><i class="fa fa-trash"></i></button>';
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateInsurance', [Helper::encode($insurances->file->id), Helper::encode($insurances->id)]) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsurance(\'' . Helper::encode($insurances->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                     $data_raw = array(
                         (!empty($insurances->file_id) ? $insurances->file->file_no : '<i>(not set)</i>'),
@@ -8672,9 +8235,9 @@ class AdminController extends BaseController {
             //                         $url,
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $insurance = Insurance::find($id);
+            $insurance = Insurance::findOrFail($id);
             if ($insurance) {
                 $insurance->is_deleted = 1;
                 $deleted = $insurance->save();
@@ -8745,7 +8308,7 @@ class AdminController extends BaseController {
             return View::make('insurance_en.add_insurance', $viewData);
                 
         } else {
-            $file = Files::find($id);
+            $file = Files::findOrFail(Helper::decode($id));
             if (Auth::user()->isJMB()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
@@ -8800,7 +8363,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
             $insurance = new Insurance();
-            $insurance->file_id = $data['file_id'];
+            $insurance->file_id = Helper::decode($data['file_id']);
             $insurance->insurance_provider_id = $data['insurance_provider'];
             $insurance->public_liability_coverage = $data['public_liability_coverage'];
             $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
@@ -8838,7 +8401,7 @@ class AdminController extends BaseController {
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->get();
 
         if ($id == 'All') {
-            $insurance = Insurance::find($file_id);
+            $insurance = Insurance::findOrFail(Helper::decode($file_id));
             if (!Auth::user()->getAdmin()) {
                 if (!empty(Auth::user()->file_id)) {
                     $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
@@ -8852,7 +8415,7 @@ class AdminController extends BaseController {
                     $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
                 }
             }
-            $disallow = Helper::isAllow($insurance->file_id, 0, !AccessGroup::hasUpdate(46));
+            $disallow = Helper::isAllow($insurance->file_id, $insurance->file->company_id, !AccessGroup::hasUpdate(46));
             if($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
@@ -8878,7 +8441,7 @@ class AdminController extends BaseController {
 
             return View::make('insurance_en.edit_insurance', $viewData);
         } else {
-            $file = Files::find($id);
+            $file = Files::findOrFail(Helper::decode($id));
             if (Auth::user()->isJMB()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
@@ -8934,11 +8497,11 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $insurance = Insurance::find($id);
+            $insurance = Insurance::findOrFail($id);
             if ($insurance) {
-                $insurance->file_id = $data['file_id'];
+                $insurance->file_id = Helper::decode($data['file_id']);
                 $insurance->insurance_provider_id = $data['insurance_provider'];
                 $insurance->public_liability_coverage = $data['public_liability_coverage'];
                 $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
@@ -8982,20 +8545,10 @@ class AdminController extends BaseController {
         }
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id);
         
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -9011,7 +8564,7 @@ class AdminController extends BaseController {
     }
 
     public function getFinanceSupport($id) {
-        $filelist = FinanceSupport::where('file_id', $id)
+        $filelist = FinanceSupport::where('file_id', Helper::decode($id))
                                     ->where('is_deleted', 0)
                                     ->orderBy('id', 'desc')
                                     ->get();
@@ -9022,11 +8575,11 @@ class AdminController extends BaseController {
                 $files = Files::where('id', $filelists->file_id)->first();
                 if ($files) {
                     $button = "";
-                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . Helper::encode($filelists->id) . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                     $data_raw = array(
                         ($files->company ? $files->company->short_name : ''),
-                        "<a style='text-decoration:underline;' href='" . URL::action('AdminController@updateFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
+                        "<a style='text-decoration:underline;' href='" . URL::action('AdminController@updateFinanceSupport', Helper::encode($filelists->id)) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
                         ($files->strata ? $files->strata->strataName() : ''),
                         date('d/m/Y', strtotime($filelists->date)),
                         $filelists->name,
@@ -9054,21 +8607,11 @@ class AdminController extends BaseController {
     }
 
     public function addFinanceSupport($id) {
-        $file = Files::find($id);
+        $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasInsert(39));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -9086,10 +8629,10 @@ class AdminController extends BaseController {
     public function submitAddFinanceSupport() {
         $data = Input::all();
         if (Request::ajax()) {
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $is_active = $data['is_active'];
 
-            $files = Files::find($file_id);
+            $files = Files::findOrFail($file_id);
             if ($files) {
                 $finance = new FinanceSupport();
                 $finance->file_id = $files->id;
@@ -9122,20 +8665,10 @@ class AdminController extends BaseController {
 
     public function updateFinanceSupport($id) {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $item = FinanceSupport::find($id);
+        $item = FinanceSupport::findOrFail(Helper::decode($id));
         $file = Files::find($item->file_id);
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(39));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -9154,12 +8687,12 @@ class AdminController extends BaseController {
     public function submitUpdateFinanceSupport() {
         $data = Input::all();
         if (Request::ajax()) {
-            $file_id = $data['file_id'];
-            $id = $data['id'];
+            $file_id = Helper::decode($data['file_id']);
+            $id = Helper::decode($data['id']);
 
-            $files = Files::find($file_id);
+            $files = Files::findOrFail($file_id);
             if ($files) {
-                $finance = FinanceSupport::find($id);
+                $finance = FinanceSupport::findOrFail($id);
                 if ($finance) {
                     $finance->file_id = $files->id;
                     $finance->company_id = $files->company_id;
@@ -9196,7 +8729,7 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $finance = FinanceSupport::find($id);
             $finance->is_deleted = 1;
