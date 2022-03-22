@@ -13,7 +13,7 @@
                         
                         @include('alert.bootbox')
 
-                        <form class="form-horizontal" method="POST" action="{{ route('summon.update', $model->id) }}" enctype="multipart/form-data" novalidate="">
+                        <form class="form-horizontal" method="POST" action="{{ route('summon.update', \Helper\Helper::encode($model->id)) }}" enctype="multipart/form-data" novalidate="">
                             <input type="hidden" name="_method" value="PUT">
 
                             <div class="row">

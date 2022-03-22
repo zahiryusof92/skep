@@ -12,16 +12,6 @@ class ReportController extends BaseController {
     //audit trail
     public function auditTrail() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
@@ -400,16 +390,6 @@ class ReportController extends BaseController {
         $categoryList = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $facilityList = Config::get('constant.module.cob.facility');
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(25));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         
         $viewData = array(
             'title' => trans('app.menus.reporting.file_by_location_report'),
@@ -579,16 +559,6 @@ class ReportController extends BaseController {
     public function managementSummary() {
         $data = Files::getManagementSummaryCOB();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(27));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.management_summary_report'),
@@ -606,16 +576,6 @@ class ReportController extends BaseController {
     public function cobFileManagement() {
         $data = Files::getManagementSummaryCOB();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(28));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.cob_file_report'),
@@ -631,16 +591,6 @@ class ReportController extends BaseController {
 
     public function ownerTenant() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(49));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $data = Input::all();
 
@@ -668,7 +618,7 @@ class ReportController extends BaseController {
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
         if (isset($data['file_id']) && !empty($data['file_id'])) {
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $owner = Buyer::where('file_id', $file_id)->where('is_deleted', 0)->get();
             $tenant = Tenant::where('file_id', $file_id)->where('is_deleted', 0)->get();
         } else {
@@ -711,16 +661,6 @@ class ReportController extends BaseController {
 
         $data = Files::getStrataProfileAnalytic();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.strata_profile'),
@@ -860,7 +800,7 @@ class ReportController extends BaseController {
                     $zone = 'Merah';
                 }
                     $data_raw = array(
-                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', $file->id) . "'>" . $file->file_no . " " . $file->finance_year . "-" . strtoupper(DateTime::createFromFormat('!m', $file->finance_month)->format('M')) . "</a>",
+                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . " " . $file->finance_year . "-" . strtoupper(DateTime::createFromFormat('!m', $file->finance_month)->format('M')) . "</a>",
                         $file->strata_name,
                         $file->company_name,
                         $file->parliment_name,
@@ -916,7 +856,7 @@ class ReportController extends BaseController {
             $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
             $tnb = '';
 
-            $files = Files::find($id);
+            $files = Files::findOrFail(Helper::decode($id));
             if ($files) {
                 $pbt = '';
                 $strata_name = '';
@@ -1318,23 +1258,13 @@ class ReportController extends BaseController {
         $defect_category = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
             $file_info = Files::getComplaintReportByCOB($cob_id);
         } else {
             $cob_id = '';
             $file_info = Files::getComplaintReportByCOB();
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(51));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.complaint'),
@@ -1375,23 +1305,13 @@ class ReportController extends BaseController {
         $insurance_provider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
             $file_info = Files::getInsuranceReportByCOB($cob_id);
         } else {
             $cob_id = '';
             $file_info = Files::getInsuranceReportByCOB();
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(50));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.insurance'),
@@ -1426,23 +1346,13 @@ class ReportController extends BaseController {
         }
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
             $file_info = Files::getCollectionReportByCOB($cob_id);
         } else {
             $cob_id = '';
             $file_info = Files::getCollectionReportByCOB();
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(52));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.collection'),
@@ -1480,23 +1390,13 @@ class ReportController extends BaseController {
         }
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
             $file_info = Files::getCouncilReportByCOB($cob_id);
         } else {
             $cob_id = '';
             $file_info = Files::getCouncilReportByCOB();
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(53));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.council'),
@@ -1532,23 +1432,13 @@ class ReportController extends BaseController {
         $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
             $file_info = Files::getDunReportByCOB($cob_id);
         } else {
             $cob_id = '';
             $file_info = Files::getDunReportByCOB();
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(54));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.dun'),
@@ -1585,23 +1475,13 @@ class ReportController extends BaseController {
         $category = Category::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
             $file_info = Files::getParlimentReportByCOB($cob_id);
         } else {
             $cob_id = '';
             $file_info = Files::getParlimentReportByCOB();
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(55));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.parliment'),
@@ -1639,10 +1519,10 @@ class ReportController extends BaseController {
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
             if (isset($data['year']) && !empty($data['year'])) {
-                $cob_id = $data['cob_id'];
+                $cob_id = Helper::decode($data['cob_id']);
                 $year_id = $data['year'];
             } else {
-                $cob_id = $data['cob_id'];
+                $cob_id = Helper::decode($data['cob_id']);
                 $year_id = '';
             }
         } else {
@@ -1657,16 +1537,6 @@ class ReportController extends BaseController {
 
         $file_info = Files::getVPReport($cob_id, $year_id ? $year_id : date('Y'));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(56));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.vp'),
@@ -1717,16 +1587,6 @@ class ReportController extends BaseController {
 
         $filename = Files::getFileName();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(57));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.management_list'),
@@ -2142,16 +2002,6 @@ class ReportController extends BaseController {
     //rating summary
     public function ratingSummary() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(26));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $summary_data = Files::getRatingByCategory();
         $rating_data = Files::getDashboardData();
 
@@ -2170,16 +2020,6 @@ class ReportController extends BaseController {
 
     public function landTitle() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(60));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $data = Input::all();
 
@@ -2197,7 +2037,7 @@ class ReportController extends BaseController {
         $cob_id = '';
         $land_title_id = '';
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
-            $cob_id = $data['cob_id'];
+            $cob_id = Helper::decode($data['cob_id']);
         }
         if (isset($data['land_title_id']) && !empty($data['land_title_id'])) {
             $land_title_id = $data['land_title_id'];

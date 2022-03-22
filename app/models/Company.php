@@ -1,8 +1,22 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 class Company extends Eloquent {
 
     protected $table = 'company';
+
+    public function scopeself($query) {
+        if (!Auth::user()->getAdmin()) {
+            $query = $query->where('id', Auth::user()->company_id);
+        } else {
+            if (!empty(Session::get('admin_cob'))) {
+                $query = $query->where('id', Session::get('admin_cob'));
+            }
+        }
+        return $query->where('is_active', 1)->where('is_deleted', 0);
+    }
 
     public function files() {
         return $this->hasMany('Files', 'company_id')->orderBy('files.id');

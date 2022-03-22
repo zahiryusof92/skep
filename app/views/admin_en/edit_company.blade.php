@@ -225,7 +225,7 @@ foreach ($user_permission as $permission) {
                                 <?php if ($update_permission == 1) { ?>
                                 <button type="button" class="btn btn-own" id="submit_button" onclick="editCompany()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
-                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@editCompany')}}'">{{ trans('app.forms.cancel') }}</button>
+                                <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@company')}}'">{{ trans('app.forms.cancel') }}</button>
                             </div>
                         </form>
                         <!-- End Vertical Form -->
@@ -451,7 +451,7 @@ foreach ($user_permission as $permission) {
                     image_url: image_url,
                     nav_image_url: nav_image_url,
                     is_hidden: is_hidden,
-                    id: '{{$company->id}}'
+                    id: '{{ \Helper\Helper::encode($company->id) }}'
 
                 },
                 success: function (data) {

@@ -81,7 +81,7 @@ foreach ($user_permission as $permission) {
                                                     <?php if ($update_permission == 1) { ?>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitFinanceSupport()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
-                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@financeSupport', $files->id) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@financeSupport', \Helper\Helper::encode($files->id)) }}'">{{ trans('app.forms.cancel') }}</button>
                                                     <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                 </div>
                                             </form>
@@ -180,7 +180,7 @@ foreach ($user_permission as $permission) {
                 url: "{{ URL::action('AdminController@submitAddFinanceSupport') }}",
                 type: "POST",
                 data: {
-                    file_id: "{{$files->id}}",
+                    file_id: "{{\Helper\Helper::encode($files->id)}}",
                     date: date,
                     name: name,
                     remark: remark,
@@ -194,7 +194,7 @@ foreach ($user_permission as $permission) {
 
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.finance_file.store') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@financeSupport",[$files->id]) }}';
+                            window.location = '{{URL::action("AdminController@financeSupport",[\Helper\Helper::encode($files->id)]) }}';
                         });
                     } else if (data.trim() == "file_already_exists") {
                         $("#file_already_exists_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"file"]) }}</span>');

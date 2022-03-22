@@ -1,5 +1,6 @@
 <?php
 
+use Helper\Helper;
 use Illuminate\Support\Facades\Config;
 
 class SummonController extends \BaseController {
@@ -35,13 +36,13 @@ class SummonController extends \BaseController {
                                 ->addColumn('action', function ($model) {
                                     $btn = '';
                                     if ($model->status == Summon::DRAFT) {
-                                        $btn .= '<a href="' . route('summon.show', $model->id) . '" class="btn btn-xs btn-success-outline margin-right-5">' . trans('app.summon.pay_now') . '</a>';
+                                        $btn .= '<a href="' . route('summon.show', Helper::encode($model->id)) . '" class="btn btn-xs btn-success-outline margin-right-5">' . trans('app.summon.pay_now') . '</a>';
                                     }
-                                    $btn .= '<a href="' . route('summon.show', $model->id) . '" class="btn btn-xs btn-primary margin-right-5" title="View"><i class="fa fa-eye"></i></a>';
+                                    $btn .= '<a href="' . route('summon.show', Helper::encode($model->id)) . '" class="btn btn-xs btn-primary margin-right-5" title="View"><i class="fa fa-eye"></i></a>';
                                     if ($model->status == Summon::DRAFT || $model->status == Summon::PENDING) {
-                                        $btn .= '<form action="' . route('summon.destroy', $model->id) . '" method="POST" id="delete_form_' . $model->id . '" style="display:inline-block;">';
+                                        $btn .= '<form action="' . route('summon.destroy', Helper::encode($model->id)) . '" method="POST" id="delete_form_' . Helper::encode($model->id) . '" style="display:inline-block;">';
                                         $btn .= '<input type="hidden" name="_method" value="DELETE">';
-                                        $btn .= '<button type="submit" class="btn btn-xs btn-danger margin-right-5 confirm-delete" data-id="delete_form_' . $model->id . '" title="Cancel">Cancel</button>';
+                                        $btn .= '<button type="submit" class="btn btn-xs btn-danger margin-right-5 confirm-delete" data-id="delete_form_' . Helper::encode($model->id) . '" title="Cancel">Cancel</button>';
                                         $btn .= '</form>';
                                     }
 
@@ -91,7 +92,7 @@ class SummonController extends \BaseController {
                                 })
                                 ->addColumn('action', function ($model) {
                                     $btn = '';
-                                    $btn .= '<a href="' . route('summon.show', $model->id) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
+                                    $btn .= '<a href="' . route('summon.show', Helper::encode($model->id)) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
 
                                     return $btn;
                                 })
@@ -140,7 +141,7 @@ class SummonController extends \BaseController {
                                 })
                                 ->addColumn('action', function ($model) {
                                     $btn = '';
-                                    $btn .= '<a href="' . route('summon.show', $model->id) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
+                                    $btn .= '<a href="' . route('summon.show', Helper::encode($model->id)) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
 
                                     return $btn;
                                 })
@@ -279,7 +280,7 @@ class SummonController extends \BaseController {
                                     $text = '';
 
                                     foreach($summons as $summon) {
-                                        $link = '- <u><a href="' . route('summon.show', $summon->id) . '" target="_blank">' . $summon->unit_no .'-'. $summon->id . '</a></u>';
+                                        $link = '- <u><a href="' . route('summon.show', Helper::encode($summon->id)) . '" target="_blank">' . $summon->unit_no .'-'. $summon->id . '</a></u>';
                                         $text .= $link . '<br>';
                                     }
                                     
@@ -479,7 +480,7 @@ class SummonController extends \BaseController {
                         $success = $model->save();
 
                         if ($success) {
-                            return Redirect::to('summon/' . $model->id)->with('success', trans('app.successes.saved_successfully'));
+                            return Redirect::to('summon/' . Helper::encode($model->id))->with('success', trans('app.successes.saved_successfully'));
                         }
                     } else {
                         //revert
@@ -502,7 +503,7 @@ class SummonController extends \BaseController {
         if (Auth::user()->isJMB() && Auth::user()->file_id) {
             $file = Files::find(Auth::user()->file_id);
             if ($file) {
-                $model = Summon::find($id);
+                $model = Summon::findOrFail(Helper::decode($id));
                 if ($model) {
                     $unit_no = Buyer::unitNoList($file->id);
                     $category = ($model->category_id ? $model->category->description : '');
@@ -560,7 +561,7 @@ class SummonController extends \BaseController {
                 }
             }
         } else if (Auth::user()->isLawyer()) {
-            $model = Summon::find($id);
+            $model = Summon::findOrFail(Helper::decode($id));
             if ($model && $model->type == Summon::LETTER_OF_DEMAND) {
                 $category = ($model->category_id ? $model->category->description : '');
                 $type = $model->type;
@@ -581,7 +582,7 @@ class SummonController extends \BaseController {
                 return View::make('summon.show', $viewData);
             }
         } else if (Auth::user()->isCOBManager()) {
-            $model = Summon::find($id);
+            $model = Summon::findOrFail(Helper::decode($id));
             if ($model && $model->type == Summon::LETTER_OF_REMINDER) {
                 $category = ($model->category_id ? $model->category->description : '');
                 $durationOverdue = $model->durationTitle();
@@ -602,7 +603,7 @@ class SummonController extends \BaseController {
                 return View::make('summon.show', $viewData);
             }
         } else if (Auth::user()->isHR() || Auth::user()->getAdmin()) {
-            $model = Summon::find($id);
+            $model = Summon::findOrFail(Helper::decode($id));
             if ($model && $model->type == Summon::LETTER_OF_REMINDER) {
                 $category = ($model->category_id ? $model->category->description : '');
                 $durationOverdue = $model->durationTitle();
@@ -672,7 +673,7 @@ class SummonController extends \BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
-            $model = Summon::find($id);
+            $model = Summon::findOrFail(Helper::decode($id));
             if ($model) {
                 $attachment = '';
                 $destinationPath = 'attachment/' . $model->id;
@@ -714,7 +715,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function destroy($id) {
-        $model = Summon::find($id);
+        $model = Summon::findOrFail(Helper::decode($id));
         if ($model) {
             $model->status = Summon::CANCELED;
             $success = $model->save();
@@ -792,7 +793,7 @@ class SummonController extends \BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
-            $summon = Summon::find($data['summon']);
+            $summon = Summon::findOrFail(Helper::decode($data['summon']));
             if ($summon) {
                 $description = 'Created Summon for ' . $summon->ic_no;
                 $ref_no = date('YmdHis') . $summon->id;
@@ -852,7 +853,7 @@ class SummonController extends \BaseController {
     public function submitPay() {
         $data = Input::all();
 
-        $model = Orders::find($data['order_id']);
+        $model = Orders::findOrFail(Helper::decode($data['order_id']));
         
         if ($model) {
             $total_amount = $data['amount'];
@@ -905,16 +906,16 @@ class SummonController extends \BaseController {
                             $item->save();
                           
                             /** send success email to payer */
-                            Mail::send('emails.point.payment_success', array('model' => $model), function($message) use ($model) {
-                                $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
-                            });
+                            // Mail::send('emails.point.payment_success', array('model' => $model), function($message) use ($model) {
+                            //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                            // });
                             
                         }
 
                         return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
                     }
                 } else {
-                    return Redirect::to('summon/' . $model->reference_id)->with('error', trans('app.my_point.not_enough'))->withInput($data);
+                    return Redirect::to('summon/' . Helper::encode($model->reference_id))->with('error', trans('app.my_point.not_enough'))->withInput($data);
                 }
             } else {
                 $data['payment_gateway'] = 'revenue';

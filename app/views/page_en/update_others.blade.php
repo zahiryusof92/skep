@@ -70,7 +70,7 @@ foreach ($user_permission as $permission) {
                                                                     <div id="others_image_output">
                                                                         <a href="{{asset($other_details->image_url)}}" target="_blank"><img src="{{asset($other_details->image_url)}}" style="width:50%; cursor: pointer;"/></a>
                                                                         <?php if ($update_permission == 1) { ?>
-                                                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="right" title="Delete" onclick="deleteImageOthers('{{$other_details->id}}')"><i class="fa fa-times"></i></button>
+                                                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="right" title="Delete" onclick="deleteImageOthers('{{ \Helper\Helper::encode($other_details->id) }}')"><i class="fa fa-times"></i></button>
                                                                         <?php } ?>
                                                                     </div>
                                                                     <div id="validation-errors"></div>
@@ -458,7 +458,7 @@ foreach ($user_permission as $permission) {
                     indian_composition: indian_composition,
                     others_composition: others_composition,
                     foreigner_composition: foreigner_composition,
-                    file_id : '{{ $file->id }}',
+                    file_id : '{{ \Helper\Helper::encode($file->id) }}',
                     reference_id: '{{ ($other_details->reference_id ? $other_details->reference_id : $other_details->id) }}'
                 },
                 success: function (data) {
@@ -473,7 +473,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@scoring', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@scoring', \Helper\Helper::encode($file->id))}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }

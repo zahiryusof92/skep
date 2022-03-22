@@ -286,7 +286,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
 
                     @if (AccessGroup::hasAccessModule('liquidator'))
-                    <li id="developer_list">
+                    <li id="liquidator_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@liquidator')}}">
                             {{ trans('app.menus.master.liquidator') }}
                         </a>

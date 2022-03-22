@@ -566,7 +566,7 @@ foreach ($user_permission as $permission) {
                     score19: score19,
                     score20: score20,
                     score21: score21,
-                    id: "{{ $rating->id }}"
+                    id: "{{ \Helper\Helper::encode($rating->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

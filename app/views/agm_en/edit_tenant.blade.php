@@ -333,7 +333,7 @@ foreach ($user_permission as $permission) {
                     caj_penyelenggaraan: caj_penyelenggaraan,
                     sinking_fund: sinking_fund,
                     file_id: file_id,
-                    id: '{{$tenant->id}}'
+                    id: '{{ \Helper\Helper::encode($tenant->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

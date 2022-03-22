@@ -296,377 +296,377 @@ foreach ($user_permission as $permission) {
                                             </form>
                                         </div>
                                     </div>
+                                    <hr/>
+                                    <form>
+                                        @if (count($residential) <= 0)
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="checkbox" name="residential" id="residential" disabled/>
+                                                <label><h4> {{ trans('app.forms.residential_block') }}</h4></label>
+                                                <!-- residential Form -->
+                                                <div id="residential_form" style="display:none">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" id="residential_unit_no" readonly="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.maintenance_fee') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" readonly="">
+                                                                    <select class="form-control" id="residential_maintenance_fee_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" readonly="">
+                                                                    <select class="form-control" id="residential_sinking_fund_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        @else
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="checkbox" name="residential" id="residential" {{($strata->is_residential == 1 ? " checked" : "")}} disabled>
+                                                <label><h4> {{ trans('app.forms.residential_block') }}</h4></label>
+                                                <!-- residential Form -->
+                                                <div id="residential_form">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" id="residential_unit_no" value="{{$residential->unit_no}}" readonly="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.maintenance_fee') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" value="{{$residential->maintenance_fee}}" readonly="">
+                                                                    <select class="form-control" id="residential_maintenance_fee_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}" {{($residential->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" value="{{$residential->sinking_fund}}" readonly="">
+                                                                    <select class="form-control" id="residential_sinking_fund_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}" {{($residential->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        @endif
+                                        @if (count($commercial) <= 0)
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="checkbox" name="commercial" id="commercial" disabled/>
+                                                <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
+                                                <!-- residential Form -->
+                                                <div id="commercial_form" style="display:none">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" id="commercial_unit_no" readonly="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.commercial_fee') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" readonly="">
+                                                                    <select class="form-control" id="commercial_maintenance_fee_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" readonly="">
+                                                                    <select class="form-control" id="commercial_sinking_fund_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        @else
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="checkbox" name="commercial" id="commercial" {{($strata->is_commercial == 1 ? " checked" : "")}} disabled>
+                                                <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
+                                                <!-- residential Form -->
+                                                <div id="commercial_form">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" id="commercial_unit_no" value="{{$commercial->unit_no}}" readonly="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.commercial_fee') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" value="{{$commercial->maintenance_fee}}" readonly="">
+                                                                    <select class="form-control" id="commercial_maintenance_fee_option" disabled="">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}" {{($commercial->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                <div class="form-inline">
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" value="{{$commercial->sinking_fund}}" readonly="">
+                                                                    <select class="form-control" id="commercial_sinking_fund_option">
+                                                                        @foreach ($unitoption as $unitoptions)
+                                                                        <option value="{{$unitoptions->id}}" {{($commercial->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        @endif
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <h4>{{ trans('app.forms.facility') }}</h4>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.management_office') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="management_office" name="management_office" value="1" {{($facility->management_office == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="management_office" name="management_office" value="0" {{($facility->management_office == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.swimming_pool') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="swimming_pool" name="swimming_pool" value="1" {{($facility->swimming_pool == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="swimming_pool" name="swimming_pool" value="0" {{($facility->swimming_pool == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.surau') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="surau" name="surau" value="1" {{($facility->surau == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="surau" name="surau" value="0" {{($facility->surau == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.multipurpose_hall') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="multipurpose_hall" name="multipurpose_hall" value="1" {{($facility->multipurpose_hall == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="multipurpose_hall" name="multipurpose_hall" value="0" {{($facility->multipurpose_hall == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.gym') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="gym" name="gym" value="1" {{($facility->gym == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="gym" name="gym" value="0" {{($facility->gym == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.playground') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="playground" name="playground" value="1" {{($facility->playground == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="playground" name="playground" value="0" {{($facility->playground == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.guardhouse') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="guardhouse" name="guardhouse" value="1" {{($facility->guardhouse == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="guardhouse" name="guardhouse" value="0" {{($facility->guardhouse == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.kindergarten') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="kindergarten" name="kindergarten" value="1" {{($facility->kindergarten == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="kindergarten" name="kindergarten" value="0" {{($facility->kindergarten == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.open_space') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="open_space" name="open_space" value="1" {{($facility->open_space == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="open_space" name="open_space" value="0" {{($facility->open_space == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.lift') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="lift" name="lift" value="1" {{($facility->lift == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="lift" name="lift" value="0" {{($facility->lift == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.rubbish_room') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="rubbish_room" name="rubbish_room" value="1" {{($facility->rubbish_room == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="rubbish_room" name="rubbish_room" value="0" {{($facility->rubbish_room == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.gated') }}</label>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="gated" name="gated" value="1" {{($facility->gated == 1 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.yes') }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <input type="radio" id="gated" name="gated" value="0" {{($facility->gated == 0 ? " checked" : "")}} disabled>
+                                                        {{ trans('app.forms.no') }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        <label class="form-control-label">{{ trans('app.forms.others') }}</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <textarea class="form-control" rows="3" id="others" readonly="">{{$facility->others}}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </section>
-                                <hr/>
-                                <form>
-                                    @if (count($residential) <= 0)
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="residential" id="residential" disabled/>
-                                            <label><h4> {{ trans('app.forms.residential_block') }}</h4></label>
-                                            <!-- residential Form -->
-                                            <div id="residential_form" style="display:none">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" id="residential_unit_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.maintenance_fee') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" readonly="">
-                                                                <select class="form-control" id="residential_maintenance_fee_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" readonly="">
-                                                                <select class="form-control" id="residential_sinking_fund_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    @else
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="residential" id="residential" {{($strata->is_residential == 1 ? " checked" : "")}} disabled>
-                                            <label><h4> {{ trans('app.forms.residential_block') }}</h4></label>
-                                            <!-- residential Form -->
-                                            <div id="residential_form">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" id="residential_unit_no" value="{{$residential->unit_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.maintenance_fee') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" value="{{$residential->maintenance_fee}}" readonly="">
-                                                                <select class="form-control" id="residential_maintenance_fee_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}" {{($residential->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" value="{{$residential->sinking_fund}}" readonly="">
-                                                                <select class="form-control" id="residential_sinking_fund_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}" {{($residential->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    @endif
-                                    @if (count($commercial) <= 0)
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="commercial" id="commercial" disabled/>
-                                            <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
-                                            <!-- residential Form -->
-                                            <div id="commercial_form" style="display:none">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" id="commercial_unit_no" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.commercial_fee') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" readonly="">
-                                                                <select class="form-control" id="commercial_maintenance_fee_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" readonly="">
-                                                                <select class="form-control" id="commercial_sinking_fund_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}">{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    @else
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <input type="checkbox" name="commercial" id="commercial" {{($strata->is_commercial == 1 ? " checked" : "")}} disabled>
-                                            <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
-                                            <!-- residential Form -->
-                                            <div id="commercial_form">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" id="commercial_unit_no" value="{{$commercial->unit_no}}" readonly="">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.commercial_fee') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" value="{{$commercial->maintenance_fee}}" readonly="">
-                                                                <select class="form-control" id="commercial_maintenance_fee_option" disabled="">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}" {{($commercial->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
-                                                            <div class="form-inline">
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" value="{{$commercial->sinking_fund}}" readonly="">
-                                                                <select class="form-control" id="commercial_sinking_fund_option">
-                                                                    @foreach ($unitoption as $unitoptions)
-                                                                    <option value="{{$unitoptions->id}}" {{($commercial->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr/>
-                                    @endif
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <h4>{{ trans('app.forms.facility') }}</h4>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.management_office') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="management_office" name="management_office" value="1" {{($facility->management_office == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="management_office" name="management_office" value="0" {{($facility->management_office == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.swimming_pool') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="swimming_pool" name="swimming_pool" value="1" {{($facility->swimming_pool == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="swimming_pool" name="swimming_pool" value="0" {{($facility->swimming_pool == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.surau') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="surau" name="surau" value="1" {{($facility->surau == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="surau" name="surau" value="0" {{($facility->surau == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.multipurpose_hall') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="multipurpose_hall" name="multipurpose_hall" value="1" {{($facility->multipurpose_hall == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="multipurpose_hall" name="multipurpose_hall" value="0" {{($facility->multipurpose_hall == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.gym') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="gym" name="gym" value="1" {{($facility->gym == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="gym" name="gym" value="0" {{($facility->gym == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.playground') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="playground" name="playground" value="1" {{($facility->playground == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="playground" name="playground" value="0" {{($facility->playground == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.guardhouse') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="guardhouse" name="guardhouse" value="1" {{($facility->guardhouse == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="guardhouse" name="guardhouse" value="0" {{($facility->guardhouse == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.kindergarten') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="kindergarten" name="kindergarten" value="1" {{($facility->kindergarten == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="kindergarten" name="kindergarten" value="0" {{($facility->kindergarten == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.open_space') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="open_space" name="open_space" value="1" {{($facility->open_space == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="open_space" name="open_space" value="0" {{($facility->open_space == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.lift') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="lift" name="lift" value="1" {{($facility->lift == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="lift" name="lift" value="0" {{($facility->lift == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.rubbish_room') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="rubbish_room" name="rubbish_room" value="1" {{($facility->rubbish_room == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="rubbish_room" name="rubbish_room" value="0" {{($facility->rubbish_room == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.gated') }}</label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="gated" name="gated" value="1" {{($facility->gated == 1 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.yes') }}
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="radio" id="gated" name="gated" value="0" {{($facility->gated == 0 ? " checked" : "")}} disabled>
-                                                    {{ trans('app.forms.no') }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-2">
-                                                    <label class="form-control-label">{{ trans('app.forms.others') }}</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <textarea class="form-control" rows="3" id="others" readonly="">{{$facility->others}}</textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
                             </div>
                             <!-- End Form -->
                         </div>

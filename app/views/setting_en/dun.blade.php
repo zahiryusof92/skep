@@ -29,10 +29,10 @@ foreach ($user_permission as $permission) {
                         </button>
                         <br/><br/>
                         <?php } ?>
-                        <div class="row">
-                            <div class="form-group">
-                                <label  class="col-md-offset-2 col-md-1 control-label">{{ trans('app.forms.parliament') }}:</label>
-                                <div class="col-sm-3">
+                        <div class="row text-center">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.parliament') }}:</label>
                                     <select id="parliaments" class="form-control">
                                         <option value="">{{ trans('app.forms.all') }}</option>
                                         @foreach ($parliament as $parliaments)

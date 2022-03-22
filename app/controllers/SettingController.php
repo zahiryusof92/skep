@@ -26,16 +26,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(10));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.area_maintenance'),
@@ -53,16 +43,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(10));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_area'),
@@ -112,13 +92,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($areas->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveArea(\'' . $areas->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveArea(\'' . Helper::encode($areas->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeArea(\'' . $areas->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeArea(\'' . Helper::encode($areas->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateArea', $areas->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteArea(\'' . $areas->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateArea', Helper::encode($areas->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteArea(\'' . Helper::encode($areas->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $areas->description,
@@ -148,9 +128,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $area = Area::find($id);
+            $area = Area::findOrFail($id);
             $area->is_active = 0;
             $updated = $area->save();
             if ($updated) {
@@ -173,9 +153,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $area = Area::find($id);
+            $area = Area::findOrFail($id);
             $area->is_active = 1;
             $updated = $area->save();
             if ($updated) {
@@ -198,9 +178,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $area = Area::find($id);
+            $area = Area::findOrFail($id);
             $area->is_deleted = 1;
             $deleted = $area->save();
             if ($deleted) {
@@ -222,18 +202,8 @@ class SettingController extends BaseController {
     public function updateArea($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $area = Area::find($id);
+        $area = Area::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(10));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_area'),
@@ -253,9 +223,9 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
             $description = $data['description'];
             $is_active = $data['is_active'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $area = Area::find($id);
+            $area = Area::findOrFail($id);
             $area->description = $description;
             $area->is_active = $is_active;
             $success = $area->save();
@@ -281,16 +251,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(11));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.city_maintenance'),
@@ -308,16 +268,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(11));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_city'),
@@ -367,13 +317,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($cities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCity(\'' . $cities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCity(\'' . Helper::encode($cities->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCity(\'' . $cities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCity(\'' . Helper::encode($cities->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCity', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCity(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCity', Helper::encode($cities->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCity(\'' . Helper::encode($cities->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $cities->description,
@@ -403,9 +353,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $city = City::find($id);
+            $city = City::findOrFail($id);
             $city->is_active = 0;
             $updated = $city->save();
             if ($updated) {
@@ -428,9 +378,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $city = City::find($id);
+            $city = City::findOrFail($id);
             $city->is_active = 1;
             $updated = $city->save();
             if ($updated) {
@@ -453,9 +403,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $city = City::find($id);
+            $city = City::findOrFail($id);
             $city->is_deleted = 1;
             $deleted = $city->save();
             if ($deleted) {
@@ -477,18 +427,8 @@ class SettingController extends BaseController {
     public function updateCity($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $city = City::find($id);
+        $city = City::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(11));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_city'),
@@ -508,9 +448,9 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
             $description = $data['description'];
             $is_active = $data['is_active'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $city = City::find($id);
+            $city = City::findOrFail($id);
             $city->description = $description;
             $city->is_active = $is_active;
             $success = $city->save();
@@ -536,16 +476,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(8));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.country_maintenance'),
@@ -563,16 +493,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(8));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_country'),
@@ -622,13 +542,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($cities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCountry(\'' . $cities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCountry(\'' . Helper::encode($cities->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCountry(\'' . $cities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCountry(\'' . Helper::encode($cities->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCountry', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCountry(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCountry', Helper::encode($cities->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCountry(\'' . Helper::encode($cities->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $cities->name,
@@ -659,9 +579,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $country = Country::find($id);
+            $country = Country::findOrFail($id);
             $country->is_active = 0;
             $updated = $country->save();
             if ($updated) {
@@ -684,9 +604,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $country = Country::find($id);
+            $country = Country::findOrFail($id);
             $country->is_active = 1;
             $updated = $country->save();
             if ($updated) {
@@ -709,9 +629,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $country = Country::find($id);
+            $country = Country::findOrFail($id);
             $country->is_deleted = 1;
             $deleted = $country->save();
             if ($deleted) {
@@ -733,18 +653,8 @@ class SettingController extends BaseController {
     public function updateCountry($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $country = Country::find($id);
+        $country = Country::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(8));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_country'),
@@ -762,9 +672,9 @@ class SettingController extends BaseController {
     public function submitUpdateCountry() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $country = Country::find($id);
+            $country = Country::findOrFail($id);
             $country->name = $data['name'];
             $country->sort_no = $data['sort_no'];
             $country->is_active = $data['is_active'];
@@ -791,16 +701,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(22));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.form_type_master'),
@@ -818,16 +718,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(22));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_form_type'),
@@ -877,13 +767,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($ft->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveFormtype(\'' . $ft->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveFormtype(\'' . Helper::encode($ft->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFormtype(\'' . $ft->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFormtype(\'' . Helper::encode($ft->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateFormtype', $ft->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFormtype(\'' . $ft->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateFormtype', Helper::encode($ft->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteFormtype(\'' . Helper::encode($ft->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $ft->name_en,
@@ -917,7 +807,7 @@ class SettingController extends BaseController {
 
             $id = $data['id'];
 
-            $formtype = FormType::find($id);
+            $formtype = FormType::findOrFail(Helper::decode($id));
             $formtype->is_active = 0;
             $updated = $formtype->save();
             if ($updated) {
@@ -942,7 +832,7 @@ class SettingController extends BaseController {
 
             $id = $data['id'];
 
-            $formtype = FormType::find($id);
+            $formtype = FormType::findOrFail(Helper::decode($id));
             $formtype->is_active = 1;
             $updated = $formtype->save();
             if ($updated) {
@@ -967,7 +857,7 @@ class SettingController extends BaseController {
 
             $id = $data['id'];
 
-            $formtype = FormType::find($id);
+            $formtype = FormType::findOrFail(Helper::decode($id));
             $formtype->is_deleted = 1;
             $deleted = $formtype->save();
             if ($deleted) {
@@ -989,18 +879,8 @@ class SettingController extends BaseController {
     public function updateFormType($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $formtype = FormType::find($id);
+        $formtype = FormType::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(22));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_form_type'),
@@ -1018,9 +898,9 @@ class SettingController extends BaseController {
     public function submitUpdateFormType() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $formtype = FormType::find($id);
+            $formtype = FormType::findOrFail($id);
             $formtype->name_en = $data['bi_type'];
             $formtype->name_my = $data['bm_type'];
             $formtype->sort_no = $data['sort_no'];
@@ -1048,16 +928,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(9));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.state_maintenance'),
@@ -1075,16 +945,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(9));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_state'),
@@ -1136,13 +996,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($states->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveState(\'' . $states->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveState(\'' . Helper::encode($states->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeState(\'' . $states->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeState(\'' . Helper::encode($states->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateState', $states->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteState(\'' . $states->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateState', Helper::encode($states->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteState(\'' . Helper::encode($states->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $states->name,
@@ -1174,9 +1034,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $state = State::find($id);
+            $state = State::findOrFail($id);
             $state->is_active = 0;
             $updated = $state->save();
             if ($updated) {
@@ -1199,9 +1059,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $state = State::find($id);
+            $state = State::findOrFail($id);
             $state->is_active = 1;
             $updated = $state->save();
             if ($updated) {
@@ -1224,9 +1084,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $state = State::find($id);
+            $state = State::findOrFail($id);
             $state->is_deleted = 1;
             $deleted = $state->save();
             if ($deleted) {
@@ -1248,18 +1108,8 @@ class SettingController extends BaseController {
     public function updateState($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $state = State::find($id);
+        $state = State::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(9));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_state'),
@@ -1278,9 +1128,9 @@ class SettingController extends BaseController {
     public function submitUpdateState() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $state = State::find($id);
+            $state = State::findOrFail($id);
             $state->name = $data['name'];
             $state->code = $data['code'];
             $state->sort_no = $data['sort_no'];
@@ -1308,16 +1158,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(23));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.document_type_maintenance'),
@@ -1335,16 +1175,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(23));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_document_type'),
@@ -1395,13 +1225,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($cities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDocumenttype(\'' . $cities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDocumenttype(\'' . Helper::encode($cities->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDocumenttype(\'' . $cities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDocumenttype(\'' . Helper::encode($cities->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDocumenttype', $cities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocumenttype(\'' . $cities->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDocumenttype', Helper::encode($cities->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocumenttype(\'' . Helper::encode($cities->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $cities->name,
@@ -1432,9 +1262,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $documenttype = Documenttype::find($id);
+            $documenttype = Documenttype::findOrFail($id);
             $documenttype->is_active = 0;
             $updated = $documenttype->save();
             if ($updated) {
@@ -1457,9 +1287,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $documenttype = Documenttype::find($id);
+            $documenttype = Documenttype::findOrFail($id);
             $documenttype->is_active = 1;
             $updated = $documenttype->save();
             if ($updated) {
@@ -1482,9 +1312,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $documenttype = Documenttype::find($id);
+            $documenttype = Documenttype::findOrFail($id);
             $documenttype->is_deleted = 1;
             $deleted = $documenttype->save();
             if ($deleted) {
@@ -1506,18 +1336,8 @@ class SettingController extends BaseController {
     public function updateDocumenttype($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $documenttype = Documenttype::find($id);
+        $documenttype = Documenttype::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(23));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_document_type'),
@@ -1535,9 +1355,9 @@ class SettingController extends BaseController {
     public function submitUpdateDocumenttype() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $documenttype = Documenttype::find($id);
+            $documenttype = Documenttype::findOrFail($id);
             $documenttype->name = $data['name'];
             $documenttype->sort_no = $data['sort_no'];
             $documenttype->is_active = $data['is_active'];
@@ -1627,13 +1447,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($categories->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCategory(\'' . $categories->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveCategory(\'' . Helper::encode($categories->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCategory(\'' . $categories->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeCategory(\'' . Helper::encode($categories->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCategory', $categories->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCategory(\'' . $categories->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateCategory', Helper::encode($categories->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteCategory(\'' . Helper::encode($categories->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $categories->description,
@@ -1664,9 +1484,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $category = Category::find($id);
+            $category = Category::findOrFail($id);
             $category->is_active = 0;
             $updated = $category->save();
             if ($updated) {
@@ -1689,9 +1509,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $category = Category::find($id);
+            $category = Category::findOrFail($id);
             $category->is_active = 1;
             $updated = $category->save();
             if ($updated) {
@@ -1714,9 +1534,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $category = Category::find($id);
+            $category = Category::findOrFail($id);
             $category->is_deleted = 1;
             $deleted = $category->save();
             if ($deleted) {
@@ -1738,7 +1558,7 @@ class SettingController extends BaseController {
     public function updateCategory($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $category = Category::find($id);
+        $category = Category::findOrFail(Helper::decode($id));
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_category'),
@@ -1757,7 +1577,7 @@ class SettingController extends BaseController {
     public function submitUpdateCategory() {
         $data = Input::all();
         if (Request::ajax()) {
-            $category = Category::find($data['id']);
+            $category = Category::findOrFail(Helper::decode($data['id']));
             $category->description = $data['description'];
             $category->code = $data['code'];
             $category->is_active = $data['is_active'];
@@ -1784,16 +1604,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(13));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.land_title_maintenance'),
@@ -1811,16 +1621,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(13));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_land_title'),
@@ -1869,13 +1669,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($lands->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLandTitle(\'' . $lands->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLandTitle(\'' . Helper::encode($lands->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLandTitle(\'' . $lands->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLandTitle(\'' . Helper::encode($lands->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateLandTitle', $lands->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteLandTitle(\'' . $lands->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateLandTitle', Helper::encode($lands->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteLandTitle(\'' . Helper::encode($lands->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $lands->description,
@@ -1906,9 +1706,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $land = LandTitle::find($id);
+            $land = LandTitle::findOrFail($id);
             $land->is_active = 0;
             $updated = $land->save();
             if ($updated) {
@@ -1931,9 +1731,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $land = LandTitle::find($id);
+            $land = LandTitle::findOrFail($id);
             $land->is_active = 1;
             $updated = $land->save();
             if ($updated) {
@@ -1956,9 +1756,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $land = LandTitle::find($id);
+            $land = LandTitle::findOrFail($id);
             $land->is_deleted = 1;
             $deleted = $land->save();
             if ($deleted) {
@@ -1980,18 +1780,8 @@ class SettingController extends BaseController {
     public function updateLandTitle($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $land = LandTitle::find($id);
+        $land = LandTitle::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(13));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_land_title'),
@@ -2010,7 +1800,7 @@ class SettingController extends BaseController {
     public function submitUpdateLandTitle() {
         $data = Input::all();
         if (Request::ajax()) {
-            $land = LandTitle::find($data['id']);
+            $land = LandTitle::findOrFail(Helper::decode($data['id']));
             $land->description = $data['description'];
             $land->code = $data['code'];
             $land->is_active = $data['is_active'];
@@ -2037,16 +1827,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.developer_maintenance'),
@@ -2067,16 +1847,6 @@ class SettingController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_developer'),
@@ -2149,13 +1919,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($developers->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDeveloper(\'' . $developers->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDeveloper(\'' . Helper::encode($developers->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDeveloper(\'' . $developers->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDeveloper(\'' . Helper::encode($developers->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDeveloper', $developers->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDeveloper(\'' . $developers->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDeveloper', Helper::encode($developers->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDeveloper(\'' . Helper::encode($developers->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $developers->name,
@@ -2187,9 +1957,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $developer = Developer::find($id);
+            $developer = Developer::findOrFail($id);
             $developer->is_active = 0;
             $updated = $developer->save();
             if ($updated) {
@@ -2212,9 +1982,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $developer = Developer::find($id);
+            $developer = Developer::findOrFail($id);
             $developer->is_active = 1;
             $updated = $developer->save();
             if ($updated) {
@@ -2237,9 +2007,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $developer = Developer::find($id);
+            $developer = Developer::findOrFail($id);
             $developer->is_deleted = 1;
             $deleted = $developer->save();
             if ($deleted) {
@@ -2261,21 +2031,11 @@ class SettingController extends BaseController {
     public function updateDeveloper($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $developer = Developer::find($id);
+        $developer = Developer::findOrFail(Helper::decode($id));
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_developer'),
@@ -2296,7 +2056,7 @@ class SettingController extends BaseController {
     public function submitUpdateDeveloper() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $name = $data['name'];
             $address1 = $data['address1'];
             $address2 = $data['address2'];
@@ -2310,7 +2070,7 @@ class SettingController extends BaseController {
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
-            $developer = Developer::find($id);
+            $developer = Developer::findOrFail($id);
             $developer->name = $name;
             $developer->address1 = $address1;
             $developer->address2 = $address2;
@@ -2346,16 +2106,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(14));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.liquidator_maintenance'),
@@ -2376,16 +2126,6 @@ class SettingController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(14));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_liquidator'),
@@ -2458,13 +2198,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($item->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLiquidator(\'' . $item->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveLiquidator(\'' . Helper::encode($item->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLiquidator(\'' . $item->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeLiquidator(\'' . Helper::encode($item->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateLiquidator', $item->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteLiquidator(\'' . $item->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateLiquidator', Helper::encode($item->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteLiquidator(\'' . Helper::encode($item->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $item->name,
@@ -2496,9 +2236,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $item = Liquidator::find($id);
+            $item = Liquidator::findOrFail($id);
             $item->is_active = 0;
             $updated = $item->save();
             if ($updated) {
@@ -2521,9 +2261,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $item = Liquidator::find($id);
+            $item = Liquidator::findOrFail($id);
             $item->is_active = 1;
             $updated = $item->save();
             if ($updated) {
@@ -2546,9 +2286,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $item = Liquidator::find($id);
+            $item = Liquidator::findOrFail($id);
             $item->is_deleted = 1;
             $deleted = $item->save();
             if ($deleted) {
@@ -2570,21 +2310,11 @@ class SettingController extends BaseController {
     public function updateLiquidator($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $liquidator = Liquidator::find($id);
+        $liquidator = Liquidator::findOrFail(Helper::decode($id));
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(14));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_liquidator'),
@@ -2605,7 +2335,7 @@ class SettingController extends BaseController {
     public function submitUpdateLiquidator() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $name = $data['name'];
             $address1 = $data['address1'];
             $address2 = $data['address2'];
@@ -2619,7 +2349,7 @@ class SettingController extends BaseController {
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
-            $item = Liquidator::find($id);
+            $item = Liquidator::findOrFail($id);
             $item->name = $name;
             $item->address1 = $address1;
             $item->address2 = $address2;
@@ -2655,16 +2385,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(15));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.agent_maintenance'),
@@ -2685,16 +2405,6 @@ class SettingController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(15));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_agent'),
@@ -2767,13 +2477,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($agents->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAgent(\'' . $agents->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveAgent(\'' . Helper::encode($agents->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAgent(\'' . $agents->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeAgent(\'' . Helper::encode($agents->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateAgent', $agents->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteAgent(\'' . $agents->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateAgent', Helper::encode($agents->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteAgent(\'' . Helper::encode($agents->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $agents->name,
@@ -2805,9 +2515,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agent = Agent::find($id);
+            $agent = Agent::findOrFail($id);
             $agent->is_active = 0;
             $updated = $agent->save();
             if ($updated) {
@@ -2830,9 +2540,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agent = Agent::find($id);
+            $agent = Agent::findOrFail($id);
             $agent->is_active = 1;
             $updated = $agent->save();
             if ($updated) {
@@ -2855,9 +2565,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agent = Agent::find($id);
+            $agent = Agent::findOrFail($id);
             $agent->is_deleted = 1;
             $deleted = $agent->save();
             if ($deleted) {
@@ -2879,21 +2589,11 @@ class SettingController extends BaseController {
     public function updateAgent($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $agent = Agent::find($id);
+        $agent = Agent::findOrFail(Helper::decode($id));
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(15));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_agent'),
@@ -2914,7 +2614,7 @@ class SettingController extends BaseController {
     public function submitUpdateAgent() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $name = $data['name'];
             $address1 = $data['address1'];
             $address2 = $data['address2'];
@@ -2928,7 +2628,7 @@ class SettingController extends BaseController {
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
-            $agent = Agent::find($id);
+            $agent = Agent::findOrFail($id);
             $agent->name = $name;
             $agent->address1 = $address1;
             $agent->address2 = $address2;
@@ -2964,16 +2664,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(16));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.parliament_maintenance'),
@@ -2991,16 +2681,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(16));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_parliament'),
@@ -3048,13 +2728,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($parliments->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveParliment(\'' . $parliments->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveParliment(\'' . Helper::encode($parliments->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeParliment(\'' . $parliments->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeParliment(\'' . Helper::encode($parliments->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateParliment', $parliments->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteParliment(\'' . $parliments->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateParliment', Helper::encode($parliments->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteParliment(\'' . Helper::encode($parliments->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $parliments->description,
@@ -3085,9 +2765,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $parliment = Parliment::find($id);
+            $parliment = Parliment::findOrFail($id);
             $parliment->is_active = 0;
             $updated = $parliment->save();
             if ($updated) {
@@ -3110,9 +2790,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $parliment = Parliment::find($id);
+            $parliment = Parliment::findOrFail($id);
             $parliment->is_active = 1;
             $updated = $parliment->save();
             if ($updated) {
@@ -3135,9 +2815,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $parliment = Parliment::find($id);
+            $parliment = Parliment::findOrFail($id);
             $parliment->is_deleted = 1;
             $deleted = $parliment->save();
             if ($deleted) {
@@ -3159,18 +2839,8 @@ class SettingController extends BaseController {
     public function updateParliment($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $parliment = Parliment::find($id);
+        $parliment = Parliment::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(16));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_parliament'),
@@ -3188,7 +2858,7 @@ class SettingController extends BaseController {
     public function submitUpdateParliment() {
         $data = Input::all();
         if (Request::ajax()) {
-            $parliment = Parliment::find($data['id']);
+            $parliment = Parliment::findOrFail(Helper::decode($data['id']));
             $parliment->description = $data['description'];
             $parliment->code = $data['code'];
             $parliment->is_active = $data['is_active'];
@@ -3216,16 +2886,6 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(17));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.dun_maintenance'),
@@ -3245,16 +2905,6 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(17));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_dun'),
@@ -3305,14 +2955,14 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($duns->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDun(\'' . $duns->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDun(\'' . Helper::encode($duns->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDun(\'' . $duns->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDun(\'' . Helper::encode($duns->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDun', $duns->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDun(\'' . $duns->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDun', Helper::encode($duns->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDun(\'' . Helper::encode($duns->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $duns->description,
@@ -3344,9 +2994,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $dun = Dun::find($id);
+            $dun = Dun::findOrFail($id);
             $dun->is_active = 0;
             $updated = $dun->save();
             if ($updated) {
@@ -3369,9 +3019,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $dun = Dun::find($id);
+            $dun = Dun::findOrFail($id);
             $dun->is_active = 1;
             $updated = $dun->save();
             if ($updated) {
@@ -3394,9 +3044,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $dun = Dun::find($id);
+            $dun = Dun::findOrFail($id);
             $dun->is_deleted = 1;
             $deleted = $dun->save();
             if ($deleted) {
@@ -3418,19 +3068,9 @@ class SettingController extends BaseController {
     public function updateDun($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $dun = Dun::find($id);
+        $dun = Dun::findOrFail(Helper::decode($id));
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(17));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_dun'),
@@ -3449,7 +3089,7 @@ class SettingController extends BaseController {
     public function submitUpdateDun() {
         $data = Input::all();
         if (Request::ajax()) {
-            $dun = Dun::find($data['id']);
+            $dun = Dun::findOrFail(Helper::decode($data['id']));
             $dun->parliament = $data['parliament'];
             $dun->description = $data['description'];
             $dun->code = $data['code'];
@@ -3478,16 +3118,6 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $dun = Dun::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(18));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.park_maintenance'),
@@ -3507,16 +3137,6 @@ class SettingController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $dun = Dun::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(18));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_park'),
@@ -3570,14 +3190,14 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($parks->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactivePark(\'' . $parks->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactivePark(\'' . Helper::encode($parks->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activePark(\'' . $parks->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activePark(\'' . Helper::encode($parks->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updatePark', $parks->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deletePark(\'' . $parks->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updatePark', Helper::encode($parks->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deletePark(\'' . Helper::encode($parks->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $parks->description,
@@ -3608,9 +3228,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $park = Park::find($id);
+            $park = Park::findOrFail($id);
             $park->is_active = 0;
             $updated = $park->save();
             if ($updated) {
@@ -3633,9 +3253,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $park = Park::find($id);
+            $park = Park::findOrFail($id);
             $park->is_active = 1;
             $updated = $park->save();
             if ($updated) {
@@ -3658,9 +3278,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $park = Park::find($id);
+            $park = Park::findOrFail($id);
             $park->is_deleted = 1;
             $deleted = $park->save();
             if ($deleted) {
@@ -3682,19 +3302,9 @@ class SettingController extends BaseController {
     public function updatePark($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $park = Park::find($id);
+        $park = Park::findOrFail(Helper::decode($id));
         $dun = Dun::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(18));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_park'),
@@ -3716,9 +3326,9 @@ class SettingController extends BaseController {
             $dun = $data['dun'];
             $description = $data['description'];
             $is_active = $data['is_active'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $park = Park::find($id);
+            $park = Park::findOrFail($id);
             $park->dun = $dun;
             $park->description = $description;
             $park->is_active = $is_active;
@@ -3745,16 +3355,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(19));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.memo_type_maintenance'),
@@ -3772,16 +3372,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(19));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_memo_type'),
@@ -3831,13 +3421,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($memotypes->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemoType(\'' . $memotypes->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemoType(\'' . Helper::encode($memotypes->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemoType(\'' . $memotypes->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemoType(\'' . Helper::encode($memotypes->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateMemoType', $memotypes->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemoType(\'' . $memotypes->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateMemoType', Helper::encode($memotypes->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemoType(\'' . Helper::encode($memotypes->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $memotypes->description,
@@ -3867,9 +3457,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memotype = MemoType::find($id);
+            $memotype = MemoType::findOrFail($id);
             $memotype->is_active = 0;
             $updated = $memotype->save();
             if ($updated) {
@@ -3892,9 +3482,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memotype = MemoType::find($id);
+            $memotype = MemoType::findOrFail($id);
             $memotype->is_active = 1;
             $updated = $memotype->save();
             if ($updated) {
@@ -3917,9 +3507,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memotype = MemoType::find($id);
+            $memotype = MemoType::findOrFail($id);
             $memotype->is_deleted = 1;
             $deleted = $memotype->save();
             if ($deleted) {
@@ -3941,18 +3531,8 @@ class SettingController extends BaseController {
     public function updateMemoType($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $memoType = MemoType::find($id);
+        $memoType = MemoType::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(19));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_memo_type'),
@@ -3972,9 +3552,9 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
             $description = $data['description'];
             $is_active = $data['is_active'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $memotype = MemoType::find($id);
+            $memotype = MemoType::findOrFail($id);
             $memotype->description = $description;
             $memotype->is_active = $is_active;
             $success = $memotype->save();
@@ -4000,16 +3580,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(20));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.designation_maintenance'),
@@ -4027,16 +3597,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(20));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_designation'),
@@ -4086,13 +3646,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($designations->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDesignation(\'' . $designations->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDesignation(\'' . Helper::encode($designations->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDesignation(\'' . $designations->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDesignation(\'' . Helper::encode($designations->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDesignation', $designations->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDesignation(\'' . $designations->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDesignation', Helper::encode($designations->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDesignation(\'' . Helper::encode($designations->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $designations->description,
@@ -4122,9 +3682,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $designation = Designation::find($id);
+            $designation = Designation::findOrFail($id);
             $designation->is_active = 0;
             $updated = $designation->save();
             if ($updated) {
@@ -4147,9 +3707,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $designation = Designation::find($id);
+            $designation = Designation::findOrFail($id);
             $designation->is_active = 1;
             $updated = $designation->save();
             if ($updated) {
@@ -4172,9 +3732,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $designation = Designation::find($id);
+            $designation = Designation::findOrFail($id);
             $designation->is_deleted = 1;
             $deleted = $designation->save();
             if ($deleted) {
@@ -4196,18 +3756,8 @@ class SettingController extends BaseController {
     public function updateDesignation($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $designation = Designation::find($id);
+        $designation = Designation::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(20));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_designation'),
@@ -4227,9 +3777,9 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
             $description = $data['description'];
             $is_active = $data['is_active'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $designation = Designation::find($id);
+            $designation = Designation::findOrFail($id);
             $designation->description = $description;
             $designation->is_active = $is_active;
             $success = $designation->save();
@@ -4255,16 +3805,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(21));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.unit_of_measure_maintenance'),
@@ -4282,16 +3822,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(21));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_unit_of_measure'),
@@ -4341,13 +3871,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($unitmeasures->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUnitMeasure(\'' . $unitmeasures->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUnitMeasure(\'' . Helper::encode($unitmeasures->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUnitMeasure(\'' . $unitmeasures->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUnitMeasure(\'' . Helper::encode($unitmeasures->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateUnitMeasure', $unitmeasures->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUnitMeasure(\'' . $unitmeasures->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateUnitMeasure', Helper::encode($unitmeasures->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUnitMeasure(\'' . Helper::encode($unitmeasures->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $unitmeasures->description,
@@ -4377,9 +3907,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $unitmeasure = UnitMeasure::find($id);
+            $unitmeasure = UnitMeasure::findOrFail($id);
             $unitmeasure->is_active = 0;
             $updated = $unitmeasure->save();
 
@@ -4403,9 +3933,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $unitmeasure = UnitMeasure::find($id);
+            $unitmeasure = UnitMeasure::findOrFail($id);
             $unitmeasure->is_active = 1;
             $updated = $unitmeasure->save();
 
@@ -4429,9 +3959,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $unitmeasure = UnitMeasure::find($id);
+            $unitmeasure = UnitMeasure::findOrFail($id);
             $unitmeasure->is_deleted = 1;
             $deleted = $unitmeasure->save();
 
@@ -4454,18 +3984,8 @@ class SettingController extends BaseController {
     public function updateUnitMeasure($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $unitmeasure = UnitMeasure::find($id);
+        $unitmeasure = UnitMeasure::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(21));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_unit_of_measure'),
@@ -4485,9 +4005,9 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
             $description = $data['description'];
             $is_active = $data['is_active'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $unitmeasure = UnitMeasure::find($id);
+            $unitmeasure = UnitMeasure::findOrFail($id);
             $unitmeasure->description = $description;
             $unitmeasure->is_active = $is_active;
             $success = $unitmeasure->save();
@@ -4513,16 +4033,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(42));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.race_maintenance'),
@@ -4540,16 +4050,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(42));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_race'),
@@ -4600,13 +4100,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($races->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveRace(\'' . $races->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="inactiveRace(\'' . Helper::encode($races->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeRace(\'' . $races->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeRace(\'' . Helper::encode($races->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateRace', $races->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteRace(\'' . $races->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateRace', Helper::encode($races->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteRace(\'' . Helper::encode($races->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $races->name_en,
@@ -4638,9 +4138,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $race = Race::find($id);
+            $race = Race::findOrFail($id);
             $race->is_active = 0;
             $updated = $race->save();
             if ($updated) {
@@ -4663,9 +4163,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $race = Race::find($id);
+            $race = Race::findOrFail($id);
             $race->is_active = 1;
             $updated = $race->save();
             if ($updated) {
@@ -4688,9 +4188,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $race = Race::find($id);
+            $race = Race::findOrFail($id);
             $race->is_deleted = 1;
             $deleted = $race->save();
             if ($deleted) {
@@ -4712,18 +4212,8 @@ class SettingController extends BaseController {
     public function updateRace($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $race = Race::find($id);
+        $race = Race::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(42));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_race'),
@@ -4741,9 +4231,9 @@ class SettingController extends BaseController {
     public function submitUpdateRace() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $race = Race::find($id);
+            $race = Race::findOrFail($id);
             $race->name_en = $data['name_en'];
             $race->name_my = $data['name_my'];
             $race->sort_no = $data['sort_no'];
@@ -4771,16 +4261,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(44));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.nationality_maintenance'),
@@ -4798,16 +4278,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(44));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_nationality'),
@@ -4857,13 +4327,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($nationalities->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveNationality(\'' . $nationalities->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveNationality(\'' . Helper::encode($nationalities->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeNationality(\'' . $nationalities->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeNationality(\'' . Helper::encode($nationalities->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateNationality', $nationalities->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteNationality(\'' . $nationalities->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateNationality', Helper::encode($nationalities->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteNationality(\'' . Helper::encode($nationalities->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $nationalities->name,
@@ -4894,9 +4364,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $nationality = Nationality::find($id);
+            $nationality = Nationality::findOrFail($id);
             $nationality->is_active = 0;
             $updated = $nationality->save();
             if ($updated) {
@@ -4919,9 +4389,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $nationality = Nationality::find($id);
+            $nationality = Nationality::findOrFail($id);
             $nationality->is_active = 1;
             $updated = $nationality->save();
             if ($updated) {
@@ -4944,9 +4414,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $nationality = Nationality::find($id);
+            $nationality = Nationality::findOrFail($id);
             $nationality->is_deleted = 1;
             $deleted = $nationality->save();
             if ($deleted) {
@@ -4968,18 +4438,8 @@ class SettingController extends BaseController {
     public function updateNationality($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $nationality = Nationality::find($id);
+        $nationality = Nationality::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(44));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_nationality'),
@@ -4997,9 +4457,9 @@ class SettingController extends BaseController {
     public function submitUpdateNationality() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $nationality = Nationality::find($id);
+            $nationality = Nationality::findOrFail($id);
             $nationality->name = $data['name'];
             $nationality->sort_no = $data['sort_no'];
             $nationality->is_active = $data['is_active'];
@@ -5026,16 +4486,7 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(47));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+      
         $viewData = array(
             'title' => trans('app.menus.master.defect_category'),
             'panel_nav_active' => 'master_panel',
@@ -5052,16 +4503,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(47));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.add_defect_category'),
@@ -5111,13 +4552,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($categories->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDefectCategory(\'' . $categories->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveDefectCategory(\'' . Helper::encode($categories->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDefectCategory(\'' . $categories->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeDefectCategory(\'' . Helper::encode($categories->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDefectCategory', $categories->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefectCategory(\'' . $categories->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateDefectCategory', Helper::encode($categories->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDefectCategory(\'' . Helper::encode($categories->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $categories->name,
@@ -5148,9 +4589,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defectCategory = DefectCategory::find($id);
+            $defectCategory = DefectCategory::findOrFail($id);
             $defectCategory->is_active = 0;
             $updated = $defectCategory->save();
             if ($updated) {
@@ -5173,9 +4614,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defectCategory = DefectCategory::find($id);
+            $defectCategory = DefectCategory::findOrFail($id);
             $defectCategory->is_active = 1;
             $updated = $defectCategory->save();
             if ($updated) {
@@ -5198,9 +4639,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defectCategory = DefectCategory::find($id);
+            $defectCategory = DefectCategory::findOrFail($id);
             $defectCategory->is_deleted = 1;
             $deleted = $defectCategory->save();
             if ($deleted) {
@@ -5222,18 +4663,8 @@ class SettingController extends BaseController {
     public function updateDefectCategory($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $defectCategory = DefectCategory::find($id);
+        $defectCategory = DefectCategory::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(47));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.edit_defect_category'),
@@ -5251,9 +4682,9 @@ class SettingController extends BaseController {
     public function submitUpdateDefectCategory() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $defectCategory = DefectCategory::find($id);
+            $defectCategory = DefectCategory::findOrFail($id);
             $defectCategory->name = $data['name'];
             $defectCategory->sort_no = $data['sort_no'];
             $defectCategory->is_active = $data['is_active'];
@@ -5280,16 +4711,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(48));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.master.insurance_provider'),
@@ -5307,16 +4728,6 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(48));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.master.add_insurance_provider'),
             'panel_nav_active' => 'master_panel',
@@ -5365,13 +4776,13 @@ class SettingController extends BaseController {
                 $button = "";
                 if ($providers->is_active == 1) {
                     $status = trans('app.forms.active');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveInsuranceProvider(\'' . $providers->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveInsuranceProvider(\'' . Helper::encode($providers->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                 } else {
                     $status = trans('app.forms.inactive');
-                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeInsuranceProvider(\'' . $providers->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeInsuranceProvider(\'' . Helper::encode($providers->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                 }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateInsuranceProvider', $providers->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsuranceProvider(\'' . $providers->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('SettingController@updateInsuranceProvider', Helper::encode($providers->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteInsuranceProvider(\'' . Helper::encode($providers->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     $providers->name,
@@ -5402,9 +4813,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider = InsuranceProvider::findOrFail($id);
             $insuranceProvider->is_active = 0;
             $updated = $insuranceProvider->save();
             if ($updated) {
@@ -5427,9 +4838,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider = InsuranceProvider::findOrFail($id);
             $insuranceProvider->is_active = 1;
             $updated = $insuranceProvider->save();
             if ($updated) {
@@ -5452,9 +4863,9 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider = InsuranceProvider::findOrFail($id);
             $insuranceProvider->is_deleted = 1;
             $deleted = $insuranceProvider->save();
             if ($deleted) {
@@ -5476,18 +4887,8 @@ class SettingController extends BaseController {
     public function updateInsuranceProvider($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $insuranceProvider = InsuranceProvider::find($id);
+        $insuranceProvider = InsuranceProvider::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(48));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         $viewData = array(
             'title' => trans('app.menus.master.edit_insurance_provider'),
             'panel_nav_active' => 'master_panel',
@@ -5504,9 +4905,9 @@ class SettingController extends BaseController {
     public function submitUpdateInsuranceProvider() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $insuranceProvider = InsuranceProvider::find($id);
+            $insuranceProvider = InsuranceProvider::findOrFail($id);
             $insuranceProvider->name = $data['name'];
             $insuranceProvider->sort_no = $data['sort_no'];
             $insuranceProvider->is_active = $data['is_active'];

@@ -980,7 +980,7 @@ foreach ($user_permission as $permission) {
     var oTable;
     $(document).ready(function () {
         oTable = $('#scoring_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getScoring', $files->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getScoring', \Helper\Helper::encode($files->id))}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,
@@ -1068,7 +1068,7 @@ foreach ($user_permission as $permission) {
                     score20: score20,
                     score21: score21,
                     survey: survey,
-                    file_id: '{{$files->id}}'
+                    file_id: '{{ \Helper\Helper::encode($files->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

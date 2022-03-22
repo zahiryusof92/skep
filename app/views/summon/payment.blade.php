@@ -18,7 +18,7 @@
                 @endif
 
                 <form method="POST" action="{{ url('summon/submitPay') }}">
-                    <input type="hidden" name="order_id" value="{{ $model->id }}"/>
+                    <input type="hidden" name="order_id" value="{{ \Helper\Helper::encode($model->id) }}"/>
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
@@ -34,7 +34,7 @@
                 </form>
             @else
                 <form method="POST" action="{{ url('summon/submitPay') }}">
-                    <input type="hidden" name="order_id" value="{{ $model->id }}"/>
+                    <input type="hidden" name="order_id" value="{{ \Helper\Helper::encode($model->id) }}"/>
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">

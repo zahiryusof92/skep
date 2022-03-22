@@ -1576,7 +1576,7 @@ foreach ($user_permission as $permission) {
                     others_fax_no: others_fax_no,
                     others_email: others_email,
                     //id
-                    file_id: '{{ $file->id }}',
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}',
                     reference_id: '{{ ($management->reference_id ? $management->reference_id : $management->id) }}'
                 },
                 success: function (data) {
@@ -1592,7 +1592,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@monitoring', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@monitoring', \Helper\Helper::encode($file->id))}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }

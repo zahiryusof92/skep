@@ -294,7 +294,7 @@ foreach ($user_permission as $permission) {
                     is_paid: is_paid,
                     is_admin: is_admin,
                     is_active: is_active,
-                    role_id: '{{$accessgroup->id}}'
+                    role_id: '{{ \Helper\Helper::encode($accessgroup->id) }}'
 
                 },
                 success: function (data) {

@@ -28,7 +28,7 @@
                                 </h6>
                             </td>
                             <td class="text-center">
-                                <a href="{{URL::action('PrintController@printDun', $cob_id ? $cob_id : 'all')}}" target="_blank">
+                                <a href="{{URL::action('PrintController@printDun', $cob_id ? \Helper\Helper::encode($cob_id) : 'all')}}" target="_blank">
                                     <button type="button" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
@@ -50,7 +50,7 @@
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @endif
                                                 @foreach ($cob as $cobs)
-                                                <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
+                                                <option value="{{ \Helper\Helper::encode($cobs->id) }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

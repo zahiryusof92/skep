@@ -29,7 +29,7 @@
                                 </h6>
                             </td>
                             <td class="text-center">
-                                <a href="{{ URL::action('PrintController@printStrataProfile', $files->id) }}" target="_blank">
+                                <a href="{{ URL::action('PrintController@printStrataProfile', \Helper\Helper::encode($files->id)) }}" target="_blank">
                                     <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>

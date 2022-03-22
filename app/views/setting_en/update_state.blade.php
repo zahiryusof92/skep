@@ -139,7 +139,7 @@ foreach ($user_permission as $permission) {
                     code: code,
                     sort_no: sort_no,
                     is_active: is_active,
-                    id: "{{$state->id}}"
+                    id: "{{ \Helper\Helper::encode($state->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

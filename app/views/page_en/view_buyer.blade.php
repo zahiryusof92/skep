@@ -61,7 +61,7 @@ foreach ($user_permission as $permission) {
 <script>
     $(document).ready(function () {
         $('#buyer_list').DataTable({
-            "sAjaxSource": "{{URL::action('AdminController@getBuyerList', $files->id)}}",
+            "sAjaxSource": "{{URL::action('AdminController@getBuyerList', \Helper\Helper::encode($files->id))}}",
             "order": [[0, "asc"]]
         });
     });

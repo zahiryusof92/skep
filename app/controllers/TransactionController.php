@@ -1,5 +1,6 @@
 <?php
 
+use Helper\Helper;
 use Helper\Paydibs;
 use Helper\Revenue;
 
@@ -67,7 +68,7 @@ class TransactionController extends BaseController {
                                     return "<span class='label label-$label_class'>$label_text</span>";
                                 })
                                 ->editColumn('reference_no', function($model) {
-                                    $url = ($model->moduleable_type == 'Summon')? url("summon/$model->moduleable_id") : url('/myPoint');
+                                    $url = ($model->moduleable_type == 'Summon')? url("summon/". Helper::encode($model->moduleable_id)) : url('/myPoint');
                                     return "<a href='" . $url . "' target='_blank'><u>$model->reference_no</u></a>";
                                 })
                                 ->editColumn('pay_for', function($model) {
@@ -106,7 +107,6 @@ class TransactionController extends BaseController {
     public function paymentProcess($data) {
         $response = '';
 
-        // $data = Input::all();
         $validation_rules = [
             'module_id' => 'required',
             'module' => 'required',
@@ -177,7 +177,6 @@ class TransactionController extends BaseController {
 
             // // return $payment_gateway_data;
             
-            // $response = (new Paydibs())->payRequest($payment_gateway_data);
             if($data['payment_gateway'] == $this->config['gateway']['paydibs']['slug']) {
                 $response = $this->processPaydibs($data['order_id'], $item);
             } else {
@@ -193,7 +192,7 @@ class TransactionController extends BaseController {
 
     public function success() {
         $request = Input::all();
-        Log::info($request);
+        
         if(empty($request['MerchantPymtID']) == false) {
             $item = PaymentTransaction::where('reference_no',$request['MerchantPymtID'])->first();
             $item->status = $request['PTxnStatus'];
@@ -216,9 +215,9 @@ class TransactionController extends BaseController {
                 $point_transaction->save();
 
                 /** send rejected email to payer */
-                Mail::send('emails.summon.payment_fail', array('model' => $model), function($message) use ($model) {
-                    $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
-                });
+                // Mail::send('emails.summon.payment_fail', array('model' => $model), function($message) use ($model) {
+                //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
+                // });
 
                 return Redirect::to('myPoint')->with('error', trans('app.errors.payment_failed'));
 
@@ -231,16 +230,15 @@ class TransactionController extends BaseController {
                 $point_transaction->save();
                 
                 /** send success email to payer */
-                Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
-                    $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
-                });
+                // Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
+                //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                // });
                 
                 return Redirect::to('myPoint')->with('success', trans('app.successes.payment_successfully'));
 
             }
         } else {
-
-            $model = Orders::where('reference_id',$item->moduleable->id)->first();
+            $model = Orders::where('reference_id',$item->moduleable->id)->orderBy('created_at', 'desc')->first();
             
             if($item->status == PaymentTransaction::FAIL) {
                 $model->status = Orders::REJECTED;
@@ -254,9 +252,9 @@ class TransactionController extends BaseController {
 
                 /** send rejected email to payer */
 
-                Mail::send('emails.summon.payment_fail', array('model' => $model), function($message) use ($model) {
-                    $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
-                });
+                // Mail::send('emails.summon.payment_fail', array('model' => $model), function($message) use ($model) {
+                //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
+                // });
 
                 return Redirect::to('summon')->with('error', trans('app.errors.payment_failed'));
             } else {
@@ -270,9 +268,9 @@ class TransactionController extends BaseController {
                     $model->status = Orders::PENDING;
                     $model->save();
 
-                    Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
-                        $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
-                    });
+                    // Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
+                    //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
+                    // });
 
                     /** Send to lawyer or jmb */
                     if($summon->type == Summon::LETTER_OF_REMINDER) {
@@ -288,9 +286,9 @@ class TransactionController extends BaseController {
                     } else {
                         /** to Lawyer */
                         $user = User::find($summon->lawyer_id);
-                        Mail::send('emails.summon.success_to_jmb_lawyer', array('model' => $user, 'order' => $model), function($message) use ($user) {
-                            $message->to($user->email, $user->full_name)->subject('Payment Success');
-                        });
+                        // Mail::send('emails.summon.success_to_jmb_lawyer', array('model' => $user, 'order' => $model), function($message) use ($user) {
+                        //     $message->to($user->email, $user->full_name)->subject('Payment Success');
+                        // });
                     }
                 }
 
@@ -326,8 +324,7 @@ class TransactionController extends BaseController {
             
             /** Update Payment Transaction info */
             $item->reference_no = $reference_no;
-            $item->sign = (new Paydibs())->generateSign($payment_gateway_data, $item->transaction_type);
-    
+            $item->sign = (new Paydibs())->generateSign($payment_gateway_data, $item->transaction_type);   
             $item->save();
     
             $payment_gateway_data['sign'] = $item->sign;
@@ -343,7 +340,9 @@ class TransactionController extends BaseController {
     public function processRevenueMonster($orderId, $item) {
         $reference_no = date('YmdHis') . $orderId;
         $data['transaction_id'] = $reference_no;
+        $data['title'] = "Pay for " . str_replace('-', ' ', $item->pay_for);
         $data['amount'] = round($item->amount,2);
+        $data['user_id'] = strval($item->user_id);
         // $data['transaction_id'] = date('YmdHis') . '123';
         // $data['amount'] = round('1.00',2);
         $data['redirect_url'] = url('transaction/success');
@@ -363,7 +362,6 @@ class TransactionController extends BaseController {
 
     public function getRevenueTransactionStatus($orderId) {
         // public function getRevenueTransactionStatus() {
-        // $response = (new Revenue())->getStatusByOrderID('2021051117364685');
         $response = (new Revenue())->getStatusByOrderID($orderId);
         
         return ($response);

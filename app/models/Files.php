@@ -1612,10 +1612,10 @@ class Files extends Eloquent {
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
-                        ->where('files.is_deleted', 0)
-                        ->where('strata.name', '!=', '')
-                        ->orderBy('strata.name', 'asc')
-                        ->get();
+                            ->where('files.is_deleted', 0)
+                            ->where('strata.name', '!=', '')
+                            ->orderBy('strata.name', 'asc')
+                            ->get();
             } else {
                 $filename = Strata::join('files', 'strata.file_id', '=', 'files.id')
                         ->where('files.company_id', Session::get('admin_cob'))

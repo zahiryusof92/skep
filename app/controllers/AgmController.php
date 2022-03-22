@@ -27,16 +27,6 @@ class AgmController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(30));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
         
         $viewData = array(
             'title' => trans('app.menus.agm.designation'),
@@ -91,10 +81,10 @@ class AgmController extends BaseController {
                 $designation = Designation::find($ajk_details->designation);
 
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', $ajk_details->id) . '\'">
+                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', Helper::encode($ajk_details->id)) . '\'">
                                 <i class="fa fa-pencil"></i>
                             </button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . $ajk_details->id . '\')">
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . Helper::encode($ajk_details->id) . '\')">
                                 <i class="fa fa-trash"></i>
                             </button>&nbsp';
 
@@ -147,16 +137,6 @@ class AgmController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(30));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_designation'),
@@ -233,18 +213,8 @@ class AgmController extends BaseController {
             }
         }
 
-        $ajk_details = AJKDetails::find($id);
-        $disallow = Helper::isAllow($ajk_details->file_id, 0, !AccessGroup::hasUpdate(30));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $ajk_details = AJKDetails::findOrFail(Helper::decode($id));
+        $disallow = Helper::isAllow($ajk_details->file_id, $ajk_details->file->company_id, !AccessGroup::hasUpdate(30));
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_designation'),
@@ -266,7 +236,7 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $file_id = $data['file_id'];
             $designation = $data['designation'];
             $name = $data['name'];
@@ -276,7 +246,7 @@ class AgmController extends BaseController {
             $end_year = $data['end_year'];
             $remarks = $data['remarks'];
 
-            $ajk_detail = AJKDetails::find($id);
+            $ajk_detail = AJKDetails::findOrFail($id);
             if ($ajk_detail) {
                 $ajk_detail->file_id = $file_id;
                 $ajk_detail->designation = $designation;
@@ -312,9 +282,9 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $ajk_details = AJKDetails::find($id);
+            $ajk_details = AJKDetails::findOrFail($id);
             $ajk_details->is_deleted = 1;
             $deleted = $ajk_details->save();
             if ($deleted) {
@@ -360,16 +330,6 @@ class AgmController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(31));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.purchaser'),
@@ -455,8 +415,8 @@ class AgmController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = "";
                                 if (AccessGroup::hasUpdate(31)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editPurchaser', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deletePurchaser(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>&nbsp';
                                 }
 
                                 return $button;
@@ -486,16 +446,6 @@ class AgmController extends BaseController {
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(31));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_purchaser'),
@@ -588,7 +538,7 @@ class AgmController extends BaseController {
     public function editPurchaser($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $buyer = Buyer::find($id);
+        $buyer = Buyer::findOrFail(Helper::decode($id));
 
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -606,17 +556,7 @@ class AgmController extends BaseController {
 
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
-        $disallow = Helper::isAllow($buyer->file_id, 0, !AccessGroup::hasUpdate(31));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow($buyer->file_id, $buyer->file->company_id, !AccessGroup::hasUpdate(31));
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_purchaser'),
@@ -659,12 +599,12 @@ class AgmController extends BaseController {
             $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $checkFile = Files::find($file_id);
 
             if (count($checkFile) > 0) {
-                $buyer = Buyer::find($id);
+                $buyer = Buyer::findOrFail($id);
                 if (count($buyer) > 0) {
                     $buyer->file_id = $file_id;
                     $buyer->unit_no = $unit_no;
@@ -716,9 +656,9 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $buyer = Buyer::find($id);
+            $buyer = Buyer::findOrFail($id);
             $buyer->is_deleted = 1;
             $deleted = $buyer->save();
             if ($deleted) {
@@ -877,16 +817,6 @@ class AgmController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(43));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.tenant'),
@@ -972,8 +902,8 @@ class AgmController extends BaseController {
                             ->addColumn('action', function ($model) {
                                 $button = "";
                                 if (AccessGroup::hasUpdate(43)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', $model->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . $model->id . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>&nbsp';
                                 }
 
                                 return $button;
@@ -1003,16 +933,6 @@ class AgmController extends BaseController {
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(43));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_tenant'),
@@ -1103,7 +1023,7 @@ class AgmController extends BaseController {
     public function editTenant($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $tenant = Tenant::find($id);
+        $tenant = Tenant::findOrFail(Helper::decode($id));
 
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
@@ -1121,17 +1041,7 @@ class AgmController extends BaseController {
 
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
-        $disallow = Helper::isAllow($tenant->file_id, 0, !AccessGroup::hasUpdate(43));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow($tenant->file_id, $tenant->file->company_id, !AccessGroup::hasUpdate(43));
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_tenant'),
@@ -1173,12 +1083,12 @@ class AgmController extends BaseController {
             $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $checkFile = Files::find($file_id);
 
             if (count($checkFile) > 0) {
-                $tenant = Tenant::find($id);
+                $tenant = Tenant::findOrFail($id);
                 if (count($tenant) > 0) {
                     $tenant->file_id = $file_id;
                     $tenant->unit_no = $unit_no;
@@ -1229,9 +1139,9 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $tenant = Tenant::find($id);
+            $tenant = Tenant::findOrFail($id);
             $tenant->is_deleted = 1;
             $deleted = $tenant->save();
             if ($deleted) {
@@ -1406,16 +1316,6 @@ class AgmController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(32));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.upload_of_minutes'),
@@ -1476,8 +1376,8 @@ class AgmController extends BaseController {
                 }
 
                 $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editMinutes', $agm_details->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . $agm_details->id . '\')"><i class="fa fa-trash""></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editMinutes', Helper::encode($agm_details->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"><i class="fa fa-trash""></i></button>';
 
                 if ($agm_details->file_id) {
                     if ($files) {
@@ -1612,16 +1512,6 @@ class AgmController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(32));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_minutes'),
@@ -1760,7 +1650,7 @@ class AgmController extends BaseController {
     public function editMinutes($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $meeting_doc = MeetingDocument::find($id);
+        $meeting_doc = MeetingDocument::findOrFail(Helper::decode($id));
         if ($meeting_doc) {
             if (!Auth::user()->getAdmin()) {
                 if (!empty(Auth::user()->file_id)) {
@@ -1775,7 +1665,7 @@ class AgmController extends BaseController {
                     $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
                 }
             }
-            $disallow = Helper::isAllow($meeting_doc->file_id, 0, !AccessGroup::hasUpdate(32));
+            $disallow = Helper::isAllow($meeting_doc->file_id, $meeting_doc->files->company_id, !AccessGroup::hasUpdate(32));
             if($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
@@ -1806,7 +1696,7 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
             $file_id = $data['file_id'];
             $agm_date = $data['agm_date'];
             $agm = $data['agm'];
@@ -1845,7 +1735,7 @@ class AgmController extends BaseController {
             $house_rules_url = $data['house_rules_url'];
             $remarks = $data['remarks'];
 
-            $agm_detail = MeetingDocument::find($id);
+            $agm_detail = MeetingDocument::findOrFail($id);
             if ($agm_detail) {
                 $agm_detail->file_id = $file_id;
                 $agm_detail->agm_date = $agm_date;
@@ -1930,9 +1820,9 @@ class AgmController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::find($id);
+            $agm_details = MeetingDocument::findOrFail($id);
             $agm_details->is_deleted = 1;
             $deleted = $agm_details->save();
 
@@ -1972,16 +1862,6 @@ class AgmController extends BaseController {
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(33));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.upload_document'),
@@ -2045,8 +1925,8 @@ class AgmController extends BaseController {
                     $is_readonly = trans('app.forms.no');
                 }
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@updateDocument', $documents->id) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . $documents->id . '\')"><i class="fa fa-trash"></i></button>';
+                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@updateDocument', Helper::encode($documents->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . Helper::encode($documents->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
                     (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
@@ -2088,9 +1968,9 @@ class AgmController extends BaseController {
             //                         json_encode($data))));
             
             // if(empty($response->status) == false && $response->status == 200) {
-                $id = $data['id'];
+                $id = Helper::decode($data['id']);
     
-                $document = Document::find($id);
+                $document = Document::findOrFail($id);
                 if ($document) {
                     $document->is_deleted = 1;
                     $deleted = $document->save();
@@ -2129,9 +2009,9 @@ class AgmController extends BaseController {
             
             // if(empty($response->status) == false && $response->status == 200) {
             
-                $id = $data['id'];
+                $id = Helper::decode($data['id']);
     
-                $document = Document::find($id);
+                $document = Document::findOrFail($id);
                 if ($document) {
                     $document->file_url = "";
                     $deleted = $document->save();
@@ -2176,16 +2056,6 @@ class AgmController extends BaseController {
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(33));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.agm.add_document'),
@@ -2215,7 +2085,7 @@ class AgmController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
                 
                 $document = new Document();
-                $document->file_id = $data['file_id'];
+                $document->file_id = Helper::decode($data['file_id']);
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];
@@ -2247,7 +2117,7 @@ class AgmController extends BaseController {
     public function updateDocument($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $document = Document::find($id);
+        $document = Document::findOrFail(Helper::decode($id));
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
@@ -2262,17 +2132,7 @@ class AgmController extends BaseController {
             }
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow($document->file_id, 0, !AccessGroup::hasUpdate(33));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
+        $disallow = Helper::isAllow($document->file_id, $document->file->company_id, !AccessGroup::hasUpdate(33));
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_document'),
@@ -2292,9 +2152,9 @@ class AgmController extends BaseController {
     public function submitUpdateDocument() {
         $data = Input::all();
         if (Request::ajax()) {
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $document = Document::find($id);
+            $document = Document::findOrFail($id);
             if ($document) {
                 $document->file_id = $data['file_id'];
                 $document->document_type_id = $data['document_type'];

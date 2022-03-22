@@ -129,7 +129,7 @@ foreach ($user_permission as $permission) {
                 data: {
                     approval_status: approval_status,
                     approval_remarks: approval_remarks,
-                    id: '{{$files->id}}'
+                    id: '{{ \Helper\Helper::encode($files->id) }}'
                 },
                 success: function (data) {
                     $("#cancel_button").removeAttr("disabled");

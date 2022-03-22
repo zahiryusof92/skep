@@ -37,7 +37,7 @@ foreach ($user_permission as $permission) {
                                         <select id="file_id" class="form-control select2" name="file_id">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($files as $file_no)
-                                            <option value="{{$file_no->id}}">{{$file_no->file_no}}</option>
+                                            <option value="{{ \Helper\Helper::encode($file_no->id) }}">{{$file_no->file_no}}</option>
                                             @endforeach
                                         </select>
                                         <div id="file_id_error" style="display:none;"></div>

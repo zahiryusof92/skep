@@ -123,7 +123,7 @@ foreach ($user_permission as $permission) {
                                                         <input type="hidden" id="document_file_url" value=""/>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddDocument()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
-                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', $files->id) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@document', \Helper\Helper::encode($files->id)) }}'">{{ trans('app.forms.cancel') }}</button>
                                                     <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                 </div>
                                             </form>
@@ -243,7 +243,7 @@ foreach ($user_permission as $permission) {
                 url: "{{ URL::action('AgmController@submitAddDocument') }}",
                 type: "POST",
                 data: {
-                    file_id: '{{ $files->id }}',
+                    file_id: '{{ \Helper\Helper::encode($files->id) }}',
                     document_type: document_type,
                     name: name,
                     remarks: remarks,

@@ -27,7 +27,7 @@ foreach ($user_permission as $permission) {
                             $disabled = Auth::user()->isMPS()? "disabled" : "";
                         ?>
                         <div class="tab-content padding-vertical-20">
-                            <div class="tab-pane active" id="strata" role="tabpanel">                                    
+                            <div class="tab-pane active" id="strata_tab" role="tabpanel">                                    
                                 
                                 <!-- strata Form -->
                                 <section class="panel panel-pad">
@@ -359,7 +359,7 @@ foreach ($user_permission as $permission) {
                                                             <br/>
                                                             <a href="{{asset($strata->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
                                                             <?php if ($update_permission == 1) { ?>
-                                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataFile('{{$strata->id}}')"><i class="fa fa-times"></i></button>
+                                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataFile('{{ \Helper\Helper::encode($strata->id) }}')"><i class="fa fa-times"></i></button>
                                                             <?php } ?>
                                                             @endif
                                                         </div>
@@ -600,7 +600,7 @@ foreach ($user_permission as $permission) {
                                             <div class="col-lg-12">
                                                 <input type="checkbox" name="commercial" id="commercial" {{($strata->is_commercial == 1 ? " checked" : "")}} {{ $disabled }}/>
                                                 <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
-                                                <!-- residential Form -->
+                                                <!-- commercial Form -->
                                                 <div id="commercial_form">
                                                     <div class="row">
                                                         <div class="col-md-4">
@@ -1468,7 +1468,7 @@ foreach ($user_permission as $permission) {
                     gated: gated,
                     gated_unit: gated_unit,
                     others: others,
-                    file_id: '{{ $file->id }}',
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}',
                     strata_reference_id: '{{ ($strata->reference_id ? $strata->reference_id : $strata->id) }}',
                     facility_reference_id: '{{ ($facility->reference_id ? $facility->reference_id : $facility->id) }}'
                 },
@@ -1485,7 +1485,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@management', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@management', \Helper\Helper::encode($file->id))}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }

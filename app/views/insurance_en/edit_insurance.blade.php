@@ -36,7 +36,7 @@ foreach ($user_permission as $permissions) {
                                         <select id="file_id" class="form-control select2" name="file_id">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($files as $file_no)
-                                            <option value="{{$file_no->id}}"  {{ $insurance->file_id == $file_no->id ? 'selected' : '' }}>{{$file_no->file_no}}</option>
+                                            <option value="{{ \Helper\Helper::encode($file_no->id) }}"  {{ $insurance->file_id == $file_no->id ? 'selected' : '' }}>{{$file_no->file_no}}</option>
                                             @endforeach
                                         </select>
                                         <div id="file_id_error" style="display:none;"></div>
@@ -289,7 +289,7 @@ foreach ($user_permission as $permissions) {
                     fic_validity_from: fic_validity_from,
                     fic_validity_to: fic_validity_to,
                     remarks: remarks,
-                    id: "{{ $insurance->id }}"
+                    id: "{{ \Helper\Helper::encode($insurance->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");

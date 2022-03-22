@@ -405,7 +405,7 @@ foreach ($user_permission as $permission) {
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <input type="hidden" id="file_id" name="file_id" value="{{ $file->id }}"/>
+                                                                            <input type="hidden" id="file_id" name="file_id" value="{{ \Helper\Helper::encode($file->id) }}"/>
                                                                             <img id="loading_housing_scheme" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                                             <button id="submit_button_housing_scheme" class="btn btn-own" type="submit">
                                                                                 {{ trans('app.forms.submit') }}
@@ -640,7 +640,7 @@ foreach ($user_permission as $permission) {
                     liquidator_remarks: liquidator_remarks,
                     liquidator_is_active: liquidator_is_active,
                     is_liquidator: is_liquidator,
-                    file_id: '{{ $file->id }}',
+                    file_id: '{{ \Helper\Helper::encode($file->id) }}',
                     reference_id: '{{ ($house_scheme->reference_id ? $house_scheme->reference_id : $house_scheme->id) }}'
                 },
                 success: function (data) {
@@ -656,7 +656,7 @@ foreach ($user_permission as $permission) {
                                 align: "center"
                             }
                         });
-                        window.location = "{{URL::action('AdminController@strata', $file->id)}}";
+                        window.location = "{{URL::action('AdminController@strata', \Helper\Helper::encode($file->id))}}";
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
@@ -667,7 +667,7 @@ foreach ($user_permission as $permission) {
     
     $(document).ready(function () {
         $('#housing_scheme_list').DataTable({
-            "sAjaxSource": "{{ URL::action('AdminController@getHousingScheme', $file->id) }}",
+            "sAjaxSource": "{{ URL::action('AdminController@getHousingScheme', \Helper\Helper::encode($file->id)) }}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "order": [[0, "asc"]],
             "responsive": true,
@@ -699,7 +699,6 @@ foreach ($user_permission as $permission) {
                     id: id
                 },
                 success: function(data) {
-                    console.log(data);
                     if (data.trim() == "true") {
                         swal({
                             title: "{{ trans('app.successes.deleted_title') }}",

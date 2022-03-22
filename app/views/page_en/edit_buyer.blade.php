@@ -214,7 +214,7 @@
                                                 </div>
                                                 <div class="form-actions">
                                                     <button type="button" class="btn btn-own" id="submit_button" onclick="editBuyer()">{{ trans('app.forms.submit') }}</button>
-                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@buyer', $files->id)}}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('AdminController@buyer', \Helper\Helper::encode($files->id))}}'">{{ trans('app.forms.cancel') }}</button>
                                                     <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                 </div>
                                             </form>
@@ -322,7 +322,7 @@
                     alamat_surat_menyurat: alamat_surat_menyurat,
                     caj_penyelenggaraan: caj_penyelenggaraan,
                     sinking_fund: sinking_fund,
-                    file_id: '{{$files->id}}',
+                    file_id: '{{ \Helper\Helper::encode($files->id) }}',
                     id: '{{$buyer->id}}'
                 },
                 success: function (data) {
@@ -338,7 +338,7 @@
                                 align: "center"
                             }
                         });
-                        location = '{{URL::action("AdminController@buyer", $files->id) }}';
+                        location = '{{URL::action("AdminController@buyer", \Helper\Helper::encode($files->id)) }}';
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }

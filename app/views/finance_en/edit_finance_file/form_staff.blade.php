@@ -94,7 +94,7 @@ $prefix = 'staff_';
 
             <?php if ($update_permission == 1) { ?>
                 <div class="form-actions">
-                    <input type="hidden" name="finance_file_id" value="{{ $financefiledata->id }}"/>
+                    <input type="hidden" name="finance_file_id" value="{{ \Helper\Helper::encode($financefiledata->id) }}"/>
                     <button type="button"class="btn btn-own submit_button" onclick="submitStaff()">{{ trans("app.forms.submit") }}</button>
                     <img class="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>   
                 </div>

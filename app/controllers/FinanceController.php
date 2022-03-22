@@ -26,16 +26,6 @@ class FinanceController extends BaseController {
 
         $year = Files::getVPYear();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(37));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.add_finance_file_list'),
@@ -612,7 +602,7 @@ class FinanceController extends BaseController {
                             return ($model->file_id ? $model->file->company->short_name : '-');
                         })
                         ->editColumn('file_no', function ($model) {
-                            return "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceFileList', $model->id) . "'>" . $model->file->file_no . " " . $model->year . "-" . strtoupper($model->monthName()) . "</a>";
+                            return "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceFileList', Helper::encode($model->id)) . "'>" . $model->file->file_no . " " . $model->year . "-" . strtoupper($model->monthName()) . "</a>";
                         })
                         ->addColumn('strata', function ($model) {
                             return ($model->file_id ? $model->file->strata->strataName() : '-');
@@ -637,13 +627,13 @@ class FinanceController extends BaseController {
                             if (AccessGroup::hasUpdate(38)) {
                                 if ($model->is_active == 1) {
                                     $status = trans('app.forms.active');
-                                    $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/disable-eye.png") . ' width="20px"></a>&nbsp;';
+                                    $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/disable-eye.png") . ' width="20px"></a>&nbsp;';
                                 } else {
                                     $status = trans('app.forms.inactive');
-                                    $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/eye.png") . ' width="28px"></a>&nbsp;';
+                                    $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/eye.png") . ' width="28px"></a>&nbsp;';
                                 }
-                                $button .= '<a href="'. route('finance_file.edit', [$model->id]) .'" class=""><img src=' . asset("assets/common/img/icon/edit.png") . ' width="20px"></a>&nbsp;';
-                                $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . $model->id . '\')"><img src=' . asset("assets/common/img/icon/trash.png") . ' width="20px"></a>&nbsp;';
+                                $button .= '<a href="'. route('finance_file.edit', [Helper::encode($model->id)]) .'" class=""><img src=' . asset("assets/common/img/icon/edit.png") . ' width="20px"></a>&nbsp;';
+                                $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/trash.png") . ' width="20px"></a>&nbsp;';
                             }
 
                             return $button;
@@ -655,9 +645,9 @@ class FinanceController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $finance = Finance::find($id);
+            $finance = Finance::findOrFail($id);
             if ($finance) {
                 $finance->is_active = 0;
                 $finance->is_deleted = 1;
@@ -689,56 +679,46 @@ class FinanceController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $file_no = Files::where('is_active', 1)->where('is_deleted', 0)->get();
-        $financeCheckData = FinanceCheck::where('finance_file_id', $id)->first();
-        $financeCheckOldData = FinanceCheckOld::where('finance_file_id', $id)->first();
-        $financeSummary = FinanceSummary::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeSummaryOld = FinanceSummaryOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financefiledata = Finance::where('id', $id)->first();
-        $financeFileAdmin = FinanceAdmin::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileAdminOld = FinanceAdminOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileContract = FinanceContract::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileContractOld = FinanceContractOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileStaff = FinanceStaff::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileStaffOld = FinanceStaffOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileVandalA = FinanceVandal::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-        $financeFileVandalAOld = FinanceVandalOld::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-        $financeFileVandalB = FinanceVandal::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-        $financeFileVandalBOld = FinanceVandalOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-        $financeFileRepairA = FinanceRepair::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-        $financeFileRepairAOld = FinanceRepairOld::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-        $financeFileRepairB = FinanceRepair::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-        $financeFileRepairBOld = FinanceRepairOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-        $financeFileUtilityA = FinanceUtility::where('finance_file_id', $id)->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
-        $financeFileUtilityAOld = FinanceUtilityOld::where('finance_file_id', $id)->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
-        $financeFileUtilityB = FinanceUtility::where('finance_file_id', $id)->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
-        $financeFileUtilityBOld = FinanceUtilityOld::where('finance_file_id', $id)->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
-        $financeFileIncome = FinanceIncome::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
-        $financeFileIncomeOld = FinanceIncomeOld::where('finance_file_id', $id)->orderBy('sort_no', 'asc')->get();
+        $financeCheckData = FinanceCheck::where('finance_file_id', Helper::decode($id))->firstOrFail();
+        $financeCheckOldData = FinanceCheckOld::where('finance_file_id', Helper::decode($id))->first();
+        $financeSummary = FinanceSummary::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeSummaryOld = FinanceSummaryOld::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financefiledata = Finance::where('id', Helper::decode($id))->first();
+        $financeFileAdmin = FinanceAdmin::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileAdminOld = FinanceAdminOld::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileContract = FinanceContract::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileContractOld = FinanceContractOld::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileStaff = FinanceStaff::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileStaffOld = FinanceStaffOld::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileVandalA = FinanceVandal::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $financeFileVandalAOld = FinanceVandalOld::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $financeFileVandalB = FinanceVandal::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $financeFileVandalBOld = FinanceVandalOld::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $financeFileRepairA = FinanceRepair::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $financeFileRepairAOld = FinanceRepairOld::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $financeFileRepairB = FinanceRepair::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $financeFileRepairBOld = FinanceRepairOld::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $financeFileUtilityA = FinanceUtility::where('finance_file_id', Helper::decode($id))->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
+        $financeFileUtilityAOld = FinanceUtilityOld::where('finance_file_id', Helper::decode($id))->where('type', 'BHG_A')->orderBy('sort_no', 'asc')->get();
+        $financeFileUtilityB = FinanceUtility::where('finance_file_id', Helper::decode($id))->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
+        $financeFileUtilityBOld = FinanceUtilityOld::where('finance_file_id', Helper::decode($id))->where('type', 'BHG_B')->orderBy('sort_no', 'asc')->get();
+        $financeFileIncome = FinanceIncome::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
+        $financeFileIncomeOld = FinanceIncomeOld::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
 
-        $mfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'MF')->first();
-        $mfreportOld = FinanceReportOld::where('finance_file_id', $id)->where('type', 'MF')->first();
-        $mfreportExtra = FinanceReportExtra::where('finance_file_id', $id)->where('type', 'MF')->get();
-        $mfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', $id)->where('type', 'MF')->get();
-        $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
-        $reportMFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', $id)->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $mfreport = FinanceReport::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->first();
+        $mfreportOld = FinanceReportOld::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->first();
+        $mfreportExtra = FinanceReportExtra::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->get();
+        $mfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->get();
+        $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
+        $reportMFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
 
-        $sfreport = FinanceReport::where('finance_file_id', $id)->where('type', 'SF')->first();
-        $sfreportOld = FinanceReportOld::where('finance_file_id', $id)->where('type', 'SF')->first();
-        $sfreportExtra = FinanceReportExtra::where('finance_file_id', $id)->where('type', 'SF')->get();
-        $sfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', $id)->where('type', 'SF')->get();
-        $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
-        $reportSFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', $id)->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $sfreport = FinanceReport::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->first();
+        $sfreportOld = FinanceReportOld::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->first();
+        $sfreportExtra = FinanceReportExtra::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->get();
+        $sfreportExtraOld = FinanceReportExtraOld::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->get();
+        $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
+        $reportSFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow($financefiledata->file_id, $financefiledata->company_id);
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.edit_finance_file_list'),
@@ -795,9 +775,9 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $finance = FinanceCheck::where('finance_file_id', $files->id)->first();
                 if ($finance) {
@@ -838,10 +818,10 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefix = 'sum_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceSummary::where('finance_file_id', $files->id)->get();
                 if(count($currents) > 0) {
@@ -891,11 +871,12 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $type = 'MF';
             $prefix = 'mfr_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
+            
             if ($files) {
                 $currents = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
                 if(count($currents) > 0) {
@@ -913,10 +894,11 @@ class FinanceController extends BaseController {
                     }
                 }
                 $extra_currents = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->get();
+                
                 if(count($extra_currents) > 0) {
                     FinanceReportExtraOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
                     foreach($extra_currents as $extra) {
-                        $extra_old = FinanceReportExtraOld::firstOrNew(array('finance_file_id' => $files->id,
+                        $extra_old = FinanceReportExtraOld::create(array('finance_file_id' => $files->id,
                                                                                 'type' => $type));
     
                         $extra_old->fee_sebulan = $extra->fee_sebulan;
@@ -929,7 +911,7 @@ class FinanceController extends BaseController {
                 $remove = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->delete();
                 $finance = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->first();
 
-                if ($remove && $finance) {
+                // if ($remove && $finance) {
                     $main_old = FinanceReportOld::firstOrNew(array('finance_file_id' => $files->id,
                                                                     'type'=> $type));
                                                 
@@ -951,17 +933,19 @@ class FinanceController extends BaseController {
                     $finance->baki_bank_akhir = $data[$prefix . 'baki_bank_akhir'];
                     $finance->save();
 
-                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                        if (!empty($data[$prefix . 'name'][$i])) {
-                            $frp = new FinanceReportPerbelanjaan;
-                            $frp->type = $type;
-                            $frp->finance_file_id = $files->id;
-                            $frp->name = $data[$prefix . 'name'][$i];
-                            $frp->report_key = $data[$prefix . 'report_key'][$i];
-                            $frp->amount = $data[$prefix . 'amount'][$i];
-                            $frp->sort_no = $i;
-                            $frp->is_custom = 0;
-                            $frp->save();
+                    if(!empty($data[$prefix . 'name']) && count($data[$prefix . 'name'])) {
+                        for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                            if (!empty($data[$prefix . 'name'][$i])) {
+                                $frp = new FinanceReportPerbelanjaan;
+                                $frp->type = $type;
+                                $frp->finance_file_id = $files->id;
+                                $frp->name = $data[$prefix . 'name'][$i];
+                                $frp->report_key = $data[$prefix . 'report_key'][$i];
+                                $frp->amount = $data[$prefix . 'amount'][$i];
+                                $frp->sort_no = $i;
+                                $frp->is_custom = 0;
+                                $frp->save();
+                            }
                         }
                     }
 
@@ -981,7 +965,7 @@ class FinanceController extends BaseController {
                             }
                         }
                     }
-                }
+                // }
 
                 # Audit Trail
                 $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
@@ -1003,11 +987,11 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $type = 'SF';
             $prefix = 'sfr_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
                 if(count($currents) > 0) {
@@ -1028,7 +1012,7 @@ class FinanceController extends BaseController {
                 if(count($extra_currents) > 0) {
                     FinanceReportExtraOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
                     foreach($extra_currents as $extra) {
-                        $extra_old = FinanceReportExtraOld::firstOrNew(array('finance_file_id' => $files->id,
+                        $extra_old = FinanceReportExtraOld::create(array('finance_file_id' => $files->id,
                                                                                 'type' => $type));
     
                         $extra_old->fee_sebulan = $extra->fee_sebulan;
@@ -1041,7 +1025,7 @@ class FinanceController extends BaseController {
                 $remove = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->delete();
                 $finance = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->first();
 
-                if ($remove && $finance) {
+                // if ($remove && $finance) {
                     $main_old = FinanceReportOld::firstOrNew(array('finance_file_id' => $files->id,
                                                                     'type' => $type));
                                                 
@@ -1093,7 +1077,7 @@ class FinanceController extends BaseController {
                             }
                         }
                     }
-                }
+                // }
 
                 # Audit Trail
                 $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
@@ -1115,10 +1099,10 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefix = 'admin_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceAdmin::where('finance_file_id', $files->id)->get();
 
@@ -1176,10 +1160,10 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefix = 'income_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceIncome::where('finance_file_id', $files->id)->get();
 
@@ -1235,13 +1219,13 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefixs = [
                 'util_',
                 'utilb_',
             ];
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceUtility::where('finance_file_id', $files->id)->get();
 
@@ -1307,13 +1291,13 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefixs = [
                 'maintenancefee_',
                 'singkingfund_'
             ];
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceVandal::where('finance_file_id', $files->id)->get();
 
@@ -1379,13 +1363,13 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefixs = [
                 'repair_maintenancefee_',
                 'repair_singkingfund_'
             ];
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceRepair::where('finance_file_id', $files->id)->get();
 
@@ -1451,10 +1435,10 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefix = 'contract_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceContract::where('finance_file_id', $files->id)->get();
 
@@ -1512,10 +1496,10 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
             $prefix = 'staff_';
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 $currents = FinanceStaff::where('finance_file_id', $files->id)->get();
 
@@ -1577,9 +1561,9 @@ class FinanceController extends BaseController {
         $data = Input::all();
 
         if (Request::ajax()) {
-            $id = $data['finance_file_id'];
+            $id = Helper::decode($data['finance_file_id']);
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             if ($files) {
                 /*
                  * CHECK
@@ -1929,11 +1913,11 @@ class FinanceController extends BaseController {
                 $files = Files::where('id', $filelists->file_id)->first();
                 if ($files) {
                     $button = "";
-                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . $filelists->id . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFinanceSupport(\'' . Helper::encode($filelists->id) . '\')">' . trans('app.forms.delete') . ' <i class="fa fa-trash"></i></button>&nbsp;';
 
                     $data_raw = array(
                         ($files->company ? $files->company->short_name : ''),
-                        "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', $filelists->id) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
+                        "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceSupport', Helper::encode($filelists->id)) . "'>" . (!empty($files) ? $files->file_no : '-') . "</a>",
                         ($files->strata ? $files->strata->strataName() : ''),
                         date('d/m/Y', strtotime($filelists->date)),
                         $filelists->name,
@@ -1977,16 +1961,6 @@ class FinanceController extends BaseController {
             }
         }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(39));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.add_finance_support'),
@@ -2053,18 +2027,8 @@ class FinanceController extends BaseController {
                 $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
             }
         }
-        $financeSupportData = FinanceSupport::where('id', $id)->first();
+        $financeSupportData = FinanceSupport::where('id', Helper::decode($id))->firstOrFail();
         $disallow = Helper::isAllow($financeSupportData->file_id, $financeSupportData->company_id, !AccessGroup::hasUpdate(39));
-        if($disallow) {
-            $viewData = array(
-                'title' => trans('app.errors.page_not_found'),
-                'panel_nav_active' => '',
-                'main_nav_active' => '',
-                'sub_nav_active' => '',
-                'image' => ""
-            );
-            return View::make('404_en', $viewData);
-        }
 
         $viewData = array(
             'title' => trans('app.menus.finance.edit_finance_support'),
@@ -2084,11 +2048,11 @@ class FinanceController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $file_id = $data['file_id'];
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
             $files = Files::find($file_id);
             if ($files) {
-                $finance = FinanceSupport::find($id);
+                $finance = FinanceSupport::findOrFail($id);
                 if ($finance) {
                     $finance->file_id = $files->id;
                     $finance->company_id = $files->company_id;
@@ -2124,9 +2088,9 @@ class FinanceController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $files = Finance::find($id);
+            $files = Finance::findOrFail($id);
             $files->is_active = 1;
             $updated = $files->save();
             if ($updated) {
@@ -2149,9 +2113,9 @@ class FinanceController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $prefix = Finance::find($id);
+            $prefix = Finance::findOrFail($id);
             $prefix->is_active = 0;
             $updated = $prefix->save();
             if ($updated) {
@@ -2174,9 +2138,9 @@ class FinanceController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
 
-            $id = $data['id'];
+            $id = Helper::decode($data['id']);
 
-            $finance = FinanceSupport::find($id);
+            $finance = FinanceSupport::findOrFail($id);
             $finance->is_deleted = 1;
             $deleted = $finance->save();
             if ($deleted) {
@@ -2198,12 +2162,12 @@ class FinanceController extends BaseController {
     public function updateFinanceFileList() {
         $data = Input::all();
         if (Request::ajax()) {
-            $file_id = $data['file_id'];
+            $file_id = Helper::decode($data['file_id']);
             $is_active = $data['is_active'];
 
-            $financeSupportId = $data['id'];
+            $financeSupportId = Helper::decode($data['id']);
 
-            $finance = FinanceSupport::find($financeSupportId);
+            $finance = FinanceSupport::findOrFail($financeSupportId);
             $finance->file_id = $file_id;
             $finance->date = $data['date'];
             $finance->name = $data['name'];

@@ -132,7 +132,7 @@ foreach ($user_permission as $permission) {
                     description: description,
                     code: code,
                     is_active: is_active,
-                    id: '{{$dun->id}}'
+                    id: '{{ \Helper\Helper::encode($dun->id) }}'
 
                 },
                 success: function (data) {

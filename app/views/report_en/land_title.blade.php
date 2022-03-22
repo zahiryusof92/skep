@@ -28,7 +28,7 @@
                                 </h6>
                             </td>
                             <td class="text-center">
-                                <a href="{{ url('print/landTitle/' . (!empty($cob_id) ? $cob_id : 'all') . '/' . (!empty($land_title_id) ? $land_title_id : 'all')) }}" target="_blank">
+                                <a href="{{ url('print/landTitle/' . (!empty($cob_id) ? \Helper\Helper::encode($cob_id) : 'all') . '/' . (!empty($land_title_id) ? $land_title_id : 'all')) }}" target="_blank">
                                     <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
@@ -50,7 +50,7 @@
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @endif
                                             @foreach ($cob as $cobs)
-                                            <option value="{{ $cobs->id }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
+                                            <option value="{{ \Helper\Helper::encode($cobs->id) }}" {{ ($cobs->id == $cob_id ? 'selected' : '') }}>{{ $cobs->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

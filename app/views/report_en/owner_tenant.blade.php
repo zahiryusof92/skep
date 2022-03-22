@@ -29,7 +29,7 @@
                             </td>
                             @if ($file_id)
                             <td class="text-center">
-                                <a href="{{URL::action('PrintController@printOwnerTenant', $file_id)}}" target="_blank">
+                                <a href="{{URL::action('PrintController@printOwnerTenant', \Helper\Helper::encode($file_id))}}" target="_blank">
                                     <button type="button" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                 </a>
                             </td>
@@ -50,7 +50,7 @@
                                             <select class="form-control select2" id="file_id" name="file_id" required="">
                                                 <option value="">{{ trans('app.forms.file_no') }}</option>
                                                 @foreach ($files as $file)
-                                                <option value="{{$file->id}}" {{ ($file->id == $file_id ? 'selected' : '') }}>{{$file->file_no}}</option>
+                                                <option value="{{ \Helper\Helper::encode($file->id) }}" {{ ($file->id == $file_id ? 'selected' : '') }}>{{$file->file_no}}</option>
                                                 @endforeach
                                             </select>
                                         </div>

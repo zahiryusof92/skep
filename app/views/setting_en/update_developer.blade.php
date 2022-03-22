@@ -211,7 +211,7 @@ foreach ($user_permission as $permission) {
                     fax_no: fax_no,
                     remarks: remarks,
                     is_active: is_active,
-                    id: '{{$developer->id}}'
+                    id: '{{ \Helper\Helper::encode($developer->id) }}'
 
                 },
                 success: function (data) {

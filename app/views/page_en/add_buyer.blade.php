@@ -322,7 +322,7 @@
                     alamat_surat_menyurat: alamat_surat_menyurat,
                     caj_penyelenggaraan: caj_penyelenggaraan,
                     sinking_fund: sinking_fund,
-                    file_id: '{{$files->id}}'
+                    file_id: '{{ \Helper\Helper::encode($files->id) }}'
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -337,7 +337,7 @@
                                 align: "center"
                             }
                         });
-                        location = '{{URL::action("AdminController@buyer", $files->id) }}';
+                        location = '{{URL::action("AdminController@buyer", \Helper\Helper::encode($files->id)) }}';
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }

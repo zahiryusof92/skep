@@ -81,7 +81,7 @@ foreach ($user_permission as $permission) {
                                                     <?php if ($update_permission == 1) { ?>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditFinanceSupport()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
-                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@financeSupport', $item->file_id) }}'">{{ trans('app.forms.cancel') }}</button>
+                                                    <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@financeSupport', \Helper\Helper::encode($item->file_id)) }}'">{{ trans('app.forms.cancel') }}</button>
                                                     <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
                                                 </div>
                                             </form>
@@ -143,7 +143,7 @@ foreach ($user_permission as $permission) {
         $("#amount_error").css("display", "none");
         $("#remark_error").css("display", "none");
 
-        var file_no = "{{$files->id}}",
+        var file_no = "{{ \Helper\Helper::encode($files->id) }}",
                 date = $("#mirror_date").val(),
                 name = $("#name").val(),
                 amount = $("#amount").val(),
@@ -186,7 +186,7 @@ foreach ($user_permission as $permission) {
                     name: name,
                     remark: remark,
                     amount: amount,
-                    id: "{{$item->id}}"
+                    id: "{{ \Helper\Helper::encode($item->id) }}"
                 },
                 success: function (data) {
                     $("#loading").css("display", "none");
@@ -194,7 +194,7 @@ foreach ($user_permission as $permission) {
                     $("#cancel_button").removeAttr("disabled");
                     if (data.trim() == "true") {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.finance_file.update') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@financeSupport",[$files->id]) }}';
+                            window.location = '{{URL::action("AdminController@financeSupport",[\Helper\Helper::encode($files->id)]) }}';
                         });
                     } else if (data.trim() == "file_already_exists") {
                         $("#file_already_exists_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"file"]) }}</span>');
