@@ -264,7 +264,7 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $prefix = FilePrefix::findOrFail(Helper::decode($id));
-        
+ 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file_prefix'),
             'panel_nav_active' => 'cob_panel',
@@ -1101,7 +1101,7 @@ class AdminController extends BaseController {
         $unitoption = UnitOption::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1190,7 +1190,7 @@ class AdminController extends BaseController {
         $unitoption = UnitOption::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -1630,7 +1630,6 @@ class AdminController extends BaseController {
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
         
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3319,6 +3318,16 @@ class AdminController extends BaseController {
         $tnbLists = OtherDetails::tnbLists();
         $disallow = Helper::isAllow($files->id, $files->company_id);
         
+        if($disallow) {
+            $viewData = array(
+                'title' => trans('app.errors.page_not_found'),
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'image' => ""
+            );
+            return View::make('404_en', $viewData);
+        }
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -3950,7 +3959,6 @@ class AdminController extends BaseController {
         $files = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -3980,7 +3988,6 @@ class AdminController extends BaseController {
         $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasAccess(31));
-        
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4440,7 +4447,6 @@ class AdminController extends BaseController {
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id);
-        
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4660,6 +4666,7 @@ class AdminController extends BaseController {
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($document->file_id, $document->file->company_id, !AccessGroup::hasUpdate(33));
 
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -4796,6 +4803,7 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(4));
+      
         $viewData = array(
             'title' => trans('app.menus.administration.organization_profile'),
             'panel_nav_active' => 'admin_panel',
@@ -5020,16 +5028,6 @@ class AdminController extends BaseController {
             $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $disallow = Helper::isAllow(0, $company->id, !AccessGroup::hasUpdate(4));
-            if($disallow) {
-                $viewData = array(
-                    'title' => trans('app.errors.page_not_found'),
-                    'panel_nav_active' => '',
-                    'main_nav_active' => '',
-                    'sub_nav_active' => '',
-                    'image' => ""
-                );
-                return View::make('404_en', $viewData);
-            }
 
             $viewData = array(
                 'title' => trans('app.menus.administration.edit_organization_profile'),
@@ -6214,7 +6212,6 @@ class AdminController extends BaseController {
         }
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(7));
-
 
         $viewData = array(
             'title' => trans('app.buttons.add_memo'),
@@ -7738,6 +7735,7 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(45));
+      
         $viewData = array(
             'title' => trans('app.menus.agm.defect'),
             'panel_nav_active' => '',
@@ -7901,6 +7899,7 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(45));
+      
         $viewData = array(
             'title' => trans('app.menus.agm.add_defect'),
             'panel_nav_active' => '',
@@ -7962,6 +7961,7 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow($defect->file_id, $defect->file->company_id, !AccessGroup::hasUpdate(45));
+      
         $viewData = array(
             'title' => trans('app.menus.agm.edit_defect'),
             'panel_nav_active' => '',
@@ -8548,7 +8548,6 @@ class AdminController extends BaseController {
         $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id);
-        
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),

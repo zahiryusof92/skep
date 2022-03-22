@@ -156,7 +156,7 @@
                         </dl>
 
                         @if (Auth::user()->isLawyer() || Auth::user()->isCOBManager())                        
-                            @if ($model->status == Summon::INPROGRESS || $model->status == Summon::PENDING)                    
+                            @if ($model->status == Summon::INPROGRESS || $model->status == Summon::PENDING)      
                                 <form method="POST" action="{{ route('summon.update', \Helper\Helper::encode($model->id)) }}" enctype="multipart/form-data" novalidate="">
                                     <input type="hidden" name="_method" value="PUT">
 

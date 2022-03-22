@@ -4486,6 +4486,7 @@ class SettingController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(47));
+      
         $viewData = array(
             'title' => trans('app.menus.master.defect_category'),
             'panel_nav_active' => 'master_panel',
