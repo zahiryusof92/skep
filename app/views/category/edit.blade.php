@@ -13,7 +13,7 @@
 
                         @include('alert.bootbox')
 
-                        <form class="form-horizontal" method="POST" action="{{ route('category.update', $model->id) }}">
+                        <form class="form-horizontal" method="POST" action="{{ route('category.update', \Helper\Helper::encode($model->id)) }}">
                             <input type="hidden" name="_method" value="PUT">
 
                             <div class="row">

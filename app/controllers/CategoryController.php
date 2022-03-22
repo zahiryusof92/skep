@@ -31,14 +31,14 @@ class CategoryController extends \BaseController {
                             ->addColumn('action', function ($model) {
                                 $btn = '';
                                 if ($model->is_active) {
-                                    $btn .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveCategory(\'' . $model->id . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                                    $btn .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveCategory(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
                                 } else {
-                                    $btn .= '<button type="button" class="btn btn-xs btn-info" onclick="activeCategory(\'' . $model->id . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                                    $btn .= '<button type="button" class="btn btn-xs btn-info" onclick="activeCategory(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
                                 }
-                                $btn .= '<a href="' . route('category.edit', $model->id) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-                                $btn .= '<form action="' . route('category.destroy', $model->id) . '" method="POST" id="delete_form_' . $model->id . '" style="display:inline-block;">';
+                                $btn .= '<a href="' . route('category.edit', Helper::encode($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+                                $btn .= '<form action="' . route('category.destroy', Helper::encode($model->id)) . '" method="POST" id="delete_form_' . Helper::encode($model->id) . '" style="display:inline-block;">';
                                 $btn .= '<input type="hidden" name="_method" value="DELETE">';
-                                $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $model->id . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                                $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
                                 $btn .= '</form>';
 
                                 return $btn;
@@ -166,7 +166,7 @@ class CategoryController extends \BaseController {
      * @return Response
      */
     public function edit($id) {
-        $model = Category::find($id);
+        $model = Category::find(Helper::decode($id));
         if ($model) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
             $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(12));
@@ -232,7 +232,7 @@ class CategoryController extends \BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
-            $model = Category::find($id);
+            $model = Category::find(Helper::decode($id));
             if ($model) {
                 $model->description = $data['description'];
                 $model->is_active = $data['is_active'];
@@ -281,7 +281,7 @@ class CategoryController extends \BaseController {
      * @return Response
      */
     public function destroy($id) {
-        $model = Category::find($id);
+        $model = Category::find(Helper::decode($id));
         if ($model) {
             $model->is_deleted = 1;
             $success = $model->save();
@@ -304,7 +304,7 @@ class CategoryController extends \BaseController {
     public function inactive() {
         $data = Input::all();
         if (Request::ajax()) {
-            $model = Category::find($data['id']);
+            $model = Category::find(Helper::decode($data['id']));
             if ($model) {
                 $model->is_active = 0;
                 $success = $model->save();
@@ -327,7 +327,7 @@ class CategoryController extends \BaseController {
     public function active() {
         $data = Input::all();
         if (Request::ajax()) {
-            $model = Category::find($data['id']);
+            $model = Category::find(Helper::decode($data['id']));
             if ($model) {
                 $model->is_active = 1;
                 $success = $model->save();
