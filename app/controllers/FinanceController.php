@@ -604,6 +604,9 @@ class FinanceController extends BaseController {
                         ->editColumn('file_no', function ($model) {
                             return "<a style='text-decoration:underline;' href='" . URL::action('FinanceController@editFinanceFileList', Helper::encode($model->id)) . "'>" . $model->file->file_no . " " . $model->year . "-" . strtoupper($model->monthName()) . "</a>";
                         })
+                        ->editColumn('created_at', function ($model) {
+                            return date('d/m/Y', strtotime($model->created_at));
+                        })
                         ->addColumn('strata', function ($model) {
                             return ($model->file_id ? $model->file->strata->strataName() : '-');
                         })

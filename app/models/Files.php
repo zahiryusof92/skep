@@ -131,6 +131,22 @@ class Files extends Eloquent {
         return $query->where('files.is_deleted', 0);
     }
 
+    public function scopeNeverHasAGM($query) {
+        $query->file()
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->join('strata', 'files.id', '=', 'strata.file_id')
+            ->where(function($query) {
+                $query->whereDoesntHave('meetingDocument');
+                $query->orWhereHas('meetingDocument', function ($query2) {
+                    $query2->where('meeting_document.agm_date', '0000-00-00');
+                });
+                $query->where('files.is_active', 1);
+            })
+            ->where('company.short_name', '!=', 'MPS');
+        
+        return $query;
+    }
+
     public static function getInsuranceReportByCOB($cob_id = NULL) {
         $result = array();
 
@@ -1488,11 +1504,23 @@ class Files extends Eloquent {
             ['name' => '2 Stars', 'y' => $twoStar],
             ['name' => '1 Star', 'y' => $oneStar]
         );
+        $never = [
+            'categories' => [],
+            'data' => [],
+        ];
+        $items_never = self::neverHasAGM()
+                            ->selectRaw('count(files.id) as total, company.short_name')
+                            ->groupBy(['company.short_name'])
+                            ->get();
+        foreach($items_never as $item) {
+            array_push($never['categories'], [$item->short_name]);
+            array_push($never['data'], [$item->total]);
+        }
         
-
         $result = array(
             'rating' => $rating,
             'management' => $management,
+            'never' => $never,
             'total_agent' => $total_agent,
             'total_developer' => $total_developer,
             'total_liquidator' => $total_liquidator,

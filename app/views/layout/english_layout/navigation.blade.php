@@ -424,9 +424,6 @@ if (!Auth::user()->getAdmin()) {
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/report.png')}}"/>
                     {{ trans('app.menus.reporting.reporting') }}
-                    @if((User::where('status', 0)->where('is_deleted', 0)->count() || FileDrafts::getTotalPending()) > 0)
-                        <span class="label label-danger">!</span>
-                    @endif
                 </a>
                 <ul class="left-menu-list list-unstyled" id="reporting_main">
 
@@ -434,9 +431,6 @@ if (!Auth::user()->getAdmin()) {
                     <li id="audit_trail_list">
                         <a class="left-menu-link" href="{{URL::action('ReportController@auditTrail')}}">
                             {{ trans('app.menus.reporting.audit_trail') }}
-                            @if((User::where('status', 0)->where('is_deleted', 0)->count() || FileDrafts::getTotalPending()) > 0)
-                                <span class="label label-danger">!</span>
-                            @endif
                         </a>
                     </li>
                     @endif

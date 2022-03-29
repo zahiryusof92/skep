@@ -268,13 +268,14 @@ foreach ($user_permission as $permission) {
                         <table class="table table-hover table-own table-striped" id="filelist" width="100%" style="font-size: 13px;">
                             <thead>
                                 <tr>
-                                    <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                    <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
                                     <th style="width:20%;">{{ trans('app.forms.finance_management') }}</th>
-                                    <th style="width:25%;">{{ trans('app.forms.strata') }}</th>                                
+                                    <th style="width:20%;">{{ trans('app.forms.strata') }}</th>                                
                                     <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.year') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.status') }}</th>
-                                    <th style="width:15%;">{{ trans('app.forms.action') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.submission_date') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -329,6 +330,7 @@ foreach ($user_permission as $permission) {
                 {data: 'month', name: 'finance_file.month'},
                 {data: 'year', name: 'finance_file.year'},
                 {data: 'active', name: 'files.is_active', searchable: false},
+                {data: 'created_at', name: 'finance_file.created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             "dom": "<'row'<'col-md-12 margin-bottom-10'B>>" +

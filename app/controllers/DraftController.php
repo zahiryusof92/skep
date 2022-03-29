@@ -48,7 +48,7 @@ class DraftController extends BaseController {
                 $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->select(['files.*', 'strata.id as strata_id', 'file_drafts.created_at as draft_created'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', '!=', 2)
@@ -58,7 +58,7 @@ class DraftController extends BaseController {
                 $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->select(['files.*', 'strata.id as strata_id', 'file_drafts.created_at as draft_created'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_active', '!=', 2)
                         ->where('files.is_deleted', 0)
@@ -69,7 +69,7 @@ class DraftController extends BaseController {
                 $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->select(['files.*', 'strata.id as strata_id', 'file_drafts.created_at as draft_created'])
                         ->where('files.is_active', '!=', 2)
                         ->where('files.is_deleted', 0)
                         ->where('file_drafts.is_deleted', 0)
@@ -78,7 +78,7 @@ class DraftController extends BaseController {
                 $file = Files::join('file_drafts', 'files.id', '=', 'file_drafts.file_id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
+                        ->select(['files.*', 'strata.id as strata_id', 'file_drafts.created_at as draft_created'])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_active', '!=', 2)
                         ->where('files.is_deleted', 0)
@@ -92,6 +92,9 @@ class DraftController extends BaseController {
                         })
                         ->editColumn('file_no', function ($model) {
                             return "<a style='text-decoration:underline;' href='" . URL::action('DraftController@houseScheme', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
+                        })
+                        ->editColumn('draft_created', function ($model) {
+                            return date('d/m/Y', strtotime($model->draft_created));
                         })
                         ->addColumn('strata', function ($model) {
                             return ($model->strata_id ? $model->strata->name : '-');

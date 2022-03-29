@@ -592,6 +592,7 @@ return array(
         "under_ten_units" => "Under 10 Units",
         "no_management" => "No Management",
         "actual_purchase_price" => "Actual Purchase Price",
+        "submission_date" => "Submission Date",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

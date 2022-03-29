@@ -151,6 +151,43 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="margin-bottom-50 chart-custom">
+                        <div id="never_has_agm_chart"></div>                            
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="tbl_custom_never_has_agm" style="display: none;">
+                <div class="col-lg-12">
+                    <div>
+                        <section class="panel panel-pad">
+                            <div class="tab-content padding-vertical-20">
+                                <h4>{{ trans('app.forms.never_has_agm') }}<button class='btn btn-xs btn-danger float-right' onclick='closeTableCustomNeverAGM()'><i class='fa fa-times'></i> </button></h4>
+                                <div class="tab-pane active" id="tabInsurance1" role="tabpanel">
+                                    <table class="table table-hover table-own table-striped" id="custom_never_has_agm" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                                <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                                <th style="width:25%;">{{ trans('app.forms.scheme_name') }}</th>
+                                                <th style="width:5%;">{{ trans('app.forms.action') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
             @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
             <div class="row">
                 <div class="col-lg-12">
@@ -430,6 +467,7 @@ foreach ($user_permission as $permission) {
 </div>
 
 <script type="text/javascript">
+    var custom_never_table, short_name;
     $(document).ready(function () {
         $('#agm_remainder').DataTable({
             processing: true,
@@ -555,6 +593,9 @@ foreach ($user_permission as $permission) {
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
+        generatePie('management_type', 'COB File By Management Type', 'Management Type', <?php echo json_encode($data ? $data['management'] : ''); ?>);
+        generatePie('rating_star', 'Star Rating of Development Area', 'Star Rating', <?php echo json_encode($data ? $data['rating'] : ''); ?>);
+        generateColumn('never_has_agm_chart', "{{ trans('app.forms.never_has_agm') }}", <?php echo json_encode($data ? $data['never']['categories'] : ''); ?>, <?php echo json_encode($data ? $data['never']['data'] : ''); ?>);
     });
 
     function getMemoDetails(id) {
@@ -571,74 +612,127 @@ foreach ($user_permission as $permission) {
         });
     }
 
-    // Build the chart
-    Highcharts.chart('management_type', {
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            type: 'pie'
-        },
-        title: {
-            text: 'COB File By Management Type'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
-                },
-                showInLegend: true
-            }
-        },
-        series: [{
-                name: 'Management Type',
-                colorByPoint: true,
-                data: <?php echo json_encode($data ? $data['management'] : ''); ?>
-            }]
-    });
-
-    Highcharts.chart('rating_star', {
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            type: 'pie',
-            events: {
-                click: function(evt, item) {
-                    console.log(evt);
-                    console.log(item);
+    function generatePie(id, title, series_title, data) {
+        Highcharts.chart(id, {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                events: {
+                    click: function(evt, item) {
+                    }
                 }
-            }
-        },
-        title: {
-            text: 'Star Rating of Development Area'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
+            },
+            title: {
+                text: title
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}<br/><b>{point.percentage:.1f} %</b>'
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                    name: series_title,
+                    colorByPoint: true,
+                    data: data
+                }]
+        });
+
+    }
+    
+    function generateColumn(id, title, categories, data) {
+        Highcharts.chart(id, {
+            chart: {
+                type: 'column',
+            },
+            title: {
+                text: title
+            },
+            xAxis: {
+                categories: categories,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '(total)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr>' +
+                    '<td style="padding:0"><b>{point.y} total</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
                 },
-                showInLegend: true
-            }
-        },
-        series: [{
-                name: 'Star Rating',
-                colorByPoint: true,
-                data: <?php echo json_encode($data ? $data['rating'] : ''); ?>
+                series: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                short_name = this.category;
+                                $('#tbl_custom_never_has_agm').show();
+                                if(custom_never_table != undefined) {
+                                    custom_never_table.draw();
+                                } else {
+                                    generate_never_agm();
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: title,
+                data: data,
+
             }]
-    });
+        });
+    }
+
+    function generate_never_agm() {
+        custom_never_table = $('#custom_never_has_agm').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                'url' : "{{ URL::action('HomeController@getNeverAGM') }}",
+                'data': function(data) {
+                    // Append to data
+                    data.short_name = short_name;
+                }
+            },
+            llengthMenu: [[5, 25, 50], [5, 25, 50]],
+            pageLength: 5,
+            order: [[0, 'asc'], [1, 'asc']],
+            responsive: true,
+            columns: [
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'file_no', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
+            ]
+        });
+    }
+
+    function closeTableCustomNeverAGM() {
+        $('#tbl_custom_never_has_agm').hide();
+    }
 </script>
 
 @stop
