@@ -2,6 +2,9 @@
 
 use Carbon\Carbon;
 use Helper\Helper;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 
 class HomeController extends BaseController {
     /*
@@ -131,44 +134,51 @@ class HomeController extends BaseController {
     }
 
     public function getNeverAGM() {
-        $condition = function ($query) {
-            $query->whereDoesntHave('meetingDocument');
-            $query->orWhereHas('meetingDocument', function ($query2) {
-                $query2->where('meeting_document.agm_date', '0000-00-00');
-            });
-            $query->where('files.is_active', 1);
-            $query->where('files.is_deleted', 0);
-        };
+        // $condition = function ($query) {
+        //     $query->whereDoesntHave('meetingDocument');
+        //     $query->orWhereHas('meetingDocument', function ($query2) {
+        //         $query2->where('meeting_document.agm_date', '0000-00-00');
+        //     });
+        //     $query->where('files.is_active', 1);
+        //     $query->where('files.is_deleted', 0);
+        // };
 
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where($condition);
-            } else {
-                $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where($condition);
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where($condition);
-            } else {
-                $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where($condition);
-            }
-        }
+        // if (!Auth::user()->getAdmin()) {
+        //     if (!empty(Auth::user()->file_id)) {
+        //         $file = Files::join('company', 'files.company_id', '=', 'company.id')
+        //                 ->join('strata', 'files.id', '=', 'strata.file_id')
+        //                 ->select(['files.*', 'strata.id as strata_id'])
+        //                 ->where('files.id', Auth::user()->file_id)
+        //                 ->where('files.company_id', Auth::user()->company_id)
+        //                 ->where($condition);
+        //     } else {
+        //         $file = Files::join('company', 'files.company_id', '=', 'company.id')
+        //                 ->join('strata', 'files.id', '=', 'strata.file_id')
+        //                 ->select(['files.*', 'strata.id as strata_id'])
+        //                 ->where('files.company_id', Auth::user()->company_id)
+        //                 ->where($condition);
+        //     }
+        // } else {
+        //     if (empty(Session::get('admin_cob'))) {
+        //         $file = Files::join('company', 'files.company_id', '=', 'company.id')
+        //                 ->join('strata', 'files.id', '=', 'strata.file_id')
+        //                 ->select(['files.*', 'strata.id as strata_id'])
+        //                 ->where($condition);
+        //     } else {
+        //         $file = Files::join('company', 'files.company_id', '=', 'company.id')
+        //                 ->join('strata', 'files.id', '=', 'strata.file_id')
+        //                 ->select(['files.*', 'strata.id as strata_id'])
+        //                 ->where('files.company_id', Session::get('admin_cob'))
+        //                 ->where($condition);
+        //     }
+        // }
+        $file = Files::neverHasAGM()
+                    ->where(function($query) {
+                        if(Request::has('short_name') && !empty(Request::get('short_name'))) {
+                            $query->where('company.short_name', Request::get('short_name'));
+                        }
+                    })
+                    ->select(['files.*', 'strata.id as strata_id']);
 
         if ($file) {
             return Datatables::of($file)

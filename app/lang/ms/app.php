@@ -582,6 +582,7 @@ return array(
         "actual_purchase_price" => "Harga Belian Sebenar",
         "under_ten_units" => "Kurang Daripada 10 Unit",
         "no_management" => "Tiada Pengurusan",
+        "submission_date" => "Tarikh Menghantar",
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",

@@ -37,15 +37,18 @@ class Helper
 
     public static function encode(...$args)
     {
-        return (new Hashids('', 16))->encode(...$args);
+        if(count($args) == 1) {
+            return (new Hashids('', 16))->encode(...$args);
+        }
+        return (new Hashids($args[0], 16))->encode($args[1]);
     }
 
-    public static function decode($enc)
+    public static function decode($enc, $module = '')
     {
         if (is_int($enc)) {
             return $enc;
         }
-        $id = (new Hashids('', 16))->decode($enc);
+        $id = (new Hashids($module, 16))->decode($enc);
         if(empty($id)) {
             App::abort(404);
         }

@@ -47,6 +47,7 @@
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.year') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.active') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.created_at') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                 </tr>
                             </thead>
@@ -80,6 +81,7 @@
                 {data: 'cob', name: 'company.short_name'},
                 {data: 'year', name: 'strata.year'},
                 {data: 'active', name: 'files.is_active', searchable: false},
+                {data: 'draft_created', name: 'file_drafts.created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
