@@ -30,15 +30,15 @@ $prefix = 'mfr_';
                         </tr>
                         <tr>
                             <td width="25%">
-                                <input type="text" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm text-right" value="{{ $mfreport['fee_sebulan'] }}">
+                                <input type="text" id="{{ $prefix }}fee_sebulan" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm text-right" value="{{ $mfreport['fee_sebulan'] }}" onkeyup="calculateMFFeeSemasa(this)">
                             </td>
                             <td width="5%">&nbsp;</td>
                             <td width="25%">
-                                <input type="text" name="{{ $prefix }}unit" class="form-control form-control-sm text-right" value="{{ $mfreport['unit'] }}">
+                                <input type="text" id="{{ $prefix }}unit" name="{{ $prefix }}unit" class="form-control form-control-sm text-right" value="{{ $mfreport['unit'] }}" onkeyup="calculateMFFeeSemasa(this)">
                             </td>
                             <td width="5%">&nbsp;</td>
                             <td width="25%">
-                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right text-right" value="{{ $mfreport['fee_semasa'] }}">
+                                <input type="currency" id="{{ $prefix }}fee_semasa"  name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right text-right" value="{{ $mfreport['fee_semasa'] }}">
                             </td>
                             <td width="5%">&nbsp;</td>
                         </tr>
@@ -46,15 +46,15 @@ $prefix = 'mfr_';
                             @foreach ($mfreportExtra as $key => $extra)
                                 <tr id="mfrf_row{{($key+1)}}">
                                     <td width="25%">
-                                        <input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_sebulan'] }}">
+                                        <input type="text" id="{{ $prefix }}fee_sebulan_is_custom_{{ $key }}" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_sebulan'] }}" onkeyup="calculateMFFeeSemasa(this)">
                                     </td>
                                     <td width="5%">&nbsp;</td>
                                     <td width="25%">
-                                        <input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['unit'] }}">
+                                        <input type="text" id="{{ $prefix }}unit_is_custom_{{ $key }}" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['unit'] }}" onkeyup="calculateMFFeeSemasa(this)">
                                     </td>
                                     <td width="5%">&nbsp;</td>
                                     <td width="25%">
-                                        <input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_semasa'] }}">
+                                        <input type="currency" id="{{ $prefix }}fee_semasa_is_custom_{{ $key }}" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_semasa'] }}">
                                     </td>
                                     <td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowMFExtra('mfrf_row{{($key+1)}}')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
                                 </tr>
@@ -182,6 +182,22 @@ $prefix = 'mfr_';
         calculateMFR();
     });
 
+    function calculateMFFeeSemasa(e) {
+        let id = e.id;
+        let fee_sebulan_id = "#{{ $prefix }}fee_sebulan";
+        let unit_id = "#{{ $prefix }}unit";
+        let fee_semasa_id = "#{{ $prefix }}fee_semasa";
+        if(id.includes('_is_custom')) {
+            id = id.substr(-2);
+            id = id.includes('_')? id.split("_")[1] : id;
+            fee_sebulan_id += '_is_custom_' + id;
+            fee_semasa_id += '_is_custom_' + id;
+            unit_id += '_is_custom_' + id;
+        }
+        let value = (parseFloat($(fee_sebulan_id).val()).toFixed(2) * Number($(unit_id).val()));
+        $(fee_semasa_id).val(value);
+    }
+
     function calculateMFR() {
         var mfr_kutipan = $("#updateFinanceFile [id=income_total_income_1]").val();
         $('#{{ $prefix }}kutipan').val(parseFloat(mfr_kutipan).toFixed(2));
@@ -223,11 +239,11 @@ $prefix = 'mfr_';
 
         $("#tbl_reportMF tr:last").prev().after(
             '<tr id="mfrf_row' + rowMFFeesNo + '">'+
-                '<td width="25%"><input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td width="25%"><input type="text" id="{{ $prefix }}fee_sebulan_is_custom_'+ rowMFFeesNo +'" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="0.00" onkeyup="calculateMFFeeSemasa(this)"></td>'+
                 '<td width="5%">&nbsp;</td>'+
-                '<td width="25%"><input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="0"></td>'+
+                '<td width="25%"><input type="text" id="{{ $prefix }}unit_is_custom_'+ rowMFFeesNo +'" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="0" onkeyup="calculateMFFeeSemasa(this)"></td>'+
                 '<td width="5%">&nbsp;</td>'+
-                '<td width="25%"><input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td width="25%"><input type="currency" id="{{ $prefix }}fee_semasa_is_custom_'+ rowMFFeesNo +'" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
                 '<td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowMFExtra(\'mfrf_row' + rowMFFeesNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
         rowMFFeesNo++;
     }
