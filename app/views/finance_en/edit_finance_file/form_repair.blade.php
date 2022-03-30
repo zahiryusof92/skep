@@ -283,11 +283,11 @@ $prefix2 = 'repair_singkingfund_';
             repairb_sum_total_tertunggak += Number(repairb_total_tertunggak[i].value);
         }
         $('#{{ $prefix2 }}total_tertunggak').val(parseFloat(repairb_sum_total_tertunggak).toFixed(2)); // UPDATE JUMLAH TERTUNGGAK
-
-        var repairb_sum_total_all = Number(repairb_sum_total_tunggakan) + Number(repairb_sum_total_semasa) + Number(repairb_sum_total_hadapan); // JUMLAH SEMUA A + B + C
-        $('#{{ $prefix2 }}total_all').val(parseFloat(repairb_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
-        $('#sfr_repair').val(parseFloat(repairb_sum_total_all).toFixed(2));
         
+        var repairb_sum_total_all = Number(repairb_sum_total_tunggakan) + Number(repairb_sum_total_semasa) + Number(repairb_sum_total_hadapan); // JUMLAH SEMUA A + B + C
+        
+        $('#{{ $prefix2 }}total_all').val(parseFloat(repairb_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+        calculateSFR(); // Recalculate SF Report
     }
 
     function addRowRepairA() {

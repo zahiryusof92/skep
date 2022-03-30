@@ -32,15 +32,15 @@ $count = 0;
                         </tr>
                         <tr>
                             <td width="25%">
-                                <input type="text" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_sebulan'] }}">
+                                <input type="text" id="{{ $prefix }}fee_sebulan" name="{{ $prefix }}fee_sebulan" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_sebulan'] }}" onkeyup="calculateSFFeeSemasa(this)">
                             </td>
                             <td width="5%">&nbsp;</td>
                             <td width="25%">
-                                <input type="text" name="{{ $prefix }}unit" class="form-control form-control-sm text-right" value="{{ $sfreport['unit'] }}">
+                                <input type="text" id="{{ $prefix }}unit" name="{{ $prefix }}unit" class="form-control form-control-sm text-right" value="{{ $sfreport['unit'] }}" onkeyup="calculateSFFeeSemasa(this)">
                             </td>
                             <td width="5%">&nbsp;</td>
                             <td width="25%">
-                                <input type="currency" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_semasa'] }}">
+                                <input type="currency" id="{{ $prefix }}fee_semasa" name="{{ $prefix }}fee_semasa" class="form-control form-control-sm text-right" value="{{ $sfreport['fee_semasa'] }}">
                             </td>
                             <td width="5%">&nbsp;</td>
                         </tr>
@@ -48,15 +48,15 @@ $count = 0;
                             @foreach ($sfreportExtra as $key => $extra)
                                 <tr id="sfrf_row{{($key+1)}}">
                                     <td width="25%">
-                                        <input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_sebulan'] }}">
+                                        <input type="text" id="{{ $prefix }}fee_sebulan_is_custom_{{ $key }}" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_sebulan'] }}" onkeyup="calculateSFFeeSemasa(this)">
                                     </td>
                                     <td width="5%">&nbsp;</td>
                                     <td width="25%">
-                                        <input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['unit'] }}">
+                                        <input type="text" id="{{ $prefix }}unit_is_custom_{{ $key }}" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['unit'] }}" onkeyup="calculateSFFeeSemasa(this)">
                                     </td>
                                     <td width="5%">&nbsp;</td>
                                     <td width="25%">
-                                        <input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_semasa'] }}">
+                                        <input type="currency" id="{{ $prefix }}fee_semasa_is_custom_{{ $key }}" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="{{ $extra['fee_semasa'] }}">
                                     </td>
                                     <td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowSFExtra('sfrf_row{{($key+1)}}')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
                                 </tr>
@@ -193,6 +193,22 @@ $count = 0;
         calculateSFR();
     });
 
+    function calculateSFFeeSemasa(e) {
+        let id = e.id;
+        let fee_sebulan_id = "#{{ $prefix }}fee_sebulan";
+        let unit_id = "#{{ $prefix }}unit";
+        let fee_semasa_id = "#{{ $prefix }}fee_semasa";
+        if(id.includes('_is_custom')) {
+            id = id.substr(-2);
+            id = id.includes('_')? id.split("_")[1] : id;
+            fee_sebulan_id += '_is_custom_' + id;
+            fee_semasa_id += '_is_custom_' + id;
+            unit_id += '_is_custom_' + id;
+        }
+        let value = (parseFloat($(fee_sebulan_id).val()).toFixed(2) * Number($(unit_id).val()));
+        $(fee_semasa_id).val(value);
+    }
+
     function calculateSFR() {
         var sfr_kutipan = $("#updateFinanceFile [id=income_total_income_2]").val();
         $('#{{ $prefix }}kutipan').val(parseFloat(sfr_kutipan).toFixed(2));
@@ -200,8 +216,8 @@ $count = 0;
         var sfr_total_income = $("#updateFinanceFile [id=income_semasa_2]").val();
         $('#{{ $prefix }}total_income').val(parseFloat(sfr_total_income).toFixed(2));
 
-        // var sfr_repair = $("#updateFinanceFile [id=repair_singkingfund_total_all]").val();
-        // $('#{{ $prefix }}repair').val(parseFloat(sfr_repair).toFixed(2));
+        var sfr_repair = $("#updateFinanceFile [id=repair_singkingfund_total_all]").val();
+        $('#{{ $prefix }}repair').val(parseFloat(sfr_repair).toFixed(2));
 
         var sfr_vandalisme = $("#updateFinanceFile [id=singkingfund_total_all]").val();
         $('#{{ $prefix }}vandalisme').val(parseFloat(sfr_vandalisme).toFixed(2));
@@ -209,7 +225,7 @@ $count = 0;
         var sfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var sfr_bayar_total = 0;
         
-        for (var i = 0; i < sfr_bayar.length; i++) {
+        for (var i = 0; i < sfr_bayar.length; i++) { 
             sfr_bayar_total += Number(sfr_bayar[i].value);
         }
         $('#{{ $prefix }}bayar_total').val(parseFloat(sfr_bayar_total).toFixed(2));
@@ -241,11 +257,11 @@ $count = 0;
 
         $("#tbl_reportSF tr:last").prev().after(
             '<tr id="sfrf_row' + rowSFFeesNo + '">'+
-                '<td width="25%"><input type="text" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td width="25%"><input type="text" id="{{ $prefix }}fee_sebulan_is_custom_'+ rowSFFeesNo +'" name="{{ $prefix }}fee_sebulan_is_custom[]" class="form-control form-control-sm text-right" value="0.00" onkeyup="calculateSFFeeSemasa(this)"></td>'+
                 '<td width="5%">&nbsp;</td>'+
-                '<td width="25%"><input type="text" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="0"></td>'+
+                '<td width="25%"><input type="text" id="{{ $prefix }}unit_is_custom_'+ rowSFFeesNo +'" name="{{ $prefix }}unit_is_custom[]" class="form-control form-control-sm text-right" value="0" onkeyup="calculateSFFeeSemasa(this)"></td>'+
                 '<td width="5%">&nbsp;</td>'+
-                '<td width="25%"><input type="currency" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
+                '<td width="25%"><input type="currency" id="{{ $prefix }}fee_semasa_is_custom_'+ rowSFFeesNo +'" name="{{ $prefix }}fee_semasa_is_custom[]" class="form-control form-control-sm text-right" value="0.00"></td>'+
                 '<td class="padding-table"><a href="javascript:void(0);" onclick="deleteRowSFExtra(\'mfrf_row' + rowSFFeesNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
         rowSFFeesNo++;
     }
