@@ -206,7 +206,7 @@ $count = 0;
             unit_id += '_is_custom_' + id;
         }
         let value = (parseFloat($(fee_sebulan_id).val()).toFixed(2) * Number($(unit_id).val()));
-        $(fee_semasa_id).val(value);
+        $(fee_semasa_id).val(parseFloat(value).toFixed(2));
     }
 
     function calculateSFR() {
