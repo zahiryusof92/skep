@@ -2016,4 +2016,214 @@ class LPHSController extends BaseController
 
         return $this->result($result, strtoupper($username), '');
     }
+
+    public function neverHasAGM($cob = null)
+    {
+        $result = [];
+
+        $query = Files::join('company', 'files.company_id', '=', 'company.id')
+            ->leftjoin('strata', 'files.id', '=', 'strata.file_id')
+            ->where(function ($query) {
+                $query->whereDoesntHave('meetingDocument');
+                $query->orWhereHas('meetingDocument', function ($query2) {
+                    $query2->where('meeting_document.agm_date', '0000-00-00');
+                    $query2->where('meeting_document.is_deleted', 0);
+                });
+            })
+            ->where('files.is_active', 1)
+            ->where('files.is_deleted', 0)
+            ->orderBy('company.short_name')
+            ->orderBy('files.file_no');
+
+        if (!empty($cob) && $cob != 'all') {
+            $query = $query->where('company.short_name', $cob);
+        }
+
+        $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'strata.name as strata_name')->get();
+
+        if ($items->count() > 0) {
+            foreach ($items as $item) {
+                $pic = HousingSchemeUser::join('users', 'housing_scheme_user.user_id', '=', 'users.id')
+                    ->where('housing_scheme_user.file_id', $item->file_id)
+                    ->select('users.full_name as pic_name', 'users.phone_no as pic_phone', 'users.email as pic_email')
+                    ->orderBy('users.id', 'desc')
+                    ->first();
+
+                $pic_name = '';
+                $pic_phone = '';
+                $pic_email = '';
+                if ($pic) {
+                    $pic_name = $pic->pic_name;
+                    $pic_phone = $pic->pic_phone;
+                    $pic_email = $pic->pic_email;
+                }
+
+                $result[] = [
+                    trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
+                    trans('File No') => $item->file_no,
+                    trans('Strata Name') => $item->strata_name,
+                    trans('Person In Charge (PIC)') => $pic_name,
+                    trans('PIC Phone No') => $pic_phone,
+                    trans('PIC E-mail') => $pic_email,
+                ];
+            }
+        }
+
+        // return '<pre>' . print_r($result, true) . '</pre>';
+
+        return $this->result($result, $filename = 'Never Has AGM - ' . strtoupper($cob));
+    }
+
+    public function due12MonthsAGM($cob = null)
+    {
+        $result = [];
+
+        $query = Files::join('company', 'files.company_id', '=', 'company.id')
+            ->leftjoin('strata', 'files.id', '=', 'strata.file_id')
+            ->leftjoin('meeting_document', 'files.id', '=', 'meeting_document.file_id')
+            ->where('meeting_document.agm_date', '!=', '0000-00-00')
+            ->where('meeting_document.agm_date', '<=', date('Y-m-d', strtotime('-12 Months')))
+            ->where('meeting_document.is_deleted', 0)
+            ->where('files.is_active', 1)
+            ->where('files.is_deleted', 0)
+            ->orderBy('company.short_name')
+            ->orderBy('meeting_document.agm_date', 'desc');
+
+        if (!empty($cob) && $cob != 'all') {
+            $query = $query->where('company.short_name', $cob);
+        }
+
+        $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'strata.name as strata_name', 'meeting_document.agm_date as agm_date')->get();
+
+        if ($items->count() > 0) {
+            foreach ($items as $item) {
+                $pic = HousingSchemeUser::join('users', 'housing_scheme_user.user_id', '=', 'users.id')
+                    ->where('housing_scheme_user.file_id', $item->file_id)
+                    ->select('users.full_name as pic_name', 'users.phone_no as pic_phone', 'users.email as pic_email')
+                    ->orderBy('users.id', 'desc')
+                    ->first();
+
+                $pic_name = '';
+                $pic_phone = '';
+                $pic_email = '';
+                if ($pic) {
+                    $pic_name = $pic->pic_name;
+                    $pic_phone = $pic->pic_phone;
+                    $pic_email = $pic->pic_email;
+                }
+
+                $result[] = [
+                    trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
+                    trans('File No') => $item->file_no,
+                    trans('Strata Name') => $item->strata_name,
+                    trans('Last AGM Date') => $item->agm_date,
+                    trans('Person In Charge (PIC)') => $pic_name,
+                    trans('PIC Phone No') => $pic_phone,
+                    trans('PIC E-mail') => $pic_email,
+                ];
+            }
+        }
+
+        // return '<pre>' . print_r($result, true) . '</pre>';
+
+        return $this->result($result, $filename = 'Due 12 months AGM - ' . strtoupper($cob));
+    }
+
+    public function due15MonthsAGM($cob = null)
+    {
+        $result = [];
+
+        $query = Files::join('company', 'files.company_id', '=', 'company.id')
+            ->leftjoin('strata', 'files.id', '=', 'strata.file_id')
+            ->leftjoin('meeting_document', 'files.id', '=', 'meeting_document.file_id')
+            ->where('meeting_document.agm_date', '!=', '0000-00-00')
+            ->where('meeting_document.agm_date', '<=', date('Y-m-d', strtotime('-15 Months')))
+            ->where('meeting_document.is_deleted', 0)
+            ->where('files.is_active', 1)
+            ->where('files.is_deleted', 0)
+            ->orderBy('company.short_name')
+            ->orderBy('meeting_document.agm_date', 'desc');
+
+        if (!empty($cob) && $cob != 'all') {
+            $query = $query->where('company.short_name', $cob);
+        }
+
+        $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'strata.name as strata_name', 'meeting_document.agm_date as agm_date')->get();
+
+        if ($items->count() > 0) {
+            foreach ($items as $item) {
+                $pic = HousingSchemeUser::join('users', 'housing_scheme_user.user_id', '=', 'users.id')
+                    ->where('housing_scheme_user.file_id', $item->file_id)
+                    ->select('users.full_name as pic_name', 'users.phone_no as pic_phone', 'users.email as pic_email')
+                    ->orderBy('users.id', 'desc')
+                    ->first();
+
+                $pic_name = '';
+                $pic_phone = '';
+                $pic_email = '';
+                if ($pic) {
+                    $pic_name = $pic->pic_name;
+                    $pic_phone = $pic->pic_phone;
+                    $pic_email = $pic->pic_email;
+                }
+
+                $result[] = [
+                    trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
+                    trans('File No') => $item->file_no,
+                    trans('Strata Name') => $item->strata_name,
+                    trans('Last AGM Date') => $item->agm_date,
+                    trans('Person In Charge (PIC)') => $pic_name,
+                    trans('PIC Phone No') => $pic_phone,
+                    trans('PIC E-mail') => $pic_email,
+                ];
+            }
+        }
+
+        // return '<pre>' . print_r($result, true) . '</pre>';
+
+        return $this->result($result, $filename = 'Due 15 months AGM - ' . strtoupper($cob));
+    }
+
+    public function insurance($cob = null)
+    {
+        $result = [];
+
+        $query = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
+            ->leftjoin('company', 'files.company_id', '=', 'company.id')
+            ->leftjoin('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
+            ->where('files.is_active', 1)
+            ->where('files.is_deleted', 0)
+            ->where('insurance.is_deleted', 0)
+            ->orderBy('company.short_name')
+            ->orderBy('files.file_no');
+
+        if (!empty($cob) && $cob != 'all') {
+            $query = $query->where('company.short_name', $cob);
+        }
+
+        $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'insurance_provider.name as provider', 'insurance.*')->get();
+
+        if ($items->count() > 0) {
+            foreach ($items as $item) {
+                $result[] = [
+                    trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
+                    trans('File No') => $item->file_no,
+                    trans('Insurance Provider') => $item->provider,
+                    trans('Public Liability Coverage (PLC)') => $item->public_liability_coverage,
+                    trans('PLC Premium Per Year') => $item->plc_premium_per_year,
+                    trans('PLC Validity From') => $item->plc_validity_from,
+                    trans('PLC Validity To') => $item->plc_validity_to,
+                    trans('Fire Insurance Coverage (FIC)') => $item->fire_insurance_coverage,
+                    trans('FIC Premium Per Year') => $item->fic_premium_per_year,
+                    trans('FIC Validity From') => $item->fic_validity_from,
+                    trans('FIC Validity To') => $item->fic_validity_to,
+                    trans('Remarks') => $item->remarks,
+                ];
+            }
+        }
+
+        // return '<pre>' . print_r($result, true) . '</pre>';
+
+        return $this->result($result, $filename = 'Insurance - ' . strtoupper($cob));
+    }
 }

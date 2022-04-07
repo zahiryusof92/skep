@@ -33,6 +33,11 @@ Route::get('/lphs/odesiLife/{council}', 'LPHSController@odesiLife');
 Route::get('/lphs/JMBMCSignIn/{council}', 'LPHSController@JMBMCSignIn');
 Route::get('/lphs/updateByUser/{council}', 'LPHSController@updateByUser');
 
+Route::get('/lphs/neverHasAGM/{council}', 'LPHSController@neverHasAGM');
+Route::get('/lphs/due12MonthsAGM/{council}', 'LPHSController@due12MonthsAGM');
+Route::get('/lphs/due15MonthsAGM/{council}', 'LPHSController@due15MonthsAGM');
+Route::get('/lphs/insurance/{council}', 'LPHSController@insurance');
+
 /*
  * LPHS REPORT END
  */
