@@ -139,9 +139,11 @@ class Files extends Eloquent {
                 $query->whereDoesntHave('meetingDocument');
                 $query->orWhereHas('meetingDocument', function ($query2) {
                     $query2->where('meeting_document.agm_date', '0000-00-00');
+                    $query2->where('meeting_document.is_deleted', 0);
                 });
-                $query->where('files.is_active', 1);
             })
+            ->where('files.is_active', 1)
+            ->where('files.is_deleted', 0)
             ->where('company.short_name', '!=', 'MPS');
         
         return $query;
