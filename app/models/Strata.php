@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+
 class Strata extends Eloquent {
 
     protected $table = 'strata';
@@ -87,6 +90,20 @@ class Strata extends Eloquent {
     
     public function facility() {
         return $this->hasOne('Facility', 'strata_id');
+    }
+
+    public function scopeSelf(Builder $builder) {
+        $builder = $builder
+                    ->join('files', 'strata.file_id', '=', 'files.id');
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $builder = $builder->where('strata.file_id', Auth::user()->file_id);
+            } else {
+                $file_ids = array_pluck(Files::file()->get()->toArray(), 'id');
+                $builder = $builder->whereIn('strata.file_id', $file_ids);
+            }
+        }
+        return $builder;
     }
 
     public static function getStratasData($request = []) {

@@ -177,6 +177,7 @@ return array(
             "vp" => "Sebelum VP vs Selepas VP",
             "management_list" => "Senarai Pengurusan",
             "land_title" => "Kategori Tanah",
+            "epks" => "ePKS",
         ),
         "agm" => array(
             "submission" => "Penyerahan AGM",
@@ -211,6 +212,17 @@ return array(
             "download" => "Muat Turun Borang"
         ),
         "change_cob" => "Tukar COB",
+        "epks" => array(
+            "name" => "EPKS",
+            "name1" => "-PKS",
+            "list" => "e-Pusat Kitar Strata",
+            "draft" => "Draf",
+            "review" => "Semakan",
+            "create" => "Permohononan Baru",
+            "edit" => "Kemas Kini Permohonan",
+            "approval" => "Kelulusan",
+            "pending" => ":count tertangguh",
+        ),
     ),
     "forms" => array(
         "mandatory_fields" => "Ruangan Wajib",
@@ -339,6 +351,7 @@ return array(
         "is_active" => "Tengah Aktif",
         "action" => "Tindakan",
         "submit" => "Hantar",
+        "submit_application" => "Hantar Permohonan",
         "cancel" => "Batal",
         "back" => "Kembali",
         "download" => "Muat Turun",
@@ -583,6 +596,16 @@ return array(
         "under_ten_units" => "Kurang Daripada 10 Unit",
         "no_management" => "Tiada Pengurusan",
         "submission_date" => "Tarikh Menghantar",
+        "role" => "Peranan",
+        "total_files" => "Jumlah Fail",
+        "total_jmb" => "Jumlah JMB",
+        "place_suggestions" => "Cadangan Tempat",
+        "pks_sketch_proposal" => "Cadangan Lakaran PKS",
+        "no_suggestions" => "Tiada Cadangan",
+        "total_monthly" => "Jumlah Bulanan",
+        "monthly_detail" => "Butiran Bulanan",
+        "image" => "Gambar",
+        "location" => "Lokasi",
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",
@@ -830,6 +853,7 @@ return array(
         "are_you_sure_delete_file" => "Adakah anda pasti untuk memadam fail ini?",
         "are_you_sure_submit" => "Adakah anda pasti untuk menghantar data ini?",
         "no_recover_file" => "Anda tidak akan dapat menemui semula fail ini!",
+        "submit_epks" => "Hantar Permohonan e-Pusat Kitar Strata",
         "want_to_leave" => "Data yang anda masukkan mungkin tidak disimpan, anda pasti mahu keluar?",
         "please_wait" => "Sila tunggu..."
     ),
@@ -879,6 +903,7 @@ return array(
         "add_defect" => "Tambah Aduan",
         "add_insurance" => "Tambah Insurans",
         "reset" => "Tetapkan Semula",
+        "add_new_application" => "Permohonan Baru",
     ),
     'directory' => [
         'title' => 'Direktori',
@@ -1019,5 +1044,12 @@ return array(
         'description' => 'Penerangan',
         'point_usage' => 'Points',
         'not_enough' => "Anda tidak mempunyai baki Points yang cukup. Sila tambah nilai dahulu."
-    ]
+    ],
+    'epks' => [
+        'draft' => 'Rangka',
+        'pending' => 'Belum Selesai',
+        'inprogress' => 'Sedang Berjalan',
+        'approved' => 'Diluluskan',
+        'rejected' => 'Ditolak',
+    ],
 );

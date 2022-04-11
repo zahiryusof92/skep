@@ -179,6 +179,7 @@ return array(
             "vp" => "Before VP vs After VP",
             "management_list" => "Management List",
             "land_title" => "Land Category",
+            "epks" => "ePKS",
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -213,6 +214,17 @@ return array(
             "download" => "Form Download"
         ),
         "change_cob" => "Change COB",
+        "epks" => array(
+            "name" => "EPKS",
+            "name1" => "-PKS",
+            "list" => "ePKS",
+            "draft" => "Draft",
+            "review" => "Review",
+            "create" => "New Application",
+            "edit" => "Edit Application",
+            "approval" => "Approval List",
+            "pending" => ":count pending",
+        ),
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
@@ -343,6 +355,7 @@ return array(
         "is_active" => "Is Active",
         "action" => "Action",
         "submit" => "Submit",
+        "submit_application" => "Submit Application",
         "cancel" => "Cancel",
         "back" => "Back",
         "download" => "Download",
@@ -593,6 +606,16 @@ return array(
         "no_management" => "No Management",
         "actual_purchase_price" => "Actual Purchase Price",
         "submission_date" => "Submission Date",
+        "role" => "Role",
+        "total_files" => "Total Files",
+        "total_jmb" => "Total JMB",
+        "image" => "Image",
+        "location" => "Location",
+        "place_suggestions" => "Place Suggestions",
+        "pks_sketch_proposal" => "PKS Sketch Proposal",
+        "no_suggestions" => "No Suggestions",
+        "total_monthly" => "Total Monthly",
+        "monthly_detail" => "Monthly Detail",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -840,12 +863,20 @@ return array(
             "submit" => "Unit of Measure submitted successfully!",
         ),
         'payment_successfully' => 'Payment Success',
+        "epks" => array(
+            "store" => "Application added successfully!",
+            "submit" => "Application submitted successfully!",
+            "update" => "Application updated successfully!",
+            "destroy" => "Application deleted successfully!",
+            "submit" => "Application submitted successfully!",
+        ),
     ),
     "confirmation" => array(
         "are_you_sure" => "Are you sure?",
         "are_you_sure_delete_file" => "Are you sure want to delete this file?",
         "are_you_sure_submit" => "Are you sure want to submit this data?",
         "no_recover_file" => "Your will not be able to recover this file!",
+        "submit_epks" => "Submit Application e-Pusat Kitar Strata",
         "want_to_leave" => "Data you have entered may not be saved, do you really want to leave?",
         "please_wait" => "Please wait..."
     ),
@@ -898,6 +929,7 @@ return array(
         "reset" => "Reset",
         "accept" => "Accept",
         "sync" => "Sync",
+        "add_new_application" => "Add New Application",
     ),
     'directory' => [
         'title' => 'Directory',
@@ -1046,5 +1078,12 @@ return array(
         'description' => 'Description',
         'point_usage' => 'Points',
         'not_enough' => "You don't have enough points. Please reload first."
-    ]
+    ],
+    'epks' => [
+        'draft' => 'Draft',
+        'pending' => 'Pending',
+        'inprogress' => 'In-progress',
+        'approved' => 'Approved',
+        'rejected' => 'Rejected',
+    ],
 );

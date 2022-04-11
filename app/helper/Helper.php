@@ -54,4 +54,46 @@ class Helper
         }
         return $id[0];
     }
+
+    /**
+     * Difference with 2 array and find out the differences
+     */
+    public static function check_diff_multi($array1, $array2){
+        $result = array();
+        foreach($array1 as $key => $val) {
+            if(is_array($val) && isset($array2[$key])) {
+                $tmp = self::check_diff_multi($val, $array2[$key]);
+                if($tmp) {
+                    $result[$key] = $tmp;
+                }
+            }
+            elseif(!isset($array2[$key])) {
+                $result[$key] = null;
+            }
+            elseif($val !== $array2[$key]) {
+                if(!in_array($key, ['id', 'created_at', 'updated_at'])) {
+                    $result[$key] = $array2[$key];
+                }
+            }
+    
+            if(isset($array2[$key])) {
+                unset($array2[$key]);
+            }
+        }
+    
+        $result = array_merge($result, $array2);
+    
+        return $result;
+    }
+
+    /**
+     * Replace the search last character
+     */
+    public static function str_replace_last( $search , $replace , $str ) {
+        if( ( $pos = strrpos( $str , $search ) ) !== false ) {
+            $search_length  = strlen( $search );
+            $str    = substr_replace( $str , $replace , $pos , $search_length );
+        }
+        return $str;
+    }
 }

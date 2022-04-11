@@ -159,6 +159,37 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccess(63))
+            <li class="left-menu-list-submenu" id="epks_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-recycle"><!-- --></i>
+                    <span id="recycle">{{ trans('app.menus.epks.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(Epks::self()->notDraft()->where('epks.status', '!=', Epks::REJECTED)->count()) ! @endif</span>
+                </a>
+                <ul class="left-menu-list list-unstyled" id="epks_main">
+                    <li class="left-menu-list-link" id="epks_create">
+                        <a class="left-menu-link" href="{{ route('epks.create') }}">
+                            {{ trans('app.menus.epks.create') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="epks_list">
+                        <a class="left-menu-link" href="{{ route('epks.index') }}">
+                            {{ trans('app.menus.epks.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.epks.pending', ['count'=> Epks::self()->notDraft()->where('epks.status', '!=', Epks::REJECTED)->count()]) }}</span>
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="epks_approval">
+                        <a class="left-menu-link" href="{{ route('epks.approval') }}">
+                            {{ trans('app.menus.epks.approval') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="epks_draft">
+                        <a class="left-menu-link" href="{{ route('epks.draft') }}">
+                            {{ trans('app.menus.epks.draft') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+
             @if (Module::hasAccess(2))
             <li class="left-menu-list-submenu" id="admin_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -427,6 +458,7 @@ if (!Auth::user()->getAdmin()) {
                 </a>
                 <ul class="left-menu-list list-unstyled" id="reporting_main">
 
+
                     @if (AccessGroup::hasAccess(24))
                     <li id="audit_trail_list">
                         <a class="left-menu-link" href="{{URL::action('ReportController@auditTrail')}}">
@@ -551,6 +583,14 @@ if (!Auth::user()->getAdmin()) {
                     <li id="land_title_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@landTitle') }}">
                             {{ trans('app.menus.reporting.land_title') }}
+                        </a>
+                    </li>
+                    @endif
+
+                    @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccess(64))
+                    <li id="epks_report_list">
+                        <a class="left-menu-link" href="{{ URL::action('ReportController@epks') }}">
+                            {{ trans('app.menus.reporting.epks') }}
                         </a>
                     </li>
                     @endif

@@ -1,10 +1,11 @@
 /*
  * WIDGETS
  */
+
 .widget {
     background: #ffffff;
     -webkit-border-radius: 5px;
-            border-radius: 5px;
+    border-radius: 5px;
     margin-bottom: 16px;
     position: relative;
     border: 1px solid #dfe4ed;
@@ -12,13 +13,13 @@
 
 .widget .widget-header {
     -webkit-border-radius: 5px 5px 0px 0px;
-            border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
 }
 
 .widget .widget-body {
     display: block;
     -webkit-border-radius: 0px 5px 5px 0px;
-            border-radius: 0px 5px 5px 0px;
+    border-radius: 0px 5px 5px 0px;
 }
 
 .widget .label {
@@ -37,22 +38,22 @@
     }
 }
 
-.widget > .table {
+.widget>.table {
     margin-bottom: 0px;
 }
 
-.widget > .table thead th {
+.widget>.table thead th {
     border-top: none !important;
 }
 
-.widget > .table thead th:first-child {
+.widget>.table thead th:first-child {
     -webkit-border-radius: 5px 0px 0px 0px;
-            border-radius: 5px 0px 0px 0px;
+    border-radius: 5px 0px 0px 0px;
 }
 
-.widget > .table thead th:last-child {
+.widget>.table thead th:last-child {
     -webkit-border-radius: 0px 5px 0px 0px;
-            border-radius: 0px 5px 0px 0px;
+    border-radius: 0px 5px 0px 0px;
 }
 
 .widget-one .widget-header {
@@ -61,7 +62,7 @@
     padding: 40px;
     background-color: #dfe4ed;
     -webkit-border-radius: 5px 5px 0px 0px;
-            border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
 }
 
 .widget-one .widget-body {
@@ -86,7 +87,7 @@
 
 .widget-one .widget-body .avatar img {
     -webkit-border-radius: 100%;
-            border-radius: 100%;
+    border-radius: 100%;
 }
 
 .widget-one .widget-body .widget-info {
@@ -98,7 +99,7 @@
 .widget-two .widget-header {
     padding: 20px 25px;
     -webkit-border-radius: 5px 5px 0px 0px;
-            border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
     border-bottom: 1px solid #eceff4;
 }
 
@@ -140,7 +141,7 @@
 .widget-five .widget-header {
     padding: 20px 25px;
     -webkit-border-radius: 5px 5px 0px 0px;
-            border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
     border-bottom: 1px solid #eceff4;
 }
 
@@ -151,7 +152,7 @@
 .widget-six .widget-header {
     padding: 20px 25px;
     -webkit-border-radius: 5px 5px 0px 0px;
-            border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
     border-bottom: 1px solid #eceff4;
 }
 
@@ -161,12 +162,12 @@
 
 .widget-six .chart-css-animations {
     -webkit-border-radius: 0px 0px 5px 5px;
-            border-radius: 0px 0px 5px 5px;
+    border-radius: 0px 0px 5px 5px;
 }
 
 .widget-seven {
     -webkit-border-radius: 5px;
-            border-radius: 5px;
+    border-radius: 5px;
     overflow: hidden;
     background-size: cover;
     position: relative;
@@ -176,17 +177,27 @@
     padding: 30px 25px 35px;
     height: 142px;
     -webkit-border-radius: 5px;
-            border-radius: 5px;
+    border-radius: 5px;
     overflow: hidden;
 }
 
-.widget-seven .widget-body h1, .widget-seven .widget-body h2, .widget-seven .widget-body h3, .widget-seven .widget-body h4, .widget-seven .widget-body h5, .widget-seven .widget-body h6,
-.widget-seven .widget-body .h1, .widget-seven .widget-body .h2, .widget-seven .widget-body .h3, .widget-seven .widget-body .h4, .widget-seven .widget-body .h5, .widget-seven .widget-body .h6 {
+.widget-seven .widget-body h1,
+.widget-seven .widget-body h2,
+.widget-seven .widget-body h3,
+.widget-seven .widget-body h4,
+.widget-seven .widget-body h5,
+.widget-seven .widget-body h6,
+.widget-seven .widget-body .h1,
+.widget-seven .widget-body .h2,
+.widget-seven .widget-body .h3,
+.widget-seven .widget-body .h4,
+.widget-seven .widget-body .h5,
+.widget-seven .widget-body .h6 {
     color: inherit;
     margin-bottom: 10px;
     white-space: nowrap;
     -o-text-overflow: ellipsis;
-       text-overflow: ellipsis;
+    text-overflow: ellipsis;
     overflow: hidden;
 }
 
@@ -206,11 +217,41 @@
     height: 100%;
 }
 
-.widget-seven.background-primary, .widget-seven.background-secondary, .widget-seven.background-default, .widget-seven.background-info, .widget-seven.background-danger, .widget-seven.background-warning, .widget-seven.background-info, .widget-seven.background-success {
+.widget-seven.background-primary,
+.widget-seven.background-secondary,
+.widget-seven.background-default,
+.widget-seven.background-info,
+.widget-seven.background-danger,
+.widget-seven.background-warning,
+.widget-seven.background-info,
+.widget-seven.background-success {
     color: #ffffff;
 }
 
-.widget-seven.background-primary a, .widget-seven.background-primary .counter-icon, .widget-seven.background-primary .counter-count, .widget-seven.background-secondary a, .widget-seven.background-secondary .counter-icon, .widget-seven.background-secondary .counter-count, .widget-seven.background-default a, .widget-seven.background-default .counter-icon, .widget-seven.background-default .counter-count, .widget-seven.background-info a, .widget-seven.background-info .counter-icon, .widget-seven.background-info .counter-count, .widget-seven.background-danger a, .widget-seven.background-danger .counter-icon, .widget-seven.background-danger .counter-count, .widget-seven.background-warning a, .widget-seven.background-warning .counter-icon, .widget-seven.background-warning .counter-count, .widget-seven.background-info a, .widget-seven.background-info .counter-icon, .widget-seven.background-info .counter-count, .widget-seven.background-success a, .widget-seven.background-success .counter-icon, .widget-seven.background-success .counter-count {
+.widget-seven.background-primary a,
+.widget-seven.background-primary .counter-icon,
+.widget-seven.background-primary .counter-count,
+.widget-seven.background-secondary a,
+.widget-seven.background-secondary .counter-icon,
+.widget-seven.background-secondary .counter-count,
+.widget-seven.background-default a,
+.widget-seven.background-default .counter-icon,
+.widget-seven.background-default .counter-count,
+.widget-seven.background-info a,
+.widget-seven.background-info .counter-icon,
+.widget-seven.background-info .counter-count,
+.widget-seven.background-danger a,
+.widget-seven.background-danger .counter-icon,
+.widget-seven.background-danger .counter-count,
+.widget-seven.background-warning a,
+.widget-seven.background-warning .counter-icon,
+.widget-seven.background-warning .counter-count,
+.widget-seven.background-info a,
+.widget-seven.background-info .counter-icon,
+.widget-seven.background-info .counter-count,
+.widget-seven.background-success a,
+.widget-seven.background-success .counter-icon,
+.widget-seven.background-success .counter-count {
     color: #ffffff;
 }
 
@@ -248,10 +289,13 @@
     font-size: 32px;
 }
 
+
 /*
  * WIDGETS GLOBAL
  */
-.mode-superclean .widget, .mode-superclean .step-block {
+
+.mode-superclean .widget,
+.mode-superclean .step-block {
     border: none;
 }
 
@@ -285,7 +329,7 @@
     background: #f2f4f8;
     margin-left: 70px;
     -webkit-border-radius: 5px;
-            border-radius: 5px;
+    border-radius: 5px;
     position: relative;
 }
 
@@ -366,6 +410,11 @@
     padding-bottom: 30px;
     margin-bottom: 30px;
     border-bottom: 1px solid #dfe4ed;
+}
+
+#recycle::before {
+    content: ' \2147';
+    font-size: 20px;
 }
 
 @media (max-width: 992px) {

@@ -928,6 +928,20 @@ Route::group(array('before' => 'authMember'), function() {
     /*
      * My Point End
      */
+    Route::get('epks/approval', ['as' => 'epks.approval', 'uses' => 'EPKSController@index']);
+    Route::get('epks/draft', ['as' => 'epks.draft', 'uses' => 'EPKSController@index']);
+    Route::post('epks/fileUpload', ['as' => 'epks.fileUpload', 'uses' => 'EPKSController@fileUpload']);
+    Route::post('epks/imageUpload', ['as' => 'epks.imageUpload', 'uses' => 'EPKSController@imageUpload']);
+    Route::post('epks/submitConfirm/{id}', ['as' => 'epks.submitConfirm', 'uses' => 'EPKSController@submitConfirm']);
+    Route::post('epks/submitByCOB/{id}', ['as' => 'epks.submitByCOB', 'uses' => 'EPKSController@submitByCOB']);
+    Route::resource('epks', 'EPKSController');
+    
+
+    /**
+     * Reporting
+     */
+    Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
+    Route::post('/print/epks',  array('as' => 'reporting.print.epks', 'uses' => 'PrintController@epks'));
     
     /**
      * Data Sync
@@ -968,6 +982,14 @@ Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('oauth/token', 'Api\AuthController@token');
 });
 
+Route::group(array('prefix' => 'api/v1/export'), function() {
+    Route::get('councilFacility', 'ExportController@exportCouncilFacility');
+    Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
+    Route::get('reporting', 'ExportController@reporting');
+    Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
+});
+
+
 Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::post('/editProfile', 'Api\ApiController@editProfile');
 
@@ -1007,6 +1029,11 @@ Route::group(array('prefix' => 'api/v2'), function() {
 Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember']), function() {
     Route::get('dashboard/getAnalyticData', 'Api\DashboardAnalyticController@getAnalyticData');
     Route::group(array('prefix' => 'cob'), function() {
+        Route::get('company/getOption', array('as' => 'v3.api.company.getOption', 'uses' => 'Api\CompanyController@getOption'));
+        Route::get('files/getOption',  array('as' => 'v3.api.files.getOption', 'uses' => 'Api\COBFileController@getOption'));
+        Route::get('audit_trail/getOption', array('as' => 'v3.api.audit_trail.getModuleOption', 'uses' => 'Api\AuditTrailController@getModuleOption'));
+        Route::get('role/getOption', array('as' => 'v3.api.role.getOption', 'uses' => 'Api\RoleController@getOption'));
+        Route::get('strata/getOption',  array('as' => 'v3.api.strata.getOption', 'uses' => 'Api\StrataController@getOption'));
         Route::get('insurance/getAnalyticData', 'Api\InsuranceController@getAnalyticData');
         Route::get('insurance/getListing', 'Api\InsuranceController@getListing');
         Route::get('management/getAnalyticData', 'Api\ManagementController@getAnalyticData');
@@ -1072,10 +1099,3 @@ Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
 
 
-
-Route::group(array('prefix' => 'api/v1/export'), function() {
-    Route::get('councilFacility', 'ExportController@exportCouncilFacility');
-    Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
-    Route::get('reporting', 'ExportController@reporting');
-    Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
-});

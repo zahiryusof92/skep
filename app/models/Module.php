@@ -4,6 +4,11 @@ class Module extends Eloquent {
 
     protected $table = 'module';
 
+    protected $fillable = [
+        'name_en',
+        'name_my'
+    ];
+
     public function SubModule() {
 
         return $this->hasMany('SubModule', 'module_id');

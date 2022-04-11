@@ -7,6 +7,72 @@ return [
                 'update_profile_url' => "https://patrick.odesi.tech/api/admin/auth/profile/update_simple"
             ]
         ],
+        'audit' => [
+            'text' => [
+                'data_inserted' => ' has been inserted.',
+                'data_imported' => ' has been imported.',
+                'data_updated' => ' has been updated.',
+                'data_uploaded' => ' has been uploaded.',
+                'data_deleted' => ' has been deleted.',
+                'status_updated' => ' has been updated to ',
+                'status_active' => " status has been updated to Active.",
+                'status_inactive' => " status has been updated to In-Active.",
+                'status_activate' => " status has been updated to Activate.",
+                'status_deactivate' => " status has been updated to Deactivate.",
+            ]
+        ],
+        'cob' => [
+            'facility' => [
+                'management_office' => [
+                    'name' => 'management_office',
+                    'title' => 'Management Office'
+                ],
+                'swimming_pool' => [
+                    'name' => 'swimming_pool',
+                    'title' => 'Swimming Pool'
+                ],
+                'surau' => [
+                    'name' => 'surau',
+                    'title' => 'Surau'
+                ],
+                'multipurpose_hall' => [
+                    'name' => 'multipurpose_hall',
+                    'title' => 'Multipurpose Hall'
+                ],
+                'gym' => [
+                    'name' => 'gym',
+                    'title' => 'Gym'
+                ],
+                'playground' => [
+                    'name' => 'playground',
+                    'title' => 'Playground'
+                ],
+                'guardhouse' => [
+                    'name' => 'guardhouse',
+                    'title' => 'Guard House'
+                ],
+                'kindergarten' => [
+                    'name' => 'kindergarten',
+                    'title' => 'KinderGarten'
+                ],
+                'open_space' => [
+                    'name' => 'open_space',
+                    'title' => 'Open Space'
+                ],
+                'lift' => [
+                    'name' => 'lift',
+                    'title' => 'Lift'
+                ],
+                'rubbish_room' => [
+                    'name' => 'rubbish_room',
+                    'title' => 'Rubbish Room'
+                ],
+                'gated' => [
+                    'name' => 'gated',
+                    'title' => 'Gated'
+                ],
+            ]
+        ],
         'finance' => [
             'tabs' => [
                 'main' => [
@@ -464,63 +530,6 @@ return [
                 ],
             ]
         ],
-        'cob' => [
-            'facility' => [
-                'management_office' => [
-                    'name' => 'management_office',
-                    'title' => 'Management Office'
-                ],
-                'swimming_pool' => [
-                    'name' => 'swimming_pool',
-                    'title' => 'Swimming Pool'
-                ],
-                'surau' => [
-                    'name' => 'surau',
-                    'title' => 'Surau'
-                ],
-                'multipurpose_hall' => [
-                    'name' => 'multipurpose_hall',
-                    'title' => 'Multipurpose Hall'
-                ],
-                'gym' => [
-                    'name' => 'gym',
-                    'title' => 'Gym'
-                ],
-                'playground' => [
-                    'name' => 'playground',
-                    'title' => 'Playground'
-                ],
-                'guardhouse' => [
-                    'name' => 'guardhouse',
-                    'title' => 'Guard House'
-                ],
-                'kindergarten' => [
-                    'name' => 'kindergarten',
-                    'title' => 'KinderGarten'
-                ],
-                'open_space' => [
-                    'name' => 'open_space',
-                    'title' => 'Open Space'
-                ],
-                'lift' => [
-                    'name' => 'lift',
-                    'title' => 'Lift'
-                ],
-                'rubbish_room' => [
-                    'name' => 'rubbish_room',
-                    'title' => 'Rubbish Room'
-                ],
-                'gated' => [
-                    'name' => 'gated',
-                    'title' => 'Gated'
-                ],
-            ]
-        ],
-        'auth' => [
-            'sso' => [
-                'update_profile_url' => "https://patrick.odesi.tech/api/admin/auth/profile/update_simple"
-            ]
-        ],
         'payment' => [
             'prefix' => 'eCobS',
             'gateway' => [
@@ -540,9 +549,9 @@ return [
                     'nonceStr' => 'MNhrdDgIDlTKdlYXzfhEvqHpGjRhvrPb',
                     'private_key' => "-----BEGIN RSA PRIVATE KEY-----\nMIIEoQIBAAKCAQB55lfJiCvYt8754qQ0lQP67mJuT+CziOD4znJqqNXZYp+9ANSw\nFOb2zkMEcmwWCaWHc6Nf7AlTCaHhFK6VV7wp9Hpn1ifIShrPiMhpaTldvyUFJI+t\n1y8QLPncvEHgJClKRzQUwsRzt8zB1h6Is7r6qnrOvSq1li4QTo4OVKKrJ8Ge3l5V\nFo8iYx1XQYYLuw4QuhEdUTL8w6x0HMjZv8qqWOCT71YvdrV6sz8ip8ksJ3hO07NL\nEhtXBcO9Q4ll9+1UkoyaQUdenBbjSaYC+L4FPh8BK9Zbiv6SLNeW6o2SU5NTUz8A\n9NzmhHg4rg83KJAZd6byNFHq9+rIrarXH18ZAgMBAAECggEAQCjKv9oaKeDk4YU2\npC5if+qEiEcmn5hFwO74LcdbdyV/qf0L9Pmrbu+1Olv3I8pEA30L2mrjpX8GYu99\nzED3WqXA33JKUhMe9WirA0BM31jB5WkO7pK5xKvHfzTe/1hJGz1K3jp9J+LvtH48\nZ/shSNn99V5/Yj//Urnl7wkA7VAsVoXO/ddSJspdVTUwCBjn21Lo+eekY1YAJZvM\nv2Eo+tppDdUGBQk5DzvMaX0u6TynTecvYvulD4ydEnp0AHLYxuX+AaAI6gDSpU34\nu0LHrNnFl9OZN/5ILhiSLidbT5dNpd/tGJwsf6BwJgY4mkRId/agEKhjnzGDyYCN\ndhyUuQKBgQDU4qT0p2BsqVyBiIxZYnjMlxQvo20J5hjrrbzCg9XutrKJBB8THNgd\nFFvB9lXvc4ANCSejHBKCEZ+RTAnUNYckDEI2qikGyDF5LLXtacCcNJ0OLxzT1L/H\nGoWmc+3CURCHjGjwv8ZKZAWIlk95UZesudLaDQpQFjx3+D8nzJ4YiwKBgQCSlmrr\nGUM/p1FbnSwWstctczcW1M0P93a7SSxlyIDe72TxmjA1lHGEE3sZr0iwdEZXOtFx\njbCtY7noaU19eeSgxwJjNeMQtAfQrwRsyQwsrtIPR6Mm1gApM0eoyDH+7olRtZEX\nUOvMrnvo5FwDVO15b6bCa9UtKUkHtpZUNLf3awKBgGRvVRGTkbtSH7GBAW3+Ni2X\nrU9YU84Sv3kZK2+9kQWhLhPUXPDAb/kwLKYSmLJylFwSEKA0U0sIE3cSH6T9Z/eK\nzQZLOzXW5vhbLq2GcfeAHwSdF4Wc3qmJirpgATDm29yHUs8aOuvHypCJEY+T/fHg\nbWiwNEhaZUbYWLtnHsNHAoGARbWedtr2rgilmgmuc8Tsq0KFSig8tIEcR4hOwsCM\n+Hej63lFv9Ut/n89JUPEL5W79bOU8olNIcexGyMopKkY3pSFQCTaLJFQvh7c3dbm\nIUGpx3Zr0gYm4XDvfQZnMDLDvsW3j/z9hcLcTi56y2LR49QC26ZoJCfkAPUFnFnN\nuq0CgYBuH8wVI62GWQITMwiCePOrXxDKPcD7isize5vDnXyYlhtVHdf9MiHIryqy\n0LLJC9EGlbQVoTti1djUD5jFG+rw79CEy/UJpnnqaEXhinJLmgXzLe2oxcLsg7f3\n/n1nryTv7s0dYbztRWoG+NHqOhDCrajMa7iOSrLVf53QZpPXCA==\n-----END RSA PRIVATE KEY-----",
                     'public_key' => "-----BEGIN PUBLIC KEY-----\nMIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQB55lfJiCvYt8754qQ0lQP6\n7mJuT+CziOD4znJqqNXZYp+9ANSwFOb2zkMEcmwWCaWHc6Nf7AlTCaHhFK6VV7wp\n9Hpn1ifIShrPiMhpaTldvyUFJI+t1y8QLPncvEHgJClKRzQUwsRzt8zB1h6Is7r6\nqnrOvSq1li4QTo4OVKKrJ8Ge3l5VFo8iYx1XQYYLuw4QuhEdUTL8w6x0HMjZv8qq\nWOCT71YvdrV6sz8ip8ksJ3hO07NLEhtXBcO9Q4ll9+1UkoyaQUdenBbjSaYC+L4F\nPh8BK9Zbiv6SLNeW6o2SU5NTUz8A9NzmhHg4rg83KJAZd6byNFHq9+rIrarXH18Z\nAgMBAAE=\n-----END PUBLIC KEY-----",
-                    'sandbox_client_id' => '1619065365617468809',
-                    'sandbox_client_secret' => 'PNvjbdlJbDYBdSjaqlQnFmcflhKhoyPA',
-                    'sandbox_private_key' => "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA0+arynT0zd+nFoWn2Ns42AkwFCyrwSMD/2TMrsym/LyKYDee\nlOVSvs8zjECEB4jH3/4dbuSbiJCetV3DEWI4XI/PlrvOGkhtq3qI7RTa141UP6cH\nISoUdumZ0sibvEA5ujORv3EH+XhyD5cj3XRvf6uI7Egbdj8k5ouTode61X4CuQ1D\nOee1hGFw1kYV4FRccDRCnG9cpNDfZO3DEJRYG+o/bwSUjPJJLwiY2bzismqc/Mnq\nXk5z0aFwIDX3Az0RgMKJWlZQFz9YlzN8sDW4ggFwEb8AIn7GPyhkPE08ojtbs+9f\n1vMNawxSabL8eZyjq801/w93gWIYF/fr6tuRzQIDAQABAoIBAQDB30WECXfFOIBO\nSeDktsYOWnGjs689GMVakKX4tAOALxxHpfuwbRREwZx/ELP7lLiShpP1VrG6w96B\nP5TuvbelcGpUleWfBG9audS3XSJQntzbE/2g6TgqB9aWFLbwCK8IXpBV4JuUMw/g\nlb7ZqeMtowq2a868ZE9lo4RiSdeF5YbZD6Y9glL7A+KPugtLbvBk3lPbHQXUhLiR\nFj20ie7eiNN6mQpDJOXkIiRGb7g6T+3zc5c7C9h+1SBBUf35TKwqiHms4slNrydp\no71+F14YLikGiZG4iblpsnNE3vStVOlEdkCPnyY2nNALBefGOPrtzj4BAK0Z3TVP\ne43AWBBdAoGBAPWzQjNvrf68Tk2Tp+rQjNMtS/XFPmP1zv/CbIsKWIAldoYuGiCu\nSBvDmNI8dxXAwqie+OQZMZJCKOa0OngxvPAGmpzWjaBPGDcXq3oV6yj4nSWY4akE\nrRvOR6EtW4HeYCSvMKxeudfktUMqv/KMyie/gz0h35xJfeSiv+RfTuOLAoGBANzI\nsgQOjRpGcTiQ/3kUUjVYpyMIRw/PEp9KdPZQdr0ixBDhzro6ud4SbEKlz8KuGrLu\nbtiEEu5U6sUFdHkYl63Udd/c5eShmiQCbW2VM+KIRI89xvrpxLIHuxJLJ71rX7bo\nd1iEq43RXerxi2uXoGTzNpgMkhDbdxg8vBdB0SsHAoGAGtm+MFTSFPaLMBskzJqB\n6UoX9QHbMZ1ZQ8YBiqhUx5xQeZVsMYoaQz564u7MrMnl+/tzg6nlKvCj+6JSiXQW\nC70NBHrF+3DpWovxp2Ph0RZqRgORFaF3MYS3ezuztluQ8jFbBltLv/Y0gOSZGW6d\nYP6i3vlmsHOvmF7YzaJEwsUCgYEAvOlMyIPa4Dyd7BTFQ8jLfrHYcPVIOJKqEHoZ\nEhlPQA5bTUapKFfPaeDBmVVfK+jlF21EkyaPPDaUmvhL7MHKJwa/xUixvKs5xM3+\n6+DagF6wqw/lDhSwJNTQkJqV6lHRmCPY2njKgZI/liQPc4RNzZL9h6RZ5uqiQK7X\nEd9TJkkCgYAGWwy5oUjXH+0YV/f594NFRVrTjx7+hwPkigcbL7k5wA2ZRyEKOmrQ\nFYs9TLfy+xe/RftCR7x8dmT151zBtUqwtoddr9aCROqUt2mxdakqLmGHTNCzkUn9\n2k81jawEKiBUV4uarvN/52P1ce5FuxUSNTT5zDcWMcQ9VRr9tSZk4Q==\n-----END RSA PRIVATE KEY-----",
+                    'sandbox_client_id' => '1646986767133732634',
+                    'sandbox_client_secret' => 'enrtynTbaeHaIDGHuwrAzgfbajOhdpao',
+                    'sandbox_private_key' => "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAr1hCHibgASD7iGqA52Y3sDoHqrj+avOwwsxjXGaxozjaX9Yt\nP3JB8RKdZDLdxvkVxF2heZ0RAkASaqTSya437GKxH08JWU597m8hkFRl93nJ0BD9\nH3xb6GeRCtEjRXQJDXy0Wz4L8YUHCtAEqe9vmdb+emQZcpyfGG9oU2iUjYl+zCeb\nLdB/AdqgNW/KJOQqnD/xKuQEQs8Tgqiia1kQLRsMa1YeP3KXigrEsJvF8gWpeUM4\nYnJcsu4zm+NoGctQFSISVvcuA3jQ+DdPADCXwbBrcWgv5+5i18EMvaVduNQFlLQx\nCouCITNtpYdRyN7g4z2Au6PwR+KM5bkgF+Xh0QIDAQABAoIBAAkMbu0LaIfmYdSa\nWmiWl80aUYb34Pk39ik3TvFXw1b++hX0AYXCqbB9G24uSc+YzwzBIDIcbuJE2C50\nrwQFX5FtTmKlO4BGUq1ZQswl7tUkjcuU9NsJGd0Wax+5xy4wXL87bjs/KnKeQMzI\nC1WRq5quw5chT0bg2jzyktmrDe930Ob1pDPZeThgCJ9c0QxDpp8qXv2NgMeqNaHi\nkfU74yxB7CPoVFoDZRP1AbgbW3v1x7wkFXznoAVmDSzrh+Urx5gfzRsmISlLTRju\np/2cln6K2/4WO23Wif3gEkjX+q0BZaq+4FPfQzvG26EmgJOr9s4zEbEqmJW7BIXz\nQrxYeRkCgYEA8uaIjruLKACI+S7DLy+5lItiXOdfo3zAFR7Yr19omgJ0ar0z3bgd\nfMJ+7CiIAfMmFBKdK7w59ULt71zhBvIfxgdBu9MVw5YjnD7/HKbkfEUCd1Iw/iKE\nrqoC5+cmBeuXllfYX++Sc9eiTUgjUaTBosovAbqCbWCggHfvTTjs1AcCgYEAuM0O\nFKjyct9QECLgC/bHW97U8Cm+VckC74vqTZevB8rjw001dX01Ya3NuZBSeM57/gRp\nEUR9XiAP0PcLtDb8LAxoft1CIVl3PS8E9QQFZn2jA1c2eV+HsR6ZWBb4MDbmi7At\nLukLl9JqkSZGWUvjhudpCQ3Tab94+9qnaAUIFWcCgYAUi0kLgXNAm+L56GmbyRaS\nKMPWBb/CDSAV6Tj8hD5NoF2GVaBYZWUhEzY29Sqjt5QF6JkghNgGFXYYY6uosbvc\nPOrjXvQdScqTQYTEQJ1coV2XB/2a0QKV301FnfhKUeXNUnq7ioDBiYBxtuM92YiD\nI0ScidDUPXL1yq8TwffN6wKBgGSvA67p5T4EwOApwBuEllVNcIJwm8ytObY9aqhf\nrfL27WSomimqz/yp7t3c7bH3/cIFsSDBSfSQT02wa2YCVx3AnOYRskftMHPbPD4p\ntK+EX94gFAPIsmsjmrRNv2a1YqJUmClouvI6p+jxC373Q71qMuXF7Js+wLGnDXI0\n25SdAoGAVeBSu4VrcaDnw+s7eM0reTBfcxNIIC6KaGQEARdAeLTXRPVgsFTdcM7M\nbqm5FUXYU1hoCvR8wXDx095HYrE1Iy72hjs+QfZy/Xj2cfGa3DbdbNXBVL7kEFDc\nN2Xo6rhv7iL0jVfddpzEIHdNYZNGXb86xgF/xl3d5ZMoO11FSu8=\n-----END RSA PRIVATE KEY-----",
                     'sandbox_store_id' => '1619057604454175171'
                 ],
             ],
@@ -567,6 +576,12 @@ return [
                 '3' => 'refunded',
             ]
 
+        ],
+        'area' => [
+            'name' => 'area'
+        ],
+        'epks' => [
+            'name' => 'epks',
         ]
     ],
     'third_party' => [
@@ -898,5 +913,8 @@ return [
             'Agent',
             'Others'
         ],
+    ],
+    'file_directory' => [
+        'epks' => 'uploads/epks'
     ]
 ];
