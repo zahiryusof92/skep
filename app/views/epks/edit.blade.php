@@ -103,7 +103,7 @@
                                                 <div class="form-group">
                                                     <label class="form-control-label"><span style="color: red;">*</span> {{ trans('app.forms.location') }}</label>
                                                     <input type="text" class="form-control" name="place_proposal[][location]" id="place_proposal.{{ $key }}.location" value="{{ $place_proposal->location }}">
-                                                    @include('alert.feedback-ajax', ['field' => "place_proposal.{{ $key }}.location"])
+                                                    @include('alert.feedback-ajax', ['field' => "place_proposal.$key.location"])
                                                 </div>
                                             </div>
                                         </div>
@@ -200,7 +200,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-2 margin-top-35">
-                                                    <button class="remove-item btn btn-danger btn-xs">{{ trans('app.forms.remove') }}</button>
+                                                    <button class="remove-item-lakaran btn btn-danger btn-xs">{{ trans('app.forms.remove') }}</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -267,7 +267,6 @@
             maxLimit: 0, // Default unlimited or set maximum limit of clone HTML
             defaultRender: 1, // Number of clone items rendered by default,
             afterRender:function(e) {
-                console.log('aa')
                 let current_length = $('#main-container').find('.container-item').length;
                 $("#place_proposal\\." + (current_length-1) + "\\.filename_download").html('<input type="file" class="form-control" name="place_proposal[][filename]" id="place_proposal.' + (current_length-1) + '.filename" onChange="onUpload(this)">');
             }
@@ -283,7 +282,6 @@
             maxLimit: 0, // Default unlimited or set maximum limit of clone HTML
             defaultRender: 1, // Number of clone items rendered by default,
             afterRender:function(e) {
-                console.log('bb')
                 let current_length = $('#main-container-lakaran').find('.container-item-lakaran').length;
                 $("#sketch_proposal\\." + (current_length-1) + "\\.filename_download").html('<input type="file" class="form-control" name="sketch_proposal[][filename]" id="sketch_proposal.' + (current_length-1) + '.filename" onChange="onUpload(this)">');
             }
