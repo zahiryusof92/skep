@@ -39,7 +39,7 @@
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">                                    
                                         <div class="col-lg-12">
-                                            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
+                                            <h6><u>{{ trans("app.forms.before_change") }}</u></h6>
                                             <h4>{{ trans('app.forms.detail') }} <span class="label label-danger">{{ trans('app.forms.draft') }}</span></h4>
                                             <form id="management_draft">
                                                 @if ($management->draft->developer)
@@ -715,7 +715,7 @@
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">                                    
                                         <div class="col-lg-12">
-                                            <h6><u>{{ trans("app.forms.before_change") }}</u></h6>
+                                            <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
                                             <h4>{{ trans('app.forms.detail') }}</h4>
                                             <form id="management">
                                                 @if ($management->developer)

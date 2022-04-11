@@ -491,7 +491,7 @@ nav.left-menu .left-menu-list li .left-menu-link:hover {
 }
 
 nav.left-menu .left-menu-list li .left-menu-link:hover .left-menu-link-icon {
-    color: #827ca1;
+    color: #827ca1 !important;
 }
 
 nav.left-menu .left-menu-list li .left-menu-link:hover img.left-menu-link-icon {

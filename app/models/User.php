@@ -4,6 +4,7 @@ use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
@@ -68,6 +69,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
     public function getCOB() {
         return $this->belongsTo('Company', 'company_id');
+    }
+
+    public function scopeActive(Builder $builder) {
+        $builder = $builder
+                    ->where('is_active', true)
+                    ->where('is_deleted', false)
+                    ->where('status', true);
+        return $builder;
     }
 
     public function isSuperadmin() {

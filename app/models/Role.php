@@ -1,10 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 class Role extends Eloquent {
 
     protected $table = 'role';
 
     const SUPERADMIN = 'SUPERADMIN';
+    const ADMINISTRATOR = 'ADMINISTRATOR';
     const COB_MANAGER = 'COB MANAGER';
     const COB = 'COB';
     const JMB = 'JMB';
@@ -18,4 +22,13 @@ class Role extends Eloquent {
     const MPS = 'MPS';
     const PRE_SALE = 'PRE-SALE';
 
+    public function scopeSelf($query) {
+        if (!Auth::user()->getAdmin() && !Auth::user()->isCOBManager()) {
+            $query = $query->where('id', Auth::user()->role);
+        }
+        if(!Auth::user()->getAdmin()) {
+            $query = $query->whereNotIn('name', [Role::SUPERADMIN, Role::ADMINISTRATOR]);
+        }
+        return $query->where('is_active', true)->where('is_deleted', false);
+    }
 }

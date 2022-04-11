@@ -2,10 +2,14 @@
 
 use Carbon\Carbon;
 use Helper\Helper;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use yajra\Datatables\Facades\Datatables;
 
 class ReportController extends BaseController {
 
@@ -22,6 +26,108 @@ class ReportController extends BaseController {
         );
 
         return View::make('report_en.audit_trail', $viewData);
+    }
+    public function auditTrailNew() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
+        // $module_options = AuditTrail::self()->getModuleOptions();
+        // $council_options = Company::self()->get();
+
+        if(Request::ajax()) {
+            $request = Request::all();
+            $data = AuditTrail::getAnalyticData($request);
+            if(!empty($request['filter'])) {
+                return Response::json([
+                    'data' => $data, 
+                    'success' => true, 
+                ]);
+            } else {
+                $models = AuditTrail::self()
+                ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no']);
+                
+                return Datatables::of($models)
+                            ->editColumn('company_id', function($model) {
+                                if($model->company_id > 0) {
+                                    return $model->company;
+                                }
+                                return Str::upper($model->user->getCOB->short_name);
+                            })
+                            ->editColumn('file_id', function($model) {
+                                if($model->file_id > 0) {
+                                    return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
+                                }
+                                if($model->user->isJMB()) {
+                                    if(empty($model->user->getFile)) {
+                                        return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
+                                    }
+                                }
+                                return '-';
+                            })
+                            ->editColumn('remarks', function($model) {
+                                if(is_array($model->remarks)) {
+
+                                }
+                                return $model->remarks;
+                            })
+                            ->editColumn('audit_by', function($model) {
+                                return $model->user->full_name;
+                            })
+                            ->editColumn('role_name', function($model) {
+                                return ($model->user->getAdmin())? trans('System Administrator') : Str::upper($model->role_name);
+                            })
+                            ->editColumn('created_at', function($model) {
+                                return date('d-m-Y H:i A', strtotime($model->created_at));
+                            })
+                            // ->addColumn('strata_name', function($model) {
+                            //     if($model->file_id > 0) {
+                            //         return $model->strata_name;
+                            //     }
+                            //     return Auth::user()->getFile->strata->name;
+                            // })
+                            ->filter(function($query) use($request) {
+                                if(!empty($request['company_id'])) {
+                                    $query->where('users.company_id', $request['company_id']);
+                                }
+                                if(!empty($request['role_id'])) {
+                                    $query->where('users.role', $request['role_id']);
+                                }
+                                if(!empty($request['module'])) {
+                                    $query->where('audit_trail.module', $request['module']);
+                                }
+                                if(!empty($request['file_id'])) {
+                                    $query->where('users.file_id', $request['file_id']);
+                                }
+                                // if(!empty($request['strata'])) {
+                                //     $query->where('strata.id', $request['strata']);
+                                // }
+                                if(!empty($request['date_from']) && empty($request['date_to'])) {
+                                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                                    $query->where('audit_trail.created_at', '>=', $date_from);
+                                }
+                                if(!empty($request['date_to']) && empty($request['date_from'])) {
+                                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                                    $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                                }
+                                if(!empty($request['date_from']) && !empty($request['date_to'])) {
+                                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                                    $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                                }
+                            })
+                            ->make(true);
+            }
+        }
+        $data = AuditTrail::getAnalyticData();
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.audit_trail_report'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'audit_trail_list',
+            'data' => $data, 
+            'image' => ""
+        );
+
+        return View::make('report_en.audit_trail_new', $viewData);
     }
 
     public function getAuditTrail() {
@@ -2058,6 +2164,33 @@ class ReportController extends BaseController {
         );
 
         return View::make('report_en.land_title', $viewData);
+    }
+
+    public function epks() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(64));
+
+        if(Request::ajax()) {
+            $request = Request::all();
+            $data = Epks::getAnalyticData($request);
+            if(!empty($request['filter'])) {
+                return Response::json([
+                    'data' => $data, 
+                    'success' => true, 
+                ]);
+            }
+        }
+        $data = Epks::getAnalyticData();
+        
+        $viewData = array(
+            'title' => trans('app.menus.reporting.epks'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'epks_report_list',
+            'data' => $data,
+            'image' => ''
+        );
+
+        return View::make('report_en.epks', $viewData);
     }
 
 }
