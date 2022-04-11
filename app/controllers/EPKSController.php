@@ -494,25 +494,27 @@ class EPKSController extends \BaseController {
                 /**
                  * Send an email to JMB / MC and copy to COB
                  */
-                $delay = 0;
-                $incrementDelay = 2;
-                if(!empty($model->user->email)) {
-                    Mail::later(Carbon::now()->addSeconds($delay), 'emails.epks.new_application', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
-                    {
-                        $message->to($model->user->email, $model->user->full_name)->subject('New Application for e-Pusat Kitar Strata');
-                    });
-                }
-                if($model->user->isJMB() || $model->user->isMC()) {
-                    // $role = array_pluck(Role::where('name', 'like', "%". Role::COB ."%")->get(), 'id');
-                    // $getCOB = User::active()->where('company_id', $model->user->company_id)->whereIn('role', $role)->->get();
-                    // foreach($getCOB as $cob) {
-                    //     if(!empty($cob->email)) {
-                            Mail::later(Carbon::now()->addSeconds($delay), 'emails.epks.new_application_cob', array('model' => $model, 'date' => $model->created_at->toDayDateTimeString(), 'status' => $model->getStatusText()), function($message)
-                            {
-                                $message->to('cob@mps.gov.my', 'COB')->subject('New Application for e-Pusat Kitar Strata');
-                            });
-                    //     }
-                    // }
+                if(Config::get('mail.driver') != '') {
+                    $delay = 0;
+                    $incrementDelay = 2;
+                    if(!empty($model->user->email)) {
+                        Mail::later(Carbon::now()->addSeconds($delay), 'emails.epks.new_application', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
+                        {
+                            $message->to($model->user->email, $model->user->full_name)->subject('New Application for e-Pusat Kitar Strata');
+                        });
+                    }
+                    if($model->user->isJMB() || $model->user->isMC()) {
+                        // $role = array_pluck(Role::where('name', 'like', "%". Role::COB ."%")->get(), 'id');
+                        // $getCOB = User::active()->where('company_id', $model->user->company_id)->whereIn('role', $role)->->get();
+                        // foreach($getCOB as $cob) {
+                        //     if(!empty($cob->email)) {
+                                Mail::later(Carbon::now()->addSeconds($delay), 'emails.epks.new_application_cob', array('model' => $model, 'date' => $model->created_at->toDayDateTimeString(), 'status' => $model->getStatusText()), function($message)
+                                {
+                                    $message->to('cob@mps.gov.my', 'COB')->subject('New Application for e-Pusat Kitar Strata');
+                                });
+                        //     }
+                        // }
+                    }
                 }
                 /**
                  * Testing send mail
@@ -598,16 +600,18 @@ class EPKSController extends \BaseController {
                 /**
                  * If status rejected or success send an email to JMB / MC
                  */
-                if(in_array($model->status, [Epks::PENDING, Epks::INPROGRESS, Epks::APPROVED, Epks::REJECTED])) {
-                    Mail::queueOn('application-update', 'emails.epks.status_update', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
-                    {
-                        $message->to($model->user->email, $model->user->full_name)->subject("Your Application e-Pusat Kitar Strata has been ". $model->getStatusText());
-                    });
-                    /** Testing send mail */
-                    // Mail::queueOn('application-update', 'emails.epks.status_update', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
-                    // {
-                    //     $message->to("patrick@odesi.tech", "Patrick Wan")->subject("Your Application e-Pusat Kitar Strata has been ". $model->getStatusText());
-                    // });
+                if(Config::get('mail.driver') != '') {
+                    if(in_array($model->status, [Epks::PENDING, Epks::INPROGRESS, Epks::APPROVED, Epks::REJECTED])) {
+                        Mail::queueOn('application-update', 'emails.epks.status_update', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
+                        {
+                            $message->to($model->user->email, $model->user->full_name)->subject("Your Application e-Pusat Kitar Strata has been ". $model->getStatusText());
+                        });
+                        /** Testing send mail */
+                        // Mail::queueOn('application-update', 'emails.epks.status_update', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
+                        // {
+                        //     $message->to("patrick@odesi.tech", "Patrick Wan")->subject("Your Application e-Pusat Kitar Strata has been ". $model->getStatusText());
+                        // });
+                    }
                 }
 
                 /*
