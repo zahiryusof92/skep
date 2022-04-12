@@ -1,8 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use Helper\Helper;
 use Helper\KCurl;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -32,7 +33,7 @@ class ImportController extends BaseController {
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['file']['cob']['buyer']['import'];
             $data['import_file'] = curl_file_create($_FILES['import_file']['tmp_name'], $_FILES['import_file']['type'], $_FILES['import_file']['name']);
-            $data['file_id'] = Input::get('file_id');
+            $data['file_id'] = Helper::decode(Input::get('file_id'));
 
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
             //                         $url,
@@ -41,7 +42,7 @@ class ImportController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
             
                 $excel = Input::file('import_file');
-                $file_id = Input::get('file_id');
+                $file_id = Helper::decode(Input::get('file_id'));
     
                 if ($excel && $file_id) {
     
@@ -146,12 +147,8 @@ class ImportController extends BaseController {
                             }
     
                             # Audit Trail
-                            $remarks = 'COB Buyer List (' . $file->file_no . ') has been inserted.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "COB File";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
+                            $remarks = 'COB Buyer List (' . $file->file_no . ')' . $this->module['audit']['text']['data_imported'];
+                            $this->addAudit(Auth::user()->file_id, "COB File", $remarks);
     
                             print "true";
                         } else {
@@ -278,12 +275,8 @@ class ImportController extends BaseController {
                         }
 
                         # Audit Trail
-                        $remarks = 'COB Tenant List (' . $file->file_no . ') has been inserted.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB File";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        $remarks = 'COB Tenant List (' . $file->file_no . ')' . $this->module['audit']['text']['data_imported'];
+                        $this->addAudit(Auth::user()->file_id, "COB File", $remarks);
 
                         print "true";
                     } else {
@@ -3496,12 +3489,8 @@ class ImportController extends BaseController {
                         }
 
                         # Audit Trail
-                        $remarks = $finance_file->file->file_no . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB Finance";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        $remarks = $finance_file->file->file_no . " finance data". $this->module['audit']['text']['data_imported'];
+                        $this->addAudit(Auth::user()->file_id, "COB Finance", $remarks);
 
                         print "true";
                     } else {
