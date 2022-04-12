@@ -18,11 +18,50 @@
     <!--<![endif]-->
     <title>@yield('Title')</title>
     <!--[if !mso]><!-->
-    <link href="{{ asset('assets/common/css/source/mail/style.css')}}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" type="text/css">
     <!--<![endif]-->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
 
+        table,
+        tr,
+        td {
+            vertical-align: top;
+            border-collapse: collapse;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .ie-container table,
+        .mso-container table {
+            table-layout: fixed;
+        }
+
+        * {
+            line-height: inherit;
+        }
+
+        a[x-apple-data-detectors='true'] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        table,
+        td {
+            color: #000000;
+        }
+
+        a {
+            color: #0000ee;
+            text-decoration: underline;
+        }
+        </style>
 </head>
 
 <body class="clean-body u_body" style="margin: 0;padding: 0;-webkit-text-size-adjust: 100%;background-color: #ecf0f1;color: #000000">
@@ -55,10 +94,10 @@
                                                             <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;" align="center">
-                                                                        <a href="https://unlayer.com/" target="_blank">
-                                                                            <img align="center" border="0" src="{{ asset('assets/common/img/odesi/logo_light.png') }}" alt="Logo" title="Logo" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 21%;max-width: 121.8px;"
+                                                                        {{-- <a href="{{ asset('assets/common/img/odesi/logo_light.png') }}" target="_blank"> --}}
+                                                                            <img align="center" border="0" src="{{ $message->embed('assets/common/img/odesi/logo_light.png') }}" alt="Logo" title="Logo" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 21%;max-width: 121.8px;"
                                                                                 width="121.8" class="v-src-width v-src-max-width" />
-                                                                        </a>
+                                                                        {{-- </a> --}}
                                                                     </td>
                                                                 </tr>
                                                             </table>
