@@ -458,13 +458,6 @@ if (!Auth::user()->getAdmin()) {
                 </a>
                 <ul class="left-menu-list list-unstyled" id="reporting_main">
 
-                    @if (AccessGroup::hasAccess(24))
-                    <li id="new_audit_trail_list">
-                        <a class="left-menu-link" href="{{ route('reporting.log.index') }}">
-                            New {{ trans('app.menus.reporting.audit_trail') }}
-                        </a>
-                    </li>
-                    @endif
 
                     @if (AccessGroup::hasAccess(24))
                     <li id="audit_trail_list">
