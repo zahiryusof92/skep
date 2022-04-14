@@ -88,6 +88,14 @@ class Strata extends Eloquent {
         return $this->hasOne('Commercial', 'strata_id')->latest();
     }
     
+    public function residentialExtra() {
+        return $this->hasMany('ResidentialExtra', 'strata_id');
+    }
+    
+    public function commercialExtra() {
+        return $this->hasMany('CommercialExtra', 'strata_id');
+    }
+    
     public function facility() {
         return $this->hasOne('Facility', 'strata_id');
     }

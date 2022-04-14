@@ -31,42 +31,56 @@ foreach ($user_permission as $permission) {
             <div class="widget widget-four background-transparent">
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="step-block">
-                            <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/strata.png')}}"/>
-                            </span>
-                            <div class="step-desc">
-                                <span class="step-title">Strata</span>
-                                <p>{{ $data['total_strata'] }}</p>
+                        <a href="{{ route('cob.file.index') }}">
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <img src="{{asset('assets/common/img/icon/strata.png')}}"/>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">Strata</span>
+                                    <p>{{ $data['total_strata'] }}</p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="step-block">
-                            <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/hirechy.png')}}"/>
-                            </span>
-                            <div class="step-desc">
-                                <span class="step-title">JMB</span>
-                                <p>
-                                    {{ $data['total_jmb'] }}
-                                </p>
+                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                        <a href="{{ route('report.generate.index',['management' => 'jmb']) }}">
+                        @endif
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <img src="{{asset('assets/common/img/icon/hirechy.png')}}"/>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">JMB</span>
+                                    <p>
+                                        {{ $data['total_jmb'] }}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                        </a>
+                        @endif
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="step-block">
-                            <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/profile.png')}}"/>
-                            </span>
-                            <div class="step-desc">
-                                <span class="step-title">MC</span>
-                                <p>
-                                    {{ $data['total_mc'] }}
-                                </p>
+                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                        <a href="{{ route('report.generate.index',['management' => 'mc']) }}">
+                        @endif
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <img src="{{asset('assets/common/img/icon/profile.png')}}"/>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">MC</span>
+                                    <p>
+                                        {{ $data['total_mc'] }}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                        </a>
+                        @endif
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         <div class="step-block">

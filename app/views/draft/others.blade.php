@@ -48,7 +48,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.name') }}</label>
+                                                                    <label>{{ trans('app.forms.name') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->name, 'new_field' => $other_details->draft->name])
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{($other_details->draft ? $other_details->draft->name : '')}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -56,7 +57,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.photo') }}</label>
+                                                                    <label>{{ trans('app.forms.photo') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->image_url, 'new_field' => $other_details->draft->image_url])
                                                                     <br/>
                                                                     @if ($other_details->draft && $other_details->draft->image_url != "")
                                                                     <a href="{{asset($other_details->draft->image_url)}}" target="_blank"><img src="{{asset($other_details->draft->image_url)}}" style="width:50%; cursor: pointer;"/></a>
@@ -69,7 +71,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.latitude') }} </label>
+                                                                    <label>{{ trans('app.forms.latitude') }}  </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->latitude, 'new_field' => $other_details->draft->latitude])
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.latitude') }}" value="{{$other_details->draft->latitude}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -77,7 +80,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.longitude') }} </label>
+                                                                    <label>{{ trans('app.forms.longitude') }}  </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->longitude, 'new_field' => $other_details->draft->longitude])
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.longitude') }}" value="{{$other_details->draft->longitude}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -98,7 +102,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.description') }}</label>
+                                                                    <label>{{ trans('app.forms.description') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->description, 'new_field' => $other_details->draft->description])
                                                                     <textarea class="form-control" rows="4" placeholder="{{ trans('app.forms.description') }}" readonly="">{{($other_details->draft ? $other_details->draft->description : '')}}</textarea>
                                                                 </div>
                                                             </div>
@@ -108,7 +113,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.pms_system') }}</label>
+                                                                    <label>{{ trans('app.forms.pms_system') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->pms_system, 'new_field' => $other_details->draft->pms_system])
                                                                     <input type="text" class="form-control" placeholder="{{ trans('app.forms.pms_system') }}" value="{{($other_details->draft ? $other_details->draft->pms_system : '')}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -116,7 +122,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.owner_occupied') }}</label>
+                                                                    <label>{{ trans('app.forms.owner_occupied') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->owner_occupied, 'new_field' => $other_details->draft->owner_occupied])
                                                                     <select class="form-control" disabled="">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="1" {{ ($other_details->draft && $other_details->draft->owner_occupied == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
@@ -128,7 +135,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.rented') }}</label>
+                                                                    <label>{{ trans('app.forms.rented') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->rented, 'new_field' => $other_details->draft->rented])
                                                                     <select class="form-control" disabled="">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="1" {{ ($other_details->draft && $other_details->draft->rented == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
@@ -140,7 +148,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.lphs_donation') }}</label>
+                                                                    <label>{{ trans('app.forms.lphs_donation') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->bantuan_lphs, 'new_field' => $other_details->draft->bantuan_lphs])
                                                                     <select class="form-control" disabled="">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="1" {{ ($other_details->draft && $other_details->draft->bantuan_lphs == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
@@ -152,7 +161,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.other_donation') }}</label>
+                                                                    <label>{{ trans('app.forms.other_donation') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->bantuan_others, 'new_field' => $other_details->draft->bantuan_others])
                                                                     <select class="form-control" disabled="">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="1" {{ ($other_details->draft && $other_details->draft->bantuan_others == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
@@ -164,7 +174,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.rumah_selangorku') }}</label>
+                                                                    <label>{{ trans('app.forms.rumah_selangorku') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->rsku, 'new_field' => $other_details->draft->rsku])
                                                                     <select class="form-control select2" disabled="">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="none" {{ ($other_details->draft && $other_details->draft->rsku == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
@@ -181,7 +192,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.water_meter') }}</label>
+                                                                    <label>{{ trans('app.forms.water_meter') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->water_meter, 'new_field' => $other_details->draft->water_meter])
                                                                     <select class="form-control select2" disabled="">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                         <option value="none" {{ ($other_details->draft && $other_details->draft->water_meter == 'none' ? " selected" : "") }}>- {{ trans('app.forms.none') }} -</option>
@@ -191,10 +203,12 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @if(str_contains(Request::url(), 'https://ecob.mps.gov.my/'))
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.tnb') }}</label>
+                                                                    <label>{{ trans('app.forms.tnb') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->tnb, 'new_field' => $other_details->draft->tnb])
                                                                     <select id="tnb" class="form-control select2" disabled="">
                                                                         @foreach ($tnbLists as $key => $val)
                                                                             <option value="{{ $key }}" {{ ($other_details && $other_details->tnb == $key ? "selected" : "") }}>{{ $val }}</option>
@@ -203,10 +217,12 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @endif
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.malay_composition') }}</label>
+                                                                    <label>{{ trans('app.forms.malay_composition') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->malay_composition, 'new_field' => $other_details->draft->malay_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" value="{{$other_details->draft ? $other_details->draft->malay_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -214,7 +230,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.chinese_composition') }}</label>
+                                                                    <label>{{ trans('app.forms.chinese_composition') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->chinese_composition, 'new_field' => $other_details->draft->chinese_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.chinese_composition') }}" value="{{$other_details->draft ? $other_details->draft->chinese_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -222,7 +239,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.indian_composition') }}</label>
+                                                                    <label>{{ trans('app.forms.indian_composition') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->indian_composition, 'new_field' => $other_details->draft->indian_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.indian_composition') }}" value="{{$other_details->draft ? $other_details->draft->indian_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -230,7 +248,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.others_composition') }}</label>
+                                                                    <label>{{ trans('app.forms.others_composition') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->others_composition, 'new_field' => $other_details->draft->others_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.others_composition') }}" value="{{$other_details->draft ? $other_details->draft->others_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -238,7 +257,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label>{{ trans('app.forms.foreigner_composition') }}</label>
+                                                                    <label>{{ trans('app.forms.foreigner_composition') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->foreigner_composition, 'new_field' => $other_details->draft->foreigner_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.foreigner_composition') }}" value="{{$other_details->draft ? $other_details->draft->foreigner_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>

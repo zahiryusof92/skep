@@ -1,6 +1,8 @@
 <?php
 
 use Helper\Helper;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\View;
 
 class PrintController extends BaseController {
 
@@ -1387,6 +1389,30 @@ class PrintController extends BaseController {
         );
 
         return View::make('print_en.finance_support', $viewData);
+
+    }
+
+    public function epks() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(64));
+        $request = Input::all();
+        if(!empty($request['from'])) {
+            $request['date_from'] = $request['from'];
+        }
+        if(!empty($request['to'])) {
+            $request['date_to'] = $request['to'];
+        }
+        $data = Epks::getAnalyticData($request);
+        
+        $viewData = array(
+            'title' => trans('app.menus.reporting.epks'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'epks_report_list',
+            'data' => $data,
+            'image' => ''
+        );
+
+        return View::make('print_en.epks', $viewData);
 
     }
 

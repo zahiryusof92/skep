@@ -47,6 +47,7 @@
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.strata_title') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->title, 'new_field' => $strata->draft->title])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="1" {{($strata->draft->title == "1" ? " selected" : "")}}>{{ trans("app.forms.yes") }}</option>
                                                                 <option value="0" {{($strata->draft->title == "0" ? " selected" : "")}}>{{ trans("app.forms.no") }}</option>
@@ -58,6 +59,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.name') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->name, 'new_field' => $strata->draft->name])
                                                             <input type="text" class="form-control" value="{{$strata->draft->name}}" readonly="">
                                                         </div>
                                                     </div>
@@ -66,6 +68,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.parliament') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->parliament, 'new_field' => $strata->draft->parliament])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($parliament as $parliaments)
@@ -77,6 +80,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.dun') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->dun, 'new_field' => $strata->draft->dun])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($dun as $duns)
@@ -90,6 +94,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.park') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->park, 'new_field' => $strata->draft->park])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($park as $parks)
@@ -103,6 +108,7 @@
                                                     <div class="col-md-8">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.address') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->address1, 'new_field' => $strata->draft->address1])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.address1') }}" value="{{$strata->draft->address1}}" readonly="">
                                                         </div>
                                                     </div>
@@ -113,6 +119,7 @@
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$strata->draft->address2}}" readonly="">
                                                         </div>
                                                     </div>
+                                                    @include('components.is_changed', ['old_field' => $strata->address2, 'new_field' => $strata->draft->address2, 'class' => 'margin-top-5'])
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-8">
@@ -120,6 +127,7 @@
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$strata->draft->address3}}" readonly="">
                                                         </div>
                                                     </div>
+                                                    @include('components.is_changed', ['old_field' => $strata->address3, 'new_field' => $strata->draft->address3, 'class' => 'margin-top-5'])
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-8">
@@ -128,11 +136,13 @@
                                                             <div id="strata_address_error" style="display:none;"></div>
                                                         </div>
                                                     </div>
+                                                    @include('components.is_changed', ['old_field' => $strata->address4, 'new_field' => $strata->draft->address4, 'class' => 'margin-top-5'])
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->city, 'new_field' => $strata->draft->city])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
@@ -144,6 +154,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.postcode') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->poscode, 'new_field' => $strata->draft->poscode])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$strata->draft->poscode}}" readonly="">
                                                         </div>
                                                     </div>
@@ -152,6 +163,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.state') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->state, 'new_field' => $strata->draft->state])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($state as $states)
@@ -164,6 +176,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.country') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->country, 'new_field' => $strata->draft->country])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($country as $countries)
@@ -178,12 +191,14 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.number_of_block') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->block_no, 'new_field' => $strata->draft->block_no])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_block') }}" value="{{$strata->draft->block_no}}" readonly="">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.floor') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->total_floor, 'new_field' => $strata->draft->total_floor])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.floor') }}" id="strata_floor" value="{{$strata->draft->total_floor}}" readonly="">
                                                         </div>
                                                     </div>
@@ -192,12 +207,14 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.year') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->year, 'new_field' => $strata->draft->year])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.year') }}" value="{{$strata->draft->year}}" readonly="">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.ownership_number') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->ownership_no, 'new_field' => $strata->draft->ownership_no])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.ownership_number') }}" value="{{$strata->draft->ownership_no}}" readonly="">
                                                         </div>
                                                     </div>
@@ -206,6 +223,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.city_town_district') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->town, 'new_field' => $strata->draft->town])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($city as $cities)
@@ -217,6 +235,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.area') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->area, 'new_field' => $strata->draft->area])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($area as $areas)
@@ -230,6 +249,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.total_land_area') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->land_area, 'new_field' => $strata->draft->land_area])
                                                             <div class="form-inline">
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.total_land_area') }}" value="{{$strata->draft->land_area}}" readonly="">
                                                                 <select class="form-control" disabled="">
@@ -237,6 +257,7 @@
                                                                     <option value="{{$units->id}}" {{($strata->draft->land_area_unit == $units->id ? " selected" : "")}}>{{$units->description}} &nbsp;&nbsp;</option>
                                                                     @endforeach
                                                                 </select>
+                                                                @include('components.is_changed', ['old_field' => $strata->land_area_unit, 'new_field' => $strata->draft->land_area_unit])
                                                             </div>
                                                         </div>
                                                     </div>
@@ -245,6 +266,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.lot_number') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->lot_no, 'new_field' => $strata->draft->lot_no])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.lot_number') }}" value="{{$strata->draft->lot_no}}" readonly="">
                                                         </div>
                                                     </div>
@@ -253,6 +275,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans("app.forms.vacant_possession_date") }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->date, 'new_field' => $strata->draft->date])
                                                             <label class="input-group">
                                                                 <input type="text" class="form-control" placeholder="{{ trans("app.forms.vacant_possession_date") }}" value="{{ ($strata->draft->date != '0000-00-00' ? date('d-m-Y', strtotime($strata->draft->date)) : '') }}" readonly=""/>
                                                                 <span class="input-group-addon">
@@ -266,6 +289,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.land_title') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->land_title, 'new_field' => $strata->draft->land_title])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($land_title as $land_titles)
@@ -277,6 +301,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.category') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->category, 'new_field' => $strata->draft->category])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($category as $categories)
@@ -290,6 +315,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.perimeter') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->perimeter, 'new_field' => $strata->draft->perimeter])
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($perimeter as $perimeters)
@@ -301,6 +327,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.total_share_unit') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->total_share_unit, 'new_field' => $strata->draft->total_share_unit])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.total_share_unit') }}" value="{{$strata->draft->total_share_unit}}" readonly="">
                                                         </div>
                                                     </div>
@@ -309,12 +336,14 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.ccc_no') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->ccc_no, 'new_field' => $strata->draft->ccc_no])
                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.ccc_no') }}" value="{{$strata->draft->ccc_no}}" readonly="">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.date_ccc') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->ccc_date, 'new_field' => $strata->draft->ccc_date])
                                                             <label class="input-group">
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_ccc') }}" value="{{ ($strata->draft->ccc_date != '0000-00-00' ? date('d-m-Y', strtotime($strata->draft->ccc_date)) : '') }}" readonly=""/>
                                                                 <span class="input-group-addon">
@@ -328,6 +357,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.upload_file') }}</label>
+                                                            @include('components.is_changed', ['old_field' => $strata->file_url, 'new_field' => $strata->draft->file_url])
                                                             <br/>
                                                             @if ($strata->draft->file_url != "")                                                            
                                                             <a href="{{asset($strata->draft->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
@@ -338,17 +368,26 @@
                                                     </div>
                                                 </div>
                                                 <hr/>
+                                                @if((($strata->is_commercial != $strata->draft->is_commercial) && ($strata->draft->is_commercial == false)) || ($strata->is_residential != $strata->draft->is_residential) && ($strata->draft->is_residential == false))
+                                                    @include('components.is_changed', ['old_field' => $strata->is_commercial, 'new_field' => $strata->draft->is_commercial, 'text' => trans('app.forms.residential_or_commercial')])
+                                                    <hr />
+                                                @endif
                                                 @if ($strata->draft->residential)
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" name="residential" disabled="" {{($strata->draft->residential ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.residential_block') }}</h4></label>
+                                                        @include('components.is_changed', ['old_field' => $strata->is_residential, 'new_field' => $strata->draft->is_residential])
+                                                        @if(($strata->is_residential == $strata->draft->is_residential) && ($strata->residentialExtra->count() != $strata->draft->residentialExtra->count()))
+                                                            @include('components.is_changed', ['old_field' => $strata->residentialExtra->count(), 'new_field' => $strata->draft->residentialExtra->count()])
+                                                        @endif
                                                         <!-- residential Form -->
                                                         <div id="residential_form">
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $strata->residential? $strata->residential->unit_no : "", 'new_field' => $strata->draft->residential? $strata->draft->residential->unit_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" value="{{$strata->draft->residential->unit_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -357,8 +396,10 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.maintenance_fee') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $strata->residential? $strata->residential->maintenance_fee_option : "", 'new_field' => $strata->draft->residential? $strata->draft->residential->maintenance_fee_option : ""])
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" value="{{$strata->draft->residential->maintenance_fee}}" readonly="">
+                                                                            @include('components.is_changed', ['old_field' => $strata->residential? $strata->residential->maintenance_fee : "", 'new_field' => $strata->draft->residential? $strata->draft->residential->maintenance_fee : "", 'class' => 'margin-top-5'])
                                                                             <select class="form-control select2" disabled="">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($strata->draft->residential->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
@@ -372,8 +413,10 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $strata->residential? $strata->residential->sinking_fund_option : "", 'new_field' => $strata->draft->residential? $strata->draft->residential->sinking_fund_option : ""])
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" value="{{$strata->draft->residential->sinking_fund}}" readonly="">
+                                                                            @include('components.is_changed', ['old_field' => $strata->residential? $strata->residential->sinking_fund : "", 'new_field' => $strata->draft->residential? $strata->draft->residential->sinking_fund : "", 'class' => 'margin-top-5'])
                                                                             <select class="form-control select2" disabled="">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($strata->draft->residential->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
@@ -386,6 +429,55 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if($strata->draft->residentialExtra->count())
+                                                @foreach ($strata->draft->residentialExtra as $key => $residentialExtra)
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <!-- residential Form -->
+                                                            <div id="residential_form_{{ $key }}">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" value="{{$residentialExtra->unit_no}}" readonly="">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.maintenance_fee') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" value="{{$residentialExtra->maintenance_fee}}" readonly="">
+                                                                                <select class="form-control select2" disabled="">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($residentialExtra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" value="{{$residentialExtra->sinking_fund}}" readonly="">
+                                                                                <select class="form-control select2" disabled="">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($residentialExtra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                @endif
                                                 <hr/>
                                                 @endif
                                                 @if ($strata->draft->commercial)
@@ -393,12 +485,17 @@
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" name="commercial" id="commercial" {{($strata->draft->commercial ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
-                                                        <!-- residential Form -->
+                                                        @include('components.is_changed', ['old_field' => $strata->is_commercial, 'new_field' => $strata->draft->is_commercial])
+                                                        @if(($strata->is_commercial == $strata->draft->is_commercial) && ($strata->commercialExtra->count() != $strata->draft->commercialExtra->count()))
+                                                            @include('components.is_changed', ['old_field' => $strata->commercialExtra->count(), 'new_field' => $strata->draft->commercialExtra->count()])
+                                                        @endif
+                                                        <!-- commercial Form -->
                                                         <div id="commercial_form">
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $strata->commercial? $strata->commercial->unit_no : "", 'new_field' => $strata->draft->commercial? $strata->draft->commercial->unit_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" value="{{$strata->draft->commercial->unit_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -407,8 +504,10 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.commercial_fee') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $strata->commercial? $strata->commercial->maintenance_fee_option : "", 'new_field' => $strata->draft->commercial? $strata->draft->commercial->maintenance_fee_option : ""])
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" value="{{$strata->draft->commercial->maintenance_fee}}" readonly="">
+                                                                            @include('components.is_changed', ['old_field' => $strata->commercial? $strata->commercial->maintenance_fee : "", 'new_field' => $strata->draft->commercial? $strata->draft->commercial->maintenance_fee : "", 'class' => 'margin-top-5'])
                                                                             <select class="form-control select2" disabled="">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($strata->draft->commercial->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
@@ -422,8 +521,10 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $strata->commercial? $strata->commercial->sinking_fund_option : "", 'new_field' => $strata->draft->commercial? $strata->draft->commercial->sinking_fund_option : ""])
                                                                         <div class="form-inline">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" value="{{$strata->draft->commercial->sinking_fund}}" readonly="">
+                                                                            @include('components.is_changed', ['old_field' => $strata->commercial? $strata->commercial->sinking_fund : "", 'new_field' => $strata->draft->commercial? $strata->draft->commercial->sinking_fund : "", 'class' => 'margin-top-5'])
                                                                             <select class="form-control select2" disabled="">
                                                                                 @foreach ($unitoption as $unitoptions)
                                                                                 <option value="{{$unitoptions->id}}" {{($strata->draft->commercial->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
@@ -436,6 +537,55 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if($strata->draft->commercialExtra->count())
+                                                @foreach ($strata->draft->commercialExtra as $key => $commercialExtra)
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <!-- commercial Form -->
+                                                            <div id="commercial_form_{{ $key }}">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" value="{{$commercialExtra->unit_no}}" readonly="">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.commercial_fee') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" value="{{$commercialExtra->maintenance_fee}}" readonly="">
+                                                                                <select class="form-control select2" disabled="">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($commercialExtra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" value="{{$commercialExtra->sinking_fund}}" readonly="">
+                                                                                <select class="form-control select2" disabled="">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($commercialExtra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                @endif
                                                 <hr/>
                                                 @endif
                                                 <div class="row">
@@ -460,6 +610,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->management_office, 'new_field' => $strata->draft->facility->management_office, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->management_office == $strata->draft->facility->management_office) && ($strata->facility->management_office_unit != $strata->draft->facility->management_office_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->management_office_unit, 'new_field' => $strata->draft->facility->management_office_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -480,6 +634,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->swimming_pool, 'new_field' => $strata->draft->facility->swimming_pool, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->swimming_pool == $strata->draft->facility->swimming_pool) && ($strata->facility->swimming_pool_unit != $strata->draft->facility->swimming_pool_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->swimming_pool_unit, 'new_field' => $strata->draft->facility->swimming_pool_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -500,6 +658,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->surau, 'new_field' => $strata->draft->facility->surau, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->surau == $strata->draft->facility->surau) && ($strata->facility->surau_unit != $strata->draft->facility->surau_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->surau_unit, 'new_field' => $strata->draft->facility->surau_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -520,6 +682,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->multipurpose_hall, 'new_field' => $strata->draft->facility->multipurpose_hall, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->multipurpose_hall == $strata->draft->facility->multipurpose_hall) && ($strata->facility->multipurpose_hall_unit != $strata->draft->facility->multipurpose_hall_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->multipurpose_hall_unit, 'new_field' => $strata->draft->facility->multipurpose_hall_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -540,6 +706,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->gym, 'new_field' => $strata->draft->facility->gym, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->gym == $strata->draft->facility->gym) && ($strata->facility->gym_unit != $strata->draft->facility->gym_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->gym_unit, 'new_field' => $strata->draft->facility->gym_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -560,6 +730,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->playground, 'new_field' => $strata->draft->facility->playground, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->playground == $strata->draft->facility->playground) && ($strata->facility->playground_unit != $strata->draft->facility->playground_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->playground_unit, 'new_field' => $strata->draft->facility->playground_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -580,6 +754,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->guardhouse, 'new_field' => $strata->draft->facility->guardhouse, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->guardhouse == $strata->draft->facility->guardhouse) && ($strata->facility->guardhouse_unit != $strata->draft->facility->guardhouse_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->guardhouse_unit, 'new_field' => $strata->draft->facility->guardhouse_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -600,6 +778,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->kindergarten, 'new_field' => $strata->draft->facility->kindergarten, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->kindergarten == $strata->draft->facility->kindergarten) && ($strata->facility->kindergarten_unit != $strata->draft->facility->kindergarten_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->kindergarten_unit, 'new_field' => $strata->draft->facility->kindergarten_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -620,6 +802,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->open_space, 'new_field' => $strata->draft->facility->open_space, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->open_space == $strata->draft->facility->open_space) && ($strata->facility->open_space_unit != $strata->draft->facility->open_space_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->open_space_unit, 'new_field' => $strata->draft->facility->open_space_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -640,6 +826,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->lift, 'new_field' => $strata->draft->facility->lift, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->lift == $strata->draft->facility->lift) && ($strata->facility->lift_unit != $strata->draft->facility->lift_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->lift_unit, 'new_field' => $strata->draft->facility->lift_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -660,6 +850,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->rubbish_room, 'new_field' => $strata->draft->facility->rubbish_room, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->rubbish_room == $strata->draft->facility->rubbish_room) && ($strata->facility->rubbish_room_unit != $strata->draft->facility->rubbish_room_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->rubbish_room_unit, 'new_field' => $strata->draft->facility->rubbish_room_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -680,6 +874,10 @@
                                                                     @endfor
                                                                 </select>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->gated, 'new_field' => $strata->draft->facility->gated, 'class' => 'margin-top-5'])
+                                                            @if(($strata->facility->gated == $strata->draft->facility->gated) && ($strata->facility->gated_unit != $strata->draft->facility->gated_unit))
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->gated_unit, 'new_field' => $strata->draft->facility->gated_unit, 'class' => 'margin-top-5'])
+                                                            @endif
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-2">
@@ -688,6 +886,7 @@
                                                             <div class="col-md-6">
                                                                 <textarea class="form-control" rows="3" readonly="">{{$strata->draft->facility->others}}</textarea>
                                                             </div>
+                                                            @include('components.is_changed', ['old_field' => $strata->facility->others, 'new_field' => $strata->draft->facility->others, 'class' => 'margin-top-5'])
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1070,10 +1269,10 @@
                                                     </div>
                                                 </div>
                                                 <hr/>
-                                                @if ($strata->residential)
+                                                @if ($strata->is_residential)
                                                 <div class="row">
                                                     <div class="col-lg-12">
-                                                        <input type="checkbox" name="residential" id="residential" {{($strata->residential ? " checked" : "")}}/>
+                                                        <input type="checkbox" name="residential" id="residential" {{($strata->is_residential ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.residential_block') }}</h4></label>
                                                         <!-- residential Form -->
                                                         <div id="residential_form">
@@ -1118,14 +1317,63 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if($strata->residentialExtra->count())
+                                                @foreach($strata->residentialExtra as $key => $residentialExtra)
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <!-- residential Form -->
+                                                            <div id="residential_form_{{ $key }}">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.number_of_residential_unit') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_residential_unit') }}" id="residential_unit_no" value="{{$residentialExtra->unit_no}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.maintenance_fee') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.maintenance_fee') }}" id="residential_maintenance_fee" value="{{$residentialExtra->maintenance_fee}}">
+                                                                                <select class="form-control select2" id="residential_maintenance_fee_option">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($residentialExtra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="residential_sinking_fund" value="{{$residentialExtra->sinking_fund}}">
+                                                                                <select class="form-control select2" id="residential_sinking_fund_option">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($residentialExtra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                @endif
                                                 <hr/>
                                                 @endif
-                                                @if ($strata->commercial)
+                                                @if ($strata->is_commercial)
                                                 <div class="row">
                                                     <div class="col-lg-12">
-                                                        <input type="checkbox" name="commercial" id="commercial" {{($strata->commercial ? " checked" : "")}}/>
+                                                        <input type="checkbox" name="commercial" id="commercial" {{($strata->is_commercial ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.commercial_block') }}</h4></label>
-                                                        <!-- residential Form -->
+                                                        <!-- commercial Form -->
                                                         <div id="commercial_form">
                                                             <div class="row">
                                                                 <div class="col-md-4">
@@ -1168,6 +1416,55 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if($strata->commercialExtra->count())
+                                                @foreach($strata->commercialExtra as $key => $commercialExtra)
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <!-- commercial Form -->
+                                                            <div id="commercial_form_{{ $key }}">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.number_of_commercial_unit') }}</label>
+                                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.number_of_commercial_unit') }}" id="commercial_unit_no" value="{{$commercialExtra->unit_no}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.commercial_fee') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.commercial_fee') }}" id="commercial_maintenance_fee" value="{{$commercialExtra->maintenance_fee}}">
+                                                                                <select class="form-control select2" id="commercial_maintenance_fee_option">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($commercialExtra->maintenance_fee_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>{{ trans('app.forms.sinking_fund') }}</label>
+                                                                            <div class="form-inline">
+                                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.sinking_fund') }}" id="commercial_sinking_fund" value="{{$commercialExtra->sinking_fund}}">
+                                                                                <select class="form-control select2" id="commercial_sinking_fund_option">
+                                                                                    @foreach ($unitoption as $unitoptions)
+                                                                                    <option value="{{$unitoptions->id}}" {{($commercialExtra->sinking_fund_option == $unitoptions->id ? " selected" : "")}}>{{$unitoptions->description}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                @endif
                                                 <hr/>
                                                 @endif
                                                 <div class="row">

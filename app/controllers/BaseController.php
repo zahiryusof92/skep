@@ -36,7 +36,7 @@ class BaseController extends Controller {
             'browser' => Request::server('HTTP_USER_AGENT'),
             'url' => Request::fullUrl(),
         ];
-        if($file_id == 0 || empty(Auth::user()->file_id)) {
+        if($file_id == 0 || empty($file_id)) {
             $file_id = 0;
         }
         $auditTrail = AuditTrail::create([

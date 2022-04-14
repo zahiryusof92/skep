@@ -81,6 +81,14 @@ class StrataDraft extends Eloquent {
         return $this->hasOne('CommercialDraft', 'strata_id')->latest();
     }
     
+    public function residentialExtra() {
+        return $this->hasMany('ResidentialExtraDraft', 'strata_id');
+    }
+    
+    public function commercialExtra() {
+        return $this->hasMany('CommercialExtraDraft', 'strata_id');
+    }
+    
     public function facility() {
         return $this->hasOne('FacilityDraft', 'strata_id');
     }

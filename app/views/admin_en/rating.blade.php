@@ -58,8 +58,9 @@ foreach ($user_permission as $permission) {
                         <table class="table table-hover nowrap table-own table-striped" id="rating" width="100%">
                             <thead>
                                 <tr>
-                                    <th style="width:30%;">{{ trans('app.forms.file_no') }}</th>
-                                    <th style="width:15%;">{{ trans('app.forms.date') }}</th>
+                                    <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.name') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.date') }}</th>
                                     <th style="width:5%;">A (%)</th>
                                     <th style="width:5%;">B (%)</th>
                                     <th style="width:5%;">C (%)</th>
@@ -90,7 +91,7 @@ foreach ($user_permission as $permission) {
         oTable = $('#rating').DataTable({
             "sAjaxSource": "{{URL::action('AdminController@getRating')}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-            "order": [[1, "desc"]],
+            "order": [[2, "desc"]],
             "responsive": true,
             "aoColumnDefs": [
                 {

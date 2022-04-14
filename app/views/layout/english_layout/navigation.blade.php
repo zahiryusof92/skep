@@ -458,6 +458,13 @@ if (!Auth::user()->getAdmin()) {
                 </a>
                 <ul class="left-menu-list list-unstyled" id="reporting_main">
 
+                    @if (AccessGroup::hasAccess(24))
+                    <li id="new_audit_trail_list">
+                        <a class="left-menu-link" href="{{ route('reporting.log.index') }}">
+                            New {{ trans('app.menus.reporting.audit_trail') }}
+                        </a>
+                    </li>
+                    @endif
 
                     @if (AccessGroup::hasAccess(24))
                     <li id="audit_trail_list">
@@ -591,6 +598,14 @@ if (!Auth::user()->getAdmin()) {
                     <li id="epks_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@epks') }}">
                             {{ trans('app.menus.reporting.epks') }}
+                        </a>
+                    </li>
+                    @endif
+
+                    @if (AccessGroup::hasAccess(65))
+                    <li id="generate_report_list">
+                        <a class="left-menu-link" href="{{ route('report.generate.index') }}">
+                            {{ trans('app.menus.reporting.generate') }}
                         </a>
                     </li>
                     @endif
