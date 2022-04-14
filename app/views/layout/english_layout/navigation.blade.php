@@ -458,7 +458,6 @@ if (!Auth::user()->getAdmin()) {
                 </a>
                 <ul class="left-menu-list list-unstyled" id="reporting_main">
 
-
                     @if (AccessGroup::hasAccess(24))
                     <li id="audit_trail_list">
                         <a class="left-menu-link" href="{{URL::action('ReportController@auditTrail')}}">
