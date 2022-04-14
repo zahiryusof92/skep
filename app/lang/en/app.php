@@ -180,6 +180,7 @@ return array(
             "management_list" => "Management List",
             "land_title" => "Land Category",
             "epks" => "ePKS",
+            "generate" => "Report Generate",
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -616,6 +617,8 @@ return array(
         "no_suggestions" => "No Suggestions",
         "total_monthly" => "Total Monthly",
         "monthly_detail" => "Monthly Detail",
+        'have_changed' => 'Has Been Modified',
+        'residential_or_commercial' => 'Residential Or Commercial',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

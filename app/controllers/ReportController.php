@@ -2193,4 +2193,121 @@ class ReportController extends BaseController {
         return View::make('report_en.epks', $viewData);
     }
 
+    public function generate() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(65));
+        if(Request::ajax()) {
+            $request = Request::all();
+            $model = Files::file()
+                            ->join('strata', 'files.id', '=', 'strata.file_id')
+                            ->join('management', 'files.id', '=', 'management.file_id')
+                            ->selectRaw("files.id as id, files.file_no as file_no, strata.name as strata_name,".
+                                        "files.is_active as is_active, management.is_jmb as is_jmb, management.is_mc as is_mc,".
+                                        "management.is_agent as is_agent, management.is_others as is_others")
+                            ->where(function($query) use($request) {
+                                if(!empty($request['file_id'])) {
+                                    $query->where('files.id', $request['file_id']);
+                                }
+                            });
+            return Datatables::of($model)
+                            ->editColumn('file_no', function($model) {
+                                return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
+                            })
+                            ->editColumn('developer', function($model) {
+                                return ucfirst($model->developer_name);
+                            })
+                            ->editColumn('city', function($model) {
+                                return ucfirst($model->city_name);
+                            })
+                            ->editColumn('category', function($model) {
+                                return ucfirst($model->category_name);
+                            })
+                            ->addColumn('management', function($model) {
+                                $content = '';
+                                if($model->is_jmb && !$model->is_mc) {
+                                    $content .= trans('JMB') .',';
+                                } 
+                                if($model->is_mc) {
+                                    $content .= trans('MC') .',';
+                                } 
+                                if($model->is_agent && !$model->is_mc) {
+                                    $content .= trans('Agent') .',';
+                                } 
+                                if($model->is_others && !$model->is_mc) {
+                                    $content .= trans('Others') .',';
+                                } 
+                                if(!$model->is_jmb && !$model->is_mc && !$model->is_agent && !$model->is_agent && !$model->is_others) {
+                                    $content .= trans('Non-Set');
+                                }
+                                return rtrim($content, ",");
+                            })
+                            ->addColumn('status', function($model) {
+                                return $model->is_active ? trans('app.forms.yes') : trans('app.forms.no');
+                            })
+                            ->filter(function($query) use($request) {
+                                if(!empty($request['management'])) {
+                                    if(in_array('jmb', $request['management']) && in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->orWhere('is_others', 1)
+                                              ->orWhere('is_mc', 1)
+                                              ->orWhere('is_jmb', 1);
+                                    } else if(in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->orWhere('is_others', 1)
+                                              ->orWhere('is_mc', 1);
+                                    } else if(in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->orWhere('is_others', 1)
+                                              ->orWhere('is_jmb', 1);
+                                    } else if(in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->orWhere('is_mc', 1)
+                                              ->orWhere('is_jmb', 1);
+                                    } else if(in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->orWhere('is_others', 1);
+                                    } else if(in_array('others', $request['management']) && in_array('mc', $request['management'])) {
+                                        $query->where('is_others', 1)
+                                              ->orWhere('is_mc', 1);
+                                    } else if(in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->orWhere('is_mc', 1);
+                                    } else if(in_array('jmb', $request['management']) && in_array('others', $request['management'])) {
+                                        $query->where('is_jmb', 1)
+                                              ->orWhere('is_others', 1);
+                                    } else if(in_array('jmb', $request['management']) && in_array('agent', $request['management'])) {
+                                        $query->where('is_jmb', 1)
+                                              ->orWhere('is_agent', 1);
+                                    } else if(in_array('jmb', $request['management']) && in_array('mc', $request['management'])) {
+                                        $query->where('is_jmb', 1)
+                                              ->orWhere('is_mc', 1);
+                                    } else if(in_array('others', $request['management'])) {
+                                        $query->where('is_others', 1)
+                                              ->where('is_mc', 0);
+                                    } else if(in_array('agent', $request['management'])) {
+                                        $query->where('is_agent', 1)
+                                              ->where('is_mc', 0);
+                                    } else if(in_array('mc', $request['management'])) {
+                                        $query->where('is_mc', 1);
+                                    } else if(in_array('jmb', $request['management'])) {
+                                        $query->where('is_jmb', 1)
+                                              ->where('is_mc', 0);
+                                    }
+                                }
+                            })
+                            ->make(true);
+        }
+        $management = Request::get('management')? Request::get('management') : ''; 
+        
+        $viewData = array(
+            'title' => trans('app.menus.reporting.generate'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'generate_report_list',
+            'management' => $management,
+            'image' => ''
+        );
+
+        return View::make('report_en.generate', $viewData);
+    }
+
 }

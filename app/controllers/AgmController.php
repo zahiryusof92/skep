@@ -179,13 +179,9 @@ class AgmController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $file_name = Files::find($ajk_detail->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $files = Files::find($ajk_detail->file_id);
+                $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 print "true";
             } else {
@@ -248,6 +244,22 @@ class AgmController extends BaseController {
 
             $ajk_detail = AJKDetails::findOrFail($id);
             if ($ajk_detail) {
+                /** Arrange audit fields changes */
+                $audit_fields_changed = '';
+                $new_line = '';
+                $new_line .= $designation != $ajk_detail->designation? "designation, " : "";
+                $new_line .= $name != $ajk_detail->name? "name, " : "";
+                $new_line .= $phone_no != $ajk_detail->phone_no? "phone no, " : "";
+                $new_line .= $month != $ajk_detail->month? "month, " : "";
+                $new_line .= $start_year != $ajk_detail->start_year? "start year, " : "";
+                $new_line .= $end_year != $ajk_detail->end_year? "end year, " : "";
+                $new_line .= $remarks != $ajk_detail->remarks? "remarks, " : "";
+                if(!empty($new_line)) {
+                    $audit_fields_changed .= "<br/><ul><li> AJK Detail : (";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $ajk_detail->file_id = $file_id;
                 $ajk_detail->designation = $designation;
                 $ajk_detail->name = $name;
@@ -260,13 +272,11 @@ class AgmController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $file_name = Files::find($ajk_detail->file_id);
-                    $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_detail->name . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    if(!empty($audit_fields_changed)) {
+                        $files = Files::find($ajk_detail->file_id);
+                        $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit($files->id, "COB File", $remarks);
+                    }
 
                     print "true";
                 } else {
@@ -284,18 +294,14 @@ class AgmController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $ajk_details = AJKDetails::findOrFail($id);
-            $ajk_details->is_deleted = 1;
-            $deleted = $ajk_details->save();
+            $ajk_detail = AJKDetails::findOrFail($id);
+            $ajk_detail->is_deleted = 1;
+            $deleted = $ajk_detail->save();
             if ($deleted) {
                 # Audit Trail
-                $file_name = Files::find($ajk_details->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $files = Files::find($ajk_detail->file_id);
+                $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 print "true";
             } else {
@@ -517,13 +523,9 @@ class AgmController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $file_name = Files::find($buyer->file_id);
-                    $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit' . $buyer->unit_no . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $files = Files::find($buyer->file_id);
+                    $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_inserted'];
+                    $this->addAudit($files->id, "COB File", $remarks);
 
                     print "true";
                 } else {
@@ -606,6 +608,34 @@ class AgmController extends BaseController {
             if (count($checkFile) > 0) {
                 $buyer = Buyer::findOrFail($id);
                 if (count($buyer) > 0) {
+                    /** Arrange audit fields changes */
+                    $audit_fields_changed = '';
+                    $new_line = '';
+                    $new_line .= $unit_no != $buyer->unit_no? "unit no, " : "";
+                    $new_line .= $unit_share != $buyer->unit_share? "unit share, " : "";
+                    $new_line .= $owner_name != $buyer->owner_name? "owner name, " : "";
+                    $new_line .= $ic_company_no != $buyer->ic_company_no? "ic company no, " : "";
+                    $new_line .= $address != $buyer->address? "address, " : "";
+                    $new_line .= $phone_no != $buyer->phone_no? "phone no, " : "";
+                    $new_line .= $email != $buyer->email? "email, " : "";
+                    $new_line .= $race != $buyer->race_id? "race, " : "";
+                    $new_line .= $nationality != $buyer->nationality_id? "nationality, " : "";
+                    $new_line .= $remark != $buyer->remarks? "remark, " : "";
+                    $new_line .= $no_petak != $buyer->no_petak? "no petak, " : "";
+                    $new_line .= $no_petak_aksesori != $buyer->no_petak_aksesori? "no petak aksesori, " : "";
+                    $new_line .= $keluasan_lantai_petak != $buyer->keluasan_lantai_petak? "keluasan lantai petak, " : "";
+                    $new_line .= $keluasan_lantai_petak_aksesori != $buyer->keluasan_lantai_petak_aksesori? "keluasan lantai petak aksesori, " : "";
+                    $new_line .= $jenis_kegunaan != $buyer->jenis_kegunaan? "jenis kegunaan, " : "";
+                    $new_line .= $nama2 != $buyer->nama2? "nama2, " : "";
+                    $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat? "alamat surat menyurat, " : "";
+                    $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan? "caj penyelenggaraan, " : "";
+                    $new_line .= $sinking_fund != $buyer->sinking_fund? "sinking fund, " : "";
+                    if(!empty($new_line)) {
+                        $audit_fields_changed .= "<br/><ul><li> Purchaser : (";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    }
+                    /** End Arrange audit fields changes */
+
                     $buyer->file_id = $file_id;
                     $buyer->unit_no = $unit_no;
                     $buyer->unit_share = $unit_share;
@@ -631,13 +661,11 @@ class AgmController extends BaseController {
 
                     if ($success) {
                         # Audit Trail
-                        $file_name = Files::find($buyer->file_id);
-                        $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB File";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        $files = Files::find($buyer->file_id);
+                        if(!empty($audit_fields_changed)) {
+                            $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                            $this->addAudit($files->id, "COB File", $remarks);
+                        }
 
                         print "true";
                     } else {
@@ -663,13 +691,9 @@ class AgmController extends BaseController {
             $deleted = $buyer->save();
             if ($deleted) {
                 # Audit Trail
-                $file_name = Files::find($buyer->file_id);
-                $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $files = Files::find($buyer->file_id);
+                $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 print "true";
             } else {
@@ -764,26 +788,18 @@ class AgmController extends BaseController {
 
                         if ($success) {
                             # Audit Trail
-                            $file_name = Files::find($buyer->file_id);
-                            $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $buyer->unit_no . ' has been inserted.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "COB File";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
+                            $files = Files::find($buyer->file_id);
+                            $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_inserted'];
+                            $this->addAudit($files->id, "COB File", $remarks);
                         }
                     }
                 }
             }
 
             # Audit Trail
-            $file_name = Files::find($buyer->file_id);
-            $remarks = 'COB Owner List (' . $file_name->file_no . ') has been imported.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $files = Files::find($buyer->file_id);
+            $remarks = 'COB Owner List (' . $files->file_no . ')' . $this->module['audit']['text']['data_imported'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             print "true";
         } else {
@@ -1002,13 +1018,9 @@ class AgmController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $file_name = Files::find($tenant->file_id);
-                    $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit' . $tenant->unit_no . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $files = Files::find($tenant->file_id);
+                    $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit' . $tenant->unit_no . $this->module['audit']['text']['data_inserted'];
+                    $this->addAudit($files->id, "COB File", $remarks);
 
                     print "true";
                 } else {
@@ -1090,6 +1102,34 @@ class AgmController extends BaseController {
             if (count($checkFile) > 0) {
                 $tenant = Tenant::findOrFail($id);
                 if (count($tenant) > 0) {
+                    /** Arrange audit fields changes */
+                    $audit_fields_changed = '';
+                    $new_line = '';
+                    $new_line .= $unit_no != $tenant->unit_no? "unit_no, " : "";
+                    $new_line .= $tenant_name != $tenant->tenant_name? "tenant name, " : "";
+                    $new_line .= $ic_company_no != $tenant->ic_company_no? "ic company no, " : "";
+                    $new_line .= $address != $tenant->address? "address, " : "";
+                    $new_line .= $phone_no != $tenant->phone_no? "phone no, " : "";
+                    $new_line .= $email != $tenant->email? "email, " : "";
+                    $new_line .= $race != $tenant->race_id? "race, " : "";
+                    $new_line .= $nationality != $tenant->nationality_id? "nationality, " : "";
+                    $new_line .= $remark != $tenant->remarks? "remark, " : "";
+                    $new_line .= $no_petak != $tenant->no_petak? "no petak, " : "";
+                    $new_line .= $no_petak_aksesori != $tenant->no_petak_aksesori? "no petak aksesori, " : "";
+                    $new_line .= $keluasan_lantai_petak != $tenant->keluasan_lantai_petak? "keluasan lantai petak, " : "";
+                    $new_line .= $keluasan_lantai_petak_aksesori != $tenant->keluasan_lantai_petak_aksesori? "keluasan lantai petak aksesori, " : "";
+                    $new_line .= $jenis_kegunaan != $tenant->jenis_kegunaan? "jenis kegunaan, " : "";
+                    $new_line .= $nama2 != $tenant->nama2? "nama2, " : "";
+                    $new_line .= $ic_no2 != $tenant->ic_no2? "ic no2, " : "";
+                    $new_line .= $alamat_surat_menyurat != $tenant->alamat_surat_menyurat? "alamat_surat menyurat, " : "";
+                    $new_line .= $caj_penyelenggaraan != $tenant->caj_penyelenggaraan? "caj penyelenggaraan, " : "";
+                    $new_line .= $sinking_fund != $tenant->sinking_fund? "sinking fund, " : "";
+                    if(!empty($new_line)) {
+                        $audit_fields_changed .= "<br/><ul><li> Tenant : (";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    }
+                    /** End Arrange audit fields changes */
+
                     $tenant->file_id = $file_id;
                     $tenant->unit_no = $unit_no;
                     $tenant->tenant_name = $tenant_name;
@@ -1114,13 +1154,11 @@ class AgmController extends BaseController {
 
                     if ($success) {
                         # Audit Trail
-                        $file_name = Files::find($tenant->file_id);
-                        $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $tenant->unit_no . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB File";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        $files = Files::find($tenant->file_id);
+                        if(!empty($audit_fields_changed)) {
+                            $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                            $this->addAudit($files->id, "COB File", $remarks);
+                        }
 
                         print "true";
                     } else {
@@ -1146,13 +1184,9 @@ class AgmController extends BaseController {
             $deleted = $tenant->save();
             if ($deleted) {
                 # Audit Trail
-                $file_name = Files::find($tenant->file_id);
-                $remarks = 'COB Owner List (' . $file_name->file_no . ') for Unit ' . $tenant->unit_no . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $files = Files::find($tenant->file_id);
+                $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 print "true";
             } else {
@@ -1246,26 +1280,18 @@ class AgmController extends BaseController {
 
                         if ($success) {
                             # Audit Trail
-                            $file_name = Files::find($tenant->file_id);
-                            $remarks = 'COB Tenant List (' . $file_name->file_no . ') for Unit ' . $tenant->unit_no . ' has been inserted.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "COB File";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
+                            $files = Files::find($tenant->file_id);
+                            $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_inserted'];
+                            $this->addAudit($files->id, "COB File", $remarks);
                         }
                     }
                 }
             }
 
             # Audit Trail
-            $file_name = Files::find($tenant->file_id);
-            $remarks = 'COB Tenant List (' . $file_name->file_no . ') has been imported.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $files = Files::find($tenant->file_id);
+            $remarks = 'COB Tenant List (' . $files->file_no . ')' . $this->module['audit']['text']['data_imported'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             print "true";
         } else {
@@ -1388,6 +1414,15 @@ class AgmController extends BaseController {
                 } else {
                     $file_no = '<i>(not set)</i>';
                 }
+                if ($agm_details->file_id) {
+                    if ($files) {
+                        $strata_name = $files->strata->name;
+                    } else {
+                        $strata_name = '<i>(not available)</i>';
+                    }
+                } else {
+                    $strata_name = '<i>(not set)</i>';
+                }
                 if ($agm_details->agm_date == "0000-00-00") {
                     $date_agm = '';
                 } else {
@@ -1456,6 +1491,7 @@ class AgmController extends BaseController {
 
                 $data_raw = array(
                     $file_no,
+                    $strata_name,
                     $date_agm,
                     trans('app.forms.annual_general_meeting') . '<br/>'
                     . trans('app.forms.extra_general_meeting') . '<br/>'

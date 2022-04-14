@@ -178,6 +178,7 @@ return array(
             "management_list" => "Senarai Pengurusan",
             "land_title" => "Kategori Tanah",
             "epks" => "ePKS",
+            "generate" => "Penjana Laporan",
         ),
         "agm" => array(
             "submission" => "Penyerahan AGM",
@@ -606,6 +607,8 @@ return array(
         "monthly_detail" => "Butiran Bulanan",
         "image" => "Gambar",
         "location" => "Lokasi",
+        'have_changed' => 'Telah Diubah',
+        'residential_or_commercial' => 'Kediaman Atau Kedai/Pejabat',
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",

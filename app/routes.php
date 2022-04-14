@@ -13,6 +13,7 @@
 /*
  * LPHS REPORT START
  */
+
 Route::get('/lphs/finance/{council}/{year}', 'LPHSController@finance');
 Route::get('/lphs/developer/{council}', 'LPHSController@developer');
 Route::get('/lphs/strata/{council}', 'LPHSController@strata');
@@ -132,7 +133,7 @@ Route::post('/submitFile', 'AdminController@submitFile')->before('authMember');
 Route::post('/importCOBFile', 'ImportController@importCOBFile')->before('authMember');
 
 // file list
-Route::get('/fileList', 'AdminController@fileList')->before('authMember');
+Route::get('/fileList', array('as' => 'cob.file.index', 'uses' => 'AdminController@fileList'))->before('authMember');
 Route::get('/getFileList', 'AdminController@getFileList')->before('authMember');
 
 // file list before VP
@@ -698,6 +699,7 @@ Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceP
 //audit trail
 Route::get('/reporting/auditTrail', 'ReportController@auditTrail')->before('authMember');
 Route::post('/getAuditTrail', 'ReportController@getAuditTrail')->before('authMember');
+Route::get('/reporting/auditTrailNew', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrailNew'))->before('authMember');
 
 //file by location
 Route::get('/reporting/fileByLocation', 'ReportController@fileByLocation')->before('authMember');
@@ -772,6 +774,7 @@ Route::post('cob/update', 'CobController@update');
 // --- Printing --- //
 //audit trail
 Route::post('/print/AuditTrail', 'PrintController@printAuditTrail')->before('authMember');
+Route::get('/print/auditTrailNew', array('as' => 'print.log', 'uses' => 'ReportController@auditTrailNew'))->before('authMember');
 
 //file by location
 Route::get('/print/FileByLocation', 'PrintController@printFileByLocation')->before('authMember');
@@ -942,6 +945,7 @@ Route::group(array('before' => 'authMember'), function() {
      */
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
     Route::post('/print/epks',  array('as' => 'reporting.print.epks', 'uses' => 'PrintController@epks'));
+    Route::get('/reporting/generate',  array('as' => 'report.generate.index', 'uses' => 'ReportController@generate'));
     
     /**
      * Data Sync

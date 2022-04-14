@@ -2,6 +2,7 @@
 
 use Helper\Helper;
 use Helper\KCurl;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends BaseController {
 
@@ -89,12 +90,8 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->username;
-                $auditTrail->save();
+                $remarks = 'COB File Prefix: ' . $fileprefix->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return "true";
             } else {
@@ -173,12 +170,8 @@ class AdminController extends BaseController {
             $updated = $prefix->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'COB File Prefix: ' . $prefix->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return "true";
             } else {
@@ -208,12 +201,8 @@ class AdminController extends BaseController {
             $updated = $prefix->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'COB File Prefix: ' . $prefix->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'COB File Prefix: ' . $prefix->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return "true";
             } else {
@@ -243,12 +232,8 @@ class AdminController extends BaseController {
             $deleted = $prefix->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'COB File Prefix: ' . $prefix->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'COB File Prefix: ' . $prefix->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return "true";
             } else {
@@ -295,6 +280,22 @@ class AdminController extends BaseController {
             $sort_no = $data['sort_no'];
 
             $fileprefix = FilePrefix::findOrFail($id);
+            
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $fileprefix->description? "": "description";
+            $is_active_field = $data['is_active'] == $fileprefix->is_active? "": "status";
+            $sort_no_field = $data['sort_no'] == $fileprefix->sort_no? "": "sort_no";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field) || !empty($sort_no_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $fileprefix->description = $description;
             $fileprefix->sort_no = $sort_no;
             $fileprefix->is_active = $is_active;
@@ -302,12 +303,10 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'COB File Prefix: ' . $fileprefix->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'COB File Prefix: ' . $fileprefix->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 return "true";
             } else {
@@ -415,12 +414,8 @@ class AdminController extends BaseController {
                     $others->save();
 
                     # Audit Trail
-                    $remarks = $files->file_no . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $remarks = $files->file_no . $this->module['audit']['text']['data_inserted'];
+                    $this->addAudit($files->id, "COB File", $remarks);
 
                     return "true";
                 } else {
@@ -709,12 +704,8 @@ class AdminController extends BaseController {
             $updated = $files->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $files->file_no . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = $files->file_no . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -743,12 +734,8 @@ class AdminController extends BaseController {
             $updated = $files->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $files->file_no . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = $files->file_no . $this->module['audit']['text']['status_active'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -807,12 +794,8 @@ class AdminController extends BaseController {
                     $buyerlist = Buyer::where('file_id', $files->id)->delete();
 
                     # Audit Trail
-                    $remarks = $files->file_no . ' has been deleted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $remarks = $files->file_no . $this->module['audit']['text']['data_deleted'];
+                    $this->addAudit($files->id, "COB File", $remarks);
 
                     return "true";
                 } else {
@@ -847,16 +830,25 @@ class AdminController extends BaseController {
             if ($check_exist <= 0) {
                 $files = Files::findOrFail($id);
                 if ($files) {
+                    /** Arrange audit fields changes */
+                    $file_no_field = $data['file_no'] == $files->file_no? "": "file_no";
+        
+                    $audit_fields_changed = "";
+                    if(!empty($file_no_field)) {
+                        $audit_fields_changed .= "<br><ul>";
+                        $audit_fields_changed .= !empty($file_no_field)? "<li>$file_no_field</li>" : "";
+                        $audit_fields_changed .= "</ul>";
+                    }
+                    /** End Arrange audit fields changes */
+
                     $files->file_no = $data['file_no'];
                     $updated = $files->save();
                     if ($updated) {
                         # Audit Trail
-                        $remarks = $files->file_no . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB File";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        if(!empty($audit_fields_changed)) {
+                            $remarks = $files->file_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                            $this->addAudit($files->id, "COB File", $remarks);
+                        }
 
                         return "true";
                     } else {
@@ -1009,6 +1001,96 @@ class AdminController extends BaseController {
             $liquidator_is_active = $data['liquidator_is_active'];
             $is_liquidator = ($data['is_liquidator'] == 'yes')? 1 : 0;
 
+            /** Arrange audit fields changes */
+            $file_status_field = $data['is_active'] == $files->is_active? "": "status";
+            $developer_name_field = $data['name'] == $house_scheme->name? "": "name";
+            $developer_company_field = $data['developer'] == $house_scheme->developer? "": "developer company";
+            $developer_address1_field = $data['address1'] == $house_scheme->address1? "": "developer address1";
+            $developer_address2_field = $data['address2'] == $house_scheme->address2? "": "developer address2";
+            $developer_address3_field = $data['address3'] == $house_scheme->address3? "": "developer address3";
+            $developer_address4_field = $data['address4'] == $house_scheme->address4? "": "developer address4";
+            $developer_city_field = $data['city'] == $house_scheme->city? "": "developer city";
+            $developer_poscode_field = $data['poscode'] == $house_scheme->poscode? "": "developer poscode";
+            $developer_state_field = $data['state'] == $house_scheme->state? "": "developer state";
+            $developer_country_field = $data['country'] == $house_scheme->country? "": "developer country";
+            $developer_phone_no_field = $data['phone_no'] == $house_scheme->phone_no? "": "developer phon no";
+            $developer_fax_no_field = $data['fax_no'] == $house_scheme->fax_no? "": "developer fax no";
+            $developer_remarks_field = $data['remarks'] == $house_scheme->remarks? "": "developer remarks";
+            $developer_is_active_field = $data['is_active'] == $house_scheme->is_active? "": "developer status";
+
+            $liquidator_name_field = $data['liquidator_name'] == $house_scheme->liquidator_name? "": "liquidator name";
+            $liquidator_company_field = $data['liquidator'] == $house_scheme->liquidator? "": "liquidator company";
+            $liquidator_address1_field = $data['liquidator_address1'] == $house_scheme->liquidator_address1? "": "liquidator address1";
+            $liquidator_address2_field = $data['liquidator_address2'] == $house_scheme->liquidator_address2? "": "liquidator address2";
+            $liquidator_address3_field = $data['liquidator_address3'] == $house_scheme->liquidator_address3? "": "liquidator address3";
+            $liquidator_address4_field = $data['liquidator_address4'] == $house_scheme->liquidator_address4? "": "liquidator address4";
+            $liquidator_city_field = $data['liquidator_city'] == $house_scheme->liquidator_city? "": "liquidator city";
+            $liquidator_state_field = $data['liquidator_state'] == $house_scheme->liquidator_state? "": "liquidator state";
+            $liquidator_country_field = $data['liquidator_country'] == $house_scheme->liquidator_country? "": "liquidator country";
+            $liquidator_phone_no_field = $data['liquidator_phone_no'] == $house_scheme->liquidator_phone_no? "": "liquidator phone_no";
+            $liquidator_fax_no_field = $data['liquidator_fax_no'] == $house_scheme->liquidator_fax_no? "": "liquidator fax_no";
+            $liquidator_remarks_field = $data['liquidator_remarks'] == $house_scheme->liquidator_remarks? "": "liquidator remarks";
+            $liquidator_is_active_field = $data['liquidator_is_active'] == $house_scheme->liquidator_is_active? "": "liquidator is_active";
+            $is_liquidator_field = $data['is_liquidator'] == $house_scheme->is_liquidator? "": "is_liquidator";
+
+            $audit_fields_changed = "";
+            if(!empty($file_status_field) || !empty($developer_name_field) || !empty($developer_company_field) || !empty($developer_address1_field)
+            || !empty($developer_address2_field) || !empty($developer_address3_field) || !empty($developer_address4_field) || !empty($developer_city_field)
+            || !empty($developer_poscode_field) || !empty($developer_state_field) || !empty($developer_country_field) || !empty($developer_phone_no_field)
+            || !empty($developer_fax_no_field) || !empty($developer_remarks_field) || !empty($developer_is_active_field) || !empty($liquidator_name_field)
+            || !empty($liquidator_company_field) || !empty($liquidator_address1_field) || !empty($liquidator_address2_field) || !empty($liquidator_address3_field)
+            || !empty($liquidator_address4_field) || !empty($liquidator_city_field) || !empty($liquidator_state_field) || !empty($liquidator_country_field)
+            || !empty($liquidator_phone_no_field) || !empty($liquidator_fax_no_field) || !empty($liquidator_remarks_field) || !empty($liquidator_is_active_field)
+            || !empty($is_liquidator_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($file_status_field)? "<li> file: $file_status_field</li>" : "";
+                if(!empty($developer_name_field) || !empty($developer_company_field) || !empty($developer_address1_field) || !empty($developer_address2_field) 
+                || !empty($developer_address3_field) || !empty($developer_address4_field) || !empty($developer_city_field) || !empty($developer_poscode_field)
+                || !empty($developer_state_field) || !empty($developer_country_field) || !empty($developer_phone_no_field)
+                || !empty($developer_fax_no_field) || !empty($developer_remarks_field) || !empty($developer_is_active_field)) {
+                    $audit_fields_changed .= "<li> developer: (";
+                    $audit_fields_changed .= !empty($developer_name_field)? "$developer_name_field, " : "";
+                    $audit_fields_changed .= !empty($developer_company_field)? "$developer_company_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address1_field)? "$developer_address1_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address2_field)? "$developer_address2_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address3_field)? "$developer_address3_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address4_field)? "$developer_address4_field, " : "";
+                    $audit_fields_changed .= !empty($developer_city_field)? "$developer_city_field, " : "";
+                    $audit_fields_changed .= !empty($developer_poscode_field)? "$developer_poscode_field, " : "";
+                    $audit_fields_changed .= !empty($developer_state_field)? "$developer_state_field, " : "";
+                    $audit_fields_changed .= !empty($developer_country_field)? "$developer_country_field, " : "";
+                    $audit_fields_changed .= !empty($developer_phone_no_field)? "$developer_phone_no_field, " : "";
+                    $audit_fields_changed .= !empty($developer_fax_no_field)? "$developer_fax_no_field, " : "";
+                    $audit_fields_changed .= !empty($developer_remarks_field)? "$developer_remarks_field, " : "";
+                    $audit_fields_changed .= !empty($developer_is_active_field)? "$developer_is_active_field" : "";
+                    $audit_fields_changed .= ")</li>";
+                }
+                if( !empty($liquidator_name_field) || !empty($liquidator_company_field) || !empty($liquidator_address1_field) || !empty($liquidator_address2_field) 
+                || !empty($liquidator_address3_field) || !empty($liquidator_address4_field) || !empty($liquidator_city_field) || !empty($liquidator_state_field) 
+                || !empty($liquidator_country_field) || !empty($liquidator_phone_no_field) || !empty($liquidator_fax_no_field) || !empty($liquidator_remarks_field) 
+                || !empty($liquidator_is_active_field) || !empty($is_liquidator_field)) {
+                    $audit_fields_changed .= "<li> liquidator: (";
+                    $audit_fields_changed .= !empty($liquidator_name_field)? "$liquidator_name_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_company_field)? "$liquidator_company_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address1_field)? "$liquidator_address1_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address2_field)? "$liquidator_address2_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address3_field)? "$liquidator_address3_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address4_field)? "$liquidator_address4_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_city_field)? "$liquidator_city_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_state_field)? "$liquidator_state_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_country_field)? "$liquidator_country_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_phone_no_field)? "$liquidator_phone_no_field, " : "";
+                    $audit_fields_changed .= !empty($developer_phone_no_field)? "$developer_phone_no_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_fax_no_field)? "$liquidator_fax_no_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_remarks_field)? "$liquidator_remarks_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_is_active_field)? "$liquidator_is_active_field" : "";
+                    $audit_fields_changed .= !empty($is_liquidator_field)? "$is_liquidator_field" : "";
+                    $audit_fields_changed .= ")</li>";
+                }
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             if (!Auth::user()->isJMB()) {
                 $files->is_active = $is_active;
                 $files->save();
@@ -1051,12 +1133,10 @@ class AdminController extends BaseController {
             $house_scheme->save();
 
             # Audit Trail
-            $remarks = 'House Info (' . $files->file_no . ') has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            if(!empty($audit_fields_changed)) {
+                $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                $this->addAudit($files->id, "COB File", $remarks);
+            }
 
             return "true";
 
@@ -1366,6 +1446,16 @@ class AdminController extends BaseController {
             $gated_unit = $data['gated_unit'];
             $others = $data['others'];
 
+            /** Arrange audit fields changes */ // not done yet
+            // $file_no_field = $data['file_no'] == $files->file_no? "": "file_no";
+
+            // $audit_fields_changed = "";
+            // if(!empty($file_no_field)) {
+            //     $audit_fields_changed .= "<br><ul>";
+            //     $audit_fields_changed .= !empty($file_no_field)? "<li>$file_no_field</li>" : "";
+            // }
+            /** End Arrange audit fields changes */
+
             if (!empty($year)) {
                 $files->year = $year;
                 $files->save();
@@ -1414,12 +1504,19 @@ class AdminController extends BaseController {
                 $residential->sinking_fund_option = $residential_sinking_fund_option;
                 $residential->save();
                 
-                $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
+                if (Auth::user()->isJMB()) {
+                    $delete_old_residential_extra = ResidentialExtraDraft::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
+                } else {
+                    $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
+                }
                 if(empty($data['residential_maintenance_fee_is_custom']) == false) {
                     $total_residential_custom = count($data['residential_maintenance_fee_is_custom']);
                     if($total_residential_custom > 0) {
                         for($i = 0; $i < $total_residential_custom; $i++) {
                             $custom_residential =  new ResidentialExtra();
+                            if (Auth::user()->isJMB()) {
+                                $custom_residential =  new ResidentialExtraDraft();
+                            }
                             $custom_residential->file_id = $residential->file_id;
                             $custom_residential->strata_id = $residential->strata_id;
                             $custom_residential->unit_no = $data['residential_unit_no_is_custom'][$i];
@@ -1450,12 +1547,19 @@ class AdminController extends BaseController {
                 $commercial->sinking_fund_option = $commercial_sinking_fund_option;
                 $commercial->save();
                 
-                $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
+                if (Auth::user()->isJMB()) {
+                    $delete_old_commercial_extra = CommercialExtraDraft::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
+                } else {
+                    $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
+                }
                 if(empty($data['commercial_maintenance_fee_is_custom']) == false) {
                     $total_commercial_custom = count($data['commercial_maintenance_fee_is_custom']);
                     if($total_commercial_custom > 0) {
                         for($i = 0; $i < $total_commercial_custom; $i++) {
                             $custom_commercial =  new CommercialExtra();
+                            if (Auth::user()->isJMB()) {
+                                $custom_commercial =  new CommercialExtraDraft();
+                            }
                             $custom_commercial->file_id = $commercial->file_id;
                             $custom_commercial->strata_id = $commercial->strata_id;
                             $custom_commercial->unit_no = $data['commercial_unit_no_is_custom'][$i];
@@ -1505,12 +1609,8 @@ class AdminController extends BaseController {
             $facility->save();
 
             # Audit Trail
-            $remarks = 'Strata Info (' . $files->file_no . ') has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -1541,12 +1641,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($strata->file_id);
-                $remarks = 'Strata Info (' . $file_name->file_no . ') has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Strata Info (' . $file_name->file_no . ')' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -1885,12 +1981,8 @@ class AdminController extends BaseController {
             }
 
             # Audit Trail
-            $remarks = 'Management Info (' . $files->file_no . ') has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -1983,12 +2075,8 @@ class AdminController extends BaseController {
             $monitor->save();
 
             # Audit Trail
-            $remarks = 'Monitoring Info (' . $files->file_no . ') has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'Monitoring Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -2077,12 +2165,8 @@ class AdminController extends BaseController {
             $agm_detail->save();
 
             # Audit Trail
-            $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been inserted.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -2168,12 +2252,8 @@ class AdminController extends BaseController {
 
             # Audit Trail
             $file_name = Files::find($agm_detail->file_id);
-            $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($file_name->id, "COB File", $remarks);
 
             return "true";
 
@@ -2819,12 +2899,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -2853,12 +2929,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' audit report file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -2887,12 +2959,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' letter integrity file' . $this->module['audit']['text']['data_updated'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -2921,12 +2989,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' letter bankruptcy file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -2947,12 +3011,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' AGM file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -2970,12 +3030,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' EGM file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -2993,12 +3049,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' minute meeting file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3016,12 +3068,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' JMC file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3039,12 +3087,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::findOrFail($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' IC File' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3062,12 +3106,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::findOrFail($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' attendance file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3085,12 +3125,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' audited financial file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3128,12 +3164,8 @@ class AdminController extends BaseController {
             $ajk_detail->save();
 
             # Audit Trail
-            $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . ' has been inserted.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_inserted'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -3173,12 +3205,8 @@ class AdminController extends BaseController {
             $ajk_detail->save();
 
             # Audit Trail
-            $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . ' has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -3255,12 +3283,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($ajk_details->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3404,12 +3428,8 @@ class AdminController extends BaseController {
             $others->save();
 
             # Audit Trail
-            $remarks = 'Others Info (' . $files->file_no . ') has been updated.';
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = Auth::user()->id;
-            $auditTrail->save();
+            $remarks = 'Others Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($files->id, "COB File", $remarks);
 
             return "true";
 
@@ -3446,7 +3466,12 @@ class AdminController extends BaseController {
                     $hs_user->is_deleted = 0;
                     $success = $hs_user->save();
 
+                    # Audit Trail
                     if ($success) {
+                        $files = Files::find($hs_user->file_id);
+                        $remarks = 'House Scheme User Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_inserted'];
+                        $this->addAudit($files->id, "COB File", $remarks);
+
                         return "true";
                     } else {
                         return "false";
@@ -3518,6 +3543,10 @@ class AdminController extends BaseController {
                 $success = $hs_user->save();
 
                 if ($success) {
+                    $files = Files::find($hs_user->file_id);
+                    $remarks = 'House Scheme User Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_deleted'];
+                    $this->addAudit($files->id, "COB File", $remarks);
+
                     return "true";
                 } else {
                     return "false";
@@ -3550,12 +3579,8 @@ class AdminController extends BaseController {
             if ($deleted) {
                 # Audit Trail
                 $file_name = Files::find($others->file_id);
-                $remarks = 'Others Info (' . $file_name->file_no . ') has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Others Info (' . $file_name->file_no . ') image file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -3696,12 +3721,8 @@ class AdminController extends BaseController {
             if ($success) {
                 # Audit Trail
                 $file_name = Files::find($scoring->file_id);
-                $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit($file_name->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -6597,6 +6618,7 @@ class AdminController extends BaseController {
 
                 $data_raw = array(
                     $ratings->file->file_no,
+                    $ratings->file->strata->name,
                     (!empty($ratings->date) ? date('d-M-Y', strtotime($ratings->date)) : '<i>(not set)</i>'),
                     number_format($ratings_A, 2),
                     number_format($ratings_B, 2),

@@ -49,7 +49,7 @@
                                                         <div class="form-check">
                                                             <input type="radio" class="form-check-input" placeholder="{{ trans('app.forms.is_developer') }}" id="is_developer" value="no" {{($house_scheme->draft->is_liquidator)? "" : "checked"}} disabled>
                                                             <label class="form-check-label" for="is_developer">
-                                                                {{ trans('app.forms.is_developer') }}
+                                                                {{ trans('app.forms.is_developer') }} @include('components.is_changed', ['old_field' => $house_scheme->is_liquidator, 'new_field' => $house_scheme->draft->is_liquidator])
                                                             </label>
                                                         </div>
                                                     </div>
@@ -58,15 +58,17 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.name') }}</label>
-                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{ $house_scheme->draft->name }}" readonly="">
+                                                                <label>{{ trans('app.forms.name') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->name, 'new_field' => $house_scheme->draft->name])
+                                                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{ $house_scheme->draft->name }}" readonly=""> 
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.developer') }}</label>
+                                                                <label>{{ trans('app.forms.developer') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->developer, 'new_field' => $house_scheme->draft->developer])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($developer as $developers)
@@ -79,7 +81,8 @@
                                                     <div class="row">
                                                         <div class="col-md-8">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.address') }}</label>
+                                                                <label>{{ trans('app.forms.address') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->address1, 'new_field' => $house_scheme->draft->address1])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address1') }}" value="{{$house_scheme->draft->address1}}" readonly="">
                                                             </div>
                                                         </div>
@@ -90,6 +93,7 @@
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$house_scheme->draft->address2}}" readonly="">
                                                             </div>
                                                         </div>
+                                                        @include('components.is_changed', ['old_field' => $house_scheme->address2, 'new_field' => $house_scheme->draft->address2, 'class' => 'margin-top-5'])
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-8">
@@ -97,6 +101,7 @@
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$house_scheme->draft->address3}}" readonly="">
                                                             </div>
                                                         </div>
+                                                        @include('components.is_changed', ['old_field' => $house_scheme->address3, 'new_field' => $house_scheme->draft->address3, 'class' => 'margin-top-5'])
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-8">
@@ -104,11 +109,13 @@
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" value="{{$house_scheme->draft->address4}}" readonly="">
                                                             </div>
                                                         </div>
+                                                        @include('components.is_changed', ['old_field' => $house_scheme->address4, 'new_field' => $house_scheme->draft->address4, 'class' => 'margin-top-5'])
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label>{{ trans('app.forms.city') }}</label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->city, 'new_field' => $house_scheme->draft->city])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($city as $cities)
@@ -119,7 +126,8 @@
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.postcode') }}</label>
+                                                                <label>{{ trans('app.forms.postcode') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->poscode, 'new_field' => $house_scheme->draft->poscode])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$house_scheme->draft->poscode}}" readonly="">
                                                             </div>
                                                         </div>
@@ -127,7 +135,8 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.state') }}</label>
+                                                                <label>{{ trans('app.forms.state') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->state, 'new_field' => $house_scheme->draft->state])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($state as $states)
@@ -138,7 +147,8 @@
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.country') }}</label>
+                                                                <label>{{ trans('app.forms.country') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->country, 'new_field' => $house_scheme->draft->country])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($country as $countries)
@@ -151,13 +161,15 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                <label>{{ trans('app.forms.phone_number') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->phone_no, 'new_field' => $house_scheme->draft->phone_no])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$house_scheme->draft->phone_no}}" readonly="">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                <label>{{ trans('app.forms.fax_number') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->fax_no, 'new_field' => $house_scheme->draft->fax_no])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$house_scheme->draft->fax_no}}" readonly="">
                                                             </div>
                                                         </div>
@@ -165,7 +177,8 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.admin_status') }}</label>
+                                                                <label>{{ trans('app.forms.admin_status') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->is_active, 'new_field' => $house_scheme->draft->is_active])
                                                                 <select id="is_active" class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     <option value="1" {{($house_scheme->draft->is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
@@ -178,7 +191,8 @@
                                                     <div class="row">
                                                         <div class="col-md-8">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.remarks') }}</label>
+                                                                <label>{{ trans('app.forms.remarks') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->remarks, 'new_field' => $house_scheme->draft->remarks])
                                                                 <textarea class="form-control" rows="3" readonly="">{{$house_scheme->draft->remarks}}</textarea>
                                                             </div>
                                                         </div>
@@ -190,7 +204,7 @@
                                                         <div class="form-check">
                                                             <input type="radio" class="form-check-input" placeholder="{{ trans('app.forms.is_liquidator') }}" id="is_liquidator" value="yes" {{($house_scheme->draft->is_liquidator)? "checked" : ""}} disabled>
                                                             <label class="form-check-label" for="is_liquidator">
-                                                                {{ trans('app.forms.is_liquidator') }}
+                                                                {{ trans('app.forms.is_liquidator') }} @include('components.is_changed', ['old_field' => $house_scheme->is_liquidator, 'new_field' => $house_scheme->draft->is_liquidator])
                                                             </label>
                                                         </div>
                                                     </div>
@@ -199,7 +213,8 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.name') }}</label>
+                                                                <label>{{ trans('app.forms.name') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_name, 'new_field' => $house_scheme->draft->liquidator_name])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{ $house_scheme->draft->liquidator_name }}" readonly="">
                                                             </div>
                                                         </div>
@@ -207,7 +222,8 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.liquidator') }}</label>
+                                                                <label>{{ trans('app.forms.liquidator') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator, 'new_field' => $house_scheme->draft->liquidator])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($liquidator as $liquidators)
@@ -220,7 +236,8 @@
                                                     <div class="row">
                                                         <div class="col-md-8">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.address') }}</label>
+                                                                <label>{{ trans('app.forms.address') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_address1, 'new_field' => $house_scheme->draft->liquidator_address1])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address1') }}" value="{{$house_scheme->draft->liquidator_address1}}" readonly="">
                                                             </div>
                                                         </div>
@@ -231,6 +248,7 @@
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$house_scheme->draft->liquidator_address2}}" readonly="">
                                                             </div>
                                                         </div>
+                                                        @include('components.is_changed', ['old_field' => $house_scheme->liquidator_address2, 'new_field' => $house_scheme->draft->liquidator_address2, 'class' => 'margin-top-5'])
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-8">
@@ -238,6 +256,7 @@
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$house_scheme->draft->liquidator_address3}}" readonly="">
                                                             </div>
                                                         </div>
+                                                        @include('components.is_changed', ['old_field' => $house_scheme->liquidator_address3, 'new_field' => $house_scheme->draft->liquidator_address3, 'class' => 'margin-top-5'])
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-8">
@@ -245,11 +264,13 @@
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" value="{{$house_scheme->draft->liquidator_address4}}" readonly="">
                                                             </div>
                                                         </div>
+                                                        @include('components.is_changed', ['old_field' => $house_scheme->liquidator_address4, 'new_field' => $house_scheme->draft->liquidator_address4, 'class' => 'margin-top-5'])
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.city') }}</label>
+                                                                <label>{{ trans('app.forms.city') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_city, 'new_field' => $house_scheme->draft->liquidator_city])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($city as $cities)
@@ -260,7 +281,8 @@
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.postcode') }}</label>
+                                                                <label>{{ trans('app.forms.postcode') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_poscode, 'new_field' => $house_scheme->draft->liquidator_poscode])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$house_scheme->draft->liquidator_poscode}}" readonly="">
                                                             </div>
                                                         </div>
@@ -268,7 +290,8 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.state') }}</label>
+                                                                <label>{{ trans('app.forms.state') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_state, 'new_field' => $house_scheme->draft->liquidator_state])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($state as $states)
@@ -279,7 +302,8 @@
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.country') }}</label>
+                                                                <label>{{ trans('app.forms.country') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_country, 'new_field' => $house_scheme->draft->liquidator_country])
                                                                 <select class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     @foreach ($country as $countries)
@@ -292,13 +316,15 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                <label>{{ trans('app.forms.phone_number') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_phone_no, 'new_field' => $house_scheme->draft->liquidator_phone_no])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$house_scheme->draft->liquidator_phone_no}}" readonly="">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                <label>{{ trans('app.forms.fax_number') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_fax_no, 'new_field' => $house_scheme->draft->liquidator_fax_no])
                                                                 <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$house_scheme->draft->liquidator_fax_no}}" readonly="">
                                                             </div>
                                                         </div>
@@ -306,7 +332,8 @@
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.admin_status') }}</label>
+                                                                <label>{{ trans('app.forms.admin_status') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_is_active, 'new_field' => $house_scheme->draft->liquidator_is_active])
                                                                 <select id="liquidator_is_active" class="form-control select2" disabled="">
                                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                     <option value="1" {{($house_scheme->draft->liquidator_is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
@@ -319,7 +346,8 @@
                                                     <div class="row">
                                                         <div class="col-md-8">
                                                             <div class="form-group">
-                                                                <label>{{ trans('app.forms.remarks') }}</label>
+                                                                <label>{{ trans('app.forms.remarks') }} </label>
+                                                                @include('components.is_changed', ['old_field' => $house_scheme->liquidator_remarks, 'new_field' => $house_scheme->draft->liquidator_remarks])
                                                                 <textarea class="form-control" rows="3" readonly="">{{$house_scheme->draft->liquidator_remarks}}</textarea>
                                                             </div>
                                                         </div>

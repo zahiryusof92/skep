@@ -60,6 +60,7 @@ foreach ($user_permission as $permission) {
                                 <thead>
                                     <tr>
                                         <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.name') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.agm_date') }}</th>
                                         <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
                                         <th style="width:5%;"></th>
@@ -91,12 +92,12 @@ foreach ($user_permission as $permission) {
         var oTable = $('#financial_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getMinutes')}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-            "order": [[1, "asc"]],
+            "order": [[2, "asc"]],
             "responsive": false,
             "aoColumnDefs": [
                 {
                     "bSortable": false,
-                    "aTargets": [1, 2, 3, 4, 5, 6, -1]
+                    "aTargets": [2, 3, 4, 5, 6, -1]
                 }
             ]
         });

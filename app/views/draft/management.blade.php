@@ -42,17 +42,24 @@
                                             <h6><u>{{ trans("app.forms.after_change") }}</u></h6>
                                             <h4>{{ trans('app.forms.detail') }} <span class="label label-danger">{{ trans('app.forms.draft') }}</span></h4>
                                             <form id="management_draft">
+                                                @if (($management->is_developer != $management->draft->is_developer) && !$management->draft->is_developer)
+                                                    @include('components.is_changed', ['old_field' => $management->is_developer, 'new_field' => $management->draft->is_developer, 'text' => trans('app.forms.developer')])
+                                                    <hr />
+                                                @endif
                                                 @if ($management->draft->developer)
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" disabled="" {{($management->draft->developer ? " checked" : "")}}/>
-                                                        <label><h4> {{ trans('app.forms.developer') }}</h4></label>
+                                                        <label><h4> {{ trans('app.forms.developer') }}</h4> 
+                                                        </label>
+                                                        @include('components.is_changed', ['old_field' => $management->is_developer, 'new_field' => $management->draft->is_developer])
                                                         <!-- developer Form -->
                                                         <div id="developer_form_draft">
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.developer') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->name : "", 'new_field' => $management->draft->developer? $management->draft->developer->name : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.developer') }}" value="{{$management->draft->developer->name}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -61,6 +68,7 @@
                                                                 <div class="col-md-8">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.address') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->address_1 : "", 'new_field' => $management->draft->developer? $management->draft->developer->address_1 : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" value="{{$management->draft->developer->address_1}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -71,6 +79,7 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$management->draft->developer->address_2}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->developer? $management->developer->address_2 : "", 'new_field' => $management->draft->developer? $management->draft->developer->address_2 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-8">
@@ -78,6 +87,7 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$management->draft->developer->address_3}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->developer? $management->developer->address_3 : "", 'new_field' => $management->draft->developer? $management->draft->developer->address_3 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-8">
@@ -85,11 +95,13 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" value="{{$management->draft->developer->address_4}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->developer? $management->developer->address_4 : "", 'new_field' => $management->draft->developer? $management->draft->developer->address_4 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.city') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->city : "", 'new_field' => $management->draft->developer? $management->draft->developer->city : ""])
                                                                         <select class="form-control" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($city as $cities)
@@ -101,6 +113,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->poscode : "", 'new_field' => $management->draft->developer? $management->draft->developer->poscode : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$management->draft->developer->poscode}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -109,6 +122,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.state') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->state : "", 'new_field' => $management->draft->developer? $management->draft->developer->state : ""])
                                                                         <select class="form-control" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($state as $states)
@@ -120,6 +134,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.country') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->country : "", 'new_field' => $management->draft->developer? $management->draft->developer->country : ""])
                                                                         <select class="form-control" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($country as $countries)
@@ -133,12 +148,14 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->phone_no : "", 'new_field' => $management->draft->developer? $management->draft->developer->phone_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$management->draft->developer->phone_no}}" readonly="">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->fax_no : "", 'new_field' => $management->draft->developer? $management->draft->developer->fax_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$management->draft->developer->fax_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -147,6 +164,7 @@
                                                                 <div class="col-md-8">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.remarks') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->developer? $management->developer->remarks : "", 'new_field' => $management->draft->developer? $management->draft->developer->remarks : ""])
                                                                         <textarea class="form-control" rows="3" readonly="">{{$management->draft->developer->remarks}}</textarea>
                                                                     </div>
                                                                 </div>
@@ -157,17 +175,23 @@
                                                 <hr/>
                                                 @endif
 
+                                                @if (($management->is_jmb != $management->draft->is_jmb) && !$management->draft->is_jmb)
+                                                    @include('components.is_changed', ['old_field' => $management->is_jmb, 'new_field' => $management->draft->is_jmb, 'text' => trans('app.forms.jmb')])
+                                                    <hr />
+                                                @endif
                                                 @if ($management->draft->jmb)
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" disabled="" {{($management->draft->jmb ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.joint_management_body') }}</h4></label>
+                                                        @include('components.is_changed', ['old_field' => $management->is_jmb, 'new_field' => $management->draft->is_jmb])
                                                         <!-- jmb Form -->
                                                         <div id="jmb_form_draft">
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.date_formed') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->date_formed : "", 'new_field' => ($management->draft->jmb && $management->draft->jmb->date_formed != '0000-00-00')? $management->draft->jmb->date_formed : ""])
                                                                         <label class="input-group datepicker-only-init">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" value="{{ ($management->draft->jmb->date_formed != '0000-00-00' ? date('d-m-Y', strtotime($management->draft->jmb->date_formed)) : '') }}" readonly=""/>
                                                                             <span class="input-group-addon">
@@ -181,6 +205,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.certificate_series_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->certificate_no : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->certificate_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" value="{{$management->draft->jmb->certificate_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -189,6 +214,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.name') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->name : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->name : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{$management->draft->jmb->name}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -197,6 +223,7 @@
                                                                 <div class="col-md-8">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.address') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->address1 : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->address1 : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" value="{{$management->draft->jmb->address1}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -207,6 +234,7 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$management->draft->jmb->address2}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->address2 : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->address2 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-8">
@@ -214,11 +242,13 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$management->draft->jmb->address3}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->address3 : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->address3 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.city') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->city : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->city : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($city as $cities)
@@ -230,6 +260,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->poscode : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->poscode : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$management->draft->jmb->poscode}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -238,6 +269,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.state') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->state : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->state : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($state as $states)
@@ -249,6 +281,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.country') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->country : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->country : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($country as $countries)
@@ -262,12 +295,14 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->phone_no : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->phone_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$management->draft->jmb->phone_no}}" readonly="">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->fax_no : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->fax_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$management->draft->jmb->fax_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -276,6 +311,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.email') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->jmb? $management->jmb->email : "", 'new_field' => $management->draft->jmb? $management->draft->jmb->email : ""])
                                                                         <input type="email" class="form-control" placeholder="{{ trans('app.forms.email') }}" value="{{$management->draft->jmb->email}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -286,17 +322,23 @@
                                                 <hr/>
                                                 @endif 
 
+                                                @if (($management->is_mc != $management->draft->is_mc) && !$management->draft->is_mc)
+                                                    @include('components.is_changed', ['old_field' => $management->is_mc, 'new_field' => $management->draft->is_mc, 'text' => trans('app.forms.mc')])
+                                                    <hr />
+                                                @endif
                                                 @if ($management->draft->mc)
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" disabled="" {{($management->draft->mc ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.management_corporation') }}</h4></label>
+                                                        @include('components.is_changed', ['old_field' => $management->is_mc, 'new_field' => $management->draft->is_mc])
                                                         <!-- mc Form -->
                                                         <div id="mc_form_draft">
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.date_formed') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->date_formed : "", 'new_field' => ($management->draft->mc && $management->draft->mc->date_formed != '0000-00-00')? $management->draft->mc->date_formed : ""])
                                                                         <label class="input-group datepicker-only-init">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" value="{{ ($management->draft->mc->date_formed != '0000-00-00' ? date('d-m-Y', strtotime($management->draft->mc->date_formed)) : '') }}" readonly=""/>
                                                                             <span class="input-group-addon">
@@ -310,6 +352,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.certificate_series_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->certificate_no : "", 'new_field' => $management->draft->mc? $management->draft->mc->certificate_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.certificate_series_number') }}" value="{{$management->draft->mc->certificate_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -318,6 +361,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.first_agm_date') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->first_agm : "", 'new_field' => ($management->draft->mc && $management->draft->mc->first_agm != '0000-00-00')? $management->draft->mc->first_agm : ""])
                                                                         <label class="input-group datepicker-only-init">
                                                                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.first_agm_date') }}" value="{{ ($management->draft->mc->first_agm != '0000-00-00' ? date('d-m-Y', strtotime($management->draft->mc->first_agm)) : '') }}" readonly=""/>
                                                                             <span class="input-group-addon">
@@ -331,6 +375,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.name') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->name : "", 'new_field' => $management->draft->mc? $management->draft->mc->name : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{$management->draft->mc->name}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -339,6 +384,7 @@
                                                                 <div class="col-md-8">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.address') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->address1 : "", 'new_field' => $management->draft->mc? $management->draft->mc->address1 : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" value="{{$management->draft->mc->address1}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -349,6 +395,7 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$management->draft->mc->address2}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->mc? $management->mc->address2 : "", 'new_field' => $management->draft->mc? $management->draft->mc->address2 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-8">
@@ -356,11 +403,13 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$management->draft->mc->address3}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->mc? $management->mc->address3 : "", 'new_field' => $management->draft->mc? $management->draft->mc->address3 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.city') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->city : "", 'new_field' => $management->draft->mc? $management->draft->mc->city : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($city as $cities)
@@ -372,6 +421,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->poscode : "", 'new_field' => $management->draft->mc? $management->draft->mc->poscode : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$management->draft->mc->poscode}}" disabled="">
                                                                     </div>
                                                                 </div>
@@ -380,6 +430,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.state') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->state : "", 'new_field' => $management->draft->mc? $management->draft->mc->state : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($state as $states)
@@ -391,6 +442,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.country') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->country : "", 'new_field' => $management->draft->mc? $management->draft->mc->country : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($country as $countries)
@@ -404,12 +456,14 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->phone_no : "", 'new_field' => $management->draft->mc? $management->draft->mc->phone_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$management->draft->mc->phone_no}}" readonly="">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->fax_no : "", 'new_field' => $management->draft->mc? $management->draft->mc->fax_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$management->draft->mc->fax_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -418,6 +472,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.email') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->mc? $management->mc->email : "", 'new_field' => $management->draft->mc? $management->draft->mc->email : ""])
                                                                         <input type="email" class="form-control" placeholder="{{ trans('app.forms.email') }}" value="{{$management->draft->mc->email}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -428,17 +483,23 @@
                                                 <hr/>
                                                 @endif
 
+                                                @if (($management->is_agent != $management->draft->is_agent) && !$management->draft->is_agent)
+                                                    @include('components.is_changed', ['old_field' => $management->is_agent, 'new_field' => $management->draft->is_agent, 'text' => trans('app.forms.agent')])
+                                                    <hr />
+                                                @endif
                                                 @if($management->draft->agent)
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" disabled="" {{($management->draft->agent ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.agent') }}</h4></label>
+                                                        @include('components.is_changed', ['old_field' => $management->is_agent, 'new_field' => $management->draft->is_agent])
                                                         <!-- agent Form -->
                                                         <div id="agent_form_draft">
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.appointed_by') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->selected_by : "", 'new_field' => $management->draft->agent? $management->draft->agent->selected_by : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             <option value="developer" {{($management->draft->agent->selected_by == "developer" ? " selected" : "")}}>{{ trans('app.forms.developer') }}</option>
@@ -453,6 +514,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.name') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->agent : "", 'new_field' => $management->draft->agent? $management->draft->agent->agent : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($agent as $agents)
@@ -466,6 +528,7 @@
                                                                 <div class="col-md-8">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.address') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->address1 : "", 'new_field' => $management->draft->agent? $management->draft->agent->address1 : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" value="{{$management->draft->agent->address1}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -476,6 +539,7 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$management->draft->agent->address2}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->agent? $management->agent->address2 : "", 'new_field' => $management->draft->agent? $management->draft->agent->address2 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-8">
@@ -483,11 +547,13 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$management->draft->agent->address3}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->agent? $management->agent->address3 : "", 'new_field' => $management->draft->agent? $management->draft->agent->address3 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.city') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->city : "", 'new_field' => $management->draft->agent? $management->draft->agent->city : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($city as $cities)
@@ -499,7 +565,8 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.postcode') }}</label>
-                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$management->draft->agent->address1}}" readonly="">
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->poscode : "", 'new_field' => $management->draft->agent? $management->draft->agent->poscode : ""])
+                                                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$management->draft->agent->poscode}}" readonly="">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -507,6 +574,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.state') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->state : "", 'new_field' => $management->draft->agent? $management->draft->agent->state : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($state as $states)
@@ -518,6 +586,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.country') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->country : "", 'new_field' => $management->draft->agent? $management->draft->agent->country : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($country as $countries)
@@ -531,12 +600,14 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->phone_no : "", 'new_field' => $management->draft->agent? $management->draft->agent->phone_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$management->draft->agent->phone_no}}" readonly="">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->fax_no : "", 'new_field' => $management->draft->agent? $management->draft->agent->fax_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$management->draft->agent->fax_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -545,6 +616,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.email') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->agent? $management->agent->email : "", 'new_field' => $management->draft->agent? $management->draft->agent->email : ""])
                                                                         <input type="email" class="form-control" placeholder="{{ trans('app.forms.email') }}" value="{{$management->draft->agent->email}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -555,17 +627,23 @@
                                                 <hr/>
                                                 @endif
 
+                                                @if (($management->is_others != $management->draft->is_others) && !$management->draft->is_others)
+                                                    @include('components.is_changed', ['old_field' => $management->is_others, 'new_field' => $management->draft->is_others, 'text' => trans('app.forms.others')])
+                                                    <hr />
+                                                @endif
                                                 @if ($management->draft->others)
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="checkbox" disabled="" {{($management->draft->others ? " checked" : "")}}/>
                                                         <label><h4> {{ trans('app.forms.others') }}</h4></label>
+                                                        @include('components.is_changed', ['old_field' => $management->is_others, 'new_field' => $management->draft->is_others])
                                                         <!-- jmb Form -->
                                                         <div id="other_form_draft">
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.name') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->name : "", 'new_field' => $management->draft->others? $management->draft->others->name : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" value="{{$management->draft->others->name}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -574,6 +652,7 @@
                                                                 <div class="col-md-8">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.address') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->address1 : "", 'new_field' => $management->draft->others? $management->draft->others->address1 : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" value="{{$management->draft->others->address1}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -584,6 +663,7 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" value="{{$management->draft->others->address2}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->others? $management->others->address2 : "", 'new_field' => $management->draft->others? $management->draft->others->address2 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-8">
@@ -591,11 +671,13 @@
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" value="{{$management->draft->others->address3}}" readonly="">
                                                                     </div>
                                                                 </div>
+                                                                @include('components.is_changed', ['old_field' => $management->others? $management->others->address3 : "", 'new_field' => $management->draft->others? $management->draft->others->address3 : "", 'class' => 'margin-top-5'])
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.city') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->city : "", 'new_field' => $management->draft->others? $management->draft->others->city : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($city as $cities)
@@ -607,6 +689,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.postcode') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->poscode : "", 'new_field' => $management->draft->others? $management->draft->others->poscode : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" value="{{$management->draft->others->poscode}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -615,6 +698,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.state') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->state : "", 'new_field' => $management->draft->others? $management->draft->others->state : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($state as $states)
@@ -626,6 +710,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.country') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->country : "", 'new_field' => $management->draft->others? $management->draft->others->country : ""])
                                                                         <select class="form-control select2" disabled="">
                                                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                             @foreach ($country as $countries)
@@ -639,12 +724,14 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.phone_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->phone_no : "", 'new_field' => $management->draft->others? $management->draft->others->phone_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" value="{{$management->draft->others->phone_no}}" readonly="">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.fax_number') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->fax_no : "", 'new_field' => $management->draft->others? $management->draft->others->fax_no : ""])
                                                                         <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" value="{{$management->draft->others->fax_no}}" readonly="">
                                                                     </div>
                                                                 </div>
@@ -653,6 +740,7 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>{{ trans('app.forms.email') }}</label>
+                                                                        @include('components.is_changed', ['old_field' => $management->others? $management->others->email : "", 'new_field' => $management->draft->others? $management->draft->others->email : ""])
                                                                         <input type="email" class="form-control" placeholder="{{ trans('app.forms.email') }}" value="{{$management->draft->others->email}}" readonly="">
                                                                     </div>
                                                                 </div>

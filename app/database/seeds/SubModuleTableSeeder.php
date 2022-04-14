@@ -44,6 +44,12 @@ class SubModuleTableSeeder extends Seeder {
                 'name_my' => 'EPKS',
                 'sort_no' => 17
             ]);
+            SubModule::firstOrCreate([
+                'module_id' => $report->id,
+                'name_en' => 'Report Generator',
+                'name_my' => 'Report Generator',
+                'sort_no' => 18
+            ]);
         }
     }
 
