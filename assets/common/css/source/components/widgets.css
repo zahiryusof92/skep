@@ -426,3 +426,20 @@
         margin-left: 0px;
     }
 }
+
+@media (min-width: 767px) {
+    .label-danger.changed {
+        margin-top: 35px;
+    }
+}
+
+@media (max-width: 767px) {
+    .label-danger.margin-top-5 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    .label-danger.margin-top-40 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+}
