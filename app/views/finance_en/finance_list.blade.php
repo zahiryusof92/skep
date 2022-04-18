@@ -21,7 +21,7 @@ foreach ($user_permission as $permission) {
             <section class="panel panel-pad">
                 {{-- Import process --}}
                 <div class="row padding-vertical-10">
-                    <div class="col-lg-12">
+                    <div class="col-md-6">
                         <button class="btn btn-success" data-toggle="modal" data-target="#importForm">
                             {{ trans('app.buttons.import_finance_files') }} &nbsp;<i class="fa fa-upload"></i>
                         </button>
@@ -32,10 +32,17 @@ foreach ($user_permission as $permission) {
                             </button>
                         </a>
                     </div>
+                    @if (Auth::user()->getAdmin())
+                    {{-- <div class="col-md-6">
+                        <button class="btn btn-primary pull-right" id="btn_sync" onclick="syncMPSFinances()" title="Sync">
+                            {{ trans('Sync MPS Finances') }} &nbsp;<i class="fa fa-refresh"></i>
+                        </button>
+                    </div> --}}
+                    @endif
                 </div>
+
                 <br/>
-                
-                
+                                
                 <div class="modal fade" id="importForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <form id="form_import" enctype="multipart/form-data" class="form-horizontal" data-parsley-validate>
@@ -120,8 +127,7 @@ foreach ($user_permission as $permission) {
                 </div>
                 <!-- modal -->
 
-                <script>
-                    
+                <script>                    
                     $("#form_import").on('submit', (function (e) {
                         e.preventDefault();
 
@@ -207,6 +213,29 @@ foreach ($user_permission as $permission) {
                             $("#cancel_button_import").removeAttr("disabled");
                         }
                     }));
+
+                    function syncMPSFinances() {
+                        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
+                            if (result) {
+                                $("#btn_sync").prop("disabled", true);
+                                $.ajax({
+                                    url: "{{ URL::action('Api\FinanceController@submitSync') }}",
+                                    type: "POST",
+                                    success: function (data) {
+                                        console.log(data);
+                                        $("#btn_sync").removeAttr("disabled");
+                                        if (data.trim() === "true") {
+                                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_sync.store') }}</span>", function () {
+                                                window.location.reload();
+                                            });
+                                        } else {
+                                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                                        }
+                                    },
+                                });
+                            }
+                        });
+                    }
                 </script>
                 {{-- End Import process --}}
 

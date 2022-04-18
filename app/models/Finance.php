@@ -27,6 +27,10 @@ class Finance extends Eloquent {
         return $this->belongsTo('Files', 'file_id');
     }
 
+    public function financeSummary() {
+        return $this->hasMany('FinanceSummary', 'finance_file_id');
+    }
+
     public function financeAdmin() {
         return $this->hasMany('FinanceAdmin', 'finance_file_id');
     }
@@ -53,6 +57,10 @@ class Finance extends Eloquent {
 
     public function financeReport() {
         return $this->hasMany('FinanceReport', 'finance_file_id');
+    }
+
+    public function financeReportExtra() {
+        return $this->hasMany('FinanceReportExtra', 'finance_file_id');
     }
 
     public function financeStaff() {

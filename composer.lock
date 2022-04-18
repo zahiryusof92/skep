@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9dfade79fb87823e6277d0668158c7f4",
+    "content-hash": "be6a4c5d70c6effa060bef58f75191f9",
     "packages": [
         {
             "name": "barryvdh/laravel-snappy",
@@ -633,6 +633,50 @@
                 "source": "https://github.com/laravel/framework/tree/4.2"
             },
             "time": "2016-11-12T01:41:37+00:00"
+        },
+        {
+            "name": "laravel/homestead",
+            "version": "v2.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/homestead.git",
+                "reference": "f4e45f895d8707042c2d0698627d33c484e7c6ba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/homestead/zipball/f4e45f895d8707042c2d0698627d33c484e7c6ba",
+                "reference": "f4e45f895d8707042c2d0698627d33c484e7c6ba",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/console": "~2.0 || ~3.0",
+                "symfony/process": "~2.0 || ~3.0"
+            },
+            "bin": [
+                "homestead"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Homestead\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "A virtual machine for web artisans.",
+            "support": {
+                "source": "https://github.com/laravel/homestead/tree/2.0"
+            },
+            "time": "2016-09-17T04:42:33+00:00"
         },
         {
             "name": "maatwebsite/excel",
