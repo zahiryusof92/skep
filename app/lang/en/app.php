@@ -710,6 +710,12 @@ return array(
         "cob_sync" => array(
             "store" => "COB buyers synced successfully!",
         ),
+        "file_sync" => array(
+            "store" => "Files synced successfully!",
+        ),
+        "finance_sync" => array(
+            "store" => "Finances synced successfully!",
+        ),
         "finance_file" => array(
             "store" => "Finance file added successfully!",
             "update" => "Finance file updated successfully!",

@@ -953,6 +953,8 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('cob/get-option', 'CobController@getOption');
     Route::post('buyer/sync', 'CobSyncController@submitBuyerSync');
     Route::get('cob/get-property', 'CobSyncController@getProperty');
+    Route::post('file/sync', 'Api\FileController@submitSync');
+    Route::post('finance/sync', 'Api\FinanceController@submitSync');
 });
 
 /** Transaction */
@@ -1098,6 +1100,29 @@ Route::get('cronjob/createFileByCob/{cob}', 'CronjobController@createFileByCob')
 Route::get('cronjob/createFile/{id}', 'CronjobController@createFile');
 Route::get('cronjob/updateFile/{id}', 'CronjobController@updateFile');
 Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
+
+Route::group(array('prefix' => 'api/v4'), function() {
+    // Files API
+    Route::get('files', 'Api\FileController@files');
+    Route::get('syncFile', 'Api\FileController@syncFile');
+
+    // Finance API
+    Route::get('financeFile', 'Api\FinanceController@financeFile');
+    Route::get('financeCheck', 'Api\FinanceController@financeCheck');
+    Route::get('financeSummary', 'Api\FinanceController@financeSummary');
+    Route::get('financeReport', 'Api\FinanceController@financeReport');
+    Route::get('financeReportExtra', 'Api\FinanceController@financeReportExtra');
+    Route::get('financeReportPerbelanjaan', 'Api\FinanceController@financeReportPerbelanjaan');
+    Route::get('financeIncome', 'Api\FinanceController@financeIncome');
+    Route::get('financeUtility', 'Api\FinanceController@financeUtility');
+    Route::get('financeContract', 'Api\FinanceController@financeContract');
+    Route::get('financeRepair', 'Api\FinanceController@financeRepair');
+    Route::get('financeVandalisme', 'Api\FinanceController@financeVandalisme');
+    Route::get('financeStaff', 'Api\FinanceController@financeStaff');
+    Route::get('financeAdmin', 'Api\FinanceController@financeAdmin');
+
+    Route::get('syncFinance', 'Api\FinanceController@syncFinance');
+});
 
 //invalid route
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');

@@ -22,9 +22,14 @@ foreach ($user_permission as $permission) {
 
                 @if (Auth::user()->getAdmin())
                 <div class="row padding-vertical-10">
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <button class="btn btn-own" data-toggle="modal" data-target="#importForm">
                             {{ trans('app.buttons.import_cob_files') }} &nbsp;<i class="fa fa-upload"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-primary pull-right" id="btn_sync" onclick="syncMPSFiles()" title="Sync">
+                            {{ trans('Sync MPS Files') }} &nbsp;<i class="fa fa-refresh"></i>
                         </button>
                     </div>
                 </div>
@@ -159,6 +164,29 @@ foreach ($user_permission as $permission) {
                             $("#cancel_button_import").removeAttr("disabled");
                         }
                     }));
+
+                    function syncMPSFiles() {
+                        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
+                            if (result) {
+                                $("#btn_sync").prop("disabled", true);
+                                $.ajax({
+                                    url: "{{ URL::action('Api\FileController@submitSync') }}",
+                                    type: "POST",
+                                    success: function (data) {
+                                        console.log(data);
+                                        $("#btn_sync").removeAttr("disabled");
+                                        if (data.trim() === "true") {
+                                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_sync.store') }}</span>", function () {
+                                                window.location.reload();
+                                            });
+                                        } else {
+                                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                                        }
+                                    },
+                                });
+                            }
+                        });
+                    }
                 </script>
                 @endif
 
