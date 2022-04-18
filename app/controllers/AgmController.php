@@ -1,7 +1,6 @@
 <?php
 
 use Helper\Helper;
-use Helper\KCurl;
 use Illuminate\Support\Facades\View;
 
 class AgmController extends BaseController {
@@ -627,6 +626,7 @@ class AgmController extends BaseController {
                     $new_line .= $keluasan_lantai_petak_aksesori != $buyer->keluasan_lantai_petak_aksesori? "keluasan lantai petak aksesori, " : "";
                     $new_line .= $jenis_kegunaan != $buyer->jenis_kegunaan? "jenis kegunaan, " : "";
                     $new_line .= $nama2 != $buyer->nama2? "nama2, " : "";
+                    $new_line .= $ic_no2 != $buyer->ic_no2? "ic no2, " : "";
                     $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat? "alamat surat menyurat, " : "";
                     $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan? "caj penyelenggaraan, " : "";
                     $new_line .= $sinking_fund != $buyer->sinking_fund? "sinking fund, " : "";
@@ -790,7 +790,7 @@ class AgmController extends BaseController {
                             # Audit Trail
                             $files = Files::find($buyer->file_id);
                             $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_inserted'];
-                            $this->addAudit($files->id, "COB File", $remarks);
+                            $this->addAudit($buyer->file_id, "COB File", $remarks);
                         }
                     }
                 }
@@ -799,7 +799,7 @@ class AgmController extends BaseController {
             # Audit Trail
             $files = Files::find($buyer->file_id);
             $remarks = 'COB Owner List (' . $files->file_no . ')' . $this->module['audit']['text']['data_imported'];
-            $this->addAudit($files->id, "COB File", $remarks);
+            $this->addAudit($buyer->file_id, "COB File", $remarks);
 
             print "true";
         } else {
@@ -1668,13 +1668,9 @@ class AgmController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $file_name = Files::find($agm_detail->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $files = Files::find($agm_detail->file_id);
+                $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 print "true";
             } else {
@@ -1773,6 +1769,50 @@ class AgmController extends BaseController {
 
             $agm_detail = MeetingDocument::findOrFail($id);
             if ($agm_detail) {
+                /** Arrange audit fields changes */
+                $audit_fields_changed = '';
+                $new_line = '';
+                $new_line .= $agm_date != $agm_detail->agm_date? "agm date, " : "";
+                $new_line .= $agm != $agm_detail->agm? "agm, " : "";
+                $new_line .= !empty($agm_file_url) ? "agm file, " : "";
+                $new_line .= $egm != $agm_detail->egm? "egm, " : "";
+                $new_line .= !empty($egm_file_url) ? "egm file, " : "";
+                $new_line .= $minit_meeting != $agm_detail->minit_meeting? "minit meeting, " : "";
+                $new_line .= !empty($minutes_meeting_file_url) ? "minutes meeting file, " : "";
+                $new_line .= $jmc_copy != $agm_detail->jmc_spa? "jmc copy, " : "";
+                $new_line .= !empty($jmc_file_url) ? "jmc file, " : "";
+                $new_line .= $ic_list != $agm_detail->identity_card? "ic list, " : "";
+                $new_line .= !empty($ic_file_url) ? "ic file, " : "";
+                $new_line .= $attendance_list != $agm_detail->attendance? "attendance list, " : "";
+                $new_line .= !empty($attendance_file_url) ? "attendance file, " : "";
+                $new_line .= $audited_financial_report != $agm_detail->financial_report? "audited financial report, " : "";
+                $new_line .= !empty($audited_financial_file_url) ? "audited financial file, " : "";
+                $new_line .= $audit_report != $agm_detail->audit_report? "audit report, " : "";
+                $new_line .= !empty($audit_report_file_url) ? "audit report file, " : "";
+                $new_line .= !empty($letter_integrity_url) ? "letter integrity, " : "";
+                $new_line .= !empty($letter_bankruptcy_url) ? "letter bankruptcy, " : "";
+                $new_line .= $audit_start != $agm_detail->audit_start_date? "audit start, " : "";
+                $new_line .= $audit_end != $agm_detail->audit_end_date? "audit end, " : "";
+                $new_line .= $notice_agm_egm_url != $agm_detail->notice_agm_egm_url? "notice agm egm, " : "";
+                $new_line .= $minutes_agm_egm_url != $agm_detail->minutes_agm_egm_url? "minutes agm egm, " : "";
+                $new_line .= $minutes_ajk_url != $agm_detail->minutes_ajk_url? "minutes ajk, " : "";
+                $new_line .= $eligible_vote_url != $agm_detail->eligible_vote_url? "eligible vote, " : "";
+                $new_line .= $attend_meeting_url != $agm_detail->attend_meeting_url? "attend meeting, " : "";
+                $new_line .= $proksi_url != $agm_detail->proksi_url? "proksi, " : "";
+                $new_line .= $ajk_info_url != $agm_detail->ajk_info_url? "ajk info, " : "";
+                $new_line .= $ic_url != $agm_detail->ic_url? "ic, " : "";
+                $new_line .= $purchase_aggrement_url != $agm_detail->purchase_aggrement_url? "purchase aggrement, " : "";
+                $new_line .= $strata_title_url != $agm_detail->strata_title_url? "strata title, " : "";
+                $new_line .= $maintenance_statement_url != $agm_detail->maintenance_statement_url? "maintenance statement, " : "";
+                $new_line .= $integrity_pledge_url != $agm_detail->integrity_pledge_url? "integrity pledge, " : "";
+                $new_line .= $house_rules_url != $agm_detail->house_rules_url? "house rules, " : "";
+                $new_line .= $remarks != $agm_detail->remarks? "remarks, " : "";
+                if(!empty($new_line)) {
+                    $audit_fields_changed .= "<br/><ul><li> AGM Detail : (";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $agm_detail->file_id = $file_id;
                 $agm_detail->agm_date = $agm_date;
                 $agm_detail->agm = $agm;
@@ -1834,13 +1874,11 @@ class AgmController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $file_name = Files::find($agm_detail->file_id);
-                    $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB File";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $files = Files::find($agm_detail->file_id);
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit($files->id, "COB File", $remarks);
+                    }
 
                     print "true";
                 } else {
@@ -1858,19 +1896,15 @@ class AgmController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $agm_details = MeetingDocument::findOrFail($id);
-            $agm_details->is_deleted = 1;
-            $deleted = $agm_details->save();
+            $agm_detail = MeetingDocument::findOrFail($id);
+            $agm_detail->is_deleted = 1;
+            $deleted = $agm_detail->save();
 
             if ($deleted) {
                 # Audit Trail
-                $file_name = Files::find($agm_details->file_id);
-                $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $files = Files::find($agm_detail->file_id);
+                $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 print "true";
             } else {
@@ -2012,12 +2046,8 @@ class AgmController extends BaseController {
                     $deleted = $document->save();
                     if ($deleted) {
                         # Audit Trail
-                        $remarks = 'Document: ' . $document->name_en . ' has been deleted.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "Document";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        $remarks = 'Document: ' . $document->name . $this->module['audit']['text']['data_deleted'];
+                        $this->addAudit($document->file_id, "Document", $remarks);
     
                         print "true";
                     } else {
@@ -2054,12 +2084,8 @@ class AgmController extends BaseController {
     
                     if ($deleted) {
                         # Audit Trail
-                        $remarks = 'Document: ' . $document->name_en . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "Document";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        $remarks = 'Document File: ' . $document->name . $this->module['audit']['text']['data_deleted'];
+                        $this->addAudit($document->file_id, "Document", $remarks);
     
                         print "true";
                     } else {
@@ -2132,12 +2158,8 @@ class AgmController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $remarks = 'Document: ' . $document->name_en . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Document";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $remarks = 'Document: ' . $document->name_en . $this->module['audit']['text']['data_inserted'];
+                    $this->addAudit($document->file_id, "Document", $remarks);
 
                     print "true";
                 } else {
@@ -2192,6 +2214,21 @@ class AgmController extends BaseController {
 
             $document = Document::findOrFail($id);
             if ($document) {
+                /** Arrange audit fields changes */
+                $audit_fields_changed = '';
+                $new_line = '';
+                $new_line .= $data['document_type'] != $document->document_type_id? "document type, " : "";
+                $new_line .= $data['name'] != $document->name? "name, " : "";
+                $new_line .= $data['remarks'] != $document->remarks? "remarks, " : "";
+                $new_line .= $data['is_hidden'] != $document->is_hidden? "is hidden, " : "";
+                $new_line .= $data['is_readonly'] != $document->is_readonly? "is readonly, " : "";
+                $new_line .= $data['document_url'] != $document->file_url? "document, " : "";
+                if(!empty($new_line)) {
+                    $audit_fields_changed .= "<br/><ul><li> Document : (";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $document->file_id = $data['file_id'];
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
@@ -2203,12 +2240,10 @@ class AgmController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $remarks = $document->id . ' has been updated.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "Document";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Document id: ' . $document->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit($document->file_id, "Document", $remarks);
+                    }
 
                     return "true";
                 } else {
@@ -2277,12 +2312,8 @@ class AgmController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'New AGM Designation Submission has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Design Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'New AGM Designation Submission' . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit($agmDesignSub->file_id, "AGM Design Submission", $remarks);
 
                 print "true";
             } else {
@@ -2339,12 +2370,8 @@ class AgmController extends BaseController {
             $updated = $agmDesignSub->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $agmDesignSub->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Design Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Designation Submission id ' . $agmDesignSub->id . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit($agmDesignSub->file_id, "AGM Design Submission", $remarks);
 
                 print "true";
             } else {
@@ -2364,12 +2391,8 @@ class AgmController extends BaseController {
             $updated = $agmDesignSub->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $agmDesignSub->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Design Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Designation Submission id ' . $agmDesignSub->id . $this->module['audit']['text']['status_active'];
+                $this->addAudit($agmDesignSub->file_id, "AGM Design Submission", $remarks);
 
                 print "true";
             } else {
@@ -2389,12 +2412,8 @@ class AgmController extends BaseController {
             $deleted = $agmDesignSub->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = $agmDesignSub->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Design Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Designation Submission id ' . $agmDesignSub->id . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($agmDesignSub->file_id, "AGM Design Submission", $remarks);
 
                 print "true";
             } else {
@@ -2430,6 +2449,21 @@ class AgmController extends BaseController {
         if (Request::ajax()) {
             $id = $data['id'];
             $agmDesignSub = AgmDesignSub::find($id);
+            /** Arrange audit fields changes */
+            $audit_fields_changed = '';
+            $new_line = '';
+            $new_line .= $data['name'] != $agmDesignSub->name? "name, " : "";
+            $new_line .= $data['phone_number'] != $agmDesignSub->phone_number? "phone number, " : "";
+            $new_line .= $data['email'] != $agmDesignSub->email? "email, " : "";
+            $new_line .= $data['ajk_start_year'] != $agmDesignSub->ajk_start_year? "ajk start year, " : "";
+            $new_line .= $data['ajk_end_year'] != $agmDesignSub->ajk_end_year? "ajk end year, " : "";
+            $new_line .= $data['remark'] != $agmDesignSub->remark? "remark, " : "";
+            if(!empty($new_line)) {
+                $audit_fields_changed .= "<br/><ul><li> AGM Designation Submission : (";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $agmDesignSub->file_id = $data['file_id'];
             $agmDesignSub->design_id = $data['design_id'];
             $agmDesignSub->name = $data['name'];
@@ -2442,12 +2476,10 @@ class AgmController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $agmDesignSub->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Design Submission Update";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'AGM Designation Submission id ' . $agmDesignSub->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($agmDesignSub->file_id, "AGM Design Submission", $remarks);
+                }
 
                 print "true";
             } else {
@@ -2518,12 +2550,8 @@ class AgmController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'New AGM Purchaser Submission has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Purchaser Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'New AGM Purchaser Submission' . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit($agmPurchaseSub->file_id, "AGM Purchaser Submission", $remarks);
 
                 print "true";
             } else {
@@ -2580,12 +2608,8 @@ class AgmController extends BaseController {
             $updated = $agmPurchaseSub->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $agmPurchaseSub->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Purchaser Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Purchaser Submission id ' . $agmPurchaseSub->id . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit($agmPurchaseSub->file_id, "AGM Purchaser Submission", $remarks);
 
                 print "true";
             } else {
@@ -2605,12 +2629,8 @@ class AgmController extends BaseController {
             $updated = $agmPurchaseSub->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $agmPurchaseSub->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Purchaser Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Purchaser Submission id ' . $agmPurchaseSub->id . $this->module['audit']['text']['status_active'];
+                $this->addAudit($agmPurchaseSub->file_id, "AGM Purchaser Submission", $remarks);
 
                 print "true";
             } else {
@@ -2630,12 +2650,8 @@ class AgmController extends BaseController {
             $deleted = $agmPurchaseSub->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = $agmPurchaseSub->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Purchaser Submission";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'AGM Purchaser Submission id ' . $agmPurchaseSub->id . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($agmPurchaseSub->file_id, "AGM Purchaser Submission", $remarks);
 
                 print "true";
             } else {
@@ -2686,13 +2702,28 @@ class AgmController extends BaseController {
 
             $agmPurchaseSub = AgmPurchaseSub::find($id);
 
+            $audit_fields_changed = '';
+            $new_line = '';
             foreach ($fields as $field) {
                 $agmPurchaseSub->$field = $data[$field];
+                $new_line .= $data[$field] != $agmPurchaseSub->$field? "$field, " : "";
             }
+            /** Arrange audit fields changes */
+            if(!empty($new_line)) {
+                $audit_fields_changed .= "<br/><ul><li> AGM Purchaser Submission : (";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $success = $agmPurchaseSub->save();
 
             if ($success) {
                 # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'AGM Purchaser Submission id ' . $agmPurchaseSub->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($agmPurchaseSub->file_id, "AGM Purchaser Submission", $remarks);
+                }
+
                 $remarks = $agmPurchaseSub->id . ' has been updated.';
                 $auditTrail = new AuditTrail();
                 $auditTrail->module = "AGM Purchaser Submission Update";

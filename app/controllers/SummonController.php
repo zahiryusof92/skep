@@ -1,6 +1,7 @@
 <?php
 
 use Helper\Helper;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 
 class SummonController extends \BaseController {
@@ -479,6 +480,10 @@ class SummonController extends \BaseController {
                         $model->attachment = json_encode($attachment);
                         $success = $model->save();
 
+                        # Audit Trail
+                        $remarks = 'Summon: ' . $model->id . $this->module['audit']['text']['data_inserted'];
+                        $this->addAudit(Auth::user()->file_id, "Summon", $remarks);
+
                         if ($success) {
                             return Redirect::to('summon/' . Helper::encode($model->id))->with('success', trans('app.successes.saved_successfully'));
                         }
@@ -691,6 +696,19 @@ class SummonController extends \BaseController {
                     }
                 }
 
+                /** Arrange audit fields changes */
+                $status_field = $data['status'] == $model->status? "": "status";
+                $action_file_field = $attachment == $model->action_file? "": "attachment";
+
+                $audit_fields_changed = "";
+                if(!empty($status_field) || !empty($action_file_field)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= !empty($status_field)? "<li>$status_field</li>" : "";
+                    $audit_fields_changed .= !empty($action_file_field)? "<li>$action_file_field</li>" : "";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $model->status = $data['status'];
                 if (!empty($attachment)) {
                     $model->action_file = $attachment;
@@ -700,6 +718,12 @@ class SummonController extends \BaseController {
                 $success = $model->save();
 
                 if ($success) {
+                    # Audit Trail
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Summon: ' . $model->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit($model->file_id, "Summon", $remarks);
+                    }
+
                     return Redirect::to('summon')->with('success', trans('app.successes.updated_successfully'));
                 }
             }
@@ -720,6 +744,10 @@ class SummonController extends \BaseController {
             $model->status = Summon::CANCELED;
             $success = $model->save();
 
+            # Audit Trail
+            $remarks = 'Summon: ' . $model->id . "has been cancelled";
+            $this->addAudit($model->file_id, "Summon", $remarks);
+            
             if ($success) {
                 $order = Orders::where('reference_id', $model->id)->where('payment_method', Orders::POINT)->where('type', Orders::SUMMON)->where('status', Orders::APPROVED)->first();
                 if ($order) {
@@ -740,7 +768,12 @@ class SummonController extends \BaseController {
                         $transaction->description = 'Refund Summon for ' . $model->ic_no;
                         $refund = $transaction->save();
 
+
                         if ($refund) {
+                            # Audit Trail
+                            $remarks = 'Point Transaction ref no: ' . $ref_no . "has been refunded";
+                            $this->addAudit(Auth::user()->file_id, "Point", $remarks);
+
                             return Redirect::to('summon')->with('success', trans('app.successes.updated_successfully'));
                         }
                     }
@@ -809,6 +842,10 @@ class SummonController extends \BaseController {
                 $success = $model->save();
 
                 if ($success) {
+                    # Audit Trail
+                    $remarks = 'New order ref no: ' . $ref_no . $this->module['audit']['text']['data_inserted'];
+                    $this->addAudit(Auth::user()->file_id, "Order", $remarks);
+
                     return Redirect::to('summon/payment')->with('orderID', $model->id);
                 }
             }
@@ -910,6 +947,9 @@ class SummonController extends \BaseController {
                             //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
                             // });
                             
+                            # Audit Trail
+                            $remarks = 'Summon:'. $summon->id .' was payment successful the order ref no: '. $model->reference_no;
+                            $this->addAudit($summon->file_id, "Summon", $remarks);
                         }
 
                         return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
@@ -1033,6 +1073,10 @@ class SummonController extends \BaseController {
             }
 
             if (!empty($attachment)) {
+                # Audit Trail
+                $remarks = 'Summon :'. $summon->id .' has upload a file.';
+                $this->addAudit($summon->file_id, "Summon", $remarks);
+
                 $model->attachment = json_encode($attachment);
                 $success = $model->save();
 

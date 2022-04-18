@@ -41,7 +41,7 @@ foreach ($user_permission as $permission) {
                                 </button>
                             </a>
 
-                            <div class="modal fade" id="importForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                            <div class="modal fade" id="importForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                                 <div class="modal-dialog">
                                     <form id="form_import" enctype="multipart/form-data" class="form-horizontal" data-parsley-validate>
                                         <div class="modal-content">
@@ -60,7 +60,7 @@ foreach ($user_permission as $permission) {
                                                     <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                                            <select id="file_id" name="file_id" class="form-control">
+                                                            <select id="file_id" name="file_id" class="form-control select2">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($files as $file)
                                                                 <option value="{{$file->id}}">{{$file->file_no}}</option>

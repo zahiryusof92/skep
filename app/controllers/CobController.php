@@ -106,12 +106,8 @@ class CobController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = "New COB {$data['name']} has been inserted.";
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB {$data['name']} Insert";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = "New COB ". $data['name'] . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "COB {$data['name']} Insert", $remarks);
 
                 print "true";
             } else {
@@ -135,12 +131,8 @@ class CobController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = "New COB {$data['name']} has been updated.";
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB {$data['name']} Update";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = "COB ". $data['name'] . $this->module['audit']['text']['data_updated'];
+                $this->addAudit(0, "COB {$data['name']} Update", $remarks);
 
                 print "true";
             } else {

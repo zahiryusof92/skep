@@ -697,9 +697,7 @@ Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceP
 
 // --- Reporting --- //
 //audit trail
-Route::get('/reporting/auditTrail', 'ReportController@auditTrail')->before('authMember');
-Route::post('/getAuditTrail', 'ReportController@getAuditTrail')->before('authMember');
-Route::get('/reporting/auditTrailNew', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrailNew'))->before('authMember');
+Route::get('/reporting/auditTrail', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrailNew'))->before('authMember');
 
 //file by location
 Route::get('/reporting/fileByLocation', 'ReportController@fileByLocation')->before('authMember');
@@ -773,8 +771,7 @@ Route::post('cob/update', 'CobController@update');
 
 // --- Printing --- //
 //audit trail
-Route::post('/print/AuditTrail', 'PrintController@printAuditTrail')->before('authMember');
-Route::get('/print/auditTrailNew', array('as' => 'print.log', 'uses' => 'ReportController@auditTrailNew'))->before('authMember');
+Route::post('/print/auditTrail', array('as' => 'print.log', 'uses' => 'PrintController@printAuditTrailNew'))->before('authMember');
 
 //file by location
 Route::get('/print/FileByLocation', 'PrintController@printFileByLocation')->before('authMember');

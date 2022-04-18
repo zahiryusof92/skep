@@ -2,6 +2,7 @@
 
 use Helper\Helper;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
 
 class PrintController extends BaseController {
@@ -201,6 +202,54 @@ class PrintController extends BaseController {
             'start' => $start,
             'end' => $end,
             'audit_trail' => $audit_trail
+        );
+
+        return View::make('print_en.audit_trail', $viewData);
+    }
+
+    public function printAuditTrailNew() {
+        $request = Request::all();
+        $request['module'] = $request['print_module'];
+        $request['date_from'] = $request['print_date_from'];
+        $request['date_to'] = $request['print_date_to'];
+        $data = AuditTrail::getAnalyticData($request);
+        $models = AuditTrail::self()
+                ->where(function($query) use($request) {
+                    if(!empty($request['company_id'])) {
+                        $query->where('users.company_id', $request['company_id']);
+                    }
+                    if(!empty($request['role_id'])) {
+                        $query->where('users.role', $request['role_id']);
+                    }
+                    if(!empty($request['module'])) {
+                        $query->where('audit_trail.module', $request['module']);
+                    }
+                    if(!empty($request['file_id'])) {
+                        $query->where('users.file_id', $request['file_id']);
+                    }
+                    if(!empty($request['date_from']) && empty($request['date_to'])) {
+                        $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                        $query->where('audit_trail.created_at', '>=', $date_from);
+                    }
+                    if(!empty($request['date_to']) && empty($request['date_from'])) {
+                        $date_to = date('Y-m-d', strtotime($request['date_to']));
+                        $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                    }
+                    if(!empty($request['date_from']) && !empty($request['date_to'])) {
+                        $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                        $date_to = date('Y-m-d', strtotime($request['date_to']));
+                        $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                    }
+                })
+                ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no'])
+                ->get();
+        $viewData = array(
+            'title' => trans('app.menus.reporting.audit_trail_report'),
+            'panel_nav_active' => '',
+            'main_nav_active' => '',
+            'sub_nav_active' => '',
+            'data' => $data,
+            'models' => $models,
         );
 
         return View::make('print_en.audit_trail', $viewData);

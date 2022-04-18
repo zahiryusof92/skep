@@ -1,6 +1,11 @@
 <?php
 
 use Helper\Helper;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
+use yajra\Datatables\Facades\Datatables;
 
 class PointPackageController extends \BaseController {
 
@@ -11,7 +16,7 @@ class PointPackageController extends \BaseController {
      */
     public function index() {
         if (Request::ajax()) {
-            $model = PointPackage::where('is_deleted', 0);
+            $model = PointPackage::self();
 
             return Datatables::of($model)
                             ->editColumn('is_active', function($model) {
@@ -104,9 +109,8 @@ class PointPackageController extends \BaseController {
                 /*
                  * add audit trail
                  */
-                $remarks = 'Point Package: ' . $model->name . ' has been inserted.';
-                $module = 'Master Setup';
-                $this->createAuditTrail($remarks, $module);
+                $remarks = 'Point Package: '. $model->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return Redirect::to('pointPackage')->with('success', trans('app.successes.saved_successfully'));
             }
@@ -172,6 +176,24 @@ class PointPackageController extends \BaseController {
         } else {
             $model = PointPackage::findOrFail(Helper::decode($id));
             if ($model) {
+                /** Arrange audit fields changes */
+                $name_field = $data['name'] == $model->name? "": "name";
+                $points_field = $data['points'] == $model->points? "": "points";
+                $price_field = $data['price'] == $model->price? "": "price";
+                $is_active_field = $data['is_active'] == $model->is_active? "": "status";
+    
+                $audit_fields_changed = "";
+                if(!empty($name_field) || !empty($points_field) || !empty($price_field) || !empty($is_active_field)
+                || !empty($remarks_field)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                    $audit_fields_changed .= !empty($points_field)? "<li>$points_field</li>" : "";
+                    $audit_fields_changed .= !empty($price_field)? "<li>$price_field</li>" : "";
+                    $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $model->name = $data['name'];
                 $model->points = $data['points'];
                 $model->price = $data['price'];
@@ -182,9 +204,10 @@ class PointPackageController extends \BaseController {
                     /*
                      * add audit trail
                      */
-                    $remarks = 'Point Package: ' . $model->name . ' has been updated.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Point Package: '. $model->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit(0, "Master Setup", $remarks);
+                    }
 
                     return Redirect::to('pointPackage')->with('success', trans('app.successes.updated_successfully'));
                 }
@@ -207,12 +230,9 @@ class PointPackageController extends \BaseController {
             $success = $model->save();
 
             if ($success) {
-                /*
-                 * add audit trail
-                 */
-                $remarks = 'Point Package: ' . $model->name . ' has been deleted.';
-                $module = 'Master Setup';
-                $this->createAuditTrail($remarks, $module);
+                # Audit Trail
+                $remarks = 'Point Package: '. $model->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return Redirect::to('pointPackage')->with('success', trans('app.successes.deleted_successfully'));
             }
@@ -229,12 +249,9 @@ class PointPackageController extends \BaseController {
                 $model->is_active = 0;
                 $success = $model->save();
                 if ($success) {
-                    /*
-                     * add audit trail
-                     */
-                    $remarks = 'Point Package: ' . $model->name . ' has been deactivated.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    # Audit Trail
+                    $remarks = 'Point Package: '. $model->name . $this->module['audit']['text']['status_deactivate'];
+                    $this->addAudit(0, "Master Setup", $remarks);
 
                     return 'true';
                 }
@@ -252,12 +269,9 @@ class PointPackageController extends \BaseController {
                 $model->is_active = 1;
                 $success = $model->save();
                 if ($success) {
-                    /*
-                     * add audit trail
-                     */
-                    $remarks = 'Point Package: ' . $model->name . ' has been activated.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    # Audit Trail
+                    $remarks = 'Point Package: '. $model->name . $this->module['audit']['text']['status_activate'];
+                    $this->addAudit(0, "Master Setup", $remarks);
 
                     return 'true';
                 }
@@ -265,15 +279,6 @@ class PointPackageController extends \BaseController {
         }
 
         return 'false';
-    }
-
-    public function createAuditTrail($remarks, $module) {
-        # Audit Trail        
-        $auditTrail = new AuditTrail();
-        $auditTrail->module = $module;
-        $auditTrail->remarks = $remarks;
-        $auditTrail->audit_by = Auth::user()->id;
-        $auditTrail->save();
     }
 
 }
