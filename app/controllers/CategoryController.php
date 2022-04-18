@@ -135,12 +135,9 @@ class CategoryController extends \BaseController {
                     }
                 }
 
-                /*
-                 * add audit trail
-                 */
-                $remarks = 'Category: ' . $model->description . ' has been inserted.';
-                $module = 'Master Setup';
-                $this->createAuditTrail($remarks, $module);
+                # Audit Trail
+                $remarks = 'Category ' . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return Redirect::to('category')->with('success', trans('app.successes.saved_successfully'));
             }
@@ -169,17 +166,6 @@ class CategoryController extends \BaseController {
         $model = Category::find(Helper::decode($id));
         if ($model) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
-            $disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(12));
-            if($disallow) {
-                $viewData = array(
-                    'title' => trans('app.errors.page_not_found'),
-                    'panel_nav_active' => '',
-                    'main_nav_active' => '',
-                    'sub_nav_active' => '',
-                    'image' => ""
-                );
-                return View::make('404_en', $viewData);
-            }
 
             $viewData = array(
                 'title' => trans('app.menus.master.edit_category'),
@@ -234,6 +220,13 @@ class CategoryController extends \BaseController {
         } else {
             $model = Category::find(Helper::decode($id));
             if ($model) {
+                /** Arrange audit fields changes */
+                $audit_fields_changed = '';
+                $new_line = '';
+                $new_line .= $data['description'] != $model->description? "description, " : "";
+                $new_line .= $data['is_active'] != $model->is_active? "description, " : "";
+                /** End Arrange audit fields changes */
+
                 $model->description = $data['description'];
                 $model->is_active = $data['is_active'];
                 $success = $model->save();
@@ -246,9 +239,15 @@ class CategoryController extends \BaseController {
                         if (Input::has('company') && Input::has('amount')) {
                             for ($x = 0; $x < count($data['company']); $x++) {
                                 $rate = SummonRate::where('company_id', $data['company'][$x])->where('category_id', $model->id)->first();
+                                /** Arrange audit fields changes */
+                                if(!empty($rate)) {
+                                    $new_line .= $data['amount'][$x] != $rate->amount? $rate->company->short_name . " rate, " : "";
+                                }
+                                /** End Arrange audit fields changes */
                                 if (!$rate) {
                                     $rate = new SummonRate();
                                 }
+
                                 $rate->company_id = $data['company'][$x];
                                 $rate->category_id = $model->id;
                                 if (array_key_exists($x, $data['amount'])) {
@@ -259,12 +258,15 @@ class CategoryController extends \BaseController {
                         }
                     }
 
-                    /*
-                     * add audit trail
-                     */
-                    $remarks = 'Category: ' . $model->description . ' has been updated.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    # Audit Trail
+                    if(!empty($new_line)) {
+                        $audit_fields_changed .= "<br/><ul><li> Summon Rate : (";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    }
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Category : '. $model->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit(0, "Master Setup", $remarks);
+                    }
 
                     return Redirect::to('category')->with('success', trans('app.successes.updated_successfully'));
                 }
@@ -290,9 +292,8 @@ class CategoryController extends \BaseController {
                 /*
                  * add audit trail
                  */
-                $remarks = 'Category: ' . $model->description . ' has been deleted.';
-                $module = 'Master Setup';
-                $this->createAuditTrail($remarks, $module);
+                $remarks = 'Category : ' . $model->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return Redirect::to('category')->with('success', trans('app.successes.deleted_successfully'));
             }
@@ -312,9 +313,8 @@ class CategoryController extends \BaseController {
                     /*
                      * add audit trail
                      */
-                    $remarks = 'Category: ' . $model->description . ' has been deactivated.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    $remarks = 'Category: ' . $model->description . $this->module['audit']['text']['status_deactivate'];
+                    $this->addAudit(0, "Master Setup", $remarks);
 
                     return 'true';
                 }
@@ -335,9 +335,8 @@ class CategoryController extends \BaseController {
                     /*
                      * add audit trail
                      */
-                    $remarks = 'Category: ' . $model->description . ' has been activated.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    $remarks = 'Category: ' . $model->description . $this->module['audit']['text']['status_activate'];
+                    $this->addAudit(0, "Master Setup", $remarks);
 
                     return 'true';
                 }
@@ -345,15 +344,6 @@ class CategoryController extends \BaseController {
         }
 
         return 'false';
-    }
-
-    public function createAuditTrail($remarks, $module) {
-        # Audit Trail        
-        $auditTrail = new AuditTrail();
-        $auditTrail->module = $module;
-        $auditTrail->remarks = $remarks;
-        $auditTrail->audit_by = Auth::user()->id;
-        $auditTrail->save();
     }
 
 }

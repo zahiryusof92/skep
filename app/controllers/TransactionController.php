@@ -3,7 +3,7 @@
 use Helper\Helper;
 use Helper\Paydibs;
 use Helper\Revenue;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Response;
 
 
 class TransactionController extends BaseController {
-
-    public function __construct()
-    {
-        $this->config = Config::get('constant.module.payment');
-    }
 
     /**
      * Index page of transaction
@@ -42,13 +37,13 @@ class TransactionController extends BaseController {
                 $model = PaymentTransaction::with('moduleable.paidBy')
                                 ->where('is_deleted', 0)
                                 ->where('moduleable_type','Summon')
-                                ->where('pay_for','!=',Config::get('constant.module.payment.pay_for.letter_of_demand.slug'));
+                                ->where('pay_for','!=', $this->module['payment']['pay_for']['letter_of_demand']['slug']);
 
             } else if(Auth::user()->isLawyer()) {
                 $model = PaymentTransaction::with('moduleable.paidBy')
                                 ->where('is_deleted', 0)
                                 ->where('moduleable_type','Summon')
-                                ->where('pay_for',Config::get('constant.module.payment.pay_for.letter_of_demand.slug'));
+                                ->where('pay_for', $this->module['payment']['pay_for']['letter_of_demand']['slug']);
 
             } else {
                 $model = PaymentTransaction::with('moduleable.paidBy')->where('user_id', Auth::user()->id)->where('is_deleted', 0);
@@ -56,7 +51,7 @@ class TransactionController extends BaseController {
             
             return Datatables::of($model)
                                 ->editColumn('status', function($model) {
-                                    $label_text = ucfirst(Config::get('constant.module.payment.status.'. $model->status));
+                                    $label_text = ucfirst($this->module['payment']['status'][$model->status]);
                                     if($label_text == 'Fail') {
                                         $label_class = 'danger';
                                     } else if($label_text == 'Pending') {
@@ -72,7 +67,7 @@ class TransactionController extends BaseController {
                                     return "<a href='" . $url . "' target='_blank'><u>$model->reference_no</u></a>";
                                 })
                                 ->editColumn('pay_for', function($model) {
-                                    return ucfirst(Config::get('constant.module.payment.pay_for.'. $model->pay_for .'.title'));
+                                    return ucfirst($this->module['payment']['pay_for'][$model->pay_for]['title']);
                                 })
                                 ->editColumn('created_at', function($model) {
                                     $created_at = ($model->created_at ? $model->created_at->format('d-M-Y H:i A') : '');
@@ -145,6 +140,9 @@ class TransactionController extends BaseController {
             $item->status  = PaymentTransaction::FAIL;
             $item->save();
 
+            # Audit Trail
+            $remarks = 'User ' . Auth::user()->username . ' has make a payment via '. $item->payment_method;
+            $this->addAudit(Auth::user()->file_id, "Transaction", $remarks);
             
     
             /** Generate reference no */
@@ -177,7 +175,7 @@ class TransactionController extends BaseController {
 
             // // return $payment_gateway_data;
             
-            if($data['payment_gateway'] == $this->config['gateway']['paydibs']['slug']) {
+            if($data['payment_gateway'] == $this->module['payment']['gateway']['paydibs']['slug']) {
                 $response = $this->processPaydibs($data['order_id'], $item);
             } else {
                 $response = $this->processRevenueMonster($data['order_id'], $item);

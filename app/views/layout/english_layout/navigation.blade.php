@@ -460,7 +460,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(24))
                     <li id="audit_trail_list">
-                        <a class="left-menu-link" href="{{URL::action('ReportController@auditTrail')}}">
+                        <a class="left-menu-link" href="{{ route('reporting.log.index') }}">
                             {{ trans('app.menus.reporting.audit_trail') }}
                         </a>
                     </li>

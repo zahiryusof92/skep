@@ -148,7 +148,7 @@ class ImportController extends BaseController {
     
                             # Audit Trail
                             $remarks = 'COB Buyer List (' . $file->file_no . ')' . $this->module['audit']['text']['data_imported'];
-                            $this->addAudit(Auth::user()->file_id, "COB File", $remarks);
+                            $this->addAudit($file->id, "COB File", $remarks);
     
                             print "true";
                         } else {
@@ -276,7 +276,7 @@ class ImportController extends BaseController {
 
                         # Audit Trail
                         $remarks = 'COB Tenant List (' . $file->file_no . ')' . $this->module['audit']['text']['data_imported'];
-                        $this->addAudit(Auth::user()->file_id, "COB File", $remarks);
+                        $this->addAudit($file->id, "COB File", $remarks);
 
                         print "true";
                     } else {
@@ -3490,7 +3490,7 @@ class ImportController extends BaseController {
 
                         # Audit Trail
                         $remarks = $finance_file->file->file_no . " finance data". $this->module['audit']['text']['data_imported'];
-                        $this->addAudit(Auth::user()->file_id, "COB Finance", $remarks);
+                        $this->addAudit($finance_file->file->id, "COB Finance", $remarks);
 
                         print "true";
                     } else {

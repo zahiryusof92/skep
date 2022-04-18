@@ -1,6 +1,7 @@
 <?php
 
 use Helper\Helper;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 class SettingController extends BaseController {
@@ -69,12 +70,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Area: ' . $area->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Area: '. $area->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -135,12 +132,8 @@ class SettingController extends BaseController {
             $updated = $area->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Area: ' . $area->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Area: '. $area->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -160,12 +153,8 @@ class SettingController extends BaseController {
             $updated = $area->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Area: ' . $area->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Area: '. $area->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -185,12 +174,8 @@ class SettingController extends BaseController {
             $deleted = $area->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Area: ' . $area->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Area: '. $area->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -226,18 +211,29 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $area = Area::findOrFail($id);
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $area->description? "": "description";
+            $is_active_field = $data['is_active'] == $area->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $area->description = $description;
             $area->is_active = $is_active;
             $success = $area->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Area: ' . $area->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Area: '. $area->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -294,12 +290,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'City: ' . $city->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'City: '. $city->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -360,12 +352,8 @@ class SettingController extends BaseController {
             $updated = $city->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'City: ' . $city->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'City: '. $city->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -385,12 +373,8 @@ class SettingController extends BaseController {
             $updated = $city->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'City: ' . $city->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'City: '. $city->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -410,12 +394,8 @@ class SettingController extends BaseController {
             $deleted = $city->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'City: ' . $city->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'City: '. $city->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -451,18 +431,29 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $city = City::findOrFail($id);
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $city->description? "": "description";
+            $is_active_field = $data['is_active'] == $city->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $city->description = $description;
             $city->is_active = $is_active;
             $success = $city->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'City: ' . $city->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'City: '. $city->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -519,12 +510,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Country: ' . $country->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Country: '. $country->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -586,12 +573,8 @@ class SettingController extends BaseController {
             $updated = $country->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Country: ' . $country->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Country: '. $country->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -611,12 +594,8 @@ class SettingController extends BaseController {
             $updated = $country->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Country: ' . $country->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Country: '. $country->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -636,12 +615,8 @@ class SettingController extends BaseController {
             $deleted = $country->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Country: ' . $country->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Country: '. $country->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -675,6 +650,21 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $country = Country::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $country->name? "": "name";
+            $is_active_field = $data['is_active'] == $country->is_active? "": "status";
+            $sort_no_field = $data['sort_no'] == $country->sort_no? "": "sort no";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($is_active_field) || !empty($sort_no_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $country->name = $data['name'];
             $country->sort_no = $data['sort_no'];
             $country->is_active = $data['is_active'];
@@ -682,12 +672,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Country: ' . $country->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Country: '. $country->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -744,12 +732,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Form Type: ' . $formtype->name_en . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Form Type: '. $formtype->name_en . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -812,12 +796,8 @@ class SettingController extends BaseController {
             $updated = $formtype->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'FormType: ' . $formtype->name_en . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Form Type: '. $formtype->name_en . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -837,12 +817,8 @@ class SettingController extends BaseController {
             $updated = $formtype->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'FormType: ' . $formtype->name_en . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Form Type: '. $formtype->name_en . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -862,12 +838,8 @@ class SettingController extends BaseController {
             $deleted = $formtype->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'FormType: ' . $formtype->name_en . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Form Type: '. $formtype->name_en . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -901,6 +873,23 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $formtype = FormType::findOrFail($id);
+            /** Arrange audit fields changes */
+            $bi_type_field = $data['bi_type'] == $formtype->name_en? "": "bi_type";
+            $bm_type_field = $data['bm_type'] == $formtype->name_my? "": "bm_type";
+            $sort_no_field = $data['sort_no'] == $formtype->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $formtype->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($bi_type_field) || !empty($bm_type_field) || !empty($sort_no_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($bi_type_field)? "<li>$bi_type_field</li>" : "";
+                $audit_fields_changed .= !empty($bm_type_field)? "<li>$bm_type_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $formtype->name_en = $data['bi_type'];
             $formtype->name_my = $data['bm_type'];
             $formtype->sort_no = $data['sort_no'];
@@ -909,12 +898,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Form Type: ' . $formtype->name_en . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Form Type: '. $formtype->name_en . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -973,12 +960,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'State: ' . $state->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'State: '. $state->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1041,12 +1024,8 @@ class SettingController extends BaseController {
             $updated = $state->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'State: ' . $state->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'State: '. $state->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1066,12 +1045,8 @@ class SettingController extends BaseController {
             $updated = $state->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'State: ' . $state->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Satte: '. $state->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1091,12 +1066,8 @@ class SettingController extends BaseController {
             $deleted = $state->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'State: ' . $state->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'State: '. $state->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1131,6 +1102,23 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $state = State::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $state->name? "": "name";
+            $code_field = $data['code'] == $state->code? "": "code";
+            $sort_no_field = $data['sort_no'] == $state->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $state->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($is_active_field) || !empty($code_field) || !empty($sort_no_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($code_field)? "<li>$code_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $state->name = $data['name'];
             $state->code = $data['code'];
             $state->sort_no = $data['sort_no'];
@@ -1139,12 +1127,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'State: ' . $state->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'State: '. $state->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -1202,12 +1188,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Document Type: ' . $documenttype->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Document Type: '. $documenttype->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1269,12 +1251,8 @@ class SettingController extends BaseController {
             $updated = $documenttype->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Document Type: ' . $documenttype->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Document Type: '. $documenttype->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1294,12 +1272,8 @@ class SettingController extends BaseController {
             $updated = $documenttype->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Document Type: ' . $documenttype->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Document Type: '. $documenttype->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1319,12 +1293,8 @@ class SettingController extends BaseController {
             $deleted = $documenttype->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Document Type: ' . $documenttype->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Document Type: '. $documenttype->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1356,8 +1326,22 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
-
             $documenttype = Documenttype::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $documenttype->name? "": "name";
+            $sort_no_field = $data['sort_no'] == $documenttype->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $documenttype->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($is_active_field) || !empty($sort_no_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $documenttype->name = $data['name'];
             $documenttype->sort_no = $data['sort_no'];
             $documenttype->is_active = $data['is_active'];
@@ -1365,12 +1349,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Document Type: ' . $documenttype->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Document Type: '. $documenttype->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -1424,12 +1406,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Category: ' . $category->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Category: '. $category->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1491,12 +1469,8 @@ class SettingController extends BaseController {
             $updated = $category->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Category: ' . $category->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Category: '. $category->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1516,12 +1490,8 @@ class SettingController extends BaseController {
             $updated = $category->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Category: ' . $category->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Category: '. $category->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1541,12 +1511,8 @@ class SettingController extends BaseController {
             $deleted = $category->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Category: ' . $category->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Category: '. $category->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1578,6 +1544,21 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $category = Category::findOrFail(Helper::decode($data['id']));
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $category->description? "": "description";
+            $code_field = $data['code'] == $category->code? "": "code";
+            $is_active_field = $data['is_active'] == $category->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field) || !empty($code_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($code_field)? "<li>$code_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $category->description = $data['description'];
             $category->code = $data['code'];
             $category->is_active = $data['is_active'];
@@ -1585,12 +1566,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Category: ' . $category->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Category: '. $category->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -1646,12 +1625,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Land Title: ' . $land->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Land Title: '. $land->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1713,12 +1688,8 @@ class SettingController extends BaseController {
             $updated = $land->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Land Title: ' . $land->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Land Title: '. $land->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1738,12 +1709,8 @@ class SettingController extends BaseController {
             $updated = $land->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Land Title: ' . $land->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Land Title: '. $land->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1763,12 +1730,8 @@ class SettingController extends BaseController {
             $deleted = $land->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Land Title: ' . $land->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Land Title: '. $land->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1801,6 +1764,21 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $land = LandTitle::findOrFail(Helper::decode($data['id']));
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $land->description? "": "description";
+            $code_field = $data['code'] == $land->code? "": "code";
+            $is_active_field = $data['is_active'] == $land->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field) || !empty($code_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($code_field)? "<li>$code_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $land->description = $data['description'];
             $land->code = $data['code'];
             $land->is_active = $data['is_active'];
@@ -1808,12 +1786,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Land Title: ' . $land->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Land Title: '. $land->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -1896,12 +1872,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $developer->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Developer: '. $developer->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1964,12 +1936,8 @@ class SettingController extends BaseController {
             $updated = $developer->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $developer->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Developer: '. $developer->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -1989,12 +1957,8 @@ class SettingController extends BaseController {
             $updated = $developer->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $developer->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Developer: '. $developer->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2014,12 +1978,8 @@ class SettingController extends BaseController {
             $deleted = $developer->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = $developer->name . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Developer: '. $developer->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2071,6 +2031,41 @@ class SettingController extends BaseController {
             $is_active = $data['is_active'];
 
             $developer = Developer::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $developer->name? "": "name";
+            $address1_field = $data['address1'] == $developer->address1? "": "address1";
+            $address2_field = $data['address2'] == $developer->address2? "": "address2";
+            $address3_field = $data['address3'] == $developer->address3? "": "address3";
+            $city_field = $data['city'] == $developer->city? "": "city";
+            $poscode_field = $data['poscode'] == $developer->poscode? "": "poscode";
+            $state_field = $data['state'] == $developer->state? "": "state";
+            $country_field = $data['country'] == $developer->country? "": "country";
+            $phone_no_field = $data['phone_no'] == $developer->phone_no? "": "phone_no";
+            $fax_no_field = $data['fax_no'] == $developer->fax_no? "": "fax_no";
+            $remarks_field = $data['remarks'] == $developer->remarks? "": "remarks";
+            $is_active_field = $data['is_active'] == $developer->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($address1_field) || !empty($address2_field) || !empty($address3_field)
+            || !empty($city_field) || !empty($poscode_field) || !empty($state_field) || !empty($country_field)
+            || !empty($phone_no_field) || !empty($fax_no_field) || !empty($remarks_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($address1_field)? "<li>$address1_field</li>" : "";
+                $audit_fields_changed .= !empty($address2_field)? "<li>$address2_field</li>" : "";
+                $audit_fields_changed .= !empty($address3_field)? "<li>$address3_field</li>" : "";
+                $audit_fields_changed .= !empty($city_field)? "<li>$city_field</li>" : "";
+                $audit_fields_changed .= !empty($poscode_field)? "<li>$poscode_field</li>" : "";
+                $audit_fields_changed .= !empty($state_field)? "<li>$state_field</li>" : "";
+                $audit_fields_changed .= !empty($country_field)? "<li>$country_field</li>" : "";
+                $audit_fields_changed .= !empty($phone_no_field)? "<li>$phone_no_field</li>" : "";
+                $audit_fields_changed .= !empty($fax_no_field)? "<li>$fax_no_field</li>" : "";
+                $audit_fields_changed .= !empty($remarks_field)? "<li>$remarks_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $developer->name = $name;
             $developer->address1 = $address1;
             $developer->address2 = $address2;
@@ -2087,12 +2082,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $developer->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Developer: '. $developer->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -2175,12 +2168,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $item->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Liquidator: '. $item->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2243,12 +2232,8 @@ class SettingController extends BaseController {
             $updated = $item->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $item->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Liquidator: '. $item->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2268,12 +2253,8 @@ class SettingController extends BaseController {
             $updated = $item->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $item->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Liquidator: '. $item->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2293,12 +2274,8 @@ class SettingController extends BaseController {
             $deleted = $item->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = $item->name . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Liquidator: '. $item->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2350,6 +2327,41 @@ class SettingController extends BaseController {
             $is_active = $data['is_active'];
 
             $item = Liquidator::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $item->name? "": "name";
+            $address1_field = $data['address1'] == $item->address1? "": "address1";
+            $address2_field = $data['address2'] == $item->address2? "": "address2";
+            $address3_field = $data['address3'] == $item->address3? "": "address3";
+            $city_field = $data['city'] == $item->city? "": "city";
+            $poscode_field = $data['poscode'] == $item->poscode? "": "poscode";
+            $state_field = $data['state'] == $item->state? "": "state";
+            $country_field = $data['country'] == $item->country? "": "country";
+            $phone_no_field = $data['phone_no'] == $item->phone_no? "": "phone no";
+            $fax_no_field = $data['fax_no'] == $item->fax_no? "": "fax no";
+            $remarks_field = $data['remarks'] == $item->remarks? "": "remarks";
+            $is_active_field = $data['is_active'] == $item->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($address1_field) || !empty($address2_field) || !empty($address3_field)
+            || !empty($city_field) || !empty($poscode_field) || !empty($state_field) || !empty($country_field)
+            || !empty($phone_no_field) || !empty($fax_no_field) || !empty($remarks_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($address1_field)? "<li>$address1_field</li>" : "";
+                $audit_fields_changed .= !empty($address2_field)? "<li>$address2_field</li>" : "";
+                $audit_fields_changed .= !empty($address3_field)? "<li>$address3_field</li>" : "";
+                $audit_fields_changed .= !empty($city_field)? "<li>$city_field</li>" : "";
+                $audit_fields_changed .= !empty($poscode_field)? "<li>$poscode_field</li>" : "";
+                $audit_fields_changed .= !empty($state_field)? "<li>$state_field</li>" : "";
+                $audit_fields_changed .= !empty($country_field)? "<li>$country_field</li>" : "";
+                $audit_fields_changed .= !empty($phone_no_field)? "<li>$phone_no_field</li>" : "";
+                $audit_fields_changed .= !empty($fax_no_field)? "<li>$fax_no_field</li>" : "";
+                $audit_fields_changed .= !empty($remarks_field)? "<li>$remarks_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $item->name = $name;
             $item->address1 = $address1;
             $item->address2 = $address2;
@@ -2366,12 +2378,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $item->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Liquidator: '. $item->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -2454,12 +2464,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $agent->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Agent: '. $agent->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2522,12 +2528,8 @@ class SettingController extends BaseController {
             $updated = $agent->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $agent->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Agent: '. $agent->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2547,12 +2549,8 @@ class SettingController extends BaseController {
             $updated = $agent->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $agent->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Agent: '. $agent->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2572,12 +2570,8 @@ class SettingController extends BaseController {
             $deleted = $agent->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = $agent->name . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Agent: '. $agent->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2629,6 +2623,41 @@ class SettingController extends BaseController {
             $is_active = $data['is_active'];
 
             $agent = Agent::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $agent->name? "": "name";
+            $address1_field = $data['address1'] == $agent->address1? "": "address1";
+            $address2_field = $data['address2'] == $agent->address2? "": "address2";
+            $address3_field = $data['address3'] == $agent->address3? "": "address3";
+            $city_field = $data['city'] == $agent->city? "": "city";
+            $poscode_field = $data['poscode'] == $agent->poscode? "": "poscode";
+            $state_field = $data['state'] == $agent->state? "": "state";
+            $country_field = $data['country'] == $agent->country? "": "country";
+            $phone_no_field = $data['phone_no'] == $agent->phone_no? "": "phone no";
+            $fax_no_field = $data['fax_no'] == $agent->fax_no? "": "fax no";
+            $remarks_field = $data['remarks'] == $agent->remarks? "": "remarks";
+            $is_active_field = $data['is_active'] == $agent->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($address1_field) || !empty($address2_field) || !empty($address3_field)
+            || !empty($city_field) || !empty($poscode_field) || !empty($state_field) || !empty($country_field)
+            || !empty($phone_no_field) || !empty($fax_no_field) || !empty($remarks_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($address1_field)? "<li>$address1_field</li>" : "";
+                $audit_fields_changed .= !empty($address2_field)? "<li>$address2_field</li>" : "";
+                $audit_fields_changed .= !empty($address3_field)? "<li>$address3_field</li>" : "";
+                $audit_fields_changed .= !empty($city_field)? "<li>$city_field</li>" : "";
+                $audit_fields_changed .= !empty($poscode_field)? "<li>$poscode_field</li>" : "";
+                $audit_fields_changed .= !empty($state_field)? "<li>$state_field</li>" : "";
+                $audit_fields_changed .= !empty($country_field)? "<li>$country_field</li>" : "";
+                $audit_fields_changed .= !empty($phone_no_field)? "<li>$phone_no_field</li>" : "";
+                $audit_fields_changed .= !empty($fax_no_field)? "<li>$fax_no_field</li>" : "";
+                $audit_fields_changed .= !empty($remarks_field)? "<li>$remarks_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+            
             $agent->name = $name;
             $agent->address1 = $address1;
             $agent->address2 = $address2;
@@ -2645,12 +2674,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = $agent->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Agent: '. $agent->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -2705,12 +2732,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Parliament: ' . $parliment->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Parliament: '. $parliment->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2772,12 +2795,8 @@ class SettingController extends BaseController {
             $updated = $parliment->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Parliament: ' . $parliment->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Parliament: '. $parliment->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2797,12 +2816,8 @@ class SettingController extends BaseController {
             $updated = $parliment->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Parliament: ' . $parliment->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Parliament: '. $parliment->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2822,12 +2837,8 @@ class SettingController extends BaseController {
             $deleted = $parliment->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Parliament: ' . $parliment->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Parliament: '. $parliment->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -2859,6 +2870,21 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $parliment = Parliment::findOrFail(Helper::decode($data['id']));
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $parliment->description? "": "description";
+            $code_field = $data['code'] == $parliment->code? "": "code";
+            $is_active_field = $data['is_active'] == $parliment->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($code_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($code_field)? "<li>$code_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $parliment->description = $data['description'];
             $parliment->code = $data['code'];
             $parliment->is_active = $data['is_active'];
@@ -2866,12 +2892,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Parliament: ' . $parliment->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Parliament: '. $parliment->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -2931,12 +2955,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'DUN: ' . $dun->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'DUN: '. $dun->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3001,12 +3021,8 @@ class SettingController extends BaseController {
             $updated = $dun->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'DUN: ' . $dun->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'DUN: '. $dun->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3026,12 +3042,8 @@ class SettingController extends BaseController {
             $updated = $dun->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'DUN: ' . $dun->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'DUN: '. $dun->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3051,12 +3063,8 @@ class SettingController extends BaseController {
             $deleted = $dun->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'DUN: ' . $dun->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'DUN: '. $dun->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3090,6 +3098,23 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $dun = Dun::findOrFail(Helper::decode($data['id']));
+            /** Arrange audit fields changes */
+            $parliment_field = $data['parliment'] == $dun->parliment? "": "parliment";
+            $description_field = $data['description'] == $dun->description? "": "description";
+            $code_field = $data['code'] == $dun->code? "": "code";
+            $is_active_field = $data['is_active'] == $dun->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($parliment_field) || !empty($description_field) || !empty($code_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($parliment_field)? "<li>$parliment_field</li>" : "";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($code_field)? "<li>$code_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $dun->parliament = $data['parliament'];
             $dun->description = $data['description'];
             $dun->code = $data['code'];
@@ -3098,12 +3123,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'DUN: ' . $dun->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'DUN: '. $dun->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -3166,12 +3189,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Park: ' . $park->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Park: '. $park->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3235,12 +3254,8 @@ class SettingController extends BaseController {
             $updated = $park->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Park: ' . $park->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Park: '. $park->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3260,12 +3275,8 @@ class SettingController extends BaseController {
             $updated = $park->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Park: ' . $park->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Park: '. $park->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3285,12 +3296,8 @@ class SettingController extends BaseController {
             $deleted = $park->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Park: ' . $park->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Park: '. $park->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3329,6 +3336,21 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $park = Park::findOrFail($id);
+            /** Arrange audit fields changes */
+            $dun_field = $data['dun'] == $park->dun? "": "dun";
+            $description_field = $data['description'] == $park->description? "": "description";
+            $is_active_field = $data['is_active'] == $park->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($dun_field) || !empty($description_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($dun_field)? "<li>$dun_field</li>" : "";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $park->dun = $dun;
             $park->description = $description;
             $park->is_active = $is_active;
@@ -3336,12 +3358,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Park: ' . $park->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Park: '. $park->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -3398,12 +3418,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Memo Type: ' . $memotype->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Memo Type: '. $memotype->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3464,12 +3480,8 @@ class SettingController extends BaseController {
             $updated = $memotype->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Memo Type: ' . $memotype->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Memo Type: '. $memotype->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3489,12 +3501,8 @@ class SettingController extends BaseController {
             $updated = $memotype->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Memo Type: ' . $memotype->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Memo Type: '. $memotype->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3514,12 +3522,8 @@ class SettingController extends BaseController {
             $deleted = $memotype->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Memo Type: ' . $memotype->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Memo Type: '. $memotype->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3555,18 +3559,29 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $memotype = MemoType::findOrFail($id);
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $memotype->description? "": "description";
+            $is_active_field = $data['is_active'] == $memotype->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $memotype->description = $description;
             $memotype->is_active = $is_active;
             $success = $memotype->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Memo Type: ' . $memotype->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Memo Type: '. $memotype->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -3623,12 +3638,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Designation: ' . $designation->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Designation: '. $designation->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3689,12 +3700,8 @@ class SettingController extends BaseController {
             $updated = $designation->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Designation: ' . $designation->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Designation: '. $designation->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3714,12 +3721,8 @@ class SettingController extends BaseController {
             $updated = $designation->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Designation: ' . $designation->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Designation: '. $designation->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3739,12 +3742,8 @@ class SettingController extends BaseController {
             $deleted = $designation->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Designation: ' . $designation->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Designation: '. $designation->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3780,18 +3779,29 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $designation = Designation::findOrFail($id);
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $designation->description? "": "description";
+            $is_active_field = $data['is_active'] == $designation->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $designation->description = $description;
             $designation->is_active = $is_active;
             $success = $designation->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Designation: ' . $designation->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Designation: '. $designation->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -3848,12 +3858,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Unit of Measure: ' . $unitmeasure->description . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Unit of Measure: '. $unitmeasure->description . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3915,12 +3921,8 @@ class SettingController extends BaseController {
 
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Unit of Measure: ' . $unitmeasure->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Unit of Measure: '. $unitmeasure->description . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3941,12 +3943,8 @@ class SettingController extends BaseController {
 
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Unit of Measure: ' . $unitmeasure->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Unit of Measure: '. $unitmeasure->description . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -3967,12 +3965,8 @@ class SettingController extends BaseController {
 
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Unit of Measure: ' . $unitmeasure->description . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Unit of Measure: '. $unitmeasure->description . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4008,18 +4002,29 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $unitmeasure = UnitMeasure::findOrFail($id);
+            /** Arrange audit fields changes */
+            $description_field = $data['description'] == $unitmeasure->description? "": "description";
+            $is_active_field = $data['is_active'] == $unitmeasure->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($description_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $unitmeasure->description = $description;
             $unitmeasure->is_active = $is_active;
             $success = $unitmeasure->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Unit of Measure: ' . $unitmeasure->description . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Unit of Measure: '. $unitmeasure->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -4077,12 +4082,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name_en . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Race: '. $race->name_en . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4145,12 +4146,8 @@ class SettingController extends BaseController {
             $updated = $race->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name_en . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Race: '. $race->name_en . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4170,12 +4167,8 @@ class SettingController extends BaseController {
             $updated = $race->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name_en . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Race: '. $race->name_en . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4195,12 +4188,8 @@ class SettingController extends BaseController {
             $deleted = $race->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name_en . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Race: '. $race->name_en . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4234,6 +4223,23 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $race = Race::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_en_field = $data['name_en'] == $race->name_en? "": "name_en";
+            $name_my_field = $data['name_my'] == $race->name_my? "": "name_my";
+            $sort_no_field = $data['sort_no'] == $race->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $race->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_en_field) || !empty($name_my_field) || !empty($sort_no_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_en_field)? "<li>$name_en_field</li>" : "";
+                $audit_fields_changed .= !empty($name_my_field)? "<li>$name_my_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+            
             $race->name_en = $data['name_en'];
             $race->name_my = $data['name_my'];
             $race->sort_no = $data['sort_no'];
@@ -4242,12 +4248,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Race: ' . $race->name_en . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Race: '. $race->name_en . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -4304,12 +4308,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Nationality: ' . $nationality->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Nationality: '. $nationality->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4371,12 +4371,8 @@ class SettingController extends BaseController {
             $updated = $nationality->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Nationality: ' . $nationality->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Nationality: '. $nationality->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4396,12 +4392,8 @@ class SettingController extends BaseController {
             $updated = $nationality->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Nationality: ' . $nationality->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Nationality: '. $nationality->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4421,12 +4413,8 @@ class SettingController extends BaseController {
             $deleted = $nationality->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Nationality: ' . $nationality->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Nationality: '. $nationality->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4460,6 +4448,21 @@ class SettingController extends BaseController {
             $id = Helper::decode($data['id']);
 
             $nationality = Nationality::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $nationality->name? "": "name";
+            $sort_no_field = $data['sort_no'] == $nationality->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $nationality->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($sort_no_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $nationality->name = $data['name'];
             $nationality->sort_no = $data['sort_no'];
             $nationality->is_active = $data['is_active'];
@@ -4467,12 +4470,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Nationality: ' . $nationality->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Nationality: '. $nationality->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -4529,12 +4530,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Defect Category: '. $defectCategory->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4596,12 +4593,8 @@ class SettingController extends BaseController {
             $updated = $defectCategory->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Defect Category: '. $defectCategory->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4621,12 +4614,8 @@ class SettingController extends BaseController {
             $updated = $defectCategory->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Defect Category: '. $defectCategory->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4646,12 +4635,8 @@ class SettingController extends BaseController {
             $deleted = $defectCategory->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $defectCategory->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Defect Category: '. $defectCategory->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4683,8 +4668,22 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
-
             $defectCategory = DefectCategory::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $defectCategory->name? "": "name";
+            $sort_no_field = $data['sort_no'] == $defectCategory->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $defectCategory->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($sort_no_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $defectCategory->name = $data['name'];
             $defectCategory->sort_no = $data['sort_no'];
             $defectCategory->is_active = $data['is_active'];
@@ -4692,12 +4691,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $defectCategory->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Defect Category: '. $defectCategory->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {
@@ -4753,12 +4750,8 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been inserted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Insurance Provider: '. $insuranceProvider->name . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4820,12 +4813,8 @@ class SettingController extends BaseController {
             $updated = $insuranceProvider->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Insurance Provider: '. $insuranceProvider->name . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4845,12 +4834,8 @@ class SettingController extends BaseController {
             $updated = $insuranceProvider->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Defect Category: '. $insuranceProvider->name . $this->module['audit']['text']['status_active'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4870,12 +4855,8 @@ class SettingController extends BaseController {
             $deleted = $insuranceProvider->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $insuranceProvider->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Insurance Provider: '. $insuranceProvider->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";
             } else {
@@ -4906,8 +4887,22 @@ class SettingController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
-
             $insuranceProvider = InsuranceProvider::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $insuranceProvider->name? "": "name";
+            $sort_no_field = $data['sort_no'] == $insuranceProvider->sort_no? "": "sort no";
+            $is_active_field = $data['is_active'] == $insuranceProvider->is_active? "": "status";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($sort_no_field) || !empty($is_active_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
             $insuranceProvider->name = $data['name'];
             $insuranceProvider->sort_no = $data['sort_no'];
             $insuranceProvider->is_active = $data['is_active'];
@@ -4915,12 +4910,10 @@ class SettingController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Defect Category: ' . $insuranceProvider->name . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "Master Setup";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Insurance Provider: '. $insuranceProvider->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "Master Setup", $remarks);
+                }
 
                 print "true";
             } else {

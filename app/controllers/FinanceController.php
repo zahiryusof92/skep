@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Helper\Helper;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 class FinanceController extends BaseController {
@@ -658,12 +659,8 @@ class FinanceController extends BaseController {
 
                 if ($deleted) {
                     # Audit Trail
-                    $remarks = 'Finance File with id : ' . $finance->id . ' has been deleted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB Finance";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $remarks = 'Finance File with id : ' . $finance->id . $this->module['audit']['text']['data_deleted'];
+                    $this->addAudit($finance->file_id, "COB Finance", $remarks);
 
                     return "true";
                 } else {
@@ -799,16 +796,31 @@ class FinanceController extends BaseController {
                     $finance->is_active = $data['is_active'];
                     $finance->remarks = $data['remarks'];
                     $finance->save();
+
+                    /** Arrange audit fields changes */
+                    $date_field = $old->date == $finance->date? "": "date";
+                    $name_field = $old->name == $finance->name? "": "name";
+                    $position_field = $old->position == $finance->position? "": "position";
+                    $is_active_field = $old->is_active == $finance->is_active? "": "status";
+                    $remarks_field = $old->remarks == $finance->remarks? "": "remarks";
+        
+                    $audit_fields_changed = "";
+                    if(!empty($name_field) || !empty($date_field) || !empty($position_field) || !empty($is_active_field) || !empty($remarks_field)) {
+                        $audit_fields_changed .= "<br><ul>";
+                        $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                        $audit_fields_changed .= !empty($date_field)? "<li>$date_field</li>" : "";
+                        $audit_fields_changed .= !empty($position_field)? "<li>$position_field</li>" : "";
+                        $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                        $audit_fields_changed .= !empty($remarks_field)? "<li>$remarks_field</li>" : "";
+                        $audit_fields_changed .= "</ul>";
+                    }
+                    /** End Arrange audit fields changes */
+                    # Audit Trail
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Finance File Check: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit($files->id, "COB Finance", $remarks);
+                    }
                 }
-
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
-
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
 
                 return "true";
             }
@@ -853,7 +865,6 @@ class FinanceController extends BaseController {
                         }
                     }
                 }
-
                 # Audit Trail
             //                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
             //
@@ -879,9 +890,9 @@ class FinanceController extends BaseController {
             $prefix = 'mfr_';
 
             $files = Finance::findOrFail($id);
-            
             if ($files) {
                 $currents = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
+                
                 if(count($currents) > 0) {
                     FinanceReportPerbelanjaanOld::where('finance_file_id', $files->id)->where('type', $type)->delete();
                     foreach($currents as $current) {
@@ -889,7 +900,7 @@ class FinanceController extends BaseController {
                                                                                 'type' => $type,
                                                                                 'report_key' => $current->report_key));
     
-                        $old->name = $current->name;
+                        $old->name = !empty($current->name)? $current->name : '';
                         $old->amount = $current->amount;
                         $old->sort_no = $current->sort_no;
                         $old->is_custom = $current->is_custom;
@@ -970,14 +981,84 @@ class FinanceController extends BaseController {
                     }
                 // }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_currents = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_old = FinanceReportOld::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_extra_old = FinanceReportExtraOld::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_b = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_b_old = FinanceReportPerbelanjaanOld::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $finance_report_differents = Helper::check_diff_multi($check_currents_old->toArray(),$check_currents->toArray());
+                $finance_report_extra_differents = Helper::check_diff_multi($check_currents_extra_old->toArray(),$check_currents_extra->toArray());
+                $finance_report_b_differents = Helper::check_diff_multi($check_currents_b_old->toArray(),$check_currents_b->toArray());
+                $audit_fields_changed = "";
+                if(count($finance_report_differents) || count($finance_report_extra_differents) || count($finance_report_b_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                }
+                if(count($finance_report_differents)) {
+                    $audit_fields_changed .= "<li>Finance MF Report : (";
+                    $new_line = '';
+                    foreach($finance_report_differents as $frd_key => $frd) {
+                        if(is_array($frd) && count($frd)) {
+                            foreach($frd as $frd_data_key => $frd_data) {
+                                $name = str_replace("_", " ", $frd_data_key);
+                                $new_line .= $name . '=' . $frd_data . ', ';
+                            }
+                        } else {
+                            if(!empty($frd)) {
+                                $name = str_replace("_", " ", $frd_key);
+                                $new_line .= $name . '=' . $frd . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                }
+                if(count($finance_report_extra_differents)) {
+                    $audit_fields_changed .= "<li>Finance MF Report Extra : (";
+                    $new_line_1 = '';
+                    foreach($finance_report_extra_differents as $fr_extra_key => $fr_extra) {
+                        if(is_array($fr_extra) && count($fr_extra)) {
+                            foreach($fr_extra as $fr_extra_data_key => $fr_extra_data) {
+                                $name = str_replace("_", " ", $fr_extra_data_key);
+                                $new_line_1 .= $name . '=' . $fr_extra_data . ', ';
+                            }
+                        } else {
+                            if(!empty($fr_extra)) {
+                                $name = str_replace("_", " ", $fr_extra_key);
+                                $new_line_1 .= $name . '=' . $fr_extra . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line_1) .")</li>";
+                }
+                if(count($finance_report_b_differents)) {
+                    $audit_fields_changed .= "<li>Finance MF Report Perbelanjaan: (";
+                    $new_line_2 = '';
+                    foreach($finance_report_b_differents as $fr_b_key => $fr_b) {
+                        if(is_array($fr_b) && count($fr_b)) {
+                            foreach($fr_b as $fr_b_data_key => $fr_b_data) {
+                                $name = str_replace("_", " ", $fr_b_data_key);
+                                $new_line_2 .= $name . '=' . $fr_b_data . ', ';
+                            }
+                        } else {
+                            if(!empty($fr_b)) {
+                                $name = str_replace("_", " ", $fr_b_key);
+                                $new_line_2 .= $name . '=' . $fr_b . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line_2) .")</li>";
+                }
+                if(count($finance_report_differents) || count($finance_report_extra_differents) || count($finance_report_b_differents)) {
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1004,7 +1085,7 @@ class FinanceController extends BaseController {
                                                                                 'type' => $type,
                                                                                 'report_key' => $current->report_key));
     
-                        $old->name = $current->name;
+                        $old->name = !empty($current->name)? $current->name : '';       
                         $old->amount = $current->amount;
                         $old->sort_no = $current->sort_no;
                         $old->is_custom = $current->is_custom;
@@ -1082,14 +1163,86 @@ class FinanceController extends BaseController {
                     }
                 // }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_currents = FinanceReport::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_old = FinanceReportOld::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_extra = FinanceReportExtra::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_extra_old = FinanceReportExtraOld::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_b = FinanceReportPerbelanjaan::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $check_currents_b_old = FinanceReportPerbelanjaanOld::where('finance_file_id', $files->id)->where('type', $type)->get();
+                $finance_report_differents = Helper::check_diff_multi($check_currents_old->toArray(),$check_currents->toArray());
+                $finance_report_extra_differents = Helper::check_diff_multi($check_currents_extra_old->toArray(),$check_currents_extra->toArray());
+                $finance_report_b_differents = Helper::check_diff_multi($check_currents_b_old->toArray(),$check_currents_b->toArray());
+                $audit_fields_changed = "";
+                if(count($finance_report_differents) || count($finance_report_extra_differents) || count($finance_report_b_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                }
+                if(count($finance_report_differents)) {
+                    $audit_fields_changed .= "<li>Finance SF Report : (";
+                    $new_line = '';
+                    foreach($finance_report_differents as $frd_key => $frd) {
+                        if(is_array($frd) && count($frd)) {
+                            foreach($frd as $frd_data_key => $frd_data) {
+                                $name = str_replace("_", " ", $frd_data_key);
+                                $new_line .= $name . '=' . $frd_data . ', ';
+                            }
+                        } else {
+                            if(!empty($frd)) {
+                                $name = str_replace("_", " ", $frd_key);
+                                $new_line .= $name . '=' . $frd . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                }
+                if(count($finance_report_extra_differents)) {
+                    $audit_fields_changed .= "<li>Finance SF Report Extra : (";
+                    $new_line_1 = '';
+                    foreach($finance_report_extra_differents as $fr_extra_key => $fr_extra) {
+                        if(is_array($fr_extra) && count($fr_extra)) {
+                            foreach($fr_extra as $fr_extra_data_key => $fr_extra_data) {
+                                $name = str_replace("_", " ", $fr_extra_data_key);
+                                $new_line_1 .= $name . '=' . $fr_extra_data . ', ';
+                            }
+                        } else {
+                            if(!empty($fr_extra)) {
+                                $name = str_replace("_", " ", $fr_extra_key);
+                                $new_line_1 .= $name . '=' . $fr_extra . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line_1) .")</li>";
+                }
+                if(count($finance_report_b_differents)) {
+                    $audit_fields_changed .= "<li>Finance SF Report Perbelanjaan: (";
+                    $new_line_2 = '';
+                    foreach($finance_report_b_differents as $fr_b_key => $fr_b) {
+                        if(is_array($fr_b) && count($fr_b)) {
+                            foreach($fr_b as $fr_b_data_key => $fr_b_data) {
+                                if(!in_array($fr_b_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fr_b_data_key);
+                                    $new_line_2 .= $name . '=' . $fr_b_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fr_b)) {
+                                $name = str_replace("_", " ", $fr_b_key);
+                                $new_line_2 .= $name . '=' . $fr_b . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line_2) .")</li>";
+                }
+                if(count($finance_report_differents) || count($finance_report_extra_differents) || count($finance_report_b_differents)) {
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1143,14 +1296,40 @@ class FinanceController extends BaseController {
                     }
                 }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_finance_admin = FinanceAdmin::where('finance_file_id', $files->id)->get();
+                $check_finance_admin_old = FinanceAdminOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_admin_old->toArray(),$check_finance_admin->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Admin : (";
+                    $new_line = '';
+                    foreach($check_differents as $fad_key => $fad) {
+                        if(is_array($fad) && count($fad)) {
+                            foreach($fad as $fad_data_key => $fad_data) {
+                                if(!in_array($fad_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fad_data_key);
+                                    $new_line .= $name . '=' . $fad_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fad)) {
+                                $name = str_replace("_", " ", $fad_key);
+                                $new_line .= $name . '=' . $fad . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1201,15 +1380,41 @@ class FinanceController extends BaseController {
                         }
                     }
                 }
+                
+                /** Arrange audit fields changes */
+                $check_finance_income = FinanceIncome::where('finance_file_id', $files->id)->get();
+                $check_finance_income_old = FinanceIncomeOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_income_old->toArray(),$check_finance_income->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Income : (";
+                    $new_line = '';
+                    foreach($check_differents as $fid_key => $fid) {
+                        if(is_array($fid) && count($fid)) {
+                            foreach($fid as $fid_data_key => $fid_data) {
+                                if(!in_array($fid_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fid_data_key);
+                                    $new_line .= $name . '=' . $fid_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fid)) {
+                                $name = str_replace("_", " ", $fid_key);
+                                $new_line .= $name . '=' . $fid . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
                 # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
-
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1273,15 +1478,41 @@ class FinanceController extends BaseController {
                         }
                     }
                 }
+                
+                /** Arrange audit fields changes */
+                $check_finance_utility = FinanceUtility::where('finance_file_id', $files->id)->get();
+                $check_finance_utility_old = FinanceUtilityOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_utility_old->toArray(),$check_finance_utility->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Utility : (";
+                    $new_line = '';
+                    foreach($check_differents as $fud_key => $fud) {
+                        if(is_array($fud) && count($fud)) {
+                            foreach($fud as $fud_data_key => $fud_data) {
+                                if(!in_array($fud_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fud_data_key);
+                                    $new_line .= $name . '=' . $fud_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fud)) {
+                                $name = str_replace("_", " ", $fud_key);
+                                $new_line .= $name . '=' . $fud . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
                 # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
-
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1346,14 +1577,40 @@ class FinanceController extends BaseController {
                     }
                 }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_finance_vandal = FinanceVandal::where('finance_file_id', $files->id)->get();
+                $check_finance_vandal_old = FinanceVandalOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_vandal_old->toArray(),$check_finance_vandal->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Vandalisme : (";
+                    $new_line = '';
+                    foreach($check_differents as $fvd_key => $fvd) {
+                        if(is_array($fvd) && count($fvd)) {
+                            foreach($fvd as $fvd_data_key => $fvd_data) {
+                                if(!in_array($fvd_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fvd_data_key);
+                                    $new_line .= $name . '=' . $fvd_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fvd)) {
+                                $name = str_replace("_", " ", $fvd_key);
+                                $new_line .= $name . '=' . $fvd . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1418,14 +1675,40 @@ class FinanceController extends BaseController {
                     }
                 }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_finance_repair = FinanceRepair::where('finance_file_id', $files->id)->get();
+                $check_finance_repair_old = FinanceRepairOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_repair_old->toArray(),$check_finance_repair->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Repair : (";
+                    $new_line = '';
+                    foreach($check_differents as $frd_key => $frd) {
+                        if(is_array($frd) && count($frd)) {
+                            foreach($frd as $frd_data_key => $frd_data) {
+                                if(!in_array($frd_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $frd_data_key);
+                                    $new_line .= $name . '=' . $frd_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($frd)) {
+                                $name = str_replace("_", " ", $frd_key);
+                                $new_line .= $name . '=' . $frd . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1479,14 +1762,40 @@ class FinanceController extends BaseController {
                     }
                 }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_finance_contract = FinanceContract::where('finance_file_id', $files->id)->get();
+                $check_finance_contract_old = FinanceContractOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_contract_old->toArray(),$check_finance_contract->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Contract : (";
+                    $new_line = '';
+                    foreach($check_differents as $fcd_key => $fcd) {
+                        if(is_array($fcd) && count($fcd)) {
+                            foreach($fcd as $fcd_data_key => $fcd_data) {
+                                if(!in_array($fcd_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fcd_data_key);
+                                    $new_line .= $name . '=' . $fcd_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fcd)) {
+                                $name = str_replace("_", " ", $fcd_key);
+                                $new_line .= $name . '=' . $fcd . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1544,14 +1853,40 @@ class FinanceController extends BaseController {
                     }
                 }
 
-                # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
+                /** Arrange audit fields changes */
+                $check_finance_staff = FinanceStaff::where('finance_file_id', $files->id)->get();
+                $check_finance_staff_old = FinanceStaffOld::where('finance_file_id', $files->id)->get();
+                $check_differents = Helper::check_diff_multi($check_finance_staff_old->toArray(),$check_finance_staff->toArray());
+                $audit_fields_changed = "";
+                if(count($check_differents)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= "<li>Finance Staff : (";
+                    $new_line = '';
+                    foreach($check_differents as $fsd_key => $fsd) {
+                        if(is_array($fsd) && count($fsd)) {
+                            foreach($fsd as $fsd_data_key => $fsd_data) {
+                                if(!in_array($fsd_data_key, ['sort_no', 'id', 'updated_at'])) {
+                                    $name = str_replace("_", " ", $fsd_data_key);
+                                    $new_line .= $name . '=' . $fsd_data . ', ';
+                                }
+                            }
+                        } else {
+                            if(!empty($fsd)) {
+                                $name = str_replace("_", " ", $fsd_key);
+                                $new_line .= $name . '=' . $fsd . ', ';
+                            }
+                        }
+                    }
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
 
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                # Audit Trail
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($files->id, "COB Finance File", $remarks);
+                }
 
                 return 'true';
             }
@@ -1852,12 +2187,8 @@ class FinanceController extends BaseController {
                 }
 
                 # Audit Trail
-                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . ' all data' . $this->module['audit']['text']['data_updated'];
+                $this->addAudit($files->id, "COB Finance File", $remarks);
 
                 return "true";
             } else {
@@ -1998,12 +2329,9 @@ class FinanceController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $remarks = 'Finance Support with id : ' . $finance->id . ' has been inserted.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "COB Finance Support";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = Auth::user()->id;
-                    $auditTrail->save();
+                    $remarks = 'Finance Support with id : ' . $finance->id . $this->module['audit']['text']['data_inserted'];
+                    $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
+                    
                     print "true";
                 } else {
                     print "false";
@@ -2057,6 +2385,23 @@ class FinanceController extends BaseController {
             if ($files) {
                 $finance = FinanceSupport::findOrFail($id);
                 if ($finance) {
+                    /** Arrange audit fields changes */
+                    $name_field = $data['name'] == $finance->name? "": "name";
+                    $date_field = $data['date'] == $finance->date? "": "date";
+                    $amount_field = $data['amount'] == $finance->amount? "": "amont";
+                    $remark_field = $data['remark'] == $finance->remark? "": "remark";
+        
+                    $audit_fields_changed = "";
+                    if(!empty($name_field) || !empty($remark_field) || !empty($date_field) || !empty($amount_field)) {
+                        $audit_fields_changed .= "<br><ul>";
+                        $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                        $audit_fields_changed .= !empty($date_field)? "<li>$date_field</li>" : "";
+                        $audit_fields_changed .= !empty($remark_field)? "<li>$remark_field</li>" : "";
+                        $audit_fields_changed .= !empty($amount_field)? "<li>$amount_field</li>" : "";
+                        $audit_fields_changed .= "</ul>";
+                    }
+                    /** End Arrange audit fields changes */
+
                     $finance->file_id = $files->id;
                     $finance->company_id = $files->company_id;
                     $finance->date = $data['date'];
@@ -2068,12 +2413,11 @@ class FinanceController extends BaseController {
 
                     if ($success) {
                         # Audit Trail
-                        $remarks = 'Finance Support with id : ' . $finance->id . ' has been updated.';
-                        $auditTrail = new AuditTrail();
-                        $auditTrail->module = "COB Finance Support";
-                        $auditTrail->remarks = $remarks;
-                        $auditTrail->audit_by = Auth::user()->id;
-                        $auditTrail->save();
+                        if(!empty($audit_fields_changed)) {
+                            $remarks = 'Finance Support with id : ' . $finance->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                            $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
+                        }
+                        
                         print "true";
                     } else {
                         print "false";
@@ -2093,17 +2437,13 @@ class FinanceController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $files = Finance::findOrFail($id);
-            $files->is_active = 1;
-            $updated = $files->save();
+            $finance_file = Finance::findOrFail($id);
+            $finance_file->is_active = 1;
+            $updated = $finance_file->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = $files->file_no . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File Active";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Finance File with id : ' . $finance_file->file_no . $this->module['audit']['text']['status_active'];
+                $this->addAudit($finance_file->file_id, "COB Finance File", $remarks);
 
                 print "true";
             } else {
@@ -2118,17 +2458,13 @@ class FinanceController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $prefix = Finance::findOrFail($id);
-            $prefix->is_active = 0;
-            $updated = $prefix->save();
+            $finance_file = Finance::findOrFail($id);
+            $finance_file->is_active = 0;
+            $updated = $finance_file->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'COB Finance File has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance File Inactive";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Finance File with id : ' . $finance_file->file_no . $this->module['audit']['text']['status_inactive'];
+                $this->addAudit($finance_file->file_id, "COB Finance File", $remarks);
 
                 print "true";
             } else {
@@ -2143,17 +2479,13 @@ class FinanceController extends BaseController {
 
             $id = Helper::decode($data['id']);
 
-            $finance = FinanceSupport::findOrFail($id);
-            $finance->is_deleted = 1;
-            $deleted = $finance->save();
+            $finance_support = FinanceSupport::findOrFail($id);
+            $finance_support->is_deleted = 1;
+            $deleted = $finance_support->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Finance Support with id : ' . $finance->id . ' has been deleted.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance Support";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                $remarks = 'Finance Support with id : ' . $finance_support->id . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($finance_support->file_id, "COB Finance Support", $remarks);
 
                 print "true";
             } else {
@@ -2168,25 +2500,42 @@ class FinanceController extends BaseController {
             $file_id = Helper::decode($data['file_id']);
             $is_active = $data['is_active'];
 
-            $financeSupportId = Helper::decode($data['id']);
+            $id = Helper::decode($data['id']);
 
-            $finance = FinanceSupport::findOrFail($financeSupportId);
-            $finance->file_id = $file_id;
-            $finance->date = $data['date'];
-            $finance->name = $data['name'];
-            $finance->amount = $data['amount'];
-            $finance->remarks = $data['remarks'];
-            $finance->is_active = $is_active;
-            $success = $finance->save();
+            $finance_support = FinanceSupport::findOrFail($id);
+            /** Arrange audit fields changes */
+            $name_field = $data['name'] == $finance_support->name? "": "name";
+            $date_field = $data['date'] == $finance_support->date? "": "date";
+            $amount_field = $data['amount'] == $finance_support->amount? "": "amount";
+            $is_active_field = $data['is_active'] == $finance_support->is_active? "": "status";
+            $remarks_field = $data['remarks'] == $finance_support->remarks? "": "remarks";
+
+            $audit_fields_changed = "";
+            if(!empty($name_field) || !empty($is_active_field) || !empty($date_field) || !empty($amount_field) || !empty($remarks_field)) {
+                $audit_fields_changed .= "<br><ul>";
+                $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                $audit_fields_changed .= !empty($date_field)? "<li>$date_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= !empty($amount_field)? "<li>$amount_field</li>" : "";
+                $audit_fields_changed .= "</ul>";
+            }
+            /** End Arrange audit fields changes */
+
+            $finance_support->file_id = $file_id;
+            $finance_support->date = $data['date'];
+            $finance_support->name = $data['name'];
+            $finance_support->amount = $data['amount'];
+            $finance_support->remarks = $data['remarks'];
+            $finance_support->is_active = $is_active;
+            $success = $finance_support->save();
 
             if ($success) {
                 # Audit Trail
-                $remarks = 'Finance Support with id : ' . $finance->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "COB Finance Support";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
+                if(!empty($audit_fields_changed)) {
+                    $remarks = 'Finance Support with id : ' . $finance_support->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit($finance_support->file_id, "COB Finance Support", $remarks);
+                }
+
                 print "true";
             } else {
                 print "false";

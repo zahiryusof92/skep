@@ -55,12 +55,9 @@ class ConversionController extends \BaseController {
             $success = $model->save();
 
             if ($success) {
-                /*
-                 * add audit trail
-                 */
-                $remarks = 'Conversion has been inserted.';
-                $module = 'Master Setup';
-                $this->createAuditTrail($remarks, $module);
+                # Audit Trail
+                $remarks = 'Conversion ' . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Master Setup", $remarks);
 
                 return Redirect::to('conversion')->with('success', trans('app.successes.saved_successfully'));
             }
@@ -113,12 +110,9 @@ class ConversionController extends \BaseController {
                 $success = $model->save();
 
                 if ($success) {
-                    /*
-                     * add audit trail
-                     */
-                    $remarks = 'Conversion has been inserted.';
-                    $module = 'Master Setup';
-                    $this->createAuditTrail($remarks, $module);
+                    # Audit Trail
+                    $remarks = 'Conversion rate ' . $this->module['audit']['text']['data_updated'];
+                    $this->addAudit(0, "Master Setup", $remarks);
 
                     return Redirect::to('conversion')->with('success', trans('app.successes.updated_successfully'));
                 }
@@ -136,15 +130,6 @@ class ConversionController extends \BaseController {
      */
     public function destroy($id) {
         //
-    }
-
-    public function createAuditTrail($remarks, $module) {
-        # Audit Trail        
-        $auditTrail = new AuditTrail();
-        $auditTrail->module = $module;
-        $auditTrail->remarks = $remarks;
-        $auditTrail->audit_by = Auth::user()->id;
-        $auditTrail->save();
     }
 
 }

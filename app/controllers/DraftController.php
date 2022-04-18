@@ -390,11 +390,11 @@ class DraftController extends BaseController {
                     if(empty($draft_residential)) {
                         $residential_text = 'remove residential data';
                     } else {
-                        $residential_unit_no_field = $draft_residential->unit_no == $residential->unit_no? "": "strata residential unit_no";
-                        $residential_maintenance_fee_field = $draft_residential->maintenance_fee == $residential->maintenance_fee? "": "strata residential maintenance_fee";
-                        $residential_maintenance_fee_option_field = $draft_residential->maintenance_fee_option == $residential->maintenance_fee_option? "": "strata residential maintenance_fee_option";
-                        $residential_sinking_fund_field = $draft_residential->sinking_fund == $residential->sinking_fund? "": "strata residential sinking_fund";
-                        $residential_sinking_fund_option_field = $draft_residential->sinking_fund_option == $residential->sinking_fund_option? "": "strata residential sinking_fund_option";
+                        $residential_unit_no_field = $draft_residential->unit_no == $residential->unit_no? "": "strata residential unit no";
+                        $residential_maintenance_fee_field = $draft_residential->maintenance_fee == $residential->maintenance_fee? "": "strata residential maintenance fee";
+                        $residential_maintenance_fee_option_field = $draft_residential->maintenance_fee_option == $residential->maintenance_fee_option? "": "strata residential maintenance fee option";
+                        $residential_sinking_fund_field = $draft_residential->sinking_fund == $residential->sinking_fund? "": "strata residential sinking fund";
+                        $residential_sinking_fund_option_field = $draft_residential->sinking_fund_option == $residential->sinking_fund_option? "": "strata residential sinking fund option";
                     }
                 } else {
                     $residential_text = 'new residential data';
@@ -403,39 +403,39 @@ class DraftController extends BaseController {
                     if(empty($draft_commercial)) {
                         $commercial_text = 'remove commercial data';
                     } else {
-                        $commercial_unit_no_field = $draft_commercial->unit_no == $commercial->unit_no? "": "strata commercial unit_no";
-                        $commercial_maintenance_fee_field = $draft_commercial->maintenance_fee == $commercial->maintenance_fee? "": "strata commercial maintenance_fee";
-                        $commercial_maintenance_fee_option_field = $draft_commercial->maintenance_fee_option == $commercial->maintenance_fee_option? "": "strata commercial maintenance_fee_option";
-                        $commercial_sinking_fund_field = $draft_commercial->sinking_fund == $commercial->sinking_fund? "": "strata commercial sinking_fund";
-                        $commercial_sinking_fund_option_field = $draft_commercial->sinking_fund_option == $commercial->sinking_fund_option? "": "strata commercial sinking_fund_option";
+                        $commercial_unit_no_field = $draft_commercial->unit_no == $commercial->unit_no? "": "strata commercial unit no";
+                        $commercial_maintenance_fee_field = $draft_commercial->maintenance_fee == $commercial->maintenance_fee? "": "strata commercial maintenance fee";
+                        $commercial_maintenance_fee_option_field = $draft_commercial->maintenance_fee_option == $commercial->maintenance_fee_option? "": "strata commercial maintenance fee option";
+                        $commercial_sinking_fund_field = $draft_commercial->sinking_fund == $commercial->sinking_fund? "": "strata commercial sinking fund";
+                        $commercial_sinking_fund_option_field = $draft_commercial->sinking_fund_option == $commercial->sinking_fund_option? "": "strata commercial sinking fund option";
                     }
                 } else {
                     $commercial_text = 'new commercial data';
                 }
-                $facility_management_office_field = $draft_facility->management_office == $facility->management_office? "": "strata facility management_office";
-                $facility_management_office_unit_field = $draft_facility->management_office_unit == $facility->management_office_unit? "": "strata facility management_office_unit";
-                $facility_swimming_pool_field = $draft_facility->swimming_pool == $facility->swimming_pool? "": "strata facility swimming_pool";
-                $facility_swimming_pool_unit_field = $draft_facility->swimming_pool_unit == $facility->swimming_pool_unit? "": "strata facility swimming_pool_unit";
+                $facility_management_office_field = $draft_facility->management_office == $facility->management_office? "": "strata facility management office";
+                $facility_management_office_unit_field = $draft_facility->management_office_unit == $facility->management_office_unit? "": "strata facility management office unit";
+                $facility_swimming_pool_field = $draft_facility->swimming_pool == $facility->swimming_pool? "": "strata facility swimming pool";
+                $facility_swimming_pool_unit_field = $draft_facility->swimming_pool_unit == $facility->swimming_pool_unit? "": "strata facility swimming pool unit";
                 $facility_surau_field = $draft_facility->surau == $facility->surau? "": "strata facility surau";
-                $facility_surau_unit_field = $draft_facility->surau_unit == $facility->surau_unit? "": "strata facility surau_unit";
-                $facility_multipurpose_hall_field = $draft_facility->multipurpose_hall == $facility->multipurpose_hall? "": "strata facility multipurpose_hall";
-                $facility_multipurpose_hall_unit_field = $draft_facility->multipurpose_hall_unit == $facility->multipurpose_hall_unit? "": "strata facility multipurpose_hall_unit";
+                $facility_surau_unit_field = $draft_facility->surau_unit == $facility->surau_unit? "": "strata facility surau unit";
+                $facility_multipurpose_hall_field = $draft_facility->multipurpose_hall == $facility->multipurpose_hall? "": "strata facility multipurpose hall";
+                $facility_multipurpose_hall_unit_field = $draft_facility->multipurpose_hall_unit == $facility->multipurpose_hall_unit? "": "strata facility multipurpose hall unit";
                 $facility_gym_field = $draft_facility->gym == $facility->gym? "": "strata facility gym";
-                $facility_gym_unit_field = $draft_facility->gym_unit == $facility->gym_unit? "": "strata facility gym_unit";
+                $facility_gym_unit_field = $draft_facility->gym_unit == $facility->gym_unit? "": "strata facility gym unit";
                 $facility_playground_field = $draft_facility->playground == $facility->playground? "": "strata facility playground";
-                $facility_playground_unit_field = $draft_facility->playground_unit == $facility->playground_unit? "": "strata facility playground_unit";
+                $facility_playground_unit_field = $draft_facility->playground_unit == $facility->playground_unit? "": "strata facility playground unit";
                 $facility_guardhouse_field = $draft_facility->guardhouse == $facility->guardhouse? "": "strata facility guardhouse";
-                $facility_guardhouse_unit_field = $draft_facility->guardhouse_unit == $facility->guardhouse_unit? "": "strata facility guardhouse_unit";
+                $facility_guardhouse_unit_field = $draft_facility->guardhouse_unit == $facility->guardhouse_unit? "": "strata facility guardhouse unit";
                 $facility_kindergarten_field = $draft_facility->kindergarten == $facility->kindergarten? "": "strata facility kindergarten";
-                $facility_kindergarten_unit_field = $draft_facility->kindergarten_unit == $facility->kindergarten_unit? "": "strata facility kindergarten_unit";
-                $facility_open_space_field = $draft_facility->open_space == $facility->open_space? "": "strata facility open_space";
-                $facility_open_space_unit_field = $draft_facility->open_space_unit == $facility->open_space_unit? "": "strata facility open_space_unit";
+                $facility_kindergarten_unit_field = $draft_facility->kindergarten_unit == $facility->kindergarten_unit? "": "strata facility kindergarten unit";
+                $facility_open_space_field = $draft_facility->open_space == $facility->open_space? "": "strata facility open space";
+                $facility_open_space_unit_field = $draft_facility->open_space_unit == $facility->open_space_unit? "": "strata facility open space unit";
                 $facility_lift_field = $draft_facility->lift == $facility->lift? "": "strata facility lift";
-                $facility_lift_unit_field = $draft_facility->lift_unit == $facility->lift_unit? "": "strata facility lift_unit";
-                $facility_rubbish_room_field = $draft_facility->rubbish_room == $facility->rubbish_room? "": "strata facility rubbish_room";
-                $facility_rubbish_room_unit_field = $draft_facility->rubbish_room_unit == $facility->rubbish_room_unit? "": "strata facility rubbish_room_unit";
+                $facility_lift_unit_field = $draft_facility->lift_unit == $facility->lift_unit? "": "strata facility lift unit";
+                $facility_rubbish_room_field = $draft_facility->rubbish_room == $facility->rubbish_room? "": "strata facility rubbish room";
+                $facility_rubbish_room_unit_field = $draft_facility->rubbish_room_unit == $facility->rubbish_room_unit? "": "strata facility rubbish room unit";
                 $facility_gated_field = $draft_facility->gated == $facility->gated? "": "strata facility gated";
-                $facility_gated_unit_field = $draft_facility->gated_unit == $facility->gated_unit? "": "strata facility gated_unit";
+                $facility_gated_unit_field = $draft_facility->gated_unit == $facility->gated_unit? "": "strata facility gated unit";
                 $facility_others_field = $draft_facility->others == $facility->others? "": "strata facility others";
 
     
