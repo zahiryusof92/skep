@@ -2,6 +2,8 @@
 
 use Helper\KCurl;
 use Helper\OAuth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends BaseController {
 
@@ -71,11 +73,7 @@ class UserController extends BaseController {
                 if ($success) {
                     # Audit Trail
                     $remarks = 'User ' . $user->username . ' has been registered.';
-                    $auditTrail = new AuditTrail();
-                    $auditTrail->module = "System Administration";
-                    $auditTrail->remarks = $remarks;
-                    $auditTrail->audit_by = $user->id;
-                    $auditTrail->save();
+                    $this->addAudit(0, "System Administration", $remarks);
 
                     print "true";
                 } else {
@@ -205,11 +203,7 @@ class UserController extends BaseController {
 
                             # Audit Trail
                             $remarks = 'User ' . Auth::user()->username . ' is signed.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "System Administration";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
+                            $this->addAudit(0, "System Administration", $remarks);
 
                             if(Auth::user()->isMPS()) {
                                 return Redirect::to('/fileList');
@@ -268,11 +262,7 @@ class UserController extends BaseController {
 
                             # Audit Trail
                             $remarks = 'User ' . Auth::user()->username . ' is signed.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "System Administration";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
+                            $this->addAudit(0, "System Administration", $remarks);
                             
                             if($user_account->isHR()) {
                                 return Redirect::to('/summon/councilSummonList');
@@ -293,11 +283,7 @@ class UserController extends BaseController {
 
                             # Audit Trail
                             $remarks = 'User ' . Auth::user()->username . ' is signed.';
-                            $auditTrail = new AuditTrail();
-                            $auditTrail->module = "System Administration";
-                            $auditTrail->remarks = $remarks;
-                            $auditTrail->audit_by = Auth::user()->id;
-                            $auditTrail->save();
+                            $this->addAudit(0, "System Administration", $remarks);
                             
                             return Redirect::to('/home');
                         } else {
@@ -346,10 +332,31 @@ class UserController extends BaseController {
 
             $user = User::find(Auth::User()->id);
             if (count($user) > 0) {
+                /** Arrange audit fields changes */
+                $name_field = $data['name'] == $user->full_name? "": "description";
+                $email_field = $data['email'] == $user->email? "": "email";
+                $phone_no_field = $data['phone_no'] == $user->phone_no? "": "phone no";
+    
+                $audit_fields_changed = "";
+                if(!empty($name_field) || !empty($email_field) || !empty($phone_no_field)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                    $audit_fields_changed .= !empty($email_field)? "<li>$email_field</li>" : "";
+                    $audit_fields_changed .= !empty($phone_no_field)? "<li>$phone_no_field</li>" : "";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $user->full_name = $data['name'];
                 $user->email = $data['email'];
                 $user->phone_no = $data['phone_no'];
                 $success = $user->save();
+
+                if(!empty($audit_fields_changed)) {
+                    # Audit Trail
+                    $remarks = 'User ' . Auth::user()->username . ' profile' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $this->addAudit(0, "System Administration", $remarks);
+                }
 
                 /**
                  * call back to vendor portal to update info
@@ -427,6 +434,9 @@ class UserController extends BaseController {
             $user = User::find(Auth::User()->id);
             $user->password = Hash::make($new_password);
             $success = $user->save();
+
+            $remarks = 'User ' . Auth::user()->username . ' password has been updated';
+            $this->addAudit(0, "System Administration", $remarks);
 
             if ($success) {
                 print "true";

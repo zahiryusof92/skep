@@ -29,8 +29,6 @@ class ReportController extends BaseController {
     }
     public function auditTrailNew() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
-        // $module_options = AuditTrail::self()->getModuleOptions();
-        // $council_options = Company::self()->get();
 
         if(Request::ajax()) {
             $request = Request::all();
@@ -127,7 +125,7 @@ class ReportController extends BaseController {
             'image' => ""
         );
 
-        return View::make('report_en.audit_trail_new', $viewData);
+        return View::make('report_en.audit_trail', $viewData);
     }
 
     public function getAuditTrail() {

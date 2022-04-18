@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Redirect;
+
 class PropertyAgentController extends \BaseController {
 
     /**
@@ -135,6 +137,9 @@ class PropertyAgentController extends \BaseController {
             $success = $model->save();
 
             if ($success) {
+                $remarks = 'Property Agent: '. $model->company . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit(0, "Property Agent", $remarks);
+
                 return Redirect::to('propertyAgents')->with('success', trans('app.successes.saved_successfully'));
             }
         }
@@ -233,6 +238,28 @@ class PropertyAgentController extends \BaseController {
         } else {
             $model = PropertyAgent::where('id', $id)->where('is_deleted', 0)->first();
             if ($model) {
+                /** Arrange audit fields changes */
+                $name_field = $data['name'] == $model->name? "": "name";
+                $company_field = $data['company'] == $model->company? "": "company";
+                $address_field = $data['address'] == $model->address? "": "address";
+                $council_field = json_encode($data['council']) == $model->company_id? "": "council";
+                $rating_field = $data['rating'] == $model->rating? "": "rating";
+                $remarks_field = $data['remarks'] == $model->remarks? "": "remarks";
+    
+                $audit_fields_changed = "";
+                if(!empty($name_field) || !empty($company_field) || !empty($address_field) || !empty($council_field) || !empty($rating_field)
+                || !empty($remarks_field)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                    $audit_fields_changed .= !empty($company_field)? "<li>$company_field</li>" : "";
+                    $audit_fields_changed .= !empty($address_field)? "<li>$address_field</li>" : "";
+                    $audit_fields_changed .= !empty($council_field)? "<li>$council_field</li>" : "";
+                    $audit_fields_changed .= !empty($rating_field)? "<li>$rating_field</li>" : "";
+                    $audit_fields_changed .= !empty($remarks_field)? "<li>$remarks_field</li>" : "";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
+
                 $model->company = $data['company'];
                 $model->name = $data['name'];
                 $model->address = $data['address'];
@@ -242,6 +269,14 @@ class PropertyAgentController extends \BaseController {
                 $success = $model->save();
 
                 if ($success) {
+                    /*
+                     * add audit trail
+                     */
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Property Agent: '. $model->company . $this->module['audit']['text']['data_updated'];
+                        $this->addAudit(0, "Property Agent", $remarks);
+                    }
+
                     return Redirect::to('propertyAgents')->with('success', trans('app.successes.updated_successfully'));
                 }
             }
@@ -264,6 +299,10 @@ class PropertyAgentController extends \BaseController {
             $deleted = $model->save();
 
             if ($deleted) {
+                # Audit Trail
+                $remarks = 'Property Agent: '. $model->company . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit(0, "Property Agent", $remarks);
+
                 return Redirect::back()->with('delete', trans('app.successes.deleted_successfully'));
             }
         }

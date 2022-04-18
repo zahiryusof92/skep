@@ -1,9 +1,13 @@
 <?php
 
 use Helper\Paydibs;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\View;
+use yajra\Datatables\Facades\Datatables;
 
 class MyPointController extends \BaseController {
 
@@ -157,6 +161,10 @@ class MyPointController extends \BaseController {
                     $success = $model->save();
 
                     if ($success) {
+                        # Audit Trail
+                        $remarks = 'Point Reload, ref no: '. $model->ref_no . $this->module['audit']['text']['data_inserted'];
+                        $this->addAudit(Auth::user()->file_id, "Point Reload", $remarks);
+
                         return Redirect::to('myPoint/payment')->with('orderID', $model->id);
                     }
                 }
@@ -249,6 +257,10 @@ class MyPointController extends \BaseController {
 
                             });
                         }
+                        # Audit Trail
+                        $remarks = 'Point Reload, ref no: '. $ref_no . "has been submitted a payment.";
+                        $this->addAudit(Auth::user()->file_id, "Point Reload", $remarks);
+
                         if($data['payment_gateway'] == Config::get('constant.module.payment.gateway.paydibs.slug')) {
                             return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
 
