@@ -32,13 +32,6 @@ foreach ($user_permission as $permission) {
                             </button>
                         </a>
                     </div>
-                    @if (Auth::user()->getAdmin())
-                    {{-- <div class="col-md-6">
-                        <button class="btn btn-primary pull-right" id="btn_sync" onclick="syncMPSFinances()" title="Sync">
-                            {{ trans('Sync MPS Finances') }} &nbsp;<i class="fa fa-refresh"></i>
-                        </button>
-                    </div> --}}
-                    @endif
                 </div>
 
                 <br/>
@@ -213,29 +206,6 @@ foreach ($user_permission as $permission) {
                             $("#cancel_button_import").removeAttr("disabled");
                         }
                     }));
-
-                    function syncMPSFinances() {
-                        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
-                            if (result) {
-                                $("#btn_sync").prop("disabled", true);
-                                $.ajax({
-                                    url: "{{ URL::action('Api\FinanceController@submitSync') }}",
-                                    type: "POST",
-                                    success: function (data) {
-                                        console.log(data);
-                                        $("#btn_sync").removeAttr("disabled");
-                                        if (data.trim() === "true") {
-                                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_sync.store') }}</span>", function () {
-                                                window.location.reload();
-                                            });
-                                        } else {
-                                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                                        }
-                                    },
-                                });
-                            }
-                        });
-                    }
                 </script>
                 {{-- End Import process --}}
 

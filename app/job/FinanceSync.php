@@ -26,7 +26,7 @@ class FinanceSync
 
     public function __construct()
     {
-        $this->api_domain = 'https://test.odesi.tech/api/v4/';
+        $this->api_domain = 'https://ecob.mps.gov.my/api/v4/';
     }
 
     public function fire($job, $data)
@@ -61,6 +61,8 @@ class FinanceSync
                         $new_finance->is_active = $finance['is_active'];
                         $new_finance->is_deleted = $finance['is_deleted'];
                         $new_finance->from_api = $finance['from_api'];
+                        $new_finance->created_at = date('Y-m-d H:i:s', strtotime($finance['created_at']));
+                        $new_finance->updated_at = date('Y-m-d H:i:s', strtotime($finance['updated_at']));
                         $success = $new_finance->save();
 
                         if ($success) {
@@ -88,6 +90,8 @@ class FinanceSync
                                 $new_check->position = $finances_check->position;
                                 $new_check->remarks = $finances_check->remarks;
                                 $new_check->is_active = $finances_check->is_active;
+                                $new_check->created_at = date('Y-m-d H:i:s', strtotime($finances_check->created_at));
+                                $new_check->updated_at = date('Y-m-d H:i:s', strtotime($finances_check->updated_at));
                                 $new_check->save();
                             }
                         }
@@ -110,6 +114,8 @@ class FinanceSync
                                 $new_summary->name = $finances_summary->name;
                                 $new_summary->amount = $finances_summary->amount;
                                 $new_summary->sort_no = $finances_summary->sort_no;
+                                $new_summary->created_at = date('Y-m-d H:i:s', strtotime($finances_summary->created_at));
+                                $new_summary->updated_at = date('Y-m-d H:i:s', strtotime($finances_summary->updated_at));
                                 $new_summary->save();
                             }
                         }
@@ -136,6 +142,8 @@ class FinanceSync
                                 $new_report->nama_bank = $finances_report->nama_bank;
                                 $new_report->baki_bank_akhir = $finances_report->baki_bank_akhir;
                                 $new_report->baki_bank_awal = $finances_report->baki_bank_awal;
+                                $new_report->created_at = date('Y-m-d H:i:s', strtotime($new_report->created_at));
+                                $new_report->updated_at = date('Y-m-d H:i:s', strtotime($new_report->updated_at));
                                 $new_report->save();
                             }
                         }
@@ -158,6 +166,8 @@ class FinanceSync
                                 $new_report_extra->fee_sebulan = $finances_report_extra->fee_sebulan;
                                 $new_report_extra->unit = $finances_report_extra->unit;
                                 $new_report_extra->fee_semasa = $finances_report_extra->fee_semasa;
+                                $new_report_extra->created_at = date('Y-m-d H:i:s', strtotime($finances_report_extra->created_at));
+                                $new_report_extra->updated_at = date('Y-m-d H:i:s', strtotime($finances_report_extra->updated_at));
                                 $new_report_extra->save();
                             }
                         }
@@ -183,6 +193,8 @@ class FinanceSync
                                 $new_report_perbelanjaan->amount = $finances_report_perbelanjaan->amount;
                                 $new_report_perbelanjaan->sort_no = $finances_report_perbelanjaan->sort_no;
                                 $new_report_perbelanjaan->is_custom = $finances_report_perbelanjaan->is_custom;
+                                $new_report_perbelanjaan->created_at = date('Y-m-d H:i:s', strtotime($finances_report_perbelanjaan->created_at));
+                                $new_report_perbelanjaan->updated_at = date('Y-m-d H:i:s', strtotime($finances_report_perbelanjaan->updated_at));
                                 $new_report_perbelanjaan->save();
                             }
                         }
@@ -207,6 +219,8 @@ class FinanceSync
                                 $new_income->hadapan = $finances_income->hadapan;
                                 $new_income->sort_no = $finances_income->sort_no;
                                 $new_income->is_custom = $finances_income->is_custom;
+                                $new_income->created_at = date('Y-m-d H:i:s', strtotime($finances_income->created_at));
+                                $new_income->updated_at = date('Y-m-d H:i:s', strtotime($finances_income->updated_at));
                                 $new_income->save();
                             }
                         }
@@ -234,6 +248,8 @@ class FinanceSync
                                 $new_utility->tertunggak = $finances_utility->tertunggak;
                                 $new_utility->sort_no = $finances_utility->sort_no;
                                 $new_utility->is_custom = $finances_utility->is_custom;
+                                $new_utility->created_at = date('Y-m-d H:i:s', strtotime($finances_utility->created_at));
+                                $new_utility->updated_at = date('Y-m-d H:i:s', strtotime($finances_utility->updated_at));
                                 $new_utility->save();
                             }
                         }
@@ -259,6 +275,8 @@ class FinanceSync
                                 $new_contract->tertunggak = $finances_contract->tertunggak;
                                 $new_contract->sort_no = $finances_contract->sort_no;
                                 $new_contract->is_custom = $finances_contract->is_custom;
+                                $new_contract->created_at = date('Y-m-d H:i:s', strtotime($finances_contract->created_at));
+                                $new_contract->updated_at = date('Y-m-d H:i:s', strtotime($finances_contract->updated_at));
                                 $new_contract->save();
                             }
                         }
@@ -286,6 +304,8 @@ class FinanceSync
                                 $new_repair->tertunggak = $finances_repair->tertunggak;
                                 $new_repair->sort_no = $finances_repair->sort_no;
                                 $new_repair->is_custom = $finances_repair->is_custom;
+                                $new_repair->created_at = date('Y-m-d H:i:s', strtotime($finances_repair->created_at));
+                                $new_repair->updated_at = date('Y-m-d H:i:s', strtotime($finances_repair->updated_at));
                                 $new_repair->save();
                             }
                         }
@@ -313,6 +333,8 @@ class FinanceSync
                                 $new_vandalisme->tertunggak = $finances_vandalisme->tertunggak;
                                 $new_vandalisme->sort_no = $finances_vandalisme->sort_no;
                                 $new_vandalisme->is_custom = $finances_vandalisme->is_custom;
+                                $new_vandalisme->created_at = date('Y-m-d H:i:s', strtotime($finances_vandalisme->created_at));
+                                $new_vandalisme->updated_at = date('Y-m-d H:i:s', strtotime($finances_vandalisme->updated_at));
                                 $new_vandalisme->save();
                             }
                         }
@@ -340,6 +362,8 @@ class FinanceSync
                                 $new_staff->tertunggak = $finances_staff->tertunggak;
                                 $new_staff->sort_no = $finances_staff->sort_no;
                                 $new_staff->is_custom = $finances_staff->is_custom;
+                                $new_staff->created_at = date('Y-m-d H:i:s', strtotime($finances_staff->created_at));
+                                $new_staff->updated_at = date('Y-m-d H:i:s', strtotime($finances_staff->updated_at));
                                 $new_staff->save();
                             }
                         }
@@ -365,6 +389,8 @@ class FinanceSync
                                 $new_admin->tertunggak = $finances_admin->tertunggak;
                                 $new_admin->sort_no = $finances_admin->sort_no;
                                 $new_admin->is_custom = $finances_admin->is_custom;
+                                $new_admin->created_at = date('Y-m-d H:i:s', strtotime($finances_admin->created_at));
+                                $new_admin->updated_at = date('Y-m-d H:i:s', strtotime($finances_admin->updated_at));
                                 $new_admin->save();
                             }
                         }

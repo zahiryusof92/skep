@@ -19,7 +19,7 @@ class FileController extends BaseController
 
 	public function __construct()
 	{
-		$this->api_domain = 'https://test.odesi.tech/api/v4/';
+		$this->api_domain = 'https://ecob.mps.gov.my/api/v4/';
 	}
 
 	public function files()
@@ -101,9 +101,6 @@ class FileController extends BaseController
 			$files = json_decode($this->curl($path));
 
 			if (!empty($files)) {
-				// $delay = 0;
-				// $incrementDelay = 2;
-
 				foreach ($files as $file) {
 					$data = [
 						'council_code' => $council_code,
@@ -111,9 +108,6 @@ class FileController extends BaseController
 					];
 
 					Queue::push(FileSync::class, $data);
-
-					// $delay += $incrementDelay;
-					// break;
 				}
 
 				return "true";
@@ -132,20 +126,16 @@ class FileController extends BaseController
 
 	public function curl($path)
 	{
-		try {
-			// curl to get data
-			$url = $this->api_domain . $path;
-			$response = json_decode((string) ((new KCurl())->requestGET($this->getHeader(), $url)));
+		// curl to get data
+		$url = $this->api_domain . $path;
+		$response = json_decode((string) ((new KCurl())->requestGET($this->getHeader(), $url)));
 
-			if (empty($response->success) == false && $response->success == true) {
-				$items = $response->data;
+		if (empty($response->success) == false && $response->success == true) {
+			$items = $response->data;
 
-				return json_encode($items);
-			}
-
-			return false;
-		} catch (Exception $e) {
-			throw ($e);
+			return json_encode($items);
 		}
+
+		return false;
 	}
 }
