@@ -27,11 +27,38 @@ foreach ($user_permission as $permission) {
                             {{ trans('app.buttons.import_cob_files') }} &nbsp;<i class="fa fa-upload"></i>
                         </button>
                     </div>
+                    @if ((URL::to('/') == 'https://skep.lphs.gov.my' || URL::to('/') == 'https://selangor.ecob.my/') || URL::to('/') == 'https://test.odesi.tech')
                     <div class="col-md-6">
                         <button class="btn btn-primary pull-right" id="btn_sync" onclick="syncMPSFiles()" title="Sync">
                             {{ trans('Sync MPS Files') }} &nbsp;<i class="fa fa-refresh"></i>
                         </button>
                     </div>
+
+                    <script>
+                        function syncMPSFiles() {
+                            bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
+                                if (result) {
+                                    $("#btn_sync").prop("disabled", true);
+                                    $.ajax({
+                                        url: "{{ URL::action('Api\FileController@submitSync') }}",
+                                        type: "POST",
+                                        success: function (data) {
+                                            console.log(data);
+                                            $("#btn_sync").removeAttr("disabled");
+                                            if (data.trim() === "true") {
+                                                bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_sync.store') }}</span>", function () {
+                                                    window.location.reload();
+                                                });
+                                            } else {
+                                                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                                            }
+                                        },
+                                    });
+                                }
+                            });
+                        }
+                    </script>
+                    @endif
                 </div>
 
                 <br/>
@@ -164,29 +191,6 @@ foreach ($user_permission as $permission) {
                             $("#cancel_button_import").removeAttr("disabled");
                         }
                     }));
-
-                    function syncMPSFiles() {
-                        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_submit') }}", function (result) {
-                            if (result) {
-                                $("#btn_sync").prop("disabled", true);
-                                $.ajax({
-                                    url: "{{ URL::action('Api\FileController@submitSync') }}",
-                                    type: "POST",
-                                    success: function (data) {
-                                        console.log(data);
-                                        $("#btn_sync").removeAttr("disabled");
-                                        if (data.trim() === "true") {
-                                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_sync.store') }}</span>", function () {
-                                                window.location.reload();
-                                            });
-                                        } else {
-                                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                                        }
-                                    },
-                                });
-                            }
-                        });
-                    }
                 </script>
                 @endif
 

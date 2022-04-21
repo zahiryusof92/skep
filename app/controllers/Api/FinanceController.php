@@ -20,7 +20,7 @@ class FinanceController extends BaseController
 
 	public function __construct()
 	{
-		$this->api_domain = 'https://test.odesi.tech/api/v4/';
+		$this->api_domain = 'https://ecob.mps.gov.my/api/v4/';
 	}
 
 	public function financeFile()
@@ -42,12 +42,14 @@ class FinanceController extends BaseController
 					->where('files.is_deleted', 0)
 					->first();
 
-				$response = [
-					'success' => true,
-					'data' => $finance['finance']
-				];
+				if ($finance && $finance->finance->count() > 0) {
+					$response = [
+						'success' => true,
+						'data' => $finance->finance
+					];
 
-				return Response::json($response);
+					return Response::json($response);
+				}
 			}
 		}
 
@@ -479,7 +481,7 @@ class FinanceController extends BaseController
 				if ($files) {
 					foreach ($files as $file) {
 						// curl to get data
-						$path = 'financeFile?council_code=' . $council->short_name . '&file_no=' . $file->file_no;
+						$path = 'financeFile?council_code=' . $council->short_name . '&file_no=' . urlencode($file->file_no);
 						$finances = json_decode($this->curl($path));
 
 						if (!empty($finances)) {
