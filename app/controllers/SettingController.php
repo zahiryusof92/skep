@@ -874,8 +874,8 @@ class SettingController extends BaseController {
 
             $formtype = FormType::findOrFail($id);
             /** Arrange audit fields changes */
-            $bi_type_field = $data['bi_type'] == $formtype->name_en? "": "bi_type";
-            $bm_type_field = $data['bm_type'] == $formtype->name_my? "": "bm_type";
+            $bi_type_field = $data['bi_type'] == $formtype->name_en? "": "bi type";
+            $bm_type_field = $data['bm_type'] == $formtype->name_my? "": "bm type";
             $sort_no_field = $data['sort_no'] == $formtype->sort_no? "": "sort no";
             $is_active_field = $data['is_active'] == $formtype->is_active? "": "status";
 
@@ -1045,7 +1045,7 @@ class SettingController extends BaseController {
             $updated = $state->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Satte: '. $state->name . $this->module['audit']['text']['status_active'];
+                $remarks = 'State: '. $state->name . $this->module['audit']['text']['status_active'];
                 $this->addAudit(0, "Master Setup", $remarks);
 
                 print "true";

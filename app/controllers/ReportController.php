@@ -27,6 +27,7 @@ class ReportController extends BaseController {
 
         return View::make('report_en.audit_trail', $viewData);
     }
+    
     public function auditTrailNew() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
 
