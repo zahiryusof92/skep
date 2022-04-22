@@ -5,13 +5,13 @@ namespace Api;
 use BaseController;
 use Carbon\Carbon;
 use Company;
-use Exception;
 use Files;
 use Helper\KCurl;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Job\FileSync;
+use Job\MPSSync;
 
 class FileController extends BaseController
 {
@@ -101,14 +101,12 @@ class FileController extends BaseController
 			$files = json_decode($this->curl($path));
 
 			if (!empty($files)) {
-				foreach ($files as $file) {
-					$data = [
-						'council_code' => $council_code,
-						'file' => $file
-					];
+				$data = [
+					'council_code' => $council_code,
+					'files' => $files
+				];
 
-					Queue::push(FileSync::class, $data);
-				}
+				Queue::push(MPSSync::class, $data);
 
 				return "true";
 			}
