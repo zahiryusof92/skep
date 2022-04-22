@@ -16,6 +16,7 @@ use FinanceReportExtra;
 use FinanceReportPerbelanjaan;
 use FinanceStaff;
 use FinanceSummary;
+use FinanceSyncLog;
 use FinanceUtility;
 use FinanceVandal;
 use Helper\KCurl;
@@ -36,6 +37,15 @@ class FinanceSync
             $council_code = $data['council_code'];
             $file_no = $data['file_no'];
             $finance = $data['finance'];
+
+            // log
+            $financeLog = FinanceSyncLog::create([
+                'data' => json_encode($finance),
+                'reference_file_id' => $finance['file_id'],
+                'reference_finance_file_id' => $finance['id'],
+                'status' => 'pending',
+
+            ]);
 
             $council = Company::where('short_name', $council_code)->first();
             if ($council && !empty($finance)) {
@@ -71,6 +81,12 @@ class FinanceSync
                     }
 
                     if (!empty($exist_finance)) {
+                        $financeLog->update([
+                            'file_id' => $file->id,
+                            'finance_file_id' => $exist_finance->id,
+                            'status' => 'success',
+                        ]);
+
                         // create Check
                         $path_check = 'financeCheck?finance_id=' . $finance['id'];
                         $finances_checks = json_decode($this->curl($path_check));

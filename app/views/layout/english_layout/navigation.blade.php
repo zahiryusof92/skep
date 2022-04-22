@@ -99,6 +99,13 @@ if (!Auth::user()->getAdmin()) {
                             COB Sync
                         </a>
                     </li>
+                    @if ((URL::to('/') == 'https://skep.lphs.gov.my' || URL::to('/') == 'https://selangor.ecob.my') || (URL::to('/') == 'https://test.odesi.tech' || URL::to('/') == 'https://skep.app'))
+                    <li id="mps_sync">
+                        <a class="left-menu-link" href="{{URL::action('MPSSyncController@index')}}">
+                            MPS Sync
+                        </a>
+                    </li>
+                    @endif
                     @endif
 
                 </ul>
