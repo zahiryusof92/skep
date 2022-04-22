@@ -14,14 +14,12 @@ class MPSSync
             $files = $data['files'];
 
             foreach ($files as $file) {
-                if ($file['file_no'] == 'MPS 3/2 - -1406/342(KR)-2') {
-                    $file_data = [
-                        'council_code' => $council_code,
-                        'file' => $file
-                    ];
+                $file_data = [
+                    'council_code' => $council_code,
+                    'file' => $file
+                ];
 
-                    Queue::push(FileSync::class, $file_data);
-                }
+                Queue::push(FileSync::class, $file_data);
             }
         }
 
