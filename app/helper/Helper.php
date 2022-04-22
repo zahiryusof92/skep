@@ -95,5 +95,5 @@ class Helper
             $str    = substr_replace( $str , $replace , $pos , $search_length );
         }
         return $str;
-    }
+    }  
 }

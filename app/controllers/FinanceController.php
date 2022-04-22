@@ -2543,4 +2543,40 @@ class FinanceController extends BaseController {
         }
     }
 
+    public function saveFinanceSummary($finance, $data_summary_amount) {
+        $summary_keys = $this->module['finance']['tabs']['summary']['only'];
+        $messages = Config::get('constant.others.messages');
+        $prefix = 'sum_';
+
+        $currents = FinanceSummary::where('finance_file_id', $finance->id)->get();
+        if(count($currents) > 0) {
+            foreach($currents as $current) {
+                $old = FinanceSummaryOld::firstOrNew(array('finance_file_id' => $finance->id,
+                                                            'summary_key' => $current->summary_key));
+
+                $old->name = $current->name;
+                $old->amount = $current->amount;
+                $old->sort_no = $current->sort_no;
+                $old->save();
+            }
+        }
+        $remove = FinanceSummary::where('finance_file_id', $finance->id)->delete();
+        if ($remove) {
+            $i = 1;
+            foreach($summary_keys as $summary_key) {
+                $finance_summary = new FinanceSummary;
+                $finance_summary->finance_file_id = $finance->id;
+                $finance_summary->name = $messages[$summary_key];
+                $finance_summary->summary_key = $summary_key;
+                $finance_summary->amount = $data_summary_amount[$summary_key];
+                $finance_summary->sort_no = $i;
+                $finance_summary->save();
+                $i++;
+            }
+        }
+        # Audit Trail
+        $remarks = 'Finance File: ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) . ' summary'. $this->module['audit']['text']['data_updated'];
+        $this->addAudit($finance->file->id, "COB Finance File", $remarks);
+    }
+
 }
