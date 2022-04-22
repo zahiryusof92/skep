@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'default' => 'sync',
+	'default' => getenv('queue_connection'),
 
 	/*
 	|--------------------------------------------------------------------------
