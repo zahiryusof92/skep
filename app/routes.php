@@ -950,6 +950,13 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('cob/get-option', 'CobController@getOption');
     Route::post('buyer/sync', 'CobSyncController@submitBuyerSync');
     Route::get('cob/get-property', 'CobSyncController@getProperty');
+
+    /**
+     * MPS Sync
+     */
+    Route::get('mpsSync', 'MPSSyncController@index');
+    Route::get('mpsSync/getFileList', 'MPSSyncController@getFileList');
+    Route::get('mpsSync/getFinanceList', 'MPSSyncController@getFinanceList');
     Route::post('file/sync', 'Api\FileController@submitSync');
     Route::post('finance/sync', 'Api\FinanceController@submitSync');
 });

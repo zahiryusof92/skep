@@ -4,9 +4,9 @@ namespace Job;
 
 use Carbon\Carbon;
 use Company;
-use Exception;
 use Facility;
 use Files;
+use FileSyncLog;
 use Helper\KCurl;
 use HouseScheme;
 use Illuminate\Support\Facades\Queue;
@@ -32,6 +32,13 @@ class FileSync
         if (!empty($data)) {
             $council_code = $data['council_code'];
             $file = $data['file'];
+
+            // log
+            $fileLog = FileSyncLog::create([
+                'data' => json_encode($file),
+                'reference_file_id' => $file['id'],
+                'status' => 'pending',
+            ]);
 
             $council = Company::where('short_name', $council_code)->first();
             if ($council && !empty($file)) {
@@ -177,6 +184,11 @@ class FileSync
 
                 // curl to get data
                 if (!empty($council->short_name) && !empty($exist_file->file_no)) {
+                    $fileLog->update([
+                        'file_id' => $exist_file->id,
+                        'status' => 'success',
+                    ]);
+
                     $path = 'financeFile?council_code=' . $council->short_name . '&file_no=' . urlencode($exist_file->file_no);
                     $finances = json_decode($this->curl($path));
 
