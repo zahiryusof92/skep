@@ -14,6 +14,11 @@
                             {{ trans('Sync MPS Files') }} &nbsp;<i class="fa fa-refresh"></i>
                         </button>
                     </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-danger pull-right" id="btn_clear" onclick="clearSyncMPSFiles()" title="Clear">
+                            {{ trans('Clear Sync Log') }} &nbsp;<i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="row padding-vertical-10">
                     <div class="col-lg-12">
@@ -69,10 +74,31 @@
                     url: "{{ URL::action('Api\FileController@submitSync') }}",
                     type: "POST",
                     success: function (data) {
-                        console.log(data);
                         $("#btn_sync").removeAttr("disabled");
                         if (data.trim() === "true") {
                             bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_sync.store') }}</span>", function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                        }
+                    },
+                });
+            }
+        });
+    }
+
+    function clearSyncMPSFiles() {
+        bootbox.confirm("{{ trans('app.confirmation.are_you_sure_delete_file') }}", function (result) {
+            if (result) {
+                $("#btn_clear").prop("disabled", true);
+                $.ajax({
+                    url: "{{ URL::action('MPSSyncController@destroy') }}",
+                    type: "POST",
+                    success: function (data) {
+                        $("#btn_clear").removeAttr("disabled");
+                        if (data.trim() === "true") {
+                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.deleted_successfully') }}</span>", function () {
                                 window.location.reload();
                             });
                         } else {
