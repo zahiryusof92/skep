@@ -2,27 +2,62 @@
 
 namespace Job;
 
+use Helper\KCurl;
 use Illuminate\Support\Facades\Queue;
 
 class MPSSync
 {
+    public $api_domain;
+
+    public function __construct()
+    {
+        $this->api_domain = 'https://ecob.mps.gov.my/api/v4/';
+    }
+
     public function fire($job, $data)
     {
         // Process the job...
         if (!empty($data)) {
             $council_code = $data['council_code'];
-            $files = $data['files'];
+            $page = $data['page'];
 
-            foreach ($files as $file) {
-                $file_data = [
-                    'council_code' => $council_code,
-                    'file' => $file
-                ];
+            $path = 'files?council_code=' . $council_code . '&page=' . $page;
+            $files = json_decode($this->curl($path));
 
-                Queue::push(FileSync::class, $file_data);
+            if (!empty($files) && !empty($files->data)) {
+                foreach ($files->data as $file) {
+                    $data = [
+                        'council_code' => $council_code,
+                        'file' => $file,
+                    ];
+
+                    Queue::push(FileSync::class, $data);
+                }
             }
         }
 
         $job->delete();
+    }
+
+    public function getHeader()
+    {
+        return [
+            "Accept: application/json",
+        ];
+    }
+
+    public function curl($path)
+    {
+        // curl to get data
+        $url = $this->api_domain . $path;
+        $response = json_decode((string) ((new KCurl())->requestGET($this->getHeader(), $url)));
+
+        if (empty($response->success) == false && $response->success == true) {
+            $items = $response->data;
+
+            return json_encode($items);
+        }
+
+        return false;
     }
 }

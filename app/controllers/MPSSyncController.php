@@ -80,6 +80,17 @@ class MPSSyncController extends \BaseController
 			->make(true);
 	}
 
+	public function destroy() {
+		if (Request::ajax()) {
+			FileSyncLog::truncate();
+			FinanceSyncLog::truncate();
+
+			return "true";
+		}
+
+		return "false";
+	}
+
 	public function errorPage()
 	{
 		$viewData = array(
