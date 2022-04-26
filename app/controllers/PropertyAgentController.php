@@ -273,7 +273,7 @@ class PropertyAgentController extends \BaseController {
                      * add audit trail
                      */
                     if(!empty($audit_fields_changed)) {
-                        $remarks = 'Property Agent: '. $model->company . $this->module['audit']['text']['data_updated'];
+                        $remarks = 'Property Agent: '. $model->company . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit(0, "Property Agent", $remarks);
                     }
 
