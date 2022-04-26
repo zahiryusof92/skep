@@ -1378,7 +1378,6 @@ class AdminController extends BaseController {
             $residentialExtra = ResidentialExtra::where('file_id', $files->id)->get();
             $commercialExtra = CommercialExtra::where('file_id', $files->id)->get();
             
-
             // strata
             $name = $data['strata_name'];
             $title = $data['strata_title'];
@@ -3799,9 +3798,9 @@ class AdminController extends BaseController {
             $deleted = $ajk_details->save();
             if ($deleted) {
                 # Audit Trail
-                $file_name = Files::find($ajk_details->file_id);
-                $remarks = 'AJK Details (' . $file_name->file_no . ') ' . $ajk_details->name . $this->module['audit']['text']['data_deleted'];
-                $this->addAudit($file_name->id, "COB File", $remarks);
+                $file = Files::find($ajk_details->file_id);
+                $remarks = 'AJK Details (' . $file->file_no . ') ' . $ajk_details->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($file->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -4012,8 +4011,8 @@ class AdminController extends BaseController {
                     $hs_user->is_deleted = 0;
                     $success = $hs_user->save();
 
-                    # Audit Trail
                     if ($success) {
+                        # Audit Trail
                         $files = Files::find($hs_user->file_id);
                         $remarks = 'House Scheme User Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_inserted'];
                         $this->addAudit($files->id, "COB File", $remarks);
@@ -4124,9 +4123,9 @@ class AdminController extends BaseController {
             $deleted = $others->save();
             if ($deleted) {
                 # Audit Trail
-                $file_name = Files::find($others->file_id);
-                $remarks = 'Others Info (' . $file_name->file_no . ') image file' . $this->module['audit']['text']['data_deleted'];
-                $this->addAudit($file_name->id, "COB File", $remarks);
+                $files = Files::find($others->file_id);
+                $remarks = 'Others Info (' . $files->file_no . ') image file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -4266,9 +4265,9 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $file_name = Files::find($scoring->file_id);
-                $remarks = 'COB Rating (' . $file_name->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . $this->module['audit']['text']['data_inserted'];
-                $this->addAudit($file_name->id, "COB File", $remarks);
+                $files = Files::find($scoring->file_id);
+                $remarks = 'COB Rating (' . $files->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . $this->module['audit']['text']['data_inserted'];
+                $this->addAudit($files->id, "COB File", $remarks);
 
                 return "true";
             } else {
@@ -5243,8 +5242,8 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                $file_name = Files::find($document->file_id);
-                $remarks = 'COB Document (' . $file_name->file_no . ')' . $this->module['audit']['text']['data_inserted'];
+                $files = Files::find($document->file_id);
+                $remarks = 'COB Document (' . $files->file_no . ')' . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($document->file_id, "COB File", $remarks);
 
                 return "true";
@@ -5322,9 +5321,9 @@ class AdminController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    $file_name = Files::find($document->file_id);
+                    $files = Files::find($document->file_id);
                     if(!empty($audit_fields_changed)) {
-                        $remarks = 'COB Document (' . $file_name->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $remarks = 'COB Document (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($document->file_id, "COB File", $remarks);
                     }
 

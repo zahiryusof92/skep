@@ -224,7 +224,7 @@ class CategoryController extends \BaseController {
                 $audit_fields_changed = '';
                 $new_line = '';
                 $new_line .= $data['description'] != $model->description? "description, " : "";
-                $new_line .= $data['is_active'] != $model->is_active? "description, " : "";
+                $new_line .= $data['is_active'] != $model->is_active? "status, " : "";
                 /** End Arrange audit fields changes */
 
                 $model->description = $data['description'];
@@ -260,7 +260,7 @@ class CategoryController extends \BaseController {
 
                     # Audit Trail
                     if(!empty($new_line)) {
-                        $audit_fields_changed .= "<br/><ul><li> Summon Rate : (";
+                        $audit_fields_changed .= "<br/><ul><li> Category : (";
                         $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
                     }
                     if(!empty($audit_fields_changed)) {
