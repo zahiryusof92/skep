@@ -8,10 +8,11 @@ use Company;
 use Exception;
 use Files;
 use Helper\KCurl;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Job\FileSync;
+use Job\MPSSync;
 
 class FileController extends BaseController
 {
@@ -35,14 +36,16 @@ class FileController extends BaseController
 				$files = Files::with('strata')
 					->where('files.company_id', $council->id)
 					->where('files.is_deleted', 0)
-					->get();
+					->paginate(30);
 
-				$response = [
-					'success' => true,
-					'data' => $files
-				];
+				if ($files) {
+					$response = [
+						'success' => true,
+						'data' => $files->toArray()
+					];
 
-				return Response::json($response);
+					return Response::json($response);
+				}
 			}
 		}
 
@@ -58,22 +61,21 @@ class FileController extends BaseController
 		$request = Request::all();
 
 		if (isset($request['council_code']) && !empty($request['council_code'])) {
-			$path = 'files?council_code=' . $request['council_code'];
+			$start_page = 1;
+			$path = 'files?council_code=' . $request['council_code'] . '&page=' . $start_page;;
 			$files = json_decode($this->curl($path));
 
 			if (!empty($files)) {
-				$delay = 0;
-				$incrementDelay = 2;
+				$page = $files->current_page;
+				$last_page = $files->last_page;
 
-				foreach ($files as $file) {
+				for ($page; $page <= $last_page; $page++) {
 					$data = [
 						'council_code' => $request['council_code'],
-						'file' => $file
+						'page' => $page
 					];
 
-					Queue::later(Carbon::now()->addSeconds($delay), FileSync::class, $data);
-
-					$delay += $incrementDelay;
+					Queue::push(MPSSync::class, $data);
 				}
 
 				$response = [
@@ -95,23 +97,35 @@ class FileController extends BaseController
 	{
 		if (Request::ajax()) {
 			$council_code = 'mps';
+			$start_page = 1;
 
 			// curl to get data
-			$path = 'files?council_code=' . $council_code;
+			$path = 'files?council_code=' . $council_code . '&page=' . $start_page;
 			$files = json_decode($this->curl($path));
 
 			if (!empty($files)) {
-				foreach ($files as $file) {
+				$page = $files->current_page;
+				$last_page = $files->last_page;
+				$delay = 1;
+				$incrementDelay = 2;
+
+				for ($page; $page <= $last_page; $page++) {
 					$data = [
 						'council_code' => $council_code,
-						'file' => $file
+						'page' => $page
 					];
 
-					Queue::push(FileSync::class, $data);
-				}
+					try {
+						Queue::later(Carbon::now()->addSeconds($delay), MPSSync::class, $data);
+					} catch (Exception $e) {
+						Log::error($e);
+					}
 
-				return "true";
+					$delay += $incrementDelay;
+				}
 			}
+
+			return "true";
 		}
 
 		return "false";
