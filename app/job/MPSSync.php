@@ -30,7 +30,7 @@ class MPSSync
             if (!empty($files) && !empty($files->data)) {
                 $delay = 1;
                 $incrementDelay = 2;
-
+              
                 foreach ($files->data as $file) {
                     $data = [
                         'council_code' => $council_code,
