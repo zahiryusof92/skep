@@ -30,7 +30,7 @@ class MPSSync
             if (!empty($files) && !empty($files->data)) {
                 $delay = 1;
                 $incrementDelay = 2;
-              
+
                 foreach ($files->data as $file) {
                     $data = [
                         'council_code' => $council_code,
@@ -38,7 +38,7 @@ class MPSSync
                     ];
 
                     try {
-                        Queue::later(Carbon::now()->addSeconds($delay), FileSync::class, $data);                        
+                        Queue::later(Carbon::now()->addSeconds($delay), FileSync::class, $data);
                     } catch (Exception $e) {
                         Log::error($e);
                     }
