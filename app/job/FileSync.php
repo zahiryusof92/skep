@@ -4,11 +4,13 @@ namespace Job;
 
 use Carbon\Carbon;
 use Company;
+use Exception;
 use Facility;
 use Files;
 use FileSyncLog;
 use Helper\KCurl;
 use HouseScheme;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Management;
 use Monitoring;
@@ -193,7 +195,7 @@ class FileSync
                     $finances = json_decode($this->curl($path));
 
                     if (!empty($finances)) {
-                        $delay = 0;
+                        $delay = 1;
                         $incrementDelay = 2;
 
                         foreach ($finances as $finance) {
@@ -203,7 +205,11 @@ class FileSync
                                 'finance' => $finance
                             ];
 
-                            Queue::later(Carbon::now()->addSeconds($delay), FinanceSync::class, $data);
+                            try {
+                                Queue::later(Carbon::now()->addSeconds($delay), FinanceSync::class, $data);
+                            } catch (Exception $e) {
+                                Log::error($e);
+                            }
 
                             $delay += $incrementDelay;
                         }
