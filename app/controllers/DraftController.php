@@ -1272,6 +1272,9 @@ class DraftController extends BaseController {
                 $files->draft->is_deleted = true;
                 $files->draft->save();
 
+                $remarks = 'File Draft (' . $files->file_no . ')' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
+                
                 return "true";
             }
         }

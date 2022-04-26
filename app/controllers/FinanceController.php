@@ -2546,7 +2546,6 @@ class FinanceController extends BaseController {
     public function saveFinanceSummary($finance, $data_summary_amount) {
         $summary_keys = $this->module['finance']['tabs']['summary']['only'];
         $messages = Config::get('constant.others.messages');
-        $prefix = 'sum_';
 
         $currents = FinanceSummary::where('finance_file_id', $finance->id)->get();
         if(count($currents) > 0) {

@@ -162,7 +162,7 @@ class MyPointController extends \BaseController {
 
                     if ($success) {
                         # Audit Trail
-                        $remarks = 'Point Reload, ref no: '. $model->ref_no . $this->module['audit']['text']['data_inserted'];
+                        $remarks = 'Point Reload, ref no: '. $model->reference_no . $this->module['audit']['text']['data_inserted'];
                         $this->addAudit(Auth::user()->file_id, "Point Reload", $remarks);
 
                         return Redirect::to('myPoint/payment')->with('orderID', $model->id);

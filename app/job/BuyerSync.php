@@ -5,6 +5,7 @@ namespace Job;
 use AuditTrail;
 use Buyer;
 use Files;
+use User;
 
 class BuyerSync
 {
@@ -50,7 +51,7 @@ class BuyerSync
             $auditTrail = new AuditTrail();
             $auditTrail->module = "COB File";
             $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = \Auth::user()->id;
+            $auditTrail->audit_by = User::where('email', 'admin@admin.com')->first()->id;
             $auditTrail->save();
 
         }

@@ -2724,13 +2724,6 @@ class AgmController extends BaseController {
                     $this->addAudit($agmPurchaseSub->file_id, "AGM Purchaser Submission", $remarks);
                 }
 
-                $remarks = $agmPurchaseSub->id . ' has been updated.';
-                $auditTrail = new AuditTrail();
-                $auditTrail->module = "AGM Purchaser Submission Update";
-                $auditTrail->remarks = $remarks;
-                $auditTrail->audit_by = Auth::user()->id;
-                $auditTrail->save();
-
                 print "true";
             } else {
                 print "false";
