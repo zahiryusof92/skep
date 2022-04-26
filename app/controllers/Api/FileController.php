@@ -3,9 +3,12 @@
 namespace Api;
 
 use BaseController;
+use Carbon\Carbon;
 use Company;
+use Exception;
 use Files;
 use Helper\KCurl;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
@@ -103,6 +106,8 @@ class FileController extends BaseController
 			if (!empty($files)) {
 				$page = $files->current_page;
 				$last_page = $files->last_page;
+				$delay = 1;
+				$incrementDelay = 2;
 
 				for ($page; $page <= $last_page; $page++) {
 					$data = [
@@ -110,7 +115,13 @@ class FileController extends BaseController
 						'page' => $page
 					];
 
-					Queue::push(MPSSync::class, $data);
+					try {
+						Queue::later(Carbon::now()->addSeconds($delay), MPSSync::class, $data);
+					} catch (Exception $e) {
+						Log::error($e);
+					}
+
+					$delay += $incrementDelay;
 				}
 			}
 
