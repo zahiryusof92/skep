@@ -909,14 +909,6 @@ foreach ($user_permission as $permission) {
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="ajk_email_edit"/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
                             <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.phone_number') }}</label>
                         </div>
                         <div class="col-md-6">
@@ -1692,12 +1684,6 @@ foreach ($user_permission as $permission) {
         if (ajk_email.trim() == "") {
             $("#ajk_email_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
             $("#ajk_email_edit_error").css("display", "block");
-            error = 1;
-        }
-
-        if (ajk_email.trim() == "") {
-            $("#ajk_email_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
-            $("#ajk_email_error").css("display", "block");
             error = 1;
         }
 
