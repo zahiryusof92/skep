@@ -92,6 +92,7 @@ class AgmController extends BaseController {
                     $ajk_details->file->file_no,
                     $designation->description,
                     $ajk_details->name,
+                    $ajk_details->email,
                     $ajk_details->phone_no,
                     $ajk_details->monthName(),
                     $ajk_details->start_year,
@@ -159,6 +160,7 @@ class AgmController extends BaseController {
             $file_id = $data['file_id'];
             $designation = $data['designation'];
             $name = $data['name'];
+            $email = $data['email'];
             $phone_no = $data['phone_no'];
             $month = $data['month'];
             $start_year = $data['start_year'];
@@ -169,6 +171,7 @@ class AgmController extends BaseController {
             $ajk_detail->file_id = $file_id;
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
+            $ajk_detail->email = $email;
             $ajk_detail->phone_no = $phone_no;
             $ajk_detail->month = $month;
             $ajk_detail->start_year = $start_year;
@@ -235,6 +238,7 @@ class AgmController extends BaseController {
             $file_id = $data['file_id'];
             $designation = $data['designation'];
             $name = $data['name'];
+            $email = $data['email'];
             $phone_no = $data['phone_no'];
             $month = $data['month'];
             $start_year = $data['start_year'];
@@ -248,6 +252,7 @@ class AgmController extends BaseController {
                 $new_line = '';
                 $new_line .= $designation != $ajk_detail->designation? "designation, " : "";
                 $new_line .= $name != $ajk_detail->name? "name, " : "";
+                $new_line .= $email != $ajk_detail->email? "email, " : "";
                 $new_line .= $phone_no != $ajk_detail->phone_no? "phone no, " : "";
                 $new_line .= $month != $ajk_detail->month? "month, " : "";
                 $new_line .= $start_year != $ajk_detail->start_year? "start year, " : "";
@@ -262,6 +267,7 @@ class AgmController extends BaseController {
                 $ajk_detail->file_id = $file_id;
                 $ajk_detail->designation = $designation;
                 $ajk_detail->name = $name;
+                $ajk_detail->email = $email;
                 $ajk_detail->phone_no = $phone_no;
                 $ajk_detail->month = $month;
                 $ajk_detail->start_year = $start_year;

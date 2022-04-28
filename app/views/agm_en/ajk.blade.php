@@ -94,10 +94,11 @@ foreach ($user_permission as $permission) {
                             <table class="table table-hover table-own table-striped" id="ajk_details_list" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                        <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
                                         <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.designation') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.name') }}</th>
+                                        <th style="width:15%;">{{ trans('app.forms.name') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.email') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                         <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>

@@ -1679,7 +1679,7 @@ class AdminController extends BaseController {
             /** Facility */
             if(!empty($facility_management_office_field) || !empty($facility_management_office_unit_field) || !empty($facility_swimming_pool_field)
             || !empty($facility_swimming_pool_unit_field) || !empty($facility_surau_field) || !empty($facility_surau_unit_field)
-            || !empty($facility_surau_unit_field) || !empty($facility_multipurpose_hall_field) || !empty($facility_multipurpose_hall_unit_field)
+            || !empty($facility_multipurpose_hall_field) || !empty($facility_multipurpose_hall_unit_field)
             || !empty($facility_gym_field) || !empty($facility_gym_unit_field) || !empty($facility_playground_field)
             || !empty($facility_playground_unit_field) || !empty($facility_guardhouse_field) || !empty($facility_guardhouse_unit_field)
             || !empty($facility_kindergarten_field) || !empty($facility_kindergarten_unit_field) || !empty($facility_open_space_field)
@@ -1695,8 +1695,8 @@ class AdminController extends BaseController {
                 $new_line .= !empty($facility_swimming_pool_unit_field)? "$facility_swimming_pool_unit_field, " : "";
                 $new_line .= !empty($facility_surau_field)? "$facility_surau_field, " : "";
                 $new_line .= !empty($facility_surau_unit_field)? "$facility_surau_unit_field, " : "";
-                $new_line .= !empty($facility_multipurpose_field)? "$facility_multipurpose_field, " : "";
-                $new_line .= !empty($facility_multipurpose_unit_field)? "$facility_multipurpose_unit_field, " : "";
+                $new_line .= !empty($facility_multipurpose_hall_field)? "$facility_multipurpose_hall_field, " : "";
+                $new_line .= !empty($facility_multipurpose_hall_unit_field)? "$facility_multipurpose_hall_unit_field, " : "";
                 $new_line .= !empty($facility_gym_field)? "$facility_gym_field, " : "";
                 $new_line .= !empty($facility_gym_unit_field)? "$facility_gym_unit_field, " : "";
                 $new_line .= !empty($facility_playground_field)? "$facility_playground_field, " : "";
@@ -3651,6 +3651,7 @@ class AdminController extends BaseController {
 
             $designation = $data['ajk_designation'];
             $name = $data['ajk_name'];
+            $email = $data['ajk_email'];
             $phone_no = $data['ajk_phone_no'];
             $start_year = $data['ajk_start_year'];
             $end_year = $data['ajk_end_year'];
@@ -3658,6 +3659,7 @@ class AdminController extends BaseController {
             $ajk_detail->file_id = $files->id;
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
+            $ajk_detail->email = $email;
             $ajk_detail->phone_no = $phone_no;
             $ajk_detail->start_year = $start_year;
             $ajk_detail->end_year = $end_year;
@@ -3693,6 +3695,7 @@ class AdminController extends BaseController {
 
             $designation = $data['ajk_designation'];
             $name = $data['ajk_name'];
+            $email = $data['ajk_email'];
             $phone_no = $data['ajk_phone_no'];
             $start_year = $data['ajk_start_year'];
             $end_year = $data['ajk_end_year'];
@@ -3702,6 +3705,7 @@ class AdminController extends BaseController {
             $new_line = '';
             $new_line .= $designation != $ajk_detail->designation? "designation, " : "";
             $new_line .= $name != $ajk_detail->name? "name, " : "";
+            $new_line .= $email != $ajk_detail->email? "email, " : "";
             $new_line .= $phone_no != $ajk_detail->phone_no? "phone no, " : "";
             $new_line .= $start_year != $ajk_detail->start_year? "start year, " : "";
             $new_line .= $end_year != $ajk_detail->end_year? "end year, " : "";
@@ -3713,6 +3717,7 @@ class AdminController extends BaseController {
 
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
+            $ajk_detail->email = $email;
             $ajk_detail->phone_no = $phone_no;
             $ajk_detail->start_year = $start_year;
             $ajk_detail->end_year = $end_year;
@@ -3744,7 +3749,7 @@ class AdminController extends BaseController {
 
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit" data-toggle="modal" data-target="#edit_ajk_details"
-                            data-ajk_id="' . $ajk_details->id . '" data-designation="' . $ajk_details->designation . '" data-name="' . $ajk_details->name . '" data-phone_no="' . $ajk_details->phone_no . '" data-start_year="' . $ajk_details->start_year . '" data-end_year="' . $ajk_details->end_year . '">
+                            data-ajk_id="' . $ajk_details->id . '" data-designation="' . $ajk_details->designation . '" data-name="' . $ajk_details->name . '" data-email="' . $ajk_details->email . '" data-phone_no="' . $ajk_details->phone_no . '" data-start_year="' . $ajk_details->start_year . '" data-end_year="' . $ajk_details->end_year . '">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
@@ -3756,6 +3761,7 @@ class AdminController extends BaseController {
                 $data_raw = array(
                     $designation->description,
                     $ajk_details->name,
+                    $ajk_details->email,
                     $ajk_details->phone_no,
                     $ajk_details->start_year,
                     $ajk_details->end_year,
@@ -5503,7 +5509,7 @@ class AdminController extends BaseController {
             $updated = $company->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Company :' . $company->description . $this->module['audit']['text']['status_inactive'];
+                $remarks = 'Company :' . $company->name . $this->module['audit']['text']['status_inactive'];
                 $this->addAudit(0, "System Administration", $remarks);
 
                 return "true";
@@ -5524,7 +5530,7 @@ class AdminController extends BaseController {
             $updated = $company->save();
             if ($updated) {
                 # Audit Trail
-                $remarks = 'Company :' . $company->description . $this->module['audit']['text']['status_active'];
+                $remarks = 'Company :' . $company->name . $this->module['audit']['text']['status_active'];
                 $this->addAudit(0, "System Administration", $remarks);
 
                 return "true";
@@ -5545,7 +5551,7 @@ class AdminController extends BaseController {
             $deleted = $company->save();
             if ($deleted) {
                 # Audit Trail
-                $remarks = 'Company :' . $company->description . $this->module['audit']['text']['data_deleted'];
+                $remarks = 'Company :' . $company->name . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit(0, "System Administration", $remarks);
 
                 return "true";

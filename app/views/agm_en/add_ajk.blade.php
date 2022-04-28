@@ -71,6 +71,16 @@ foreach ($user_permission as $permission) {
                             </div>
 
                             <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email"/>
+                                        <div id="email_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.phone_number') }}</label>
@@ -152,6 +162,7 @@ foreach ($user_permission as $permission) {
         $("#file_id_error").css("display", "none");
         $("#designation_error").css("display", "none");
         $("#name_error").css("display", "none");
+        $("#email_error").css("display", "none");
         $("#phone_no_error").css("display", "none");
         $("#phone_no_invalid_error").css("display", "none");
         $("#month_error").css("display", "none");
@@ -163,6 +174,7 @@ foreach ($user_permission as $permission) {
         var file_id = $("#file_id").val(),
                 designation = $("#designation").val(),
                 name = $("#name").val(),
+                email = $("#email").val(),
                 phone_no = $("#phone_no").val(),
                 month = $("#month").val(),
                 start_year = $("#start_year").val(),
@@ -186,6 +198,12 @@ foreach ($user_permission as $permission) {
         if (name.trim() == "") {
             $("#name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
             $("#name_error").css("display", "block");
+            error = 1;
+        }
+
+        if (email.trim() == "") {
+            $("#email_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
+            $("#email_error").css("display", "block");
             error = 1;
         }
 
@@ -245,6 +263,7 @@ foreach ($user_permission as $permission) {
                     file_id: file_id,
                     designation: designation,
                     name: name,
+                    email: email,
                     phone_no: phone_no,
                     month: month,
                     start_year: start_year,

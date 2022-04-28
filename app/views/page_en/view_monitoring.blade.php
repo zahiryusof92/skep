@@ -125,7 +125,8 @@ foreach ($user_permission as $permission) {
                                                                 <thead>
                                                                     <tr>
                                                                         <th style="width:30%;text-align: center !important;">{{ trans('app.forms.designation') }}</th>
-                                                                        <th style="width:30%;">{{ trans('app.forms.name') }}</th>
+                                                                        <th style="width:15%;">{{ trans('app.forms.name') }}</th>
+                                                                        <th style="width:15%;">{{ trans('app.forms.email') }}</th>
                                                                         <th style="width:20%;">{{ trans('app.forms.phone_number') }}</th>
                                                                         <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
                                                                         <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>

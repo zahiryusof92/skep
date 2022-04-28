@@ -9,6 +9,7 @@ return [
         ],
         'audit' => [
             'text' => [
+                'data_accepted' => ' changes has been accepted.',
                 'data_inserted' => ' has been inserted.',
                 'data_imported' => ' has been imported.',
                 'data_updated' => ' has been updated.',

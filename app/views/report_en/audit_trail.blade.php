@@ -177,7 +177,7 @@ $company = Company::find(Auth::user()->company_id);
                 }
             },
             "dom": '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
-            "order": [[0, "desc"]],
+            "order": [[6, "desc"]],
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
             "pageLength": 25,
             "scrollX": true,

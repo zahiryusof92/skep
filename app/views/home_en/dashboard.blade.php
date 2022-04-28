@@ -388,11 +388,12 @@ foreach ($user_permission as $permission) {
                                     <table class="table table-hover table-own table-striped" id="designation_remainder" width="100%">
                                         <thead>
                                             <tr>
-                                                <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                                <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
                                                 <th style="width:15%;">{{ trans('app.forms.file_no') }}</th>
                                                 <th style="width:15%;">{{ trans('app.forms.scheme_name') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.designation') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.name') }}</th>
+                                                <th style="width:10%;">{{ trans('app.forms.name') }}</th>
+                                                <th style="width:10%;">{{ trans('app.forms.email') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                                 <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
@@ -579,9 +580,10 @@ foreach ($user_permission as $permission) {
             columns: [
                 {data: 'cob', name: 'company.short_name'},
                 {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strate.name'},
+                {data: 'strata', name: 'strata.name'},
                 {data: 'designation', name: 'designation.description'},
                 {data: 'name', name: 'ajk_details.name'},
+                {data: 'email', name: 'ajk_details.email'},
                 {data: 'phone_no', name: 'ajk_details.phone_no'},
                 {data: 'month', name: 'ajk_details.month'},
                 {data: 'start_year', name: 'ajk_details.start_year'},

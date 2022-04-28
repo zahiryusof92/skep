@@ -3393,6 +3393,9 @@ class ImportController extends BaseController {
 
                                         $repair_mf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
                                         if(in_array($repair_first_col_mf, ['LIF', 'WAYAR BUMI', 'PENDAWAIAN ELEKTRIK', 'SUBSTATION TNB', 'GENSET'])) {
                                             $data_summary_amount['mechaninal'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
                                         } else if(in_array($repair_first_col_mf, ['TANGKI AIR', 'BUMBUNG', 'RAIN WATER DOWN PIPE', 'PEMBENTUNG', 'PERPAIPAN', 'TANGGA/HANDRAIL', 'JALAN', 'PAGAR', 'LONGKANG'])) {
@@ -3508,6 +3511,9 @@ class ImportController extends BaseController {
 
                                         $staff->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
                                         $data_summary_amount['kos_pekerja'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                                     }
                                 }
@@ -3539,6 +3545,9 @@ class ImportController extends BaseController {
 
                                         $admin->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
                                         $data_summary_amount['pentadbiran'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                                         if(in_array($admin_first_col, ['FI EJEN PENGURUSAN'])) {
                                             $data_summary_amount['fi_ejen_pengurusan'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
