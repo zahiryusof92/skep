@@ -1685,7 +1685,7 @@ foreach ($user_permission as $permission) {
             $("#ajk_email_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
             $("#ajk_email_edit_error").css("display", "block");
             error = 1;
-        }
+        } 
 
         if (ajk_phone_no.trim() == "") {
             $("#ajk_phone_no_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Phone Number"]) }}</span>');
