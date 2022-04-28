@@ -3,6 +3,20 @@
 class AJKDetails extends Eloquent {
 
     protected $table = 'ajk_details';
+    
+    protected $fillable = [
+        'file_id',
+        'monitoring_id',
+        'designation',
+        'name',
+        'email',
+        'phone_no',
+        'month',
+        'start_year',
+        'end_year',
+        'remarks',
+        'is_deleted'
+    ];
 
     public static function monthList() {
         $month = [

@@ -3099,7 +3099,7 @@ class SettingController extends BaseController {
         if (Request::ajax()) {
             $dun = Dun::findOrFail(Helper::decode($data['id']));
             /** Arrange audit fields changes */
-            $parliment_field = $data['parliment'] == $dun->parliment? "": "parliment";
+            $parliment_field = $data['parliament'] == $dun->parliament? "": "parliament";
             $description_field = $data['description'] == $dun->description? "": "description";
             $code_field = $data['code'] == $dun->code? "": "code";
             $is_active_field = $data['is_active'] == $dun->is_active? "": "status";

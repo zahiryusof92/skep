@@ -289,7 +289,9 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.land_title') }}</label>
+                                                            @if(!empty($strata->draft))
                                                             @include('components.is_changed', ['old_field' => $strata->land_title, 'new_field' => $strata->draft->land_title])
+                                                            @endif
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($land_title as $land_titles)

@@ -250,7 +250,7 @@ class DraftController extends BaseController {
 
                 # Audit Trail
                 if(!empty($audit_fields_changed)) {
-                    $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
 
@@ -776,7 +776,7 @@ class DraftController extends BaseController {
 
                 # Audit Trail
                 if(!empty($audit_fields_changed)) {
-                    $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
 
@@ -1144,7 +1144,7 @@ class DraftController extends BaseController {
 
             # Audit Trail
             if(!empty($audit_fields_changed)) {
-                $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                 $this->addAudit($files->id, "COB File", $remarks);
             }
 
@@ -1246,7 +1246,7 @@ class DraftController extends BaseController {
 
                 # Audit Trail
                 if(!empty($audit_fields_changed)) {
-                    $remarks = 'Others Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                    $remarks = 'Others Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
 
