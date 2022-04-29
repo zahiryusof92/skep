@@ -1456,268 +1456,270 @@ class AdminController extends BaseController {
 
             
             /** Arrange audit fields changes */
-            $audit_fields_changed = "";
-            $strata_title_field = $title == $strata->title? "": "strata title";
-            $strata_name_field = $name == $strata->name? "": "strata name";
-            $strata_parliament_field = $parliament == $strata->parliament? "": "strata parliament";
-            $strata_dun_field = $dun == $strata->dun? "": "strata dun";
-            $strata_park_field = $park == $strata->park? "": "strata park";
-            $strata_address1_field = $address1 == $strata->address1? "": "strata address1";
-            $strata_address2_field = $address2 == $strata->address2? "": "strata address2";
-            $strata_address3_field = $address3 == $strata->address3? "": "strata address3";
-            $strata_address4_field = $address4 == $strata->address4? "": "strata address4";
-            $strata_poscode_field = $poscode == $strata->poscode? "": "strata poscode";
-            $strata_city_field = $city == $strata->city? "": "strata city";
-            $strata_state_field = $state == $strata->state? "": "strata state";
-            $strata_country_field = $country == $strata->country? "": "strata country";
-            $strata_block_no_field = $block_no == $strata->block_no? "": "strata block no";
-            $strata_total_floor_field = $floor == $strata->total_floor? "": "strata total floor";
-            $strata_year_field = $year == $strata->year? "": "strata year";
-            $strata_town_field = $town == $strata->town? "": "strata town";
-            $strata_area_field = $area == $strata->area? "": "strata area";
-            $strata_land_area_field = $land_area == $strata->land_area? "": "strata land area";
-            $strata_total_share_unit_field = $total_share_unit == $strata->total_share_unit? "": "strata total share unit";
-            $strata_land_area_unit_field = $land_area_unit == $strata->land_area_unit? "": "strata land area unit";
-            $strata_lot_no_field = $lot_no == $strata->lot_no? "": "strata lot no";
-            $strata_ownership_no_field = $ownership_no == $strata->ownership_no? "": "strata ownership no";
-            $strata_date_field = $date == $strata->date? "": "strata date";
-            $strata_land_title_field = $land_title == $strata->land_title? "": "strata land title";
-            $strata_category_field = $category == $strata->category? "": "strata category";
-            $strata_perimeter_field = $perimeter == $strata->perimeter? "": "strata perimeter";
-            $strata_ccc_no_field = $ccc_no == $strata->ccc_no? "": "strata ccc_no";
-            $strata_ccc_date_field = $ccc_date == $strata->ccc_date? "": "strata ccc_date";
-            $strata_file_url_field = $stratafile == $strata->file_url? "": "strata file";
-            $strata_is_residential_field = $is_residential == $strata->is_residential? "": "strata is residential";
-            $strata_is_commercial_field = $is_commercial == $strata->is_commercial? "": "strata is commercial";
-            $residential_text = '';
-            $residential_unit_no_field = '';
-            $residential_maintenance_fee_field = '';
-            $residential_maintenance_fee_option_field = '';
-            $residential_sinking_fund_field = '';
-            $residential_sinking_fund_option_field = '';
-            $commercial_text = '';
-            $commercial_unit_no_field = '';
-            $commercial_maintenance_fee_field = '';
-            $commercial_maintenance_fee_option_field = '';
-            $commercial_sinking_fund_field = '';
-            $commercial_sinking_fund_option_field = '';
-            if($strata->is_residential && $is_residential) {
-                $residential_unit_no_field = $residential_unit_no == $residential->unit_no? "": "strata residential unit no";
-                $residential_maintenance_fee_field = $residential_maintenance_fee == $residential->maintenance_fee? "": "strata residential maintenance fee";
-                $residential_maintenance_fee_option_field = $residential_maintenance_fee_option == $residential->maintenance_fee_option? "": "strata residential maintenance fee option";
-                $residential_sinking_fund_field = $residential_sinking_fund == $residential->sinking_fund? "": "strata residential sinking fund";
-                $residential_sinking_fund_option_field = $residential_sinking_fund_option == $residential->sinking_fund_option? "": "strata residential sinking fund option";
-            } else {
-                if($strata->is_residential != $is_residential) {
-                    if($is_residential) {
-                        $residential_text = 'new residential data';
-                    } else {
-                        $residential_text = 'remove residential data';
+            if(!Auth::user()->isJMB()) {
+                $audit_fields_changed = "";
+                $strata_title_field = $title == $strata->title? "": "strata title";
+                $strata_name_field = $name == $strata->name? "": "strata name";
+                $strata_parliament_field = $parliament == $strata->parliament? "": "strata parliament";
+                $strata_dun_field = $dun == $strata->dun? "": "strata dun";
+                $strata_park_field = $park == $strata->park? "": "strata park";
+                $strata_address1_field = $address1 == $strata->address1? "": "strata address1";
+                $strata_address2_field = $address2 == $strata->address2? "": "strata address2";
+                $strata_address3_field = $address3 == $strata->address3? "": "strata address3";
+                $strata_address4_field = $address4 == $strata->address4? "": "strata address4";
+                $strata_poscode_field = $poscode == $strata->poscode? "": "strata poscode";
+                $strata_city_field = $city == $strata->city? "": "strata city";
+                $strata_state_field = $state == $strata->state? "": "strata state";
+                $strata_country_field = $country == $strata->country? "": "strata country";
+                $strata_block_no_field = $block_no == $strata->block_no? "": "strata block no";
+                $strata_total_floor_field = $floor == $strata->total_floor? "": "strata total floor";
+                $strata_year_field = $year == $strata->year? "": "strata year";
+                $strata_town_field = $town == $strata->town? "": "strata town";
+                $strata_area_field = $area == $strata->area? "": "strata area";
+                $strata_land_area_field = $land_area == $strata->land_area? "": "strata land area";
+                $strata_total_share_unit_field = $total_share_unit == $strata->total_share_unit? "": "strata total share unit";
+                $strata_land_area_unit_field = $land_area_unit == $strata->land_area_unit? "": "strata land area unit";
+                $strata_lot_no_field = $lot_no == $strata->lot_no? "": "strata lot no";
+                $strata_ownership_no_field = $ownership_no == $strata->ownership_no? "": "strata ownership no";
+                $strata_date_field = $date == $strata->date? "": "strata date";
+                $strata_land_title_field = $land_title == $strata->land_title? "": "strata land title";
+                $strata_category_field = $category == $strata->category? "": "strata category";
+                $strata_perimeter_field = $perimeter == $strata->perimeter? "": "strata perimeter";
+                $strata_ccc_no_field = $ccc_no == $strata->ccc_no? "": "strata ccc_no";
+                $strata_ccc_date_field = $ccc_date == $strata->ccc_date? "": "strata ccc_date";
+                $strata_file_url_field = $stratafile == $strata->file_url? "": "strata file";
+                $strata_is_residential_field = $is_residential == $strata->is_residential? "": "strata is residential";
+                $strata_is_commercial_field = $is_commercial == $strata->is_commercial? "": "strata is commercial";
+                $residential_text = '';
+                $residential_unit_no_field = '';
+                $residential_maintenance_fee_field = '';
+                $residential_maintenance_fee_option_field = '';
+                $residential_sinking_fund_field = '';
+                $residential_sinking_fund_option_field = '';
+                $commercial_text = '';
+                $commercial_unit_no_field = '';
+                $commercial_maintenance_fee_field = '';
+                $commercial_maintenance_fee_option_field = '';
+                $commercial_sinking_fund_field = '';
+                $commercial_sinking_fund_option_field = '';
+                if($strata->is_residential && $is_residential) {
+                    $residential_unit_no_field = $residential_unit_no == $residential->unit_no? "": "strata residential unit no";
+                    $residential_maintenance_fee_field = $residential_maintenance_fee == $residential->maintenance_fee? "": "strata residential maintenance fee";
+                    $residential_maintenance_fee_option_field = $residential_maintenance_fee_option == $residential->maintenance_fee_option? "": "strata residential maintenance fee option";
+                    $residential_sinking_fund_field = $residential_sinking_fund == $residential->sinking_fund? "": "strata residential sinking fund";
+                    $residential_sinking_fund_option_field = $residential_sinking_fund_option == $residential->sinking_fund_option? "": "strata residential sinking fund option";
+                } else {
+                    if($strata->is_residential != $is_residential) {
+                        if($is_residential) {
+                            $residential_text = 'new residential data';
+                        } else {
+                            $residential_text = 'remove residential data';
+                        }
                     }
                 }
-            }
-            if($strata->is_commercial && $is_commercial) {
-                $commercial_unit_no_field = $commercial_unit_no == $commercial->unit_no? "": "strata commercial unit no";
-                $commercial_maintenance_fee_field = $commercial_maintenance_fee == $commercial->maintenance_fee? "": "strata commercial maintenance fee";
-                $commercial_maintenance_fee_option_field = $commercial_maintenance_fee_option == $commercial->maintenance_fee_option? "": "strata commercial maintenance fee option";
-                $commercial_sinking_fund_field = $commercial_sinking_fund == $commercial->sinking_fund? "": "strata commercial sinking fund";
-                $commercial_sinking_fund_option_field = $commercial_sinking_fund_option == $commercial->sinking_fund_option? "": "strata commercial sinking fund option";
-            } else {
-                if($strata->is_commercial != $is_commercial) {
-                    if($is_commercial) {
-                        $commercial_text = 'new commercial data';
-                    } else {
-                        $commercial_text = 'remove commercial data';
+                if($strata->is_commercial && $is_commercial) {
+                    $commercial_unit_no_field = $commercial_unit_no == $commercial->unit_no? "": "strata commercial unit no";
+                    $commercial_maintenance_fee_field = $commercial_maintenance_fee == $commercial->maintenance_fee? "": "strata commercial maintenance fee";
+                    $commercial_maintenance_fee_option_field = $commercial_maintenance_fee_option == $commercial->maintenance_fee_option? "": "strata commercial maintenance fee option";
+                    $commercial_sinking_fund_field = $commercial_sinking_fund == $commercial->sinking_fund? "": "strata commercial sinking fund";
+                    $commercial_sinking_fund_option_field = $commercial_sinking_fund_option == $commercial->sinking_fund_option? "": "strata commercial sinking fund option";
+                } else {
+                    if($strata->is_commercial != $is_commercial) {
+                        if($is_commercial) {
+                            $commercial_text = 'new commercial data';
+                        } else {
+                            $commercial_text = 'remove commercial data';
+                        }
                     }
                 }
-            }
-            $facility_management_office_field = $management_office == $facility->management_office? "": "strata facility management office";
-            $facility_management_office_unit_field = $management_office_unit == $facility->management_office_unit? "": "strata facility management office unit";
-            $facility_swimming_pool_field = $swimming_pool == $facility->swimming_pool? "": "strata facility swimming pool";
-            $facility_swimming_pool_unit_field = $swimming_pool_unit == $facility->swimming_pool_unit? "": "strata facility swimming pool unit";
-            $facility_surau_field = $surau == $facility->surau? "": "strata facility surau";
-            $facility_surau_unit_field = $surau_unit == $facility->surau_unit? "": "strata facility surau unit";
-            $facility_multipurpose_hall_field = $multipurpose_hall == $facility->multipurpose_hall? "": "strata facility multipurpose hall";
-            $facility_multipurpose_hall_unit_field = $multipurpose_hall_unit == $facility->multipurpose_hall_unit? "": "strata facility multipurpose hall unit";
-            $facility_gym_field = $gym == $facility->gym? "": "strata facility gym";
-            $facility_gym_unit_field = $gym_unit == $facility->gym_unit? "": "strata facility gym unit";
-            $facility_playground_field = $playground == $facility->playground? "": "strata facility playground";
-            $facility_playground_unit_field = $playground_unit == $facility->playground_unit? "": "strata facility playground unit";
-            $facility_guardhouse_field = $guardhouse == $facility->guardhouse? "": "strata facility guardhouse";
-            $facility_guardhouse_unit_field = $guardhouse_unit == $facility->guardhouse_unit? "": "strata facility guardhouse unit";
-            $facility_kindergarten_field = $kindergarten == $facility->kindergarten? "": "strata facility kindergarten";
-            $facility_kindergarten_unit_field = $kindergarten_unit == $facility->kindergarten_unit? "": "strata facility kindergarten unit";
-            $facility_open_space_field = $open_space == $facility->open_space? "": "strata facility open space";
-            $facility_open_space_unit_field = $open_space_unit == $facility->open_space_unit? "": "strata facility open space unit";
-            $facility_lift_field = $lift == $facility->lift? "": "strata facility lift";
-            $facility_lift_unit_field = $lift_unit == $facility->lift_unit? "": "strata facility lift unit";
-            $facility_rubbish_room_field = $rubbish_room == $facility->rubbish_room? "": "strata facility rubbish room";
-            $facility_rubbish_room_unit_field = $rubbish_room_unit == $facility->rubbish_room_unit? "": "strata facility rubbish room unit";
-            $facility_gated_field = $gated == $facility->gated? "": "strata facility gated";
-            $facility_gated_unit_field = $gated_unit == $facility->gated_unit? "": "strata facility gated unit";
-            $facility_others_field = $others == $facility->others? "": "strata facility others";
+                $facility_management_office_field = $management_office == $facility->management_office? "": "strata facility management office";
+                $facility_management_office_unit_field = $management_office_unit == $facility->management_office_unit? "": "strata facility management office unit";
+                $facility_swimming_pool_field = $swimming_pool == $facility->swimming_pool? "": "strata facility swimming pool";
+                $facility_swimming_pool_unit_field = $swimming_pool_unit == $facility->swimming_pool_unit? "": "strata facility swimming pool unit";
+                $facility_surau_field = $surau == $facility->surau? "": "strata facility surau";
+                $facility_surau_unit_field = $surau_unit == $facility->surau_unit? "": "strata facility surau unit";
+                $facility_multipurpose_hall_field = $multipurpose_hall == $facility->multipurpose_hall? "": "strata facility multipurpose hall";
+                $facility_multipurpose_hall_unit_field = $multipurpose_hall_unit == $facility->multipurpose_hall_unit? "": "strata facility multipurpose hall unit";
+                $facility_gym_field = $gym == $facility->gym? "": "strata facility gym";
+                $facility_gym_unit_field = $gym_unit == $facility->gym_unit? "": "strata facility gym unit";
+                $facility_playground_field = $playground == $facility->playground? "": "strata facility playground";
+                $facility_playground_unit_field = $playground_unit == $facility->playground_unit? "": "strata facility playground unit";
+                $facility_guardhouse_field = $guardhouse == $facility->guardhouse? "": "strata facility guardhouse";
+                $facility_guardhouse_unit_field = $guardhouse_unit == $facility->guardhouse_unit? "": "strata facility guardhouse unit";
+                $facility_kindergarten_field = $kindergarten == $facility->kindergarten? "": "strata facility kindergarten";
+                $facility_kindergarten_unit_field = $kindergarten_unit == $facility->kindergarten_unit? "": "strata facility kindergarten unit";
+                $facility_open_space_field = $open_space == $facility->open_space? "": "strata facility open space";
+                $facility_open_space_unit_field = $open_space_unit == $facility->open_space_unit? "": "strata facility open space unit";
+                $facility_lift_field = $lift == $facility->lift? "": "strata facility lift";
+                $facility_lift_unit_field = $lift_unit == $facility->lift_unit? "": "strata facility lift unit";
+                $facility_rubbish_room_field = $rubbish_room == $facility->rubbish_room? "": "strata facility rubbish room";
+                $facility_rubbish_room_unit_field = $rubbish_room_unit == $facility->rubbish_room_unit? "": "strata facility rubbish room unit";
+                $facility_gated_field = $gated == $facility->gated? "": "strata facility gated";
+                $facility_gated_unit_field = $gated_unit == $facility->gated_unit? "": "strata facility gated unit";
+                $facility_others_field = $others == $facility->others? "": "strata facility others";
 
-            $audit_fields_changed .= "<br><ul>";
-            /** Strata */
-            if(!empty($strata_title_field) || !empty($strata_name_field) || !empty($strata_parliament_field) || !empty($strata_dun_field)
-            || !empty($strata_park_field) || !empty($strata_address1_field) || !empty($strata_address2_field) || !empty($strata_address3_field)
-            || !empty($strata_address4_field) || !empty($strata_poscode_field) || !empty($strata_city_field) || !empty($strata_state_field)
-            || !empty($strata_country_field) || !empty($strata_block_no_field) || !empty($strata_total_floor_field) || !empty($strata_year_field)
-            || !empty($strata_town_field) || !empty($strata_area_field) || !empty($strata_land_area_field) || !empty($strata_total_share_unit_field)
-            || !empty($strata_land_area_unit_field) || !empty($strata_lot_no_field) || !empty($strata_ownership_no_field) || !empty($strata_date_field)
-            || !empty($strata_land_title_field) || !empty($strata_category_field) || !empty($strata_perimeter_field) || !empty($strata_ccc_no_field)
-            || !empty($strata_ccc_date_field) || !empty($strata_file_url_field) || !empty($strata_is_residential_field) || !empty($strata_is_commercial_field)
-            ) {
-                $audit_fields_changed .= "<li> Strata : (";
-                $new_line = '';
-                $new_line .= !empty($strata_title_field)? "$strata_title_field, " : "";
-                $new_line .= !empty($strata_name_field)? "$strata_name_field, " : "";
-                $new_line .= !empty($strata_parliament_field)? "$strata_parliament_field, " : "";
-                $new_line .= !empty($strata_dun_field)? "$strata_dun_field, " : "";
-                $new_line .= !empty($strata_park_field)? "$strata_park_field, " : "";
-                $new_line .= !empty($strata_address1_field)? "$strata_address1_field, " : "";
-                $new_line .= !empty($strata_address2_field)? "$strata_address2_field, " : "";
-                $new_line .= !empty($strata_address3_field)? "$strata_address3_field, " : "";
-                $new_line .= !empty($strata_address4_field)? "$strata_address4_field, " : "";
-                $new_line .= !empty($strata_poscode_field)? "$strata_poscode_field, " : "";
-                $new_line .= !empty($strata_city_field)? "$strata_city_field, " : "";
-                $new_line .= !empty($strata_state_field)? "$strata_state_field, " : "";
-                $new_line .= !empty($strata_country_field)? "$strata_country_field, " : "";
-                $new_line .= !empty($strata_block_no_field)? "$strata_block_no_field, " : "";
-                $new_line .= !empty($strata_total_floor_field)? "$strata_total_floor_field, " : "";
-                $new_line .= !empty($strata_year_field)? "$strata_year_field, " : "";
-                $new_line .= !empty($strata_town_field)? "$strata_town_field, " : "";
-                $new_line .= !empty($strata_area_field)? "$strata_area_field, " : "";
-                $new_line .= !empty($strata_land_area_field)? "$strata_land_area_field, " : "";
-                $new_line .= !empty($strata_total_share_unit_field)? "$strata_total_share_unit_field, " : "";
-                $new_line .= !empty($strata_land_area_unit_field)? "$strata_land_area_unit_field, " : "";
-                $new_line .= !empty($strata_lot_no_field)? "$strata_lot_no_field, " : "";
-                $new_line .= !empty($strata_ownership_no_field)? "$strata_ownership_no_field, " : "";
-                $new_line .= !empty($strata_date_field)? "$strata_date_field, " : "";
-                $new_line .= !empty($strata_land_title_field)? "$strata_land_title_field, " : "";
-                $new_line .= !empty($strata_category_field)? "$strata_category_field, " : "";
-                $new_line .= !empty($strata_perimeter_field)? "$strata_perimeter_field, " : "";
-                $new_line .= !empty($strata_ccc_no_field)? "$strata_ccc_no_field, " : "";
-                $new_line .= !empty($strata_ccc_date_field)? "$strata_ccc_date_field, " : "";
-                $new_line .= !empty($strata_file_url_field)? "$strata_file_url_field, " : "";
-                $new_line .= !empty($strata_is_residential_field)? "$strata_is_residential_field, " : "";
-                $new_line .= !empty($strata_is_commercial_field)? "$strata_is_commercial_field, " : "";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
-            }
-            /** End Strata */
-            /** Residential */
-            if(empty($residential_text)) {
-                if(!empty($residential_unit_no_field) || !empty($residential_maintenance_fee_field) || !empty($residential_maintenance_fee_option_field) || !empty($residential_sinking_fund_field)
-                || !empty($residential_sinking_fund_option_field)) {
-                    $audit_fields_changed .= "<li> Residential : (";
+                $audit_fields_changed .= "<br><ul>";
+                /** Strata */
+                if(!empty($strata_title_field) || !empty($strata_name_field) || !empty($strata_parliament_field) || !empty($strata_dun_field)
+                || !empty($strata_park_field) || !empty($strata_address1_field) || !empty($strata_address2_field) || !empty($strata_address3_field)
+                || !empty($strata_address4_field) || !empty($strata_poscode_field) || !empty($strata_city_field) || !empty($strata_state_field)
+                || !empty($strata_country_field) || !empty($strata_block_no_field) || !empty($strata_total_floor_field) || !empty($strata_year_field)
+                || !empty($strata_town_field) || !empty($strata_area_field) || !empty($strata_land_area_field) || !empty($strata_total_share_unit_field)
+                || !empty($strata_land_area_unit_field) || !empty($strata_lot_no_field) || !empty($strata_ownership_no_field) || !empty($strata_date_field)
+                || !empty($strata_land_title_field) || !empty($strata_category_field) || !empty($strata_perimeter_field) || !empty($strata_ccc_no_field)
+                || !empty($strata_ccc_date_field) || !empty($strata_file_url_field) || !empty($strata_is_residential_field) || !empty($strata_is_commercial_field)
+                ) {
+                    $audit_fields_changed .= "<li> Strata : (";
                     $new_line = '';
-                    $new_line .= !empty($residential_unit_no_field)? "$residential_unit_no_field, " : "";
-                    $new_line .= !empty($residential_maintenance_fee_field)? "$residential_maintenance_fee_field, " : "";
-                    $new_line .= !empty($residential_maintenance_fee_option_field)? "$residential_maintenance_fee_option_field, " : "";
-                    $new_line .= !empty($residential_sinking_fund_field)? "$residential_sinking_fund_field, " : "";
-                    $new_line .= !empty($residential_sinking_fund_option_field)? "$residential_sinking_fund_option_field, " : "";
+                    $new_line .= !empty($strata_title_field)? "$strata_title_field, " : "";
+                    $new_line .= !empty($strata_name_field)? "$strata_name_field, " : "";
+                    $new_line .= !empty($strata_parliament_field)? "$strata_parliament_field, " : "";
+                    $new_line .= !empty($strata_dun_field)? "$strata_dun_field, " : "";
+                    $new_line .= !empty($strata_park_field)? "$strata_park_field, " : "";
+                    $new_line .= !empty($strata_address1_field)? "$strata_address1_field, " : "";
+                    $new_line .= !empty($strata_address2_field)? "$strata_address2_field, " : "";
+                    $new_line .= !empty($strata_address3_field)? "$strata_address3_field, " : "";
+                    $new_line .= !empty($strata_address4_field)? "$strata_address4_field, " : "";
+                    $new_line .= !empty($strata_poscode_field)? "$strata_poscode_field, " : "";
+                    $new_line .= !empty($strata_city_field)? "$strata_city_field, " : "";
+                    $new_line .= !empty($strata_state_field)? "$strata_state_field, " : "";
+                    $new_line .= !empty($strata_country_field)? "$strata_country_field, " : "";
+                    $new_line .= !empty($strata_block_no_field)? "$strata_block_no_field, " : "";
+                    $new_line .= !empty($strata_total_floor_field)? "$strata_total_floor_field, " : "";
+                    $new_line .= !empty($strata_year_field)? "$strata_year_field, " : "";
+                    $new_line .= !empty($strata_town_field)? "$strata_town_field, " : "";
+                    $new_line .= !empty($strata_area_field)? "$strata_area_field, " : "";
+                    $new_line .= !empty($strata_land_area_field)? "$strata_land_area_field, " : "";
+                    $new_line .= !empty($strata_total_share_unit_field)? "$strata_total_share_unit_field, " : "";
+                    $new_line .= !empty($strata_land_area_unit_field)? "$strata_land_area_unit_field, " : "";
+                    $new_line .= !empty($strata_lot_no_field)? "$strata_lot_no_field, " : "";
+                    $new_line .= !empty($strata_ownership_no_field)? "$strata_ownership_no_field, " : "";
+                    $new_line .= !empty($strata_date_field)? "$strata_date_field, " : "";
+                    $new_line .= !empty($strata_land_title_field)? "$strata_land_title_field, " : "";
+                    $new_line .= !empty($strata_category_field)? "$strata_category_field, " : "";
+                    $new_line .= !empty($strata_perimeter_field)? "$strata_perimeter_field, " : "";
+                    $new_line .= !empty($strata_ccc_no_field)? "$strata_ccc_no_field, " : "";
+                    $new_line .= !empty($strata_ccc_date_field)? "$strata_ccc_date_field, " : "";
+                    $new_line .= !empty($strata_file_url_field)? "$strata_file_url_field, " : "";
+                    $new_line .= !empty($strata_is_residential_field)? "$strata_is_residential_field, " : "";
+                    $new_line .= !empty($strata_is_commercial_field)? "$strata_is_commercial_field, " : "";
                     $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
                 }
-            } else {
-                $audit_fields_changed .= "<li> Residential : (". $residential_text . ")</li>";
-            }
-            if(!empty($data['residential_maintenance_fee_is_custom'])) {
-                if(($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0) || ($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)
-                || ($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) == 0)) {
-                    $audit_fields_changed .= "<li>Residential Extra : (";
-                    if(($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
-                        $audit_fields_changed .= "residential extra data updated";
-
-                    } else if(($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
-                        $audit_fields_changed .= "new data";
-                    } else {
-                        $audit_fields_changed .= "removed residential extra data";
+                /** End Strata */
+                /** Residential */
+                if(empty($residential_text)) {
+                    if(!empty($residential_unit_no_field) || !empty($residential_maintenance_fee_field) || !empty($residential_maintenance_fee_option_field) || !empty($residential_sinking_fund_field)
+                    || !empty($residential_sinking_fund_option_field)) {
+                        $audit_fields_changed .= "<li> Residential : (";
+                        $new_line = '';
+                        $new_line .= !empty($residential_unit_no_field)? "$residential_unit_no_field, " : "";
+                        $new_line .= !empty($residential_maintenance_fee_field)? "$residential_maintenance_fee_field, " : "";
+                        $new_line .= !empty($residential_maintenance_fee_option_field)? "$residential_maintenance_fee_option_field, " : "";
+                        $new_line .= !empty($residential_sinking_fund_field)? "$residential_sinking_fund_field, " : "";
+                        $new_line .= !empty($residential_sinking_fund_option_field)? "$residential_sinking_fund_option_field, " : "";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
                     }
-                    $audit_fields_changed .= ")</li>";
+                } else {
+                    $audit_fields_changed .= "<li> Residential : (". $residential_text . ")</li>";
                 }
-            } else {
-                if($residentialExtra->count() > 0) {
-                    $audit_fields_changed .= "<li>Residential Extra : (removed residential extra data) </li>";
+                if(!empty($data['residential_maintenance_fee_is_custom'])) {
+                    if(($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0) || ($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)
+                    || ($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) == 0)) {
+                        $audit_fields_changed .= "<li>Residential Extra : (";
+                        if(($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
+                            $audit_fields_changed .= "residential extra data updated";
+
+                        } else if(($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
+                            $audit_fields_changed .= "new data";
+                        } else {
+                            $audit_fields_changed .= "removed residential extra data";
+                        }
+                        $audit_fields_changed .= ")</li>";
+                    }
+                } else {
+                    if($residentialExtra->count() > 0) {
+                        $audit_fields_changed .= "<li>Residential Extra : (removed residential extra data) </li>";
+                    }
                 }
-            }
-            /** End Residential */
-            /** Commercial */
-            if(empty($commercial_text)) {
-                if(!empty($commercial_unit_no_field) || !empty($commercial_maintenance_fee_field) || !empty($commercial_maintenance_fee_option_field)
-                || !empty($commercial_sinking_fund_field) || !empty($commercial_sinking_fund_option_field)) {
-                    $audit_fields_changed .= "<li> Commercial : (";
+                /** End Residential */
+                /** Commercial */
+                if(empty($commercial_text)) {
+                    if(!empty($commercial_unit_no_field) || !empty($commercial_maintenance_fee_field) || !empty($commercial_maintenance_fee_option_field)
+                    || !empty($commercial_sinking_fund_field) || !empty($commercial_sinking_fund_option_field)) {
+                        $audit_fields_changed .= "<li> Commercial : (";
+                        $new_line = '';
+                        $new_line .= !empty($commercial_unit_no_field)? "$commercial_unit_no_field, " : "";
+                        $new_line .= !empty($commercial_maintenance_fee_field)? "$commercial_maintenance_fee_field, " : "";
+                        $new_line .= !empty($commercial_maintenance_fee_option_field)? "$commercial_maintenance_fee_option_field, " : "";
+                        $new_line .= !empty($commercial_sinking_fund_field)? "$commercial_sinking_fund_field, " : "";
+                        $new_line .= !empty($commercial_sinking_fund_option_field)? "$commercial_sinking_fund_option_field, " : "";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    }
+                } else {
+                    $audit_fields_changed .= "<li> Commercial : (". $commercial_text . ")</li>";
+                }
+                if(!empty($data['commercial_maintenance_fee_is_custom'])) {
+                    if(($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0) || ($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)
+                    || ($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) == 0)) {
+                        $audit_fields_changed .= "<li>Commercial Extra : (";
+                        if(($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
+                            $audit_fields_changed .= "commercial extra data updated";
+                        } else if(($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
+                            $audit_fields_changed .= "new data";
+                        } else {
+                            $audit_fields_changed .= "removed commercial extra data";
+                        }
+                        $audit_fields_changed .= ")</li>";
+                    }
+                } else {
+                    if($commercialExtra->count() > 0) {
+                        $audit_fields_changed .= "<li>Commercial Extra : (removed commercial extra data) </li>";
+                    }
+                }
+                /** End Commercial */
+                /** Facility */
+                if(!empty($facility_management_office_field) || !empty($facility_management_office_unit_field) || !empty($facility_swimming_pool_field)
+                || !empty($facility_swimming_pool_unit_field) || !empty($facility_surau_field) || !empty($facility_surau_unit_field)
+                || !empty($facility_multipurpose_hall_field) || !empty($facility_multipurpose_hall_unit_field)
+                || !empty($facility_gym_field) || !empty($facility_gym_unit_field) || !empty($facility_playground_field)
+                || !empty($facility_playground_unit_field) || !empty($facility_guardhouse_field) || !empty($facility_guardhouse_unit_field)
+                || !empty($facility_kindergarten_field) || !empty($facility_kindergarten_unit_field) || !empty($facility_open_space_field)
+                || !empty($facility_open_space_unit_field) || !empty($facility_lift_field) || !empty($facility_lift_unit_field)
+                || !empty($facility_rubbish_room_field) || !empty($facility_rubbish_room_unit_field) || !empty($facility_gated_field)
+                || !empty($facility_gated_unit_field) || !empty($facility_others_field)
+                ) {
+                    $audit_fields_changed .= "<li> Facility : (";
                     $new_line = '';
-                    $new_line .= !empty($commercial_unit_no_field)? "$commercial_unit_no_field, " : "";
-                    $new_line .= !empty($commercial_maintenance_fee_field)? "$commercial_maintenance_fee_field, " : "";
-                    $new_line .= !empty($commercial_maintenance_fee_option_field)? "$commercial_maintenance_fee_option_field, " : "";
-                    $new_line .= !empty($commercial_sinking_fund_field)? "$commercial_sinking_fund_field, " : "";
-                    $new_line .= !empty($commercial_sinking_fund_option_field)? "$commercial_sinking_fund_option_field, " : "";
+                    $new_line .= !empty($facility_management_office_field)? "$facility_management_office_field, " : "";
+                    $new_line .= !empty($facility_management_office_unit_field)? "$facility_management_office_unit_field, " : "";
+                    $new_line .= !empty($facility_swimming_pool_field)? "$facility_swimming_pool_field, " : "";
+                    $new_line .= !empty($facility_swimming_pool_unit_field)? "$facility_swimming_pool_unit_field, " : "";
+                    $new_line .= !empty($facility_surau_field)? "$facility_surau_field, " : "";
+                    $new_line .= !empty($facility_surau_unit_field)? "$facility_surau_unit_field, " : "";
+                    $new_line .= !empty($facility_multipurpose_hall_field)? "$facility_multipurpose_hall_field, " : "";
+                    $new_line .= !empty($facility_multipurpose_hall_unit_field)? "$facility_multipurpose_hall_unit_field, " : "";
+                    $new_line .= !empty($facility_gym_field)? "$facility_gym_field, " : "";
+                    $new_line .= !empty($facility_gym_unit_field)? "$facility_gym_unit_field, " : "";
+                    $new_line .= !empty($facility_playground_field)? "$facility_playground_field, " : "";
+                    $new_line .= !empty($facility_playground_unit_field)? "$facility_playground_unit_field, " : "";
+                    $new_line .= !empty($facility_guardhouse_field)? "$facility_guardhouse_field, " : "";
+                    $new_line .= !empty($facility_guardhouse_unit_field)? "$facility_guardhouse_unit_field, " : "";
+                    $new_line .= !empty($facility_kindergarten_field)? "$facility_kindergarten_field, " : "";
+                    $new_line .= !empty($facility_kindergarten_unit_field)? "$facility_kindergarten_unit_field, " : "";
+                    $new_line .= !empty($facility_open_space_field)? "$facility_open_space_field, " : "";
+                    $new_line .= !empty($facility_open_space_unit_field)? "$facility_open_space_unit_field, " : "";
+                    $new_line .= !empty($facility_lift_field)? "$facility_lift_field, " : "";
+                    $new_line .= !empty($facility_lift_unit_field)? "$facility_lift_unit_field, " : "";
+                    $new_line .= !empty($facility_rubbish_room_field)? "$facility_rubbish_room_field, " : "";
+                    $new_line .= !empty($facility_rubbish_room_unit_field)? "$facility_rubbish_room_unit_field, " : "";
+                    $new_line .= !empty($facility_gated_field)? "$facility_gated_field, " : "";
+                    $new_line .= !empty($facility_gated_unit_field)? "$facility_gated_unit_field, " : "";
+                    $new_line .= !empty($facility_others_field)? "$facility_others_field, " : "";
                     $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
                 }
-            } else {
-                $audit_fields_changed .= "<li> Commercial : (". $commercial_text . ")</li>";
+                /** End Facility */
+                $audit_fields_changed .= "</ul>";
             }
-            if(!empty($data['commercial_maintenance_fee_is_custom'])) {
-                if(($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0) || ($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)
-                || ($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) == 0)) {
-                    $audit_fields_changed .= "<li>Commercial Extra : (";
-                    if(($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
-                        $audit_fields_changed .= "commercial extra data updated";
-                    } else if(($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
-                        $audit_fields_changed .= "new data";
-                    } else {
-                        $audit_fields_changed .= "removed commercial extra data";
-                    }
-                    $audit_fields_changed .= ")</li>";
-                }
-            } else {
-                if($commercialExtra->count() > 0) {
-                    $audit_fields_changed .= "<li>Commercial Extra : (removed commercial extra data) </li>";
-                }
-            }
-            /** End Commercial */
-            /** Facility */
-            if(!empty($facility_management_office_field) || !empty($facility_management_office_unit_field) || !empty($facility_swimming_pool_field)
-            || !empty($facility_swimming_pool_unit_field) || !empty($facility_surau_field) || !empty($facility_surau_unit_field)
-            || !empty($facility_multipurpose_hall_field) || !empty($facility_multipurpose_hall_unit_field)
-            || !empty($facility_gym_field) || !empty($facility_gym_unit_field) || !empty($facility_playground_field)
-            || !empty($facility_playground_unit_field) || !empty($facility_guardhouse_field) || !empty($facility_guardhouse_unit_field)
-            || !empty($facility_kindergarten_field) || !empty($facility_kindergarten_unit_field) || !empty($facility_open_space_field)
-            || !empty($facility_open_space_unit_field) || !empty($facility_lift_field) || !empty($facility_lift_unit_field)
-            || !empty($facility_rubbish_room_field) || !empty($facility_rubbish_room_unit_field) || !empty($facility_gated_field)
-            || !empty($facility_gated_unit_field) || !empty($facility_others_field)
-            ) {
-                $audit_fields_changed .= "<li> Facility : (";
-                $new_line = '';
-                $new_line .= !empty($facility_management_office_field)? "$facility_management_office_field, " : "";
-                $new_line .= !empty($facility_management_office_unit_field)? "$facility_management_office_unit_field, " : "";
-                $new_line .= !empty($facility_swimming_pool_field)? "$facility_swimming_pool_field, " : "";
-                $new_line .= !empty($facility_swimming_pool_unit_field)? "$facility_swimming_pool_unit_field, " : "";
-                $new_line .= !empty($facility_surau_field)? "$facility_surau_field, " : "";
-                $new_line .= !empty($facility_surau_unit_field)? "$facility_surau_unit_field, " : "";
-                $new_line .= !empty($facility_multipurpose_hall_field)? "$facility_multipurpose_hall_field, " : "";
-                $new_line .= !empty($facility_multipurpose_hall_unit_field)? "$facility_multipurpose_hall_unit_field, " : "";
-                $new_line .= !empty($facility_gym_field)? "$facility_gym_field, " : "";
-                $new_line .= !empty($facility_gym_unit_field)? "$facility_gym_unit_field, " : "";
-                $new_line .= !empty($facility_playground_field)? "$facility_playground_field, " : "";
-                $new_line .= !empty($facility_playground_unit_field)? "$facility_playground_unit_field, " : "";
-                $new_line .= !empty($facility_guardhouse_field)? "$facility_guardhouse_field, " : "";
-                $new_line .= !empty($facility_guardhouse_unit_field)? "$facility_guardhouse_unit_field, " : "";
-                $new_line .= !empty($facility_kindergarten_field)? "$facility_kindergarten_field, " : "";
-                $new_line .= !empty($facility_kindergarten_unit_field)? "$facility_kindergarten_unit_field, " : "";
-                $new_line .= !empty($facility_open_space_field)? "$facility_open_space_field, " : "";
-                $new_line .= !empty($facility_open_space_unit_field)? "$facility_open_space_unit_field, " : "";
-                $new_line .= !empty($facility_lift_field)? "$facility_lift_field, " : "";
-                $new_line .= !empty($facility_lift_unit_field)? "$facility_lift_unit_field, " : "";
-                $new_line .= !empty($facility_rubbish_room_field)? "$facility_rubbish_room_field, " : "";
-                $new_line .= !empty($facility_rubbish_room_unit_field)? "$facility_rubbish_room_unit_field, " : "";
-                $new_line .= !empty($facility_gated_field)? "$facility_gated_field, " : "";
-                $new_line .= !empty($facility_gated_unit_field)? "$facility_gated_unit_field, " : "";
-                $new_line .= !empty($facility_others_field)? "$facility_others_field, " : "";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
-            }
-            /** End Facility */
-            $audit_fields_changed .= "</ul>";
             /** End Arrange audit fields changes */
 
             if (!empty($year)) {
