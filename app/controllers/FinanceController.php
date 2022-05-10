@@ -638,6 +638,12 @@ class FinanceController extends BaseController {
 
                             return $button;
                         })
+                        ->filter(function($query) {
+                            $request = Request::all();
+                            if(!empty($request['company'])) {
+                                $query->where('company.short_name', $request['company']);
+                            }
+                        })
                         ->make(true);
     }
 
