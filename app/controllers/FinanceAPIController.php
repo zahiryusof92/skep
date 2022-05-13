@@ -1941,7 +1941,7 @@ class FinanceAPIController extends BaseController {
                 */
                 $update_contract = '';
                 if($update_utility['status'] == 200) {
-                    $update_contract = $this->createOrUpdateContract($update_utility['data'], $finance_id, true);
+                    $update_contract = $this->createOrUpdateContract($request_params, $finance_id, true);
                     $request_params['summary'] = array_merge($request_params['summary'], $update_contract['data']['summary']);
                 }
                 
@@ -1955,7 +1955,7 @@ class FinanceAPIController extends BaseController {
                 */
                 $update_repair = '';
                 if($update_contract['status'] == 200) {
-                    $update_repair = $this->createOrUpdateRepair($update_contract['data'], $finance_id, true);
+                    $update_repair = $this->createOrUpdateRepair($request_params, $finance_id, true);
                     $request_params['summary'] = array_merge($request_params['summary'], $update_repair['data']['summary']);
                 }
                 
