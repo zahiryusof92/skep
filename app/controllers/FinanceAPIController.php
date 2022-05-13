@@ -57,8 +57,7 @@ class FinanceAPIController extends BaseController {
                         'message' => 'Record found',
                     ];
                 } else {
-                    dd('aa');
-                    $response = [
+                    $response = [ 
                         'status' => 404,
                         'message' => "ID finance file does not found in our finance file!",
                     ];
