@@ -593,6 +593,9 @@ class FinanceController extends BaseController {
             $month = (substr(Input::get('month'), 0, 1 ) === "0")? str_replace("0", "", Input::get('month')) : Input::get('month');
             $file = $file->where('month', $month);
         }
+        if(!empty(Input::get('company'))) {
+            $file = $file->where('company.short_name', Input::get('company'));
+        }
 
         return Datatables::of($file)
                         ->addColumn('cob', function ($model) {
@@ -637,12 +640,6 @@ class FinanceController extends BaseController {
                             }
 
                             return $button;
-                        })
-                        ->filter(function($query) {
-                            $request = Request::all();
-                            if(!empty($request['company'])) {
-                                $query->where('company.short_name', $request['company']);
-                            }
                         })
                         ->make(true);
     }
