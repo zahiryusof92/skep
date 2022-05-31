@@ -147,8 +147,8 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
-
-            @if (AccessGroup::hasAccess(45))
+            
+            @if (AccessGroup::hasAccess(45) && (Session::get('admin_cob') != 2 || (Auth::user()->company_id != 2 && empty(Session::get('admin_cob')))))
             <li class="left-menu-list-link" id="defect_list">
                 <a class="left-menu-link" href="{{ URL::action('AdminController@defect') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/complaint.png')}}"/>
@@ -419,7 +419,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(47))
+                    @if (AccessGroup::hasAccess(47) && (Session::get('admin_cob') != 2 || (Auth::user()->company_id != 2 && empty(Session::get('admin_cob')))))
                     <li id="defect_category_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@defectCategory')}}">
                             {{ trans('app.menus.master.defect_category') }}
@@ -529,7 +529,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(51))
+                    @if (AccessGroup::hasAccess(51) && (Session::get('admin_cob') != 2 || (Auth::user()->company_id != 2 && empty(Session::get('admin_cob')))))
                     <li id="complaint_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@complaint') }}">
                             {{ trans('app.menus.reporting.complaint') }}
