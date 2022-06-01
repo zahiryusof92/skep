@@ -112,7 +112,9 @@ return array(
 	'redis' => array(
 
 		'cluster' => false,
-
+		'options'=>[
+            'prefix' => getenv('redis_prefix'),
+        ],
 		'default' => array(
 			'host'     => '127.0.0.1',
 			'port'     => 6379,
