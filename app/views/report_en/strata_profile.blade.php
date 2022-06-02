@@ -6,7 +6,8 @@
 $zone = [
     'Biru' => 'Biru',
     'Kuning' => 'Kuning',
-    'Merah' => 'Merah'
+    'Merah' => 'Merah',
+    'Kelabu' => 'Kelabu'
 ];
 ?>
 
@@ -217,7 +218,7 @@ $zone = [
         });
 
         Highcharts.setOptions({
-            colors: ['#24CBE5', '#DDDF00', '#FF0000']
+            colors: ['#24CBE5', '#DDDF00', '#FF0000', '#999999']
         });
         generatePie(<?php echo json_encode($data ? $data['pie_data'] : ''); ?>);
     });

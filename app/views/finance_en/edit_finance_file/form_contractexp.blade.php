@@ -95,6 +95,10 @@ $prefix = 'contract_';
 <script type="text/javascript">
     $(document).ready(function () {
         calculateContractTotal();
+        
+        // summary contract
+        $('#sum_contract').val( $('#{{ $prefix }}total_all').val());
+        calculateSummaryTotal();
     });
 
     function calculateContract(id) {
@@ -116,7 +120,6 @@ $prefix = 'contract_';
         $('#{{ $prefix }}total_income_' + id).val(parseFloat(contract_sum_total_income).toFixed(2)); // UPDATE JUMLAH A + B + C
 
         calculateContractTotal();
-        calculateSummaryTotal();
     }
 
     function calculateContractTotal() {

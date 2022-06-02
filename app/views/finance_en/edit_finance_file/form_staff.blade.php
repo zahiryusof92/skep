@@ -108,6 +108,10 @@ $prefix = 'staff_';
 <script type="text/javascript">
     $(document).ready(function () {
         calculateStaffTotal();
+        
+        // summary staff
+        $('#sum_staff').val($('#staff_total_gaji').val());
+        calculateSummaryTotal();
     });
 
     function calculateStaff(id) {

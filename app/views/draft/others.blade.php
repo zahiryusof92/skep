@@ -187,8 +187,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -200,6 +198,26 @@
                                                                         <option value="BULK" {{ ($other_details->draft && $other_details->draft->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
                                                                         <option value="INDIVIDUAL" {{ ($other_details->draft && $other_details->draft->water_meter == 'INDIVIDUAL' ? " selected" : "") }}>{{ trans('app.forms.individual') }}</option>
                                                                     </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.parking_bay') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->parking_bay, 'new_field' => $other_details->draft->parking_bay])
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.parking_bay') }}" value="{{($other_details->draft ? $other_details->draft->parking_bay : '')}}" readonly="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.parking_area') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->parking_area, 'new_field' => $other_details->draft->parking_area])
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.parking_area') }}" value="{{($other_details->draft ? $other_details->draft->parking_area : '')}}" readonly="">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -451,8 +469,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -463,6 +479,24 @@
                                                                         <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
                                                                         <option value="INDIVIDUAL" {{ ($other_details && $other_details->water_meter == 'INDIVIDUAL' ? " selected" : "") }}>{{ trans('app.forms.individual') }}</option>
                                                                     </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.parking_bay') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.parking_bay') }}" id="parking_bay" value="{{($other_details ? $other_details->parking_bay : '')}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.parking_area') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.parking_area') }}" id="parking_area" value="{{($other_details ? $other_details->parking_area : '')}}">
                                                                 </div>
                                                             </div>
                                                         </div>

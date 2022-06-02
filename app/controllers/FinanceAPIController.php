@@ -121,38 +121,19 @@ class FinanceAPIController extends BaseController {
         /**
          * bill_air = (utility(bhg_a)(A+B+C) + utility(bhg_b)(A+B+C)) - bil_air + bil_meter_air
          * bill_elektrik = (utility(bhg_a)(A+B+C)) - bil_elektrik
-         * caruman_insuran = (contract(A+B+C)) - contracts_insurans
          * caruman_cukai = (utility(bhg_b)(A+B+C)) - bil_cukai_tanah
-         * fi_firma = (contract(A+B+C)) - fi_firma_kompeten_lif
-         * pembersihan = (contract(A+B+C)) - pembersihan_kontrak + potong_rumput_lanskap + kutipan_sampah_pukal
-         * keselamatan = (contract(A+B+C)) - keselamatan + uji_penggera_kebakaran + sistem_kad_akses + sistem_cctv + uji_peralatan_pemadam_kebakaran
-         * jurutera_elektrik = (contract(A+B+C)) - jurutera_elektrik
-         * mechaninal = (repair(A+B+C)) - mf_lif + mf_wayar_bumi + mf_pendawaian_elektrik + mf_substation_tnb + mf_genset
-         * kawalan_serangga = (contract(A+B+C)) - kawalan_serangga
-         * kos_pekerja = (staff(A+B)) - total all staff gaji
-         * civil = (repair(A+B+C)) - mf_tangki_air + mf_bumbung + mf_rain_water_down_pipe + mf_pembentung + 
-         *                           mf_perpaipan + mf_tangga_handrail + mf_jalan + mf_pagar + mf_longkang
-         * pentadbiran = (admin(C+D+E)) - total all admin
-         * fi_ejen_pengurusan = (admin(C+D+E)) - fi_ejen_pengurusan
-         * lain_lain = 0
          * jumlah_pembelanjaan = (sum all the fields above)
          */
         $data = [
             'bill_air' => 0,
             'bill_elektrik' => 0,
-            'caruman_insuran' => 0,
             'caruman_cukai' => 0,
-            'fi_firma' => 0,
-            'pembersihan' => 0,
-            'keselamatan' => 0,
-            'jurutera_elektrik' => 0,
-            'mechaninal' => 0,
-            'kawalan_serangga' => 0,
-            'kos_pekerja' => 0,
-            'civil' => 0,
-            'pentadbiran' => 0,
-            'fi_ejen_pengurusan' => 0,
-            'lain_lain' => 0,
+            'utility' => 0,
+            'contract' => 0,
+            'repair' => 0,
+            'vandalisme' => 0,
+            'staff' => 0,
+            'admin' => 0,
             
         ];
         return $data;
@@ -847,47 +828,9 @@ class FinanceAPIController extends BaseController {
                         $new_data = $contract;
                         /**
                          * 
-                         * caruman_insuran = (contract(A+B+C)) - insurans
+                         * contract
                          */
-                        if(in_array($key,['insurans'])) {
-                            $data['summary']['caruman_insuran'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * fi_firma = (contract(A+B+C)) - fi_firma_kompeten_lif
-                         */
-                        if(in_array($key,['fi_firma_kompeten_lif'])) {
-                            $data['summary']['fi_firma'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * pembersihan = (contract(A+B+C)) - pembersihan_kontrak + potong_rumput_lanskap + kutipan_sampah_pukal
-                         */
-                        if(in_array($key,['pembersihan_kontrak','potong_rumput_lanskap','kutipan_sampah_pukal'])) {
-                            $data['summary']['pembersihan'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * keselamatan = (contract(A+B+C)) - keselamatan + uji_penggera_kebakaran + sistem_kad_akses + 
-                         *              sistem_cctv + uji_peralatan_pemadam_kebakaran
-                         */
-                        if(in_array($key,['keselamatan','uji_penggera_kebakaran','sistem_kad_akses','sistem_cctv','uji_peralatan_pemadam_kebakaran'])) {
-                            $data['summary']['keselamatan'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * jurutera_elektrik = (contract(A+B+C)) - jurutera_elektrik
-                         */
-                        if(in_array($key,['jurutera_elektrik'])) {
-                            $data['summary']['jurutera_elektrik'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * kawalan_serangga = (contract(A+B+C)) - kawalan_serangga
-                         */
-                        if(in_array($key,['kawalan_serangga'])) {
-                            $data['summary']['kawalan_serangga'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
+                        $data['summary']['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
                     }
                 }
 
@@ -906,6 +849,11 @@ class FinanceAPIController extends BaseController {
                         $contract->save();
 
                         $new_data = $contract;
+                        /**
+                         * 
+                         * contract
+                         */
+                        $data['summary']['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
                     }
                 }
                 
@@ -992,16 +940,9 @@ class FinanceAPIController extends BaseController {
 
                             /**
                              * define summary attribute
-                             * mechaninal = (repair(A+B+C)) - mf_lif + mf_wayar_bumi + mf_pendawaian_elektrik + mf_substation_tnb + mf_genset
-                             * mechaninal = (repair(A+B+C)) - mf_lif + mf_wayar_bumi + mf_pendawaian_elektrik + mf_substation_tnb + mf_genset
+                             * repair
                              */
-                            if($key == 'mf') {
-                                if(in_array($key1,['lif','wayar_bumi','pendawaian_elektrik','substation_tnb','genset'])) {
-                                    $data['summary']['mechaninal'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
-                                } else if(in_array($key1, ['tangki_air', 'bumbung', 'rain_water_down_pipe', 'pembentung', 'perpaipan', 'tangga_handrail', 'jalan', 'pagar', 'longkang'])) {
-                                    $data['summary']['civil'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
-                                }
-                            }
+                            $data['summary']['repair'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
                         }
                     }
 
@@ -1021,6 +962,12 @@ class FinanceAPIController extends BaseController {
                             $repair->save();
 
                             $new_data = $repair;
+                            
+                            /**
+                             * define summary attribute
+                             * repair
+                             */
+                            $data['summary']['repair'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
                         }
                     }
 
@@ -1106,6 +1053,11 @@ class FinanceAPIController extends BaseController {
 
                             $new_data = $vandal;
 
+                            /**
+                             * define summary attribute
+                             * vandalisme
+                             */
+                            $data['summary']['vandalisme'] += ($vandal->tunggakan + $vandal->semasa + $vandal->hadapan);
                         }
                     }
 
@@ -1125,6 +1077,12 @@ class FinanceAPIController extends BaseController {
                             $vandal->save();
 
                             $new_data = $vandal;
+                            
+                            /**
+                             * define summary attribute
+                             * vandalisme
+                             */
+                            $data['summary']['vandalisme'] += ($vandal->tunggakan + $vandal->semasa + $vandal->hadapan);
                         }
                     }
 
@@ -1212,9 +1170,10 @@ class FinanceAPIController extends BaseController {
                         $new_data = $staff;
 
                         /**
-                         * Summary Calculation
+                         * define summary attribute
+                         * staff
                          */
-                        $data['summary']['kos_pekerja'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
+                        $data['summary']['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                     }
                 }
 
@@ -1238,9 +1197,10 @@ class FinanceAPIController extends BaseController {
                         $new_data = $staff;
                         
                         /**
-                         * Summary Calculation
+                         * define summary attribute
+                         * staff
                          */
-                        $data['summary']['kos_pekerja'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
+                        $data['summary']['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                     }
                 }
                 
@@ -1324,13 +1284,10 @@ class FinanceAPIController extends BaseController {
                         $new_data = $admin;
                         
                         /**
-                         * Summary Calculation
+                         * define summary attribute
+                         * admin
                          */
-                        $data['summary']['pentadbiran'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
-                        if(in_array($key, ['fi_ejen_pengurusan'])) {
-                            $data['summary']['fi_ejen_pengurusan'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
-                        }
-
+                        $data['summary']['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                     }
                 }
 
@@ -1352,9 +1309,10 @@ class FinanceAPIController extends BaseController {
                         $new_data = $admin;
 
                         /**
-                         * Summary Calculation
+                         * define summary attribute
+                         * admin
                          */
-                        $data['summary']['pentadbiran'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
+                        $data['summary']['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                     }
                 }
                 

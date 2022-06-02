@@ -96,6 +96,10 @@ $prefix = 'admin_';
 <script type="text/javascript">
     $(document).ready(function () {
         calculateAdminTotal();
+        
+        // summary admin
+        $('#sum_admin').val($('#admin_total_all').val());
+        calculateSummaryTotal();
     });
 
     function calculateAdmin(id) {

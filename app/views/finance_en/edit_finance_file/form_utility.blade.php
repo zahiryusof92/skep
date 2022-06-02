@@ -159,6 +159,11 @@ $prefix3 = 'utilab_';
         calculateUtilityATotal();
         calculateUtilityBTotal();
         calculateUtilityABTotal();
+        
+        // summary utility
+        let utility_amount = Number($('#utilb_total_all').val()) - (Number($('#utilb_total_income_1').val()) + Number($('#utilb_total_income_2').val()));
+        $('#sum_utility').val(parseFloat(utility_amount).toFixed(2));
+        calculateSummaryTotal();
     });
 
     function calculateUtilityA(id) {
@@ -205,6 +210,7 @@ $prefix3 = 'utilab_';
         calculateUtilityBTotal();
         calculateUtilityABTotal();
         calculateSummaryTotal();
+        
     }
 
     function calculateUtilityATotal() {
@@ -311,6 +317,7 @@ $prefix3 = 'utilab_';
         var utilb_total_tertunggak = document.getElementById("{{ $prefix2 }}total_tertunggak");
         utilab_sum_total_tertunggak += Number(util_total_tertunggak.value) + Number(utilb_total_tertunggak.value);
         $('#{{ $prefix3 }}total_tertunggak').val(parseFloat(utilab_sum_total_tertunggak).toFixed(2)); // UPDATE JUMLAH SEMUA TERTUNGGAK
+        
     }
 
     function addRowUtility() {

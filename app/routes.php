@@ -717,6 +717,7 @@ Route::get('/reporting/strataProfile', 'ReportController@strataProfile')->before
 Route::get('/reporting/getStrataProfile', 'ReportController@getStrataProfile')->before('authMember');
 Route::get('/reporting/getStrataProfileAnalytic', 'ReportController@getStrataProfileAnalytic')->before('authMember');
 Route::get('/reporting/viewStrataProfile/{id}', 'ReportController@viewStrataProfile')->before('authMember');
+Route::get('/reporting/getStrataProfileFinance/{file_id}', array('as' => 'reporting.strataProfile.finance', 'uses' => 'ReportController@getStrataProfileFinance'))->before('authMember');
 Route::get('/print/strataProfile/{id}', 'PrintController@printStrataProfile')->before('authMember');
 
 // owner tenant
@@ -958,7 +959,17 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('mpsSync/getFileList', 'MPSSyncController@getFileList');
     Route::get('mpsSync/getFinanceList', 'MPSSyncController@getFinanceList');
     Route::post('mpsSync/destroy', 'MPSSyncController@destroy');   
-    Route::post('file/sync', 'Api\FileController@submitSync');    
+    Route::post('file/sync', 'Api\FileController@submitSync'); 
+    
+    /**
+     * Finance
+     */
+    Route::get('finance/recalculateSummary', 'FinanceController@recalculateSummary');
+    
+    /**
+     * COB Letter
+     */
+    // Route::get('cob_letter/index', 'CobLetterController@index');
 });
 
 /** Transaction */
@@ -995,6 +1006,7 @@ Route::group(array('prefix' => 'api/v1'), function() {
 Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('councilFacility', 'ExportController@exportCouncilFacility');
     Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
+    Route::get('strataName', 'ExportController@strataName');
     Route::get('reporting', 'ExportController@reporting');
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
 });
