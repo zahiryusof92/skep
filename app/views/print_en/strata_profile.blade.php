@@ -258,6 +258,50 @@
             </script>
             @endif
             @endif
+
+            
+            <div class="row margin-vertical-15">
+                <div class="col-lg-12">
+                    <h4>{{ trans('app.menus.finance.finance_file_list') }}</h4>
+                </div>
+                <div class="col-lg-12">
+                    <table border="1" id="finance_table" width="100%">
+                        <thead>
+                            <tr>
+                                <th style="width:50%; text-align: center !important; vertical-align:middle !important;">No. FAIL</th>
+                                <th style="width:50%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.zone') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($result['finances'] as $finance)
+                            <tr>
+                                <td>{{ $finance->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) }}</td>
+                                <td style="text-align: center !important;">
+                                    <?php
+
+                                    $zone = 'Kelabu';
+                                    $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
+                                    $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
+                                    if($finance_report_fee_semasa > 0) {
+                                        $percentage = round(($finance_income_semasa / $finance_report_fee_semasa) * 100);
+                                        
+                                        if ($percentage >= 80) {
+                                            $zone = 'Biru';
+                                        } else if ($percentage < 79 && $percentage >= 50) {
+                                            $zone = 'Kuning';
+                                        } else {
+                                            $zone = 'Merah';
+                                        }
+                                    } 
+                                    ?>
+                                    {{ $zone }} 
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             @endif
 
             <hr/>

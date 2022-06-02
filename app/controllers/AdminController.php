@@ -3925,6 +3925,8 @@ class AdminController extends BaseController {
             $rsku = $data['rsku'];
             $water_meter = $data['water_meter'];
             $tnb = $data['tnb'];
+            $parking_bay = $data['parking_bay'];
+            $parking_area = $data['parking_area'];
             $malay_composition = $data['malay_composition'];
             $chinese_composition = $data['chinese_composition'];
             $indian_composition = $data['indian_composition'];
@@ -3947,6 +3949,8 @@ class AdminController extends BaseController {
             $new_line .= $rsku != $others->rsku? "rsku, " : "";
             $new_line .= $water_meter != $others->water_meter? "water meter, " : "";
             $new_line .= $tnb != $others->tnb? "tnb, " : "";
+            $new_line .= $parking_bay != $others->parking_bay? "parking bay, " : "";
+            $new_line .= $parking_area != $others->parking_area? "parking area, " : "";
             $new_line .= $malay_composition != $others->malay_composition? "malay composition, " : "";
             $new_line .= $chinese_composition != $others->chinese_composition? "chinese composition, " : "";
             $new_line .= $indian_composition != $others->indian_composition? "indian composition, " : "";
@@ -3971,6 +3975,8 @@ class AdminController extends BaseController {
             $others->rsku = $rsku;
             $others->water_meter = $water_meter;
             $others->tnb = $tnb;
+            $others->parking_bay = $parking_bay;
+            $others->parking_area = $parking_area;
             $others->malay_composition = $malay_composition;
             $others->chinese_composition = $chinese_composition;
             $others->indian_composition = $indian_composition;

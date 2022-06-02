@@ -33,166 +33,6 @@ class PrintController extends BaseController {
         
         $audit_trail = $query->orderBy('audit_trail.id', 'desc')
                             ->get();
-                                    
-        // if (!Auth::user()->getAdmin()) {
-        //     if (!empty($start) && !empty($end)) {
-        //         if ($start == $end) {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('users.company_id', Auth::user()->company_id)
-        //                     ->where('audit_trail.created_at', 'LIKE', $start . '%')
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         } else {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('users.company_id', Auth::user()->company_id)
-        //                     ->whereBetween('audit_trail.created_at', [$start, $end])
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         }
-        //     } else if (!empty($start)) {
-        //         $end = date('Y-m-d');
-        //         if ($start == $end) {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('users.company_id', Auth::user()->company_id)
-        //                     ->where('audit_trail.created_at', 'LIKE', $start . '%')
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         } else {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('users.company_id', Auth::user()->company_id)
-        //                     ->whereBetween('audit_trail.created_at', [$start, $end])
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         }
-        //     } else if (!empty($end)) {
-        //         $audit_trail = DB::table('audit_trail')
-        //                 ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                 ->select('audit_trail.*', 'users.full_name as name')
-        //                 ->where('users.company_id', Auth::user()->company_id)
-        //                 ->where('audit_trail.created_at', 'LIKE', $end . '%')
-        //                 ->orderBy('audit_trail.id', 'desc')
-        //                 ->get();
-        //     } else {
-        //         $audit_trail = DB::table('audit_trail')
-        //                 ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                 ->select('audit_trail.*', 'users.full_name as name')
-        //                 ->where('users.company_id', Auth::user()->company_id)
-        //                 ->orderBy('audit_trail.id', 'desc')
-        //                 ->get();
-        //     }
-        // } else {
-        //     if (empty(Session::get('admin_cob'))) {
-        //         if (!empty($start) && !empty($end)) {
-        //             if ($start == $end) {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->where('audit_trail.created_at', 'LIKE', $start . '%')
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             } else {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->whereBetween('audit_trail.created_at', [$start, $end])
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             }
-        //         } else if (!empty($start)) {
-        //             $end = date('Y-m-d');
-        //             if ($start == $end) {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->where('audit_trail.created_at', 'LIKE', $start . '%')
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             } else {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->whereBetween('audit_trail.created_at', [$start, $end])
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             }
-        //         } else if (!empty($end)) {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('audit_trail.created_at', 'LIKE', $end . '%')
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         } else {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         }
-        //     } else {
-        //         if (!empty($start) && !empty($end)) {
-        //             if ($start == $end) {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->where('users.company_id', Session::get('admin_cob'))
-        //                         ->where('audit_trail.created_at', 'LIKE', $start . '%')
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             } else {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->where('users.company_id', Session::get('admin_cob'))
-        //                         ->whereBetween('audit_trail.created_at', [$start, $end])
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             }
-        //         } else if (!empty($start)) {
-        //             $end = date('Y-m-d');
-        //             if ($start == $end) {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->where('users.company_id', Session::get('admin_cob'))
-        //                         ->where('audit_trail.created_at', 'LIKE', $start . '%')
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             } else {
-        //                 $audit_trail = DB::table('audit_trail')
-        //                         ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                         ->select('audit_trail.*', 'users.full_name as name')
-        //                         ->where('users.company_id', Session::get('admin_cob'))
-        //                         ->whereBetween('audit_trail.created_at', [$start, $end])
-        //                         ->orderBy('audit_trail.id', 'desc')
-        //                         ->get();
-        //             }
-        //         } else if (!empty($end)) {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('users.company_id', Session::get('admin_cob'))
-        //                     ->where('audit_trail.created_at', 'LIKE', $end . '%')
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         } else {
-        //             $audit_trail = DB::table('audit_trail')
-        //                     ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-        //                     ->select('audit_trail.*', 'users.full_name as name')
-        //                     ->where('users.company_id', Session::get('admin_cob'))
-        //                     ->orderBy('audit_trail.id', 'desc')
-        //                     ->get();
-        //         }
-        //     }
-        // }
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
@@ -429,7 +269,9 @@ class PrintController extends BaseController {
         if ($access_permission) {
             $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
-            $files = Files::find(Helper::decode($id));
+            $files = Files::with(['financeLatest'])
+                            ->file()
+                            ->find(Helper::decode($id));
             if ($files) {
                 $pbt = '';
                 $strata_name = '';
@@ -476,41 +318,55 @@ class PrintController extends BaseController {
                     $tnb = ucfirst($files->other->tnb);
                 }
 
-                if ($files->finance) {
-                    foreach ($files->finance as $finance) {
-                        if ($finance->year == date('Y')) {
-                            if ($finance->financeIncome) {
-                                foreach ($finance->financeReport as $report) {
-                                    if ($report->type == 'MF') {
-                                        $mf_rate = $report->fee_sebulan;
-                                    }
-                                    if ($report->type == 'SF') {
-                                        $sf_rate = $report->fee_sebulan;
-                                        $sepatut_dikutip = $sepatut_dikutip + $report->fee_semasa;
-                                    }
-                                }
-                                foreach ($finance->financeIncome as $income) {
-                                    if ($income->name == 'SINKING FUND') {
-                                        $berjaya_dikutip = $berjaya_dikutip + $income->semasa;
-                                    }
-                                }
+                if ($files->financeLatest) {
+                    $finance = $files->financeLatest;
+                    $finance_income = $finance->financeIncome;
+                    $finance_report_fee = $finance->financeReport;
+                    $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
+                    if ($finance_income) {
+                        foreach ($finance_report_fee as $report) {
+                            if ($report->type == 'MF') {
+                                $mf_rate = $report->fee_sebulan;
+                            }
+                            if ($report->type == 'SF') {
+                                $sf_rate = $report->fee_sebulan;
+                                $sepatut_dikutip = $sepatut_dikutip + $report->fee_semasa;
+                            }
+                        }
+                        foreach ($finance_income as $income) {
+                            if ($income->name == 'SINKING FUND') {
+                                $berjaya_dikutip = $berjaya_dikutip + $income->semasa;
                             }
                         }
                     }
-                }
-
-                if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
-                    $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
-                }
-
-                if ($purata_dikutip >= 80) {
-                    $zone = 'BIRU';
-                } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
-                    $zone = 'KUNING';
+    
+                    if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
+                        $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
+                    }
+    
+                    if($finance_report_fee_semasa > 0) {
+                        if ($purata_dikutip >= 80) {
+                            $zone = 'BIRU';
+                        } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
+                            $zone = 'KUNING';
+                        } else {
+                            $zone = "MERAH";
+                        }
+                    } else {
+                        $zone = "KELABU";
+                    }
                 } else {
-                    $zone = 'MERAH';
+                    $zone = "KELABU";
                 }
             }
+            $finances = Finance::with(['financeIncome', 'financeReport'])
+                            ->join('files', 'finance_file.file_id', '=', 'files.id')
+                            ->where('finance_file.file_id', $files->id)
+                            ->where('finance_file.is_active', true)
+                            ->where('finance_file.is_deleted', false)
+                            ->selectRaw('finance_file.*, files.file_no')
+                            ->orderBy('finance_file.id', 'desc')
+                            ->get();
 
             $result = array(
                 'pbt' => $pbt,
@@ -525,7 +381,8 @@ class PrintController extends BaseController {
                 'lif_unit' => $lif_unit,
                 'type_meter' => $type_meter,
                 'tnb' => $tnb,
-                'purata_dikutip' => $purata_dikutip
+                'purata_dikutip' => $purata_dikutip,
+                'finances' => $finances
             );
 
 //            return "<pre>" . print_r($result, true) . "</pre>";

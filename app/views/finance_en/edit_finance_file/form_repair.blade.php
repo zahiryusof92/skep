@@ -168,6 +168,11 @@ $prefix2 = 'repair_singkingfund_';
     $(document).ready(function () {
         calculateRepairATotal();
         calculateRepairBTotal();
+        
+        // summary repair
+        let repair_amount = Number($('#{{ $prefix }}total_all').val()) + Number($('#{{ $prefix2 }}total_all').val());
+        $('#sum_repair').val(parseFloat(repair_amount).toFixed(2));
+        calculateSummaryTotal();
     });
 
     function calculateRepairA(id) {

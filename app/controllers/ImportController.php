@@ -3126,19 +3126,13 @@ class ImportController extends BaseController {
                     $data_summary_amount = [
                         'bill_air' => 0,
                         'bill_elektrik' => 0,
-                        'caruman_insuran' => 0,
                         'caruman_cukai' => 0,
-                        'fi_firma' => 0,
-                        'pembersihan' => 0,
-                        'keselamatan' => 0,
-                        'jurutera_elektrik' => 0,
-                        'mechaninal' => 0,
-                        'civil' => 0,
-                        'kawalan_serangga' => 0,
-                        'kos_pekerja' => 0,
-                        'pentadbiran' => 0,
-                        'fi_ejen_pengurusan' => 0,
-                        'lain_lain' => 0,
+                        'utility' => 0,
+                        'contract' => 0,
+                        'repair' => 0,
+                        'vandalisme' => 0,
+                        'staff' => 0,
+                        'admin' => 0,
                     ];
                                             
                     if (!empty($finance_file) && !empty($data) && $data->count()) {
@@ -3309,8 +3303,10 @@ class ImportController extends BaseController {
                                              */
                                             if(str_contains($utility_first_col_b, 'AIR')) {
                                                 $data_summary_amount['bill_air'] += ($utility_b->tunggakan + $utility_b->semasa + $utility_b->hadapan);
-                                            } else {
+                                            } else if (str_contains($utility_first_col_b, 'CUKAI TANAH')) {
                                                 $data_summary_amount['caruman_cukai'] += ($utility_b->tunggakan + $utility_b->semasa + $utility_b->hadapan);
+                                            } else {
+                                                $data_summary_amount['utility'] += ($utility_b->tunggakan + $utility_b->semasa + $utility_b->hadapan);
                                             }
                                     }
                                 }
@@ -3344,19 +3340,7 @@ class ImportController extends BaseController {
                                         /**
                                          * Summary Calculation
                                          */
-                                        if($contract_first_col == 'INSURANS') {
-                                            $data_summary_amount['caruman_insuran'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if($contract_first_col == 'FI FIRMA KOMPETEN LIF') {
-                                            $data_summary_amount['fi_firma'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['PEMBERSIHAN (KONTRAK)', 'POTONG RUMPUT/LANSKAP', 'KUTIPAN SAMPAH PUKAL'])) {
-                                            $data_summary_amount['pembersihan'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['KESELAMATAN', 'UJI PENGGERA KEBAKARAN', 'SISTEM KAD AKSES', 'SISTEM CCTV', 'UJI PERALATAN/ALAT PEMADAM KEBAKARAN'])) {
-                                            $data_summary_amount['keselamatan'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['JURUTERA ELEKTRIK'])) {
-                                            $data_summary_amount['jurutera_elektrik'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['KAWALAN SERANGGA'])) {
-                                            $data_summary_amount['kawalan_serangga'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        }
+                                        $data_summary_amount['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
                                     }
                                 }
                                 
@@ -3396,11 +3380,7 @@ class ImportController extends BaseController {
                                         /**
                                          * Summary Calculation
                                          */
-                                        if(in_array($repair_first_col_mf, ['LIF', 'WAYAR BUMI', 'PENDAWAIAN ELEKTRIK', 'SUBSTATION TNB', 'GENSET'])) {
-                                            $data_summary_amount['mechaninal'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
-                                        } else if(in_array($repair_first_col_mf, ['TANGKI AIR', 'BUMBUNG', 'RAIN WATER DOWN PIPE', 'PEMBENTUNG', 'PERPAIPAN', 'TANGGA/HANDRAIL', 'JALAN', 'PAGAR', 'LONGKANG'])) {
-                                            $data_summary_amount['civil'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
-                                        }
+                                        $data_summary_amount['repair'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
 
                                     }
                                     /** Repair SF */
@@ -3423,6 +3403,10 @@ class ImportController extends BaseController {
 
                                         $repair_sf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['repair'] += ($repair_sf->tunggakan + $repair_sf->semasa + $repair_sf->hadapan);
                                     }
                                 }
                                 
@@ -3458,6 +3442,10 @@ class ImportController extends BaseController {
 
                                         $vandal_mf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['vandalisme'] += ($vandal_mf->tunggakan + $vandal_mf->semasa + $vandal_mf->hadapan);
                                     }
                                     /** Vandal SF */
                                     if(empty($vandal_first_col_sf) == false) {
@@ -3479,6 +3467,10 @@ class ImportController extends BaseController {
 
                                         $vandal_sf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['vandalisme'] += ($vandal_sf->tunggakan + $vandal_sf->semasa + $vandal_sf->hadapan);
                                     }
                                 }
                                 
@@ -3514,7 +3506,7 @@ class ImportController extends BaseController {
                                         /**
                                          * Summary Calculation
                                          */
-                                        $data_summary_amount['kos_pekerja'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
+                                        $data_summary_amount['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                                     }
                                 }
                                 
@@ -3548,10 +3540,7 @@ class ImportController extends BaseController {
                                         /**
                                          * Summary Calculation
                                          */
-                                        $data_summary_amount['pentadbiran'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
-                                        if(in_array($admin_first_col, ['FI EJEN PENGURUSAN'])) {
-                                            $data_summary_amount['fi_ejen_pengurusan'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
-                                        }
+                                        $data_summary_amount['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                                     }
                                 }
                                 

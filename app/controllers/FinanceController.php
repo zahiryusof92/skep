@@ -3,6 +3,9 @@
 use Carbon\Carbon;
 use Helper\Helper;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class FinanceController extends BaseController {
@@ -75,29 +78,14 @@ class FinanceController extends BaseController {
                             /*
                              * create Summary
                              */
-                            $tableFieldSummary = [
-                                'bill_air' => 'Bil Air',
-                                'bill_elektrik' => 'Bil. Elektrik',
-                                'caruman_insuran' => 'Caruman Insuran',
-                                'caruman_cukai' => 'Caruman Cukai Tanah',
-                                'fi_firma' => 'Fi Firma Kompeten Lif',
-                                'pembersihan' => 'Pembersihan Termasuk potong rumput, lanskap, kutipan sampah pukal dan lain-lain',
-                                'keselamatan' => 'Keselamatan Termasuk Sistem CCTV, Palang Automatik, Kad Akses, Alat Pemadam Api, Penggera Kebakaran dan lain-lain	',
-                                'jurutera_elektrik' => 'Jurutera Elektrik',
-                                'mechaninal' => 'Mechaninal & Electrical Termasuk semua kerja-kerja penyenggaraan/ pembaikan /penggantian/ pembelian lampu, pendawaian elektrik, wayar bumi, kelengkapan lif, substation TNB,Genset dan lain-lain',
-                                'civil' => 'Civil & Structure Termasuk semua kerja-kerja penyenggaraan/ pembaikan /penggantian/ pembelian tangki air, bumbung, kolam renang, pembentung, perpaipan, tangga, pagar, longkang dan lain-lain',
-                                'kawalan_serangga' => 'Kawalan Serangga',
-                                'kos_pekerja' => 'Kos Pekerja',
-                                'pentadbiran' => 'Pentadbiran Termasuk telefon, internet, alat tulis pejabat, petty cash, sewaan mesin fotokopi, fi audit, caj bank dan lain-lain',
-                                'fi_ejen_pengurusan' => 'Fi Ejen Pengurusan',
-                                'lain_lain' => 'Lain-Lain-sekiranya ada Termasuk sila senaraikan',
-                            ];
+                            $summary_keys = $this->module['finance']['tabs']['summary']['only'];
+                            $messages = Config::get('constant.others.messages');
 
                             $countSum = 1;
-                            foreach ($tableFieldSummary as $key => $name) {
+                            foreach ($summary_keys as $key) {
                                 $summary = new FinanceSummary();
                                 $summary->finance_file_id = $finance->id;
-                                $summary->name = $name;
+                                $summary->name = $messages[$key];
                                 $summary->summary_key = $key;
                                 $summary->amount = 0;
                                 $summary->sort_no = $countSum;
@@ -171,25 +159,27 @@ class FinanceController extends BaseController {
                             /*
                              * create Income
                              */
-                            $tableFieldIncome = [
-                                'MAINTENANCE FEE',
-                                'SINKING FUND',
-                                'INSURAN BANGUNAN',
-                                'CUKAI TANAH',
-                                'PELEKAT KENDERAAN',
-                                'KAD AKSES',
-                                'SEWAAN TLK',
-                                'SEWAAN KEDAI',
-                                'SEWAAN HARTA BERSAMA',
-                                'DENDA UNDANG-UNDANG KECIL',
-                                'DENDA LEWAT BAYAR MAINTENANCE FEE @ SINKING FUND',
-                                'BIL METER AIR PEMILIK-PEMILIK(DI BAWAH AKAUN METER PUKAL SAHAJA)',
-                            ];
+                            $income_keys = $this->module['finance']['tabs']['income']['default'];
+                            $messages = Config::get('constant.others.tbl_fields_name');
+                            // $tableFieldIncome = [
+                            //     'MAINTENANCE FEE',
+                            //     'SINKING FUND',
+                            //     'INSURAN BANGUNAN',
+                            //     'CUKAI TANAH',
+                            //     'PELEKAT KENDERAAN',
+                            //     'KAD AKSES',
+                            //     'SEWAAN TLK',
+                            //     'SEWAAN KEDAI',
+                            //     'SEWAAN HARTA BERSAMA',
+                            //     'DENDA UNDANG-UNDANG KECIL',
+                            //     'DENDA LEWAT BAYAR MAINTENANCE FEE @ SINKING FUND',
+                            //     'BIL METER AIR PEMILIK-PEMILIK(DI BAWAH AKAUN METER PUKAL SAHAJA)',
+                            // ];
 
-                            foreach ($tableFieldIncome as $count => $name) {
+                            foreach ($income_keys as $count => $key) {
                                 $income = new FinanceIncome();
                                 $income->finance_file_id = $finance->id;
-                                $income->name = $name;
+                                $income->name = $messages['income_'. $key];
                                 $income->tunggakan = 0;
                                 $income->semasa = 0;
                                 $income->hadapan = 0;
@@ -2599,7 +2589,7 @@ class FinanceController extends BaseController {
             }
         }
         $remove = FinanceSummary::where('finance_file_id', $finance->id)->delete();
-        if ($remove) {
+        // if ($remove) {
             $i = 1;
             foreach($summary_keys as $summary_key) {
                 $finance_summary = new FinanceSummary;
@@ -2611,10 +2601,85 @@ class FinanceController extends BaseController {
                 $finance_summary->save();
                 $i++;
             }
-        }
+        // }
         # Audit Trail
         $remarks = 'Finance File: ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) . ' summary'. $this->module['audit']['text']['data_updated'];
         $this->addAudit($finance->file->id, "COB Finance File", $remarks);
     }
 
+    public function recalculateSummary() {
+        if(!Auth::user()->getAdmin()) {
+            App::abort(404);
+        }
+        $finance_latest = Finance::latest()->first();
+        $finance_files = Finance::where('is_summary', false)->take(100)->get();
+        $finance_file_id = 0;
+        foreach($finance_files as $finance) {
+            $finance_file_summary = FinanceSummary::where('finance_file_id', $finance->id)->delete();
+            $finance_file_summary_old = FinanceSummaryOld::where('finance_file_id', $finance->id)->delete();
+            $data_summary_amount = [
+                'bill_air' => 0,
+                'bill_elektrik' => 0,
+                'caruman_cukai' => 0,
+                'utility' => 0,
+                'contract' => 0,
+                'repair' => 0,
+                'vandalisme' => 0,
+                'staff' => 0,
+                'admin' => 0,
+            ];
+            $finance_utility = $finance->financeUtility;
+            if($finance_utility) {
+                foreach($finance_utility as $utility) {
+                    if(str_contains($utility->name, 'AIR')) {
+                        $data_summary_amount['bill_air'] += ($utility->tunggakan + $utility->semasa + $utility->hadapan);
+                    } else if (str_contains($utility->name, 'ELEKTRIK')) {
+                        $data_summary_amount['bill_elektrik'] += ($utility->tunggakan + $utility->semasa + $utility->hadapan);
+                    } else if (str_contains($utility->name, 'CUKAI TANAH')) {
+                        $data_summary_amount['caruman_cukai'] += ($utility->tunggakan + $utility->semasa + $utility->hadapan);
+                    } else {
+                        $data_summary_amount['utility'] += ($utility->tunggakan + $utility->semasa + $utility->hadapan);
+                    }
+                }
+            }
+            $finance_contract = $finance->financeContract;
+            if($finance_contract) {
+                foreach($finance_contract as $contract) {
+                    $data_summary_amount['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
+                }
+            }
+            $finance_repair = $finance->financeRepair;
+            if($finance_repair) {
+                foreach($finance_repair as $repair) {
+                    $data_summary_amount['repair'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
+                }
+            }
+            $finance_vandalisme = $finance->financeVandal;
+            if($finance_vandalisme) {
+                foreach($finance_vandalisme as $vandalisme) {
+                    $data_summary_amount['vandalisme'] += ($vandalisme->tunggakan + $vandalisme->semasa + $vandalisme->hadapan);
+                }
+            }
+            $finance_staff = $finance->financeStaff;
+            if($finance_staff) {
+                foreach($finance_staff as $staff) {
+                    $data_summary_amount['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
+                }
+            }
+            $finance_admin = $finance->financeAdmin;
+            if($finance_admin) {
+                foreach($finance_admin as $admin) {
+                    $data_summary_amount['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
+                }
+            }
+            $this->saveFinanceSummary($finance, $data_summary_amount);
+
+            $finance->is_summary = true;
+            $finance->save();
+
+            $finance_file_id = $finance->id;
+        }
+
+        return 'Recalculate Summary done. Current Finance File Id : '. $finance_file_id . " and the latest Finance File Id : " . $finance_latest->id;
+    }
 }
