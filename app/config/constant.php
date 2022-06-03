@@ -238,6 +238,7 @@ return [
                     'default' => [
                         'maintain_fee',
                         'sinking_fund',
+                        'tunggakan_lain_lain',
                         'insuran_bangunan',
                         'cukai_tanah',
                         'pelekat_kenderaan',
@@ -248,7 +249,6 @@ return [
                         'denda_undang_undang_kecil',
                         'denda_lewat_bayar_maintain_sinking_fee',
                         'bil_meter_air_pemilik_pemilik',
-                        // 'tunggakan_lain_lain',
                     ],
                     'only' => [
                         'default',
@@ -597,6 +597,37 @@ return [
         ],
         'epks' => [
             'name' => 'epks',
+        ],
+        "cob_letter" => [
+            "type" => [
+                [
+                    "name" => "notis_serahan_minit_agm_jmb",
+                    "title" => trans('app.form.notis_serahan_minit_agm_jmb'),
+                ],
+                [
+                    "name" => "pematuhan_agm_mc",
+                    "title" => trans('app.form.pematuhan_agm_mc'),
+                ],
+                [
+                    "name" => "surat_bocor_antara_unit_kali_1_jmb",
+                    "title" => trans('app.form.surat_bocor_antara_unit_kali_1_jmb'),
+                ],
+                [
+                    "name" => "surat_bocor_antara_unit_kali_1_mc",
+                    "title" => trans('app.form.surat_bocor_antara_unit_kali_1_mc'),
+                ],
+                [
+                    "name" => "surat_bocor_pengurusan_jmb",
+                    "title" => trans('app.form.surat_bocor_pengurusan_jmb'),
+                ],
+                [
+                    "name" => "surat_bocor_pengurusan_mc",
+                    "title" => trans('app.form.surat_bocor_pengurusan_mc'),
+                ],
+            ],
+            'field' => [
+
+            ],
         ]
     ],
     'third_party' => [
@@ -830,8 +861,8 @@ return [
             'income_denda_lewat_bayar_maintain_sinking_fee' => 'DENDA LEWAT BAYAR MAINTENANCE FEE @ SINKING FUND',
             'income_bil_meter_air_pemilik_pemilik' => 'BIL METER AIR PEMILIK-PEMILIK(DI BAWAH AKAUN METER PUKAL SAHAJA)',
             'income_tunggakan_lain_lain' => 'TUNGGAKAN LAIN-LAIN',
-            'sum_bill_air' => 'Bil Air',
-            'sum_bill_elektrik' => 'Bil. Elektrik',
+            'sum_bill_air' => trans('app.forms.sum_bill_air'),
+            'sum_bill_elektrik' => trans('app.forms.sum_bill_elektrik'),
             'sum_caruman_cukai' => trans('app.forms.sum_caruman_cukai'),
             'sum_utility' => trans('app.forms.sum_utility'),
             'sum_contract' => trans('app.forms.sum_contract'),
