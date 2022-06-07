@@ -21,7 +21,7 @@ return [
                 'status_active' => " status has been updated to Active.",
                 'status_inactive' => " status has been updated to In-Active.",
                 'status_activate' => " status has been updated to Activate.",
-                'status_deactivate' => " status has been updated to Deactivate.",
+                'status_deactivate' => " status has been updated to Deactivate.", 
             ]
         ],
         'cob' => [
