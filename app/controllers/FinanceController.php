@@ -921,6 +921,7 @@ class FinanceController extends BaseController {
                     $main_old->fee_sebulan = $finance->fee_sebulan;
                     $main_old->unit = $finance->unit;
                     $main_old->fee_semasa = $finance->fee_semasa;
+                    $main_old->tunggakan_belum_dikutip = $finance->tunggakan_belum_dikutip;
                     $main_old->no_akaun = $finance->no_akaun;
                     $main_old->nama_bank = $finance->nama_bank;
                     $main_old->baki_bank_awal = $finance->baki_bank_awal;
@@ -930,6 +931,7 @@ class FinanceController extends BaseController {
                     $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
                     $finance->unit = $data[$prefix . 'unit'];
                     $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
+                    $finance->tunggakan_belum_dikutip = $data[$prefix . 'tunggakan_belum_dikutip'];
                     $finance->no_akaun = $data[$prefix . 'no_akaun'];
                     $finance->nama_bank = $data[$prefix . 'nama_bank'];
                     $finance->baki_bank_awal = $data[$prefix . 'baki_bank_awal'];
@@ -1062,7 +1064,7 @@ class FinanceController extends BaseController {
 
     public function updateFinanceFileReportSf() {
         $data = Input::all();
-
+        
         if (Request::ajax()) {
             $id = Helper::decode($data['finance_file_id']);
             $type = 'SF';
@@ -1109,6 +1111,7 @@ class FinanceController extends BaseController {
                     $main_old->fee_sebulan = $finance->fee_sebulan;
                     $main_old->unit = $finance->unit;
                     $main_old->fee_semasa = $finance->fee_semasa;
+                    $main_old->tunggakan_belum_dikutip = $finance->tunggakan_belum_dikutip;
                     $main_old->no_akaun = $finance->no_akaun;
                     $main_old->nama_bank = $finance->nama_bank;
                     $main_old->baki_bank_awal = $finance->baki_bank_awal;
@@ -1118,6 +1121,7 @@ class FinanceController extends BaseController {
                     $finance->fee_sebulan = $data[$prefix . 'fee_sebulan'];
                     $finance->unit = $data[$prefix . 'unit'];
                     $finance->fee_semasa = $data[$prefix . 'fee_semasa'];
+                    $finance->tunggakan_belum_dikutip = $data[$prefix . 'tunggakan_belum_dikutip'];
                     $finance->no_akaun = $data[$prefix . 'no_akaun'];
                     $finance->nama_bank = $data[$prefix . 'nama_bank'];
                     $finance->baki_bank_awal = $data[$prefix . 'baki_bank_awal'];

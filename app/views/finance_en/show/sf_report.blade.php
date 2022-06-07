@@ -76,6 +76,12 @@ $old_prefix = 'sfr_old_';
                                 <input type="currency" id="{{$old_prefix}}total_income" name="{{$old_prefix}}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </td>
                         </tr>
+                        <tr>
+                            <td class="padding-table">JUMLAH TUNGGAKAN BELUM DIKUTIP</td>
+                            <td class="padding-table">
+                                <input type="currency" id="{{ $old_prefix }}tunggakan_belum_dikutip" name="{{ $old_prefix }}tunggakan_belum_dikutip"  class="form-control form-control-sm text-right" value="{{ $sfreportOld->tunggakan_belum_dikutip }}">
+                            </td>
+                        </tr>
 
                     </tbody>
                 </table>
@@ -110,7 +116,7 @@ $old_prefix = 'sfr_old_';
                         </tr>
 
                         <tr>
-                            <td class="padding-table" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - (B)</td>
+                            <td class="padding-table" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - TUNGGAKAN BELUM DIKUTIP - (B)</td>
                             <td><input type="currency" id="{{$old_prefix}}lebihan_kurangan" name="{{$old_prefix}}lebihan_kurangan" class="form-control form-control-sm text-right" value="0.00" readonly=""></td>
                         </tr>
                     </tbody>
@@ -178,8 +184,9 @@ $old_prefix = 'sfr_old_';
             $('#{{ $old_prefix }}total_income').val(parseFloat(sfr_old_total_income).toFixed(2));
         }
 
+        var old_sfr_tunggakan_belum_dikutip = $("#{{ $old_prefix }}tunggakan_belum_dikutip").val();
         var sfr_old_bayar_total = $('#{{ $old_prefix }}bayar_total').val();
-        var sfr_old_lebihan_kurangan = Number(sfr_old_kutipan) - Number(sfr_old_bayar_total);
+        var sfr_old_lebihan_kurangan = Number(sfr_old_kutipan) - Number(old_sfr_tunggakan_belum_dikutip) - Number(sfr_old_bayar_total);
         if(sfr_old_kutipan != undefined) {
             $('#{{ $old_prefix }}lebihan_kurangan').val(parseFloat(sfr_old_lebihan_kurangan).toFixed(2));
         }
