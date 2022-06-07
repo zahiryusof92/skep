@@ -2603,14 +2603,10 @@ class FinanceController extends BaseController {
             }
         // }
         # Audit Trail
-        Log::info('finance file id :'. $finance->id);
-        Log::info('finance file id :'. Helper::encode($finance->id));
-        Log::info('finance year :'. $finance->year);
-        Log::info('finance month :'. $finance->monthName());
-        Log::info('finance audit text :'. $this->module['audit']['text']['data_updated']);
-
-        $remarks = 'Finance File: ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) . ' summary'. $this->module['audit']['text']['data_updated'];
-        $this->addAudit($finance->file->id, "COB Finance File", $remarks);
+        if(!empty($finance->file)) {
+            $remarks = 'Finance File: ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) . ' summary'. $this->module['audit']['text']['data_updated'];
+            $this->addAudit($finance->file->id, "COB Finance File", $remarks);
+        }
     }
 
     public function recalculateSummary() {
