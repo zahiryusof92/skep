@@ -84,6 +84,12 @@ $count = 0;
                                 <input type="currency" id="{{ $prefix }}total_income" name="{{ $prefix }}total_income" class="form-control form-control-sm text-right" value="0.00" readonly="">
                             </td>
                         </tr>
+                        <tr>
+                            <td class="padding-table">JUMLAH TUNGGAKAN BELUM DIKUTIP</td>
+                            <td class="padding-table">
+                                <input type="currency" id="{{ $prefix }}tunggakan_belum_dikutip" name="{{ $prefix }}tunggakan_belum_dikutip" onkeyup="calculateSFR()" class="form-control form-control-sm text-right" value="{{ $sfreport['tunggakan_belum_dikutip'] }}">
+                            </td>
+                        </tr>
 
                     </tbody>
                 </table>
@@ -126,7 +132,7 @@ $count = 0;
                         </tr>
 
                         <tr>
-                            <td class="padding-table" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - (B)</td>
+                            <td class="padding-table" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - TUNGGAKAN BELUM DIKUTIP - (B)</td>
                             <td><input type="currency" id="{{ $prefix }}lebihan_kurangan" name="{{ $prefix }}lebihan_kurangan" class="form-control form-control-sm text-right" value="0.00" readonly=""></td>
                         </tr>
                     </tbody>
@@ -230,7 +236,8 @@ $count = 0;
         }
         $('#{{ $prefix }}bayar_total').val(parseFloat(sfr_bayar_total).toFixed(2));
 
-        var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_bayar_total);
+        var sfr_tunggakan_belum_dikutip = $("#updateFinanceFile [id=sfr_tunggakan_belum_dikutip]").val();
+        var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_tunggakan_belum_dikutip) - Number(sfr_bayar_total);
         $('#{{ $prefix }}lebihan_kurangan').val(parseFloat(sfr_lebihan_kurangan).toFixed(2));
     }
 

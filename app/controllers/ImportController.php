@@ -3097,15 +3097,22 @@ class ImportController extends BaseController {
     }
 
     public function importFinanceFile() {
-        
-        
         DB::transaction(function() {
-            if (Request::ajax()) {
+            // if (Request::ajax()) {
                 $file = Input::file('import_file');
                 $file_id = Input::get('import_file_id');
                 $month = Input::get('import_month');
                 $year = Input::get('import_year');
                 $status = Input::get('status');
+                if(!empty(Input::get('import_file_no'))) {
+                    $file_no = Files::where('file_no', Input::get('import_file_no'))->first();
+                    if(empty($file_no)) {
+                        print 'empty_file_no';
+                        exit;
+                    } else {
+                        $file_id = $file_no->id; 
+                    }
+                }
                 
                 if ($file) {
 
@@ -3161,10 +3168,11 @@ class ImportController extends BaseController {
                                 $report_mf->fee_sebulan = (empty($report_main[0]) == false)? $report_main[0] : 0;
                                 $report_mf->unit = (empty($report_main[1]) == false)? $report_main[1] : 0;
                                 $report_mf->fee_semasa = (empty($report_main[2]) == false)? $report_main[2] : 0;
-                                $report_mf->no_akaun = (empty($report_main[3]) == false)? $report_main[3] : '';
-                                $report_mf->nama_bank = (empty($report_main[4]) == false)? $report_main[4] : '';
-                                $report_mf->baki_bank_awal = (empty($report_main[5]) == false)? $report_main[5] : 0;
-                                $report_mf->baki_bank_akhir = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_mf->tunggakan_belum_dikutip = (empty($report_main[3]) == false)? $report_main[3] : 0;
+                                $report_mf->no_akaun = (empty($report_main[4]) == false)? $report_main[4] : '';
+                                $report_mf->nama_bank = (empty($report_main[5]) == false)? $report_main[5] : '';
+                                $report_mf->baki_bank_awal = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_mf->baki_bank_akhir = (empty($report_main[7]) == false)? $report_main[7] : 0;
                                 $report_mf->save();
                                 
                             } else if($title == 'report sf' && $row->count()) {
@@ -3174,10 +3182,11 @@ class ImportController extends BaseController {
                                 $report_sf->fee_sebulan = (empty($report_main[0]) == false)? $report_main[0] : 0;
                                 $report_sf->unit = (empty($report_main[1]) == false)? $report_main[1] : 0;
                                 $report_sf->fee_semasa = (empty($report_main[2]) == false)? $report_main[2] : 0;
-                                $report_sf->no_akaun = (empty($report_main[3]) == false)? $report_main[3] : '';
-                                $report_sf->nama_bank = (empty($report_main[4]) == false)? $report_main[4] : '';
-                                $report_sf->baki_bank_awal = (empty($report_main[5]) == false)? $report_main[5] : 0;
-                                $report_sf->baki_bank_akhir = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_sf->tunggakan_belum_dikutip = (empty($report_main[3]) == false)? $report_main[3] : 0;
+                                $report_sf->no_akaun = (empty($report_main[4]) == false)? $report_main[4] : '';
+                                $report_sf->nama_bank = (empty($report_main[5]) == false)? $report_main[5] : '';
+                                $report_sf->baki_bank_awal = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_sf->baki_bank_akhir = (empty($report_main[7]) == false)? $report_main[7] : 0;
                                 $report_sf->save();
 
                                 $perkara_count = $row->count(); 
@@ -3560,9 +3569,9 @@ class ImportController extends BaseController {
                 } else {
                     print "empty_file";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         });
         
     }

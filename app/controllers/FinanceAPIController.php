@@ -430,6 +430,7 @@ class FinanceAPIController extends BaseController {
                         $report_clone->fee_sebulan = $report->fee_sebulan;
                         $report_clone->unit = $report->unit;
                         $report_clone->fee_semasa = $report->fee_semasa;
+                        $report_clone->tunggakan_belum_dikutip = $report->tunggakan_belum_dikutip;
                         $report_clone->no_akaun = $report->no_akaun;
                         $report_clone->nama_bank = $report->nama_bank;
                         $report_clone->baki_bank_awal = $report->baki_bank_awal;
@@ -441,6 +442,7 @@ class FinanceAPIController extends BaseController {
                     $report->fee_sebulan = $val['fee_sebulan'];
                     $report->unit = $val['unit'];
                     $report->fee_semasa = $val['fee_semasa'];
+                    $report->tunggakan_belum_dikutip = $val['tunggakan_belum_dikutip'];
                     $report->no_akaun = $val['no_akaun'];
                     $report->nama_bank = $val['nama_bank'];
                     $report->baki_bank_awal = $val['baki_bank_awal'];
