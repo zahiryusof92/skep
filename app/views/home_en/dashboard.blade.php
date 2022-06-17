@@ -16,15 +16,6 @@ foreach ($user_permission as $permission) {
 <div class="page-content-inner">
     <section class="panel panel-style">
         <div class="panel-heading">
-            @if(Str::lower($company->short_name) == 'mbs')
-                <h4>
-                    <a href="{{asset('files/pertandingan_photojournalism.pdf')}}" target="_blank" class="text-primary">
-                        <u>
-                            PERTANDINGAN PHOTOJOURNALISM Sempena Hari Habitat Sedunia Tahun 2021
-                        </u>
-                    </a>
-                </h4>
-            @endif
             <h3>Dashboard</h3>
         </div>
         <div class="panel-body">
