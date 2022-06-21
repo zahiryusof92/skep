@@ -153,7 +153,7 @@ Route::post('/submitUpdateHouseScheme', 'AdminController@submitUpdateHouseScheme
 
 //strata
 Route::get('/view/strata/{id}', 'AdminController@viewStrata')->before('authMember');
-Route::get('/update/strata/{id}', array('as' => 'cob.file.strata.edit', 'AdminController@strata'))->before('authMember');
+Route::get('/update/strata/{id}', array('as' => 'cob.file.strata.edit', 'uses' => 'AdminController@strata'))->before('authMember');
 Route::post('/submitUpdateStrata', 'AdminController@submitUpdateStrata')->before('authMember');
 Route::post('uploadStrataFile', 'FileController@uploadStrataFile');
 Route::post('/findDUN', 'AdminController@findDUN')->before('authMember');
