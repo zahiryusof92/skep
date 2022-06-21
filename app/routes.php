@@ -162,7 +162,7 @@ Route::post('/deleteStrataFile/{id}', 'AdminController@deleteStrataFile')->befor
 
 //management
 Route::get('/view/management/{id}', 'AdminController@viewManagement')->before('authMember');
-Route::get('/update/management/{id}', array('as' => 'cob.file.management.edit', 'AdminController@management'))->before('authMember');
+Route::get('/update/management/{id}', array('as' => 'cob.file.management.edit', 'uses' => 'AdminController@management'))->before('authMember');
 Route::post('/submitUpdateManagement', 'AdminController@submitUpdateManagement')->before('authMember');
 Route::post('/deleteAuditReport/{id}', 'AdminController@deleteAuditReport')->before('authMember');
 Route::post('/deleteLetterIntegrity/{id}', 'AdminController@deleteLetterIntegrity')->before('authMember');
@@ -251,7 +251,7 @@ Route::post('/deleteHouseRules/{id}', 'AdminController@deleteHouseRules')->befor
 
 //others
 Route::get('/view/others/{id}', 'AdminController@viewOthers')->before('authMember');
-Route::get('/updateFile/others/{id}', array('as' => 'cob.file.others.edit', 'AdminController@others'))->before('authMember');
+Route::get('/updateFile/others/{id}', array('as' => 'cob.file.others.edit', 'uses' => 'AdminController@others'))->before('authMember');
 Route::post('/submitUpdateOtherDetails', 'AdminController@submitUpdateOtherDetails')->before('authMember');
 Route::post('/uploadOthersImage', 'ImageController@uploadOthersImage');
 Route::post('/deleteImageOthers/{id}', 'AdminController@deleteImageOthers')->before('authMember');
@@ -944,8 +944,8 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
     Route::post('/print/epks',  array('as' => 'reporting.print.epks', 'uses' => 'PrintController@epks'));
     Route::get('/reporting/generate',  array('as' => 'report.generate.index', 'uses' => 'ReportController@generate'));
-    // Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
-    // Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
+    Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
+    Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
     
     /**
      * Data Sync
@@ -979,8 +979,8 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * COB Letter
      */
-    // Route::get('cob_letter/getForm',  array('as' => 'cob_letter.getForm', 'uses' => 'CobLetterController@getForm'));
-    // Route::resource('cob_letter', 'CobLetterController');
+    Route::get('cob_letter/getForm',  array('as' => 'cob_letter.getForm', 'uses' => 'CobLetterController@getForm'));
+    Route::resource('cob_letter', 'CobLetterController');
 });
 
 /** Transaction */
