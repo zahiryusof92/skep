@@ -438,7 +438,7 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
-            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_hidden', false)->where('is_deleted', 0)->orderBy('name')->get();
+            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
@@ -792,6 +792,8 @@ class AdminController extends BaseController {
                     $scoring = Scoring::where('file_id', $files->id)->delete();
                     # Buyer List
                     $buyerlist = Buyer::where('file_id', $files->id)->delete();
+                    # File Draft Reject List
+                    $fileDraftRejectList = FileDraftReject::where('file_id', $files->id)->delete();
 
                     # Audit Trail
                     $remarks = $files->file_no . $this->module['audit']['text']['data_deleted'];

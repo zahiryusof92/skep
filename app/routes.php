@@ -115,13 +115,13 @@ Route::get('cob/sync', 'CobSyncController@index')->before('authMember');
 //draft files
 Route::get('/draft/fileList', 'DraftController@fileList')->before('authMember');
 Route::get('/draft/getFileList', 'DraftController@getFileList')->before('authMember');
-Route::get('/draft/houseScheme/{id}', 'DraftController@houseScheme')->before('authMember');
+Route::get('/draft/houseScheme/{id}', array('as' => 'cob.file.draft.house.edit', 'uses' => 'DraftController@houseScheme'))->before('authMember');
 Route::post('/draft/submitHouseScheme', 'DraftController@submitHouseScheme')->before('authMember');
-Route::get('/draft/strata/{id}', 'DraftController@strata')->before('authMember');
+Route::get('/draft/strata/{id}', array('as' => 'cob.file.draft.strata.edit', 'uses' => 'DraftController@strata'))->before('authMember');
 Route::post('/draft/submitStrata', 'DraftController@submitStrata')->before('authMember');
-Route::get('/draft/management/{id}', 'DraftController@management')->before('authMember');
+Route::get('/draft/management/{id}', array('as' => 'cob.file.draft.management.edit', 'uses' => 'DraftController@management'))->before('authMember');
 Route::post('/draft/submitManagement', 'DraftController@submitManagement')->before('authMember');
-Route::get('/draft/others/{id}', 'DraftController@others')->before('authMember');
+Route::get('/draft/others/{id}', array('as' => 'cob.file.draft.others.edit', 'uses' => 'DraftController@others'))->before('authMember');
 Route::post('/draft/submitOthers', 'DraftController@submitOthers')->before('authMember');
 Route::post('/draft/deleteFile', 'DraftController@deleteFile')->before('authMember');
 
@@ -148,12 +148,12 @@ Route::post('/updateFileNo', 'AdminController@updateFileNo')->before('authMember
 
 //house scheme
 Route::get('/view/house/{id}', 'AdminController@viewHouse')->before('authMember');
-Route::get('/update/house/{id}', 'AdminController@house')->before('authMember');
+Route::get('/update/house/{id}', array('as' => 'cob.file.house.edit', 'uses' => 'AdminController@house'))->before('authMember');
 Route::post('/submitUpdateHouseScheme', 'AdminController@submitUpdateHouseScheme')->before('authMember');
 
 //strata
 Route::get('/view/strata/{id}', 'AdminController@viewStrata')->before('authMember');
-Route::get('/update/strata/{id}', 'AdminController@strata')->before('authMember');
+Route::get('/update/strata/{id}', array('as' => 'cob.file.strata.edit', 'AdminController@strata'))->before('authMember');
 Route::post('/submitUpdateStrata', 'AdminController@submitUpdateStrata')->before('authMember');
 Route::post('uploadStrataFile', 'FileController@uploadStrataFile');
 Route::post('/findDUN', 'AdminController@findDUN')->before('authMember');
@@ -162,7 +162,7 @@ Route::post('/deleteStrataFile/{id}', 'AdminController@deleteStrataFile')->befor
 
 //management
 Route::get('/view/management/{id}', 'AdminController@viewManagement')->before('authMember');
-Route::get('/update/management/{id}', 'AdminController@management')->before('authMember');
+Route::get('/update/management/{id}', array('as' => 'cob.file.management.edit', 'AdminController@management'))->before('authMember');
 Route::post('/submitUpdateManagement', 'AdminController@submitUpdateManagement')->before('authMember');
 Route::post('/deleteAuditReport/{id}', 'AdminController@deleteAuditReport')->before('authMember');
 Route::post('/deleteLetterIntegrity/{id}', 'AdminController@deleteLetterIntegrity')->before('authMember');
@@ -251,7 +251,7 @@ Route::post('/deleteHouseRules/{id}', 'AdminController@deleteHouseRules')->befor
 
 //others
 Route::get('/view/others/{id}', 'AdminController@viewOthers')->before('authMember');
-Route::get('/updateFile/others/{id}', 'AdminController@others')->before('authMember');
+Route::get('/updateFile/others/{id}', array('as' => 'cob.file.others.edit', 'AdminController@others'))->before('authMember');
 Route::post('/submitUpdateOtherDetails', 'AdminController@submitUpdateOtherDetails')->before('authMember');
 Route::post('/uploadOthersImage', 'ImageController@uploadOthersImage');
 Route::post('/deleteImageOthers/{id}', 'AdminController@deleteImageOthers')->before('authMember');
@@ -944,6 +944,8 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
     Route::post('/print/epks',  array('as' => 'reporting.print.epks', 'uses' => 'PrintController@epks'));
     Route::get('/reporting/generate',  array('as' => 'report.generate.index', 'uses' => 'ReportController@generate'));
+    // Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
+    // Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
     
     /**
      * Data Sync
@@ -951,6 +953,14 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('cob/get-option', 'CobController@getOption');
     Route::post('buyer/sync', 'CobSyncController@submitBuyerSync');
     Route::get('cob/get-property', 'CobSyncController@getProperty');
+
+    /**
+     * COB Draft Reject
+     */
+    Route::get('draft/reject/index', array('as' => 'file.draft.reject.index', 'uses' => 'DraftRejectController@index'));
+    Route::get('draft/reject/create', array('as' => 'file.draft.reject.create', 'uses' => 'DraftRejectController@create'));
+    Route::post('draft/reject', array('as' => 'file.draft.reject.store', 'uses' => 'DraftRejectController@store'));
+    Route::get('draft/reject/{id}', array('as' => 'file.draft.reject.show', 'uses' => 'DraftRejectController@show'));
 
     /**
      * MPS Sync
@@ -969,7 +979,8 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * COB Letter
      */
-    // Route::get('cob_letter/index', 'CobLetterController@index');
+    // Route::get('cob_letter/getForm',  array('as' => 'cob_letter.getForm', 'uses' => 'CobLetterController@getForm'));
+    // Route::resource('cob_letter', 'CobLetterController');
 });
 
 /** Transaction */
@@ -1052,6 +1063,7 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
     Route::get('dashboard/getAnalyticData', 'Api\DashboardAnalyticController@getAnalyticData');
     Route::group(array('prefix' => 'cob'), function() {
         Route::get('company/getOption', array('as' => 'v3.api.company.getOption', 'uses' => 'Api\CompanyController@getOption'));
+        Route::get('company/getNameOption', array('as' => 'v3.api.company.getNameOption', 'uses' => 'Api\CompanyController@getNameOption'));
         Route::get('files/getOption',  array('as' => 'v3.api.files.getOption', 'uses' => 'Api\COBFileController@getOption'));
         Route::get('audit_trail/getOption', array('as' => 'v3.api.audit_trail.getModuleOption', 'uses' => 'Api\AuditTrailController@getModuleOption'));
         Route::get('role/getOption', array('as' => 'v3.api.role.getOption', 'uses' => 'Api\RoleController@getOption'));
@@ -1070,6 +1082,7 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('strata/getAnalyticData', 'Api\StrataController@getAnalyticData');
         Route::get('tenant/getListing', 'Api\TenantController@getListing');
         Route::get('tenant/getAnalyticData', 'Api\TenantController@getAnalyticData');
+        Route::get('cob_letter/getTypeOptions', array('as' => 'v3.api.cob_letter.getTypeOptions', 'uses' => 'Api\COBLetterController@getTypeOptions'));
     });
 
     Route::group(array('prefix' => 'finance'), function() {

@@ -16,6 +16,7 @@ return [
                 'data_approved' => ' has been approved.',
                 'data_uploaded' => ' data has been uploaded.',
                 'data_deleted' => ' has been deleted.',
+                'data_rejected' => ' data update has been rejected.',
                 'jmb_submit_updated' => ' JMB submitted a update.',
                 'status_updated' => ' has been updated to ',
                 'status_active' => " status has been updated to Active.",
@@ -600,36 +601,278 @@ return [
             'name' => 'epks',
         ],
         "cob_letter" => [
-            "type" => [
-                [
-                    "name" => "notis_serahan_minit_agm_jmb",
-                    "title" => trans('app.form.notis_serahan_minit_agm_jmb'),
-                ],
-                [
-                    "name" => "pematuhan_agm_mc",
-                    "title" => trans('app.form.pematuhan_agm_mc'),
-                ],
-                [
-                    "name" => "surat_bocor_antara_unit_kali_1_jmb",
-                    "title" => trans('app.form.surat_bocor_antara_unit_kali_1_jmb'),
-                ],
-                [
-                    "name" => "surat_bocor_antara_unit_kali_1_mc",
-                    "title" => trans('app.form.surat_bocor_antara_unit_kali_1_mc'),
-                ],
-                [
-                    "name" => "surat_bocor_pengurusan_jmb",
-                    "title" => trans('app.form.surat_bocor_pengurusan_jmb'),
-                ],
-                [
-                    "name" => "surat_bocor_pengurusan_mc",
-                    "title" => trans('app.form.surat_bocor_pengurusan_mc'),
+            'name' => 'cob_letter',
+            "cob" => [
+                'mps' => [
+                    "type" => [
+                        "notis_serahan_minit_agm_jmb" => [
+                            "name" => "notis_serahan_minit_agm_jmb",
+                            "title" => trans('app.forms.notis_serahan_minit_agm_jmb'),
+                            'only' => [
+                                'date',
+                                'bill_no',
+                                'building_name',
+                                'receiver_address_1',
+                                'receiver_address_2',
+                                'receiver_address_3',
+                                'receiver_address_4',
+                                'receiver_address_5',
+                            ],
+                        ],
+                        "pematuhan_agm_mc" => [
+                            "name" => "pematuhan_agm_mc",
+                            "title" => trans('app.forms.pematuhan_agm_mc'),
+                            'only' => [
+                                'date',
+                                'bill_no',
+                                'building_name',
+                                'receiver_name',
+                                'management_address_1',
+                                'management_address_2',
+                                'management_address_3',
+                                'management_address_4',
+                                'management_address_5',
+                            ],
+                        ],
+                        "surat_bocor_antara_unit_kali_1_jmb" => [
+                            "name" => "surat_bocor_antara_unit_kali_1_jmb",
+                            "title" => trans('app.forms.surat_bocor_antara_unit_kali_1_jmb'),
+                            'only' => [
+                                'date',
+                                'bill_no',
+                                'building_name',
+                                'management_address_1',
+                                'management_address_2',
+                                'management_address_3',
+                                'management_address_4',
+                                'management_address_5',
+                                'receiver_name',
+                                'receiver_address_1',
+                                'receiver_address_2',
+                                'receiver_address_3',
+                                'receiver_address_4',
+                                'receiver_address_5',
+                                'unit_name',
+                                'from_address_1',
+                                'from_address_2',
+                                'from_address_3',
+                                'from_address_4',
+                                'from_address_5',
+                            ],
+                        ],
+                        "surat_bocor_antara_unit_kali_1_mc" => [
+                            "name" => "surat_bocor_antara_unit_kali_1_mc",
+                            "title" => trans('app.forms.surat_bocor_antara_unit_kali_1_mc'),
+                            'only' => [
+                                'date',
+                                'bill_no',
+                                'building_name',
+                                'management_address_1',
+                                'management_address_2',
+                                'management_address_3',
+                                'management_address_4',
+                                'management_address_5',
+                                'receiver_name',
+                                'receiver_address_1',
+                                'receiver_address_2',
+                                'receiver_address_3',
+                                'receiver_address_4',
+                                'receiver_address_5',
+                                'unit_name',
+                                'from_address_1',
+                                'from_address_2',
+                                'from_address_3',
+                                'from_address_4',
+                                'from_address_5',
+                            ],
+                        ],
+                        "surat_bocor_pengurusan_jmb" => [
+                            "name" => "surat_bocor_pengurusan_jmb",
+                            "title" => trans('app.forms.surat_bocor_pengurusan_jmb'),
+                            'only' => [
+                                'date',
+                                'bill_no',
+                                'building_name',
+                                'management_address_1',
+                                'management_address_2',
+                                'management_address_3',
+                                'management_address_4',
+                                'management_address_5',
+                                'unit_name',
+                                'from_address_1',
+                                'from_address_2',
+                                'from_address_3',
+                                'from_address_4',
+                                'from_address_5',
+                            ],
+                        ],
+                        "surat_bocor_pengurusan_mc" => [
+                            "name" => "surat_bocor_pengurusan_mc",
+                            "title" => trans('app.forms.surat_bocor_pengurusan_mc'),
+                            'only' => [
+                                'date',
+                                'bill_no',
+                                'building_name',
+                                'management_address_1',
+                                'management_address_2',
+                                'management_address_3',
+                                'management_address_4',
+                                'management_address_5',
+                                'unit_name',
+                                'from_address_1',
+                                'from_address_2',
+                                'from_address_3',
+                                'from_address_4',
+                                'from_address_5',
+                            ],
+                        ],
+                    ],
                 ],
             ],
-            'field' => [
-
+            'fields' => [
+                'date' => [
+                    'label' => trans('app.forms.date'),
+                    'name' => 'date',
+                    'type' => 'date',
+                    'required' => true
+                ],
+                'bill_no' => [
+                    'label' => trans('app.forms.bill_no'),
+                    'name' => 'bill_no',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'building_name' => [
+                    'label' => trans('app.forms.building_name'),
+                    'name' => 'building_name',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'receiver_name' => [
+                    'label' => trans('app.forms.receiver_name'),
+                    'name' => 'receiver_name',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'unit_name' => [
+                    'label' => trans('app.forms.unit_name'),
+                    'name' => 'unit_name',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'receiver_address_1' => [
+                    'label' => trans('app.forms.receiver_address_1'),
+                    'name' => 'receiver_address_1',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'receiver_address_2' => [
+                    'label' => trans('app.forms.receiver_address_2'),
+                    'name' => 'receiver_address_2',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'receiver_address_3' => [
+                    'label' => trans('app.forms.receiver_address_3'),
+                    'name' => 'receiver_address_3',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'receiver_address_4' => [
+                    'label' => trans('app.forms.receiver_address_4'),
+                    'name' => 'receiver_address_4',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'receiver_address_5' => [
+                    'label' => trans('app.forms.receiver_address_5'),
+                    'name' => 'receiver_address_5',
+                    'type' => 'textarea',
+                    'required' => false
+                ],
+                'management_address_1' => [
+                    'label' => trans('app.forms.management_address_1'),
+                    'name' => 'management_address_1',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'management_address_2' => [
+                    'label' => trans('app.forms.management_address_2'),
+                    'name' => 'management_address_2',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'management_address_3' => [
+                    'label' => trans('app.forms.management_address_3'),
+                    'name' => 'management_address_3',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'management_address_4' => [
+                    'label' => trans('app.forms.management_address_4'),
+                    'name' => 'management_address_4',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'management_address_5' => [
+                    'label' => trans('app.forms.management_address_5'),
+                    'name' => 'management_address_5',
+                    'type' => 'textarea',
+                    'required' => false
+                ],
+                'from_address_1' => [
+                    'label' => trans('app.forms.from_address_1'),
+                    'name' => 'from_address_1',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'from_address_2' => [
+                    'label' => trans('app.forms.from_address_2'),
+                    'name' => 'from_address_2',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'from_address_3' => [
+                    'label' => trans('app.forms.from_address_3'),
+                    'name' => 'from_address_3',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'from_address_4' => [
+                    'label' => trans('app.forms.from_address_4'),
+                    'name' => 'from_address_4',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'from_address_5' => [
+                    'label' => trans('app.forms.from_address_5'),
+                    'name' => 'from_address_5',
+                    'type' => 'textarea',
+                    'required' => false
+                ],
             ],
-        ]
+        ],
+        'file_draft_reject' => [
+            'name' => 'file_draft_reject',
+            'type' => [
+                'house_scheme' => [
+                    'name' => 'house_scheme',
+                    'title' => trans('app.forms.housing_scheme'),
+                ],
+                'strata' => [
+                    'name' => 'strata',
+                    'title' => trans('app.forms.developed_area'),
+                ],
+                'management' => [
+                    'name' => 'management',
+                    'title' => trans('app.forms.management'),
+                ],
+                'others' => [
+                    'name' => 'others',
+                    'title' => trans('app.forms.others'),
+                ],
+            ]
+        ],
     ],
     'third_party' => [
         'eagm' => [

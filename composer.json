@@ -22,7 +22,8 @@
             "app/database/seeds",
             "app/tests/TestCase.php",
             "app/helper",
-            "app/job"
+            "app/job",
+            "app/repositories"
         ]
     },
     "scripts": {
