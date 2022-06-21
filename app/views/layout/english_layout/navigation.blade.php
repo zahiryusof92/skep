@@ -93,6 +93,12 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
+                    <li id="cob_sync">
+                        <a class="left-menu-link" href="{{ route('file.draft.reject.index') }}">
+                            {{ trans('app.menus.cob.file_reject_list') }}
+                        </a>
+                    </li>
+
                     @if (Auth::user()->getAdmin())
                     <li id="cob_sync">
                         <a class="left-menu-link" href="{{URL::action('CobSyncController@index')}}">
@@ -162,6 +168,15 @@ if (!Auth::user()->getAdmin()) {
                 <a class="left-menu-link" href="{{ URL::action('AdminController@insurance', 'All') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/protect.png')}}"/>
                     {{ trans('app.menus.agm.insurance') }}
+                </a>
+            </li>
+            @endif
+
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('COB Letter'))
+            <li class="left-menu-list-link" id="cob_letter_list">
+                <a class="left-menu-link" href="{{ route('cob_letter.index') }}">
+                    <i class="left-menu-link-icon fa fa-paper-plane" aria-hidden="true"></i>
+                    {{ trans('app.menus.cob_letter.name') }}
                 </a>
             </li>
             @endif
@@ -609,6 +624,14 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
+                    @if (AccessGroup::hasAccessModule("Statistics Report"))
+                    <li id="statistic_report_list">
+                        <a class="left-menu-link" href="{{ route('report.statistic.index') }}">
+                            {{ trans('app.menus.reporting.statistic') }}
+                        </a>
+                    </li>
+                    @endif
+
                 </ul>
             </li>
             @endif
@@ -714,7 +737,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(9))
             <!-- Summon Start -->
             @if (AccessGroup::hasAccess(61))
-            @if (Auth::user()->isJMB())
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && Auth::user()->isJMB())
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
@@ -742,6 +765,7 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
 
+            @if(!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")
             <li id="my_point_list">
                 <a class="left-menu-link" href="{{ route('myPoint.index') }}">
                     <i class="left-menu-link-icon fa fa-money"><!-- --></i>
@@ -749,8 +773,8 @@ if (!Auth::user()->getAdmin()) {
                 </a>
             </li>
             @endif
-            
-            @if (Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer() || Auth::user()->isCOBManager())
+            @endif
+            @if ((Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer() || Auth::user()->isCOBManager()) && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")))
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
@@ -787,7 +811,7 @@ if (!Auth::user()->getAdmin()) {
             @endif
             
             @if (AccessGroup::hasAccess(61))
-            @if(Auth::user()->isJMB() || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid())
+            @if((Auth::user()->isJMB() && Auth::user()->getCOB->short_name == "MPS") || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid() && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")))
                 @if(!Auth::user()->isCOBPaid())
                 <li id="transaction_list">
                     <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">

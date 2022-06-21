@@ -240,7 +240,6 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.malay_composition') }} </label>
-                                                                    @include('components.is_changed', ['old_field' => $other_details->malay_composition, 'new_field' => $other_details->draft->malay_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.malay_composition') }}" value="{{$other_details->draft ? $other_details->draft->malay_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -249,7 +248,6 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.chinese_composition') }} </label>
-                                                                    @include('components.is_changed', ['old_field' => $other_details->chinese_composition, 'new_field' => $other_details->draft->chinese_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.chinese_composition') }}" value="{{$other_details->draft ? $other_details->draft->chinese_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -258,7 +256,6 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.indian_composition') }} </label>
-                                                                    @include('components.is_changed', ['old_field' => $other_details->indian_composition, 'new_field' => $other_details->draft->indian_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.indian_composition') }}" value="{{$other_details->draft ? $other_details->draft->indian_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -267,7 +264,6 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.others_composition') }} </label>
-                                                                    @include('components.is_changed', ['old_field' => $other_details->others_composition, 'new_field' => $other_details->draft->others_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.others_composition') }}" value="{{$other_details->draft ? $other_details->draft->others_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -276,7 +272,6 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label>{{ trans('app.forms.foreigner_composition') }} </label>
-                                                                    @include('components.is_changed', ['old_field' => $other_details->foreigner_composition, 'new_field' => $other_details->draft->foreigner_composition])
                                                                     <input type="number" step="0.01" class="form-control text-right" placeholder="{{ trans('app.forms.foreigner_composition') }}" value="{{$other_details->draft ? $other_details->draft->foreigner_composition : ''}}" readonly="">
                                                                 </div>
                                                             </div>
@@ -285,12 +280,14 @@
                                                 </div>
                                                 <div class="form-actions">
                                                     <button type="button" class="btn btn-own" id="submit_button_draft" onclick="submitDraft()">{{ trans('app.buttons.accept') }}</button>
+                                                    <button type="button" class="btn btn-danger" id="reject_button" onclick="submitReject()">{{ trans('app.buttons.reject') }}</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </section>
                                 
+                                <div id="modal-content"></div>
                                 <script>
                                     function submitDraft() {
                                         swal({
@@ -328,6 +325,21 @@
                                                     }
                                                 }
                                             });
+                                        });
+                                    }
+
+                                    function submitReject() {
+                                        $.ajax({
+                                            url: "{{ route('file.draft.reject.create') }}",
+                                            type: "GET",
+                                            data: {
+                                                file_id: "{{ $file->id}}",
+                                                type: "others"
+                                            },
+                                            success: function (data) {
+                                                $("#modal-content").html(data);
+                                                $("#file-reject").modal("show");
+                                            }
                                         });
                                     }
                                 </script>
