@@ -727,27 +727,24 @@ class FinanceAPIController extends BaseController {
                         }
                     }
 
-                    if($key == "bhg_b") {
-
-                        if(empty($val['is_custom']) == false) {
-                            foreach($val['is_custom'] as $key2 => $val2) {
-                                $params_needed = Arr::only($val2,$params);
-        
-                                $finance = new FinanceUtility;
-                                $finance->finance_file_id = $finance_id;
-                                $finance->name = $params_needed['name'];
-                                $finance->type = $my_config["type"][$key]['name'];
-                                $finance->tunggakan = $params_needed['tunggakan'];
-                                $finance->semasa = $params_needed['semasa'];
-                                $finance->hadapan = $params_needed['hadapan'];
-                                $finance->tertunggak = $params_needed['tertunggak'];
-                                $finance->sort_no = ++$count;
-                                $finance->is_custom = 1;
-                                $finance->save();
-                            }
+                    if(empty($val['is_custom']) == false) {
+                        foreach($val['is_custom'] as $key2 => $val2) {
+                            $params_needed = Arr::only($val2,$params);
     
-                            $new_data = $finance;
+                            $finance = new FinanceUtility;
+                            $finance->finance_file_id = $finance_id;
+                            $finance->name = $params_needed['name'];
+                            $finance->type = $my_config["type"][$key]['name'];
+                            $finance->tunggakan = $params_needed['tunggakan'];
+                            $finance->semasa = $params_needed['semasa'];
+                            $finance->hadapan = $params_needed['hadapan'];
+                            $finance->tertunggak = $params_needed['tertunggak'];
+                            $finance->sort_no = ++$count;
+                            $finance->is_custom = 1;
+                            $finance->save();
                         }
+
+                        $new_data = $finance;
                     }
                 }
                 
