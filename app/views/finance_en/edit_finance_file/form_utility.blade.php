@@ -51,7 +51,7 @@ $prefix3 = 'utilab_';
                         $total_income = $utilas['tunggakan'] + $utilas['semasa'] + $utilas['hadapan'];
                         $total_all += $total_income;
                         ?>
-                        <tr id="util_row{{ ++$count }}">
+                        <tr id="util_row{{ ++$count }}" class="util_row">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $utilas['is_custom'] }}">{{ $count }}</td>
                             <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $utilas['name'] }}" {{ $utilas['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateUtilityA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $utilas['tunggakan'] }}"></td>
@@ -68,7 +68,7 @@ $prefix3 = 'utilab_';
                         @endforeach
 
                         <tr>
-                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility('{{ $prefix }}', 'util_row', {{ $count }})" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility('{{ $prefix }}', 'util_row')" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
                         </tr>
 
                         <tr>
@@ -104,7 +104,7 @@ $prefix3 = 'utilab_';
                         $totalb_income = $utilbs['tunggakan'] + $utilbs['semasa'] + $utilbs['hadapan'];
                         $totalb_all += $totalb_income;
                         ?>
-                        <tr id="utility_row{{ ++$countb }}">
+                        <tr id="utility_row{{ ++$countb }}" class="utility_row">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $utilbs['is_custom'] }}">{{ $countb }}</td>
                             <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $utilbs['name'] }}" {{ $utilbs['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateUtilityB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $utilbs['tunggakan'] }}"></td>
@@ -121,7 +121,7 @@ $prefix3 = 'utilab_';
                         @endforeach
 
                         <tr>
-                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility('{{ $prefix2 }}', 'utility_row', {{ $countb }})" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility('{{ $prefix2 }}', 'utility_row')" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
                         </tr>
 
                         <tr>
@@ -328,11 +328,12 @@ $prefix3 = 'utilab_';
         
     }
 
-    function addRowUtility(prefix, id, last_digit) {
+    function addRowUtility(prefix, id) {
         changes = true;
-        var rowUtilityNo = last_digit + 1;
+        var latest_id = $("#dynamic_form_utility tr." + id + ":last").attr("id").split(id);
+        var rowUtilityNo = Number(latest_id[1]) + 1;
         var detect_function = (prefix == 'util_')? "calculateUtilityA" : "calculateUtilityB";
-        $("#dynamic_form_utility tr#"+ id + last_digit +":last").after('<tr id="'+ id + rowUtilityNo + '"><td class="text-center padding-table">'+
+        $("#dynamic_form_utility tr#"+ id + Number(latest_id[1]) +":last").after('<tr id="'+ id + rowUtilityNo + '" class="'+ id +'"><td class="text-center padding-table">'+
         '<input type="hidden" name="'+ prefix +'is_custom[]" value="1">' + rowUtilityNo + '</td>'+
         '<td><input type="text" name="'+ prefix +'name[]" class="form-control form-control-sm" value=""></td>'+
         '<td><input type="currency" oninput="'+ detect_function +'(\'' + rowUtilityNo + '\')" id="'+ prefix +'tunggakan_' + rowUtilityNo + '" name="'+ prefix +'tunggakan[]" class="form-control form-control-sm text-right" value="0"></td>'+
