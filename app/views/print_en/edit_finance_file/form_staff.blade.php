@@ -23,6 +23,7 @@ $prefix = 'staff_';
             <tbody>
                 <?php
                 $count = 0;
+                $total_gaji = 0;
                 $total_tunggakan = 0;
                 $total_semasa = 0;
                 $total_hadapan = 0;
@@ -34,7 +35,7 @@ $prefix = 'staff_';
                 <?php
                 $gaji_per_person = $staffFiles['gaji_per_orang'];
                 $bil_pekerja = $staffFiles['bil_pekerja'];
-                $total_gaji = $staffFiles['gaji_per_orang'] * $staffFiles['bil_pekerja'];
+                $total_gaji += $staffFiles['gaji_per_orang'] * $staffFiles['bil_pekerja'];
                 $total_tunggakan += $staffFiles['tunggakan'];
                 $total_semasa += $staffFiles['semasa'];
                 $total_hadapan += $staffFiles['hadapan'];
@@ -48,7 +49,7 @@ $prefix = 'staff_';
                     <td class="text-left">{{ $staffFiles['name'] }}</td>
                     <td class="text-right">{{ number_format($staffFiles['gaji_per_orang'], 2) }}</td>
                     <td class="text-right">{{ number_format($staffFiles['bil_pekerja'], 2) }}</td>
-                    <td class="text-right">{{ number_format($total_gaji, 2) }}</td>
+                    <td class="text-right">{{ number_format($staffFiles['gaji_per_orang'] * $staffFiles['bil_pekerja'], 2) }}</td>
                     <td class="text-right">{{ number_format($staffFiles['tunggakan'], 2) }}</td>
                     <td class="text-right">{{ number_format($staffFiles['semasa'], 2) }}</td>
                     <td class="text-right">{{ number_format($staffFiles['hadapan'], 2) }}</td>
