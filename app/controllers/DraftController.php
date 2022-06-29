@@ -1206,6 +1206,7 @@ class DraftController extends BaseController {
                 $new_line .= $others->bantuan_others != $draft_others->bantuan_others? "bantuan others, " : "";
                 $new_line .= $others->rsku != $draft_others->rsku? "rsku, " : "";
                 $new_line .= $others->water_meter != $draft_others->water_meter? "water meter, " : "";
+                $new_line .= $others->original_price != $draft_others->original_price? "original price, " : "";
                 $new_line .= $others->tnb != $draft_others->tnb? "tnb, " : "";
                 $new_line .= $others->parking_bay != $draft_others->parking_bay? "parking bay, " : "";
                 $new_line .= $others->parking_area != $draft_others->parking_area? "parking area, " : "";
@@ -1232,6 +1233,7 @@ class DraftController extends BaseController {
                 $others->bantuan_others = $draft_others->bantuan_others;
                 $others->rsku = $draft_others->rsku;
                 $others->water_meter = $draft_others->water_meter;
+                $others->original_price = $draft_others->original_price;
                 $others->tnb = $draft_others->tnb;
                 $others->parking_bay = $draft_others->parking_bay;
                 $others->parking_area = $draft_others->parking_area;

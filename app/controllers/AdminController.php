@@ -3925,6 +3925,7 @@ class AdminController extends BaseController {
             $bantuan_lphs = $data['bantuan_lphs'];
             $bantuan_others = $data['bantuan_others'];
             $rsku = $data['rsku'];
+            $original_price = $data['original_price'];
             $water_meter = $data['water_meter'];
             $tnb = $data['tnb'];
             $parking_bay = $data['parking_bay'];
@@ -3949,6 +3950,7 @@ class AdminController extends BaseController {
             $new_line .= $bantuan_lphs != $others->bantuan_lphs? "bantuan lphs, " : "";
             $new_line .= $bantuan_others != $others->bantuan_others? "bantuan others, " : "";
             $new_line .= $rsku != $others->rsku? "rsku, " : "";
+            $new_line .= $original_price != $others->original_price? "original price, " : "";
             $new_line .= $water_meter != $others->water_meter? "water meter, " : "";
             $new_line .= $tnb != $others->tnb? "tnb, " : "";
             $new_line .= $parking_bay != $others->parking_bay? "parking bay, " : "";
@@ -3975,6 +3977,7 @@ class AdminController extends BaseController {
             $others->bantuan_lphs = $bantuan_lphs;
             $others->bantuan_others = $bantuan_others;
             $others->rsku = $rsku;
+            $others->original_price = $original_price;
             $others->water_meter = $water_meter;
             $others->tnb = $tnb;
             $others->parking_bay = $parking_bay;
