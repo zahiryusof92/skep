@@ -108,8 +108,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -119,6 +117,8 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -168,6 +168,15 @@
                                                                         <option value="1" {{ ($other_details->draft && $other_details->draft->bantuan_others == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
                                                                         <option value="0" {{ ($other_details->draft && $other_details->draft->bantuan_others == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
                                                                     </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.original_price') }} </label>
+                                                                    @include('components.is_changed', ['old_field' => $other_details->original_price, 'new_field' => $other_details->draft->original_price])
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.original_price') }}" value="{{($other_details->draft ? $other_details->draft->original_price : '')}}" readonly="">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -408,8 +417,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -418,6 +425,8 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -463,6 +472,14 @@
                                                                         <option value="1" {{ ($other_details && $other_details->bantuan_others == '1' ? " selected" : "") }}>{{ trans("app.forms.yes") }}</option>
                                                                         <option value="0" {{ ($other_details && $other_details->bantuan_others == '0' ? " selected" : "") }}>{{ trans("app.forms.no") }}</option>
                                                                     </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.original_price') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.original_price') }}" id="original_price" value="{{($other_details ? $other_details->original_price : '')}}">
                                                                 </div>
                                                             </div>
                                                         </div>

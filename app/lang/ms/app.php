@@ -658,6 +658,7 @@ return array(
         'section' => 'Bahagian',
         'grains' => 'Butir',
         'overall_total' => 'Jumlah Keseluruhan',
+        'original_price' => 'Harga Asal',
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",

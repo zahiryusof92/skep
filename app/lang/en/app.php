@@ -668,6 +668,7 @@ return array(
         'section' => 'Section',
         'grains' => 'Grains',
         'overall_total' => 'Overall Total',
+        'original_price' => 'Original Price',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
