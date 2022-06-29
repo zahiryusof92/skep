@@ -290,6 +290,54 @@
                 </div>
                 @endif
                 @endif
+
+                <div class="row margin-vertical-15">
+                    <div class="col-lg-12">
+                        <h4>{{ trans('app.menus.finance.finance_file_list') }}</h4>
+                    </div>
+                    <div class="col-lg-12">
+                        <table class="table table-hover table-own table-striped" id="finance_table" width="100%" style="font-size: 13px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:55%; text-align: center !important; vertical-align:middle !important;">No. FAIL</th>
+                                    <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.zone') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        var route = "{{ route('reporting.strataProfile.finance', ':file_id') }}";
+                        route = route.replace(':file_id', "{{ $files->id }}");
+                        $('#finance_table').DataTable({
+                            processing: true,
+                            serverSide: true,
+                            ajax: {
+                                'url' : route,
+                            },
+                            lengthMenu: [[15, 30, 50], [15, 30, 50]],
+                            pageLength: 30,
+                            order: [[1, "desc"]],
+                            responsive: true,
+                            scrollX: true,
+                            columns: [
+                                {data: 'file_id', name: 'files.file_no'},
+                                {data: 'zone', name: 'zone', orderable: false, searchable: false}
+                            ],
+                            columnDefs: [
+                                {
+                                    targets: 1, // your case first column
+                                    className: "text-center",
+                                },
+                            ]
+                        });
+                    });
+                </script>
                 @endif
 
             </div>           

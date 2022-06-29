@@ -289,7 +289,9 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.land_title') }}</label>
+                                                            @if(!empty($strata->draft))
                                                             @include('components.is_changed', ['old_field' => $strata->land_title, 'new_field' => $strata->draft->land_title])
+                                                            @endif
                                                             <select class="form-control select2" disabled="">
                                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                                 @foreach ($land_title as $land_titles)
@@ -892,12 +894,14 @@
                                                 </div>
                                                 <div class="form-actions">
                                                     <button type="button" class="btn btn-own" id="submit_button_draft" onclick="submitDraft()">{{ trans('app.buttons.accept') }}</button>
+                                                    <button type="button" class="btn btn-danger" id="reject_button" onclick="submitReject()">{{ trans('app.buttons.reject') }}</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>                                    
                                 </section>
 
+                                <div id="modal-content"></div>
                                 <script>
                                     function submitDraft() {
                                         swal({
@@ -935,6 +939,21 @@
                                                     }
                                                 }
                                             });
+                                        });
+                                    }
+
+                                    function submitReject() {
+                                        $.ajax({
+                                            url: "{{ route('file.draft.reject.create') }}",
+                                            type: "GET",
+                                            data: {
+                                                file_id: "{{ $file->id}}",
+                                                type: "strata"
+                                            },
+                                            success: function (data) {
+                                                $("#modal-content").html(data);
+                                                $("#file-reject").modal("show");
+                                            }
                                         });
                                     }
                                 </script>

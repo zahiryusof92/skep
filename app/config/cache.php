@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'driver' => 'file',
+	'driver' => getenv('cahce_driver') ?: 'file',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -84,6 +84,6 @@ return array(
 	|
 	*/
 
-	'prefix' => 'laravel',
+	'prefix' => getenv('cache_prefix') ?: Str::slug(getenv('app.name') ?: 'laravel', '_').'_cache_',
 
 );

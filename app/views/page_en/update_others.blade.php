@@ -150,10 +150,6 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                </div>
-                                                <div class="col-lg-4">
-                                                    <form>
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -162,6 +158,10 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </form>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <form>
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -213,6 +213,14 @@ foreach ($user_permission as $permission) {
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
+                                                                    <label>{{ trans('app.forms.original_price') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.original_price') }}" id="original_price" value="{{($other_details ? $other_details->original_price : '')}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
                                                                     <label>{{ trans('app.forms.rumah_selangorku') }}</label>
                                                                     <select id="rsku" class="form-control select2">
                                                                         <option value="">{{ trans('app.forms.please_select') }}</option>
@@ -225,10 +233,6 @@ foreach ($user_permission as $permission) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                </div>
-                                                <div class="col-lg-4">
-                                                    <form>
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -239,6 +243,26 @@ foreach ($user_permission as $permission) {
                                                                         <option value="BULK" {{ ($other_details && $other_details->water_meter == 'BULK' ? " selected" : "") }}>{{ trans('app.forms.bulk') }}</option>
                                                                         <option value="INDIVIDUAL" {{ ($other_details && $other_details->water_meter == 'INDIVIDUAL' ? " selected" : "") }}>{{ trans('app.forms.individual') }}</option>
                                                                     </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <form>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.parking_bay') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.parking_bay') }}" id="parking_bay" value="{{($other_details ? $other_details->parking_bay : '')}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{ trans('app.forms.parking_area') }}</label>
+                                                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.parking_area') }}" id="parking_area" value="{{($other_details ? $other_details->parking_area : '')}}">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -426,7 +450,10 @@ foreach ($user_permission as $permission) {
                 bantuan_others = $("#bantuan_others").val(),
                 rsku = $("#rsku").val(),
                 water_meter = $("#water_meter").val(),
+                original_price = $("#original_price").val(),
                 tnb = $("#tnb").val(),
+                parking_bay = $("#parking_bay").val(),
+                parking_area = $("#parking_area").val(),
                 malay_composition = $("#malay_composition").val(),
                 chinese_composition = $("#chinese_composition").val(),
                 indian_composition = $("#indian_composition").val(),
@@ -452,7 +479,10 @@ foreach ($user_permission as $permission) {
                     bantuan_others: bantuan_others,
                     rsku: rsku,
                     water_meter: water_meter,
+                    original_price: original_price,
                     tnb: tnb,
+                    parking_bay: parking_bay,
+                    parking_area: parking_area,
                     malay_composition: malay_composition,
                     chinese_composition: chinese_composition,
                     indian_composition: indian_composition,

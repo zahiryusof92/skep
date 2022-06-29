@@ -111,12 +111,21 @@ return array(
 
 	'redis' => array(
 
-		'cluster' => false,
+		'cluster' => getenv('redis_cluster') ?: false,
+		'options'=>[
+            'prefix' => Str::slug(getenv('redis_prefix') ?: 'laravel', '_').'_database_',
+        ],
 
 		'default' => array(
-			'host'     => '127.0.0.1',
-			'port'     => 6379,
-			'database' => 0,
+			'host'     => getenv('redis_host') ?: '127.0.0.1',
+			'port'     => getenv('redis_port') ?: '6379',
+			'database' => getenv('redis_db') ?: '0',
+		),
+
+		'cache' => array(
+			'host'     => getenv('redis_host') ?: '127.0.0.1',
+			'port'     => getenv('redis_port') ?: '6379',
+			'database' => getenv('redis_cache_db') ?: '1',
 		),
 
 	),

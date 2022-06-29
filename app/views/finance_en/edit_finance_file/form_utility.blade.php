@@ -51,7 +51,7 @@ $prefix3 = 'utilab_';
                         $total_income = $utilas['tunggakan'] + $utilas['semasa'] + $utilas['hadapan'];
                         $total_all += $total_income;
                         ?>
-                        <tr id="util_row{{ ++$count }}">
+                        <tr id="util_row{{ ++$count }}" class="util_row">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix }}is_custom[]" value="{{ $utilas['is_custom'] }}">{{ $count }}</td>
                             <td><input type="text" name="{{ $prefix }}name[]" class="form-control form-control-sm" value="{{ $utilas['name'] }}" {{ $utilas['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateUtilityA('{{ $count }}')" id="{{ $prefix . 'tunggakan_' . $count }}" name="{{ $prefix }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $utilas['tunggakan'] }}"></td>
@@ -59,9 +59,17 @@ $prefix3 = 'utilab_';
                             <td><input type="currency" oninput="calculateUtilityA('{{ $count }}')" id="{{ $prefix . 'hadapan_' . $count }}" name="{{ $prefix }}hadapan[]" class="form-control form-control-sm text-right" value="{{ $utilas['hadapan'] }}"></td>
                             <td><input type="currency" id="{{ $prefix . 'total_income_' . $count }}" name="{{ $prefix }}total_income[]" class="form-control form-control-sm text-right" value="{{ $total_income }}" readonly=""></td>
                             <td><input type="currency" oninput="calculateUtilityATotal()" id="{{ $prefix . 'tertunggak_' . $count }}" name="{{ $prefix }}tertunggak[]" class="form-control form-control-sm text-right" value="{{ $utilas['tertunggak'] }}"></td>
+                            @if ($utilas['is_custom'])
+                            <td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowUtility('util_row<?php echo $count ?>')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td>
+                            @else
                             <td>&nbsp;</td>
+                            @endif
                         </tr>
                         @endforeach
+
+                        <tr>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility('{{ $prefix }}', 'util_row')" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                        </tr>
 
                         <tr>
                             <td>&nbsp;</td>
@@ -96,7 +104,7 @@ $prefix3 = 'utilab_';
                         $totalb_income = $utilbs['tunggakan'] + $utilbs['semasa'] + $utilbs['hadapan'];
                         $totalb_all += $totalb_income;
                         ?>
-                        <tr id="utility_row{{ ++$countb }}">
+                        <tr id="utility_row{{ ++$countb }}" class="utility_row">
                             <td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="{{ $utilbs['is_custom'] }}">{{ $countb }}</td>
                             <td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value="{{ $utilbs['name'] }}" {{ $utilbs['is_custom'] ? '' : 'readonly' }}></td>
                             <td><input type="currency" oninput="calculateUtilityB('{{ $countb }}')" id="{{ $prefix2 . 'tunggakan_' . $countb }}" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="{{ $utilbs['tunggakan'] }}"></td>
@@ -113,7 +121,7 @@ $prefix3 = 'utilab_';
                         @endforeach
 
                         <tr>
-                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility()" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
+                            <td class="padding-table text-right" colspan="8"><a href="javascript:void(0);" onclick="addRowUtility('{{ $prefix2 }}', 'utility_row')" class="btn btn-own btn-xs">{{ trans("app.forms.add_more") }}</a></td>
                         </tr>
 
                         <tr>
@@ -159,6 +167,11 @@ $prefix3 = 'utilab_';
         calculateUtilityATotal();
         calculateUtilityBTotal();
         calculateUtilityABTotal();
+        
+        // summary utility
+        let utility_amount = Number($('#utilb_total_all').val()) - (Number($('#utilb_total_income_1').val()) + Number($('#utilb_total_income_2').val()));
+        $('#sum_utility').val(parseFloat(utility_amount).toFixed(2));
+        calculateSummaryTotal();
     });
 
     function calculateUtilityA(id) {
@@ -205,6 +218,7 @@ $prefix3 = 'utilab_';
         calculateUtilityBTotal();
         calculateUtilityABTotal();
         calculateSummaryTotal();
+        
     }
 
     function calculateUtilityATotal() {
@@ -311,15 +325,25 @@ $prefix3 = 'utilab_';
         var utilb_total_tertunggak = document.getElementById("{{ $prefix2 }}total_tertunggak");
         utilab_sum_total_tertunggak += Number(util_total_tertunggak.value) + Number(utilb_total_tertunggak.value);
         $('#{{ $prefix3 }}total_tertunggak').val(parseFloat(utilab_sum_total_tertunggak).toFixed(2)); // UPDATE JUMLAH SEMUA TERTUNGGAK
+        
     }
 
-    function addRowUtility() {
+    function addRowUtility(prefix, id) {
         changes = true;
-        
-        var rowUtilityNo = $("#dynamic_form_utility tr").length;
-        rowUtilityNo = rowUtilityNo - 8;
-        $("#dynamic_form_utility tr:last").prev().prev().prev().after('<tr id="utility_row' + rowUtilityNo + '"><td class="text-center padding-table"><input type="hidden" name="{{ $prefix2 }}is_custom[]" value="1">' + rowUtilityNo + '</td><td><input type="text" name="{{ $prefix2 }}name[]" class="form-control form-control-sm" value=""></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}tunggakan_' + rowUtilityNo + '" name="{{ $prefix2 }}tunggakan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}semasa_' + rowUtilityNo + '" name="{{ $prefix2 }}semasa[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" oninput="calculateUtilityB(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}hadapan_' + rowUtilityNo + '" name="{{ $prefix2 }}hadapan[]" class="form-control form-control-sm text-right" value="0"></td><td><input type="currency" id="{{ $prefix2 }}total_income_' + rowUtilityNo + '" name="{{ $prefix2 }}total_income[]" class="form-control form-control-sm text-right" value="0" readonly=""></td><td><input type="currency" oninput="calculateUtilityBTotal(\'' + rowUtilityNo + '\')" id="{{ $prefix2 }}tertunggak_' + rowUtilityNo + '" name="{{ $prefix2 }}tertunggak[]" class="form-control form-control-sm text-right" value="0"></td><td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowUtility(\'utility_row' + rowUtilityNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
+        var latest_id = $("#dynamic_form_utility tr." + id + ":last").attr("id").split(id);
+        var rowUtilityNo = Number(latest_id[1]) + 1;
+        var detect_function = (prefix == 'util_')? "calculateUtilityA" : "calculateUtilityB";
+        $("#dynamic_form_utility tr#"+ id + Number(latest_id[1]) +":last").after('<tr id="'+ id + rowUtilityNo + '" class="'+ id +'"><td class="text-center padding-table">'+
+        '<input type="hidden" name="'+ prefix +'is_custom[]" value="1">' + rowUtilityNo + '</td>'+
+        '<td><input type="text" name="'+ prefix +'name[]" class="form-control form-control-sm" value=""></td>'+
+        '<td><input type="currency" oninput="'+ detect_function +'(\'' + rowUtilityNo + '\')" id="'+ prefix +'tunggakan_' + rowUtilityNo + '" name="'+ prefix +'tunggakan[]" class="form-control form-control-sm text-right" value="0"></td>'+
+        '<td><input type="currency" oninput="'+ detect_function +'(\'' + rowUtilityNo + '\')" id="'+ prefix +'semasa_' + rowUtilityNo + '" name="'+ prefix +'semasa[]" class="form-control form-control-sm text-right" value="0"></td>'+
+        '<td><input type="currency" oninput="'+ detect_function +'(\'' + rowUtilityNo + '\')" id="'+ prefix +'hadapan_' + rowUtilityNo + '" name="'+ prefix +'hadapan[]" class="form-control form-control-sm text-right" value="0"></td>'+
+        '<td><input type="currency" id="'+ prefix +'total_income_' + rowUtilityNo + '" name="'+ prefix +'total_income[]" class="form-control form-control-sm text-right" value="0" readonly=""></td>'+
+        '<td><input type="currency" oninput="'+ detect_function +'Total(\'' + rowUtilityNo + '\')" id="'+ prefix +'tertunggak_' + rowUtilityNo + '" name="'+ prefix +'tertunggak[]" class="form-control form-control-sm text-right" value="0"></td>'+
+        '<td class="padding-table text-right"><a href="javascript:void(0);" onclick="deleteRowUtility(\''+ id + rowUtilityNo + '\')" class="btn btn-danger btn-xs">{{ trans("app.forms.remove") }}</a></td></tr>');
 
+        calculateUtilityATotal();
         calculateUtilityBTotal();
     }
 
@@ -327,7 +351,8 @@ $prefix3 = 'utilab_';
         changes = true;
 
         $('#' + rowUtilityNo).remove();
-
+        
+        calculateUtilityATotal();
         calculateUtilityBTotal();
     }
 

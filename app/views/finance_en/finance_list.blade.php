@@ -306,11 +306,13 @@ foreach ($user_permission as $permission) {
             ajax: {
                 'url' : "{{ URL::action('FinanceController@getFinanceList') }}",
                 'data': function(data) {
+                    var company = $('#company').val();
                     var from_date = $('#start_date').val();
                     var to_date = $('#end_date').val();
                     var month = $('#month').val();
 
                     // Append to data
+                    data.company = company;
                     data.start_date = from_date;
                     data.end_date = to_date;
                     data.month = month;
@@ -361,7 +363,7 @@ foreach ($user_permission as $permission) {
         });
 
         $('#company').on('change', function () {
-            oTable.columns(0).search(this.value).draw();
+            oTable.draw();
         });
         $('#month').on('change', function () {
             oTable.draw();

@@ -168,6 +168,11 @@ $prefix2 = 'singkingfund_';
     $(document).ready(function () {
         calculateVandalismeATotal();
         calculateVandalismeBTotal();
+        
+        // summary vandalisme
+        let vandalisme_amount = Number($('#{{ $prefix }}total_all').val()) + Number($('#{{ $prefix2 }}total_all').val());
+        $('#sum_vandalisme').val(parseFloat(vandalisme_amount).toFixed(2));
+        calculateSummaryTotal();
     });
 
     function calculateVandalismeA(id) {

@@ -207,7 +207,8 @@ foreach ($user_permission as $permission) {
                                                         <thead>
                                                             <tr>
                                                                 <th style="width:30%;text-align: center !important;">{{ trans('app.forms.designation') }}</th>
-                                                                <th style="width:30%;">{{ trans('app.forms.name') }}</th>
+                                                                <th style="width:15%;">{{ trans('app.forms.name') }}</th>
+                                                                <th style="width:15%;">{{ trans('app.forms.email') }}</th>
                                                                 <th style="width:20%;">{{ trans('app.forms.phone_number') }}</th>
                                                                 <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
                                                                 <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
@@ -807,6 +808,15 @@ foreach ($user_permission as $permission) {
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
+                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="ajk_email"/>
+                            <div id="ajk_email_error" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
                             <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.phone_number') }}</label>
                         </div>
                         <div class="col-md-6">
@@ -885,6 +895,16 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="ajk_name_edit"/>
+                            <div id="ajk_name_edit_error" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="ajk_email_edit"/>
+                            <div id="ajk_email_edit_error" style="display:none;"></div>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -893,6 +913,8 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="col-md-6">
                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="ajk_phone_no_edit"/>
+                            <div id="ajk_phone_no_edit_error" style="display:none;"></div>
+                            <div id="ajk_phone_no_invalid_edit_error" style="display:none;"></div>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -901,6 +923,8 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.start_year') }}" id="ajk_start_year_edit"/>
+                            <div id="ajk_start_year_edit_error" style="display:none;"></div>
+                            <div id="ajk_start_year_invalid_edit_error" style="display:none;"></div>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -909,6 +933,8 @@ foreach ($user_permission as $permission) {
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control" placeholder="{{ trans('app.forms.end_year') }}" id="ajk_end_year_edit"/>
+                            <div id="ajk_start_year_edit_error" style="display:none;"></div>
+                            <div id="ajk_start_year_invalid_edit_error" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
@@ -1146,9 +1172,9 @@ foreach ($user_permission as $permission) {
             $("#audit_end_edit").val(audit_end_date);
         }
         if (audit_end_date_raw == "") {
-            $("#audit_end_date_raw").val("");
+            $("#audit_end_edit_raw").val("");
         } else {
-            $("#audit_end_date_raw").val(audit_end_date_raw);
+            $("#audit_end_edit_raw").val(audit_end_date_raw);
         }
         $("#audit_report_file_url_edit").val(audit_report_file_url);
         $("#letter_integrity_url_edit").val(letter_integrity_url);
@@ -1159,6 +1185,7 @@ foreach ($user_permission as $permission) {
         var ajk_id = $(this).data('ajk_id');
         var designation = $(this).data('designation');
         var name = $(this).data('name');
+        var email = $(this).data('email');
         var phone_no = $(this).data('phone_no');
         var start_year = $(this).data('start_year');
         var end_year = $(this).data('end_year');
@@ -1166,6 +1193,7 @@ foreach ($user_permission as $permission) {
         $("#ajk_id_edit").val(ajk_id);
         $("#ajk_designation_edit").val(designation);
         $("#ajk_name_edit").val(name);
+        $("#ajk_email_edit").val(email);
         $("#ajk_phone_no_edit").val(phone_no);
         $("#ajk_start_year_edit").val(start_year);
         $("#ajk_end_year_edit").val(end_year);
@@ -1525,6 +1553,7 @@ foreach ($user_permission as $permission) {
 
         var ajk_designation = $("#ajk_designation").val(),
                 ajk_name = $("#ajk_name").val(),
+                ajk_email = $("#ajk_email").val(),
                 ajk_phone_no = $("#ajk_phone_no").val(),
                 ajk_start_year = $("#ajk_start_year").val(),
                 ajk_end_year = $("#ajk_end_year").val();
@@ -1540,6 +1569,12 @@ foreach ($user_permission as $permission) {
         if (ajk_name.trim() == "") {
             $("#ajk_name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
             $("#ajk_name_error").css("display", "block");
+            error = 1;
+        }
+
+        if (ajk_email.trim() == "") {
+            $("#ajk_email_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
+            $("#ajk_email_error").css("display", "block");
             error = 1;
         }
 
@@ -1592,6 +1627,7 @@ foreach ($user_permission as $permission) {
                 data: {
                     ajk_designation: ajk_designation,
                     ajk_name: ajk_name,
+                    ajk_email: ajk_email,
                     ajk_phone_no: ajk_phone_no,
                     ajk_start_year: ajk_start_year,
                     ajk_end_year: ajk_end_year,
@@ -1626,6 +1662,7 @@ foreach ($user_permission as $permission) {
         var ajk_id_edit = $("#ajk_id_edit").val(),
                 ajk_designation = $("#ajk_designation_edit").val(),
                 ajk_name = $("#ajk_name_edit").val(),
+                ajk_email = $("#ajk_email_edit").val(),
                 ajk_phone_no = $("#ajk_phone_no_edit").val(),
                 ajk_start_year = $("#ajk_start_year_edit").val(),
                 ajk_end_year = $("#ajk_end_year_edit").val();
@@ -1639,50 +1676,56 @@ foreach ($user_permission as $permission) {
         }
 
         if (ajk_name.trim() == "") {
-            $("#ajk_name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-            $("#ajk_name_error").css("display", "block");
+            $("#ajk_name_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
+            $("#ajk_name_edit_error").css("display", "block");
             error = 1;
         }
 
+        if (ajk_email.trim() == "") {
+            $("#ajk_email_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
+            $("#ajk_email_edit_error").css("display", "block");
+            error = 1;
+        } 
+
         if (ajk_phone_no.trim() == "") {
-            $("#ajk_phone_no_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Phone Number"]) }}</span>');
-            $("#ajk_phone_no_error").css("display", "block");
-            $("#ajk_phone_no_invalid_error").css("display", "none");
+            $("#ajk_phone_no_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Phone Number"]) }}</span>');
+            $("#ajk_phone_no_edit_error").css("display", "block");
+            $("#ajk_phone_no_invalid_edit_error").css("display", "none");
             error = 1;
         }
 
         if (isNaN(ajk_phone_no)) {
-            $("#ajk_phone_no_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Phone Number"]) }}</span>');
-            $("#ajk_phone_no_invalid_error").css("display", "block");
-            $("#ajk_phone_no_error").css("display", "none");
+            $("#ajk_phone_no_invalid_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Phone Number"]) }}</span>');
+            $("#ajk_phone_no_invalid_edit_error").css("display", "block");
+            $("#ajk_phone_no_edit_error").css("display", "none");
             error = 1;
         }
 
         if (ajk_start_year.trim() == "") {
-            $("#ajk_start_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Start Year"]) }}</span>');
-            $("#ajk_start_year_error").css("display", "block");
-            $("#ajk_start_year_invalid_error").css("display", "none");
+            $("#ajk_start_year_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Start Year"]) }}</span>');
+            $("#ajk_start_year_edit_error").css("display", "block");
+            $("#ajk_start_year_invalid_edit_error").css("display", "none");
             error = 1;
         }
 
         if (isNaN(ajk_start_year)) {
-            $("#ajk_start_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Start Year"]) }}</span>');
-            $("#ajk_start_year_invalid_error").css("display", "block");
-            $("#ajk_start_year_error").css("display", "none");
+            $("#ajk_start_year_invalid_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Start Year"]) }}</span>');
+            $("#ajk_start_year_invalid_edit_error").css("display", "block");
+            $("#ajk_start_year_edit_error").css("display", "none");
             error = 1;
         }
 
         if (ajk_end_year.trim() == "") {
-            $("#ajk_end_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"End Year"]) }}</span>');
-            $("#ajk_end_year_error").css("display", "block");
-            $("#ajk_end_year_invalid_error").css("display", "none");
+            $("#ajk_end_year_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"End Year"]) }}</span>');
+            $("#ajk_end_year_edit_error").css("display", "block");
+            $("#ajk_end_year_invalid_edit_error").css("display", "none");
             error = 1;
         }
 
         if (isNaN(ajk_end_year)) {
-            $("#ajk_end_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"End Year"]) }}</span>');
-            $("#ajk_end_year_invalid_error").css("display", "block");
-            $("#ajk_end_year_error").css("display", "none");
+            $("#ajk_end_year_invalid_edit_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"End Year"]) }}</span>');
+            $("#ajk_end_year_invalid_edit_error").css("display", "block");
+            $("#ajk_end_year_edit_error").css("display", "none");
             error = 1;
         }
 
@@ -1693,6 +1736,7 @@ foreach ($user_permission as $permission) {
                 data: {
                     ajk_designation: ajk_designation,
                     ajk_name: ajk_name,
+                    ajk_email: ajk_email,
                     ajk_phone_no: ajk_phone_no,
                     ajk_start_year: ajk_start_year,
                     ajk_end_year: ajk_end_year,

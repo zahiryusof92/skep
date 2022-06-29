@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'default' => getenv('queue_connection'),
+	'default' => getenv('queue_connection') ?: 'sync',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -60,8 +60,15 @@ return array(
 
 		'redis' => array(
 			'driver' => 'redis',
-			'queue'  => 'default',
+			'queue'  => getenv('redis_queue') ?: 'default',
 		),
+
+		'redis_cache' => array(
+			'driver' => 'redis',
+			'queue'  => 'cache',
+		),
+
+		
 
 	),
 

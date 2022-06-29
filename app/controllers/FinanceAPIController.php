@@ -57,9 +57,9 @@ class FinanceAPIController extends BaseController {
                         'message' => 'Record found',
                     ];
                 } else {
-                    $response = [
+                    $response = [ 
                         'status' => 404,
-                        'message' => "ID $finance->id does not found in our finance file!",
+                        'message' => "ID finance file does not found in our finance file!",
                     ];
                 }
             } else {
@@ -121,38 +121,19 @@ class FinanceAPIController extends BaseController {
         /**
          * bill_air = (utility(bhg_a)(A+B+C) + utility(bhg_b)(A+B+C)) - bil_air + bil_meter_air
          * bill_elektrik = (utility(bhg_a)(A+B+C)) - bil_elektrik
-         * caruman_insuran = (contract(A+B+C)) - contracts_insurans
          * caruman_cukai = (utility(bhg_b)(A+B+C)) - bil_cukai_tanah
-         * fi_firma = (contract(A+B+C)) - fi_firma_kompeten_lif
-         * pembersihan = (contract(A+B+C)) - pembersihan_kontrak + potong_rumput_lanskap + kutipan_sampah_pukal
-         * keselamatan = (contract(A+B+C)) - keselamatan + uji_penggera_kebakaran + sistem_kad_akses + sistem_cctv + uji_peralatan_pemadam_kebakaran
-         * jurutera_elektrik = (contract(A+B+C)) - jurutera_elektrik
-         * mechaninal = (repair(A+B+C)) - mf_lif + mf_wayar_bumi + mf_pendawaian_elektrik + mf_substation_tnb + mf_genset
-         * kawalan_serangga = (contract(A+B+C)) - kawalan_serangga
-         * kos_pekerja = (staff(A+B)) - total all staff gaji
-         * civil = (repair(A+B+C)) - mf_tangki_air + mf_bumbung + mf_rain_water_down_pipe + mf_pembentung + 
-         *                           mf_perpaipan + mf_tangga_handrail + mf_jalan + mf_pagar + mf_longkang
-         * pentadbiran = (admin(C+D+E)) - total all admin
-         * fi_ejen_pengurusan = (admin(C+D+E)) - fi_ejen_pengurusan
-         * lain_lain = 0
          * jumlah_pembelanjaan = (sum all the fields above)
          */
         $data = [
             'bill_air' => 0,
             'bill_elektrik' => 0,
-            'caruman_insuran' => 0,
             'caruman_cukai' => 0,
-            'fi_firma' => 0,
-            'pembersihan' => 0,
-            'keselamatan' => 0,
-            'jurutera_elektrik' => 0,
-            'mechaninal' => 0,
-            'kawalan_serangga' => 0,
-            'kos_pekerja' => 0,
-            'civil' => 0,
-            'pentadbiran' => 0,
-            'fi_ejen_pengurusan' => 0,
-            'lain_lain' => 0,
+            'utility' => 0,
+            'contract' => 0,
+            'repair' => 0,
+            'vandalisme' => 0,
+            'staff' => 0,
+            'admin' => 0,
             
         ];
         return $data;
@@ -449,6 +430,7 @@ class FinanceAPIController extends BaseController {
                         $report_clone->fee_sebulan = $report->fee_sebulan;
                         $report_clone->unit = $report->unit;
                         $report_clone->fee_semasa = $report->fee_semasa;
+                        $report_clone->tunggakan_belum_dikutip = $report->tunggakan_belum_dikutip;
                         $report_clone->no_akaun = $report->no_akaun;
                         $report_clone->nama_bank = $report->nama_bank;
                         $report_clone->baki_bank_awal = $report->baki_bank_awal;
@@ -460,6 +442,7 @@ class FinanceAPIController extends BaseController {
                     $report->fee_sebulan = $val['fee_sebulan'];
                     $report->unit = $val['unit'];
                     $report->fee_semasa = $val['fee_semasa'];
+                    $report->tunggakan_belum_dikutip = $val['tunggakan_belum_dikutip'];
                     $report->no_akaun = $val['no_akaun'];
                     $report->nama_bank = $val['nama_bank'];
                     $report->baki_bank_awal = $val['baki_bank_awal'];
@@ -724,7 +707,7 @@ class FinanceAPIController extends BaseController {
                          * (utility(bhg_a)(A+B+C) + utility(bhg_b)(A+B+C)) - bil_air + bil_meter_air
                          */
                         if(in_array($key1,['bil_air','bil_meter_air'])) {
-                            $data['summary']['bill_air'] = ($finance->tunggakan + $finance->semasa + $finance->hadapan);
+                            $data['summary']['bill_air'] += ($finance->tunggakan + $finance->semasa + $finance->hadapan);
                         }
 
                         /**
@@ -732,7 +715,7 @@ class FinanceAPIController extends BaseController {
                          * (utility(bhg_a)(A+B+C)) - bil_elektrik
                          */
                         if(in_array($key1,['bil_elektrik'])) {
-                            $data['summary']['bill_elektrik'] = ($finance->tunggakan + $finance->semasa + $finance->hadapan);
+                            $data['summary']['bill_elektrik'] += ($finance->tunggakan + $finance->semasa + $finance->hadapan);
                         }
                         
                         /**
@@ -740,31 +723,28 @@ class FinanceAPIController extends BaseController {
                          * caruman_cukai = (utility(bhg_b)(A+B+C)) - bil_cukai_tanah
                          */
                         if(in_array($key1,['bil_cukai_tanah'])) {
-                            $data['summary']['caruman_cukai'] = ($finance->tunggakan + $finance->semasa + $finance->hadapan);
+                            $data['summary']['caruman_cukai'] += ($finance->tunggakan + $finance->semasa + $finance->hadapan);
                         }
                     }
 
-                    if($key == "bhg_b") {
-
-                        if(empty($val['is_custom']) == false) {
-                            foreach($val['is_custom'] as $key2 => $val2) {
-                                $params_needed = Arr::only($val2,$params);
-        
-                                $finance = new FinanceUtility;
-                                $finance->finance_file_id = $finance_id;
-                                $finance->name = $params_needed['name'];
-                                $finance->type = $my_config["type"][$key]['name'];
-                                $finance->tunggakan = $params_needed['tunggakan'];
-                                $finance->semasa = $params_needed['semasa'];
-                                $finance->hadapan = $params_needed['hadapan'];
-                                $finance->tertunggak = $params_needed['tertunggak'];
-                                $finance->sort_no = ++$count;
-                                $finance->is_custom = 1;
-                                $finance->save();
-                            }
+                    if(empty($val['is_custom']) == false) {
+                        foreach($val['is_custom'] as $key2 => $val2) {
+                            $params_needed = Arr::only($val2,$params);
     
-                            $new_data = $finance;
+                            $finance = new FinanceUtility;
+                            $finance->finance_file_id = $finance_id;
+                            $finance->name = $params_needed['name'];
+                            $finance->type = $my_config["type"][$key]['name'];
+                            $finance->tunggakan = $params_needed['tunggakan'];
+                            $finance->semasa = $params_needed['semasa'];
+                            $finance->hadapan = $params_needed['hadapan'];
+                            $finance->tertunggak = $params_needed['tertunggak'];
+                            $finance->sort_no = ++$count;
+                            $finance->is_custom = 1;
+                            $finance->save();
                         }
+
+                        $new_data = $finance;
                     }
                 }
                 
@@ -847,47 +827,9 @@ class FinanceAPIController extends BaseController {
                         $new_data = $contract;
                         /**
                          * 
-                         * caruman_insuran = (contract(A+B+C)) - insurans
+                         * contract
                          */
-                        if(in_array($key,['insurans'])) {
-                            $data['summary']['caruman_insuran'] = ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * fi_firma = (contract(A+B+C)) - fi_firma_kompeten_lif
-                         */
-                        if(in_array($key,['fi_firma_kompeten_lif'])) {
-                            $data['summary']['fi_firma'] = ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * pembersihan = (contract(A+B+C)) - pembersihan_kontrak + potong_rumput_lanskap + kutipan_sampah_pukal
-                         */
-                        if(in_array($key,['pembersihan_kontrak','potong_rumput_lanskap','kutipan_sampah_pukal'])) {
-                            $data['summary']['pembersihan'] = ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * keselamatan = (contract(A+B+C)) - keselamatan + uji_penggera_kebakaran + sistem_kad_akses + 
-                         *              sistem_cctv + uji_peralatan_pemadam_kebakaran
-                         */
-                        if(in_array($key,['keselamatan','uji_penggera_kebakaran','sistem_kad_akses','sistem_cctv','uji_peralatan_pemadam_kebakaran'])) {
-                            $data['summary']['keselamatan'] = ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * jurutera_elektrik = (contract(A+B+C)) - jurutera_elektrik
-                         */
-                        if(in_array($key,['jurutera_elektrik'])) {
-                            $data['summary']['jurutera_elektrik'] = ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
-                        /**
-                         * 
-                         * kawalan_serangga = (contract(A+B+C)) - kawalan_serangga
-                         */
-                        if(in_array($key,['kawalan_serangga'])) {
-                            $data['summary']['kawalan_serangga'] = ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                        }
+                        $data['summary']['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
                     }
                 }
 
@@ -906,6 +848,11 @@ class FinanceAPIController extends BaseController {
                         $contract->save();
 
                         $new_data = $contract;
+                        /**
+                         * 
+                         * contract
+                         */
+                        $data['summary']['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
                     }
                 }
                 
@@ -992,11 +939,9 @@ class FinanceAPIController extends BaseController {
 
                             /**
                              * define summary attribute
-                             * mechaninal = (repair(A+B+C)) - mf_lif + mf_wayar_bumi + mf_pendawaian_elektrik + mf_substation_tnb + mf_genset
+                             * repair
                              */
-                            if(in_array($key1,['mf_lif','mf_wayar_bumi','mf_pendawaian_elektrik','mf_substation_tnb','mf_genset'])) {
-                                $data['summary']['mechaninal'] = ($repair->tunggakan + $repair->semasa + $repair->hadapan);
-                            }
+                            $data['summary']['repair'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
                         }
                     }
 
@@ -1016,6 +961,12 @@ class FinanceAPIController extends BaseController {
                             $repair->save();
 
                             $new_data = $repair;
+                            
+                            /**
+                             * define summary attribute
+                             * repair
+                             */
+                            $data['summary']['repair'] += ($repair->tunggakan + $repair->semasa + $repair->hadapan);
                         }
                     }
 
@@ -1101,6 +1052,11 @@ class FinanceAPIController extends BaseController {
 
                             $new_data = $vandal;
 
+                            /**
+                             * define summary attribute
+                             * vandalisme
+                             */
+                            $data['summary']['vandalisme'] += ($vandal->tunggakan + $vandal->semasa + $vandal->hadapan);
                         }
                     }
 
@@ -1120,6 +1076,12 @@ class FinanceAPIController extends BaseController {
                             $vandal->save();
 
                             $new_data = $vandal;
+                            
+                            /**
+                             * define summary attribute
+                             * vandalisme
+                             */
+                            $data['summary']['vandalisme'] += ($vandal->tunggakan + $vandal->semasa + $vandal->hadapan);
                         }
                     }
 
@@ -1206,6 +1168,11 @@ class FinanceAPIController extends BaseController {
                         $count++;
                         $new_data = $staff;
 
+                        /**
+                         * define summary attribute
+                         * staff
+                         */
+                        $data['summary']['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                     }
                 }
 
@@ -1227,13 +1194,19 @@ class FinanceAPIController extends BaseController {
 
                         $count++;
                         $new_data = $staff;
+                        
+                        /**
+                         * define summary attribute
+                         * staff
+                         */
+                        $data['summary']['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                     }
                 }
                 
 
                 $response = [
                     'status' => 200,
-                    'data'  => $new_data
+                    'data'  => $data
                 ];
                 
                 return $response;
@@ -1308,7 +1281,12 @@ class FinanceAPIController extends BaseController {
 
                         $count++;
                         $new_data = $admin;
-
+                        
+                        /**
+                         * define summary attribute
+                         * admin
+                         */
+                        $data['summary']['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                     }
                 }
 
@@ -1328,13 +1306,19 @@ class FinanceAPIController extends BaseController {
                         
                         $count++;
                         $new_data = $admin;
+
+                        /**
+                         * define summary attribute
+                         * admin
+                         */
+                        $data['summary']['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                     }
                 }
                 
 
                 $response = [
                     'status' => 200,
-                    'data'  => $new_data
+                    'data'  => $data
                 ];
                 
                 return $response;
@@ -1355,7 +1339,7 @@ class FinanceAPIController extends BaseController {
         try {
             
             
-            $request_params = Input::all();
+            $request_params = Request::all();
             $request_params['summary'] = array();
             
             DB::transaction(function() use($request_params, &$response) {
@@ -1378,14 +1362,6 @@ class FinanceAPIController extends BaseController {
                     $response = $validate_data;
                     return $response;
                 }
-
-                // validate file summary process
-                // $validate_data = (new FinanceValidatorController())->validateSummary($request_params);
-           
-                // if($validate_data['status'] == 422) {
-                //     $response = $validate_data;
-                //     return $response;
-                // }
 
                 // validate file report process
                 $validate_data = (new FinanceValidatorController())->validateReport($request_params);
@@ -1534,8 +1510,9 @@ class FinanceAPIController extends BaseController {
                 $create_utility = '';
                 if($create_income['status'] == 200) {
                     $create_utility = $this->createOrUpdateUtility($request_params, $finance_id);
+                    $request_params['summary'] = array_merge($request_params['summary'], $create_utility['data']['summary']);
                 }
-                
+
                 if(in_array($create_utility['status'],[400, 404, 422])) {
                     //delete 
                     $this->deleteAllFinanceRecord($finance_id);
@@ -1548,7 +1525,8 @@ class FinanceAPIController extends BaseController {
                 */
                 $create_contract = '';
                 if($create_utility['status'] == 200) {
-                    $create_contract = $this->createOrUpdateContract($create_utility['data'], $finance_id);
+                    $create_contract = $this->createOrUpdateContract($request_params, $finance_id);
+                    $request_params['summary'] = array_merge($request_params['summary'], $create_contract['data']['summary']);
                 }
                 
                 if(in_array($create_contract['status'],[400, 404, 422])) {
@@ -1563,28 +1541,14 @@ class FinanceAPIController extends BaseController {
                 */
                 $create_repair = '';
                 if($create_contract['status'] == 200) {
-                    $create_repair = $this->createOrUpdateRepair($create_contract['data'], $finance_id);
+                    $create_repair = $this->createOrUpdateRepair($request_params, $finance_id);
+                    $request_params['summary'] = array_merge($request_params['summary'], $create_repair['data']['summary']);
                 }
                 
                 if(in_array($create_repair['status'],[400, 404, 422])) {
                     //delete 
                     $this->deleteAllFinanceRecord($finance_id);
                     $response = $create_repair;
-                    return $response;
-                }
-
-                /*
-                * create Summary
-                */
-                $create_summary = '';
-                if($create_repair['status'] == 200) {
-                    $create_summary = $this->createOrUpdateSummary($create_repair['data'], $finance_id);
-                }
-                
-                if(in_array($create_summary['status'],[400, 404, 422])) {
-                    //delete 
-                    $this->deleteAllFinanceRecord($finance_id);
-                    $response = $create_summary;
                     return $response;
                 }
     
@@ -1594,6 +1558,7 @@ class FinanceAPIController extends BaseController {
                 $create_staff = '';
                 if($create_repair['status'] == 200) {
                     $create_staff = $this->createOrUpdateStaff($request_params, $finance_id);
+                    $request_params['summary'] = array_merge($request_params['summary'], $create_staff['data']['summary']);
                 }
                 
                 if(in_array($create_staff['status'],[400, 404, 422])) {
@@ -1609,12 +1574,27 @@ class FinanceAPIController extends BaseController {
                 $create_admin = '';
                 if($create_staff['status'] == 200) {
                     $create_admin = $this->createOrUpdateAdmin($request_params, $finance_id);
+                    $request_params['summary'] = array_merge($request_params['summary'], $create_admin['data']['summary']);
                 }
                 
                 if(in_array($create_admin['status'],[400, 404, 422])) {
                     //delete 
                     $this->deleteAllFinanceRecord($finance_id);
                     $response = $create_admin;
+                    return $response;
+                }
+
+                /*
+                * create Summary
+                */
+                $create_summary = '';
+                $create_summary = $this->createOrUpdateSummary($request_params, $finance_id);
+                
+                
+                if(in_array($create_summary['status'],[400, 404, 422])) {
+                    //delete 
+                    $this->deleteAllFinanceRecord($finance_id);
+                    $response = $create_summary;
                     return $response;
                 }
                 
@@ -1730,9 +1710,8 @@ class FinanceAPIController extends BaseController {
                 * create Summary
                 */
                 $create_summary = '';
-                if($check_finance['status'] == 200) {
-                    $create_summary = $this->createOrUpdateSummary($request_params, $finance_id);
-                }
+                $create_summary = $this->createOrUpdateSummary($request_params, $finance_id);
+                
                 
                 if(in_array($create_summary['status'],[400, 404, 422])) {
                     
@@ -1780,14 +1759,6 @@ class FinanceAPIController extends BaseController {
                     $response = $validate_data;
                     return $response;
                 }
-
-                // validate file summary process
-                // $validate_data = (new FinanceValidatorController())->validateSummary($request_params, true);
-           
-                // if($validate_data['status'] == 422) {
-                //     $response = $validate_data;
-                //     return $response;
-                // }
 
                 // validate file report process
                 $validate_data = (new FinanceValidatorController())->validateReport($request_params, true);
@@ -1852,6 +1823,11 @@ class FinanceAPIController extends BaseController {
                     $response = $validate_data;
                     return $response;
                 }
+
+                /**
+                 * Get Summary Attributes
+                 */
+                $request_params['summary'] = $this->getSummaryAttribute();
                 
                 
                 $finance_id = "";
@@ -1908,6 +1884,7 @@ class FinanceAPIController extends BaseController {
                 $update_utility = '';
                 if($update_income['status'] == 200) {
                     $update_utility = $this->createOrUpdateUtility($request_params, $finance_id, true);
+                    $request_params['summary'] = array_merge($request_params['summary'], $update_utility['data']['summary']);
                 }
                 
                 if(in_array($update_utility['status'],[400, 404, 422])) {
@@ -1920,7 +1897,8 @@ class FinanceAPIController extends BaseController {
                 */
                 $update_contract = '';
                 if($update_utility['status'] == 200) {
-                    $update_contract = $this->createOrUpdateContract($update_utility['data'], $finance_id, true);
+                    $update_contract = $this->createOrUpdateContract($request_params, $finance_id, true);
+                    $request_params['summary'] = array_merge($request_params['summary'], $update_contract['data']['summary']);
                 }
                 
                 if(in_array($update_contract['status'],[400, 404, 422])) {
@@ -1933,26 +1911,13 @@ class FinanceAPIController extends BaseController {
                 */
                 $update_repair = '';
                 if($update_contract['status'] == 200) {
-                    $update_repair = $this->createOrUpdateRepair($update_contract['data'], $finance_id, true);
+                    $update_repair = $this->createOrUpdateRepair($request_params, $finance_id, true);
+                    $request_params['summary'] = array_merge($request_params['summary'], $update_repair['data']['summary']);
                 }
                 
                 if(in_array($update_repair['status'],[400, 404, 422])) {
                     
                     $response = $update_repair;
-                    return $response;
-                }
-                
-                /*
-                * create Summary
-                */
-                $update_summary = '';
-                if($update_check['status'] == 200) {
-                    $update_summary = $this->createOrUpdateSummary($update_repair['data'], $finance_id, true);
-                }
-                
-                if(in_array($update_summary['status'],[400, 404, 422])) {
-                    
-                    $response = $update_summary;
                     return $response;
                 }
     
@@ -1976,6 +1941,7 @@ class FinanceAPIController extends BaseController {
                 $update_staff = '';
                 if($update_vandal['status'] == 200) {
                     $update_staff = $this->createOrUpdateStaff($request_params, $finance_id, true);
+                    $request_params['summary'] = array_merge($request_params['summary'], $update_staff['data']['summary']);
                 }
                 
                 if(in_array($update_staff['status'],[400, 404, 422])) {
@@ -1990,6 +1956,20 @@ class FinanceAPIController extends BaseController {
                 $update_admin = '';
                 if($update_staff['status'] == 200) {
                     $update_admin = $this->createOrUpdateAdmin($request_params, $finance_id, true);
+                    $request_params['summary'] = array_merge($request_params['summary'], $update_admin['data']['summary']);
+                }
+                
+                /*
+                * create Summary
+                */
+                $update_summary = '';
+                $update_summary = $this->createOrUpdateSummary($request_params, $finance_id, true);
+                
+                
+                if(in_array($update_summary['status'],[400, 404, 422])) {
+                    
+                    $response = $update_summary;
+                    return $response;
                 }
                 
                 if(in_array($update_admin['status'],[400, 404, 422])) {
@@ -2107,9 +2087,8 @@ class FinanceAPIController extends BaseController {
                 * update Summary
                 */
                 $update_summary = '';
-                if($check_finance['status'] == 200) {
-                    $update_summary = $this->createOrUpdateSummary($request_params, $finance_id, true);
-                }
+                $update_summary = $this->createOrUpdateSummary($request_params, $finance_id, true);
+                
                 
                 if(in_array($update_summary['status'],[400, 404, 422])) {
                     

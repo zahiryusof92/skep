@@ -3097,15 +3097,22 @@ class ImportController extends BaseController {
     }
 
     public function importFinanceFile() {
-        
-        
         DB::transaction(function() {
-            if (Request::ajax()) {
+            // if (Request::ajax()) {
                 $file = Input::file('import_file');
                 $file_id = Input::get('import_file_id');
                 $month = Input::get('import_month');
                 $year = Input::get('import_year');
                 $status = Input::get('status');
+                if(!empty(Input::get('import_file_no'))) {
+                    $file_no = Files::where('file_no', Input::get('import_file_no'))->first();
+                    if(empty($file_no)) {
+                        print 'empty_file_no';
+                        exit;
+                    } else {
+                        $file_id = $file_no->id; 
+                    }
+                }
                 
                 if ($file) {
 
@@ -3126,19 +3133,13 @@ class ImportController extends BaseController {
                     $data_summary_amount = [
                         'bill_air' => 0,
                         'bill_elektrik' => 0,
-                        'caruman_insuran' => 0,
                         'caruman_cukai' => 0,
-                        'fi_firma' => 0,
-                        'pembersihan' => 0,
-                        'keselamatan' => 0,
-                        'jurutera_elektrik' => 0,
-                        'mechaninal' => 0,
-                        'civil' => 0,
-                        'kawalan_serangga' => 0,
-                        'kos_pekerja' => 0,
-                        'pentadbiran' => 0,
-                        'fi_ejen_pengurusan' => 0,
-                        'lain_lain' => 0,
+                        'utility' => 0,
+                        'contract' => 0,
+                        'repair' => 0,
+                        'vandalisme' => 0,
+                        'staff' => 0,
+                        'admin' => 0,
                     ];
                                             
                     if (!empty($finance_file) && !empty($data) && $data->count()) {
@@ -3167,10 +3168,11 @@ class ImportController extends BaseController {
                                 $report_mf->fee_sebulan = (empty($report_main[0]) == false)? $report_main[0] : 0;
                                 $report_mf->unit = (empty($report_main[1]) == false)? $report_main[1] : 0;
                                 $report_mf->fee_semasa = (empty($report_main[2]) == false)? $report_main[2] : 0;
-                                $report_mf->no_akaun = (empty($report_main[3]) == false)? $report_main[3] : '';
-                                $report_mf->nama_bank = (empty($report_main[4]) == false)? $report_main[4] : '';
-                                $report_mf->baki_bank_awal = (empty($report_main[5]) == false)? $report_main[5] : 0;
-                                $report_mf->baki_bank_akhir = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_mf->tunggakan_belum_dikutip = (empty($report_main[3]) == false)? $report_main[3] : 0;
+                                $report_mf->no_akaun = (empty($report_main[4]) == false)? $report_main[4] : '';
+                                $report_mf->nama_bank = (empty($report_main[5]) == false)? $report_main[5] : '';
+                                $report_mf->baki_bank_awal = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_mf->baki_bank_akhir = (empty($report_main[7]) == false)? $report_main[7] : 0;
                                 $report_mf->save();
                                 
                             } else if($title == 'report sf' && $row->count()) {
@@ -3180,10 +3182,11 @@ class ImportController extends BaseController {
                                 $report_sf->fee_sebulan = (empty($report_main[0]) == false)? $report_main[0] : 0;
                                 $report_sf->unit = (empty($report_main[1]) == false)? $report_main[1] : 0;
                                 $report_sf->fee_semasa = (empty($report_main[2]) == false)? $report_main[2] : 0;
-                                $report_sf->no_akaun = (empty($report_main[3]) == false)? $report_main[3] : '';
-                                $report_sf->nama_bank = (empty($report_main[4]) == false)? $report_main[4] : '';
-                                $report_sf->baki_bank_awal = (empty($report_main[5]) == false)? $report_main[5] : 0;
-                                $report_sf->baki_bank_akhir = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_sf->tunggakan_belum_dikutip = (empty($report_main[3]) == false)? $report_main[3] : 0;
+                                $report_sf->no_akaun = (empty($report_main[4]) == false)? $report_main[4] : '';
+                                $report_sf->nama_bank = (empty($report_main[5]) == false)? $report_main[5] : '';
+                                $report_sf->baki_bank_awal = (empty($report_main[6]) == false)? $report_main[6] : 0;
+                                $report_sf->baki_bank_akhir = (empty($report_main[7]) == false)? $report_main[7] : 0;
                                 $report_sf->save();
 
                                 $perkara_count = $row->count(); 
@@ -3258,6 +3261,8 @@ class ImportController extends BaseController {
                                         $utility_a = $finance_file->financeUtility()->where('type',$type_a)->where('name',$utility_first_col_a)->first();
                                         
                                             if(empty($utility_a)) {
+                                                $current_sort_utility_a += 1;
+
                                                 $utility_a = new FinanceUtility();
                                                 $utility_a->finance_file_id = $finance_file->getKey();
                                                 $utility_a->type = $type_a;
@@ -3265,7 +3270,6 @@ class ImportController extends BaseController {
                                                 $utility_a->sort_no = $current_sort_utility_a;
                                                 $utility_a->is_custom = 1;
     
-                                                $current_sort_utility_a += 1;
                                             }
                                             $utility_a->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
                                             $utility_a->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
@@ -3288,6 +3292,8 @@ class ImportController extends BaseController {
                                         $utility_b = $finance_file->financeUtility()->where('type',$type_b)->where('name',$utility_first_col_b)->first();
                                         
                                             if(empty($utility_b)) {
+                                                $current_sort_utility_sf += 1;
+                                                
                                                 $utility_b = new FinanceUtility();
                                                 $utility_b->finance_file_id = $finance_file->getKey();
                                                 $utility_b->type = $type_b;
@@ -3295,7 +3301,6 @@ class ImportController extends BaseController {
                                                 $utility_b->sort_no = $current_sort_utility_sf;
                                                 $utility_b->is_custom = 1;
     
-                                                $current_sort_utility_sf += 1;
                                             }
                                             $utility_b->tunggakan = (empty($row[$i][7]) == false)? $row[$i][7] : 0;
                                             $utility_b->semasa = (empty($row[$i][8]) == false)? $row[$i][8] : 0;
@@ -3309,8 +3314,10 @@ class ImportController extends BaseController {
                                              */
                                             if(str_contains($utility_first_col_b, 'AIR')) {
                                                 $data_summary_amount['bill_air'] += ($utility_b->tunggakan + $utility_b->semasa + $utility_b->hadapan);
-                                            } else {
+                                            } else if (str_contains($utility_first_col_b, 'CUKAI TANAH')) {
                                                 $data_summary_amount['caruman_cukai'] += ($utility_b->tunggakan + $utility_b->semasa + $utility_b->hadapan);
+                                            } else {
+                                                $data_summary_amount['utility'] += ($utility_b->tunggakan + $utility_b->semasa + $utility_b->hadapan);
                                             }
                                     }
                                 }
@@ -3344,19 +3351,7 @@ class ImportController extends BaseController {
                                         /**
                                          * Summary Calculation
                                          */
-                                        if($contract_first_col == 'INSURANS') {
-                                            $data_summary_amount['caruman_insuran'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if($contract_first_col == 'FI FIRMA KOMPETEN LIF') {
-                                            $data_summary_amount['fi_firma'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['PEMBERSIHAN (KONTRAK)', 'POTONG RUMPUT/LANSKAP', 'KUTIPAN SAMPAH PUKAL'])) {
-                                            $data_summary_amount['pembersihan'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['KESELAMATAN', 'UJI PENGGERA KEBAKARAN', 'SISTEM KAD AKSES', 'SISTEM CCTV', 'UJI PERALATAN/ALAT PEMADAM KEBAKARAN'])) {
-                                            $data_summary_amount['keselamatan'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['JURUTERA ELEKTRIK'])) {
-                                            $data_summary_amount['jurutera_elektrik'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        } else if(in_array($contract_first_col, ['KAWALAN SERANGGA'])) {
-                                            $data_summary_amount['kawalan_serangga'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
-                                        }
+                                        $data_summary_amount['contract'] += ($contract->tunggakan + $contract->semasa + $contract->hadapan);
                                     }
                                 }
                                 
@@ -3393,11 +3388,10 @@ class ImportController extends BaseController {
 
                                         $repair_mf->save();
 
-                                        if(in_array($repair_first_col_mf, ['LIF', 'WAYAR BUMI', 'PENDAWAIAN ELEKTRIK', 'SUBSTATION TNB', 'GENSET'])) {
-                                            $data_summary_amount['mechaninal'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
-                                        } else if(in_array($repair_first_col_mf, ['TANGKI AIR', 'BUMBUNG', 'RAIN WATER DOWN PIPE', 'PEMBENTUNG', 'PERPAIPAN', 'TANGGA/HANDRAIL', 'JALAN', 'PAGAR', 'LONGKANG'])) {
-                                            $data_summary_amount['civil'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
-                                        }
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['repair'] += ($repair_mf->tunggakan + $repair_mf->semasa + $repair_mf->hadapan);
 
                                     }
                                     /** Repair SF */
@@ -3420,6 +3414,10 @@ class ImportController extends BaseController {
 
                                         $repair_sf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['repair'] += ($repair_sf->tunggakan + $repair_sf->semasa + $repair_sf->hadapan);
                                     }
                                 }
                                 
@@ -3455,6 +3453,10 @@ class ImportController extends BaseController {
 
                                         $vandal_mf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['vandalisme'] += ($vandal_mf->tunggakan + $vandal_mf->semasa + $vandal_mf->hadapan);
                                     }
                                     /** Vandal SF */
                                     if(empty($vandal_first_col_sf) == false) {
@@ -3476,6 +3478,10 @@ class ImportController extends BaseController {
 
                                         $vandal_sf->save();
 
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['vandalisme'] += ($vandal_sf->tunggakan + $vandal_sf->semasa + $vandal_sf->hadapan);
                                     }
                                 }
                                 
@@ -3508,7 +3514,10 @@ class ImportController extends BaseController {
 
                                         $staff->save();
 
-                                        $data_summary_amount['kos_pekerja'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['staff'] += ($staff->gaji_per_orang * $staff->bil_pekerja);
                                     }
                                 }
                                 
@@ -3539,10 +3548,10 @@ class ImportController extends BaseController {
 
                                         $admin->save();
 
-                                        $data_summary_amount['pentadbiran'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
-                                        if(in_array($admin_first_col, ['FI EJEN PENGURUSAN'])) {
-                                            $data_summary_amount['fi_ejen_pengurusan'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
-                                        }
+                                        /**
+                                         * Summary Calculation
+                                         */
+                                        $data_summary_amount['admin'] += ($admin->tunggakan + $admin->semasa + $admin->hadapan);
                                     }
                                 }
                                 
@@ -3562,9 +3571,9 @@ class ImportController extends BaseController {
                 } else {
                     print "empty_file";
                 }
-            } else {
-                print "false";
-            }
+            // } else {
+            //     print "false";
+            // }
         });
         
     }

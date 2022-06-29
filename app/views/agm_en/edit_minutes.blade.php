@@ -49,7 +49,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                                 <div class="col-md-4">
                                     <label class="input-group datepicker-only-init">
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.agm_date') }}" id="agm_date_raw" value="{{ $meeting_doc->agm_date ? date('d-m-Y', strtotime($meeting_doc->agm_date)) : '' }}"/>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.agm_date') }}" id="agm_date_raw" value="{{ $meeting_doc->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($meeting_doc->agm_date)) : '' }}"/>
                                         <span class="input-group-addon">
                                             <i class="icmn-calendar"></i>
                                         </span>
@@ -400,7 +400,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                                 <div class="col-md-4">
                                     <label class="input-group datepicker-only-init">
-                                        <input type="text" class="form-control" placeholder="Start Date" id="audit_start_raw"  value="{{ $meeting_doc->audit_start_date ? date('d-m-Y', strtotime($meeting_doc->audit_start_date)) : '' }}"/>
+                                        <input type="text" class="form-control" placeholder="Start Date" id="audit_start_raw"  value="{{ $meeting_doc->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($meeting_doc->audit_start_date)) : '' }}"/>
                                         <span class="input-group-addon">
                                             <i class="icmn-calendar"></i>
                                         </span>
@@ -414,7 +414,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                                 <div class="col-md-4">
                                     <label class="input-group datepicker-only-init">
-                                        <input type="text" class="form-control" placeholder="End Date" id="audit_end_raw"  value="{{ $meeting_doc->audit_end_date ? date('d-m-Y', strtotime($meeting_doc->audit_end_date)) : '' }}"/>
+                                        <input type="text" class="form-control" placeholder="End Date" id="audit_end_raw"  value="{{ $meeting_doc->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($meeting_doc->audit_end_date)) : '' }}"/>
                                         <span class="input-group-addon">
                                             <i class="icmn-calendar"></i>
                                         </span>
@@ -790,6 +790,116 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
 
+                            <hr/>
+
+                            <h5>{{ trans('Endorsement') }}</h5>
+                            
+                            @if ($endorse)
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        <span style="color: red; font-style: italic;">*</span>
+                                        {{ trans('app.forms.status') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select id="status" name="status" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        <option value="pending" {{ ($meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'pending' ? ' selected' : '') }}>{{ trans('app.forms.pending') }}</option>
+                                        <option value="approved" {{ ($meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'approved' ? ' selected' : '') }}>{{ trans('app.forms.approved') }}</option>
+                                        <option value="rejected" {{ ($meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'rejected' ? ' selected' : '') }}>{{ trans('app.forms.rejected') }}</option>
+                                    </select>
+                                    <div id="status_error" style="display:none;"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.reason') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" placeholder="{{ trans('app.forms.reason') }}" id="reason" name="reason" rows="5">{{ ($meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->reason : null) }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        <span style="color: red; font-style: italic;">*</span>
+                                        {{ trans('app.forms.endorsed_by') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="endorsed_by" name="endorsed_by" placeholder="{{ trans('app.forms.endorsed_by') }}" value="{{ ($meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->endorsed_by : '') }}"/>
+                                    <div id="endorsed_by_error" style="display:none;"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        <span style="color: red; font-style: italic;">*</span>
+                                        {{ trans('app.forms.endorsed_email') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" id="endorsed_email" name="endorsed_email" placeholder="{{ trans('app.forms.endorsed_email') }}" value="{{ ($meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->endorsed_email : '') }}"/>
+                                    <div id="endorsed_email_error" style="display:none;"></div>
+                                </div>
+                            </div>
+                            @else
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        {{ trans('app.forms.status') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control select2" disabled>
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        <option value="pending" {{ ($meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'pending' ? ' selected' : '') }}>{{ trans('app.forms.pending') }}</option>
+                                        <option value="approved" {{ ($meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'approved' ? ' selected' : '') }}>{{ trans('app.forms.approved') }}</option>
+                                        <option value="rejected" {{ ($meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'rejected' ? ' selected' : '') }}>{{ trans('app.forms.rejected') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.reason') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" placeholder="{{ trans('app.forms.reason') }}" rows="5" disabled>{{ ($meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->reason : null) }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        {{ trans('app.forms.endorsed_by') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.endorsed_by') }}" value="{{ ($meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->endorsed_by : '') }}" disabled/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        {{ trans('app.forms.endorsed_email') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" placeholder="{{ trans('app.forms.endorsed_email') }}" value="{{ ($meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->endorsed_email : '') }}" disabled/>
+                                </div>
+                            </div>
+                            <input type="hidden" id="status" value=""/>
+                            <input type="hidden" id="reason" value=""/>
+                            <input type="hidden" id="endorsed_by" value=""/>
+                            <input type="hidden" id="endorsed_email" value=""/>
+                            @endif
+
                             <div class="form-actions">
                                 <?php if ($update_permission == 1) { ?>
                                     <input type="hidden" id="agm_file_url" value="{{ $meeting_doc->agm_file_url }}"/>
@@ -878,7 +988,11 @@ function editMinutes() {
             integrity_pledge_url = $("#integrity_pledge_url").val(),
             report_audited_financial_url = $("#report_audited_financial_url").val(),
             house_rules_url = $("#house_rules_url").val(),
-            remarks = $("#remarks").val();
+            remarks = $("#remarks").val(),
+            status = $("#status").val(),
+            reason = $("#reason").val(),
+            endorsed_by = $("#endorsed_by").val(),
+            endorsed_email = $("#endorsed_email").val();
 
     if (document.getElementById('agm').checked) {
         agm = 1;
@@ -925,6 +1039,24 @@ function editMinutes() {
         error = 1;
     }
 
+    if ('{{ $endorse }}') {
+        if (status.trim() == "") {
+            $("#status_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Status"]) }}</span>');
+            $("#status_error").css("display", "block");
+            error = 1;
+        }
+        if (endorsed_by.trim() == "") {
+            $("#endorsed_by_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Endorsed By"]) }}</span>');
+            $("#endorsed_by_error").css("display", "block");
+            error = 1;
+        }
+        if (endorsed_email.trim() == "") {
+            $("#endorsed_email_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Endorsed E-mail"]) }}</span>');
+            $("#endorsed_email_error").css("display", "block");
+            error = 1;
+        }
+    }
+
     if (error == 0) {
         $.ajax({
             url: "{{ URL::action('AgmController@submitEditMinutes') }}",
@@ -967,6 +1099,10 @@ function editMinutes() {
                 report_audited_financial_url: report_audited_financial_url,
                 house_rules_url: house_rules_url,
                 remarks: remarks,
+                status: status,
+                reason: reason,
+                endorsed_by: endorsed_by,
+                endorsed_email: endorsed_email,
                 id: '{{ \Helper\Helper::encode($meeting_doc->id) }}'
             },
             success: function (data) {

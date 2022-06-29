@@ -355,12 +355,14 @@
                                                 </div>
                                                 <div class="form-actions">
                                                     <button type="button" class="btn btn-own" id="submit_button_draft" onclick="submitDraft()">{{ trans('app.buttons.accept') }}</button>
+                                                    <button type="button" class="btn btn-danger" id="reject_button" onclick="submitReject()">{{ trans('app.buttons.reject') }}</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </section>
 
+                                <div id="modal-content"></div>
                                 <script>
                                     $(function() { 
                                         if("{{$house_scheme->draft->is_liquidator}}" > 0) {
@@ -407,6 +409,21 @@
                                                     }
                                                 }
                                             });
+                                        });
+                                    }
+
+                                    function submitReject() {
+                                        $.ajax({
+                                            url: "{{ route('file.draft.reject.create') }}",
+                                            type: "GET",
+                                            data: {
+                                                file_id: "{{ $file->id}}",
+                                                type: "house_scheme"
+                                            },
+                                            success: function (data) {
+                                                $("#modal-content").html(data);
+                                                $("#file-reject").modal("show");
+                                            }
                                         });
                                     }
                                 </script>
