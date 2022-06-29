@@ -12,6 +12,7 @@ class OtherDetailsDraft extends Eloquent {
     protected $fillable = [
         'file_id',
         'reference_id',
+        'original_price',
     ];
 
 }

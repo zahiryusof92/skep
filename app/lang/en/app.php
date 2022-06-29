@@ -671,6 +671,7 @@ return array(
         'reason' => 'Reason',
         'endorsed_by' => 'Endorsed By',
         'endorsed_email' => 'Endorsed E-mail',
+        'original_price' => 'Original Price',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

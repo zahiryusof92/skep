@@ -11,6 +11,7 @@ class OtherDetails extends Eloquent {
      */
     protected $fillable = [
         'file_id',
+        'original_price',
     ];
 
     public static function tnbLists() {
