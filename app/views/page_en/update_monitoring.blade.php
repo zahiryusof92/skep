@@ -1172,9 +1172,9 @@ foreach ($user_permission as $permission) {
             $("#audit_end_edit").val(audit_end_date);
         }
         if (audit_end_date_raw == "") {
-            $("#audit_end_date_raw").val("");
+            $("#audit_end_edit_raw").val("");
         } else {
-            $("#audit_end_date_raw").val(audit_end_date_raw);
+            $("#audit_end_edit_raw").val(audit_end_date_raw);
         }
         $("#audit_report_file_url_edit").val(audit_report_file_url);
         $("#letter_integrity_url_edit").val(letter_integrity_url);

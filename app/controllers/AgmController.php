@@ -1,6 +1,8 @@
 <?php
 
+use Carbon\Carbon;
 use Helper\Helper;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 
 class AgmController extends BaseController {
@@ -1429,17 +1431,17 @@ class AgmController extends BaseController {
                 } else {
                     $strata_name = '<i>(not set)</i>';
                 }
-                if ($agm_details->agm_date == "0000-00-00") {
+                if (empty($agm_details->agm_date) || $agm_details->agm_date == "0000-00-00") {
                     $date_agm = '';
                 } else {
                     $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
                 }
-                if ($agm_details->audit_start_date == "0000-00-00") {
+                if (empty($agm_details->audit_start_date) || $agm_details->audit_start_date == "0000-00-00") {
                     $date_audit_start = '';
                 } else {
                     $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
                 }
-                if ($agm_details->audit_end_date == "0000-00-00") {
+                if (empty($agm_details->audit_end_date) || $agm_details->audit_end_date == "0000-00-00") {
                     $date_audit_end = '';
                 } else {
                     $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
@@ -1495,6 +1497,15 @@ class AgmController extends BaseController {
                     $status10 = '<i class="icmn-checkmark"></i>';
                 }
 
+                $endorse = trans('app.forms.pending');
+                if ($agm_details->meetingDocumentStatus) {
+                    if ($agm_details->meetingDocumentStatus->status == 'approved') {
+                        $endorse = trans('app.forms.approved');
+                    } else if ($agm_details->meetingDocumentStatus->status == 'rejected') {
+                        $endorse = trans('app.forms.rejected');
+                    }
+                }
+
                 $data_raw = array(
                     $file_no,
                     $strata_name,
@@ -1515,6 +1526,7 @@ class AgmController extends BaseController {
                     . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
                     date('d-M-Y', strtotime($agm_details->updated_at)),
+                    $endorse,
                     $button
                 );
 
@@ -1673,6 +1685,35 @@ class AgmController extends BaseController {
             $success = $agm_detail->save();
 
             if ($success) {
+                $file = $agm_detail->files;
+
+                if ($file) {
+                    $company = $file->company;
+
+                    if ($company) {
+                        $receipants = User::where('company_id', $company->id)
+                            ->where('is_active', 1)
+                            ->where('is_deleted', 0)
+                            ->get();
+
+                        if ($receipants) {
+                            $delay = 0;
+                            $incrementDelay = 2;
+
+                            foreach ($receipants as $receipant) {
+                                if ($receipant->isCOB() && !empty($receipant->email)) {
+                                    /** Send E-mail */
+                                    Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.new_submission_cob', array('full_name' => $receipant->full_name, 'file_no' => $file->file_no, 'id' => $agm_detail->id), function ($message) use ($receipant) {
+                                        $message->to($receipant->email, $receipant->full_name)->subject('New Submission Minutes of Meeting');
+                                    });
+                                }
+
+                                $delay += $incrementDelay;
+                            }
+                        }
+                    }
+                }
+
                 # Audit Trail
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
@@ -1689,6 +1730,9 @@ class AgmController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $meeting_doc = MeetingDocument::findOrFail(Helper::decode($id));
+
+        $endorse = ((Auth::user()->isSuperadmin() || Auth::user()->isCOB()) ? true : false);
+
         if ($meeting_doc) {
             if (!Auth::user()->getAdmin()) {
                 if (!empty(Auth::user()->file_id)) {
@@ -1723,7 +1767,8 @@ class AgmController extends BaseController {
                 'user_permission' => $user_permission,
                 'meeting_doc' => $meeting_doc,
                 'files' => $files,
-                'image' => ""
+                'image' => "",
+                'endorse' => $endorse,
             );
 
             return View::make('agm_en.edit_minutes', $viewData);
@@ -1772,6 +1817,10 @@ class AgmController extends BaseController {
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $remarks = $data['remarks'];
+            $status = $data['status'];
+            $reason = $data['reason'];
+            $endorsed_by = $data['endorsed_by'];
+            $endorsed_email = $data['endorsed_email'];
 
             $agm_detail = MeetingDocument::findOrFail($id);
             if ($agm_detail) {
@@ -1879,9 +1928,36 @@ class AgmController extends BaseController {
                 $success = $agm_detail->save();
 
                 if ($success) {
-                    # Audit Trail
                     $files = Files::find($agm_detail->file_id);
-                    if(!empty($audit_fields_changed)) {
+
+                    /** Added status */
+                    if (!empty($status)) {
+                        MeetingDocumentStatus::updateOrCreate(
+                            [
+                                'meeting_document_id' => $agm_detail->id,
+                                'status' => $status,
+                                'is_deleted' => false,
+                            ],
+                            [
+                                'user_id' => Auth::user()->id,
+                                'reason' => $reason,
+                                'endorsed_by' => $endorsed_by,
+                                'endorsed_email' => $endorsed_email,
+                            ]
+                        );
+
+                        if ($files->jmb) {
+                            $receipant = $files->jmb;
+                            /** Send E-mail */
+                            $delay = 0;
+                            Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.endorsement', array('full_name' => $receipant->full_name, 'file_no' => $files->file_no, 'status' => $status, 'id' => $agm_detail->id), function ($message) use ($receipant) {
+                                $message->to($receipant->email, $receipant->full_name)->subject('Endorsement Minutes of Meeting');
+                            });
+                        }
+                    }
+
+                    # Audit Trail                   
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
                     }

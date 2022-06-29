@@ -3148,6 +3148,8 @@ class AdminController extends BaseController {
                             data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
                             data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
                             data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
+                            data-audit_start_date_raw="' . ($agm_details->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_start_date)) : '') . '"
+                            data-audit_end_date_raw="' . ($agm_details->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_end_date)) : '') . '"
                             data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
                                 <i class="fa fa-pencil"></i>
                             </button>
@@ -3272,6 +3274,8 @@ class AdminController extends BaseController {
                             data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
                             data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
                             data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
+                            data-audit_start_date_raw="' . ($agm_details->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_start_date)) : '') . '"
+                            data-audit_end_date_raw="' . ($agm_details->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_end_date)) : '') . '"
                             data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
                                 <i class="fa fa-pencil"></i>
                             </button>

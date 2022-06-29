@@ -668,6 +668,9 @@ return array(
         'section' => 'Section',
         'grains' => 'Grains',
         'overall_total' => 'Overall Total',
+        'reason' => 'Reason',
+        'endorsed_by' => 'Endorsed By',
+        'endorsed_email' => 'Endorsed E-mail',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
