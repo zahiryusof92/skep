@@ -3261,6 +3261,8 @@ class ImportController extends BaseController {
                                         $utility_a = $finance_file->financeUtility()->where('type',$type_a)->where('name',$utility_first_col_a)->first();
                                         
                                             if(empty($utility_a)) {
+                                                $current_sort_utility_a += 1;
+
                                                 $utility_a = new FinanceUtility();
                                                 $utility_a->finance_file_id = $finance_file->getKey();
                                                 $utility_a->type = $type_a;
@@ -3268,7 +3270,6 @@ class ImportController extends BaseController {
                                                 $utility_a->sort_no = $current_sort_utility_a;
                                                 $utility_a->is_custom = 1;
     
-                                                $current_sort_utility_a += 1;
                                             }
                                             $utility_a->tunggakan = (empty($row[$i][1]) == false)? $row[$i][1] : 0;
                                             $utility_a->semasa = (empty($row[$i][2]) == false)? $row[$i][2] : 0;
@@ -3291,6 +3292,8 @@ class ImportController extends BaseController {
                                         $utility_b = $finance_file->financeUtility()->where('type',$type_b)->where('name',$utility_first_col_b)->first();
                                         
                                             if(empty($utility_b)) {
+                                                $current_sort_utility_sf += 1;
+                                                
                                                 $utility_b = new FinanceUtility();
                                                 $utility_b->finance_file_id = $finance_file->getKey();
                                                 $utility_b->type = $type_b;
@@ -3298,7 +3301,6 @@ class ImportController extends BaseController {
                                                 $utility_b->sort_no = $current_sort_utility_sf;
                                                 $utility_b->is_custom = 1;
     
-                                                $current_sort_utility_sf += 1;
                                             }
                                             $utility_b->tunggakan = (empty($row[$i][7]) == false)? $row[$i][7] : 0;
                                             $utility_b->semasa = (empty($row[$i][8]) == false)? $row[$i][8] : 0;
