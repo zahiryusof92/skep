@@ -1,6 +1,7 @@
 <?php
 
-class MeetingDocument extends Eloquent {
+class MeetingDocument extends Eloquent
+{
 
     protected $table = 'meeting_document';
 
@@ -13,12 +14,18 @@ class MeetingDocument extends Eloquent {
         'file_id'
     ];
 
-    public function files() {
+    public function files()
+    {
         return $this->belongsTo('Files', 'file_id');
     }
-    
-    public function draft() {
+
+    public function draft()
+    {
         return $this->hasOne('MeetingDocumentDraft', 'reference_id');
     }
 
+    public function meetingDocumentStatus()
+    {
+        return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->latest();
+    }
 }

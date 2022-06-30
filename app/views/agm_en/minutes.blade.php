@@ -62,13 +62,14 @@ foreach ($user_permission as $permission) {
                                         <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.name') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.agm_date') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.meeting') }}</th>
+                                        <th style="width:15%;">{{ trans('app.forms.meeting') }}</th>
                                         <th style="width:5%;"></th>
-                                        <th style="width:20%;">{{ trans('app.forms.copy_list') }}</th>
+                                        <th style="width:15%;">{{ trans('app.forms.copy_list') }}</th>
                                         <th style="width:5%;"></th>
                                         <th style="width:20%;">{{ trans('app.forms.financial_report') }}</th>
                                         <th style="width:5%;"></th>
                                         <th style="width:10%;">{{ trans('app.forms.recent_update') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                         <?php if ($update_permission == 1) { ?>
                                             <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                             <?php } ?>
@@ -92,12 +93,12 @@ foreach ($user_permission as $permission) {
         var oTable = $('#financial_report_list').DataTable({
             "sAjaxSource": "{{URL::action('AgmController@getMinutes')}}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-            "order": [[2, "asc"]],
+            "order": [[2, "desc"]],
             "responsive": false,
             "aoColumnDefs": [
                 {
                     "bSortable": false,
-                    "aTargets": [2, 3, 4, 5, 6, -1]
+                    "aTargets": [3, 4, 5, 6, -1]
                 }
             ]
         });

@@ -12,7 +12,7 @@ return array(
       |
      */
 
-    'debug' => getenv('app_debug'),
+    'debug' => getenv('app_debug') ?: false,
     /*
       |--------------------------------------------------------------------------
       | Application URL

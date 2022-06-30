@@ -10,6 +10,12 @@
   | and give it the Closure to execute when that URI is requested.
   |
  */
+
+/**
+ * Route for testing
+ */
+Route::get('/test/testMail', 'TestController@testMail');
+
 /*
  * LPHS REPORT START
  */
