@@ -23,6 +23,42 @@ class FileController extends BaseController
 		$this->api_domain = 'https://ecob.mps.gov.my/api/v4/';
 	}
 
+	public function get() {
+		$request = Request::all();
+		$cob = Company::where('short_name', $request['council'])->first();
+		if($cob) {
+			$options = [];
+			$files = Files::with(['strata'])
+						->where('company_id', $cob->id)
+						->where('is_deleted', false)
+						->orderBy('file_no', 'asc')
+						->chunk(300, function($models) use(&$options)
+						{
+							foreach ($models as $key => $model)
+							{
+								array_push($options, [
+									'id' => $key + 1, 
+									'strata' => $model->strata->name? $model->strata->name : "-", 
+									'file_no' => $model->file_no]);
+							}
+						});
+			
+			$response = [
+				'status' => true,
+				'data' => $options
+			];
+			
+			return Response::json($response);
+		}
+
+		$response = [
+			'status' => false,
+			'message' => "Council Not Found!"
+		];
+
+		return Response::json($response, 404);
+	}
+
 	public function files()
 	{
 		$request = Request::all();
