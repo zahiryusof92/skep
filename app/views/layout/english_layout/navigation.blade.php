@@ -154,7 +154,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
             
-            @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && Session::get('admin_cob') != 2) || (Auth::user()->company_id != 2 && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && Auth::user()->company_id != 2)))
+            @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
             <li class="left-menu-list-link" id="defect_list">
                 <a class="left-menu-link" href="{{ URL::action('AdminController@defect') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/complaint.png')}}"/>
@@ -434,7 +434,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && Session::get('admin_cob') != 2) || (Auth::user()->company_id != 2 && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && Auth::user()->company_id != 2)))
+                    @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
                     <li id="defect_category_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@defectCategory')}}">
                             {{ trans('app.menus.master.defect_category') }}
@@ -544,7 +544,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && Session::get('admin_cob') != 2) || (Auth::user()->company_id != 2 && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && Auth::user()->company_id != 2)))
+                    @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
                     <li id="complaint_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@complaint') }}">
                             {{ trans('app.menus.reporting.complaint') }}
@@ -737,7 +737,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(9))
             <!-- Summon Start -->
             @if (AccessGroup::hasAccess(61))
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && Auth::user()->isJMB())
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))) && Auth::user()->isJMB())
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
@@ -765,7 +765,7 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
 
-            @if(!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")
+            @if(!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))
             <li id="my_point_list">
                 <a class="left-menu-link" href="{{ route('myPoint.index') }}">
                     <i class="left-menu-link-icon fa fa-money"><!-- --></i>
@@ -774,7 +774,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
             @endif
-            @if ((Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer() || Auth::user()->isCOBManager()) && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")))
+            @if ((Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isLawyer() || Auth::user()->isCOBManager()) && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))))
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
@@ -811,7 +811,7 @@ if (!Auth::user()->getAdmin()) {
             @endif
             
             @if (AccessGroup::hasAccess(61))
-            @if((Auth::user()->isJMB() && Auth::user()->getCOB->short_name == "MPS") || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid() && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")))
+            @if((Auth::user()->isJMB() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ'])) || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid() && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))))
                 @if(!Auth::user()->isCOBPaid())
                 <li id="transaction_list">
                     <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
