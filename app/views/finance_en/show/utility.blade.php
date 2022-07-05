@@ -111,7 +111,7 @@ $old_prefix3 = 'utilab_old_';
                             <th><input type="currency" id="{{ $old_prefix2 . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ number_format($totalb_tunggakan, 2, '.', '') }}" readonly=""></th>
                             <th><input type="currency" id="{{ $old_prefix2 . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ number_format($totalb_semasa, 2, '.', '') }}" readonly=""></th>
                             <th><input type="currency" id="{{ $old_prefix2 . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ number_format($totalb_hadapan, 2, '.', '') }}" readonly=""></th>
-                            <th><input type="currency" id="{{ $old_prefix2 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ number_format($totalb_income, 2, '.', '') }}" readonly=""></th>
+                            <th><input type="currency" id="{{ $old_prefix2 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ number_format($totalb_all, 2, '.', '') }}" readonly=""></th>
                             <th><input type="currency" id="{{ $old_prefix2 . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ number_format($totalb_tertunggak, 2, '.', '') }}" readonly=""></th>
                             <td>&nbsp;</td>
                         </tr>
