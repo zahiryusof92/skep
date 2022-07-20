@@ -1026,6 +1026,7 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('strataName', 'ExportController@strataName');
     Route::get('reporting', 'ExportController@reporting');
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
+    Route::get('tunggakanFinance', 'ExportController@tunggakanFinance');
 });
 
 
@@ -1120,13 +1121,17 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
 });
 
 //API route
-Route::post('api/addNewFinanceFile', 'FinanceAPIController@addNewFinance')->before(['auth.basic', 'authMember']);
-Route::post('api/addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck')->before(['auth.basic', 'authMember']);
-Route::post('api/addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary')->before(['auth.basic', 'authMember']);
-Route::post('api/updateFinanceFile', 'FinanceAPIController@updateFinance')->before(['auth.basic', 'authMember']);
-Route::post('api/updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck')->before(['auth.basic', 'authMember']);
-Route::post('api/updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary')->before(['auth.basic', 'authMember']);
-Route::delete('api/deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord')->before(['auth.basic', 'authMember']);
+Route::group(array('prefix' => 'api', 'before' => ['auth.basic', 'authMember']), function() {
+    Route::post('addNewFinanceFile', 'FinanceAPIController@addNewFinance');
+    // Route::post('addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck');
+    // Route::post('addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary');
+    Route::post('updateFinanceFile', 'FinanceAPIController@updateFinance');
+    // Route::post('updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck');
+    // Route::post('updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary');
+    // Route::delete('deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord');
+
+    Route::post('files/get', 'Api\FileController@get');
+});
 
 /*
  * Cronjob

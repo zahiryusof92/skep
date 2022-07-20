@@ -130,7 +130,7 @@ $prefix3 = 'utilab_';
                             <th><input type="currency" id="{{ $prefix2 . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $totalb_tunggakan }}" readonly=""></th>
                             <th><input type="currency" id="{{ $prefix2 . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $totalb_semasa }}" readonly=""></th>
                             <th><input type="currency" id="{{ $prefix2 . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $totalb_hadapan }}" readonly=""></th>
-                            <th><input type="currency" id="{{ $prefix2 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $totalb_income }}" readonly=""></th>
+                            <th><input type="currency" id="{{ $prefix2 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $totalb_all }}" readonly=""></th>
                             <th><input type="currency" id="{{ $prefix2 . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ $totalb_tertunggak }}" readonly=""></th>
                             <td>&nbsp;</td>
                         </tr>
@@ -141,7 +141,7 @@ $prefix3 = 'utilab_';
                             <th><input type="currency" id="{{ $prefix3 . 'total_tunggakan' }}" class="form-control form-control-sm text-right" value="{{ $total_tunggakan + $totalb_tunggakan }}" readonly=""></th>
                             <th><input type="currency" id="{{ $prefix3 . 'total_semasa' }}" class="form-control form-control-sm text-right" value="{{ $total_semasa + $totalb_semasa }}" readonly=""></th>
                             <th><input type="currency" id="{{ $prefix3 . 'total_hadapan' }}" class="form-control form-control-sm text-right" value="{{ $total_hadapan + $totalb_hadapan }}" readonly=""></th>
-                            <th><input type="currency" id="{{ $prefix3 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $total_income + $totalb_income }}" readonly=""></th>
+                            <th><input type="currency" id="{{ $prefix3 . 'total_all' }}" class="form-control form-control-sm text-right" value="{{ $total_income + $totalb_all }}" readonly=""></th>
                             <th><input type="currency" id="{{ $prefix3 . 'total_tertunggak' }}" class="form-control form-control-sm text-right" value="{{ $total_tertunggak + $totalb_tertunggak }}" readonly=""></th>
                             <td>&nbsp;</td>
                         </tr>
