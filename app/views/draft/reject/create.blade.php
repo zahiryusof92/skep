@@ -38,6 +38,7 @@
                 type: "POST",
                 data: formData,
                 beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
                     $("#loading").css("display", "inline-block");
                     $("#modal_submit_button").attr("disabled", "disabled");
                     $("#modal_cancel_button").attr("disabled", "disabled");
@@ -73,6 +74,7 @@
                     }
                 },
                 complete: function() {
+                    $.unblockUI();
                     $("#loading").css("display", "none");
                     $("#modal_submit_button").removeAttr("disabled");
                     $("#modal_cancel_button").removeAttr("disabled");

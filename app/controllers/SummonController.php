@@ -1,8 +1,10 @@
 <?php
 
 use Helper\Helper;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Redirect;
 
 class SummonController extends \BaseController {
 
@@ -12,6 +14,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function index() {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB()) {
             if (Request::ajax()) {
                 $model = Summon::where('user_id', Auth::user()->id)->where('is_deleted', 0)->orderBy('created_at','desc');
@@ -218,7 +221,7 @@ class SummonController extends \BaseController {
                                 })
                                 ->addColumn('action', function ($model) {
                                     $btn = '';
-                                    $btn .= '<a href="' . route('summon.show', $model->id) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
+                                    $btn .= '<a href="' . route('summon.show', Helper::encode($model->id)) . '" class="btn btn-xs btn-primary margin-inline" title="View"><i class="fa fa-eye"></i></a>';
 
                                     return $btn;
                                 })
@@ -252,6 +255,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function paidListing() {
+        $this->checkAvailableAccess();
         if (Auth::user()->isHR() || Auth::user()->isCOBManager() || Auth::user()->getAdmin()) {
             if (Request::ajax()) {
                 $model = SummonConfirmed::join('company', 'summon_confirmed.company_id', '=', 'company.id')
@@ -335,11 +339,15 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function create($type) {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB() && Auth::user()->file_id) {
             $file = Files::find(Auth::user()->file_id);
             if ($file) {
                 $unit_no = Buyer::unitNoList($file->id);
                 $category = $file->strata->categories;
+                if(empty($category)) {
+                    App::abort(404);
+                }
 
                 if ($type == Summon::LETTER_OF_REMINDER) {
                     $durationOverdue = Summon::durationOverdue();
@@ -381,6 +389,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function store() {
+        $this->checkAvailableAccess();
         $data = Input::all();
 
         $rules = array(
@@ -505,6 +514,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function show($id) {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB() && Auth::user()->file_id) {
             $file = Files::find(Auth::user()->file_id);
             if ($file) {
@@ -650,6 +660,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function update($id) {
+        $this->checkAvailableAccess();
         $data = Input::all();
 
         if (Auth::user()->isLawyer() || Auth::user()->isCOBManager()) {
@@ -739,6 +750,7 @@ class SummonController extends \BaseController {
      * @return Response
      */
     public function destroy($id) {
+        $this->checkAvailableAccess();
         $model = Summon::findOrFail(Helper::decode($id));
         if ($model) {
             $model->status = Summon::CANCELED;
@@ -787,6 +799,7 @@ class SummonController extends \BaseController {
     }
 
     public function purchaser() {
+        $this->checkAvailableAccess();
         $result = array();
 
         if (Request::ajax()) {
@@ -815,6 +828,7 @@ class SummonController extends \BaseController {
     }
 
     public function orders() {
+        $this->checkAvailableAccess();
         $data = Input::all();
 
         $rules = array(
@@ -855,6 +869,7 @@ class SummonController extends \BaseController {
     }
 
     public function payment() {
+        $this->checkAvailableAccess();
         $eligible_pay = true;
 
         $model = Orders::find(Session::get('orderID'));
@@ -888,6 +903,7 @@ class SummonController extends \BaseController {
     }
 
     public function submitPay() {
+        $this->checkAvailableAccess();
         $data = Input::all();
 
         $model = Orders::findOrFail(Helper::decode($data['order_id']));
@@ -1005,8 +1021,16 @@ class SummonController extends \BaseController {
                         if($data['payment_gateway'] == Config::get('constant.module.payment.gateway.paydibs.slug')) {
                             return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
                         } else {
-                            $redirect_url = $payment_params->item->url;
-                            return Redirect::to($redirect_url);
+                            // direct sent to success function
+                            if(getenv('payment_gateway')) {
+                                // dd($payment_params);
+                                $redirect_url = $payment_params->item->url;
+                                return Redirect::to($redirect_url);
+                            } else {
+                                if($payment_params->status == PaymentTransaction::SUCCESS) {
+                                    return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
+                                }
+                            }
                             
                         }
                     }
@@ -1018,6 +1042,7 @@ class SummonController extends \BaseController {
     }
 
     public function uploadPayment() {
+        $this->checkAvailableAccess();
         $data = Input::all();
 
         $rules = array(
@@ -1090,6 +1115,12 @@ class SummonController extends \BaseController {
             
         }
 
+    }
+
+    private function checkAvailableAccess() {
+        if(!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && !in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))) {
+            App::abort(404);
+        }
     }
 
 }

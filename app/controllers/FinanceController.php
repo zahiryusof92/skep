@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use Enums\AdminStatus;
+use Services\NotificationService;
 
 class FinanceController extends BaseController {
 
@@ -65,397 +67,613 @@ class FinanceController extends BaseController {
                     $finance->is_active = 1;
                     $success = $finance->save();
 
+                    $previous_file = '';
+                    if($month > 1) {
+                        $previous_month = $month - 1;
+                        $previous_file = Finance::with(['financeCheck', 'financeSummary', 'financeContract', 'financeIncome', 'financeAdmin',
+                                                'financeRepair', 'financeReportPerbelanjaan', 'financeReport', 'financeReportExtra', 
+                                                'financeStaff', 'financeUtility', 'financeVandal'])
+                                                ->where('file_id', $file_id)
+                                                ->where('year', $year)
+                                                ->where('month', $previous_month)
+                                                ->where('is_deleted', 0)
+                                                ->first();
+                    } else {
+                        $previous_year = $year - 1;
+                        $previous_file = Finance::with(['financeCheck', 'financeSummary', 'financeContract', 'financeIncome', 'financeAdmin',
+                                                'financeRepair', 'financeReportPerbelanjaan', 'financeReport', 'financeReportExtra', 
+                                                'financeStaff', 'financeUtility', 'financeVandal'])
+                                                ->where('file_id', $file_id)
+                                                ->where('year', $previous_year)
+                                                ->where('month', 12)
+                                                ->where('is_deleted', 0)
+                                                ->first();
+                    }
+
                     if ($success) {
                         /*
                          * create Check
                          */
                         $check = new FinanceCheck();
                         $check->finance_file_id = $finance->id;
-                        $check->is_active = 1;
+                        $check->is_active = 0;
+                        // if(!empty($previous_file)) {
+                        //     /** Clone Finance Check */
+                        //     $check->date = $previous_file->financeCheck->date;
+                        //     $check->name = $previous_file->financeCheck->name;
+                        //     $check->position = $previous_file->financeCheck->position;
+                        //     $check->remarks = $previous_file->financeCheck->remarks;
+                        // }
                         $createCheck = $check->save();
 
                         if ($createCheck) {
                             /*
                              * create Summary
                              */
-                            $summary_keys = $this->module['finance']['tabs']['summary']['only'];
-                            $messages = Config::get('constant.others.messages');
+                            // if(!empty($previous_file)) {
+                            //     /** Clone Finance Summary */
+                            //     $previous_summary = $previous_file->financeSummary;
+                            //     foreach($previous_summary as $summary) {
+                            //         $summary = new FinanceSummary();
+                            //         $summary->finance_file_id = $finance->id;
+                            //         $summary->name = $previous_summary->name;
+                            //         $summary->summary_key = $previous_summary->summary_key;
+                            //         $summary->amount = $previous_summary->amount;
+                            //         $summary->sort_no = $previous_summary->sort_no;
+                            //         $summary->save();
+                            //     }
+                            // } else {
+                                $summary_keys = $this->module['finance']['tabs']['summary']['only'];
+                                $messages = Config::get('constant.others.messages');
+                                $countSum = 1;
 
-                            $countSum = 1;
-                            foreach ($summary_keys as $key) {
-                                $summary = new FinanceSummary();
-                                $summary->finance_file_id = $finance->id;
-                                $summary->name = $messages[$key];
-                                $summary->summary_key = $key;
-                                $summary->amount = 0;
-                                $summary->sort_no = $countSum;
-                                $summary->save();
+                                foreach ($summary_keys as $key) {
+                                    $summary = new FinanceSummary();
+                                    $summary->finance_file_id = $finance->id;
+                                    $summary->name = $messages[$key];
+                                    $summary->summary_key = $key;
+                                    $summary->amount = 0;
+                                    $summary->sort_no = $countSum;
+                                    $summary->save();
+    
+                                    $countSum++;
+                                }
 
-                                $countSum++;
-                            }
+                            // }
 
-                            /*
-                             * create MF Report
-                             */
-                            $reportMF = new FinanceReport();
-                            $reportMF->finance_file_id = $finance->id;
-                            $reportMF->type = 'MF';
-                            $createMF = $reportMF->save();
+                            
+                            /** Clone Finance Report */
+                            if(!empty($previous_file)) {
+                                $previous_report = $previous_file->financeReport;
+                                if($previous_report->count()) {
+                                    foreach($previous_report as $p_report) {
+                                        $report = new FinanceReport();
+                                        $report->finance_file_id = $finance->id;
+                                        $report->type = $p_report->type;
+                                        $report->fee_sebulan = $p_report->fee_sebulan;
+                                        $report->unit = $p_report->unit;
+                                        $report->fee_semasa = $p_report->fee_semasa;
+                                        $report->tunggakan_belum_dikutip = $p_report->tunggakan_belum_dikutip;
+                                        $report->no_akaun = $p_report->no_akaun;
+                                        $report->nama_bank = $p_report->nama_bank;
+                                        $report->baki_bank_akhir = $p_report->baki_bank_akhir;
+                                        $report->baki_bank_awal = $p_report->baki_bank_awal;
+                                        $report->save();
+                                    }
+                                }
+                                
+                                /** Clone Finance Report Extra */
+                                $previous_mf_report_extra = $previous_file->financeReportExtra;
+                                if($previous_mf_report_extra->count()) {
+                                    foreach($previous_mf_report_extra as $p_extra) {
+                                        $extra = new FinanceReportExtra();
+                                        $extra->finance_file_id = $finance->id;
+                                        $extra->type = $p_extra->type;
+                                        $extra->fee_sebulan = $p_extra->fee_sebulan;
+                                        $extra->unit = $p_extra->unit;
+                                        $extra->fee_semasa = $p_extra->fee_semasa;
+                                        $extra->save();
+                                    }
+                                }
+                                /** Clone Finance Report Perbelanjaan */
+                                // $previous_report_perbelanjaan = $previous_file->financeReportPerbelanjaan;
+                                // if(!empty($previous_file) && $previous_report_perbelanjaan->count()) {
+                                //     foreach ($previous_report_perbelanjaan as $p_perbelanjaan) {
+                                //         $perbelanjaan = new FinanceReportPerbelanjaan();
+                                //         $perbelanjaan->type = $p_perbelanjaan->type;
+                                //         $perbelanjaan->finance_file_id = $p_perbelanjaan->finance_file_id;
+                                //         $perbelanjaan->name = $p_perbelanjaan->name;
+                                //         $perbelanjaan->report_key = $p_perbelanjaan->report_key;
+                                //         $perbelanjaan->amount = $p_perbelanjaan->amount;
+                                //         $perbelanjaan->sort_no = $p_perbelanjaan->sort_no;
+                                //         $perbelanjaan->save();
+                                //     }
 
-                            if ($createMF) {
-                                $tableFieldMF = [
-                                    'utility' => 'UTILITI (BAHAGIAN A SAHAJA)',
-                                    'contract' => 'PENYENGGARAAN',
-                                    'repair' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN',
-                                    'vandalisme' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN (VANDALISME)',
-                                    'staff' => 'PEKERJA',
-                                    'admin' => 'PENTADBIRAN'
-                                ];
+                                // }
+                            } else {
+                                /*
+                                * create MF Report
+                                */
+                                $reportMF = new FinanceReport();
+                                $reportMF->finance_file_id = $finance->id;
+                                $reportMF->type = 'MF';
+                                $createMF = $reportMF->save();
 
-                                $count = 1;
-                                foreach ($tableFieldMF as $key => $name) {
-                                    $reportMF = new FinanceReportPerbelanjaan();
-                                    $reportMF->type = 'MF';
-                                    $reportMF->finance_file_id = $finance->id;
-                                    $reportMF->name = $name;
-                                    $reportMF->report_key = $key;
-                                    $reportMF->amount = 0;
-                                    $reportMF->sort_no = $count;
-                                    $reportMF->save();
+                                if ($createMF) {
+                                    $tableFieldMF = [
+                                        'utility' => 'UTILITI (BAHAGIAN A SAHAJA)',
+                                        'contract' => 'PENYENGGARAAN',
+                                        'repair' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN',
+                                        'vandalisme' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN (VANDALISME)',
+                                        'staff' => 'PEKERJA',
+                                        'admin' => 'PENTADBIRAN'
+                                    ];
+    
+                                    $count = 1;
+                                    foreach ($tableFieldMF as $key => $name) {
+                                        $reportMF = new FinanceReportPerbelanjaan();
+                                        $reportMF->type = 'MF';
+                                        $reportMF->finance_file_id = $finance->id;
+                                        $reportMF->name = $name;
+                                        $reportMF->report_key = $key;
+                                        $reportMF->amount = 0;
+                                        $reportMF->sort_no = $count;
+                                        $reportMF->save();
+    
+                                        $count++;
+                                    }
+                                }
 
-                                    $count++;
+                                /*
+                                * create SF Report
+                                */
+                                $reportSF = new FinanceReport();
+                                $reportSF->finance_file_id = $finance->id;
+                                $reportSF->type = 'SF';
+                                $createSF = $reportSF->save();
+
+                                if ($createSF) {
+                                    $tableFieldSF = [
+                                        'repair' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN',
+                                        'vandalisme' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN (VANDALISME)'
+                                    ];
+
+                                    $counter = 1;
+                                    foreach ($tableFieldSF as $key => $name) {
+                                        $reportSF = new FinanceReportPerbelanjaan();
+                                        $reportSF->type = 'SF';
+                                        $reportSF->finance_file_id = $finance->id;
+                                        $reportSF->name = $name;
+                                        $reportSF->report_key = $key;
+                                        $reportSF->amount = 0;
+                                        $reportSF->sort_no = $counter;
+                                        $reportSF->save();
+
+                                        $counter++;
+                                    }
                                 }
                             }
 
-                            /*
-                             * create SF Report
-                             */
-                            $reportSF = new FinanceReport();
-                            $reportSF->finance_file_id = $finance->id;
-                            $reportSF->type = 'SF';
-                            $createSF = $reportSF->save();
+                            /** Clone Finance Income */
+                            // $previous_income = $previous_file->financeIncome;
+                            // if(!empty($previous_file) && $previous_income->count()) {
+                            //     foreach($previous_income as $p_income) {
+                            //         $income = new FinanceIncome();
+                            //         $income->finance_file_id = $finance->id;
+                            //         $income->name = $p_income->name;
+                            //         $income->tunggakan = $p_income->tunggakan;
+                            //         $income->semasa = $p_income->semasa;
+                            //         $income->hadapan = $p_income->hadapan;
+                            //         $income->sort_no = $p_income->sort_no;
+                            //         $income->save();
+                            //     }
+                            // } else {
+                                /*
+                                 * create Income
+                                 */    
+                                $income_keys = $this->module['finance']['tabs']['income']['default'];
+                                $messages = Config::get('constant.others.tbl_fields_name');
+    
+                                foreach ($income_keys as $count => $key) {
+                                    $income = new FinanceIncome();
+                                    $income->finance_file_id = $finance->id;
+                                    $income->name = $messages['income_'. $key];
+                                    $income->tunggakan = 0;
+                                    $income->semasa = 0;
+                                    $income->hadapan = 0;
+                                    $income->sort_no = ++$count;
+                                    $income->save();
+                                }
+                            // }
 
-                            if ($createSF) {
-                                $tableFieldSF = [
-                                    'repair' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN/NAIKTARAF/PEMBAHARUAN',
-                                    'vandalisme' => 'PEMBAIKAN/PENGGANTIAN/PEMBELIAN (VANDALISME)'
+                            /** Clone Finance Utility */
+                            // $previous_utility = $previous_file->financeUtility;
+                            // if(!empty($previous_file) && $previous_utility->count()) {
+                            //     foreach($previous_utility as $p_utility) {
+                            //         $utility = new FinanceUtility();
+                            //         $utility->finance_file_id = $finance->id;
+                            //         $utility->type = $p_utility->type;
+                            //         $utility->name = $p_utility->name;
+                            //         $utility->tunggakan = $p_utility->tunggakan;
+                            //         $utility->semasa = $p_utility->semasa;
+                            //         $utility->hadapan = $p_utility->hadapan;
+                            //         $utility->tertunggak = $p_utility->tertunggak;
+                            //         $utility->sort_no = $p_utility->sort_no;
+                            //         $utility->save();
+                            //     }
+                            // } else {
+                                /*
+                                 * create Utility A
+                                 */
+                                $tableFieldUtilityA = [
+                                    'BIL AIR METER PUKAL',
+                                    'BIL ELEKTRIK HARTA BERSAMA',
+                                ];
+    
+                                foreach ($tableFieldUtilityA as $count => $name) {
+                                    $utilityA = new FinanceUtility();
+                                    $utilityA->finance_file_id = $finance->id;
+                                    $utilityA->type = 'BHG_A';
+                                    $utilityA->name = $name;
+                                    $utilityA->tunggakan = 0;
+                                    $utilityA->semasa = 0;
+                                    $utilityA->hadapan = 0;
+                                    $utilityA->tertunggak = 0;
+                                    $utilityA->sort_no = ++$count;
+                                    $utilityA->save();
+                                }
+    
+                                /*
+                                 * create Utility B
+                                 */
+                                $tableFieldUtilityB = [
+                                    'BIL METER AIR PEMILIK-PEMILIK (DI BAWAH AKAUN METER PUKAL SAHAJA)',
+                                    'BIL CUKAI TANAH',
+                                ];
+    
+                                foreach ($tableFieldUtilityB as $count => $name) {
+                                    $utilityB = new FinanceUtility();
+                                    $utilityB->finance_file_id = $finance->id;
+                                    $utilityB->type = 'BHG_B';
+                                    $utilityB->name = $name;
+                                    $utilityB->tunggakan = 0;
+                                    $utilityB->semasa = 0;
+                                    $utilityB->hadapan = 0;
+                                    $utilityB->tertunggak = 0;
+                                    $utilityB->sort_no = ++$count;
+                                    $utilityB->save();
+                                }
+                            // }
+
+                            /** Clone Finance Contract */
+                            // $previous_contract = $previous_file->financeContract;
+                            // if(!empty($previous_file) && $previous_contract->count()) {
+                            //     foreach($previous_contract as $p_contract) {
+                            //         $contract = new FinanceContract();
+                            //         $contract->finance_file_id = $finance->id;
+                            //         $contract->name = $p_contract->name;
+                            //         $contract->tunggakan = $p_contract->tunggakan;
+                            //         $contract->semasa = $p_contract->semasa;
+                            //         $contract->hadapan = $p_contract->hadapan;
+                            //         $contract->tertunggak = $p_contract->tertunggak;
+                            //         $contract->sort_no = $p_contract->sort_no;
+                            //         $contract->save();
+                            //     }
+                            // } else {
+                                /*
+                                 * create Contract
+                                 */    
+                                $tableFieldContract = [
+                                    'FI FIRMA KOMPETEN LIF',
+                                    'PEMBERSIHAN (KONTRAK)',
+                                    'KESELAMATAN',
+                                    'INSURANS',
+                                    'JURUTERA ELEKTRIK',
+                                    'CUCI TANGKI AIR',
+                                    'UJI PENGGERA KEBAKARAN',
+                                    'CUCI KOLAM RENANG',
+                                    'SEDUT PEMBETUNG',
+                                    'POTONG RUMPUT/LANSKAP',
+                                    'SISTEM KAD AKSES',
+                                    'SISTEM CCTV',
+                                    'UJI PERALATAN/ALAT PEMADAM KEBAKARAN',
+                                    'KUTIPAN SAMPAH PUKAL',
+                                    'KAWALAN SERANGGA',
                                 ];
 
-                                $counter = 1;
-                                foreach ($tableFieldSF as $key => $name) {
-                                    $reportSF = new FinanceReportPerbelanjaan();
-                                    $reportSF->type = 'SF';
-                                    $reportSF->finance_file_id = $finance->id;
-                                    $reportSF->name = $name;
-                                    $reportSF->report_key = $key;
-                                    $reportSF->amount = 0;
-                                    $reportSF->sort_no = $counter;
-                                    $reportSF->save();
-
-                                    $counter++;
+                                foreach ($tableFieldContract as $count => $name) {
+                                    $contract = new FinanceContract();
+                                    $contract->finance_file_id = $finance->id;
+                                    $contract->name = $name;
+                                    $contract->tunggakan = 0;
+                                    $contract->semasa = 0;
+                                    $contract->hadapan = 0;
+                                    $contract->tertunggak = 0;
+                                    $contract->sort_no = ++$count;
+                                    $contract->save();
                                 }
-                            }
+                            // }
 
-                            /*
-                             * create Income
-                             */
-                            $income_keys = $this->module['finance']['tabs']['income']['default'];
-                            $messages = Config::get('constant.others.tbl_fields_name');
-                            // $tableFieldIncome = [
-                            //     'MAINTENANCE FEE',
-                            //     'SINKING FUND',
-                            //     'INSURAN BANGUNAN',
-                            //     'CUKAI TANAH',
-                            //     'PELEKAT KENDERAAN',
-                            //     'KAD AKSES',
-                            //     'SEWAAN TLK',
-                            //     'SEWAAN KEDAI',
-                            //     'SEWAAN HARTA BERSAMA',
-                            //     'DENDA UNDANG-UNDANG KECIL',
-                            //     'DENDA LEWAT BAYAR MAINTENANCE FEE @ SINKING FUND',
-                            //     'BIL METER AIR PEMILIK-PEMILIK(DI BAWAH AKAUN METER PUKAL SAHAJA)',
-                            // ];
+                            /** Clone Finance Repair */
+                            // $previous_repair = $previous_file->financeRepair;
+                            // if(!empty($previous_file) && $previous_repair->count()) {
+                            //     foreach($previous_repair as $p_repair) {
+                            //         $repair = new FinanceRepair();
+                            //         $repair->finance_file_id = $finance->id;
+                            //         $repair->type = $p_repair->type;
+                            //         $repair->name = $p_repair->name;
+                            //         $repair->tunggakan = $p_repair->tunggakan;
+                            //         $repair->semasa = $p_repair->semasa;
+                            //         $repair->hadapan = $p_repair->hadapan;
+                            //         $repair->tertunggak = $p_repair->tertunggak;
+                            //         $repair->sort_no = $p_repair->sort_no;
+                            //         $repair->save();
+                            //     }
+                            // } else {
+                                /*
+                                 * create Repair MF
+                                 */
+                                $tableFieldRepairMF = [
+                                    'LIF',
+                                    'TANGKI AIR',
+                                    'BUMBUNG',
+                                    'GUTTER',
+                                    'RAIN WATER DOWN PIPE',
+                                    'PEMBENTUNG',
+                                    'PERPAIPAN',
+                                    'WAYAR BUMI',
+                                    'PENDAWAIAN ELEKTRIK',
+                                    'TANGGA/HANDRAIL',
+                                    'JALAN',
+                                    'PAGAR',
+                                    'LONGKANG',
+                                    'SUBSTATION TNB',
+                                    'ALAT PEMADAM KEBAKARAN',
+                                    'SISTEM KAD AKSES',
+                                    'CCTV',
+                                    'PELEKAT KENDERAAN',
+                                    'GENSET',
+                                ];
+    
+                                foreach ($tableFieldRepairMF as $count => $name) {
+                                    $repairMF = new FinanceRepair();
+                                    $repairMF->finance_file_id = $finance->id;
+                                    $repairMF->type = 'MF';
+                                    $repairMF->name = $name;
+                                    $repairMF->tunggakan = 0;
+                                    $repairMF->semasa = 0;
+                                    $repairMF->hadapan = 0;
+                                    $repairMF->tertunggak = 0;
+                                    $repairMF->sort_no = ++$count;
+                                    $repairMF->save();
+                                }
+    
+                                /*
+                                 * create Repair SF
+                                 */
+                                $tableFieldRepairSF = [
+                                    'LIF',
+                                    'TANGKI AIR',
+                                    'BUMBUNG',
+                                    'GUTTER',
+                                    'RAIN WATER DOWN PIPE',
+                                    'PEMBENTUNG',
+                                    'PERPAIPAN',
+                                    'WAYAR BUMI',
+                                    'PENDAWAIAN ELEKTRIK',
+                                    'TANGGA/HANDRAIL',
+                                    'JALAN',
+                                    'PAGAR',
+                                    'LONGKANG',
+                                    'SUBSTATION TNB',
+                                    'ALAT PEMADAM KEBAKARAN',
+                                    'SISTEM KAD AKSES',
+                                    'CCTV',
+                                    'GENSET',
+                                ];
+    
+                                foreach ($tableFieldRepairSF as $count => $name) {
+                                    $repairSF = new FinanceRepair();
+                                    $repairSF->finance_file_id = $finance->id;
+                                    $repairSF->type = 'SF';
+                                    $repairSF->name = $name;
+                                    $repairSF->tunggakan = 0;
+                                    $repairSF->semasa = 0;
+                                    $repairSF->hadapan = 0;
+                                    $repairSF->tertunggak = 0;
+                                    $repairSF->sort_no = ++$count;
+                                    $repairSF->save();
+                                }
+                            // }
 
-                            foreach ($income_keys as $count => $key) {
-                                $income = new FinanceIncome();
-                                $income->finance_file_id = $finance->id;
-                                $income->name = $messages['income_'. $key];
-                                $income->tunggakan = 0;
-                                $income->semasa = 0;
-                                $income->hadapan = 0;
-                                $income->sort_no = ++$count;
-                                $income->save();
-                            }
+                            /** Clone Finance Vandalisme */
+                            // $previous_vandalisme = $previous_file->financeVandal;
+                            // if(!empty($previous_file) && $previous_vandalisme->count()) {
+                            //     foreach($previous_vandalisme as $p_vandalisme) {
+                            //         $vandalisme = new FinanceVandal();
+                            //         $vandalisme->finance_file_id = $finance->id;
+                            //         $vandalisme->type = $p_vandalisme->type;
+                            //         $vandalisme->name = $p_vandalisme->name;
+                            //         $vandalisme->tunggakan = $p_vandalisme->tunggakan;
+                            //         $vandalisme->semasa = $p_vandalisme->semasa;
+                            //         $vandalisme->hadapan = $p_vandalisme->hadapan;
+                            //         $vandalisme->tertunggak = $p_vandalisme->tertunggak;
+                            //         $vandalisme->sort_no = $p_vandalisme->sort_no;
+                            //         $vandalisme->save();
+                            //     }
+                            // } else {
+                                /*
+                                * create Vandalisme MF
+                                */
+                                $tableFieldVandalismeMF = [
+                                    'LIF',
+                                    'WAYAR BUMI',
+                                    'PENDAWAIAN ELEKTRIK',
+                                    'PAGAR',
+                                    'SUBSTATION TNB',
+                                    'PERALATAN/ALAT PEMADAM KEBAKARAN',
+                                    'SISTEM KAD AKSES',
+                                    'CCTV',
+                                    'GENSET',
+                                ];
 
-                            /*
-                             * create Utility A
-                             */
-                            $tableFieldUtilityA = [
-                                'BIL AIR METER PUKAL',
-                                'BIL ELEKTRIK HARTA BERSAMA',
-                            ];
+                                foreach ($tableFieldVandalismeMF as $count => $name) {
+                                    $vandalismeMF = new FinanceVandal();
+                                    $vandalismeMF->finance_file_id = $finance->id;
+                                    $vandalismeMF->type = 'MF';
+                                    $vandalismeMF->name = $name;
+                                    $vandalismeMF->tunggakan = 0;
+                                    $vandalismeMF->semasa = 0;
+                                    $vandalismeMF->hadapan = 0;
+                                    $vandalismeMF->tertunggak = 0;
+                                    $vandalismeMF->sort_no = ++$count;
+                                    $vandalismeMF->save();
+                                }
 
-                            foreach ($tableFieldUtilityA as $count => $name) {
-                                $utilityA = new FinanceUtility();
-                                $utilityA->finance_file_id = $finance->id;
-                                $utilityA->type = 'BHG_A';
-                                $utilityA->name = $name;
-                                $utilityA->tunggakan = 0;
-                                $utilityA->semasa = 0;
-                                $utilityA->hadapan = 0;
-                                $utilityA->tertunggak = 0;
-                                $utilityA->sort_no = ++$count;
-                                $utilityA->save();
-                            }
+                                /*
+                                * create Vandalisme SF
+                                */
+                                $tableFieldVandalismeSF = [
+                                    'LIF',
+                                    'WAYAR BUMI',
+                                    'PENDAWAIAN ELEKTRIK',
+                                    'PAGAR',
+                                    'SUBSTATION TNB',
+                                    'PERALATAN/ALAT PEMADAM KEBAKARAN',
+                                    'SISTEM KAD AKSES',
+                                    'CCTV',
+                                    'GENSET',
+                                ];
 
-                            /*
-                             * create Utility B
-                             */
-                            $tableFieldUtilityB = [
-                                'BIL METER AIR PEMILIK-PEMILIK (DI BAWAH AKAUN METER PUKAL SAHAJA)',
-                                'BIL CUKAI TANAH',
-                            ];
+                                foreach ($tableFieldVandalismeSF as $count => $name) {
+                                    $vandalismeSF = new FinanceVandal();
+                                    $vandalismeSF->finance_file_id = $finance->id;
+                                    $vandalismeSF->type = 'SF';
+                                    $vandalismeSF->name = $name;
+                                    $vandalismeSF->tunggakan = 0;
+                                    $vandalismeSF->semasa = 0;
+                                    $vandalismeSF->hadapan = 0;
+                                    $vandalismeSF->tertunggak = 0;
+                                    $vandalismeSF->sort_no = ++$count;
+                                    $vandalismeSF->save();
+                                }
+                            // }
 
-                            foreach ($tableFieldUtilityB as $count => $name) {
-                                $utilityB = new FinanceUtility();
-                                $utilityB->finance_file_id = $finance->id;
-                                $utilityB->type = 'BHG_B';
-                                $utilityB->name = $name;
-                                $utilityB->tunggakan = 0;
-                                $utilityB->semasa = 0;
-                                $utilityB->hadapan = 0;
-                                $utilityB->tertunggak = 0;
-                                $utilityB->sort_no = ++$count;
-                                $utilityB->save();
-                            }
+                            
+                            /** Clone Finance Staff */
+                            // $previous_staff = $previous_file->financeVandal;
+                            // if(!empty($previous_file) && $previous_staff->count()) {
+                            //     foreach($previous_staff as $p_staff) {
+                            //         $staff = new FinanceStaff();
+                            //         $staff->finance_file_id = $finance->id;
+                            //         $staff->name = $staff->name;
+                            //         $staff->gaji_per_orang = $staff->gaji_per_orang;
+                            //         $staff->bil_pekerja = $staff->bil_pekerja;
+                            //         $staff->tunggakan = $staff->tunggakan;
+                            //         $staff->semasa = $staff->semasa;
+                            //         $staff->hadapan = $staff->hadapan;
+                            //         $staff->tertunggak = $staff->tertunggak;
+                            //         $staff->sort_no = $staff->sort_no;
+                            //         $staff->save();
+                            //     }
+                            // } else {
+                                /*
+                                * create Staff
+                                */
+                                $tableFieldStaff = [
+                                    'PENGAWAL KESELAMATAN',
+                                    'PEMBERSIHAN',
+                                    'RENCAM',
+                                    'KERANI',
+                                    'JURUTEKNIK',
+                                    'PENYELIA',
+                                ];
 
-                            /*
-                             * create Contract
-                             */
-                            $tableFieldContract = [
-                                'FI FIRMA KOMPETEN LIF',
-                                'PEMBERSIHAN (KONTRAK)',
-                                'KESELAMATAN',
-                                'INSURANS',
-                                'JURUTERA ELEKTRIK',
-                                'CUCI TANGKI AIR',
-                                'UJI PENGGERA KEBAKARAN',
-                                'CUCI KOLAM RENANG',
-                                'SEDUT PEMBETUNG',
-                                'POTONG RUMPUT/LANSKAP',
-                                'SISTEM KAD AKSES',
-                                'SISTEM CCTV',
-                                'UJI PERALATAN/ALAT PEMADAM KEBAKARAN',
-                                'KUTIPAN SAMPAH PUKAL',
-                                'KAWALAN SERANGGA',
-                            ];
+                                foreach ($tableFieldStaff as $count => $name) {
+                                    $staff = new FinanceStaff();
+                                    $staff->finance_file_id = $finance->id;
+                                    $staff->name = $name;
+                                    $staff->gaji_per_orang = 0;
+                                    $staff->bil_pekerja = 0;
+                                    $staff->tunggakan = 0;
+                                    $staff->semasa = 0;
+                                    $staff->hadapan = 0;
+                                    $staff->tertunggak = 0;
+                                    $staff->sort_no = ++$count;
+                                    $staff->save();
+                                }
+                            // }
 
-                            foreach ($tableFieldContract as $count => $name) {
-                                $contract = new FinanceContract();
-                                $contract->finance_file_id = $finance->id;
-                                $contract->name = $name;
-                                $contract->tunggakan = 0;
-                                $contract->semasa = 0;
-                                $contract->hadapan = 0;
-                                $contract->tertunggak = 0;
-                                $contract->sort_no = ++$count;
-                                $contract->save();
-                            }
+                            
+                            /** Clone Finance Admin */
+                            // $previous_admin = $previous_file->financeAdmin;
+                            // if(!empty($previous_file) && $previous_admin->count()) {
+                            //     foreach($previous_admin as $p_admin) {
+                            //         $admin = new FinanceAdmin();
+                            //         $admin->finance_file_id = $finance->id;
+                            //         $admin->name = $p_admin->name;
+                            //         $admin->tunggakan = $p_admin->tunggakan;
+                            //         $admin->semasa = $p_admin->semasa;
+                            //         $admin->hadapan = $p_admin->hadapan;
+                            //         $admin->tertunggak = $p_admin->tertunggak;
+                            //         $admin->sort_no = $p_admin->sort_no;
+                            //         $admin->save();
+                            //     }
+                            // } else {
+                                /*
+                                * create Admin
+                                */
+                                $tableFieldAdmin = [
+                                    'TELEFON & INTERNET',
+                                    'PERALATAN',
+                                    'ALAT TULIS PEJABAT',
+                                    'PETTY CASH',
+                                    'SEWAAN MESIN FOTOKOPI',
+                                    'PERKHIDMATAN SISTEM UBS @ LAIN-LAIN SISTEM',
+                                    'PERKHIDMATAN AKAUN',
+                                    'PERKHIDMATAN AUDIT',
+                                    'CAJ PERUNDANGAN',
+                                    'CAJ PENGHANTARAN & KUTIPAN',
+                                    'CAJ BANK',
+                                    'FI EJEN PENGURUSAN',
+                                    'PERBELANJAAN MESYUARAT',
+                                    'ELAUN JMB/MC',
+                                    'LAIN-LAIN TUNTUTAN JMB/MC',
+                                ];
 
-                            /*
-                             * create Repair MF
-                             */
-                            $tableFieldRepairMF = [
-                                'LIF',
-                                'TANGKI AIR',
-                                'BUMBUNG',
-                                'GUTTER',
-                                'RAIN WATER DOWN PIPE',
-                                'PEMBENTUNG',
-                                'PERPAIPAN',
-                                'WAYAR BUMI',
-                                'PENDAWAIAN ELEKTRIK',
-                                'TANGGA/HANDRAIL',
-                                'JALAN',
-                                'PAGAR',
-                                'LONGKANG',
-                                'SUBSTATION TNB',
-                                'ALAT PEMADAM KEBAKARAN',
-                                'SISTEM KAD AKSES',
-                                'CCTV',
-                                'PELEKAT KENDERAAN',
-                                'GENSET',
-                            ];
-
-                            foreach ($tableFieldRepairMF as $count => $name) {
-                                $repairMF = new FinanceRepair();
-                                $repairMF->finance_file_id = $finance->id;
-                                $repairMF->type = 'MF';
-                                $repairMF->name = $name;
-                                $repairMF->tunggakan = 0;
-                                $repairMF->semasa = 0;
-                                $repairMF->hadapan = 0;
-                                $repairMF->tertunggak = 0;
-                                $repairMF->sort_no = ++$count;
-                                $repairMF->save();
-                            }
-
-                            /*
-                             * create Repair SF
-                             */
-                            $tableFieldRepairSF = [
-                                'LIF',
-                                'TANGKI AIR',
-                                'BUMBUNG',
-                                'GUTTER',
-                                'RAIN WATER DOWN PIPE',
-                                'PEMBENTUNG',
-                                'PERPAIPAN',
-                                'WAYAR BUMI',
-                                'PENDAWAIAN ELEKTRIK',
-                                'TANGGA/HANDRAIL',
-                                'JALAN',
-                                'PAGAR',
-                                'LONGKANG',
-                                'SUBSTATION TNB',
-                                'ALAT PEMADAM KEBAKARAN',
-                                'SISTEM KAD AKSES',
-                                'CCTV',
-                                'GENSET',
-                            ];
-
-                            foreach ($tableFieldRepairSF as $count => $name) {
-                                $repairSF = new FinanceRepair();
-                                $repairSF->finance_file_id = $finance->id;
-                                $repairSF->type = 'SF';
-                                $repairSF->name = $name;
-                                $repairSF->tunggakan = 0;
-                                $repairSF->semasa = 0;
-                                $repairSF->hadapan = 0;
-                                $repairSF->tertunggak = 0;
-                                $repairSF->sort_no = ++$count;
-                                $repairSF->save();
-                            }
-
-                            /*
-                             * create Vandalisme MF
-                             */
-                            $tableFieldVandalismeMF = [
-                                'LIF',
-                                'WAYAR BUMI',
-                                'PENDAWAIAN ELEKTRIK',
-                                'PAGAR',
-                                'SUBSTATION TNB',
-                                'PERALATAN/ALAT PEMADAM KEBAKARAN',
-                                'SISTEM KAD AKSES',
-                                'CCTV',
-                                'GENSET',
-                            ];
-
-                            foreach ($tableFieldVandalismeMF as $count => $name) {
-                                $vandalismeMF = new FinanceVandal();
-                                $vandalismeMF->finance_file_id = $finance->id;
-                                $vandalismeMF->type = 'MF';
-                                $vandalismeMF->name = $name;
-                                $vandalismeMF->tunggakan = 0;
-                                $vandalismeMF->semasa = 0;
-                                $vandalismeMF->hadapan = 0;
-                                $vandalismeMF->tertunggak = 0;
-                                $vandalismeMF->sort_no = ++$count;
-                                $vandalismeMF->save();
-                            }
-
-                            /*
-                             * create Vandalisme SF
-                             */
-                            $tableFieldVandalismeSF = [
-                                'LIF',
-                                'WAYAR BUMI',
-                                'PENDAWAIAN ELEKTRIK',
-                                'PAGAR',
-                                'SUBSTATION TNB',
-                                'PERALATAN/ALAT PEMADAM KEBAKARAN',
-                                'SISTEM KAD AKSES',
-                                'CCTV',
-                                'GENSET',
-                            ];
-
-                            foreach ($tableFieldVandalismeSF as $count => $name) {
-                                $vandalismeSF = new FinanceVandal();
-                                $vandalismeSF->finance_file_id = $finance->id;
-                                $vandalismeSF->type = 'SF';
-                                $vandalismeSF->name = $name;
-                                $vandalismeSF->tunggakan = 0;
-                                $vandalismeSF->semasa = 0;
-                                $vandalismeSF->hadapan = 0;
-                                $vandalismeSF->tertunggak = 0;
-                                $vandalismeSF->sort_no = ++$count;
-                                $vandalismeSF->save();
-                            }
-
-                            /*
-                             * create Staff
-                             */
-                            $tableFieldStaff = [
-                                'PENGAWAL KESELAMATAN',
-                                'PEMBERSIHAN',
-                                'RENCAM',
-                                'KERANI',
-                                'JURUTEKNIK',
-                                'PENYELIA',
-                            ];
-
-                            foreach ($tableFieldStaff as $count => $name) {
-                                $staff = new FinanceStaff();
-                                $staff->finance_file_id = $finance->id;
-                                $staff->name = $name;
-                                $staff->gaji_per_orang = 0;
-                                $staff->bil_pekerja = 0;
-                                $staff->tunggakan = 0;
-                                $staff->semasa = 0;
-                                $staff->hadapan = 0;
-                                $staff->tertunggak = 0;
-                                $staff->sort_no = ++$count;
-                                $staff->save();
-                            }
-
-                            /*
-                             * create Admin
-                             */
-                            $tableFieldAdmin = [
-                                'TELEFON & INTERNET',
-                                'PERALATAN',
-                                'ALAT TULIS PEJABAT',
-                                'PETTY CASH',
-                                'SEWAAN MESIN FOTOKOPI',
-                                'PERKHIDMATAN SISTEM UBS @ LAIN-LAIN SISTEM',
-                                'PERKHIDMATAN AKAUN',
-                                'PERKHIDMATAN AUDIT',
-                                'CAJ PERUNDANGAN',
-                                'CAJ PENGHANTARAN & KUTIPAN',
-                                'CAJ BANK',
-                                'FI EJEN PENGURUSAN',
-                                'PERBELANJAAN MESYUARAT',
-                                'ELAUN JMB/MC',
-                                'LAIN-LAIN TUNTUTAN JMB/MC',
-                            ];
-
-                            foreach ($tableFieldAdmin as $count => $name) {
-                                $admin = new FinanceAdmin();
-                                $admin->finance_file_id = $finance->id;
-                                $admin->name = $name;
-                                $admin->tunggakan = 0;
-                                $admin->semasa = 0;
-                                $admin->hadapan = 0;
-                                $admin->tertunggak = 0;
-                                $admin->sort_no = ++$count;
-                                $admin->save();
-                            }
+                                foreach ($tableFieldAdmin as $count => $name) {
+                                    $admin = new FinanceAdmin();
+                                    $admin->finance_file_id = $finance->id;
+                                    $admin->name = $name;
+                                    $admin->tunggakan = 0;
+                                    $admin->semasa = 0;
+                                    $admin->hadapan = 0;
+                                    $admin->tertunggak = 0;
+                                    $admin->sort_no = ++$count;
+                                    $admin->save();
+                                }
+                            // }
                         }
 
                         # Audit Trail
                         $remarks = 'Finance File : ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) .  $this->module['audit']['text']['data_inserted'];
                         $this->addAudit($finance->file_id, "COB Finance", $remarks);
+
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $finance->file->strata;
+                            $notify_data['file_id'] = $finance->file->id;
+                            $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($finance->id)]);
+                            $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($finance->id)]);
+                            $notify_data['strata'] = "You";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                            $notify_data['title'] = "COB File Finance File";
+                            $notify_data['module'] = "Finance File";
+                            
+                            (new NotificationService())->store($notify_data);
+                        }
 
                         return "true";
                     } else {
@@ -651,6 +869,21 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance File : ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) .  $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($finance->file_id, "COB Finance", $remarks);
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $finance->file->strata;
+                        $notify_data['file_id'] = $finance->file->id;
+                        $notify_data['route'] = route('finance_file.index');
+                        $notify_data['cob_route'] = route('finance_file.index');
+                        $notify_data['strata'] = "You";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                        $notify_data['title'] = "Finance File";
+                        $notify_data['module'] = "Finance File";
+                        
+                        (new NotificationService())->store($notify_data, 'deleted');
+                    }
                     return "true";
                 } else {
                     return "false";
@@ -708,7 +941,8 @@ class FinanceController extends BaseController {
         $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
         $reportSFOld = FinanceReportPerbelanjaanOld::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow($financefiledata->file_id, $financefiledata->company_id);
-
+        $adminStatus = AdminStatus::toArray();
+        
         $viewData = array(
             'title' => trans('app.menus.finance.edit_finance_file_list'),
             'panel_nav_active' => 'finance_panel',
@@ -754,7 +988,8 @@ class FinanceController extends BaseController {
             'sfreportExtraOld' => $sfreportExtraOld,
             'reportSF' => $reportSF,
             'reportSFOld' => $reportSFOld,
-            'finance_file_id' => $id
+            'finance_file_id' => $id,
+            'adminStatus' => $adminStatus
         );
 
         return View::make('finance_en.edit_finance_file', $viewData);
@@ -808,6 +1043,22 @@ class FinanceController extends BaseController {
                     if(!empty($audit_fields_changed)) {
                         $remarks = 'Finance File Check: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->file_id, "COB Finance", $remarks);
+                    }
+
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $files->file->strata;
+                        $notify_data['file_id'] = $files->file->id;
+                        $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]);
+                        $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]);
+                        $notify_data['strata'] = "You";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                        $notify_data['title'] = "Finance File Check";
+                        $notify_data['module'] = "Finance File Check";
+                        
+                        (new NotificationService())->store($notify_data);
                     }
                 }
 
@@ -1054,6 +1305,21 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#mfreport";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#mfreport";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File MF Report";
+                    $notify_data['module'] = "Finance File MF Report";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
 
                 return 'true';
             }
@@ -1128,17 +1394,19 @@ class FinanceController extends BaseController {
                     $finance->baki_bank_akhir = $data[$prefix . 'baki_bank_akhir'];
                     $finance->save();
 
-                    for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
-                        if (!empty($data[$prefix . 'name'][$i])) {
-                            $frp = new FinanceReportPerbelanjaan;
-                            $frp->type = $type;
-                            $frp->finance_file_id = $files->id;
-                            $frp->name = $data[$prefix . 'name'][$i];
-                            $frp->report_key = $data[$prefix . 'report_key'][$i];
-                            $frp->amount = $data[$prefix . 'amount'][$i];
-                            $frp->sort_no = $i;
-                            $frp->is_custom = $data[$prefix . 'is_custom'][$i];
-                            $frp->save();
+                    if(!empty($data[$prefix . 'name'])) {
+                        for ($i = 0; $i < count($data[$prefix . 'name']); $i++) {
+                            if (!empty($data[$prefix . 'name'][$i])) {
+                                $frp = new FinanceReportPerbelanjaan;
+                                $frp->type = $type;
+                                $frp->finance_file_id = $files->id;
+                                $frp->name = $data[$prefix . 'name'][$i];
+                                $frp->report_key = $data[$prefix . 'report_key'][$i];
+                                $frp->amount = $data[$prefix . 'amount'][$i];
+                                $frp->sort_no = $i;
+                                $frp->is_custom = $data[$prefix . 'is_custom'][$i];
+                                $frp->save();
+                            }
                         }
                     }
 
@@ -1248,6 +1516,21 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#sfreport";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#sfreport";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File SF Report";
+                    $notify_data['module'] = "Finance File SF Report";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
 
                 return 'true';
             }
@@ -1339,6 +1622,21 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#admin";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#admin";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Admin";
+                    $notify_data['module'] = "Finance File Admin";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
 
                 return 'true';
             }
@@ -1427,6 +1725,21 @@ class FinanceController extends BaseController {
                 if(!empty($audit_fields_changed)) {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
+                }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#income";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#income";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Income";
+                    $notify_data['module'] = "Finance File Income";
+                    
+                    (new NotificationService())->store($notify_data);
                 }
 
                 return 'true';
@@ -1530,6 +1843,21 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#utility";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#utility";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Utility";
+                    $notify_data['module'] = "Finance File Utility";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
 
                 return 'true';
             }
@@ -1631,6 +1959,21 @@ class FinanceController extends BaseController {
                 if(!empty($audit_fields_changed)) {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
+                }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#vandalisme";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#vandalisme";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Vandalisme";
+                    $notify_data['module'] = "Finance File Vandalisme";
+                    
+                    (new NotificationService())->store($notify_data);
                 }
 
                 return 'true';
@@ -1734,6 +2077,21 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#repair";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#repair";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Repair";
+                    $notify_data['module'] = "Finance File Repair";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
 
                 return 'true';
             }
@@ -1824,6 +2182,21 @@ class FinanceController extends BaseController {
                 if(!empty($audit_fields_changed)) {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
+                }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#contractexp";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#contractexp";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Contract";
+                    $notify_data['module'] = "Finance File Contract";
+                    
+                    (new NotificationService())->store($notify_data);
                 }
 
                 return 'true';
@@ -1919,6 +2292,21 @@ class FinanceController extends BaseController {
                 if(!empty($audit_fields_changed)) {
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
+                }
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->file->strata;
+                    $notify_data['file_id'] = $files->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#staff";
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($files->id)]) . "#staff";
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file->file_no;
+                    $notify_data['title'] = "Finance File Staff";
+                    $notify_data['module'] = "Finance File Staff";
+                    
+                    (new NotificationService())->store($notify_data);
                 }
 
                 return 'true';
@@ -2365,6 +2753,22 @@ class FinanceController extends BaseController {
                     $remarks = 'Finance Support : ' . $finance->name . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
                     
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $finance->file->strata;
+                        $notify_data['file_id'] = $finance->file->id;
+                        $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                        $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                        $notify_data['strata'] = "You";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                        $notify_data['title'] = "COB File Finance Support";
+                        $notify_data['module'] = "Finance Support";
+                        
+                        (new NotificationService())->store($notify_data);
+                    }
+
                     print "true";
                 } else {
                     print "false";
@@ -2450,6 +2854,22 @@ class FinanceController extends BaseController {
                             $remarks = 'Finance Support : ' . $finance->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
                         }
+
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $finance->file->strata;
+                            $notify_data['file_id'] = $finance->file->id;
+                            $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                            $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                            $notify_data['strata'] = "You";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                            $notify_data['title'] = "COB File Finance Support";
+                            $notify_data['module'] = "Finance Support";
+                            
+                            (new NotificationService())->store($notify_data);
+                        }
                         
                         print "true";
                     } else {
@@ -2478,6 +2898,21 @@ class FinanceController extends BaseController {
                 $remarks = 'Finance File : ' . $finance_file->file->file_no . " " . $finance_file->year . "-" . strtoupper($finance_file->monthName()) . $this->module['audit']['text']['status_active'];
                 $this->addAudit($finance_file->file_id, "COB Finance File", $remarks);
 
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $finance_file->file->strata;
+                    $notify_data['file_id'] = $finance_file->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($finance_file->id)]);
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($finance_file->id)]);
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance_file->file->file_no;
+                    $notify_data['title'] = "Finance File";
+                    $notify_data['module'] = "Finance File";
+                    
+                    (new NotificationService())->store($notify_data, 'status updated');
+                }
                 print "true";
             } else {
                 print "false";
@@ -2499,6 +2934,21 @@ class FinanceController extends BaseController {
                 $remarks = 'Finance File : ' . $finance_file->file->file_no . " " . $finance_file->year . "-" . strtoupper($finance_file->monthName()) . $this->module['audit']['text']['status_inactive'];
                 $this->addAudit($finance_file->file_id, "COB Finance File", $remarks);
 
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $finance_file->file->strata;
+                    $notify_data['file_id'] = $finance_file->file->id;
+                    $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($finance_file->id)]);
+                    $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($finance_file->id)]);
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance_file->file->file_no;
+                    $notify_data['title'] = "Finance File";
+                    $notify_data['module'] = "Finance File";
+                    
+                    (new NotificationService())->store($notify_data, 'status updated');
+                }
                 print "true";
             } else {
                 print "false";
@@ -2519,6 +2969,22 @@ class FinanceController extends BaseController {
                 # Audit Trail
                 $remarks = 'Finance Support : ' . $finance_support->name . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($finance_support->file_id, "COB Finance Support", $remarks);
+
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $finance_support->file->strata;
+                    $notify_data['file_id'] = $finance_support->file->id;
+                    $notify_data['route'] = route('finance_support.index');
+                    $notify_data['cob_route'] = route('finance_support.index');
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance_support->file->file_no;
+                    $notify_data['title'] = "COB File Finance Support";
+                    $notify_data['module'] = "Finance Support";
+                    
+                    (new NotificationService())->store($notify_data, 'deleted');
+                }
 
                 print "true";
             } else {

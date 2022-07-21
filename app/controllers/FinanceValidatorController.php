@@ -39,7 +39,7 @@ class FinanceValidatorController extends BaseController {
          */
         foreach ($fields_name as $key) {
             $validate_key_name = '';
-            $validate_rule = 'required|regex:/^\d+(\.\d{1,2})?$/';
+            $validate_rule = 'required|regex:/^-?\d*\.{0,1}\d+$/';
             if ($sub_modules) {
                 $validate_key_name = $tab_name . '.' . $key;
                 if (empty($sub_modules_prefix) == false) {

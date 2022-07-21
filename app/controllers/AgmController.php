@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Helper\Helper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
+use Services\NotificationService;
 
 class AgmController extends BaseController {
 
@@ -187,6 +188,22 @@ class AgmController extends BaseController {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->strata;
+                    $notify_data['file_id'] = $files->id;
+                    $notify_data['route'] = route('ajk.edit', ['id' => Helper::encode($ajk_detail->id)]);
+                    $notify_data['cob_route'] = route('ajk.edit', ['id' => Helper::encode($ajk_detail->id)]);
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['title'] = "COB File AJK Details";
+                    $notify_data['module'] = "AJK Details";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
+
                 print "true";
             } else {
                 print "false";
@@ -283,6 +300,22 @@ class AgmController extends BaseController {
                         $files = Files::find($ajk_detail->file_id);
                         $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
+
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $files->strata;
+                            $notify_data['file_id'] = $files->id;
+                            $notify_data['route'] = route('ajk.edit', ['id' => Helper::encode($ajk_detail->id)]);
+                            $notify_data['cob_route'] = route('ajk.edit', ['id' => Helper::encode($ajk_detail->id)]);
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                            $notify_data['title'] = "COB File AJK Details";
+                            $notify_data['module'] = "AJK Details";
+                            
+                            (new NotificationService())->store($notify_data, 'updated');
+                        }
                     }
 
                     print "true";
@@ -310,6 +343,21 @@ class AgmController extends BaseController {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->strata;
+                    $notify_data['file_id'] = $files->id;
+                    $notify_data['route'] = route('ajk.index');
+                    $notify_data['cob_route'] = route('ajk.index');
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['title'] = "COB File AJK Details";
+                    $notify_data['module'] = "AJK Details";
+                    
+                    (new NotificationService())->store($notify_data, 'deleted');
+                }
                 print "true";
             } else {
                 print "false";
@@ -534,6 +582,22 @@ class AgmController extends BaseController {
                     $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB File", $remarks);
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $files->strata;
+                        $notify_data['file_id'] = $files->id;
+                        $notify_data['route'] = route('purchaser.edit', ['id' => Helper::encode($buyer->id)]);
+                        $notify_data['cob_route'] = route('purchaser.edit', ['id' => Helper::encode($buyer->id)]);
+                        $notify_data['strata'] = "You";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                        $notify_data['title'] = "COB File Purchaser";
+                        $notify_data['module'] = "Purchaser";
+                        
+                        (new NotificationService())->store($notify_data);
+                    }
+
                     print "true";
                 } else {
                     print "false";
@@ -674,6 +738,21 @@ class AgmController extends BaseController {
                             $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $files->strata;
+                            $notify_data['file_id'] = $files->id;
+                            $notify_data['route'] = route('purchaser.edit', ['id' => Helper::encode($buyer->id)]);
+                            $notify_data['cob_route'] = route('purchaser.edit', ['id' => Helper::encode($buyer->id)]);
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                            $notify_data['title'] = "COB File Purchaser";
+                            $notify_data['module'] = "Purchaser";
+                            
+                            (new NotificationService())->store($notify_data, 'updated');
+                        }
 
                         print "true";
                     } else {
@@ -702,6 +781,21 @@ class AgmController extends BaseController {
                 $files = Files::find($buyer->file_id);
                 $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->strata;
+                    $notify_data['file_id'] = $files->id;
+                    $notify_data['route'] = route('purchaser.index');
+                    $notify_data['cob_route'] = route('purchaser.index');
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['title'] = "COB File Purchaser";
+                    $notify_data['module'] = "Purchaser";
+                    
+                    (new NotificationService())->store($notify_data, 'deleted');
+                }
 
                 print "true";
             } else {
@@ -1029,6 +1123,22 @@ class AgmController extends BaseController {
                     $files = Files::find($tenant->file_id);
                     $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit' . $tenant->unit_no . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB File", $remarks);
+                    
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $files->strata;
+                        $notify_data['file_id'] = $files->id;
+                        $notify_data['route'] = route('tenant.edit', ['id' => Helper::encode($tenant->id)]);
+                        $notify_data['cob_route'] = route('tenant.edit', ['id' => Helper::encode($tenant->id)]);
+                        $notify_data['strata'] = "You";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                        $notify_data['title'] = "COB File Tenant";
+                        $notify_data['module'] = "Tenant";
+                        
+                        (new NotificationService())->store($notify_data);
+                    }
 
                     print "true";
                 } else {
@@ -1167,6 +1277,21 @@ class AgmController extends BaseController {
                             $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $files->strata;
+                            $notify_data['file_id'] = $files->id;
+                            $notify_data['route'] = route('tenant.edit', ['id' => Helper::encode($tenant->id)]);
+                            $notify_data['cob_route'] = route('tenant.edit', ['id' => Helper::encode($tenant->id)]);
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                            $notify_data['title'] = "COB File Tenant";
+                            $notify_data['module'] = "Tenant";
+                            
+                            (new NotificationService())->store($notify_data, 'updated');
+                        }
 
                         print "true";
                     } else {
@@ -1195,6 +1320,21 @@ class AgmController extends BaseController {
                 $files = Files::find($tenant->file_id);
                 $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->strata;
+                    $notify_data['file_id'] = $files->id;
+                    $notify_data['route'] = route('tenant.index');
+                    $notify_data['cob_route'] = route('tenant.index');
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['title'] = "COB File Tenant";
+                    $notify_data['module'] = "Tenant";
+                    
+                    (new NotificationService())->store($notify_data, 'deleted');
+                }
 
                 print "true";
             } else {
@@ -1687,37 +1827,52 @@ class AgmController extends BaseController {
             if ($success) {
                 $file = $agm_detail->files;
 
-                if ($file) {
-                    $company = $file->company;
+                // if ($file) {
+                //     $company = $file->company;
 
-                    if ($company) {
-                        $receipants = User::where('company_id', $company->id)
-                            ->where('is_active', 1)
-                            ->where('is_deleted', 0)
-                            ->get();
+                //     if ($company) {
+                //         $receipants = User::where('company_id', $company->id)
+                //             ->where('is_active', 1)
+                //             ->where('is_deleted', 0)
+                //             ->get();
 
-                        if ($receipants) {
-                            $delay = 0;
-                            $incrementDelay = 2;
+                //         if ($receipants) {
+                //             $delay = 0;
+                //             $incrementDelay = 2;
 
-                            foreach ($receipants as $receipant) {
-                                if ($receipant->isCOB() && !empty($receipant->email)) {
-                                    /** Send E-mail */
-                                    Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.new_submission_cob', array('full_name' => $receipant->full_name, 'file_no' => $file->file_no, 'id' => $agm_detail->id), function ($message) use ($receipant) {
-                                        $message->to($receipant->email, $receipant->full_name)->subject('New Submission Minutes of Meeting');
-                                    });
-                                }
+                //             foreach ($receipants as $receipant) {
+                //                 if ($receipant->isCOB() && !empty($receipant->email)) {
+                //                     /** Send E-mail */
+                //                     Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.new_submission_cob', array('full_name' => $receipant->full_name, 'file_no' => $file->file_no, 'id' => $agm_detail->id), function ($message) use ($receipant) {
+                //                         $message->to($receipant->email, $receipant->full_name)->subject('New Submission Minutes of Meeting');
+                //                     });
+                //                 }
 
-                                $delay += $incrementDelay;
-                            }
-                        }
-                    }
-                }
+                //                 $delay += $incrementDelay;
+                //             }
+                //         }
+                //     }
+                // }
 
                 # Audit Trail
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->strata;
+                    $notify_data['file_id'] = $files->id;
+                    $notify_data['route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
+                    $notify_data['cob_route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['title'] = "COB File AGM Minutes";
+                    $notify_data['module'] = "AGM Minutes";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
 
                 print "true";
             } else {
@@ -1946,20 +2101,35 @@ class AgmController extends BaseController {
                             ]
                         );
 
-                        if ($files->jmb) {
-                            $receipant = $files->jmb;
-                            /** Send E-mail */
-                            $delay = 0;
-                            Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.endorsement', array('full_name' => $receipant->full_name, 'file_no' => $files->file_no, 'status' => $status, 'id' => $agm_detail->id), function ($message) use ($receipant) {
-                                $message->to($receipant->email, $receipant->full_name)->subject('Endorsement Minutes of Meeting');
-                            });
-                        }
+                        // if ($files->jmb) {
+                        //     $receipant = $files->jmb;
+                        //     /** Send E-mail */
+                        //     $delay = 0;
+                        //     Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.endorsement', array('full_name' => $receipant->full_name, 'file_no' => $files->file_no, 'status' => $status, 'id' => $agm_detail->id), function ($message) use ($receipant) {
+                        //         $message->to($receipant->email, $receipant->full_name)->subject('Endorsement Minutes of Meeting');
+                        //     });
+                        // }
                     }
 
                     # Audit Trail                   
                     if (!empty($audit_fields_changed)) {
                         $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
+                    }
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $files->strata;
+                        $notify_data['file_id'] = $files->id;
+                        $notify_data['route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
+                        $notify_data['cob_route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                        $notify_data['title'] = "COB File AGM Minutes";
+                        $notify_data['module'] = "AGM Minutes";
+                        
+                        (new NotificationService())->store($notify_data, 'updated');
                     }
 
                     print "true";
@@ -1987,6 +2157,21 @@ class AgmController extends BaseController {
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $files->strata;
+                    $notify_data['file_id'] = $files->id;
+                    $notify_data['route'] = route('minutes.index');
+                    $notify_data['cob_route'] = route('minutes.index');
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['title'] = "COB File AGM Minutes";
+                    $notify_data['module'] = "AGM Minutes";
+                    
+                    (new NotificationService())->store($notify_data, 'deleted');
+                }
 
                 print "true";
             } else {
@@ -2130,6 +2315,21 @@ class AgmController extends BaseController {
                         # Audit Trail
                         $remarks = 'Document: ' . $document->name . $this->module['audit']['text']['data_deleted'];
                         $this->addAudit($document->file_id, "Document", $remarks);
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $document->file->strata;
+                            $notify_data['file_id'] = $document->file->id;
+                            $notify_data['route'] = route('document.index');
+                            $notify_data['cob_route'] = route('document.index');
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $document->file->file_no;
+                            $notify_data['title'] = "COB File Document";
+                            $notify_data['module'] = "Document";
+                            
+                            (new NotificationService())->store($notify_data, 'deleted');
+                        }
     
                         print "true";
                     } else {
@@ -2242,6 +2442,21 @@ class AgmController extends BaseController {
                     # Audit Trail
                     $remarks = 'Document: ' . $document->name_en . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($document->file_id, "Document", $remarks);
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $document->file->strata;
+                        $notify_data['file_id'] = $document->file->id;
+                        $notify_data['route'] = route('document.edit', ['id' => Helper::encode($document->id)]);
+                        $notify_data['cob_route'] = route('document.edit', ['id' => Helper::encode($document->id)]);
+                        $notify_data['strata'] = "You";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $document->file->file_no;
+                        $notify_data['title'] = "COB File Document";
+                        $notify_data['module'] = "Document";
+                        
+                        (new NotificationService())->store($notify_data);
+                    }
 
                     print "true";
                 } else {
@@ -2325,6 +2540,21 @@ class AgmController extends BaseController {
                     if(!empty($audit_fields_changed)) {
                         $remarks = 'Document id: ' . $document->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($document->file_id, "Document", $remarks);
+                    }
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $document->file->strata;
+                        $notify_data['file_id'] = $document->file->id;
+                        $notify_data['route'] = route('document.edit', ['id' => Helper::encode($document->id)]);
+                        $notify_data['cob_route'] = route('document.edit', ['id' => Helper::encode($document->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $document->file->file_no;
+                        $notify_data['title'] = "COB File Document";
+                        $notify_data['module'] = "Document";
+                        
+                        (new NotificationService())->store($notify_data, 'updated');
                     }
 
                     return "true";

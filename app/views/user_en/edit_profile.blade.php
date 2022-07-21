@@ -72,6 +72,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.receive_mail') }}</label><br/>
+                                        <input type="checkbox" id="receive_mail" name="receive_mail" {{ $user->receive_mail? "checked" : "" }}/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.receive_notify') }}</label><br/>
+                                        <input type="checkbox" id="receive_notify" name="receive_notify" {{ $user->receive_notify? "checked" : "" }}/>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-own" id="submit_button" onclick="updateProfile()">{{ trans('app.forms.submit') }}</button>
                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{URL::action('HomeController@home')}}'">{{ trans('app.forms.cancel') }}</button>
@@ -93,6 +109,8 @@
         var name = $("#name").val(),
                 email = $("#email").val(),
                 phone_no = $("#phone_no").val(),
+                receive_mail = document.getElementById('receive_mail').checked? 1 : 0,
+                receive_notify = document.getElementById('receive_notify').checked? 1 : 0,
                 remarks = $("#remarks").val(),
                 is_active = $("#is_active").val();
 
@@ -117,6 +135,8 @@
                     name: name,
                     email: email,
                     phone_no: phone_no,
+                    receive_mail: receive_mail,
+                    receive_notify: receive_notify,
                     id: '{{$user->id}}'
                 },
                 success: function (data) {

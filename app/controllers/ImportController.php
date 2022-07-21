@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Job\ImportFile;
 use Maatwebsite\Excel\Facades\Excel;
+use Services\NotificationService;
 
 class ImportController extends BaseController {
 
@@ -3096,8 +3097,9 @@ class ImportController extends BaseController {
         }
     }
 
-    public function importFinanceFile() {
-        DB::transaction(function() {
+    public function importFinanceFile($is_api = false) {
+        $response = '';
+        DB::transaction(function() use($is_api, &$response) {
             // if (Request::ajax()) {
                 $file = Input::file('import_file');
                 $file_id = Input::get('import_file_id');
@@ -3107,8 +3109,8 @@ class ImportController extends BaseController {
                 if(!empty(Input::get('import_file_no'))) {
                     $file_no = Files::where('file_no', Input::get('import_file_no'))->first();
                     if(empty($file_no)) {
-                        print 'empty_file_no';
-                        exit;
+                        $response = 'empty_file_no';
+                        return $response;
                     } else {
                         $file_id = $file_no->id; 
                     }
@@ -3156,8 +3158,8 @@ class ImportController extends BaseController {
                                 $finance_check->date = $check_data[0];
                                 $finance_check->name = $check_data[1];
                                 $finance_check->position = $check_data[2];
-                                $finance_check->is_active = (strtolower($check_data[3]) == "yes")? "1" : "0";
-                                $finance_check->remarks = $check_data[4];
+                                // $finance_check->is_active = (strtolower($check_data[3]) == "yes")? "1" : "0";
+                                $finance_check->remarks = $check_data[3];
                                 $finance_check->save();
                                 
                             } else if($title == 'report mf' && $row->count()) {
@@ -3563,18 +3565,43 @@ class ImportController extends BaseController {
                         $this->addAudit($finance_file->file->id, "COB Finance", $remarks);
                         
                         (new FinanceController())->saveFinanceSummary($finance_file, $data_summary_amount);
+                        
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $finance_file->file->strata;
+                            $notify_data['file_id'] = $finance_file->file->id;
+                            $notify_data['route'] = route('finance_file.edit', ['id' => Helper::encode($finance_file->id)]);
+                            $notify_data['cob_route'] = route('finance_file.edit', ['id' => Helper::encode($finance_file->id)]);
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance_file->file->file_no;
+                            $notify_data['title'] = "Finance File";
+                            $notify_data['module'] = "Finance File";
+                            
+                            (new NotificationService())->store($notify_data, 'imported');
+                        }
 
-                        print "true";
+                        $response = 'true';
+                        return $response;
                     } else {
-                        print "empty_data";
+                        $response = 'empty_data';
+                        return $response;
                     }
                 } else {
-                    print "empty_file";
+                    $response = 'empty_file';
+                    return $response;
                 }
             // } else {
             //     print "false";
             // }
         });
+        
+        if($is_api) {
+            return $response;
+        } else {
+            print $response;
+        }
         
     }
 

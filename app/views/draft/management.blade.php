@@ -778,6 +778,9 @@
                                                 data: {
                                                     file_id: '{{ \Helper\Helper::encode($file->id) }}'
                                                 },
+                                                beforeSend: function() {
+                                                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                                                },
                                                 success: function (data) {
                                                     $("#loading").css("display", "none");
                                                     $("#submit_button").removeAttr("disabled");
@@ -795,7 +798,10 @@
                                                     } else {
                                                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                                                     }
-                                                }
+                                                },
+                                                complete: function() {
+                                                    $.unblockUI();
+                                                },
                                             });
                                         });
                                     }
@@ -811,7 +817,7 @@
                                             success: function (data) {
                                                 $("#modal-content").html(data);
                                                 $("#file-reject").modal("show");
-                                            }
+                                            },
                                         });
                                     }
                                 </script>

@@ -203,7 +203,7 @@ class UserController extends BaseController {
 
                             # Audit Trail
                             $remarks = 'User ' . Auth::user()->username . ' is signed.';
-                            $this->addAudit(0, "System Administration", $remarks);
+                            $this->addAudit(0, "System Authentication", $remarks);
 
                             if(Auth::user()->isMPS()) {
                                 return Redirect::to('/fileList');
@@ -262,7 +262,7 @@ class UserController extends BaseController {
 
                             # Audit Trail
                             $remarks = 'User ' . Auth::user()->username . ' is signed.';
-                            $this->addAudit(0, "System Administration", $remarks);
+                            $this->addAudit(0, "System Authentication", $remarks);
                             
                             if($user_account->isHR()) {
                                 return Redirect::to('/summon/councilSummonList');
@@ -283,7 +283,7 @@ class UserController extends BaseController {
 
                             # Audit Trail
                             $remarks = 'User ' . Auth::user()->username . ' is signed.';
-                            $this->addAudit(0, "System Administration", $remarks);
+                            $this->addAudit(0, "System Authentication", $remarks);
                             
                             return Redirect::to('/home');
                         } else {
@@ -336,13 +336,17 @@ class UserController extends BaseController {
                 $name_field = $data['name'] == $user->full_name? "": "description";
                 $email_field = $data['email'] == $user->email? "": "email";
                 $phone_no_field = $data['phone_no'] == $user->phone_no? "": "phone no";
+                $receive_mail_field = $data['receive_mail'] == $user->receive_mail? "": "receive mail";
+                $receive_notify_field = $data['receive_notify'] == $user->receive_notify? "": "receive notify";
     
                 $audit_fields_changed = "";
-                if(!empty($name_field) || !empty($email_field) || !empty($phone_no_field)) {
+                if(!empty($name_field) || !empty($email_field) || !empty($phone_no_field) || !empty($receive_mail_field) || !empty($receive_notify_field)) {
                     $audit_fields_changed .= "<br><ul>";
                     $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
                     $audit_fields_changed .= !empty($email_field)? "<li>$email_field</li>" : "";
                     $audit_fields_changed .= !empty($phone_no_field)? "<li>$phone_no_field</li>" : "";
+                    $audit_fields_changed .= !empty($receive_mail_field)? "<li>$receive_mail_field</li>" : "";
+                    $audit_fields_changed .= !empty($receive_notify_field)? "<li>$receive_notify_field</li>" : "";
                     $audit_fields_changed .= "</ul>";
                 }
                 /** End Arrange audit fields changes */
@@ -350,6 +354,8 @@ class UserController extends BaseController {
                 $user->full_name = $data['name'];
                 $user->email = $data['email'];
                 $user->phone_no = $data['phone_no'];
+                $user->receive_mail = $data['receive_mail'];
+                $user->receive_notify = $data['receive_notify'];
                 $success = $user->save();
 
                 if(!empty($audit_fields_changed)) {
@@ -382,7 +388,6 @@ class UserController extends BaseController {
     }
 
     //Change password
-
     public function changePassword() {
 
         $user = User::find(Auth::User()->id);
@@ -451,6 +456,10 @@ class UserController extends BaseController {
 
     //member logout start
     public function logout($cob = '') {
+        # Audit Trail
+        $remarks = 'User ' . Auth::user()->username . ' is sign out.';
+        $this->addAudit(0, "System Authentication", $remarks);
+
         Session::forget('id');
         Session::forget('username');
         Session::forget('role');

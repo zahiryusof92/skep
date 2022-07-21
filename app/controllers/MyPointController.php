@@ -1,6 +1,7 @@
 <?php
 
 use Helper\Paydibs;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ class MyPointController extends \BaseController {
      * @return Response
      */
     public function index() {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB()) {
             if (Request::ajax()) {
                 $model = PointTransaction::where('user_id', Auth::user()->id);
@@ -116,6 +118,7 @@ class MyPointController extends \BaseController {
     }
 
     public function reload() {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB()) {
             $package = PointPackage::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             $viewData = array(
@@ -134,6 +137,7 @@ class MyPointController extends \BaseController {
     }
 
     public function orders() {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB()) {
             $data = Input::all();
 
@@ -177,6 +181,7 @@ class MyPointController extends \BaseController {
     }
 
     public function payment() {
+        $this->checkAvailableAccess();
         if (Auth::user()->isJMB()) {
             $model = Orders::find(Session::get('orderID'));
 
@@ -254,7 +259,6 @@ class MyPointController extends \BaseController {
                                 $payment_data['order_id'] = $transaction->order_id;
                                 
                                 $payment_params = (new TransactionController())->paymentProcess($payment_data);
-
                             });
                         }
                         # Audit Trail
@@ -265,9 +269,15 @@ class MyPointController extends \BaseController {
                             return Redirect::to(Config::get('constant.module.payment.gateway.paydibs.pay_request_url') .'?'. $payment_params);
 
                         } else {
-                            // dd($payment_params);
-                            $redirect_url = $payment_params->item->url;
-                            return Redirect::to($redirect_url);
+                            // direct sent to success function
+                            if(getenv('payment_gateway')) {
+                                $redirect_url = $payment_params->item->url;
+                                return Redirect::to($redirect_url);
+                            } else {
+                                if($payment_params->status == PaymentTransaction::SUCCESS) {
+                                    return Redirect::to('myPoint')->with('success', trans('app.successes.payment_successfully'));
+                                }
+                            }
                         }
 
                         // Mail::send('emails.summon.payment_success', array('model' => $model), function($message) use ($model) {
@@ -282,6 +292,12 @@ class MyPointController extends \BaseController {
             return Redirect::back()->with('error', trans('app.errors.occurred'))->withInput($data);
         } else {
             return Redirect::to('/')->with('error', trans('app.errors.occurred'));
+        }
+    }
+
+    private function checkAvailableAccess() {
+        if(!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && !in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))) {
+            App::abort(404);
         }
     }
 

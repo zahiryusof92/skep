@@ -56,6 +56,18 @@ class SubModuleTableSeeder extends Seeder {
                 'name_my' => 'Laporan Statistik',
                 'sort_no' => 20
             ]);
+            SubModule::firstOrCreate([
+                'module_id' => $report->id,
+                'name_en' => 'Email Log',
+                'name_my' => 'Log E-mel',
+                'sort_no' => 21
+            ]);
+            SubModule::firstOrCreate([
+                'module_id' => $report->id,
+                'name_en' => 'Notification',
+                'name_my' => 'Notifikasi',
+                'sort_no' => 22
+            ]);
         }
         
         $cob_letter = Module::where('name_en', 'COB Letter')->first();
@@ -70,6 +82,28 @@ class SubModuleTableSeeder extends Seeder {
                 'module_id' => $cob_letter->id,
                 'name_en' => 'COB Letter',
                 'name_my' => 'Surat COB',
+                'sort_no' => 1
+            ]);
+        }
+        
+        $api_client = Module::where('name_en', 'API Client')->first();
+        if(empty($api_client)) {
+            $api_client = new Module;
+            $api_client->name_en = "API Client";
+            $api_client->name_my = "Pelanggan API";
+            $api_client->save();
+        }
+        if($api_client) {
+            SubModule::firstOrCreate([
+                'module_id' => $api_client->id,
+                'name_en' => 'API Client',
+                'name_my' => 'Pelanggan API',
+                'sort_no' => 1
+            ]);
+            SubModule::firstOrCreate([
+                'module_id' => $api_client->id,
+                'name_en' => 'API Building',
+                'name_my' => 'Bangunan API',
                 'sort_no' => 1
             ]);
         }

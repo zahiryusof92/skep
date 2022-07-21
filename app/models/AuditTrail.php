@@ -68,6 +68,9 @@ class AuditTrail extends Eloquent {
                         if(!empty($request['module'])) {
                             $query->where('audit_trail.module', $request['module']);
                         }
+                        if(!empty($request['description'])) {
+                            $query->where('audit_trail.remarks', "LIKE", "%". $request['description'] ."%");
+                        }
                         if(!empty($request['file_id'])) {
                             $query->where('users.file_id', $request['file_id']);
                         }

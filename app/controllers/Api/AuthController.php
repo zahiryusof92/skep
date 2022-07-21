@@ -29,11 +29,11 @@ class AuthController extends BaseController {
 
                 $errors = $validator->errors();
 
-                return [
-                    'status' => 422,
-                    'data' => $errors->toJson(),
+                $response = [
+                    'data' => $errors,
                     'message' => 'Validation Error'
                 ];
+                return Response::json($response, 422);
             }
 
             $auth = Auth::attempt(array(
@@ -48,15 +48,17 @@ class AuthController extends BaseController {
                 $user = User::find(Auth::user()->id);
                 $response = [
                     'id' => $user->id,
-                    'token' => JWTAuth::fromUser($user)
+                    'token' => JWTAuth::fromUser($user),
+                    'message' => 'Login Success'
                 ];
+                return Response::json($response);
             } else {
                 $response = [
                     'error' => true,
                     'message' => 'Login Fail'
                 ];
+                return Response::json($response, 401);
             }
-            return Response::json($response);
         } catch (Exception $e) {
             throw($e);
         }

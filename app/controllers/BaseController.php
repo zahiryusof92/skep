@@ -1,8 +1,10 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 
 class BaseController extends Controller {
@@ -47,6 +49,27 @@ class BaseController extends Controller {
             'agent' => json_encode($agent),
             'audit_by' => Auth::user()->id,
         ]);   
+    }
+
+    /**
+     * Check valid secret
+     * @return void
+     */
+    protected function validateSecret() {
+		$client = APIClient::where('secret', Request::header('secret'))
+                            ->where('expiry', '>=', Carbon::now()->startOfDay())
+                            ->where('status', true)
+                            ->first();
+        if($client) {
+            return [
+                'success' => true,
+                'client' => $client
+            ];
+        }
+        return [
+            'error' => true,
+            'message' => 'Invalid Secret'
+        ];
     }
 
     /**

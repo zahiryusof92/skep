@@ -3,6 +3,7 @@
 use Helper\Helper;
 use Helper\KCurl;
 use Illuminate\Support\Facades\Auth;
+use Services\NotificationService;
 
 class AdminController extends BaseController {
 
@@ -954,7 +955,7 @@ class AdminController extends BaseController {
     public function submitUpdateHouseScheme() {
         $data = Input::all();
         if (Request::ajax()) {
-
+            
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['file']['cob']['house']['update'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
@@ -968,6 +969,20 @@ class AdminController extends BaseController {
                 $house_scheme->reference_id = $data['reference_id'];
 
                 $this->createOrUpdateFileDraft($files);
+
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.house.edit', Request::get('file_id'));
+                $notify_data['cob_route'] = route('cob.file.draft.house.edit', Request::get('file_id'));
+                $notify_data['strata'] = "You";
+                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['title'] = "COB File House Scheme";
+                $notify_data['module'] = "House Scheme";
+                
+                (new NotificationService())->store($notify_data);
             } else {
                 $house_scheme = HouseScheme::firstOrNew(array('file_id' => $files->id));
             }
@@ -1224,7 +1239,7 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
-
+        
         if (Auth::user()->isJMB()) {
             $strata = StrataDraft::where('file_id', $files->id)->first();
             $residential = ResidentialDraft::where('file_id', $files->id)->first();
@@ -1371,6 +1386,20 @@ class AdminController extends BaseController {
                 $facility->reference_id = $data['facility_reference_id'];
 
                 $this->createOrUpdateFileDraft($files);
+
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $not_draft_strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.strata.edit', Request::get('file_id'));
+                $notify_data['cob_route'] = route('cob.file.draft.strata.edit', Request::get('file_id'));
+                $notify_data['strata'] = "You";
+                $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                $notify_data['title'] = "COB File Strata";
+                $notify_data['module'] = "Strata";
+                
+                (new NotificationService())->store($notify_data);
             } else {
                 $strata = Strata::firstOrNew(array('file_id' => $files->id));
                 $commercial = Commercial::firstOrNew(array('file_id' => $files->id));
@@ -2044,6 +2073,19 @@ class AdminController extends BaseController {
                 $others = ManagementOthersDraft::firstOrNew(array('file_id' => $files->id));
 
                 $this->createOrUpdateFileDraft($files);
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.management.edit', Request::get('file_id'));
+                $notify_data['cob_route'] = route('cob.file.draft.management.edit', Request::get('file_id'));
+                $notify_data['strata'] = "You";
+                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['title'] = "COB File Management";
+                $notify_data['module'] = "Management";
+                
+                (new NotificationService())->store($notify_data);
             } else {
                 $management = Management::firstOrNew(array('file_id' => $files->id));
                 $developer = ManagementDeveloper::firstOrNew(array('file_id' => $files->id));
@@ -3914,6 +3956,19 @@ class AdminController extends BaseController {
                 $others->reference_id = $data['reference_id'];
 
                 $this->createOrUpdateFileDraft($files);
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.others.edit', Request::get('file_id'));
+                $notify_data['cob_route'] = route('cob.file.draft.others.edit', Request::get('file_id'));
+                $notify_data['strata'] = "You";
+                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['title'] = "COB File Others";
+                $notify_data['module'] = "Other Details";
+                
+                (new NotificationService())->store($notify_data);
             } else {
                 $others = OtherDetails::firstOrNew(array('file_id' => $files->id));
             }
@@ -6322,6 +6377,7 @@ class AdminController extends BaseController {
     public function submitUser() {
         $data = Input::all();
         if (Request::ajax()) {
+            dd($data);
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['user']['add'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
@@ -6339,6 +6395,8 @@ class AdminController extends BaseController {
             $end_date = $data['end_date'];
             $file_id = $data['file_id'];
             $company = $data['company'];
+            $receive_mail = $data['receive_mail'];
+            $receive_notify = $data['receive_notify'];
             $remarks = $data['remarks'];
             $is_active = $data['is_active'];
 
@@ -6373,6 +6431,8 @@ class AdminController extends BaseController {
                     $user->company_id = $company;
                     $user->remarks = $remarks;
                     $user->is_active = $is_active;
+                    $user->receive_mail = $receive_mail;
+                    $user->receive_notify = $receive_notify;
                     $user->status = 1;
                     $user->approved_by = Auth::user()->id;
                     $user->approved_at = date('Y-m-d H:i:s');
@@ -6743,6 +6803,8 @@ class AdminController extends BaseController {
             $company = $data['company'];
             $password = $data['password'];
             $is_active = $data['is_active'];
+            $receive_mail = $data['receive_mail'];
+            $receive_notify = $data['receive_notify'];
 
             $user = User::findOrFail($id);
             if ($user) {
@@ -6765,7 +6827,8 @@ class AdminController extends BaseController {
                     $new_line .= !empty($password)? "password, " : "";
                     $new_line .= $company != $user->company_id? "company, " : "";
                     $new_line .= $remarks != $user->remarks? "remarks, " : "";
-                    $new_line .= $is_active != $user->is_active? "is active, " : "";
+                    $new_line .= $receive_mail != $user->receive_mail? "receive mail, " : "";
+                    $new_line .= $receive_notify != $user->receive_notify? "receive notify, " : "";
                     if(!empty($new_line)) {
                         $audit_fields_changed .= "<br/><ul><li> Fields : (";
                         $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
@@ -6797,6 +6860,8 @@ class AdminController extends BaseController {
                     $user->company_id = $company;
                     $user->remarks = $remarks;
                     $user->is_active = $is_active;
+                    $user->receive_mail = $receive_mail;
+                    $user->receive_notify = $receive_notify;
                     $success = $user->save();
 
                     if ($success) {
@@ -8858,6 +8923,22 @@ class AdminController extends BaseController {
                     $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $insurance->file->strata;
+                        $notify_data['file_id'] = $insurance->file->id;
+                        $notify_data['route'] = route('cob.file.insurance.index', ['id' => 'All']);
+                        $notify_data['cob_route'] = route('cob.file.insurance.index', ['id' => 'All']);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $insurance->file->file_no;
+                        $notify_data['title'] = "COB File Insurance";
+                        $notify_data['module'] = "Insurance";
+                        
+                        (new NotificationService())->store($notify_data, 'deleted');
+                    }
+
                     return "true";
                 } else {
                     return "false";
@@ -8989,6 +9070,21 @@ class AdminController extends BaseController {
                 $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $insurance->file->strata;
+                    $notify_data['file_id'] = $insurance->file->id;
+                    $notify_data['route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
+                    $notify_data['cob_route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $insurance->file->file_no;
+                    $notify_data['title'] = "COB File Insurance";
+                    $notify_data['module'] = "Insurance";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
                 return "true";
             } else {
                 return "false";
@@ -9144,6 +9240,22 @@ class AdminController extends BaseController {
                         $this->addAudit($insurance->file->id, "Insurance", $remarks);
                     }
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $insurance->file->strata;
+                        $notify_data['file_id'] = $insurance->file->id;
+                        $notify_data['route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
+                        $notify_data['cob_route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $insurance->file->file_no;
+                        $notify_data['title'] = "COB File Insurance";
+                        $notify_data['module'] = "Insurance";
+                        
+                        (new NotificationService())->store($notify_data, 'updated');
+                    }
+
                     return "true";
                 } else {
                     return "false";
@@ -9270,6 +9382,22 @@ class AdminController extends BaseController {
                     $remarks = 'COB File (' . $files->file_no . ') has a Finance Support with id : ' . $finance->id .  $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB Finance Support", $remarks);
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $finance->file->strata;
+                        $notify_data['file_id'] = $finance->file->id;
+                        $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                        $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                        $notify_data['title'] = "COB File Finance Support";
+                        $notify_data['module'] = "Finance Support";
+                        
+                        (new NotificationService())->store($notify_data);
+                    }
+
                     print "true";
                 } else {
                     print "false";
@@ -9339,6 +9467,22 @@ class AdminController extends BaseController {
                         if(!empty($audit_fields_changed)) {
                             $remarks = 'COB File (' . $files->file_no . ') has a Finance Support with id : ' . $finance->id .  $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB Finance Support", $remarks);
+                        }
+                        
+                        if(Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $finance->file->strata;
+                            $notify_data['file_id'] = $finance->file->id;
+                            $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                            $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                            $notify_data['strata'] = "You";
+                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                            $notify_data['title'] = "COB File Finance Support";
+                            $notify_data['module'] = "Finance Support";
+                            
+                            (new NotificationService())->store($notify_data);
                         }
                         
                         print "true";

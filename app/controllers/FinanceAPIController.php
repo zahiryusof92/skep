@@ -47,7 +47,7 @@ class FinanceAPIController extends BaseController {
             $file = Files::where('file_no',$file_no)->first();
             
             if($file) {
-                $finance = Finance::where('file_id', $file->id)->where('month',$month)->where('year',$year)->first();
+                $finance = Finance::where('file_id', $file->id)->where('month',$month)->where('year',$year)->where('is_deleted', false)->first();
                 if($finance) {
                     $response = [
                         'status' => 200,
@@ -1739,7 +1739,7 @@ class FinanceAPIController extends BaseController {
             
             $request_params = Input::all();
             $request_params['summary'] = array();
-            DB::transaction(function() use($request_params, &$response) {
+            // DB::transaction(function() use($request_params, &$response) {
                 /*
                 *Process all validation before create process
                 *
@@ -1980,7 +1980,7 @@ class FinanceAPIController extends BaseController {
                 
                 $response = $this->createAuditTrail($finance_id,'update');
                 return $response;
-            });
+            // });
 
         } catch (Exception $e) {
             throw($e);

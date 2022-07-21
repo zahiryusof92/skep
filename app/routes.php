@@ -184,7 +184,7 @@ Route::post('/deleteAuditedFinancialFile/{id}', 'AdminController@deleteAuditedFi
 
 //monitoring
 Route::get('/view/monitoring/{id}', 'AdminController@viewMonitoring')->before('authMember');
-Route::get('/update/monitoring/{id}', 'AdminController@monitoring')->before('authMember');
+Route::get('/update/monitoring/{id}',  array('as' => 'cob.file.monitoring.edit', 'uses' => 'AdminController@monitoring'))->before('authMember');
 Route::post('/submitUpdateMonitoring', 'AdminController@submitUpdateMonitoring')->before('authMember');
 Route::post('/addAGMDetails', 'AdminController@addAGMDetails')->before('authMember');
 Route::post('/editAGMDetails', 'AdminController@editAGMDetails')->before('authMember');
@@ -275,7 +275,7 @@ Route::post('/deleteScoring/{id}', 'AdminController@deleteScoring')->before('aut
 
 //buyer
 Route::get('/view/buyer/{id}', 'AdminController@viewBuyer')->before('authMember');
-Route::get('/update/buyer/{id}', 'AdminController@buyer')->before('authMember');
+Route::get('/update/buyer/{id}', array('as' => 'cob.file.buyer.edit', 'uses' => 'AdminController@buyer'))->before('authMember');
 Route::get('/update/addBuyer/{id}', 'AdminController@addBuyer')->before('authMember');
 Route::get('/update/editBuyer/{id}', 'AdminController@editBuyer')->before('authMember');
 Route::post('/submitBuyer', 'AdminController@submitBuyer')->before('authMember');
@@ -290,31 +290,31 @@ Route::post('/importBuyer', 'ImportController@importBuyer')->before('authMember'
 Route::post('/importTenant', 'ImportController@importTenant')->before('authMember');
 
 //document
-Route::get('/update/document/{id}', 'AdminController@document')->before('authMember');
+Route::get('/update/document/{id}', array('as' => 'cob.file.document.index', 'uses' => 'AdminController@document'))->before('authMember');
 Route::get('/getDocument/{id}', 'AdminController@getDocument')->before('authMember');
 Route::get('/update/addDocument/{id}', 'AdminController@addDocument')->before('authMember');
 Route::post('/submitAddDocument', 'AdminController@submitAddDocument')->before('authMember');
-Route::get('/update/editDocument/{id}', 'AdminController@editDocument')->before('authMember');
+Route::get('/update/editDocument/{id}', array('as' => 'cob.file.document.edit', 'uses' => 'AdminController@editDocument'))->before('authMember');
 Route::post('/submitEditDocument', 'AdminController@submitEditDocument')->before('authMember');
 Route::post('/deleteDocument/{id}', 'AdminController@deleteDocument')->before('authMember');
 Route::post('/deleteDocumentFile', 'AdminController@deleteDocumentFile')->before('authMember');
 Route::post('/uploadDocumentFile', 'FileController@uploadDocumentFile')->before('authMember');
 
 //insurance
-Route::get('/insurance/{id}', 'AdminController@insurance')->before('authMember');
+Route::get('/insurance/{id}', array('as' => 'cob.file.insurance.index', 'uses' => 'AdminController@insurance'))->before('authMember');
 Route::get('/getInsurance/{id}', 'AdminController@getInsurance')->before('authMember');
 Route::get('/addInsurance/{id}', 'AdminController@addInsurance')->before('authMember');
 Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before('authMember');
-Route::get('/updateInsurance/{id}/{file_id}', 'AdminController@updateInsurance')->before('authMember');
+Route::get('/updateInsurance/{id}/{file_id}', array('as' => 'cob.file.insurance.edit', 'uses' => 'AdminController@updateInsurance'))->before('authMember');
 Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
 Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
 
 //finance_support
-Route::get('/financeSupport/{id}', 'AdminController@financeSupport')->before('authMember');
+Route::get('/financeSupport/{id}', array('as' => 'cob.file.finance_support.index', 'uses' => 'AdminController@financeSupport'))->before('authMember');
 Route::get('/getFinanceSupport/{id}', 'AdminController@getFinanceSupport')->before('authMember');
 Route::get('/addFinanceSupport/{id}', 'AdminController@addFinanceSupport')->before('authMember');
-Route::post('/submitAddFinanceSupport', 'AdminController@submitAddFinanceSupport')->before('authMember');
-Route::get('/updateFinanceSupport/{id}', 'AdminController@updateFinanceSupport')->before('authMember');
+Route::post('/submitAddFinanceSupport', array('as' => 'cob.file.finance_support.store', 'uses' => 'AdminController@submitAddFinanceSupport'))->before('authMember');
+Route::get('/updateFinanceSupport/{id}', array('as' => 'cob.file.finance_support.edit', 'uses' => 'AdminController@updateFinanceSupport'))->before('authMember');
 Route::post('/submitUpdateFinanceSupport', 'AdminController@submitUpdateFinanceSupport')->before('authMember');
 Route::post('/deleteFinanceSupport/{id}', 'AdminController@deleteFinanceSupport')->before('authMember');
 
@@ -411,20 +411,20 @@ Route::post('/uploadFormFile', 'FileController@uploadFormFile');
 Route::post('/getFileListByCOB', 'AgmController@getFileListByCOB');
 
 //AGM Design Submission
-Route::get('/AJK', 'AgmController@AJK')->before('authMember');
+Route::get('/AJK', array('as' => 'ajk.index', 'uses' => 'AgmController@AJK'))->before('authMember');
 Route::get('/getAJK', 'AgmController@getAJK')->before('authMember');
 Route::get('/addAJK', 'AgmController@addAJK')->before('authMember');
 Route::post('/submitAddAJK', 'AgmController@submitAddAJK')->before('authMember');
-Route::get('/editAJK/{id}', 'AgmController@editAJK')->before('authMember');
+Route::get('/editAJK/{id}', array('as' => 'ajk.edit', 'uses' => 'AgmController@editAJK'))->before('authMember');
 Route::post('/submitEditAJK', 'AgmController@submitEditAJK')->before('authMember');
 Route::post('/deleteAJK', 'AgmController@deleteAJK')->before('authMember');
 
 //Purchaser Submission
-Route::get('/purchaser', 'AgmController@purchaser')->before('authMember');
+Route::get('/purchaser', array('as' => 'purchaser.index', 'uses' => 'AgmController@purchaser'))->before('authMember');
 Route::get('/getPurchaser', 'AgmController@getPurchaser')->before('authMember');
 Route::get('/addPurchaser', 'AgmController@addPurchaser')->before('authMember');
 Route::post('/submitPurchaser', 'AgmController@submitPurchaser')->before('authMember');
-Route::get('/editPurchaser/{id}', 'AgmController@editPurchaser')->before('authMember');
+Route::get('/editPurchaser/{id}', array('as' => 'purchaser.edit', 'uses' => 'AgmController@editPurchaser'))->before('authMember');
 Route::post('/submitEditPurchaser', 'AgmController@submitEditPurchaser')->before('authMember');
 Route::post('/deletePurchaser', 'AgmController@deletePurchaser')->before('authMember');
 Route::get('/importPurchaser', 'AgmController@importPurchaser')->before('authMember');
@@ -434,11 +434,11 @@ Route::post('/report/purchaser', 'ReportController@purchaser')->before('authMemb
 Route::post('/print/purchaser', 'PrintController@printPurchaser')->before('authMember');
 
 //Tenant Submission
-Route::get('/tenant', 'AgmController@tenant')->before('authMember');
+Route::get('/tenant', array('as' => 'tenant.index', 'uses' => 'AgmController@tenant'))->before('authMember');
 Route::get('/getTenant', 'AgmController@getTenant')->before('authMember');
 Route::get('/addTenant', 'AgmController@addTenant')->before('authMember');
 Route::post('/submitTenant', 'AgmController@submitTenant')->before('authMember');
-Route::get('/editTenant/{id}', 'AgmController@editTenant')->before('authMember');
+Route::get('/editTenant/{id}', array('as' => 'tenant.edit', 'uses' => 'AgmController@editTenant'))->before('authMember');
 Route::post('/submitEditTenant', 'AgmController@submitEditTenant')->before('authMember');
 Route::post('/deleteTenant', 'AgmController@deleteTenant')->before('authMember');
 Route::get('/importTenant', 'AgmController@importTenant')->before('authMember');
@@ -448,21 +448,21 @@ Route::post('/report/tenant', 'ReportController@tenant')->before('authMember');
 Route::post('/print/tenant', 'PrintController@printTenant')->before('authMember');
 
 // upload minutes
-Route::get('/minutes', 'AgmController@minutes')->before('authMember');
+Route::get('/minutes', array('as' => 'minutes.index', 'uses' => 'AgmController@minutes'))->before('authMember');
 Route::get('/getMinutes', 'AgmController@getMinutes')->before('authMember');
 Route::get('/addMinutes', 'AgmController@addMinutes')->before('authMember');
 Route::post('/submitAddMinutes', 'AgmController@submitAddMinutes')->before('authMember');
-Route::get('/editMinutes/{id}', 'AgmController@editMinutes')->before('authMember');
+Route::get('/editMinutes/{id}', array('as' => 'minutes.edit', 'uses' => 'AgmController@editMinutes'))->before('authMember');
 Route::post('/submitEditMinutes', 'AgmController@submitEditMinutes')->before('authMember');
 Route::post('/getMinuteDetails', 'AgmController@getMinuteDetails')->before('authMember');
 Route::post('/deleteMinutes', 'AgmController@deleteMinutes')->before('authMember');
 
 //document
-Route::get('/document', 'AgmController@document')->before('authMember');
+Route::get('/document', array('as' => 'document.index', 'uses' => 'AgmController@document'))->before('authMember');
 Route::get('/getDocument', 'AgmController@getDocument')->before('authMember');
 Route::get('/addDocument', 'AgmController@addDocument')->before('authMember');
 Route::post('/submitAddDocument', 'AgmController@submitAddDocument')->before('authMember');
-Route::get('/updateDocument/{id}', 'AgmController@updateDocument')->before('authMember');
+Route::get('/updateDocument/{id}', array('as' => 'document.edit', 'uses' => 'AgmController@updateDocument'))->before('authMember');
 Route::post('/submitUpdateDocument', 'AgmController@submitUpdateDocument')->before('authMember');
 Route::post('/deleteDocument/{id}', 'AgmController@deleteDocument')->before('authMember');
 Route::post('/deleteDocumentFile', 'AgmController@deleteDocumentFile')->before('authMember');
@@ -703,7 +703,9 @@ Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceP
 
 // --- Reporting --- //
 //audit trail
-Route::get('/reporting/auditTrail', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrailNew'))->before('authMember');
+Route::get('/reporting/auditTrail', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrail'))->before('authMember');
+Route::get('/reporting/auditLogon', array('as' => 'reporting.logon.index', 'uses' => 'ReportController@auditLogon'))->before('authMember');
+Route::get('/reporting/auditLogon/old', array('as' => 'reporting.logon.old.index', 'uses' => 'ReportController@auditLogonOld'))->before('authMember');
 
 //file by location
 Route::get('/reporting/fileByLocation', 'ReportController@fileByLocation')->before('authMember');
@@ -796,7 +798,7 @@ Route::get('/print/CobFileManagement', 'PrintController@printCobFileManagement')
 Route::post('/print/financeSupport', 'PrintController@financeSupport')->before('authMember');
 
 // FINANCE FILE LIST
-Route::get('/financeList', 'FinanceController@financeList')->before('authMember');
+Route::get('/financeList', array('as' => 'finance_file.index', 'uses' => 'FinanceController@financeList'))->before('authMember');
 Route::get('/getFinanceList', 'FinanceController@getFinanceList')->before('authMember');
 Route::post('/inactiveFinanceList', 'FinanceController@inactiveFinanceList')->before('authMember');
 Route::post('/activeFinanceList', 'FinanceController@activeFinanceList')->before('authMember');
@@ -827,11 +829,11 @@ Route::post('/updateFinanceFileReportMf', 'FinanceController@updateFinanceFileRe
 Route::get('/print/financeFile/{id}', 'PrintController@printFinanceFile')->before('authMember');
 
 // FINANCE SUPPORT
-Route::get('/financeSupport', 'FinanceController@financeSupport')->before('authMember');
+Route::get('/financeSupport', array('as' => 'finance_support.index', 'uses' => 'FinanceController@financeSupport'))->before('authMember');
 Route::get('/getFinanceSupportList', 'FinanceController@getFinanceSupportList')->before('authMember');
 Route::get('/addFinanceSupport', 'FinanceController@addFinanceSupport')->before('authMember');
 Route::post('/submitFinanceSupport', 'FinanceController@submitFinanceSupport')->before('authMember');
-Route::get('/editFinanceSupport/{id}', 'FinanceController@editFinanceSupport')->before('authMember');
+Route::get('/editFinanceSupport/{id}', array('as' => 'finance_support.edit', 'uses' => 'FinanceController@editFinanceSupport'))->before('authMember');
 Route::post('/updateFinanceSupport', 'FinanceController@updateFinanceSupport')->before('authMember');
 Route::post('/deleteFinanceSupport', 'FinanceController@deleteFinanceSupport')->before('authMember');
 
@@ -985,8 +987,22 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * COB Letter
      */
-    Route::get('cob_letter/getForm',  array('as' => 'cob_letter.getForm', 'uses' => 'CobLetterController@getForm'));
+    Route::get('cob_letter/getForm', array('as' => 'cob_letter.getForm', 'uses' => 'CobLetterController@getForm'));
     Route::resource('cob_letter', 'CobLetterController');
+
+    /**
+     * API Client
+     */
+    Route::resource('clients', 'APIClientController');
+    Route::get('client/buildings', array('as' => 'clients.building.index', 'uses' => 'APIBuildingController@index'));
+    Route::get('client/buildings/{id}/edit', array('as' => 'clients.building.edit', 'uses' => 'APIBuildingController@edit'));
+    Route::get('client/buildings/{id}/active', array('as' => 'clients.building.status.active', 'uses' => 'APIBuildingController@updateActive'));
+    Route::get('client/buildings/{id}/inactive', array('as' => 'clients.building.status.inactive', 'uses' => 'APIBuildingController@updateInactive'));
+    Route::post('client/buildings/logs', array('as' => 'clients.building.log', 'uses' => 'APIBuildingController@log'));
+    
+    Route::resource('email_log', 'EmailLogController');
+    Route::get('notification/markAll', array('as' => 'notification.markAll', 'uses' => 'NotificationController@markAll'));
+    Route::resource('notification', 'NotificationController');
 });
 
 /** Transaction */
@@ -1017,7 +1033,30 @@ Route::group(array('prefix' => 'api/v1'), function() {
     Route::post('profile/update_simple', 'Api\ApiController@updateSimpleProfileInfo');
     Route::post('/login', 'Api\ApiController@login');
     Route::get('getCouncil', 'Api\ApiController@getCouncil');
+    
+    /** 
+     * Finance File API 
+     */
     Route::post('oauth/token', 'Api\AuthController@token');
+    Route::group(array('prefix' => 'api', 'before' => 'jwt-auth'), function() {
+        Route::post('files/get', 'Api\FileController@get');
+        Route::post('finance/new', 'FinanceAPIController@addNewFinance');
+        // Route::post('addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck');
+        // Route::post('addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary');
+        Route::post('finance/update', 'FinanceAPIController@updateFinance');
+        // Route::post('updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck');
+        // Route::post('updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary');
+        // Route::delete('deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord');
+        Route::post('finance/import', 'FinanceAPIController@import');
+    });
+});
+//API route
+Route::group(array('prefix' => 'api', 'before' => ['auth.basic', 'authMember']), function() {
+
+    Route::post('addNewFinanceFile', 'FinanceAPIController@addNewFinance');
+    Route::post('updateFinanceFile', 'FinanceAPIController@updateFinance');
+    Route::post('files/get', 'Api\FileController@get');
+    Route::post('importFinanceFile', 'FinanceAPIController@import');
 });
 
 Route::group(array('prefix' => 'api/v1/export'), function() {
@@ -1027,6 +1066,7 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('reporting', 'ExportController@reporting');
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
     Route::get('tunggakanFinance', 'ExportController@tunggakanFinance');
+    Route::get('fileDetails', 'ExportController@fileDetails');
 });
 
 
@@ -1120,19 +1160,6 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
     });
 });
 
-//API route
-Route::group(array('prefix' => 'api', 'before' => ['auth.basic', 'authMember']), function() {
-    Route::post('addNewFinanceFile', 'FinanceAPIController@addNewFinance');
-    // Route::post('addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck');
-    // Route::post('addNewFinanceSummary', 'FinanceAPIController@addNewFinanceSummary');
-    Route::post('updateFinanceFile', 'FinanceAPIController@updateFinance');
-    // Route::post('updateFinanceCheck', 'FinanceAPIController@updateFinanceCheck');
-    // Route::post('updateFinanceSummary', 'FinanceAPIController@updateFinanceSummary');
-    // Route::delete('deleteFinanceFile/{id}', 'FinanceAPIController@deleteAllFinanceRecord');
-
-    Route::post('files/get', 'Api\FileController@get');
-});
-
 /*
  * Cronjob
  */
@@ -1168,3 +1195,4 @@ Route::group(array('prefix' => 'api/v4'), function() {
 Route::get('/{name?}', 'AdminController@showView')->before('authMember');
 
 
+Route::get('test/finance/api', 'TestController@updateFinanceAPI');

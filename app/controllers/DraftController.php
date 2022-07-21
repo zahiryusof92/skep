@@ -3,6 +3,7 @@
 use Helper\Helper;
 use Illuminate\Support\Facades\Session;
 use yajra\Datatables\Facades\Datatables;
+use Services\NotificationService;
 
 class DraftController extends BaseController {
 
@@ -253,6 +254,19 @@ class DraftController extends BaseController {
                     $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
+            
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.house.edit', Request::get('file_id'));
+                $notify_data['strata'] = "your";
+                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['title'] = "COB File House Scheme";
+                $notify_data['module'] = "House Scheme";
+                
+                (new NotificationService())->sendJMB($notify_data, 'approved');
 
                 return "true";
             }
@@ -779,6 +793,19 @@ class DraftController extends BaseController {
                     $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
+            
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.strata.edit', Request::get('file_id'));
+                $notify_data['strata'] = "your";
+                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['title'] = "COB File Strata";
+                $notify_data['module'] = "Strata";
+                
+                (new NotificationService())->sendJMB($notify_data, 'approved');
 
                 return "true";
             }
@@ -1147,6 +1174,21 @@ class DraftController extends BaseController {
                 $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                 $this->addAudit($files->id, "COB File", $remarks);
             }
+            
+            /**
+             * Add Notification & send email to COB and JMB
+             */
+            $receiver = User::where('file_id', $files->id)->first();
+            $strata = $files->strata;
+            $notify_data['receiver_id'] = $receiver->id;
+            $notify_data['file_id'] = $files->id;
+            $notify_data['route'] = route('cob.file.management.edit', Request::get('file_id'));
+            $notify_data['strata'] = "your";
+            $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+            $notify_data['title'] = "COB File Management";
+            $notify_data['module'] = "Management";
+            
+            (new NotificationService())->sendJMB($notify_data, 'approved');
 
             return "true";
         }
@@ -1255,6 +1297,19 @@ class DraftController extends BaseController {
                     $remarks = 'Others Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_accepted'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
+            
+                /**
+                 * Add Notification & send email to COB and JMB
+                 */
+                $strata = $files->strata;
+                $notify_data['file_id'] = $files->id;
+                $notify_data['route'] = route('cob.file.others.edit', Request::get('file_id'));
+                $notify_data['strata'] = "your";
+                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['title'] = "COB File Others";
+                $notify_data['module'] = "Other Details";
+                
+                (new NotificationService())->sendJMB($notify_data, 'approved');
 
                 return "true";
             }

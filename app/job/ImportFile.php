@@ -57,10 +57,10 @@ class ImportFile
         if (isset($row['3']) && !empty($row['3'])) {
             $year = trim($row['3']);
         }
-        // 124. Status
+        // 127. Status
         $is_active = 0;
-        if (isset($row['124']) && !empty($row['124'])) {
-            $is_active_raw = trim($row['124']);
+        if (isset($row['127']) && !empty($row['127'])) {
+            $is_active_raw = trim($row['127']);
 
             if (!empty($is_active_raw)) {
                 if (strtolower($is_active_raw) == 'aktif' || strtolower($is_active_raw) == 'active') {
@@ -695,6 +695,7 @@ class ImportFile
                     }
                     $residential->strata_id = $strata->id;
                     $residential->unit_no = $residential_unit_no;
+                    $residential->under_ten_units = (!empty($residential_unit_no) && $residential_unit_no < 10)? true : false;
                     $residential->maintenance_fee = $residential_mf;
                     $residential->maintenance_fee_option = $residential_mf_unit;
                     $residential->sinking_fund = $residential_sf;
@@ -768,6 +769,7 @@ class ImportFile
                     }
                     $commercial->strata_id = $strata->id;
                     $commercial->unit_no = $commercial_unit_no;
+                    $commercial->under_ten_units = (!empty($commercial_unit_no) && $commercial_unit_no < 10)? true : false;
                     $commercial->maintenance_fee = $commercial_mf;
                     $commercial->maintenance_fee_option = $commercial_mf_unit;
                     $commercial->sinking_fund = $commercial_sf;
@@ -823,6 +825,36 @@ class ImportFile
                     $is_others = 1;
                 }
             }
+    
+            // 117. No Management
+            $no_management = false;
+            if (isset($row['117']) && !empty($row['117'])) {
+                $no_management_raw = trim($row['117']);
+
+                if (strtolower($no_management_raw) == 'yes') {
+                    $no_management = true;
+                }
+            }
+
+            // 118. Date Start
+            $date_start = '';
+            if (isset($row['118']) && !empty($row['118'])) {
+                if(!empty($row['118']['date'])) {
+                    $date_start = Carbon::parse($row['118']['date'])->format('Y-m-d');
+                } else {
+                    $date_start = Carbon::createFromFormat('d/m/Y', trim($row['118']))->format('Y-m-d');
+                }
+            }
+
+            // 119. Date End
+            $date_end = '';
+            if (isset($row['119']) && !empty($row['119'])) {
+                if(!empty($row['119']['date'])) {
+                    $date_end = Carbon::parse($row['119']['date'])->format('Y-m-d');
+                } else {
+                    $date_end = Carbon::createFromFormat('d/m/Y', trim($row['119']['date']))->format('Y-m-d');
+                }
+            }
 
             $management = Management::where('file_id', $files->id)->first();
             if(empty($management)) {
@@ -833,6 +865,9 @@ class ImportFile
             $management->is_mc = $is_mc;
             $management->is_agent = $is_agent;
             $management->is_others = $is_others;
+            $management->no_management = $no_management;
+            $management->start = $date_start;
+            $management->end = $date_end;
             $create_management = $management->save();
 
             if ($create_management) {
@@ -1102,10 +1137,10 @@ class ImportFile
                         $mc_email = trim($row['89']);
                     }
 
-                    // 125. Certificate No
+                    // 128. Certificate No
                     $certificate_no = 0;
-                    if (isset($row['125']) && !empty($row['125'])) {
-                        $certificate_no = trim($row['125']);
+                    if (isset($row['128']) && !empty($row['128'])) {
+                        $certificate_no = trim($row['128']);
                     }
 
                     $new_mc = ManagementMC::where('file_id', $files->id)->first();
@@ -1389,22 +1424,22 @@ class ImportFile
                 }
             }
 
-            // 117. Precalculate Plan
+            // 120. Precalculate Plan
             $precalculate_plan = '';
-            if (isset($row['117']) && !empty($row['117'])) {
-                $precalculate_plan = trim($row['117']);
+            if (isset($row['120']) && !empty($row['120'])) {
+                $precalculate_plan = trim($row['120']);
             }
-            // 118. Buyer Registration
+            // 121. Buyer Registration
             $buyer_registration = '';
-            if (isset($row['118']) && !empty($row['118'])) {
-                $buyer_registration = trim($row['118']);
+            if (isset($row['121']) && !empty($row['121'])) {
+                $buyer_registration = trim($row['121']);
             }
-            // 119. Certificate No
+            // 122. Certificate No
             $certificate_no = '';
-            if (isset($row['119']) && !empty($row['119'])) {
-                $certificate_no = trim($row['119']);
+            if (isset($row['122']) && !empty($row['122'])) {
+                $certificate_no = trim($row['122']);
             }
-            // 120. Financial Report Start Month
+            // 123. Financial Report Start Month
 
             $monitor = Monitoring::where('file_id', $files->id)->first();
             if(empty($monitor)) {
@@ -1416,20 +1451,20 @@ class ImportFile
             $monitor->certificate_no = $certificate_no;
             $monitor->save();
 
-            // 121. Name
+            // 124. Name
             $other_details_name = '';
-            if (isset($row['121']) && !empty($row['121'])) {
-                $other_details_name = trim($row['121']);
+            if (isset($row['124']) && !empty($row['124'])) {
+                $other_details_name = trim($row['124']);
             }
-            // 122. Latitude
+            // 125. Latitude
             $latitude = '';
-            if (isset($row['122']) && !empty($row['122'])) {
-                $latitude = trim($row['122']);
+            if (isset($row['125']) && !empty($row['125'])) {
+                $latitude = trim($row['125']);
             }
-            // 123. Longitude
+            // 126. Longitude
             $longitude = '';
-            if (isset($row['123']) && !empty($row['123'])) {
-                $longitude = trim($row['123']);
+            if (isset($row['126']) && !empty($row['126'])) {
+                $longitude = trim($row['126']);
             }
 
             $others_details = OtherDetails::where('file_id', $files->id)->first();
@@ -1459,10 +1494,10 @@ class ImportFile
         }
 
 
-        // 125. New File No
+        // 129. New File No
         $new_file_no = '';
-        if (isset($row['125']) && !empty($row['125'])) {
-            $new_file_no = trim($row['125']);
+        if (isset($row['129']) && !empty($row['129'])) {
+            $new_file_no = trim($row['129']);
         }
 
         if (!empty($new_file_no)) {

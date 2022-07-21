@@ -1901,6 +1901,69 @@ a.custom-tab:hover {
     box-shadow: 3px 3px 5px 0px #ccc;
 }
 
+.theme-icon {
+    color: #fbdd51;
+}
+
+.notification-link {
+    display: flex;
+}
+
+.notification-img {
+    /* height: 35px;
+    width: 35px !important; */
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.notification-message {
+    margin-left: 10px;
+    margin-bottom: 0;
+    width: 250px;
+}
+
+.dropdown-menu li {
+    border-bottom: 1px solid #d2d9e5;
+}
+
+.text-overflow {
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+
+.badge-warning {
+    color: #1f2d3d;
+    background-color: #ffc107;
+}
+
+.badge-danger {
+    color: #ffffff;
+    background-color: #e82424;
+    ;
+}
+
+.navbar-badge {
+    font-weight: 300;
+    padding: 2px 5px;
+    position: absolute;
+    right: 0;
+    z-index: -1;
+}
+
 .col-xs-15 {
     width: 20%;
     float: left;

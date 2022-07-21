@@ -1105,6 +1105,9 @@ function editMinutes() {
                 endorsed_email: endorsed_email,
                 id: '{{ \Helper\Helper::encode($meeting_doc->id) }}'
             },
+            beforeSend: function() {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+            },
             success: function (data) {
                 $("#loading").css("display", "none");
                 $("#submit_button").removeAttr("disabled");
@@ -1117,7 +1120,10 @@ function editMinutes() {
                 } else {
                     bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                 }
-            }
+            },
+            complete: function() {
+                $.unblockUI();
+            },
         });
     } else {
         $("#loading").css("display", "none");
