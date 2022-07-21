@@ -44,7 +44,7 @@ class NotificationService {
                         ->whereIn('role', array_pluck($role_ids, 'id'))
                         ->where('status', true)
                         ->where('is_deleted', false)
-                        ->take(3)
+                        // ->take(3)
                         ->get();
             foreach($cobs as $cob) {
                 if($cob->receive_notify) {
