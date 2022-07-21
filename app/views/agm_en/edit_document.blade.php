@@ -254,6 +254,9 @@ foreach ($user_permission as $permission) {
                     is_readonly: is_readonly,
                     id: "{{ \Helper\Helper::encode($document->id) }}"
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
@@ -265,7 +268,10 @@ foreach ($user_permission as $permission) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         } else {
             $("#file_id").focus();

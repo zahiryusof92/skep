@@ -42,6 +42,10 @@ foreach ($user_permission as $permission) {
                     @endif
                     <dt>{{ trans('app.forms.is_active') }}</dt>
                     <dd>{{ ($user->is_active == '1' ? 'Yes' : 'No') }}</dd>
+                    <dt>{{ trans('app.forms.receive_mail') }}</dt>
+                    <dd>{{ ($user->receive_mail == '1' ? 'Yes' : 'No') }}</dd>
+                    <dt>{{ trans('app.forms.receive_notify') }}</dt>
+                    <dd>{{ ($user->receive_notify == '1' ? 'Yes' : 'No') }}</dd>
                     @if ($user->status == 0)
                     <dt>{{ trans('app.forms.status') }}</dt>
                     <dd>

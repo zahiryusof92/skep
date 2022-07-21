@@ -37,7 +37,7 @@ return array(
             "add_cob_file_prefix" => "Tambah Awalan Fail COB",
             "update_cob_file_prefix" => "Kemas Kini Awalan Fail COB",
             "update_cob_file" => "Kemas Kini Fail COB",
-            "file_reject_list" => "Tolak Fail Rangka COB",
+            "file_reject_list" => "Draf Fail COB Ditolak",
         ),
         "finance" => array(
             "maintenance" => "Kewangan",
@@ -181,6 +181,10 @@ return array(
             "epks" => "ePKS",
             "generate" => "Penjana Laporan",
             "statistic" => "Laporan Statistik",
+            'notification' => "Notifikasi",
+            'email_log' => "Log E-mel",
+            'audit_logon' => "Log Masuk Audit",
+            'audit_logon_report' => "Laporan Audit Logon",
         ),
         "agm" => array(
             "submission" => "Penyerahan AGM",
@@ -228,6 +232,12 @@ return array(
         ),
         "cob_letter" => array(
             "name" => "Surat COB",
+        ),
+        'api' => array(
+            'name' => 'API',
+            'client' => 'Pelanggan API',
+            'building' => 'Bangunan API',
+            'building_log' => 'Log Bangunan API'
         ),
     ),
     "forms" => array(
@@ -376,7 +386,7 @@ return array(
         "vacant_possession_date" => "Tarikh VP",
         "position" => "Jawatan",
         "summary" => "Rumusan",
-        "amount" => "Jawatan",
+        "amount" => "Jumlah",
         "finance_management" => "Pengurusan Kewangan",
         "finance_management_id" => "ID Pengurusan Kewangan",
         "strata" => "Strata",
@@ -659,6 +669,18 @@ return array(
         'grains' => 'Butir',
         'overall_total' => 'Jumlah Keseluruhan',
         'original_price' => 'Harga Asal',
+        'api_client' => 'Pelanggan API',
+        'api_building' => 'Bangunan API',
+        'api_building_log' => 'Log Bangunan API',
+        'secret' => 'Rahsia',
+        'receive_mail' => 'Menerima Emel',
+        'receive_notify' => 'Menerima Makluman',
+        'notification' => 'Notifikasi',
+        'mark_all' => 'Tandakan Semua Sebagai Baca',
+        'email_log' => 'Log E-mel',
+        'accepted' => 'Diterima',
+        'rejected' => 'Ditolak',
+        'old' => 'Lama',
     ),
     "errors" => array(
         "required" => "Sila Masukkan :attribute",
@@ -1065,13 +1087,13 @@ return array(
         ],
     ],
     'transaction' => [
-        'title' => 'Transaction',
-        'created_at' => 'Created At',
-        'reference_no' => 'Reference No',
-        'pay_for' => 'Pay For',
+        'title' => 'Transaksi',
+        'created_at' => 'Tarikh Dibina',
+        'reference_no' => 'No Rujukan',
+        'pay_for' => 'Bayar Kepada',
         'user' => 'User',
-        'amount' => 'Amount',
-        'payment_method' => 'Payment Method',
+        'amount' => 'Jumlah',
+        'payment_method' => 'Kaedah Pembayaran',
         'status' => 'Status'
     ],
     'point_package' => [

@@ -3,8 +3,12 @@
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Queue;
+use Job\GetExportData;
 
 class ExportController extends BaseController {
+
     public function exportCouncilFacility() {
         $config_facilities = Config::get('constant.module.cob.facility');
         $facilities = Company::join('files','company.id','=','files.company_id')
@@ -71,12 +75,392 @@ class ExportController extends BaseController {
             }
             
         }
-        
+
         return Excel::create('CouncilFacilityByStrata', function($excel) use ($data) {
             $excel->sheet('mySheet', function($sheet) use ($data)
             {
 
                 $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function reporting() {
+        $files = Files::with(['company','strata','managementDeveloper','managementJMB','managementMC','managementAgent',
+                                'managementOthers','ajk_details'])
+                        // ->whereIn('files.id',[8,19])
+                        // ->whereHas('company', function($query) {
+                        //     return $query->where('short_name','MPS');
+                        // })
+                        ->orderBy('company_id','asc')
+                        ->get();
+        
+        $types = ['Developer','JMB','MC','Agent','Others'];
+        $data = [];
+        $delay = 0;
+        $incrementDelay = 2;
+        foreach($files as $key => $file) {
+            // $queue = new GetExportData;
+            // $queue_data = Queue::later(Carbon::now()->addSeconds($delay), GetExportData::class, array('item' => $file));
+            //         $delay += $incrementDelay;
+            
+            // array_merge($queue_data, $data);
+            if(empty($file->strata->name) == false) {
+                $data[$key]['cob'] = $file->company->short_name;
+                $data[$key]['file_no'] = $file->file_no;
+                $data[$key]['file_name'] = $file->strata->name;
+    
+                foreach($types as $key1 => $type) {
+                    $data[$key]['management'][$key1]['type'] = $type;
+                    $type = 'management'. $type;
+                    if($type == 'managementAgent') {
+                        if(empty($file->$type) == false) {
+                            $management_name = $file->$type->agent;
+                        } else {
+                            $management_name = '';
+                        }
+                    } else {
+                        if(empty($file->$type) == false) {
+                            $management_name = $file->$type->name;
+                        } else {
+                            $management_name = '';
+                        }
+                    }
+                    $data[$key]['management'][$key1]['name'] = $management_name;
+                    $data[$key]['management'][$key1]['address'] = (empty($file->$type) == false)? $file->$type->address1 : '';
+                    $data[$key]['management'][$key1]['email'] = (empty($file->$type) == false)? $file->$type->email : '';
+                    $data[$key]['management'][$key1]['phone_no'] = (empty($file->$type) == false)? $file->$type->phone_no : '';
+                }
+                if(count($file->ajk_details) > 0) {
+                    foreach($file->ajk_details as $key2 => $ajk) {
+                        $data[$key]['ajk'][$key2]['name'] = $ajk->name;
+                        $data[$key]['ajk'][$key2]['designation'] = $ajk->designations->description;
+                        $data[$key]['ajk'][$key2]['phone_no'] = $ajk->phone_no;
+                        $data[$key]['ajk'][$key2]['start_year'] = $ajk->start_year;
+                        $data[$key]['ajk'][$key2]['end_year'] = $ajk->end_year;
+                    }
+                }
+
+            }
+        }
+    
+        // Queue::later(Carbon::now()->addSeconds($delay), GetExportData::class, array('items' => $data));
+        // return \Response::json(array('data'=> $data));
+        // return \View::make('exports.reporting',array('datas' => $data));
+        return Excel::create('reporting', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->loadView('exports.reporting', array('datas' => $data));
+                
+            });
+        })->download();
+    }
+
+    public function JMBMCSignByCouncil() {
+        $items = DB::table('users')
+                    ->join('audit_trail','audit_trail.audit_by','=','users.id')
+                    ->join('company','users.company_id','=','company.id')
+                    ->join('files','users.file_id','=','files.id')
+                    ->join('house_scheme','house_scheme.file_id','=','files.id')
+                    ->where('audit_trail.remarks','like','%signed%')
+                    ->selectRaw('users.username, users.full_name, files.file_no, house_scheme.name as house_scheme, 
+                                 files.id as file_id, company.short_name')
+                    ->where('users.is_deleted', 0)
+                    ->whereIn('users.role', [3,24])
+                    ->whereIn('company.short_name', ['MBPJ'])
+                    ->groupBy(['users.username'])
+                    ->get();
+        $data = [];
+        $i = 0;
+        foreach($items as $key => $item) {
+            $is_update = false;
+            $finance_file = DB::table('finance_file')
+                                ->join('finance_file_summary','finance_file_summary.finance_file_id','=','finance_file.id')
+                                ->selectRaw('finance_file.created_at, finance_file_summary.created_at as summary_created')
+                                ->where('finance_file.is_deleted', 0)
+                                ->where('finance_file.file_id', $item->file_id)
+                                ->where('finance_file_summary.summary_key','bill_elektrik')
+                                ->get();
+                                
+            foreach($finance_file as $finance) {
+                if($finance->summary_created > $finance->created_at) {
+                    $is_update = true;
+                }
+            }
+            if($is_update) {
+                $new_data[$i]['username'] = $item->username;
+                $new_data[$i]['full name'] = $item->full_name;
+                $new_data[$i]['file no'] = (is_array($item->file_no))? implode(',', $item->file_no) : $item->file_no;
+                $new_data[$i]['scheme name'] = (empty($item->house_scheme))? '-': $item->house_scheme;
+                
+                $data = array_merge($data, $new_data);
+            }
+            
+        }
+        return Excel::create('jmbmc_logon_report', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function ownerByCouncil() {
+        $items = DB::table('files')
+                    ->join('buyer', 'buyer.file_id', '=', 'files.id')
+                    ->join('house_scheme', 'house_scheme.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->selectRaw('count(buyer.id) as total, files.file_no, company.short_name, house_scheme.name,
+                            house_scheme.address1, house_scheme.address2, house_scheme.address3, house_scheme.address4,
+                            house_scheme.poscode, house_scheme.city, house_scheme.state')
+                    ->where('files.is_deleted', 0)
+                    ->where('buyer.is_deleted', 0)
+                    ->groupBy(['house_scheme.name'])
+                    ->get();
+                    
+        $data = [];
+        $i = 0;
+        $total = 0;
+        foreach($items as $key => $item) {
+            $city = City::where('id', $item->city)->first();                   
+            $state = State::where('id', $item->state)->first();                   
+            $new_data[$i]['no of owners'] = $item->total;
+            $new_data[$i]['file no'] = $item->file_no;
+            $new_data[$i]['scheme name'] = $item->name;
+            $new_data[$i]['council'] = $item->short_name;
+            $new_data[$i]['address'] = $item->address1 .', '. $item->address2 .', '. $item->address3
+                                        .', '. $item->address4 .', '. $item->poscode .', ';
+            $new_data[$i]['address'] .= (empty($city))? '' : $city->description;
+            $new_data[$i]['address'] .= (empty($state))? '' : (' '. $state->name);
+            
+            $data = array_merge($data, $new_data);
+            $total += $item->total;
+        }
+        $new_data[$i]['no of owners'] = $total;
+        $new_data[$i]['file no'] = '';
+        $new_data[$i]['scheme name'] = '';
+        $new_data[$i]['council'] = '';
+        $new_data[$i]['address'] = '';
+        
+        $data = array_merge($data, $new_data);
+
+        return Excel::create('owner_by_council', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function JMBActivity() { 
+        $items = DB::table('users')
+                    ->join('audit_trail', 'users.id', '=', 'audit_trail.audit_by')
+                    ->join('company', 'users.company_id', '=', 'company.id')
+                    ->selectRaw('users.email, users.full_name, audit_trail.remarks as activity, audit_trail.created_at,
+                                company.short_name')
+                    ->where('users.role', 3)
+                    ->where('users.is_deleted', 0)
+                    ->whereBetween('audit_trail.created_at', ["2021-08-06 00:00:00", "2021-09-03 23:59:59"])
+                    ->orderBy('users.full_name', 'asc')
+                    ->get();
+                    
+        $data = [];
+        $i = 0;
+        foreach($items as $key => $item) {                 
+            $new_data[$i]['email'] = $item->email;
+            $new_data[$i]['full name'] = $item->full_name;
+            $new_data[$i]['activity'] = $item->activity;
+            $new_data[$i]['council'] = $item->short_name;
+            $new_data[$i]['created at'] = $item->created_at;
+            
+            $data = array_merge($data, $new_data);
+        }
+        
+        $data = array_merge($data, $new_data);
+
+        return Excel::create('jmb_activity', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function strataName() { 
+        $items = Strata::join('files', 'strata.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->where('company.short_name', 'MPS')
+                        ->select(['strata.*', 'files.file_no as file_no'])
+                        ->get();
+                    
+        $data = [];
+        $i = 0;
+        foreach($items as $key => $item) {                 
+            $new_data[$i]['file'] = $item->file_no;
+            $new_data[$i]['name'] = $item->name;
+
+            $data = array_merge($data, $new_data);
+        }
+        
+        return Excel::create('strata-data-'. date('YmdHis'), function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function tunggakanFinance() {
+        $items = Finance::with(['financeReport', 'financeIncome', 'file.strata', 'company'])
+                        ->where('is_deleted', 0)
+                        ->where('is_active', 1)
+                        ->whereBetween('month', [3, 5])
+                        ->where('year', 2022)
+                        ->get();
+                    
+        $data = [];
+        $i = 0;
+        foreach($items as $key => $item) {                 
+            $new_data[$i]['cob'] = $item->company->short_name;
+            $new_data[$i]['strata'] = $item->file->strata->name;
+            $new_data[$i]['file'] = $item->file->file_no;
+            $new_data[$i]['year'] = $item->year;
+            $new_data[$i]['month'] = $item->month;
+            $new_data[$i]['MF Tunggakan'] = $item->financeReport()->where('type', 'mf')->first()? $item->financeReport()->where('type', 'mf')->first()->tunggakan_belum_dikutip : 0;
+            $new_data[$i]['SF Tunggakan'] = $item->financeReport()->where('type', 'sf')->first()? $item->financeReport()->where('type', 'sf')->first()->tunggakan_belum_dikutip : 0;
+            $new_data[$i]['Income MF Tunggakan'] = $item->financeIncome()->where('name', 'maintenance fee')->first()? $item->financeIncome()->where('name', 'maintenance fee')->first()->tunggakan : 0;
+            $new_data[$i]['Income SF Tunggakan'] = $item->financeIncome()->where('name', 'sinking fund')->first()? $item->financeIncome()->where('name', 'sinking fund')->first()->tunggakan : 0;
+
+            $data = array_merge($data, $new_data);
+        }
+        
+        return Excel::create('tunggakan finance-data-'. date('YmdHis'), function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function fileDetails() {
+        $commercial_files = Commercial::where('unit_no', '>=', 500)
+                                    ->get();
+        $residential_files = Residential::where('unit_no', '>=', 500)
+                                    ->get();
+        $file_ids = array_merge(array_pluck($commercial_files, 'file_id'), array_pluck($residential_files, 'file_id'));
+        
+        $files = Files::with(['company','strata','managementDeveloper','managementJMB','managementMC','managementAgent',
+                                'managementOthers','ajk_details', 'resident', 'commercial'])
+                        ->whereIn('id', $file_ids)
+                        ->where('files.is_deleted', false)
+                        ->orderBy('company_id','asc')
+                        ->get();
+        
+        $types = ['Developer','JMB','MC','Agent','Others'];
+        $data = [];
+        foreach($files as $key => $file) {
+            if(empty($file->strata->name) == false) {
+                $data[$key]['cob'] = $file->company->short_name;
+                $data[$key]['file_no'] = $file->file_no;
+                $data[$key]['strata'] = $file->strata->name;
+                $data[$key]['residential_unit_no'] = $file->resident? $file->resident->unit_no : '-';
+                $data[$key]['commercial_unit_no'] = $file->commercial? $file->commercial->unit_no : '-';
+    
+                foreach($types as $key1 => $type) {
+                    $data[$key]['management'][$key1]['type'] = $type;
+                    $type = 'management'. $type;
+                    if($type == 'managementAgent') {
+                        if(empty($file->$type) == false) {
+                            $management_name = $file->$type->agent;
+                        } else {
+                            $management_name = '';
+                        }
+                    } else {
+                        if(empty($file->$type) == false) {
+                            $management_name = $file->$type->name;
+                        } else {
+                            $management_name = '';
+                        }
+                    }
+                    $data[$key]['management'][$key1]['name'] = $management_name;
+                    $data[$key]['management'][$key1]['address'] = (empty($file->$type) == false)? $file->$type->address1 : '';
+                    $data[$key]['management'][$key1]['email'] = (empty($file->$type) == false)? $file->$type->email : '';
+                    $data[$key]['management'][$key1]['phone_no'] = (empty($file->$type) == false)? $file->$type->phone_no : '';
+                }
+                if(count($file->ajk_details) > 0) {
+                    foreach($file->ajk_details as $key2 => $ajk) {
+                        $data[$key]['ajk'][$key2]['name'] = $ajk->name;
+                        $data[$key]['ajk'][$key2]['designation'] = $ajk->designations->description;
+                        $data[$key]['ajk'][$key2]['phone_no'] = $ajk->phone_no;
+                        $data[$key]['ajk'][$key2]['start_year'] = $ajk->start_year;
+                        $data[$key]['ajk'][$key2]['end_year'] = $ajk->end_year;
+                    }
+                }
+
+            }
+        }
+        // dd($data);
+        // $file_ids = Files::with(['managementDeveloper', 'managementJMB', 'managementMC', 'managementAgent', 'managementOthers', 'ajk_details', 'buyer', 'company', 'strata'])
+        //                 ->join('strata', 'strata.file_id', '=', 'files.id')
+        //                 ->leftJoin('residential_block', 'residential_block.file_id', '=', 'files.id')
+        //                 ->leftJoin('commercial_block', 'commercial_block.file_id', '=', 'files.id')
+        //                 ->where('residential_block.unit_no', '>=', 500)
+        //                 ->orWhere('commercial_block.unit_no', '>=', 500)
+        //                 ->get();
+        // $files = Files::with(['managementDeveloper', 'managementJMB', 'managementMC', 'managementAgent', 'managementOthers', 'ajk_details', 'buyer', 'company', 'strata'])
+        //                 ->whereIn('id', array_pluck($file_ids, 'id'))
+        //                 ->get();
+
+        //             // dd($files);
+        // $data = [];
+        // $i = 0;
+        // $total = 0;
+        // foreach($files as $key => $file) {
+        //     $city = City::where('id', $file->city)->first();                   
+        //     $state = State::where('id', $file->state)->first();                   
+        //     $new_data[$key]['no'] = ($key + 1);
+        //     $new_data[$key]['file no'] = $file->file_no;
+        //     $new_data[$key]['strata'] = $file->strata->name;
+        //     $new_data[$key]['council'] = $file->company->short_name;
+        //     $new_data[$key]['address'] = $file->address1 .', '. $file->address2 .', '. $file->address3
+        //                                 .', '. $file->address4 .', '. $file->poscode .', ';
+        //     $new_data[$key]['address'] .= (empty($city))? '' : $city->description;
+        //     $new_data[$key]['address'] .= (empty($state))? '' : (' '. $state->name);
+
+        //     $new_data[$key]['address'] .= (empty($state))? '' : (' '. $state->name);
+        
+        //     if(!empty($file->managementJMB)) {
+        //         $new_data[$key]['management']['type']['jmb']['name'] = $file->managementJMB->name;
+        //         $new_data[$key]['management']['type']['jmb']['phone_no'] = $file->managementJMB->phone_no;    
+        //     }
+        //     if(!empty($file->managementMC)) {
+        //         $new_data[$key]['management']['type']['mc']['name'] = $file->managementMC->name;
+        //         $new_data[$key]['management']['type']['mc']['phone_no'] = $file->managementMC->phone_no;
+        //     }
+        //     if(!empty($file->ajk_details)) {
+        //         $new_data[$key]['management']['type']['ajk'] = [];
+        //         foreach($file->ajk_details as $key_ajk => $ajk) {
+        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['name'] = $ajk->name;
+        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['email'] = $ajk->email;
+        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['designation'] = $ajk->designation;
+        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['phone_no'] = $ajk->phone_no;
+        //         }
+        //     }
+            
+
+        //     $data = array_merge($data, $new_data);
+        // }
+        return Excel::create('file-details-'. date('YmdHis'), function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->loadView('exports.file-detail', array('datas' => $data));
                 
             });
         })->download();

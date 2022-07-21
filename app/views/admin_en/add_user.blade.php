@@ -159,6 +159,22 @@ foreach ($user_permission as $permission) {
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
+                                        <label>{{ trans('app.forms.receive_mail') }}</label><br/>
+                                        <input type="checkbox" id="receive_mail" name="receive_mail" checked/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.receive_notify') }}</label><br/>
+                                        <input type="checkbox" id="receive_notify" name="receive_notify" checked/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
                                         <label>{{ trans('app.forms.remarks') }}</label>
                                         <textarea class="form-control" rows="3" placeholder="{{ trans('app.forms.remarks') }}" id="remarks"></textarea>
                                     </div>
@@ -267,6 +283,8 @@ foreach ($user_permission as $permission) {
                 company = $("#company").val(),
                 email = $("#email").val(),
                 phone_no = $("#phone_no").val(),
+                receive_mail = document.getElementById('receive_mail').checked? 1 : 0,
+                receive_notify = document.getElementById('receive_notify').checked? 1 : 0,
                 remarks = $("#remarks").val(),
                 is_active = $("#is_active").val();
 
@@ -342,6 +360,9 @@ foreach ($user_permission as $permission) {
                     company: company,
                     email: email,
                     phone_no: phone_no,
+                    remarks: remarks,
+                    receive_mail: receive_mail,
+                    receive_notify: receive_notify,
                     remarks: remarks,
                     is_active: is_active
                 },

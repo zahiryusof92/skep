@@ -4,6 +4,7 @@ use Helper\Helper;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
+use Repositories\ReportRepo;
 
 class PrintController extends BaseController {
 
@@ -1320,6 +1321,24 @@ class PrintController extends BaseController {
 
         return View::make('print_en.epks', $viewData);
 
+    }
+
+    public function statistic() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Statistics Report"));
+        $datas = (new ReportRepo())->statisticsReport(Request::all());
+        $cities = City::self()->get();
+        
+        $viewData = array(
+            'title' => trans('app.menus.reporting.statistic'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'statistic_report_list',
+            'cities' => $cities,
+            'datas' => $datas,
+            'image' => ''
+        );
+
+        return View::make('print_en.statistic', $viewData);
     }
 
 }

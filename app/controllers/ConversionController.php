@@ -104,7 +104,7 @@ class ConversionController extends \BaseController {
         if ($validator->fails()) {
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
-            $model = Conversion::findOrFail(Helper::decode($id));
+            $model = Conversion::findOrFail($id);
             if ($model) {
                 $model->rate = $data['rate'];
                 $success = $model->save();

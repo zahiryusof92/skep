@@ -1265,6 +1265,9 @@ foreach ($user_permission as $permission) {
                     monitoring_remarks: monitoring_remarks,
                     file_id: '{{ \Helper\Helper::encode($file->id) }}'
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
@@ -1281,7 +1284,10 @@ foreach ($user_permission as $permission) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         }
     }

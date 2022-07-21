@@ -12,7 +12,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         'full_name',
         'username',
         'password',
-        'role'
+        'role',
+        'receive_mail',
+        'receive_notify',
     );
 
     use UserTrait,

@@ -465,7 +465,7 @@ foreach ($user_permission as $permission) {
                                                                     window.location.reload();
                                                                     });
                                                                     }
-                                                                    }
+                                                                    },
                                                             });
                                                             } else {
                                                             $("#housing_scheme").focus();
@@ -643,6 +643,9 @@ foreach ($user_permission as $permission) {
                     file_id: '{{ \Helper\Helper::encode($file->id) }}',
                     reference_id: '{{ ($house_scheme->reference_id ? $house_scheme->reference_id : $house_scheme->id) }}'
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
@@ -660,7 +663,10 @@ foreach ($user_permission as $permission) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         }
     }

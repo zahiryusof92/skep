@@ -23,7 +23,9 @@
             "app/tests/TestCase.php",
             "app/helper",
             "app/job",
-            "app/repositories"
+            "app/services",
+            "app/repositories",
+            "app/enums"
         ]
     },
     "scripts": {

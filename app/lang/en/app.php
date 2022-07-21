@@ -39,7 +39,7 @@ return array(
             "update_cob_file_prefix" => "Update COB File Prefix",
             "update_cob_file" => "Update COB File",
             "file_draft_list" => "COB File Draft List",
-            "file_reject_list" => "COB File Reject List",
+            "file_reject_list" => "Rejected COB File Draft",
         ),
         "finance" => array(
             "maintenance" => "Finance",
@@ -183,6 +183,10 @@ return array(
             "epks" => "ePKS",
             "generate" => "Report Generate",
             "statistic" => "Statistic Report",
+            'notification' => "Notification",
+            'email_log' => "Email Log",
+            'audit_logon' => "Audit Logon",
+            'audit_logon_report' => "Audit Logon Report",
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -230,6 +234,12 @@ return array(
         ),
         "cob_letter" => array(
             "name" => "COB Letter",
+        ),
+        'api' => array(
+            'name' => 'API',
+            'client' => 'API Client',
+            'building' => 'API Building',
+            'building_log' => 'API Building Log'
         ),
     ),
     "forms" => array(
@@ -672,6 +682,18 @@ return array(
         'endorsed_by' => 'Endorsed By',
         'endorsed_email' => 'Endorsed E-mail',
         'original_price' => 'Original Price',
+        'api_client' => 'API Client',
+        'api_building' => 'API Building',
+        'api_building_log' => 'API Building Log',
+        'secret' => 'Secret',
+        'receive_mail' => 'Receive Mail',
+        'receive_notify' => 'Receive Notify',
+        'notification' => 'Notification',
+        'mark_all' => 'Mark All As Read',
+        'email_log' => 'Email Log',
+        'accepted' => 'Accepted',
+        'rejected' => 'Rejected',
+        'old' => 'Old',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
