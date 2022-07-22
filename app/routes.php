@@ -11,6 +11,22 @@
   |
  */
 
+ /**
+ * Route for maintenance mode
+ */
+Route::get('/systemUp', function() {
+    Artisan::call('up');
+
+    return Redirect::to('/');
+});
+Route::get('/systemDown', function() {
+    if (Auth::user()->isSuperadmin()) {
+        Artisan::call('down');
+    }
+
+    return Redirect::to('/');
+})->before('authMember');
+
 /**
  * Route for testing
  */
