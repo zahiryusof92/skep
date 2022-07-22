@@ -310,6 +310,20 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td>
+                                                {{ trans('Liquidator') }}
+                                            </td>
+                                            <td scope="row" class="text-center">
+                                                <input type="checkbox" id="access_liquidator" value="0"/>
+                                            </td>
+                                            <td scope="row" class="text-center">
+                                                <input type="checkbox" id="insert_liquidator" value="0"/>
+                                            </td>
+                                            <td scope="row" class="text-center">
+                                                <input type="checkbox" id="update_liquidator" value="0"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th colspan="4"><h6 class="margin-top-20 margin-bottom-0">Reporting</h6></th>
                                         </tr>
                                         <tr>
@@ -468,6 +482,9 @@
                 access_unit_measure = $("#access_unit_measure").val(),
                 insert_unit_measure = $("#insert_unit_measure").val(),
                 update_unit_measure = $("#update_unit_measure").val(),
+                access_liquidator = $("#access_liquidator").val(),
+                insert_liquidator = $("#insert_liquidator").val(),
+                update_liquidator = $("#update_liquidator").val(),
                 access_audit_trail = $("#access_audit_trail").val(),
                 access_file_location = $("#access_file_location").val(),
                 access_rating_summary = $("#access_rating_summary").val(),
@@ -550,6 +567,9 @@
                     access_unit_measure: access_unit_measure,
                     insert_unit_measure: insert_unit_measure,
                     update_unit_measure: update_unit_measure,
+                    access_liquidator: access_liquidator,
+                    insert_liquidator: insert_liquidator,
+                    update_liquidator: update_liquidator,
                     access_audit_trail: access_audit_trail,
                     access_file_location: access_file_location,
                     access_rating_summary: access_rating_summary,

@@ -145,7 +145,7 @@ $prefix = 'mfr_';
                                 <span style="color: red;">*</span> BAKI BANK (AWAL)
                             </td>
                             <td width="15%">
-                                <input type="currency" name="{{ $prefix }}baki_bank_awal" class="form-control form-control-sm text-right" value="{{ $mfreport['baki_bank_awal'] }}">
+                                <input type="text" name="{{ $prefix }}baki_bank_awal" class="form-control form-control-sm text-right" value="{{ $mfreport['baki_bank_awal'] }}">
                             </td>
                         </tr>
                         <tr>
@@ -161,7 +161,7 @@ $prefix = 'mfr_';
                                 <span style="color: red;">*</span> BAKI BANK (AKHIR)
                             </td>
                             <td>
-                                <input type="currency" name="{{ $prefix }}baki_bank_akhir" class="form-control form-control-sm text-right" value="{{ $mfreport['baki_bank_akhir'] }}">
+                                <input type="text" name="{{ $prefix }}baki_bank_akhir" class="form-control form-control-sm text-right" value="{{ $mfreport['baki_bank_akhir'] }}">
                             </td>
                         </tr>
                     </tbody>

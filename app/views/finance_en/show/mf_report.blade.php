@@ -138,7 +138,7 @@ $old_prefix = 'mfr_old_';
                                 BAKI BANK (AWAL)
                             </td>
                             <td width="15%">
-                                <input type="currency" name="{{$old_prefix}}baki_bank_awal" class="form-control form-control-sm text-right" value="{{ $mfreportOld->baki_bank_awal }}">
+                                <input type="text" name="{{$old_prefix}}baki_bank_awal" class="form-control form-control-sm text-right" value="{{ $mfreportOld->baki_bank_awal }}">
                             </td>
                         </tr>
                         <tr>
@@ -154,7 +154,7 @@ $old_prefix = 'mfr_old_';
                                 BAKI BANK (AKHIR)
                             </td>
                             <td>
-                                <input type="currency" name="{{$old_prefix}}baki_bank_akhir" class="form-control form-control-sm text-right" value="{{ $mfreportOld->baki_bank_akhir }}">
+                                <input type="text" name="{{$old_prefix}}baki_bank_akhir" class="form-control form-control-sm text-right" value="{{ $mfreportOld->baki_bank_akhir }}">
                             </td>
                         </tr>
                     </tbody>

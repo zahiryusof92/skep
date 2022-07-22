@@ -169,6 +169,9 @@ foreach ($user_permission as $permission) {
                 data: {
                     id: id
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     if (data.trim() == "true") {
                         $.notify({
@@ -183,7 +186,10 @@ foreach ($user_permission as $permission) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         });
     }

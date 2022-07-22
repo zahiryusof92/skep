@@ -212,6 +212,38 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Module::hasAccessModule("API Client"))
+            <li class="left-menu-list-submenu" id="api_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-american-sign-language-interpreting" aria-hidden="true"></i>
+                    {{ trans('app.menus.api.name') }}
+                </a>
+                <ul class="left-menu-list list-unstyled" id="api_client_main">
+
+                    @if (AccessGroup::hasAccessModule("API Client"))
+                    <li id="api_client_list">
+                        <a class="left-menu-link" href="{{ route('clients.index') }}">
+                            {{ trans('app.menus.api.client') }}
+                        </a>
+                    </li>
+                    @endif
+                    
+                    @if (AccessGroup::hasAccessModule("API Building"))
+                    <li id="api_building_list">
+                        <a class="left-menu-link" href="{{ route('clients.building.index') }}">
+                            {{ trans('app.menus.api.building') }}
+                        </a>
+                    </li>
+                    <li id="api_building_log_list">
+                        <a class="left-menu-link" href="{{ route('clients.building.log') }}">
+                            {{ trans('app.menus.api.building_log') }}
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+            </li>
+            @endif
+
             @if (Module::hasAccess(2))
             <li class="left-menu-list-submenu" id="admin_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -472,7 +504,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (Module::hasAccess(4))
+            @if (Module::hasAccess(4) && !Auth::user()->isJMB())
             <li class="left-menu-list-submenu" id="reporting_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/report.png')}}"/>
@@ -484,6 +516,16 @@ if (!Auth::user()->getAdmin()) {
                     <li id="audit_trail_list">
                         <a class="left-menu-link" href="{{ route('reporting.log.index') }}">
                             {{ trans('app.menus.reporting.audit_trail') }}
+                        </a>
+                    </li>
+                    <li id="audit_logon_list">
+                        <a class="left-menu-link" href="{{ route('reporting.logon.index') }}">
+                            {{ trans('app.menus.reporting.audit_logon') }}
+                        </a>
+                    </li>
+                    <li id="audit_logon_old_list">
+                        <a class="left-menu-link" href="{{ route('reporting.logon.old.index') }}">
+                            {{ trans('app.menus.reporting.audit_logon') }} -  {{ trans('app.forms.old') }}
                         </a>
                     </li>
                     @endif
@@ -628,6 +670,14 @@ if (!Auth::user()->getAdmin()) {
                     <li id="statistic_report_list">
                         <a class="left-menu-link" href="{{ route('report.statistic.index') }}">
                             {{ trans('app.menus.reporting.statistic') }}
+                        </a>
+                    </li>
+                    @endif
+
+                    @if (AccessGroup::hasAccessModule("Email Log"))
+                    <li id="email_log_list">
+                        <a class="left-menu-link" href="{{ route('email_log.index') }}">
+                            {{ trans('app.menus.reporting.email_log') }}
                         </a>
                     </li>
                     @endif
@@ -821,6 +871,15 @@ if (!Auth::user()->getAdmin()) {
                 </li>
                 @endif
             @endif
+            @endif
+
+            @if (AccessGroup::hasAccessModule("Notification"))
+            <li id="notification_list">
+                <a class="left-menu-link" href="{{ route('notification.index') }}">
+                    <i class="left-menu-link-icon fa fa-bell"><!-- --></i>
+                    {{ trans('app.menus.reporting.notification') }}
+                </a>
+            </li>
             @endif
 
             @if (Module::hasAccess(7))

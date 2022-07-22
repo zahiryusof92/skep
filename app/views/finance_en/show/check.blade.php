@@ -21,8 +21,9 @@
                     <label>{{ trans('app.forms.admin_status') }}</label>
                     <select name="lbl-status" class="form-control form-control-sm">
                         <option value="">{{ trans('app.forms.please_select') }}</option>
-                        <option value="1" {{ ($checkOldData->is_active == 1) ? 'selected' : '' }}>{{ trans('app.forms.active') }}</option>
-                        <option value="0" {{ ($checkOldData->is_active == 0) ? 'selected' : '' }}>{{ trans('app.forms.inactive') }}</option>
+                        @foreach($adminStatus as $key => $status) 
+                            <option value="{{ $key }}" {{ $checkOldData->is_active == $key ? "selected" : "" }}>{{ $status }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>

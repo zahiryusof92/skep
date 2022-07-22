@@ -26,11 +26,15 @@
                 </div>
                 <div class="col-md-6">
                     <label><span style="color: red;">*</span> {{ trans('app.forms.admin_status') }}</label>
-                    <select name="is_active" id="is_active" class="form-control form-control-sm">
+                    <select name="is_active" id="is_active" class="form-control form-control-sm" {{ (Auth::user()->getAdmin() || Auth::user()->isCOBManager())? "" : "disabled"}}>
                         <option value="">{{ trans('app.forms.please_select') }}</option>
-                        <option value="1" {{ ($checkdata->is_active == 1) ? 'selected' : '' }}>{{ trans('app.forms.active') }}</option>
-                        <option value="0" {{ ($checkdata->is_active == 0) ? 'selected' : '' }}>{{ trans('app.forms.inactive') }}</option>
+                        @foreach($adminStatus as $key => $status) 
+                            <option value="{{ $key }}" {{ $checkdata->is_active == $key ? "selected" : "" }}>{{ $status }}</option>
+                        @endforeach
                     </select>
+                    @if((!Auth::user()->getAdmin() || !Auth::user()->isCOBManager()))
+                    <input type="hidden" name="is_active" id="is_active" value="{{ $checkdata->is_active }}">
+                    @endif
                     <div id="is_active_err" style="display:none;"></div>
                 </div>
             </div>

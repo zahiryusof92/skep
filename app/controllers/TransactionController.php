@@ -3,6 +3,7 @@
 use Helper\Helper;
 use Helper\Paydibs;
 use Helper\Revenue;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -10,14 +11,13 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
-
 class TransactionController extends BaseController {
 
     /**
      * Index page of transaction
      */
     public function index() {
-        
+        $this->checkAvailableAccess();
         $viewData = array(
             'title' => trans('app.transaction.title'),
             'panel_nav_active' => '',
@@ -174,31 +174,45 @@ class TransactionController extends BaseController {
             // $payment_gateway_data['sign'] = $item->sign;
 
             // // return $payment_gateway_data;
-            
+
             if($data['payment_gateway'] == $this->module['payment']['gateway']['paydibs']['slug']) {
                 $response = $this->processPaydibs($data['order_id'], $item);
+                // direct payment done
+                if(getenv('payment_gateway') == false) {
+                    $request['reference_no'] = $response->reference_no;
+                    return $this->success($request);
+                }
             } else {
                 $response = $this->processRevenueMonster($data['order_id'], $item);
+                // direct payment done
+                if(getenv('payment_gateway') == false) {
+                    $request['reference_no'] = $response->reference_no;
+                    $response = $this->success($request);
+                }
 
             }
             
         });
         return $response;
-
     }
 
 
-    public function success() {
-        $request = Input::all();
+    public function success($request = []) {
+        $request = empty($request)? Input::all() : $request;
         
-        if(empty($request['MerchantPymtID']) == false) {
-            $item = PaymentTransaction::where('reference_no',$request['MerchantPymtID'])->first();
-            $item->status = $request['PTxnStatus'];
+        if(getenv('payment_gateway')) {
+            if(empty($request['MerchantPymtID']) == false) {
+                $item = PaymentTransaction::where('reference_no',$request['MerchantPymtID'])->first();
+                $item->status = $request['PTxnStatus'];
+            } else {
+                $orderId = $request['orderId'];
+                $getOrder = $this->getRevenueTransactionStatus($orderId);
+                $item = PaymentTransaction::where('reference_no',$getOrder->item->order->id)->first();
+                $item->status = ($getOrder->item->status == 'SUCCESS')? 0 : 1;
+            }
         } else {
-            $orderId = $request['orderId'];
-            $getOrder = $this->getRevenueTransactionStatus($orderId);
-            $item = PaymentTransaction::where('reference_no',$getOrder->item->order->id)->first();
-            $item->status = ($getOrder->item->status == 'SUCCESS')? 0 : 1;
+            $item = PaymentTransaction::where('reference_no',$request['reference_no'])->first();
+            $item->status = 0;
         }
         $item->save();
         if($item->moduleable_type == get_class(new PointTransaction)) {
@@ -217,7 +231,11 @@ class TransactionController extends BaseController {
                 //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
                 // });
 
-                return Redirect::to('myPoint')->with('error', trans('app.errors.payment_failed'));
+                if(getenv('payment_gateway')) {
+                    return Redirect::to('myPoint')->with('error', trans('app.errors.payment_failed'));
+                } else {
+                    return $item;
+                }
 
             } else {
                 $model->status = Orders::APPROVED;
@@ -232,7 +250,11 @@ class TransactionController extends BaseController {
                 //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Success');
                 // });
                 
-                return Redirect::to('myPoint')->with('success', trans('app.successes.payment_successfully'));
+                if(getenv('payment_gateway')) {
+                    return Redirect::to('myPoint')->with('success', trans('app.successes.payment_successfully'));
+                } else {
+                    return $item;
+                }
 
             }
         } else {
@@ -254,7 +276,11 @@ class TransactionController extends BaseController {
                 //     $message->to($model->user->email, $model->user->full_name)->subject('Payment Fail');
                 // });
 
-                return Redirect::to('summon')->with('error', trans('app.errors.payment_failed'));
+                if(getenv('payment_gateway')) {
+                    return Redirect::to('summon')->with('error', trans('app.errors.payment_failed'));
+                } else {
+                    return $item;
+                }
             } else {
                 
                 if ($model->status == Summon::REJECTED || $model->status == Summon::PENDING) {
@@ -290,7 +316,11 @@ class TransactionController extends BaseController {
                     }
                 }
 
-                return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
+                if(getenv('payment_gateway')) {
+                    return Redirect::to('summon')->with('success', trans('app.successes.payment_successfully'));
+                } else {
+                    return $item;
+                }
 
             }
         }
@@ -322,12 +352,17 @@ class TransactionController extends BaseController {
             
             /** Update Payment Transaction info */
             $item->reference_no = $reference_no;
-            $item->sign = (new Paydibs())->generateSign($payment_gateway_data, $item->transaction_type);   
-            $item->save();
+            if(getenv('payment_gateway')) {
+                $item->sign = (new Paydibs())->generateSign($payment_gateway_data, $item->transaction_type);   
+                $item->save();
+        
+                $payment_gateway_data['sign'] = $item->sign;
     
-            $payment_gateway_data['sign'] = $item->sign;
-
-            $response = (new Paydibs())->payRequest($payment_gateway_data);
+                $response = (new Paydibs())->payRequest($payment_gateway_data);
+            } else {
+                $item->save();
+                $response = $item;
+            }
 
             return $response;
     }
@@ -349,7 +384,11 @@ class TransactionController extends BaseController {
         $item->reference_no = $reference_no;
         $item->save();
         
-        $response = (new Revenue())->paymentOnline($data);
+        if(getenv('payment_gateway')) {
+            $response = (new Revenue())->paymentOnline($data);
+        } else {
+            $response = $item;
+        }
         
         return $response;
     }
@@ -363,5 +402,11 @@ class TransactionController extends BaseController {
         $response = (new Revenue())->getStatusByOrderID($orderId);
         
         return ($response);
+    }
+
+    private function checkAvailableAccess() {
+        if(!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && !in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))) {
+            App::abort(404);
+        }
     }
 }

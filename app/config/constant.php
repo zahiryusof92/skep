@@ -9,6 +9,7 @@ return [
         ],
         'audit' => [
             'text' => [
+                'building_inserted' => ' has new building been inserted.',
                 'data_accepted' => ' changes has been accepted.',
                 'data_inserted' => ' has been inserted.',
                 'data_imported' => ' has been imported.',
@@ -872,6 +873,12 @@ return [
                     'title' => trans('app.forms.others'),
                 ],
             ]
+        ],
+        'api_client' => [
+            'name' => 'api_client',
+        ],
+        'api_building' => [
+            'name' => 'api_building',
         ],
     ],
     'third_party' => [

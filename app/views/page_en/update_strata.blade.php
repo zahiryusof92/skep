@@ -1472,6 +1472,9 @@ foreach ($user_permission as $permission) {
                     strata_reference_id: '{{ ($strata->reference_id ? $strata->reference_id : $strata->id) }}',
                     facility_reference_id: '{{ ($facility->reference_id ? $facility->reference_id : $facility->id) }}'
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
@@ -1489,7 +1492,10 @@ foreach ($user_permission as $permission) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         }
     }

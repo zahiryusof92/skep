@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Job\MPSSync;
 
 class FileController extends BaseController
@@ -24,20 +25,48 @@ class FileController extends BaseController
 	}
 
 	public function get() {
+		// $client = $this->validateSecret();
+		
+		if(!empty($client['error'])) {
+			return Response::json([
+				'response' => $client
+			], 404);
+		}
+
 		$request = Request::all();
+		$rules = array(
+			'council' => 'required',
+		);
+		$validator = Validator::make($request, $rules);
+
+		if ($validator->fails()) {
+			return Response::json([
+				'errors' => $validator->errors(), 
+				'message' => trans('Validation Fail')
+			], 422);
+		}
+
 		$cob = Company::where('short_name', $request['council'])->first();
+
 		if($cob) {
 			$options = [];
 			$files = Files::with(['strata'])
-						->where('company_id', $cob->id)
-						->where('is_deleted', false)
-						->orderBy('file_no', 'asc')
+						->join('strata', 'strata.file_id', '=', 'files.id')
+						->where(function($query) use($request){
+							if(!empty($request['strata'])) {
+								$query->where('strata.name', 'like', "%". $request['strata'] ."%");
+							}
+						})
+						->where('files.company_id', $cob->id)
+						->where('files.is_deleted', false)
+						->orderBy('files.file_no', 'asc')
+						->selectRaw('files.*, strata.name as strata_name')
 						->chunk(300, function($models) use(&$options)
 						{
 							foreach ($models as $key => $model)
 							{
 								array_push($options, [
-									'id' => $key + 1, 
+									'id' => $model->id, 
 									'strata' => $model->strata->name? $model->strata->name : "-", 
 									'file_no' => $model->file_no]);
 							}

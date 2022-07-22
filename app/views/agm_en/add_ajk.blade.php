@@ -270,6 +270,9 @@ foreach ($user_permission as $permission) {
                     end_year: end_year,
                     remarks: remarks
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
@@ -281,7 +284,10 @@ foreach ($user_permission as $permission) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         } else {
             $("#loading").css("display", "none");

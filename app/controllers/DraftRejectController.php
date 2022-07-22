@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Services\NotificationService;
 use yajra\Datatables\Facades\Datatables;
 
 class DraftRejectController extends BaseController {
@@ -19,7 +20,9 @@ class DraftRejectController extends BaseController {
     public function index() {
         $this->checkAvailableAccess();
         if (Request::ajax()) {
-            $model = FileDraftReject::with(['file']);
+            $model = FileDraftReject::with(['file'])
+                                    ->self()
+                                    ->select('file_draft_rejects.*');
             return Datatables::of($model)
                             ->editColumn('type', function($model) {
                                 return $this->module['file_draft_reject']['type'][$model->type]['title'];
@@ -68,7 +71,6 @@ class DraftRejectController extends BaseController {
      * @return Response
      */
     public function create() {
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsertModule("COB Letter"));
         $type = Request::get('type');
         $file_id = Request::get('file_id');
 
@@ -108,6 +110,27 @@ class DraftRejectController extends BaseController {
             $remarks = $draft_reject->file->file_no ." ". $name . $this->module['audit']['text']['data_rejected'];
             $this->addAudit(0, "File Draft Reject", $remarks);
             
+            /**
+             * Add Notification & send email to COB and JMB
+             */
+            $tab = 'others';
+            if($this->module['file_draft_reject']['type'][$draft_reject->type]['name'] == 'house_scheme') {
+                $tab = 'house';
+            } else if($this->module['file_draft_reject']['type'][$draft_reject->type]['name'] == 'strata') {
+                $tab = 'strata';
+            } else if($this->module['file_draft_reject']['type'][$draft_reject->type]['name'] == 'management') {
+                $tab = 'management';
+            }
+            $strata = $draft_reject->file->strata;
+            $notify_data['file_id'] = $draft_reject->file->id;
+            $notify_data['route'] = route("cob.file.$tab.edit", Helper::encode(Request::get('file_id')));
+            $notify_data['strata'] = "your";
+            $notify_data['strata_name'] = $strata->name != ""? $strata->name : $draft_reject->file->file_no;
+            $notify_data['title'] = "COB File $name";
+            $notify_data['module'] = "$name";
+            
+            (new NotificationService())->sendJMB($notify_data, 'rejected');
+            
             return Response::json([
                 'success' => true, 
                 'id' => Helper::encode($this->module['file_draft_reject']['name'], $draft_reject->id), 
@@ -137,9 +160,9 @@ class DraftRejectController extends BaseController {
 
 
     private function checkAvailableAccess() {
-        if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
-            return true;
-        }
-        App::abort(404);
+        // if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+        //     return true;
+        // }
+        // App::abort(404);
     }
 }

@@ -5,30 +5,18 @@ use Helper\Helper;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use yajra\Datatables\Facades\Datatables;
+use Repositories\ReportRepo;
 
 class ReportController extends BaseController {
 
     //audit trail
     public function auditTrail() {
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
-
-        $viewData = array(
-            'title' => trans('app.menus.reporting.audit_trail_report'),
-            'panel_nav_active' => 'reporting_panel',
-            'main_nav_active' => 'reporting_main',
-            'sub_nav_active' => 'audit_trail_list',
-            'image' => ""
-        );
-
-        return View::make('report_en.audit_trail', $viewData);
-    }
-    
-    public function auditTrailNew() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
 
         if(Request::ajax()) {
@@ -128,365 +116,216 @@ class ReportController extends BaseController {
 
         return View::make('report_en.audit_trail', $viewData);
     }
+    
+    public function auditLogon() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
 
-    public function getAuditTrail() {
-        $data = array();
-        $requestData = Request::input();
+        if(Request::ajax()) {
+            $request = Request::all();
+            $request['module'] = 'System Authentication';
+            $data = AuditTrail::getAnalyticData($request);
+            if(!empty($request['filter'])) {
+                return Response::json([
+                    'data' => $data, 
+                    'success' => true, 
+                ]);
+            } else {
+                $models = AuditTrail::self()
+                ->where('audit_trail.module', 'System Authentication')
+                ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no']);
+                
+                return Datatables::of($models)
+                            ->editColumn('company_id', function($model) {
+                                if($model->company_id > 0) {
+                                    return $model->company;
+                                }
+                                return Str::upper($model->user->getCOB->short_name);
+                            })
+                            ->editColumn('file_id', function($model) {
+                                if($model->file_id > 0) {
+                                    return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
+                                }
+                                if($model->user->isJMB()) {
+                                    if(empty($model->user->getFile)) {
+                                        return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
+                                    }
+                                }
+                                return '-';
+                            })
+                            ->editColumn('remarks', function($model) {
+                                if(is_array($model->remarks)) {
 
-        $columns = array(
-            0 => 'audit_trail.created_at',
-            1 => 'audit_trail.module',
-            2 => 'audit_trail.remarks',
-            3 => 'users.full_name'
+                                }
+                                return $model->remarks;
+                            })
+                            ->editColumn('audit_by', function($model) {
+                                return $model->user->full_name;
+                            })
+                            ->editColumn('role_name', function($model) {
+                                return ($model->user->getAdmin())? trans('System Administrator') : Str::upper($model->role_name);
+                            })
+                            ->editColumn('created_at', function($model) {
+                                return date('d-m-Y H:i A', strtotime($model->created_at));
+                            })
+                            // ->addColumn('strata_name', function($model) {
+                            //     if($model->file_id > 0) {
+                            //         return $model->strata_name;
+                            //     }
+                            //     return Auth::user()->getFile->strata->name;
+                            // })
+                            ->filter(function($query) use($request) {
+                                if(!empty($request['company_id'])) {
+                                    $query->where('users.company_id', $request['company_id']);
+                                }
+                                if(!empty($request['role_id'])) {
+                                    $query->where('users.role', $request['role_id']);
+                                }
+                                if(!empty($request['module'])) {
+                                    $query->where('audit_trail.module', $request['module']);
+                                }
+                                if(!empty($request['file_id'])) {
+                                    $query->where('users.file_id', $request['file_id']);
+                                }
+                                // if(!empty($request['strata'])) {
+                                //     $query->where('strata.id', $request['strata']);
+                                // }
+                                if(!empty($request['date_from']) && empty($request['date_to'])) {
+                                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                                    $query->where('audit_trail.created_at', '>=', $date_from);
+                                }
+                                if(!empty($request['date_to']) && empty($request['date_from'])) {
+                                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                                    $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                                }
+                                if(!empty($request['date_from']) && !empty($request['date_to'])) {
+                                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                                    $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                                }
+                            })
+                            ->make(true);
+            }
+        }
+        $request['module'] = 'System Authentication';
+        $data = AuditTrail::getAnalyticData($request);
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.audit_logon_report'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'audit_logon_list',
+            'data' => $data, 
+            'image' => ""
         );
 
-        if (!Auth::user()->getAdmin()) {
-            $totalData = DB::table('audit_trail')
-                    ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                    ->where('users.company_id', Auth::user()->company_id)
-                    ->count();
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $totalData = DB::table('audit_trail')
-                        ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->count();
+        return View::make('report_en.audit_logon', $viewData);
+    }
+    
+    public function auditLogonOld() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(24));
+
+        if(Request::ajax()) {
+            $request = Request::all();
+            $request['module'] = 'System Administration';
+            $request['description'] = 'signed';
+            $data = AuditTrail::getAnalyticData($request);
+            if(!empty($request['filter'])) {
+                return Response::json([
+                    'data' => $data, 
+                    'success' => true, 
+                ]);
             } else {
-                $totalData = DB::table('audit_trail')
-                        ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                        ->where('users.company_id', Session::get('admin_cob'))
-                        ->count();
-            }
-        }
-
-        $limit = $requestData['length'];
-        $start = $requestData['start'];
-        $order = $columns[$requestData['order'][0]['column']];
-        $dir = $requestData['order'][0]['dir'];
-        $search = $requestData['search']['value'];
-        $date = $requestData['columns'][0]['search']['value'];
-
-        if ($limit == -1) {
-            if ($totalData != 0) {
-                $limit = $totalData;
-            } else {
-                $limit = 1;
-            }
-        } else {
-            $limit = $limit;
-        }
-
-        if (!empty($date)) {
-            $new_date = explode("&", $date);
-
-            $from_date2 = $new_date[0];
-            if (!empty($from_date2)) {
-                $from_date = explode("-", $from_date2);
-                $new_from_date = $from_date[2] . "-" . $from_date[1] . "-" . $from_date[0];
-            }
-
-            $to_date2 = $new_date[1];
-            if (!empty($to_date2)) {
-                $to_date = explode("-", $to_date2);
-                $new_to_date = $to_date[2] . "-" . $to_date[1] . "-" . $to_date[0];
-            }
-        }
-
-        if (!Auth::user()->getAdmin()) {
-            if (empty($search)) {
-                if (!empty($new_from_date) && !empty($new_to_date)) {
-                    $posts = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->select('audit_trail.*', 'users.full_name as name')
-                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order, $dir)
-                            ->get();
-
-                    $totalFiltered = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->count();
-                } else {
-                    $posts = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->select('audit_trail.*', 'users.full_name as name')
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order, $dir)
-                            ->get();
-
-                    $totalFiltered = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->count();
-                }
-            } else {
-                if (!empty($new_from_date) && !empty($new_to_date)) {
-                    $posts = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->select('audit_trail.*', 'users.full_name as name')
-                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->where(function($query) use ($search) {
-                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                $models = AuditTrail::self()
+                ->where('audit_trail.module', 'System Administration')
+                ->where('audit_trail.remarks', "LIKE", "%signed%")
+                ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no']);
+                
+                return Datatables::of($models)
+                            ->editColumn('company_id', function($model) {
+                                if($model->company_id > 0) {
+                                    return $model->company;
+                                }
+                                return Str::upper($model->user->getCOB->short_name);
                             })
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order, $dir)
-                            ->get();
-
-                    $totalFiltered = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                            ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->where(function($query) use ($search) {
-                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            ->editColumn('file_id', function($model) {
+                                if($model->file_id > 0) {
+                                    return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
+                                }
+                                if($model->user->isJMB()) {
+                                    if(empty($model->user->getFile)) {
+                                        return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
+                                    }
+                                }
+                                return '-';
                             })
-                            ->count();
-                } else {
-                    $posts = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->select('audit_trail.*', 'users.full_name as name')
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->where(function($query) use ($search) {
-                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            ->editColumn('remarks', function($model) {
+                                if(is_array($model->remarks)) {
+
+                                }
+                                return $model->remarks;
                             })
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order, $dir)
-                            ->get();
-
-                    $totalFiltered = DB::table('audit_trail')
-                            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                            ->where('users.company_id', Auth::user()->company_id)
-                            ->where(function($query) use ($search) {
-                                $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
+                            ->editColumn('audit_by', function($model) {
+                                return $model->user->full_name;
                             })
-                            ->count();
-                }
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                if (empty($search)) {
-                    if (!empty($new_from_date) && !empty($new_to_date)) {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->count();
-                    } else {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->count();
-                    }
-                } else {
-                    if (!empty($new_from_date) && !empty($new_to_date)) {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    }
-                }
-            } else {
-                if (empty($search)) {
-                    if (!empty($new_from_date) && !empty($new_to_date)) {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->count();
-                    } else {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->count();
-                    }
-                } else {
-                    if (!empty($new_from_date) && !empty($new_to_date)) {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where('audit_trail.created_at', '>=', $new_from_date . " 00:00:00")
-                                ->where('audit_trail.created_at', '<=', $new_to_date . " 23:59:59")
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    } else {
-                        $posts = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->select('audit_trail.*', 'users.full_name as name')
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->offset($start)
-                                ->limit($limit)
-                                ->orderBy($order, $dir)
-                                ->get();
-
-                        $totalFiltered = DB::table('audit_trail')
-                                ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                                ->where('users.company_id', Session::get('admin_cob'))
-                                ->where(function($query) use ($search) {
-                                    $query->where('audit_trail.created_at', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.module', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('audit_trail.remarks', 'LIKE', "%" . $search . "%")
-                                    ->orWhere('users.full_name', 'LIKE', "%" . $search . "%");
-                                })
-                                ->count();
-                    }
-                }
+                            ->editColumn('role_name', function($model) {
+                                return ($model->user->getAdmin())? trans('System Administrator') : Str::upper($model->role_name);
+                            })
+                            ->editColumn('created_at', function($model) {
+                                return date('d-m-Y H:i A', strtotime($model->created_at));
+                            })
+                            // ->addColumn('strata_name', function($model) {
+                            //     if($model->file_id > 0) {
+                            //         return $model->strata_name;
+                            //     }
+                            //     return Auth::user()->getFile->strata->name;
+                            // })
+                            ->filter(function($query) use($request) {
+                                if(!empty($request['company_id'])) {
+                                    $query->where('users.company_id', $request['company_id']);
+                                }
+                                if(!empty($request['role_id'])) {
+                                    $query->where('users.role', $request['role_id']);
+                                }
+                                if(!empty($request['module'])) {
+                                    $query->where('audit_trail.module', $request['module']);
+                                }
+                                if(!empty($request['file_id'])) {
+                                    $query->where('users.file_id', $request['file_id']);
+                                }
+                                // if(!empty($request['strata'])) {
+                                //     $query->where('strata.id', $request['strata']);
+                                // }
+                                if(!empty($request['date_from']) && empty($request['date_to'])) {
+                                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                                    $query->where('audit_trail.created_at', '>=', $date_from);
+                                }
+                                if(!empty($request['date_to']) && empty($request['date_from'])) {
+                                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                                    $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                                }
+                                if(!empty($request['date_from']) && !empty($request['date_to'])) {
+                                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                                    $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                                }
+                            })
+                            ->make(true);
             }
         }
+        $request['module'] = 'System Administration';
+        $request['description'] = 'signed';
+        $data = AuditTrail::getAnalyticData($request);
 
-        if (!empty($posts)) {
-            foreach ($posts as $post) {
-                $nestedData['created_at'] = date('d-M-Y H:i A', strtotime($post->created_at));
-                $nestedData['module'] = $post->module;
-                $nestedData['remarks'] = $post->remarks;
-                $nestedData['full_name'] = $post->name;
-                $data[] = $nestedData;
-            }
-        }
-
-        $json_data = array(
-            "draw" => intval(Request::input('draw')),
-            "recordsTotal" => intval($totalData),
-            "recordsFiltered" => intval($totalFiltered),
-            "data" => $data
+        $viewData = array(
+            'title' => trans('app.menus.reporting.audit_logon_report'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'audit_logon_old_list',
+            'data' => $data, 
+            'image' => ""
         );
 
-        echo json_encode($json_data);
+        return View::make('report_en.audit_logon_old', $viewData);
     }
 
     //file by location
@@ -752,7 +591,6 @@ class ReportController extends BaseController {
     public function strataProfile() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
         if (!Auth::user()->getAdmin()) {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
@@ -781,171 +619,44 @@ class ReportController extends BaseController {
 
         return View::make('report_en.strata_profile', $viewData);
     }
-
-    // public function getStrataProfile() {
-    //     if (!Auth::user()->getAdmin()) {
-    //         if (!empty(Auth::user()->file_id)) {
-    //             $files = DB::table('files')
-    //                     ->join('company', 'files.company_id', '=', 'company.id')
-    //                     ->join('strata', 'files.id', '=', 'strata.file_id')
-    //                     ->join('parliment', 'strata.parliament', '=', 'parliment.id')
-    //                     ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
-    //                     ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
-    //                     ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-    //                     ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
-    //                     ->where('files.id', Auth::user()->file_id)
-    //                     ->where('files.company_id', Auth::user()->company_id)
-    //                     // ->where('finance_file.year', date('Y'))
-    //                     ->where('finance_file_report.type', 'SF')
-    //                     ->where('finance_file_income.name', 'SINKING FUND')
-    //                     ->where('finance_file.is_active', 1)
-    //                     ->where('files.is_deleted', 0)
-    //                     ->where('finance_file.is_deleted', 0)
-    //                     ->groupBy('files.id')
-    //                     ->groupBy('finance_file.id')
-    //                     ->orderBy('files.id');
-    //         } else {
-    //             $files = DB::table('files')
-    //                     ->join('company', 'files.company_id', '=', 'company.id')
-    //                     ->join('strata', 'files.id', '=', 'strata.file_id')
-    //                     ->join('parliment', 'strata.parliament', '=', 'parliment.id')
-    //                     ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
-    //                     ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
-    //                     ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-    //                     ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
-    //                     ->where('files.company_id', Auth::user()->company_id)
-    //                     // ->where('finance_file.year', date('Y'))
-    //                     ->where('finance_file_report.type', 'SF')
-    //                     ->where('finance_file_income.name', 'SINKING FUND')
-    //                     ->where('finance_file.is_active', 1)
-    //                     ->where('files.is_deleted', 0)
-    //                     ->where('finance_file.is_deleted', 0)
-    //                     ->groupBy('files.id')
-    //                     ->groupBy('finance_file.id')
-    //                     ->orderBy('files.id');
-    //         }
-    //     } else {
-    //         if (empty(Session::get('admin_cob'))) {
-    //             $files = DB::table('files')
-    //                     ->join('company', 'files.company_id', '=', 'company.id')
-    //                     ->join('strata', 'files.id', '=', 'strata.file_id')
-    //                     ->join('parliment', 'strata.parliament', '=', 'parliment.id')
-    //                     ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
-    //                     ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
-    //                     ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-    //                     ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
-    //                     // ->where('finance_file.year', date('Y'))
-    //                     ->where('finance_file_report.type', 'SF')
-    //                     ->where('finance_file_income.name', 'SINKING FUND')
-    //                     ->where('finance_file.is_active', 1)
-    //                     ->where('files.is_deleted', 0)
-    //                     ->where('finance_file.is_deleted', 0)
-    //                     ->groupBy('files.id')
-    //                     ->groupBy('finance_file.id')
-    //                     ->orderBy('files.id');
-    //         } else {
-    //             $files = DB::table('files')
-    //                     ->join('company', 'files.company_id', '=', 'company.id')
-    //                     ->join('strata', 'files.id', '=', 'strata.file_id')
-    //                     ->join('parliment', 'strata.parliament', '=', 'parliment.id')
-    //                     ->join('finance_file', 'files.id', '=', 'finance_file.file_id')
-    //                     ->join('finance_file_income', 'finance_file.id', '=', 'finance_file_income.finance_file_id')
-    //                     ->join('finance_file_report', 'finance_file.id', '=', 'finance_file_report.finance_file_id')
-    //                     ->select(DB::raw('files.*, strata.name as strata_name, company.short_name as company_name, parliment.description as parliment_name, finance_file.id as finance_id, finance_file.year as finance_year, finance_file.month as finance_month, finance_file_report.id as finance_report_id, finance_file_income.id as finance_income_id, SUM(finance_file_report.fee_semasa) as sepatut_dikutip, SUM(finance_file_income.semasa) as berjaya_dikutip, round((SUM(finance_file_income.semasa) / SUM(finance_file_report.fee_semasa)) * 100) as percentage'))
-    //                     ->where('files.company_id', Session::get('admin_cob'))
-    //                     // ->where('finance_file.year', date('Y'))
-    //                     ->where('finance_file_report.type', 'SF')
-    //                     ->where('finance_file_income.name', 'SINKING FUND')
-    //                     ->where('finance_file.is_active', 1)
-    //                     ->where('files.is_deleted', 0)
-    //                     ->where('finance_file.is_deleted', 0)
-    //                     ->groupBy('files.id')
-    //                     ->groupBy('finance_file.id')
-    //                     ->orderBy('files.id');
-    //         }
-    //     }
-
-    //     if(!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
-    //         $start_date = !empty(Input::get('start_date'))? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0); 
-    //         $today = !empty(Input::get('end_date'))? Carbon::parse(Input::get('end_date')) : Carbon::now();
-    //         $files = $files->where(function($query) use($start_date, $today){
-    //                         $query->where(function($query1) use($start_date) {
-    //                             $query1->where('finance_file.year','>',$start_date->year)
-    //                                   ->orWhere(function($query2) use($start_date){
-    //                                     $query2->where('finance_file.year',$start_date->year)
-    //                                            ->where(function($query3) use($start_date) {
-    //                                                $query3->where('finance_file.month', '>', $start_date->month)
-    //                                                       ->orWhere('finance_file.month', $start_date->month);
-    //                                            });
-    //                                   });
-    //                         })
-    //                         ->where(function($query1) use($today) {
-    //                             $query1->where('finance_file.year','<',$today->year)
-    //                                   ->orWhere(function($query2) use($today){
-    //                                     $query2->where('finance_file.year',$today->year)
-    //                                            ->where(function($query3) use($today) {
-    //                                                $query3->where('finance_file.month', '<', $today->month)
-    //                                                       ->orWhere('finance_file.month', $today->month);
-    //                                            });
-    //                                   });
-    //                         });
-    //                 });
-    //     }
-
-    //     $files = $files->get();
-
-    //     if ($files) {
-    //         $data = array();
-    //         foreach ($files as $file) {
-    //             if ($file->percentage >= 80) {
-    //                 $zone = 'Biru';
-    //             } else if ($file->percentage < 79 && $file->percentage >= 50) {
-    //                 $zone = 'Kuning';
-    //             } else if($file->percentage < 50 && $file->percentage > 0) {
-    //                 $zone = 'Merah';
-    //             } else {
-    //                 $zone = 'Kelabu';
-    //             }
-    //                 $data_raw = array(
-    //                     "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . " " . $file->finance_year . "-" . strtoupper(DateTime::createFromFormat('!m', $file->finance_month)->format('M')) . "</a>",
-    //                     $file->strata_name,
-    //                     $file->company_name,
-    //                     $file->parliment_name,
-    //                     $zone
-    //                 );
-    
-    //                 array_push($data, $data_raw);
-
-    //         }
-
-    //         $output_raw = array(
-    //             "aaData" => $data
-    //         );
-
-    //         $output = json_encode($output_raw);
-    //         return $output;
-    //     } else {
-    //         $output_raw = array(
-    //             "aaData" => []
-    //         );
-
-    //         $output = json_encode($output_raw);
-    //         return $output;
-    //     }
-    // }
     
     public function getStrataProfile() {
-        $query = Files::with(['financeLatest', 'strata.parliment', 'company'])
+        $query = Files::with(['financeLatest', 'company'])
                         ->file();
         
         if(!empty($request['company_id'])) {
             $company = Company::where('short_name', $request['company_id'])->first();
             $query = $query->where('files.company_id', $company->id);
         }
-        $files = $query->get();       
-
-        if ($files) {
-            $data = array();
+        // if(!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
+        //     $start_date = !empty(Input::get('start_date'))? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0); 
+        //     $today = !empty(Input::get('end_date'))? Carbon::parse(Input::get('end_date')) : Carbon::now();
+        //     $query = $query->where(function($query) use($start_date, $today){
+        //                     $query->where(function($query1) use($start_date) {
+        //                         $query1->where('finance_file.year','>',$start_date->year)
+        //                                 ->orWhere(function($query2) use($start_date){
+        //                                 $query2->where('finance_file.year',$start_date->year)
+        //                                         ->where(function($query3) use($start_date) {
+        //                                             $query3->where('finance_file.month', '>', $start_date->month)
+        //                                                     ->orWhere('finance_file.month', $start_date->month);
+        //                                         });
+        //                                 });
+        //                     })
+        //                     ->where(function($query1) use($today) {
+        //                         $query1->where('finance_file.year','<',$today->year)
+        //                                 ->orWhere(function($query2) use($today){
+        //                                 $query2->where('finance_file.year',$today->year)
+        //                                         ->where(function($query3) use($today) {
+        //                                             $query3->where('finance_file.month', '<', $today->month)
+        //                                                     ->orWhere('finance_file.month', $today->month);
+        //                                         });
+        //                                 });
+        //                     });
+        //             });
+        // }
+        
+        $data = array();
+        $files = $query->chunk(500, function($files) use(&$data){
             foreach ($files as $file) {
                 $finance = $file->financeLatest;
                 if($finance) {
@@ -967,32 +678,25 @@ class ReportController extends BaseController {
                 } else {
                     $zone = 'Kelabu';
                 }
-                    $data_raw = array(
-                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . "</a>",
-                        $file->strata->name,
-                        $file->company->short_name,
-                        ($file->strata->parliment)? $file->strata->parliment->description : '-',
-                        $zone
-                    );
-    
-                    array_push($data, $data_raw);
+                $data_raw = array(
+                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . "</a>",
+                    $file->strata->name,
+                    $file->company->short_name,
+                    ($file->strata->parliment)? $file->strata->parliment->description : '-',
+                    $zone
+                );
+
+                array_push($data, $data_raw);
 
             }
+        });       
 
-            $output_raw = array(
-                "aaData" => $data
-            );
+        $output_raw = array(
+            "aaData" => $data
+        );
 
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
+        $output = json_encode($output_raw);
+        return $output;
     }
 
     public function getStrataProfileFinance($file_id) {
@@ -2410,6 +2114,34 @@ class ReportController extends BaseController {
         );
 
         return View::make('report_en.generate', $viewData);
+    }
+
+    public function statistic() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Statistics Report"));
+        $datas = (new ReportRepo())->statisticsReport(Request::all());
+        $cities = City::self()->get();
+        if(Request::ajax()) {
+            return View::make('report_en.statistic.table', compact('datas', 'cities'));
+        }
+        $last_10_years = Carbon::now()->subYears(10)->format('Y');
+        $this_year = Carbon::now()->format('Y');
+        $years = [];
+        for($i = $this_year; $i > $last_10_years; $i--) {
+            array_push($years, $i);
+        }
+        
+        $viewData = array(
+            'title' => trans('app.menus.reporting.statistic'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'statistic_report_list',
+            'cities' => $cities,
+            'years' => $years,
+            'datas' => $datas,
+            'image' => ''
+        );
+
+        return View::make('report_en.statistic', $viewData);
     }
 
 }
