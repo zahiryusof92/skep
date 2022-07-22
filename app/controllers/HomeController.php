@@ -205,6 +205,7 @@ class HomeController extends BaseController {
         $condition = function ($query) {
             $query->where('meeting_document.agm_date', '!=', '0000-00-00');
             $query->where('meeting_document.agm_date', '<=', date('Y-m-d', strtotime('-12 Months')));
+            $query->where('meeting_document.agm_date', '>', date('Y-m-d', strtotime('-15 Months')));
             $query->where('meeting_document.is_deleted', 0);
             $query->where('files.is_active', 1);
             $query->where('files.is_deleted', 0);
