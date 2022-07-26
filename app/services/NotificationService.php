@@ -24,7 +24,7 @@ class NotificationService {
             $jmb_notify['description'] = $jmb_message;
             $jmb_notification = (new NotificationController())->store($jmb_notify);
         }
-        if(Auth::user()->receive_mail) {
+        if(getenv('send_email') == true && Auth::user()->receive_mail) {
             $jmb_message = "We are pleased to inform ";
             $jmb_message .= !empty($custom_text)? $data['strata'] ." ". $data['title'] . " has been " . $custom_text : strtolower($data['strata']) ." thanks for submitted " . $data['title'];
             $jmb_email_data['title'] = $data['title'];
@@ -57,7 +57,7 @@ class NotificationService {
                     $cob_notify['description'] = $cob_message;
                     $cob_notification = (new NotificationController())->store($cob_notify);
                 }
-                if($cob->receive_mail) {
+                if(getenv('send_email') == true && $cob->receive_mail) {
                     $cob_message = "We are pleased to inform you that ";
                     $cob_message .= $custom_text == 'deleted'? $data['strata_name'] ." ". $data['title'] . " has been " . $custom_text : $data['strata_name'] ." have submitted " . $data['title'];
                     $cob_email_data['title'] =  $data['title'];
@@ -95,7 +95,7 @@ class NotificationService {
                 $jmb_notify['description'] = $jmb_message;
                 $jmb_notification = (new NotificationController())->store($jmb_notify);
             }
-            if($jmb->receive_mail) {
+            if(getenv('send_email') == true && $jmb->receive_mail) {
                 $jmb_message = "We are pleased to inform ";
                 $jmb_message .= !empty($custom_text)? $data['strata'] ." ". $data['title'] . " changes has been " . $custom_text : strtolower($data['strata']) ." thanks for submitted " . $data['title'];
                 $jmb_email_data['title'] = $data['title'];
