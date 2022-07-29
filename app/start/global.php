@@ -65,7 +65,15 @@ App::error(function(Exception $exception, $code)
 
 App::down(function()
 {
-	return Response::make("Be right back!", 503);
+	if (Auth::user() && Auth::user()->isSuperadmin()) {
+		return null;
+	}
+
+	if(Request::is('systemUp')) {
+		return null;
+	}
+
+	return Response::view('maintenance', array(), 503);
 });
 
 /*

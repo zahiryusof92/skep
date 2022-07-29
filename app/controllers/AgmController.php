@@ -2101,6 +2101,19 @@ class AgmController extends BaseController {
                             ]
                         );
 
+                        if(Auth::user()->isCOB()) {
+                            $strata = $files->strata;
+                            $notify_data['file_id'] = $files->id;
+                            $notify_data['route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
+                            $notify_data['cob_route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                            $notify_data['title'] = "COB File AGM Minutes";
+                            $notify_data['module'] = "AGM Minutes";
+                            
+                            (new NotificationService())->sendJMB($notify_data, $status);
+                        }
+
                         // if ($files->jmb) {
                         //     $receipant = $files->jmb;
                         //     /** Send E-mail */
