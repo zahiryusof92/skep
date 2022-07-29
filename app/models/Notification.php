@@ -14,6 +14,7 @@ class Notification extends Eloquent {
         'user_id',
         'company_id',
         'file_id',
+        'strata_id',
         'module',
         'route',
         'description',

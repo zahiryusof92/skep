@@ -60,11 +60,11 @@ class Files extends Eloquent {
     }
 
     public function meetingDocument() {
-        return $this->hasMany('MeetingDocument', 'file_id');
+        return $this->hasMany('MeetingDocument', 'file_id')->where('is_deleted', 0);
     }
 
     public function latestMeetingDocument() {
-        return $this->hasOne('MeetingDocument', 'file_id')->latest();
+        return $this->hasOne('MeetingDocument', 'file_id')->where('is_deleted', 0)->latest();
     }
 
     public function insurance() {
@@ -1996,7 +1996,590 @@ class Files extends Eloquent {
         return $result;
     }
 
-    public static function getManagementSummaryCOB() {
+    public static function getManagementSummaryCOB($request = []) {
+        $developer = 0;
+        $management_developer = 0;
+        $management_liquidator = 0;
+        $liquidator = 0;
+        $jmb = 0;
+        $mc = 0;
+        $agent = 0;
+        $others = 0;
+        $residential = 0;
+        $commercial = 0;
+        $total_count_residential_less10 = 0;
+        $total_count_residential_more10 = 0;
+        $total_count_commercial_less10 = 0;
+        $total_count_commercial_more10 = 0;
+        $count_all = 0;
+        $total_sum_residential_less10 = 0;
+        $total_sum_residential_more10 = 0;
+        $total_sum_commercial_less10 = 0;
+        $total_sum_commercial_more10 = 0;
+        $sum_all = 0;
+        $unknown_kawasan = 0;
+        $total_all_management = 0;
+        $total_no_management = 0;
+        $total_under_10_units = 0;
+        $total_bankruptcy = 0;
+        $total_developer_less_10 = 0;
+        $total_developer_more_10 = 0;
+        $total_liquidator_less_10 = 0;
+        $total_liquidator_more_10 = 0;
+        $total_jmb_less_10 = 0;
+        $total_jmb_more_10 = 0;
+        $total_mc_less_10 = 0;
+        $total_mc_more_10 = 0;
+        $total_agent_less_10 = 0;
+        $total_agent_more_10 = 0;
+        $total_others_less_10 = 0;
+        $total_others_more_10 = 0;
+        $extra_strata_condition = function($query) use($request) {
+            if(!empty($request['city'])) {
+                $query->where('strata.city', $request['city']);
+            }
+        };
+        $extra_management_condition = function($query) use($request) {
+            if(!empty($request['management'])) {
+                if($request['management'] == 'jmb') {
+                    $query->where('management.is_jmb', true)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false);
+                } else if($request['management'] == 'mc') {
+                    $query->where('management.is_mc', true);
+                } else if($request['management'] == 'developer') {
+                    $query->where('management.is_developer', true)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false);
+                } else if($request['management'] == 'agent') {
+                    $query->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', true)
+                        ->where('management.is_others', false);
+                } else if($request['management'] == 'others') {
+                    $query->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', true);
+                } else if($request['management'] == 'non') {
+                    $query->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false)
+                        ->where('management.is_developer', false);
+                }
+            }
+        };
+
+        if (!Auth::user()->getAdmin()) {
+            $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            } else {
+                $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            }
+        }
+
+        if ($company) {
+            foreach ($company as $cob) {
+                $total_developer = DB::table('house_scheme')
+                                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                    ->join('strata', 'strata.file_id', '=', 'files.id')
+                                    ->where('files.company_id', $cob->id)
+                                    ->where('files.is_deleted', 0)
+                                    ->where('house_scheme.is_deleted', 0)
+                                    ->where('house_scheme.is_liquidator', 0)
+                                    ->where($extra_strata_condition)
+                                    ->count();
+                        
+                $total_management_developer = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_developer', true)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+                $total_developer_less_10 = DB::table('management')
+                                            ->join('files', 'management.file_id', '=', 'files.id')
+                                            ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                                            ->join('strata', 'strata.file_id', '=', 'files.id')
+                                            ->where('residential_block.unit_no', '<=', 10)
+                                            ->where('files.company_id', $cob->id)
+                                            ->where('management.is_developer', true)
+                                            ->where('management.is_jmb', false)
+                                            ->where('management.is_mc', false)
+                                            ->where('management.is_agent', false)
+                                            ->where('management.is_others', false)
+                                            ->where('files.is_deleted', 0)
+                                            ->where($extra_strata_condition)
+                                            ->count();
+                $total_developer_more_10 = DB::table('management')
+                                            ->join('files', 'management.file_id', '=', 'files.id')
+                                            ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                                            ->join('strata', 'strata.file_id', '=', 'files.id')
+                                            ->where('residential_block.unit_no', '>', 10)
+                                            ->where('files.company_id', $cob->id)
+                                            ->where('management.is_developer', true)
+                                            ->where('management.is_jmb', false)
+                                            ->where('management.is_mc', false)
+                                            ->where('management.is_agent', false)
+                                            ->where('management.is_others', false)
+                                            ->where('files.is_deleted', 0)
+                                            ->where($extra_strata_condition)
+                                            ->count();
+                $total_liquidator = DB::table('house_scheme')
+                                        ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                                        ->where('files.company_id', $cob->id)
+                                        ->where('files.is_deleted', 0)
+                                        ->where('house_scheme.is_deleted', 0)
+                                        ->where('house_scheme.is_liquidator', 1)
+                                        ->where($extra_strata_condition)
+                                        ->count();
+                        
+                $total_jmb = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', true)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+                        
+                $total_jmb_less_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', true)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+                
+                $total_jmb_more_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', true)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_mc = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_mc', true)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_mc_less_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_mc', true)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_mc_more_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_mc', true)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_agent = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', true)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_agent_less_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', true)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_agent_more_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', true)
+                        ->where('management.is_others', false)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_others = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', true)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_others_less_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', true)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $total_others_more_10 = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('residential_block', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', true)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $count_no_management = DB::table('management')
+                        ->join('files', 'management.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where('management.is_jmb', false)
+                        ->where('management.is_mc', false)
+                        ->where('management.is_agent', false)
+                        ->where('management.is_others', false)
+                        ->where('management.is_developer', false)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $count_unkown_residential_commercial = DB::table('strata')
+                        ->join('files', 'strata.file_id', '=', 'files.id')
+                        ->where('strata.is_residential', false)
+                        ->where('strata.is_commercial', false)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('residential_block.unit_no');
+                        
+                $count_residential_more10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('residential_block.unit_no');
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('commercial_block.unit_no');
+
+                $count_commercial_more10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('commercial_block.unit_no');
+
+                $count_residential_less10_extra = DB::table('residential_block_extra')
+                        ->join('files', 'residential_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block_extra.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('residential_block_extra.unit_no');
+
+                $count_residential_more10_extra = DB::table('residential_block_extra')
+                        ->join('files', 'residential_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block_extra.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('residential_block_extra.unit_no');
+
+                $count_commercial_less10_extra = DB::table('commercial_block_extra')
+                        ->join('files', 'commercial_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block_extra.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('commercial_block_extra.unit_no');
+
+                $count_commercial_more10_extra = DB::table('commercial_block_extra')
+                        ->join('files', 'commercial_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block_extra.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->count('commercial_block_extra.unit_no');
+
+                $sum_residential_less10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('residential_block.unit_no');
+
+                $sum_residential_more10 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('residential_block.unit_no');
+
+                $sum_commercial_less10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('commercial_block.unit_no');
+
+                $sum_commercial_more10 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('commercial_block.unit_no');
+
+                $sum_residential_less10_extra = DB::table('residential_block_extra')
+                        ->join('files', 'residential_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block_extra.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('residential_block_extra.unit_no');
+
+                $sum_residential_more10_extra = DB::table('residential_block_extra')
+                        ->join('files', 'residential_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('residential_block_extra.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('residential_block_extra.unit_no');
+
+                $sum_commercial_less10_extra = DB::table('commercial_block_extra')
+                        ->join('files', 'commercial_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block_extra.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('commercial_block_extra.unit_no');
+
+                $sum_commercial_more10_extra = DB::table('commercial_block_extra')
+                        ->join('files', 'commercial_block_extra.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id')
+                        ->join('management', 'management.file_id', '=', 'files.id')
+                        ->where('commercial_block_extra.unit_no', '>', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->where($extra_strata_condition)
+                        ->where($extra_management_condition)
+                        ->sum('commercial_block_extra.unit_no');
+
+                $developer += $total_developer;
+                $management_developer += $total_management_developer;
+                $liquidator += $total_liquidator;
+                $jmb += $total_jmb;
+                $mc += $total_mc;
+                $agent += $total_agent;
+                $others += $total_others;
+                $total_count_residential_less10 += ($count_residential_less10 + $count_residential_less10_extra);
+                $total_count_residential_more10 += ($count_residential_more10 + $count_residential_more10_extra);
+                $total_count_commercial_less10 += ($count_commercial_less10 + $count_commercial_less10_extra);
+                $total_count_commercial_more10 += ($count_commercial_more10 + $count_commercial_more10_extra);
+                $total_sum_residential_less10 += ($sum_residential_less10 + $sum_residential_less10_extra);
+                $total_sum_residential_more10 += ($sum_residential_more10 + $sum_residential_more10_extra);
+                $total_sum_commercial_less10 += ($sum_commercial_less10 + $sum_commercial_less10_extra);
+                $total_sum_commercial_more10 += ($sum_commercial_more10 + $sum_commercial_more10_extra);
+                $unknown_kawasan += ($count_unkown_residential_commercial);
+                $total_no_management += $count_no_management;
+                $total_developer_less_10 += $total_developer_less_10;
+                $total_developer_more_10 += $total_developer_more_10;
+                $total_liquidator_less_10 += $total_liquidator_less_10;
+                $total_liquidator_more_10 += $total_liquidator_more_10;
+                $total_jmb_less_10 += $total_jmb_less_10;
+                $total_jmb_more_10 += $total_jmb_more_10;
+                $total_mc_less_10 += $total_mc_less_10;
+                $total_mc_more_10 += $total_mc_more_10;
+                $total_agent_less_10 += $total_agent_less_10;
+                $total_agent_more_10 += $total_agent_more_10;
+                $total_others_less_10 += $total_others_less_10;
+                $total_others_more_10 += $total_others_more_10;
+
+
+                $total_all_management += ($total_no_management + $total_management_developer + 
+                                        $total_jmb + $total_mc + $total_agent + $total_others);
+            }
+        }
+
+        $management_chart_data = [
+            ["name" => 'JMB', 'y' => $jmb],
+            ["name" => 'MC', 'y' => $mc],
+            ["name" => 'PEMAJU', 'y' => $management_developer],
+            ["name" => 'Ejen', 'y' => $agent],
+            ["name" => "Lain-lain", 'y' => $others],
+            ["name" => "Tiada Pengurusan", 'y' => $total_no_management],
+        ];
+        $house_scheme_chart_data = [
+            ['name' => 'PEMAJU', 'y' => $developer],
+            ["name" => 'LIQUIDATOR', 'y' => $liquidator],
+        ];
+        $result = array(
+            'developer' => $developer,
+            'management_developer' => $management_developer,
+            'liquidator' => $liquidator,
+            'jmb' => $jmb,
+            'mc' => $mc,
+            'agent' => $agent,
+            'others' => $others,
+            'total_no_management' => $total_no_management,
+            'total_count_residential_less10' => $total_count_residential_less10,
+            'total_count_residential_more10' => $total_count_residential_more10,
+            'total_count_commercial_less10' => $total_count_commercial_less10,
+            'total_count_commercial_more10' => $total_count_commercial_more10,
+            'total_sum_residential_less10' => $total_sum_residential_less10,
+            'total_sum_residential_more10' => $total_sum_residential_more10,
+            'total_sum_commercial_less10' => $total_sum_commercial_less10,
+            'total_sum_commercial_more10' => $total_sum_commercial_more10,
+            'total_developer_less_10' => $total_developer_less_10,
+            'total_developer_more_10' => $total_developer_more_10,
+            'total_jmb_less_10' => $total_jmb_less_10,
+            'total_jmb_more_10' => $total_jmb_more_10,
+            'total_mc_less_10' => $total_mc_less_10,
+            'total_mc_more_10' => $total_mc_more_10,
+            'total_agent_less_10' => $total_agent_less_10,
+            'total_agent_more_10' => $total_agent_more_10,
+            'total_others_less_10' => $total_others_less_10,
+            'total_others_more_10' => $total_others_more_10,
+            'unknown_kawasan' => $unknown_kawasan,
+            'total_all_management' => $total_all_management,
+            'management_chart_data' => $management_chart_data,
+            "house_scheme_chart_data" => $house_scheme_chart_data
+        );
+
+        return $result;
+    }
+
+    public static function getManagementSummaryCOBOld() {
         $developer = 0;
         $liquidator = 0;
         $jmb = 0;

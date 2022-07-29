@@ -1,4 +1,4 @@
-@extends('layout.english_layout.default')
+@extends('layout.english_layout.default_custom')
 
 @section('content')
 

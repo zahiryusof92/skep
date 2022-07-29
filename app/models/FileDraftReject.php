@@ -23,7 +23,8 @@ class FileDraftReject extends Eloquent {
     }
 
     public function scopeSelf($query) {
-        $query = $query->join('files', 'file_draft_rejects.file_id', '=', 'files.id');
+        $query = $query->join('files', 'file_draft_rejects.file_id', '=', 'files.id')
+                        ->join('strata', 'strata.file_id', '=', 'files.id');
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $query = $query->where('files.id', Auth::user()->file_id);

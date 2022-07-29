@@ -71,6 +71,7 @@ class EmailLogController extends BaseController {
             'user_id' => $data['user_id'],
             'company_id' => $data['company_id'],
             'file_id' => $data['file_id'],
+            'strata_id' => $data['file_id']? Strata::where('file_id', $data['file_id'])->first()->getKey() : 0,
             'route' => $data['route'],
             'description' => $data['description'],
         ]);
@@ -87,7 +88,7 @@ class EmailLogController extends BaseController {
             */
             $audit_name = "$email_log->description";
             $remarks = $audit_name;
-            $this->addAudit($email_log->file_id, "Email Log", $remarks);
+            $this->addAudit($email_log->file_id, "Email Log", $remarks, $data['user_id']);
             
             return true;
         }

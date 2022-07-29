@@ -1,4 +1,4 @@
-@extends('layout.english_layout.default')
+@extends('layout.english_layout.default_custom')
 
 @section('content')
 
@@ -20,7 +20,7 @@ foreach ($user_permission as $permissions) {
             <section class="panel panel-pad">
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
-                        <form class="form-horizontal">
+                        <form class="form-horizontal" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
@@ -33,15 +33,24 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                        <select id="file_id" class="form-control select2" name="file_id">
+                                        <select id="file_id" name="file_id" class="form-control" data-placeholder="{{ $insurance->file_id? $insurance->file->file_no : trans('app.forms.please_select') }}">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($files as $file_no)
-                                            <option value="{{ \Helper\Helper::encode($file_no->id) }}"  {{ $insurance->file_id == $file_no->id ? 'selected' : '' }}>{{$file_no->file_no}}</option>
-                                            @endforeach
                                         </select>
-                                        <div id="file_id_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'file_id'])
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label> {{ trans('app.forms.strata') }}</label>
+                                        <select id="strata_id" name="strata_id" class="form-control" data-placeholder="{{ $insurance->strata_id? $insurance->strata->name : trans('app.forms.please_select') }}">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        </select>
+                                        @include('alert.feedback-ajax', ['field' => 'strata_id'])
+                                    </div>
+                                </div> 
                             </div>
 
                             <div class="row">
@@ -54,7 +63,7 @@ foreach ($user_permission as $permissions) {
                                             <option value="{{ $provider->id }}"  {{ $insurance->insurance_provider_id == $provider->id ? 'selected' : '' }}>{{ $provider->name }}</option>
                                             @endforeach
                                         </select>
-                                        <div id="insurance_provider_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'insurance_provider'])
                                     </div>
                                 </div>
                             </div>
@@ -63,7 +72,7 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="form-control-label">{{ trans('app.forms.public_liability_coverage') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.public_liability_coverage') }}" id="public_liability_coverage" value="{{ $insurance->public_liability_coverage }}"/>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.public_liability_coverage') }}" id="public_liability_coverage" name="public_liability_coverage" value="{{ $insurance->public_liability_coverage }}"/>
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +80,7 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label class="form-control-label">{{ trans('app.forms.premium_per_year') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="plc_premium_per_year" value="{{ $insurance->plc_premium_per_year }}"/>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="plc_premium_per_year" name="plc_premium_per_year" value="{{ $insurance->plc_premium_per_year }}"/>
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -83,7 +92,7 @@ foreach ($user_permission as $permissions) {
                                                 <i class="icmn-calendar"></i>
                                             </span>
                                         </label>
-                                        <input type="hidden" id="plc_validity_from" value="{{ $insurance->plc_validity_from }}">
+                                        <input type="hidden" id="plc_validity_from" name="plc_validity_from" value="{{ $insurance->plc_validity_from }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -95,7 +104,7 @@ foreach ($user_permission as $permissions) {
                                                 <i class="icmn-calendar"></i>
                                             </span>
                                         </label>
-                                        <input type="hidden" id="plc_validity_to" value="{{ $insurance->plc_validity_to }}">
+                                        <input type="hidden" id="plc_validity_to" name="plc_validity_to" value="{{ $insurance->plc_validity_to }}">
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +113,7 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="form-control-label">{{ trans('app.forms.fire_insurance_coverage') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fire_insurance_coverage') }}" id="fire_insurance_coverage" value="{{ $insurance->fire_insurance_coverage }}"/>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.fire_insurance_coverage') }}" id="fire_insurance_coverage" name="fire_insurance_coverage" value="{{ $insurance->fire_insurance_coverage }}"/>
                                     </div>
                                 </div>
                             </div>
@@ -112,7 +121,7 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <label class="form-control-label">{{ trans('app.forms.premium_per_year') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="fic_premium_per_year" value="{{ $insurance->fic_premium_per_year }}"/>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.premium_per_year') }}" id="fic_premium_per_year" name="fic_premium_per_year" value="{{ $insurance->fic_premium_per_year }}"/>
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -124,7 +133,7 @@ foreach ($user_permission as $permissions) {
                                                 <i class="icmn-calendar"></i>
                                             </span>
                                         </label>
-                                        <input type="hidden" id="fic_validity_from" value="{{ $insurance->fic_validity_from }}">
+                                        <input type="hidden" id="fic_validity_from" name="fic_validity_from" value="{{ $insurance->fic_validity_from }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -136,27 +145,51 @@ foreach ($user_permission as $permissions) {
                                                 <i class="icmn-calendar"></i>
                                             </span>
                                         </label>
-                                        <input type="hidden" id="fic_validity_to" value="{{ $insurance->fic_validity_to }}">
+                                        <input type="hidden" id="fic_validity_to" name="fic_validity_to" value="{{ $insurance->fic_validity_to }}">
                                     </div>
                                 </div>
                             </div>
+                        </form>
 
+                            <form id="upload_insurance_file" enctype="multipart/form-data" method="post" action="{{ route('cob.file.insurance.file.upload') }}" autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.upload_file') }}</label>
+                                            <br/>
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                            <button type="button" id="clear_insurance_file" class="btn btn-xs btn-danger" onclick="clearFile()" style="display: none;"><i class="fa fa-times"></i></button>
+                                            &nbsp;<input type="file" name="insurance_file" id="insurance_file" />
+                                            <div id="validation-errors_insurance_file"></div>
+                                            @if ($insurance->filename != "")
+                                            <a href="{{asset($insurance->filename)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
+                                            <?php if ($update_permission == 1) { ?>
+                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteFile('{{ \Helper\Helper::encode($insurance->id) }}')"><i class="fa fa-times"></i></button>
+                                            <?php } ?>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        <form>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="form-label">{{ trans('app.forms.remarks') }}</label>
                                         <textarea id="remarks" name="remarks" rows="5" class="form-control" placeholder="{{ trans('app.forms.remarks') }}">{{ $insurance->remarks }}</textarea>
-                                        <div id="remarks_error" style="display:none;"></div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-actions">
                                 <?php if ($update_permission) { ?>
+                                    <input type="hidden" id="filename" name="filename" value="{{ $insurance->filename }}"/>
+                                    <input type="hidden" id="id" name="id" value="{{ \Helper\Helper::encode($insurance->id) }}"/>
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditInsurance()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@insurance', ['All']) }}'">{{ trans('app.forms.cancel') }}</button>
-                                <img id="loading" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                <img id="loading" style="display:none;" src="{{ asset('assets/common/img/input-spinner.gif') }}"/>
                             </div>
                         </form>
                     </div>
@@ -169,6 +202,131 @@ foreach ($user_permission as $permissions) {
 
 <!-- Page Scripts -->
 <script>
+    $(document).ready(function () {
+        //upload
+        var options = {
+            beforeSubmit: showRequest,
+            success: showResponse,
+            dataType: 'json'
+        };
+
+        $('body').delegate('#insurance_file', 'change', function () {
+            $('#upload_insurance_file').ajaxForm(options).submit();
+        });
+        $('.select2').select2();
+        $("#strata_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.strata.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    let file_id = "{{ $insurance->file_id }}";
+                    return {
+                        term: params.term, // search term
+                        file_id: file_id? file_id : $('#file_id').val(),
+                        type: 'id',
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+        $("#file_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.files.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    let strata_id = "{{ $insurance->strata_id }}";
+                    return {
+                        term: params.term, // search term
+                        strata: strata_id? strata_id : $('#strata_id').val()
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+    });
+
+    //upload document file
+    function showRequest(formData, jqForm, options) {
+        $("#validation-errors_insurance_file").hide().empty();
+        return true;
+    }
+    function showResponse(response, statusText, xhr, $form) {
+        if (response.success == false) {
+            var arr = response.errors;
+            $.each(arr, function (index, value) {
+                if (value.length != 0) {
+                    $("#validation-errors_insurance_file").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                }
+            });
+            $("#validation-errors_insurance_file").show();
+            $("#insurance_file").css("color", "red");
+        } else {
+            $("#clear_insurance_file").show();
+            $("#validation-errors_insurance_file").html("<i class='fa fa-check' id='check_insurance_file' style='color:green;'></i>");
+            $("#validation-errors_insurance_file").show();
+            $("#insurance_file").css("color", "green");
+            $("#filename").val(response.file);
+        }
+    }
+
+    function clearFile() {
+        $("#insurance_file").val("");
+        $("#clear_insurance_file").hide();
+        $("#insurance_file").css("color", "grey");
+        $("#check_insurance_file").hide();
+    }
+
+    function deleteFile(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ route('cob.file.insurance.file.delete') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+    
     $(function () {
         $("#plc_validity_from_raw").datetimepicker({
             widgetPositioning: {
@@ -244,72 +402,42 @@ foreach ($user_permission as $permissions) {
     });
 
     function submitEditInsurance() {
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#cancel_button").attr("disabled", "disabled");
-
-        var file_id = $("#file_id").val(),
-                insurance_provider = $("#insurance_provider").val(),
-                public_liability_coverage = $("#public_liability_coverage").val(),
-                plc_premium_per_year = $("#plc_premium_per_year").val(),
-                plc_validity_from = $("#plc_validity_from").val(),
-                plc_validity_to = $("#plc_validity_to").val(),
-                fire_insurance_coverage = $("#fire_insurance_coverage").val(),
-                fic_premium_per_year = $("#fic_premium_per_year").val(),
-                fic_validity_from = $("#fic_validity_from").val(),
-                fic_validity_to = $("#fic_validity_to").val(),
-                remarks = $("#remarks").val();
-
-        var error = 0;
-
-        if (file_id.trim() == "") {
-            $("#file_id_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"File No"]) }}</span>');
-            $("#file_id_error").css("display", "block");
-            error = 1;
-        }
-        if (insurance_provider.trim() == "") {
-            $("#insurance_provider_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Insurance Provider"]) }}</span>');
-            $("#insurance_provider_error").css("display", "block");
-            error = 1;
-        }
-
-        if (error == 0) {
-            $.ajax({
-                url: "{{ URL::action('AdminController@submitUpdateInsurance') }}",
-                type: "POST",
-                data: {
-                    file_id: file_id,
-                    insurance_provider: insurance_provider,
-                    public_liability_coverage: public_liability_coverage,
-                    plc_premium_per_year: plc_premium_per_year,
-                    plc_validity_from: plc_validity_from,
-                    plc_validity_to: plc_validity_to,
-                    fire_insurance_coverage: fire_insurance_coverage,
-                    fic_premium_per_year: fic_premium_per_year,
-                    fic_validity_from: fic_validity_from,
-                    fic_validity_to: fic_validity_to,
-                    remarks: remarks,
-                    id: "{{ \Helper\Helper::encode($insurance->id) }}"
-                },
-                success: function (data) {
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#cancel_button").removeAttr("disabled");
-                    if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@insurance", ["All"]) }}';
-                        });
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                    }
+        let formData = $('form').serializeArray();
+        $.ajax({
+            url: "{{ URL::action('AdminController@submitUpdateInsurance') }}",
+            type: "POST",
+            data: formData,
+            beforeSend: function() {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                $("#loading").css("display", "inline-block");
+                $("#submit_button").attr("disabled", "disabled");
+                $("#cancel_button").attr("disabled", "disabled");
+                $.each(formData, function (key, value) {
+                    $("#" + value['name'] + "_error").children("strong").text("");
+                });
+            },
+            success: function (data) {
+                if (data.trim() == "true") {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>", function () {
+                        window.location = '{{URL::action("AdminController@insurance", ["All"]) }}';
+                    });
                 }
-            });
-        } else {
-            $("#file_id").focus();
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-            $("#cancel_button").removeAttr("disabled");
-        }
+            },
+            error: function (err) {
+                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                if(err.responseJSON.errors) {
+                    $.each(err.responseJSON.errors, function (key, value) {
+                        $("#" + key + "_error").children("strong").text(value);
+                    });
+                }
+            },
+            complete: function() {
+                $.unblockUI();
+                $("#loading").css("display", "none");
+                $("#submit_button").removeAttr("disabled");
+                $("#cancel_button").removeAttr("disabled");
+            },
+        });
     }
 </script>
 <!-- End Page Scripts-->

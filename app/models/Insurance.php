@@ -4,8 +4,23 @@ class Insurance extends Eloquent {
 
     protected $table = 'insurance';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'file_id',
+        'strata_id',
+        'filename',
+    ];
+
     public function file() {
         return $this->belongsTo('Files', 'file_id');
+    }
+
+    public function strata() {
+        return $this->belongsTo('Strata', 'strata_id');
     }
 
     public function provider() {

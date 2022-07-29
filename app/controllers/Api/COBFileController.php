@@ -4,9 +4,10 @@ namespace Api;
 
 use BaseController;
 use Files;
+use Strata;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Strata;
+use Helper\Helper;
 
 class COBFileController extends BaseController {
 
@@ -34,13 +35,23 @@ class COBFileController extends BaseController {
                                                     }
                                                 });
                                     } else {
-                                        Strata::where('strata.name', "like", "%". $request['strata'] ."%")
-                                                ->chunk(500, function($models) use(&$file_ids) {
-                                                    foreach ($models as $model)
-                                                    {
-                                                        array_push($file_ids, $model->file_id);
-                                                    }
-                                                });
+                                        if(is_numeric($request['strata'])) {
+                                            Strata::where('strata.id', $request['strata'])
+                                                    ->chunk(500, function($models) use(&$file_ids) {
+                                                        foreach ($models as $model)
+                                                        {
+                                                            array_push($file_ids, $model->file_id);
+                                                        }
+                                                    });
+                                        } else {
+                                            Strata::where('strata.name', "like", "%". $request['strata'] ."%")
+                                                    ->chunk(500, function($models) use(&$file_ids) {
+                                                        foreach ($models as $model)
+                                                        {
+                                                            array_push($file_ids, $model->file_id);
+                                                        }
+                                                    });
+                                        }
                                     }
                                     $query->whereIn('files.id', $file_ids);
                                 }
@@ -95,11 +106,15 @@ class COBFileController extends BaseController {
                                 }
                             })
                             ->orderBy('files.file_no', 'asc')
-                            ->chunk(200, function($models) use(&$options)
+                            ->chunk(200, function($models) use(&$options, $request)
                             {
                                 foreach ($models as $model)
                                 {
-                                    array_push($options, ['id' => $model->id, 'text' => $model->file_no]);
+                                    if(!empty($request['type']) && $request['type'] == 'encode_id') {
+                                        array_push($options, ['id' => Helper::encode($model->id), 'text' => $model->file_no]);
+                                    } else {
+                                        array_push($options, ['id' => $model->id, 'text' => $model->file_no]);
+                                    }
                                 }
                             });
 

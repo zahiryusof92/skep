@@ -9,45 +9,6 @@ use Repositories\ReportRepo;
 class PrintController extends BaseController {
 
     //audit trail
-    public function printAuditTrail() {
-        $data = Input::all();
-        
-        $start = $data['start'];
-        $end = $data['end'];
-        
-        $query = DB::table('audit_trail')
-                    ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                    ->select('audit_trail.*', 'users.full_name as name');
-        if (!Auth::user()->getAdmin()) {
-            $query = $query->where('files.company_id', Auth::user()->company_id);
-        } else {
-            if (!empty(Session::get('admin_cob'))) {
-                $query = $query->where('files.company_id', Session::get('admin_cob'));
-            }
-        }
-        if(!empty($start)) {
-            $query = $query->where('audit_trail.created_at', '>=', $start. '00:00:00');
-        }
-        if(!empty($end)) {
-            $query = $query->where('audit_trail.created_at', '<=', $end. '23:59:59');
-        }
-        
-        $audit_trail = $query->orderBy('audit_trail.id', 'desc')
-                            ->get();
-
-        $viewData = array(
-            'title' => trans('app.menus.reporting.audit_trail_report'),
-            'panel_nav_active' => '',
-            'main_nav_active' => '',
-            'sub_nav_active' => '',
-            'start' => $start,
-            'end' => $end,
-            'audit_trail' => $audit_trail
-        );
-
-        return View::make('print_en.audit_trail', $viewData);
-    }
-
     public function printAuditTrailNew() {
         $request = Request::all();
         $request['module'] = $request['print_module'];
@@ -83,6 +44,7 @@ class PrintController extends BaseController {
                     }
                 })
                 ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no'])
+                ->take(50)
                 ->get();
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
@@ -175,24 +137,25 @@ class PrintController extends BaseController {
     }
 
     //management summary
-    public function printManagementSummary() {
-        $data = Files::getManagementSummaryCOB();
+    // public function printManagementSummary() {
+    //     $data = Files::getManagementSummaryCOB();
 
-        $viewData = array(
-            'title' => trans('app.menus.reporting.management_summary_report'),
-            'panel_nav_active' => 'reporting_panel',
-            'main_nav_active' => 'reporting_main',
-            'sub_nav_active' => 'management_summary_list',
-            'data' => $data,
-            'image' => ""
-        );
+    //     $viewData = array(
+    //         'title' => trans('app.menus.reporting.management_summary_report'),
+    //         'panel_nav_active' => 'reporting_panel',
+    //         'main_nav_active' => 'reporting_main',
+    //         'sub_nav_active' => 'management_summary_list',
+    //         'data' => $data,
+    //         'image' => ""
+    //     );
 
-        return View::make('print_en.management_summary', $viewData);
-    }
+    //     return View::make('print_en.management_summary', $viewData);
+    // }
 
     //cob file / management
     public function printCobFileManagement() {
-        $data = Files::getManagementSummaryCOB();
+        $request = Request::all();
+        $data = Files::getManagementSummaryCOB($request);
 
         $viewData = array(
             'title' => trans('app.menus.reporting.cob_file_report'),
@@ -1321,6 +1284,23 @@ class PrintController extends BaseController {
 
         return View::make('print_en.epks', $viewData);
 
+    }
+
+    public function generate() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Report Generator"));
+        $request = Request::all();
+        $models = (new ReportRepo())->generateReport($request);
+        $viewData = array(
+            'title' => trans('app.menus.reporting.generate'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'generate_report_list',
+            'models' => $models,
+            'selected' => $request['selected'],
+            'image' => ''
+        );
+
+        return View::make('print_en.generate', $viewData);
     }
 
     public function statistic() {

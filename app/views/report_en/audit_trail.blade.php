@@ -61,6 +61,7 @@ $company = Company::find(Auth::user()->company_id);
                                 </div>
                             </div>
                             @endif
+                            @if($setting['page'] == 'audit')
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.module') }}</label>
@@ -69,6 +70,7 @@ $company = Company::find(Auth::user()->company_id);
                                     </select>
                                 </div>
                             </div>
+                            @endif
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.file_no') }}</label>
@@ -113,7 +115,36 @@ $company = Company::find(Auth::user()->company_id);
                     </div>
 
                     <section class="panel panel-pad">
-                        <br/>
+                        <div class="row text-center padding-vertical-15">
+                            <div class="col-lg-12">
+                                <h3 class="text-left">{{ trans('app.forms.files') }}</h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-own table-striped" id="unique_file" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:5%; text-align: center !important;">{{ trans('app.forms.cob') }}</th>
+                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
+                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.role') }}</th>
+                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.audit_by') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel panel-pad">
+                        <div class="row text-center padding-vertical-15">
+                            <div class="col-lg-12">
+                                <h3 class="text-left">{{ trans('app.forms.activities') }}</h3>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-lg-12">
                                 <table class="table table-hover table-own table-striped" id="audit_trail" width="100%">
@@ -121,8 +152,9 @@ $company = Company::find(Auth::user()->company_id);
                                         <tr>
                                             <th style="width:5%; text-align: center !important;">{{ trans('app.forms.cob') }}</th>
                                             <th style="width:10%; text-align: center !important;">{{ trans('app.forms.file_no') }}</th>
+                                            {{-- <th style="width:10%; text-align: center !important;">{{ trans('app.forms.strata') }}</th> --}}
                                             <th style="width:10%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
-                                            <th style="width:45%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
+                                            <th style="width:35%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
                                             <th style="width:10%; text-align: center !important;">{{ trans('app.forms.role') }}</th>
                                             <th style="width:10%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
                                             <th style="width:10%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
@@ -144,13 +176,16 @@ $company = Company::find(Auth::user()->company_id);
 <!-- Page Scripts -->
 <script>
     var oTable;
+    var oTable1;
+    var company = ""; 
+    var role = "";
 
     $(document).ready(function () {
         oTable = $('#audit_trail').DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "{{ route('reporting.log.index') }}",
+                "url": "{{ $setting['route'] }}",
                 'data': function(data) {
                     var company_id = $('#company_id').val();
                     var role_id = $('#role_id').val();
@@ -167,8 +202,8 @@ $company = Company::find(Auth::user()->company_id);
                     $('#print_date_from').val(date_from);
                     $('#print_date_to').val(date_to);
                     // Append to data
-                    data.company_id = company_id;
-                    data.role_id = role_id;
+                    data.company_id = company? company : company_id;
+                    data.role_id = role? role : role_id;
                     data.module = module_name;
                     data.file_id = file_id;
                     // data.strata = strata;
@@ -185,6 +220,7 @@ $company = Company::find(Auth::user()->company_id);
             "columns": [
                 {data: 'company_id', name: 'company.name'},
                 {data: 'file_id', name: 'files.file_no'},
+                // {data: 'strata', name: 'strata.name'},
                 {data: 'module', name: 'audit_trail.module'},
                 {data: 'remarks', name: 'audit_trail.remarks'},
                 {data: 'role_name', searchable: false},
@@ -195,10 +231,64 @@ $company = Company::find(Auth::user()->company_id);
                 $.unblockUI();  
             }
         });
+        oTable1 = $('#unique_file').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{ route('reporting.log.unique.file') }}",
+                'data': function(data) {
+                    var company_id = $('#company_id').val();
+                    var role_id = $('#role_id').val();
+                    var module_name = $('#module').val();
+                    var file_id = $('#file_id').val();
+                    // var strata = $('#strata').val();
+                    var date_from = $('#date_from').val();
+                    var date_to = $('#date_to').val();
+
+                    $('#print_company_id').val(company_id);
+                    $('#print_role_id').val(role_id);
+                    $('#print_module').val(module_name);
+                    $('#print_file_id').val(file_id);
+                    $('#print_date_from').val(date_from);
+                    $('#print_date_to').val(date_to);
+                    // Append to data
+                    data.company_id = company? company : company_id;
+                    data.role_id = role? role : role_id;
+                    data.module = module_name;
+                    data.file_id = file_id;
+                    // data.strata = strata;
+                    data.date_from = date_from;
+                    data.date_to = date_to;
+                    data.page = "{{ $setting['page'] }}";
+                }
+            },
+            "dom": '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+            "order": [[1, "desc"]],
+            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
+            "pageLength": 25,
+            "scrollX": true,
+            "responsive": false,
+            "columns": [
+                {data: 'company_id', name: 'company.name'},
+                {data: 'file_id', name: 'files.file_no'},
+                {data: 'module', name: 'audit_trail.module'},
+                {data: 'role_name', searchable: false},
+                {data: 'audit_by', name: 'users.full_name'},
+            ],
+            "fnDrawCallback": function( oSettings ) {
+                $.unblockUI();  
+            }
+        });
         generateColumn('files_chart', "{{ trans('app.forms.total_files') }}", <?php echo json_encode($data ? $data['data_files']['categories'] : ''); ?>, <?php echo json_encode($data ? $data['data_files']['data'] : ''); ?>);
         generateColumn('jmb_chart', "{{ trans('app.forms.total_jmb') }}", <?php echo json_encode($data ? $data['data_jmb']['categories'] : ''); ?>, <?php echo json_encode($data ? $data['data_jmb']['data'] : ''); ?>);
 
         $('select').on('select2:select', function (e) {
+            if(this.id == 'company_id') {
+                company = '';
+            }
+            if(this.id == 'role_id') {
+                role = '';
+            }
             getChartData();
         });
 
@@ -309,6 +399,7 @@ $company = Company::find(Auth::user()->company_id);
                     generateColumn('files_chart', "{{ trans('app.forms.total_files') }}", res.data.data_files.categories, res.data.data_files.data);
                     generateColumn('jmb_chart', "{{ trans('app.forms.total_jmb') }}", res.data.data_jmb.categories, res.data.data_jmb.data);
                     oTable.draw();
+                    oTable1.draw();
                 }
             });
     }
@@ -348,13 +439,11 @@ $company = Company::find(Auth::user()->company_id);
                     point: {
                         events: {
                             click: function () {
-                                short_name = this.category;
-                                $('#tbl_custom_never_has_agm').show();
-                                if(custom_never_table != undefined) {
-                                    custom_never_table.draw();
-                                } else {
-                                    generate_never_agm();
-                                }
+                                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                                company = this.category;
+                                role = "JMB";
+                                oTable.draw();
+                                oTable1.draw();
                             }
                         }
                     }

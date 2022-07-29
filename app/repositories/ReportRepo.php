@@ -9,6 +9,103 @@ use Illuminate\Support\Str;
 
 class ReportRepo {
 
+    public function generateReport($request = []) {
+        $request = $request;
+        $models = Files::with(['strata.cities', 'strata.categories', 'houseScheme.developers', 'management', 'managementDeveloper', 
+        'managementJMB', 'managementMC', 'latestMeetingDocument', 'insurance', 'other', 'resident', 'commercial', 'draft'])
+                        ->file()
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->join('management', 'files.id', '=', 'management.file_id')
+                        // ->join('house_scheme', 'files.id', '=', 'house_scheme.file_id')
+                        // ->join('others_details', 'files.id', '=', 'others_details.file_id')
+                        ->leftJoin('category', 'category.id', '=', 'strata.category')
+                        // ->leftJoin('developer', 'developer.id', '=', 'house_scheme.developer')
+                        ->leftJoin('city', 'city.id', '=', 'strata.city')
+                        ->selectRaw("files.id as id, files.file_no as file_no,".
+                                    // "developer.name as developer_name,".
+                                    "strata.name as strata_name, city.description as city_name, category.description as category_name,".
+                                    "files.is_active as is_active, management.is_jmb as is_jmb, management.is_mc as is_mc,".
+                                    "management.is_agent as is_agent, management.is_developer as is_developer")
+                        ->where(function($query) use($request) {
+                            if(!empty($request['file_id']) && $request['file_id'] != 'null') {
+                                $file_id = explode(',', $request['file_id']);
+                                $query->whereIn('files.id', $file_id);
+                            }
+                            if(!empty($request['city']) && $request['city'] != 'null') {
+                                $city = explode(',', $request['city']);
+                                $query->whereIn('strata.city', $city);
+                            }
+                            if(!empty($request['category']) && $request['category'] != 'null') {
+                                $category = explode(',', $request['category']);
+                                $query->whereIn('strata.category', $category);
+                            }
+                            if(!empty($request['strata']) && $request['category'] != 'null') {
+                                $strata = explode(',', $request['strata']);
+                                $query->whereIn('strata.name', $strata);
+                            }
+                            // if(!empty($request['developer']) && $request['developer'] != 'null') {
+                            //     $developer = explode(',', $request['developer']);
+                            //     $query->whereIn('house_scheme.developer', $developer);
+                            // }
+                            if(!empty($request['management'])) {
+                                $management = explode(',', $request['management']);
+                                if(in_array('jmb', $management) && in_array('mc', $management) && in_array('agent', $management) && in_array('others', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->orWhere('is_others', 1)
+                                          ->orWhere('is_mc', 1)
+                                          ->orWhere('is_jmb', 1);
+                                } else if(in_array('mc', $management) && in_array('agent', $management) && in_array('others', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->orWhere('is_others', 1)
+                                          ->orWhere('is_mc', 1);
+                                } else if(in_array('jmb', $management) && in_array('agent', $management) && in_array('others', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->orWhere('is_others', 1)
+                                          ->orWhere('is_jmb', 1);
+                                } else if(in_array('jmb', $management) && in_array('agent', $management) && in_array('mc', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->orWhere('is_mc', 1)
+                                          ->orWhere('is_jmb', 1);
+                                } else if(in_array('agent', $management) && in_array('others', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->orWhere('is_others', 1);
+                                } else if(in_array('others', $management) && in_array('mc', $management)) {
+                                    $query->where('is_others', 1)
+                                          ->orWhere('is_mc', 1);
+                                } else if(in_array('agent', $management) && in_array('mc', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->orWhere('is_mc', 1);
+                                } else if(in_array('jmb', $management) && in_array('others', $management)) {
+                                    $query->where('is_jmb', 1)
+                                          ->orWhere('is_others', 1);
+                                } else if(in_array('jmb', $management) && in_array('agent', $management)) {
+                                    $query->where('is_jmb', 1)
+                                          ->orWhere('is_agent', 1);
+                                } else if(in_array('jmb', $management) && in_array('mc', $management)) {
+                                    $query->where('is_jmb', 1)
+                                          ->orWhere('is_mc', 1);
+                                } else if(in_array('others', $management)) {
+                                    $query->where('is_others', 1)
+                                          ->where('is_mc', 0);
+                                } else if(in_array('agent', $management)) {
+                                    $query->where('is_agent', 1)
+                                          ->where('is_mc', 0);
+                                } else if(in_array('mc', $management)) {
+                                    $query->where('is_mc', 1);
+                                } else if(in_array('jmb', $management)) {
+                                    $query->where('is_jmb', 1)
+                                          ->where('is_mc', 0)
+                                          ->where('is_agent', false);
+                                }
+                            }
+                        })
+                        ->where('files.is_deleted', false)
+                        // ->take(50)
+                        ->get();
+        return $models;
+
+    }
+
     public function statisticsReport($request = []) {
         $condition = function($query) use($request){
             if(!empty($request['year'])) {

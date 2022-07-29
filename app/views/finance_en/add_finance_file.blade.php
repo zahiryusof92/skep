@@ -1,4 +1,4 @@
-@extends('layout.english_layout.default')
+@extends('layout.english_layout.default_custom')
 
 @section('content')
 
@@ -33,36 +33,44 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                        <select id="file_id" class="form-control select2">
+                                        <select id="file_id" name="file_id" class="form-control">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($file_no as $files)
-                                            <option value="{{ $files->id }}">{{ $files->file_no }}</option>
-                                            @endforeach
                                         </select>
-                                        <div id="file_no_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'file_id'])
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.strata') }}</label>
+                                        <select id="strata_id" name="strata_id" class="form-control">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        </select>
+                                        @include('alert.feedback-ajax', ['field' => 'strata_id'])
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.year') }}</label>
-                                        <select id="year" class="form-control select2">
+                                        <select id="year" name="year" class="form-control select2">
                                             @foreach ($year as $value => $years)
                                             <option value="{{ $value }}">{{ $years }}</option>
                                             @endforeach
                                         </select>
-                                        <div id="year_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'year'])
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.month') }}</label>
-                                        <select id="month" class="form-control select2">
+                                        <select id="month" name="month" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($month as $value => $months)
                                             <option value="{{ $value }}">{{ $months }}</option>
                                             @endforeach
                                         </select>
-                                        <div id="month_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'month'])
                                     </div>
                                 </div>
                             </div>
@@ -89,76 +97,92 @@ foreach ($user_permission as $permission) {
 
 <!-- Page Scripts -->
 <script>
+    $(function() {
+        $('.select2').select2();
+        $("#strata_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.strata.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    return {
+                        term: params.term, // search term
+                        file_id: $('#file_id').val(),
+                        type: 'id',
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+        $("#file_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.files.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    return {
+                        term: params.term, // search term
+                        strata: $('#strata_id').val()
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+    });
     function submitAddFinanceFile() {
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#cancel_button").attr("disabled", "disabled");
-        $("#file_no_error").css("display", "none");
-        $("#month_error").css("display", "none");
-        $("#year_error").css("display", "none");
-        $("#file_already_exists_error").css("display", "none");
-
-        var file_no = $("#file_id").val(),
-                month = $("#month").val(),
-                year = $("#year").val();
-
-        var error = 0;
-
-        if (file_no.trim() == "") {
-            $("#file_no_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"File No"]) }}</span>');
-            $("#file_no_error").css("display", "block");
-            error = 1;
-        }
-
-        if (month.trim() == "") {
-            $("#month_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Month"]) }}</span>');
-            $("#month_error").css("display", "block");
-            error = 1;
-        }
-
-        if (year.trim() == "") {
-            $("#year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Year"]) }}</span>');
-            $("#year_error").css("display", "block");
-            error = 1;
-        }
-
-        if (error == 0) {
-            $.ajax({
-                url: "{{ URL::action('FinanceController@submitAddFinanceFile') }}",
-                type: "POST",
-                data: {
-                    file_id: file_no,
-                    month: month,
-                    year: year
-                },
-                beforeSend: function() {
-                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-                },
-                success: function (data) {
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#cancel_button").removeAttr("disabled");
-
-                    if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.finance_file.store') }}</span>", function () {
-                            window.location = '{{URL::action("FinanceController@financeList") }}';
-                        });
-                    } else if (data.trim() == "file_already_exists") {
-                        $("#file_already_exists_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"file"]) }}</span>');
-                        $("#file_already_exists_error").css("display", "block");
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                    }
-                },
-                complete: function() {
-                    $.unblockUI();
-                },
-            });
-        } else {
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-            $("#cancel_button").removeAttr("disabled");
-        }
+        let formData = $('form').serializeArray();
+        $.ajax({
+            url: "{{ URL::action('FinanceController@submitAddFinanceFile') }}",
+            type: "POST",
+            data: formData,
+            beforeSend: function() {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                $("#loading").css("display", "inline-block");
+                $("#submit_button").attr("disabled", "disabled");
+                $("#cancel_button").attr("disabled", "disabled");
+                $.each(formData, function (key, value) {
+                    $("#" + value['name'] + "_error").children("strong").text("");
+                });
+            },
+            success: function (data) {
+                if (data.trim() == "true") {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.finance_file.store') }}</span>", function () {
+                        window.location = '{{URL::action("FinanceController@financeList") }}';
+                    });
+                } else if (data.trim() == "file_already_exists") {
+                    $("#file_already_exists_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"file"]) }}</span>');
+                    $("#file_already_exists_error").css("display", "block");
+                }
+            },
+            error: function (err) {
+                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                if(err.responseJSON.errors) {
+                    $.each(err.responseJSON.errors, function (key, value) {
+                        $("#" + key + "_error").children("strong").text(value);
+                    });
+                }
+            },
+            complete: function() {
+                $.unblockUI();
+                $("#loading").css("display", "none");
+                $("#submit_button").removeAttr("disabled");
+                $("#cancel_button").removeAttr("disabled");
+            },
+        });
     }
 </script>
 

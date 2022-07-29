@@ -29,7 +29,7 @@ foreach ($user_permission as $permission) {
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
-                                            <form class="form-horizontal">
+                                            <form class="form-horizontal" enctype="multipart/form-data">
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <div class="form-group">
@@ -134,7 +134,24 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                            </form>
+                        
+                                            <form id="upload_insurance_file" enctype="multipart/form-data" method="post" action="{{ route('cob.file.insurance.file.upload') }}" autocomplete="off">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">{{ trans('app.forms.upload_file') }}</label>
+                                                            <br/>
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                            <button type="button" id="clear_insurance_file" class="btn btn-xs btn-danger" onclick="clearFile()" style="display: none;"><i class="fa fa-times"></i></button>
+                                                            &nbsp;<input type="file" name="insurance_file" id="insurance_file" />
+                                                            <div id="validation-errors_insurance_file"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                
+                                            <form>
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <div class="form-group">
@@ -147,6 +164,7 @@ foreach ($user_permission as $permission) {
 
                                                 <div class="form-actions">
                                                     <?php if ($update_permission) { ?>
+                                                        <input type="hidden" id="insurance_file_url" value=""/>
                                                         <input type="hidden" id="file_id" name="file_id" value="{{ \Helper\Helper::encode($file->id) }}"/>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddInsurance()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
@@ -178,6 +196,18 @@ foreach ($user_permission as $permission) {
         if (changes) {
             return "{{ trans('app.confirmation.want_to_leave') }}";
         }
+    });
+    $(document).ready(function () {
+        //upload
+        var options = {
+            beforeSubmit: showRequest,
+            success: showResponse,
+            dataType: 'json'
+        };
+
+        $('body').delegate('#insurance_file', 'change', function () {
+            $('#upload_insurance_file').ajaxForm(options).submit();
+        });
     });
 
     $(function () {
@@ -254,6 +284,38 @@ foreach ($user_permission as $permission) {
         });
     });
 
+    //upload document file
+    function showRequest(formData, jqForm, options) {
+        $("#validation-errors_insurance_file").hide().empty();
+        return true;
+    }
+    function showResponse(response, statusText, xhr, $form) {
+            console.log('aa');
+        if (response.success == false) {
+            var arr = response.errors;
+            $.each(arr, function (index, value) {
+                if (value.length != 0) {
+                    $("#validation-errors_insurance_file").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                }
+            });
+            $("#validation-errors_insurance_file").show();
+            $("#insurance_file").css("color", "red");
+        } else {
+            $("#clear_insurance_file").show();
+            $("#validation-errors_insurance_file").html("<i class='fa fa-check' id='check_insurance_file' style='color:green;'></i>");
+            $("#validation-errors_insurance_file").show();
+            $("#insurance_file").css("color", "green");
+            $("#insurance_file_url").val(response.file);
+        }
+    }
+
+    function clearFile() {
+        $("#insurance_file").val("");
+        $("#clear_insurance_file").hide();
+        $("#insurance_file").css("color", "grey");
+        $("#check_insurance_file").hide();
+    }
+
     function submitAddInsurance() {
         changes = false;
         $("#loading").css("display", "inline-block");
@@ -270,6 +332,7 @@ foreach ($user_permission as $permission) {
                 fic_premium_per_year = $("#fic_premium_per_year").val(),
                 fic_validity_from = $("#fic_validity_from").val(),
                 fic_validity_to = $("#fic_validity_to").val(),
+                filename = $("#insurance_file_url").val(),
                 remarks = $("#remarks").val();
 
         var error = 0;
@@ -300,6 +363,7 @@ foreach ($user_permission as $permission) {
                     fic_premium_per_year: fic_premium_per_year,
                     fic_validity_from: fic_validity_from,
                     fic_validity_to: fic_validity_to,
+                    filename: filename,
                     remarks: remarks
                 },
                 success: function (data) {

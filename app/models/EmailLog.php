@@ -14,6 +14,7 @@ class EmailLog extends Eloquent {
         'user_id',
         'company_id',
         'file_id',
+        'strata_id',
         'route',
         'description'
     ];

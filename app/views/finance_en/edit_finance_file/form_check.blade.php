@@ -90,12 +90,6 @@
             error = 1;
         }
 
-        // if ($("#is_active").val().trim() == "") {
-        //     $("#is_active_err").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Status"]) }}</span>');
-        //     $("#is_active_err").css("display", "block");
-        //     error = 1;
-        // }
-
         if (error == 0) {
             $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
 

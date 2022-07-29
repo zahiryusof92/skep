@@ -10,6 +10,21 @@
         <div class="panel-body">
             <section class="panel panel-pad">                
                 <div class="row padding-vertical-10">
+                    <div class="col-lg-12 text-center">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.scheme_name') }}</label>
+                                        <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                        </select>
+                                    </div>
+                                </div>                          
+                            </div>
+                        </form>                        
+                    </div>
+
+                    <hr/>
                 </div>
 
                 <div class="row">
@@ -18,6 +33,7 @@
                             <thead>
                                 <tr>                                
                                     <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.name') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.section') }}</th>
                                     <th style="width:45%;">{{ trans('app.forms.remarks') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.created_at') }}</th>
@@ -51,11 +67,15 @@
             scrollX: true,
             columns: [
                 {data: 'file_no', name: 'files.file_no'},
+                {data: 'strata', name: 'strata.name'},
                 {data: 'type', name: 'type'},
-                {data: 'remarks', name: 'remarks'},
-                {data: 'created_at', name: 'created_at'},
+                {data: 'remarks', name: 'file_draft_rejects.remarks'},
+                {data: 'created_at', name: 'file_draft_rejects.created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
+        });
+        $('#strata').on('change', function () {
+            oTable.columns(1).search(this.value).draw();
         });
     });
 

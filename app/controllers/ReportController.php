@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use yajra\Datatables\Facades\Datatables;
 use Repositories\ReportRepo;
+use Enums\ManagementStatus;
 
 class ReportController extends BaseController {
 
@@ -72,10 +73,18 @@ class ReportController extends BaseController {
                             // })
                             ->filter(function($query) use($request) {
                                 if(!empty($request['company_id'])) {
-                                    $query->where('users.company_id', $request['company_id']);
+                                    $company_id = $request['company_id'];
+                                    if(is_array($request['company_id'])) {
+                                        $company_id = Company::where('short_name', $request['company_id'][0])->first()->getKey();
+                                    }
+                                    $query->where('users.company_id', $company_id);
                                 }
                                 if(!empty($request['role_id'])) {
-                                    $query->where('users.role', $request['role_id']);
+                                    $role_id = $request['role_id'];
+                                    if(is_string($request['role_id'])) {
+                                        $role_id = Role::where('name', $request['role_id'])->first()->getKey();
+                                    }
+                                    $query->where('users.role', $role_id);
                                 }
                                 if(!empty($request['module'])) {
                                     $query->where('audit_trail.module', $request['module']);
@@ -99,17 +108,29 @@ class ReportController extends BaseController {
                                     $date_to = date('Y-m-d', strtotime($request['date_to']));
                                     $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
                                 }
+                                if (!empty($request['search']['value'])) {
+                                    $query->where('company.name', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('files.file_no', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('audit_trail.module', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('audit_trail.remarks', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('users.full_name', 'LIKE', '%'. $request['search']['value'].'%');
+                                }
                             })
                             ->make(true);
             }
         }
         $data = AuditTrail::getAnalyticData();
+        $setting = [
+            'page' => 'audit',
+            'route' => route('reporting.log.index') 
+        ];
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'audit_trail_list',
+            'setting' => $setting, 
             'data' => $data, 
             'image' => ""
         );
@@ -175,10 +196,18 @@ class ReportController extends BaseController {
                             // })
                             ->filter(function($query) use($request) {
                                 if(!empty($request['company_id'])) {
-                                    $query->where('users.company_id', $request['company_id']);
+                                    $company_id = $request['company_id'];
+                                    if(is_array($request['company_id'])) {
+                                        $company_id = Company::where('short_name', $request['company_id'][0])->first()->getKey();
+                                    }
+                                    $query->where('users.company_id', $company_id);
                                 }
                                 if(!empty($request['role_id'])) {
-                                    $query->where('users.role', $request['role_id']);
+                                    $role_id = $request['role_id'];
+                                    if(is_string($request['role_id'])) {
+                                        $role_id = Role::where('name', $request['role_id'])->first()->getKey();
+                                    }
+                                    $query->where('users.role', $role_id);
                                 }
                                 if(!empty($request['module'])) {
                                     $query->where('audit_trail.module', $request['module']);
@@ -202,23 +231,35 @@ class ReportController extends BaseController {
                                     $date_to = date('Y-m-d', strtotime($request['date_to']));
                                     $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
                                 }
+                                if (!empty($request['search']['value'])) {
+                                    $query->where('company.name', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('files.file_no', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('audit_trail.module', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('audit_trail.remarks', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('users.full_name', 'LIKE', '%'. $request['search']['value'].'%');
+                                }
                             })
                             ->make(true);
             }
         }
         $request['module'] = 'System Authentication';
         $data = AuditTrail::getAnalyticData($request);
+        $setting = [
+            'page' => 'logon',
+            'route' => route('reporting.logon.index'),
+        ];
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_logon_report'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'audit_logon_list',
+            'setting' => $setting, 
             'data' => $data, 
             'image' => ""
         );
 
-        return View::make('report_en.audit_logon', $viewData);
+        return View::make('report_en.audit_trail', $viewData);
     }
     
     public function auditLogonOld() {
@@ -281,10 +322,18 @@ class ReportController extends BaseController {
                             // })
                             ->filter(function($query) use($request) {
                                 if(!empty($request['company_id'])) {
-                                    $query->where('users.company_id', $request['company_id']);
+                                    $company_id = $request['company_id'];
+                                    if(is_array($request['company_id'])) {
+                                        $company_id = Company::where('short_name', $request['company_id'][0])->first()->getKey();
+                                    }
+                                    $query->where('users.company_id', $company_id);
                                 }
                                 if(!empty($request['role_id'])) {
-                                    $query->where('users.role', $request['role_id']);
+                                    $role_id = $request['role_id'];
+                                    if(is_string($request['role_id'])) {
+                                        $role_id = Role::where('name', $request['role_id'])->first()->getKey();
+                                    }
+                                    $query->where('users.role', $role_id);
                                 }
                                 if(!empty($request['module'])) {
                                     $query->where('audit_trail.module', $request['module']);
@@ -308,6 +357,13 @@ class ReportController extends BaseController {
                                     $date_to = date('Y-m-d', strtotime($request['date_to']));
                                     $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
                                 }
+                                if (!empty($request['search']['value'])) {
+                                    $query->where('company.name', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('files.file_no', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('audit_trail.module', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('audit_trail.remarks', 'LIKE', '%'. $request['search']['value'].'%')
+                                        ->orWhere('users.full_name', 'LIKE', '%'. $request['search']['value'].'%');
+                                }
                             })
                             ->make(true);
             }
@@ -315,17 +371,107 @@ class ReportController extends BaseController {
         $request['module'] = 'System Administration';
         $request['description'] = 'signed';
         $data = AuditTrail::getAnalyticData($request);
+        $setting = [
+            'page' => 'logon_old',
+            'route' => route('reporting.logon.index') 
+        ];
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_logon_report'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'audit_logon_old_list',
+            'setting' => $setting, 
             'data' => $data, 
             'image' => ""
         );
 
-        return View::make('report_en.audit_logon_old', $viewData);
+        return View::make('report_en.audit_trail', $viewData);
+    }
+
+    public function getAuditUniqueFiles() {
+        if(Request::ajax()) {
+            $request = Request::all();
+            $models = AuditTrail::self()
+                    ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no'])
+                    ->groupBy(['full_name']);
+            if($request['page'] == 'logon_old') {
+                $models->where('audit_trail.module', 'System Administration')
+                    ->where('audit_trail.remarks', "LIKE", "%signed%");
+            } else if($request['page'] == 'logon') {
+                $models->where('audit_trail.module', 'System Authentication');
+            }
+            
+            return Datatables::of($models)
+                    ->editColumn('company_id', function($model) {
+                        if($model->company_id > 0) {
+                            return $model->company;
+                        }
+                        return Str::upper($model->user->getCOB->short_name);
+                    })
+                    ->editColumn('file_id', function($model) {
+                        if($model->file_id > 0) {
+                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
+                        }
+                        if($model->user->isJMB()) {
+                            if(empty($model->user->getFile)) {
+                                return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
+                            }
+                        }
+                        return '-';
+                    })
+                    ->editColumn('audit_by', function($model) {
+                        return $model->user->full_name;
+                    })
+                    ->editColumn('role_name', function($model) {
+                        return ($model->user->getAdmin())? trans('System Administrator') : Str::upper($model->role_name);
+                    })
+                    ->filter(function($query) use($request) {
+                        if(!empty($request['company_id'])) {
+                            $company_id = $request['company_id'];
+                            if(is_array($request['company_id'])) {
+                                $company_id = Company::where('short_name', $request['company_id'][0])->first()->getKey();
+                            }
+                            $query->where('users.company_id', $company_id);
+                        }
+                        if(!empty($request['role_id'])) {
+                            $role_id = $request['role_id'];
+                            if(is_string($request['role_id'])) {
+                                $role_id = Role::where('name', $request['role_id'])->first()->getKey();
+                            }
+                            $query->where('users.role', $role_id);
+                        }
+                        if(!empty($request['module'])) {
+                            $query->where('audit_trail.module', $request['module']);
+                        }
+                        if(!empty($request['file_id'])) {
+                            $query->where('users.file_id', $request['file_id']);
+                        }
+                        // if(!empty($request['strata'])) {
+                        //     $query->where('strata.id', $request['strata']);
+                        // }
+                        if(!empty($request['date_from']) && empty($request['date_to'])) {
+                            $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                            $query->where('audit_trail.created_at', '>=', $date_from);
+                        }
+                        if(!empty($request['date_to']) && empty($request['date_from'])) {
+                            $date_to = date('Y-m-d', strtotime($request['date_to']));
+                            $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                        }
+                        if(!empty($request['date_from']) && !empty($request['date_to'])) {
+                            $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                            $date_to = date('Y-m-d', strtotime($request['date_to']));
+                            $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                        }
+                        if (!empty($request['search']['value'])) {
+                            $query->where('company.name', 'LIKE', '%'. $request['search']['value'].'%')
+                                ->orWhere('files.file_no', 'LIKE', '%'. $request['search']['value'].'%')
+                                ->orWhere('audit_trail.module', 'LIKE', '%'. $request['search']['value'].'%')
+                                ->orWhere('users.full_name', 'LIKE', '%'. $request['search']['value'].'%');
+                        }
+                    })
+                    ->make(true);
+        }
     }
 
     //file by location
@@ -500,37 +646,80 @@ class ReportController extends BaseController {
     }
 
     //management summary
-    public function managementSummary() {
-        $data = Files::getManagementSummaryCOB();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(27));
+    // public function managementSummary() {
+    //     $data = Files::getManagementSummaryCOB();
+    //     $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(27));
 
-        $viewData = array(
-            'title' => trans('app.menus.reporting.management_summary_report'),
-            'panel_nav_active' => 'reporting_panel',
-            'main_nav_active' => 'reporting_main',
-            'sub_nav_active' => 'management_summary_list',
-            'data' => $data,
-            'image' => ""
-        );
+    //     $viewData = array(
+    //         'title' => trans('app.menus.reporting.management_summary_report'),
+    //         'panel_nav_active' => 'reporting_panel',
+    //         'main_nav_active' => 'reporting_main',
+    //         'sub_nav_active' => 'management_summary_list',
+    //         'data' => $data,
+    //         'image' => ""
+    //     );
 
-        return View::make('report_en.management_summary', $viewData);
-    }
+    //     return View::make('report_en.management_summary', $viewData);
+    // }
 
     //cob file / management
     public function cobFileManagement() {
-        $data = Files::getManagementSummaryCOB();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(28));
+        $request = Request::all();
+        $data = Files::getManagementSummaryCOB($request);
+        if(Request::ajax()) {
+            return View::make('report_en.cob.management.summary', compact('data'));
+        } else {
+            $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(28));
+            $viewData = array(
+                'title' => trans('app.menus.reporting.cob_file_report'),
+                'panel_nav_active' => 'reporting_panel',
+                'main_nav_active' => 'reporting_main',
+                'sub_nav_active' => 'cob_file_management_list',
+                'data' => $data,
+                'image' => ""
+            );
 
-        $viewData = array(
-            'title' => trans('app.menus.reporting.cob_file_report'),
-            'panel_nav_active' => 'reporting_panel',
-            'main_nav_active' => 'reporting_main',
-            'sub_nav_active' => 'cob_file_management_list',
-            'data' => $data,
-            'image' => ""
-        );
+            return View::make('report_en.cob_file_management', $viewData);
+        }
+    }
 
-        return View::make('report_en.cob_file_management', $viewData);
+    public function getFilesWithNoUnit() {
+        if (Request::ajax()) {
+            $model = Files::file()
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
+                            ->where('strata.is_residential', false)
+                            ->where('strata.is_commercial', false);
+            
+            return Datatables::of($model)
+                            ->addColumn('id', function($model) {
+                                return "#";
+                            })
+                            ->editColumn('file_no', function($model) {
+                                return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
+                            })
+                            ->make(true);
+        }    
+    }
+
+    public function getFilesWithNoManagement() {
+        if (Request::ajax()) {
+            $model = Files::file()
+                            ->join('management', 'management.file_id', '=', 'files.id')
+                            ->where('management.is_jmb', false)
+                            ->where('management.is_mc', false)
+                            ->where('management.is_agent', false)
+                            ->where('management.is_others', false)
+                            ->where('management.is_developer', false);
+            
+            return Datatables::of($model)
+                            ->addColumn('id', function($model) {
+                                return "#";
+                            })
+                            ->editColumn('file_no', function($model) {
+                                return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
+                            })
+                            ->make(true);
+        }    
     }
 
     public function ownerTenant() {
@@ -2003,29 +2192,64 @@ class ReportController extends BaseController {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(65));
         if(Request::ajax()) {
             $request = Request::all();
-            $model = Files::file()
+            $model = Files::with(['strata.cities', 'strata.categories', 'houseScheme.developers', 'management', 'managementDeveloper', 
+            'managementJMB', 'managementMC', 'latestMeetingDocument', 'insurance', 'other', 'resident', 'commercial', 'draft'])
+                            ->file()
                             ->join('strata', 'files.id', '=', 'strata.file_id')
                             ->join('management', 'files.id', '=', 'management.file_id')
-                            ->selectRaw("files.id as id, files.file_no as file_no, strata.name as strata_name,".
+                            // ->join('house_scheme', 'files.id', '=', 'house_scheme.file_id')
+                            // ->join('others_details', 'files.id', '=', 'others_details.file_id')
+                            ->leftJoin('category', 'category.id', '=', 'strata.category')
+                            // ->leftJoin('developer', 'developer.id', '=', 'house_scheme.developer')
+                            ->leftJoin('city', 'city.id', '=', 'strata.city')
+                            ->selectRaw("files.id as id, files.file_no as file_no,".
+                                        // "developer.name as developer_name,".
+                                        "strata.name as strata_name, city.description as city_name, category.description as category_name,".
                                         "files.is_active as is_active, management.is_jmb as is_jmb, management.is_mc as is_mc,".
-                                        "management.is_agent as is_agent, management.is_others as is_others")
+                                        "management.is_agent as is_agent, management.is_developer as is_developer")
                             ->where(function($query) use($request) {
                                 if(!empty($request['file_id'])) {
-                                    $query->where('files.id', $request['file_id']);
+                                    $query->whereIn('files.id', $request['file_id']);
                                 }
+                                if(!empty($request['city'])) {
+                                    $query->whereIn('strata.city', $request['city']);
+                                }
+                                if(!empty($request['category'])) {
+                                    $query->whereIn('strata.category', $request['category']);
+                                }
+                                if(!empty($request['strata'])) {
+                                    $query->whereIn('strata.name', $request['strata']);
+                                }
+                                // if(!empty($request['developer'])) {
+                                //     $query->whereIn('house_scheme.developer', $request['developer']);
+                                // }
                             });
+                            // ->take(50);
             return Datatables::of($model)
                             ->editColumn('file_no', function($model) {
                                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
                             })
-                            ->editColumn('developer', function($model) {
-                                return ucfirst($model->developer_name);
+                            ->editColumn('strata_name', function($model) {
+                                return $model->strata_name? ucfirst($model->strata_name) : "-";
                             })
+                            // ->editColumn('developer', function($model) {
+                            //     return ucfirst($model->developer_name);
+                            // })
                             ->editColumn('city', function($model) {
                                 return ucfirst($model->city_name);
                             })
                             ->editColumn('category', function($model) {
                                 return ucfirst($model->category_name);
+                            })
+                            ->addColumn('sum_residential', function($model) {
+                                $sum_residential = Residential::where('file_id', $model->id)->sum('unit_no');
+                                $sum_residential_extra = ResidentialExtra::where('file_id', $model->id)->sum('unit_no');
+                                return $sum_residential + $sum_residential_extra;
+                            })
+                            ->addColumn('sum_commercial', function($model) {
+                                $sum_commercial = Commercial::where('file_id', $model->id)->sum('unit_no');
+                                $sum_commercial_extra = CommercialExtra::where('file_id', $model->id)->sum('unit_no');
+                                return $sum_commercial + $sum_commercial_extra;
                             })
                             ->addColumn('management', function($model) {
                                 $content = '';
@@ -2048,6 +2272,21 @@ class ReportController extends BaseController {
                             })
                             ->addColumn('status', function($model) {
                                 return $model->is_active ? trans('app.forms.yes') : trans('app.forms.no');
+                            })
+                            ->addColumn('latest_file_draft_date', function($model) {
+                                return !empty($model->draft)? $model->draft->created_at->toDateTimeString() : '-';
+                            })
+                            ->addColumn('latest_agm_date', function($model) {
+                                return $model->latestMeetingDocument? $model->latestMeetingDocument->created_at->toDateTimeString() : "-";
+                            })
+                            ->addColumn('latest_insurance_date', function($model) {
+                                return $model->insurance->count()? $model->insurance()->latest()->first()->created_at->toDateTimeString() : "-";
+                            })
+                            ->addColumn('jmb_date_formed', function($model) {
+                                return $model->management->is_jmb? $model->managementJMB->date_formed : '-';
+                            })
+                            ->addColumn('mc_date_formed', function($model) {
+                                return $model->management->is_mc? $model->managementMC->date_formed : '-';
                             })
                             ->filter(function($query) use($request) {
                                 if(!empty($request['management'])) {
@@ -2102,18 +2341,42 @@ class ReportController extends BaseController {
                             })
                             ->make(true);
         }
-        $management = Request::get('management')? Request::get('management') : ''; 
+        $management = Request::get('management')? Request::get('management') : '';
+        $company = Company::find(Auth::user()->company_id);
+        $managementStatus = ManagementStatus::toArray();
         
         $viewData = array(
             'title' => trans('app.menus.reporting.generate'),
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'generate_report_list',
+            'company' => $company,
             'management' => $management,
+            'managementStatus' => $managementStatus,
             'image' => ''
         );
 
         return View::make('report_en.generate', $viewData);
+    }
+
+    public function generateSelected() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Report Generator"));
+        $request = Request::all();
+        $models = (new ReportRepo())->generateReport($request);
+        $route = ($request['export'] == 'excel') ? route('api.v1.export.generateReport') : route('print.generate.index');
+        
+        $viewData = array(
+            'title' => trans('app.menus.reporting.generate'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'generate_report_list',
+            'route' => $route,
+            'request_params' => $request,
+            'models' => $models,
+            'image' => ''
+        );
+
+        return View::make('report_en.generate_selected', $viewData);
     }
 
     public function statistic() {

@@ -75,6 +75,7 @@ class NotificationController extends BaseController {
             'user_id' => $data['user_id'],
             'company_id' => $data['company_id'],
             'file_id' => $data['file_id'],
+            'strata_id' => $data['file_id']? Strata::where('file_id', $data['file_id'])->first()->getKey() : 0,
             'module' => $data['module'],
             'route' => $data['route'],
             'description' => $data['description'],
@@ -82,11 +83,11 @@ class NotificationController extends BaseController {
 
         if ($notification) {
             /*
-                * add audit trail
-                */
+            * add audit trail
+            */
             $audit_name = "$notification->description";
             $remarks = $audit_name;
-            $this->addAudit($notification->file_id, "Notification", $remarks);
+            $this->addAudit($notification->file_id, "Notification", $remarks, $data['user_id']);
             
             return true;
         }

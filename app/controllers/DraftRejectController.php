@@ -32,6 +32,9 @@ class DraftRejectController extends BaseController {
 
                                 return $created_at;
                             })
+                            ->addColumn('strata', function($model) {
+                                return $model->file->strata? $model->file->strata->name : "Non-Set";
+                            })
                             ->addColumn('file_no', function($model) {
                                 $tab = 'others';
                                 if($model->type == 'house_scheme') {

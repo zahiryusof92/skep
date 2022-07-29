@@ -16,20 +16,6 @@ class FinanceController extends BaseController {
     public function addFinanceFileList() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file_no = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $file_no = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file_no = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        }
-
         $year = Files::getVPYear();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(37));
 
@@ -40,7 +26,6 @@ class FinanceController extends BaseController {
             'sub_nav_active' => 'add_finance_list',
             'user_permission' => $user_permission,
             'image' => "",
-            'file_no' => $file_no,
             'year' => $year,
             'month' => Finance::monthList()
         );
@@ -51,7 +36,23 @@ class FinanceController extends BaseController {
     public function submitAddFinanceFile() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'file_id' => 'required',
+                'year' => 'required',
+                'month' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
+
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $year = $data['year'];
             $month = $data['month'];
 
@@ -61,6 +62,7 @@ class FinanceController extends BaseController {
                 if ($check_exist <= 0) {
                     $finance = new Finance();
                     $finance->file_id = $file->id;
+                    $finance->strata_id = $strata_id? $strata_id : Strata::where('file_id', $file->id)->first()->getKey();
                     $finance->company_id = $file->company_id;
                     $finance->month = $month;
                     $finance->year = $year;
@@ -2702,19 +2704,6 @@ class FinanceController extends BaseController {
     public function addFinanceSupport() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file_no = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $file_no = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file_no = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(39));
 
         $viewData = array(
@@ -2724,7 +2713,6 @@ class FinanceController extends BaseController {
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'image' => "",
-            'file_no' => $file_no
         );
 
         return View::make('finance_en.add_finance_support', $viewData);
@@ -2733,19 +2721,37 @@ class FinanceController extends BaseController {
     public function submitFinanceSupport() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'file_id' => 'required',
+                'date' => 'required',
+                'name' => 'required',
+                'amount' => 'required',
+                'remark' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
+
             $file_id = $data['file_id'];
-            $is_active = $data['is_active'];
+            $strata_id = $data['strata_id'];
 
             $files = Files::find($file_id);
             if ($files) {
                 $finance = new FinanceSupport();
                 $finance->file_id = $files->id;
+                $finance->strata_id = $strata_id? $strata_id : Strata::where('file_id', $files->id)->first()->getKey();
                 $finance->company_id = $files->company_id;
                 $finance->date = $data['date'];
                 $finance->name = $data['name'];
                 $finance->amount = $data['amount'];
                 $finance->remark = $data['remark'];
-                $finance->is_active = $is_active;
+                $finance->is_active = true;
                 $success = $finance->save();
 
                 if ($success) {
@@ -2782,19 +2788,6 @@ class FinanceController extends BaseController {
     public function editFinanceSupport($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $file_no = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $file_no = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $file_no = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            } else {
-                $file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-            }
-        }
         $financeSupportData = FinanceSupport::where('id', Helper::decode($id))->firstOrFail();
         $disallow = Helper::isAllow($financeSupportData->file_id, $financeSupportData->company_id, !AccessGroup::hasUpdate(39));
 
@@ -2805,7 +2798,6 @@ class FinanceController extends BaseController {
             'sub_nav_active' => 'finance_support_list',
             'user_permission' => $user_permission,
             'image' => "",
-            'file_no' => $file_no,
             'financesupportdata' => $financeSupportData
         );
 
@@ -2815,66 +2807,78 @@ class FinanceController extends BaseController {
     public function updateFinanceSupport() {
         $data = Input::all();
         if (Request::ajax()) {
-            $file_id = $data['file_id'];
+            $rules = array(
+                'date' => 'required',
+                'name' => 'required',
+                'amount' => 'required',
+                'remark' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
+
             $id = Helper::decode($data['id']);
-
+            $finance = FinanceSupport::findOrFail($id);
+            $file_id = !empty($data['file_id'])? $data['file_id'] : $finance->file_id;
             $files = Files::find($file_id);
-            if ($files) {
-                $finance = FinanceSupport::findOrFail($id);
-                if ($finance) {
-                    /** Arrange audit fields changes */
-                    $name_field = $data['name'] == $finance->name? "": "name";
-                    $date_field = $data['date'] == $finance->date? "": "date";
-                    $amount_field = $data['amount'] == $finance->amount? "": "amont";
-                    $remark_field = $data['remark'] == $finance->remark? "": "remark";
-        
-                    $audit_fields_changed = "";
-                    if(!empty($name_field) || !empty($remark_field) || !empty($date_field) || !empty($amount_field)) {
-                        $audit_fields_changed .= "<br><ul>";
-                        $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
-                        $audit_fields_changed .= !empty($date_field)? "<li>$date_field</li>" : "";
-                        $audit_fields_changed .= !empty($remark_field)? "<li>$remark_field</li>" : "";
-                        $audit_fields_changed .= !empty($amount_field)? "<li>$amount_field</li>" : "";
-                        $audit_fields_changed .= "</ul>";
+            if ($finance) {
+                /** Arrange audit fields changes */
+                $name_field = $data['name'] == $finance->name? "": "name";
+                $date_field = $data['date'] == $finance->date? "": "date";
+                $amount_field = $data['amount'] == $finance->amount? "": "amont";
+                $remark_field = $data['remark'] == $finance->remark? "": "remark";
+    
+                $audit_fields_changed = "";
+                if(!empty($name_field) || !empty($remark_field) || !empty($date_field) || !empty($amount_field)) {
+                    $audit_fields_changed .= "<br><ul>";
+                    $audit_fields_changed .= !empty($name_field)? "<li>$name_field</li>" : "";
+                    $audit_fields_changed .= !empty($date_field)? "<li>$date_field</li>" : "";
+                    $audit_fields_changed .= !empty($remark_field)? "<li>$remark_field</li>" : "";
+                    $audit_fields_changed .= !empty($amount_field)? "<li>$amount_field</li>" : "";
+                    $audit_fields_changed .= "</ul>";
+                }
+                /** End Arrange audit fields changes */
+
+                $finance->file_id = $files->id;
+                $finance->strata_id = Strata::where('file_id', $files->id)->first()->getKey();
+                $finance->company_id = $files->company_id;
+                $finance->date = $data['date'];
+                $finance->name = $data['name'];
+                $finance->amount = $data['amount'];
+                $finance->remark = $data['remark'];
+                $finance->is_active = 1;
+                $success = $finance->save();
+
+                if ($success) {
+                    # Audit Trail
+                    if(!empty($audit_fields_changed)) {
+                        $remarks = 'Finance Support : ' . $finance->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                        $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
                     }
-                    /** End Arrange audit fields changes */
 
-                    $finance->file_id = $files->id;
-                    $finance->company_id = $files->company_id;
-                    $finance->date = $data['date'];
-                    $finance->name = $data['name'];
-                    $finance->amount = $data['amount'];
-                    $finance->remark = $data['remark'];
-                    $finance->is_active = 1;
-                    $success = $finance->save();
-
-                    if ($success) {
-                        # Audit Trail
-                        if(!empty($audit_fields_changed)) {
-                            $remarks = 'Finance Support : ' . $finance->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
-                            $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
-                        }
-
-                        if(Auth::user()->isJMB()) {
-                            /**
-                             * Add Notification & send email to COB and JMB
-                             */
-                            $not_draft_strata = $finance->file->strata;
-                            $notify_data['file_id'] = $finance->file->id;
-                            $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
-                            $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
-                            $notify_data['strata'] = "You";
-                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
-                            $notify_data['title'] = "COB File Finance Support";
-                            $notify_data['module'] = "Finance Support";
-                            
-                            (new NotificationService())->store($notify_data);
-                        }
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $finance->file->strata;
+                        $notify_data['file_id'] = $finance->file->id;
+                        $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                        $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                        $notify_data['title'] = "COB File Finance Support";
+                        $notify_data['module'] = "Finance Support";
                         
-                        print "true";
-                    } else {
-                        print "false";
+                        (new NotificationService())->store($notify_data, 'updated');
                     }
+                    
+                    print "true";
                 } else {
                     print "false";
                 }

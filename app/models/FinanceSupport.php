@@ -3,8 +3,17 @@
 class FinanceSupport extends Eloquent {
     protected $table = 'finance_support';
 
+    protected $fillable = [
+        'file_id',
+        'strata_id',
+    ];
+    
     public function file() {
         return $this->belongsTo('Files', 'file_id');
+    }
+    
+    public function strata() {
+        return $this->belongsTo('Strata', 'strata_id');
     }
 
     public static function getSupportData($request = []) {

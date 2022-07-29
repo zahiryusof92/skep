@@ -67,14 +67,13 @@ $zone = [
                                 </div>
                             </div>
                             @endif
-                            {{-- <div class="col-lg-6">
-                                <div class="form-group float-left">
-                                    <label>{{ trans('app.forms.date_strata') }} </label><br>
-                                    <input id="start_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
-                                    <span class="margin-right-10">&nbsp; —</span>
-                                    <input id="end_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>{{ trans('app.forms.strata') }}</label>
+                                    <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                    </select>
                                 </div>
-                            </div> --}}
+                            </div> 
                         </div>
                     </div>
                 </div>
@@ -156,6 +155,9 @@ $zone = [
         });
         $('#zone').on('change', function () {
             oTable.columns(4).search(this.value).draw();
+        });
+        $('#strata').on('change', function () {
+            oTable.columns(1).search(this.value).draw();
         });
         $('#start_date').datetimepicker({
             widgetPositioning: {

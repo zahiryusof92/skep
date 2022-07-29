@@ -9,6 +9,7 @@ class AuditTrail extends Eloquent {
 
     protected $fillable = [
         'file_id',
+        'strata_id',
         'company_id',
         'module',
         'remarks',
@@ -60,7 +61,11 @@ class AuditTrail extends Eloquent {
                     // ->where('audit_trail.company_id', '!=', 0)
                     ->where(function($query) use($request){
                         if(!empty($request['company_id'])) {
-                            $query->where('users.company_id', $request['company_id']);
+                            $company_id = $request['company_id'];
+                            if(is_array($request['company_id'])) {
+                                $company_id = Company::where('short_name', $request['company_id'][0])->first()->getKey();
+                            }
+                            $query->where('users.company_id', $company_id);
                         }
                         if(!empty($request['role_id'])) {
                             $query->where('users.role', $request['role_id']);

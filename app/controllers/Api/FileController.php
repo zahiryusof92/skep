@@ -45,7 +45,6 @@ class FileController extends BaseController
 				'message' => trans('Validation Fail')
 			], 422);
 		}
-
 		$cob = Company::where('short_name', $request['council'])->first();
 
 		if($cob) {

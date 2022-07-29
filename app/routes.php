@@ -200,7 +200,7 @@ Route::post('/deleteAuditedFinancialFile/{id}', 'AdminController@deleteAuditedFi
 
 //monitoring
 Route::get('/view/monitoring/{id}', 'AdminController@viewMonitoring')->before('authMember');
-Route::get('/update/monitoring/{id}',  array('as' => 'cob.file.monitoring.edit', 'uses' => 'AdminController@monitoring'))->before('authMember');
+Route::get('/update/monitoring/{id}', array('as' => 'cob.file.monitoring.edit', 'uses' => 'AdminController@monitoring'))->before('authMember');
 Route::post('/submitUpdateMonitoring', 'AdminController@submitUpdateMonitoring')->before('authMember');
 Route::post('/addAGMDetails', 'AdminController@addAGMDetails')->before('authMember');
 Route::post('/editAGMDetails', 'AdminController@editAGMDetails')->before('authMember');
@@ -210,7 +210,7 @@ Route::post('/getAGMDetails', 'AdminController@getAGMDetails')->before('authMemb
 Route::post('/deleteAGMDetails/{id}', 'AdminController@deleteAGMDetails')->before('authMember');
 Route::post('/addAJKDetails', 'AdminController@addAJKDetails')->before('authMember');
 Route::post('/editAJKDetails', 'AdminController@editAJKDetails')->before('authMember');
-Route::get('/getAJK/{file_id}', 'AdminController@getAJK')->before('authMember');
+Route::get('/getAJK/{file_id}', array('as' => 'cob.file.ajk.index', 'uses' => 'AdminController@getAJK'))->before('authMember');
 Route::post('/deleteAJKDetails/{id}', 'AdminController@deleteAJKDetails')->before('authMember');
 Route::get('/editAGM/{id}', 'AdminController@editAGM')->before('authMember');
 Route::post('/uploadAuditReportFile', 'FileController@uploadAuditReportFile');
@@ -324,6 +324,8 @@ Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before
 Route::get('/updateInsurance/{id}/{file_id}', array('as' => 'cob.file.insurance.edit', 'uses' => 'AdminController@updateInsurance'))->before('authMember');
 Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
 Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
+Route::post('/insurance/file/delete', array('as' => 'cob.file.insurance.file.delete', 'uses' => 'AdminController@deleteInsuranceFile'))->before('authMember');
+Route::post('/insurance/file/upload', array('as' => 'cob.file.insurance.file.upload', 'uses' => 'FileController@uploadInsuranceFile'))->before('authMember');
 
 //finance_support
 Route::get('/financeSupport/{id}', array('as' => 'cob.file.finance_support.index', 'uses' => 'AdminController@financeSupport'))->before('authMember');
@@ -399,13 +401,13 @@ Route::post('/submitUpdateMemo', 'AdminController@submitUpdateMemo')->before('au
 Route::post('/deleteMemo/{id}', 'AdminController@deleteMemo')->before('authMember');
 
 //rating
-Route::get('/rating', 'AdminController@rating')->before('authMember');
+Route::get('/rating', array('as' => 'rating.index', 'uses' => 'AdminController@rating'))->before('authMember');
 Route::get('/getRating', 'AdminController@getRating')->before('authMember');
 Route::post('/activeRating', 'AdminController@activeRating')->before('authMember');
 Route::post('/inactiveRating', 'AdminController@inactiveRating')->before('authMember');
 Route::get('/addRating', 'AdminController@addRating')->before('authMember');
 Route::post('/submitAddRating', 'AdminController@submitAddRating')->before('authMember');
-Route::get('/updateRating/{id}', 'AdminController@updateRating')->before('authMember');
+Route::get('/updateRating/{id}', array('as' => 'rating.edit', 'uses' => 'AdminController@updateRating'))->before('authMember');
 Route::post('/submitUpdateRating', 'AdminController@submitUpdateRating')->before('authMember');
 Route::post('/deleteRating/{id}', 'AdminController@deleteRating')->before('authMember');
 
@@ -485,11 +487,11 @@ Route::post('/deleteDocumentFile', 'AgmController@deleteDocumentFile')->before('
 Route::post('/uploadDocumentFile', 'FileController@uploadDocumentFile')->before('authMember');
 
 //defect
-Route::get('/defect', 'AdminController@defect')->before('authMember');
+Route::get('/defect', array('as' => 'defect.index', 'uses' => 'AdminController@defect'))->before('authMember');
 Route::get('/getDefect', 'AdminController@getDefect')->before('authMember');
 Route::get('/addDefect', 'AdminController@addDefect')->before('authMember');
 Route::post('/submitAddDefect', 'AdminController@submitAddDefect')->before('authMember');
-Route::get('/updateDefect/{id}', 'AdminController@updateDefect')->before('authMember');
+Route::get('/updateDefect/{id}', array('as' => 'defect.edit', 'uses' => 'AdminController@updateDefect'))->before('authMember');
 Route::post('/submitUpdateDefect', 'AdminController@submitUpdateDefect')->before('authMember');
 Route::post('/deleteDefect/{id}', 'AdminController@deleteDefect')->before('authMember');
 Route::post('/deleteDefectAttachment', 'AdminController@deleteDefectAttachment')->before('authMember');
@@ -722,6 +724,7 @@ Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceP
 Route::get('/reporting/auditTrail', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrail'))->before('authMember');
 Route::get('/reporting/auditLogon', array('as' => 'reporting.logon.index', 'uses' => 'ReportController@auditLogon'))->before('authMember');
 Route::get('/reporting/auditLogon/old', array('as' => 'reporting.logon.old.index', 'uses' => 'ReportController@auditLogonOld'))->before('authMember');
+Route::get('/reporting/getAuditUniqueFiles', array('as' => 'reporting.log.unique.file', 'uses' => 'ReportController@getAuditUniqueFiles'))->before('authMember');
 
 //file by location
 Route::get('/reporting/fileByLocation', 'ReportController@fileByLocation')->before('authMember');
@@ -730,11 +733,10 @@ Route::get('/getFileByLocation', 'ReportController@getFileByLocation')->before('
 //rating summary
 Route::get('/reporting/ratingSummary', 'ReportController@ratingSummary')->before('authMember');
 
-//management summary
-Route::get('/reporting/managementSummary', 'ReportController@managementSummary')->before('authMember');
-
 //cob file / management
-Route::get('/reporting/cobFileManagement', 'ReportController@cobFileManagement')->before('authMember');
+Route::get('/reporting/cobFileManagement', array('as' => 'reporting.cobFileManagement', 'uses' => 'ReportController@cobFileManagement'))->before('authMember');
+Route::get('/reporting/getFilesWithNoUnit', array('as' => 'reporting.getFilesWithNoUnit', 'uses' => 'ReportController@getFilesWithNoUnit'))->before('authMember');
+Route::get('/reporting/getFilesWithNoManagement', array('as' => 'reporting.getFilesWithNoManagement', 'uses' => 'ReportController@getFilesWithNoManagement'))->before('authMember');
 
 // strata profile
 Route::get('/reporting/strataProfile', 'ReportController@strataProfile')->before('authMember');
@@ -804,11 +806,8 @@ Route::get('/print/FileByLocation', 'PrintController@printFileByLocation')->befo
 //rating summary
 Route::get('/print/RatingSummary', 'PrintController@printRatingSummary')->before('authMember');
 
-//management summary
-Route::get('/print/ManagementSummary', 'PrintController@printManagementSummary')->before('authMember');
-
 //cob file / management
-Route::get('/print/CobFileManagement', 'PrintController@printCobFileManagement')->before('authMember');
+Route::get('/print/CobFileManagement', array('as' => 'print.cob.file.management', 'uses' => 'PrintController@printCobFileManagement'))->before('authMember');
 
 // finance support
 Route::post('/print/financeSupport', 'PrintController@financeSupport')->before('authMember');
@@ -967,7 +966,9 @@ Route::group(array('before' => 'authMember'), function() {
      */
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
     Route::post('/print/epks',  array('as' => 'reporting.print.epks', 'uses' => 'PrintController@epks'));
+    Route::post('print/generate',  array('as' => 'print.generate.index', 'uses' => 'PrintController@generate'));
     Route::get('/reporting/generate',  array('as' => 'report.generate.index', 'uses' => 'ReportController@generate'));
+    Route::get('reporting/generate/selected',  array('as' => 'report.generateSelected.index', 'uses' => 'ReportController@generateSelected'));
     Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
     Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
     
@@ -1083,6 +1084,8 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
     Route::get('tunggakanFinance', 'ExportController@tunggakanFinance');
     Route::get('fileDetails', 'ExportController@fileDetails');
+    Route::get('ajk', array('as' => 'api.v1.export.ajk', 'uses' => 'ExportController@ajk'));
+    Route::post('generateReport', array('as' => 'api.v1.export.generateReport', 'uses' => 'ExportController@generateReport'));
 });
 
 
@@ -1125,9 +1128,12 @@ Route::group(array('prefix' => 'api/v2'), function() {
 Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember']), function() {
     Route::get('dashboard/getAnalyticData', 'Api\DashboardAnalyticController@getAnalyticData');
     Route::group(array('prefix' => 'cob'), function() {
+        Route::get('city/getOption',  array('as' => 'v3.api.city.getOption', 'uses' => 'Api\CityController@getOption'));
         Route::get('company/getOption', array('as' => 'v3.api.company.getOption', 'uses' => 'Api\CompanyController@getOption'));
         Route::get('company/getNameOption', array('as' => 'v3.api.company.getNameOption', 'uses' => 'Api\CompanyController@getNameOption'));
         Route::get('files/getOption',  array('as' => 'v3.api.files.getOption', 'uses' => 'Api\COBFileController@getOption'));
+        Route::get('developer/getOption',  array('as' => 'v3.api.developer.getOption', 'uses' => 'Api\DeveloperController@getOption'));
+        Route::get('category/getOption',  array('as' => 'v3.api.category.getOption', 'uses' => 'Api\CategoryController@getOption'));
         Route::get('audit_trail/getOption', array('as' => 'v3.api.audit_trail.getModuleOption', 'uses' => 'Api\AuditTrailController@getModuleOption'));
         Route::get('role/getOption', array('as' => 'v3.api.role.getOption', 'uses' => 'Api\RoleController@getOption'));
         Route::get('strata/getOption',  array('as' => 'v3.api.strata.getOption', 'uses' => 'Api\StrataController@getOption'));

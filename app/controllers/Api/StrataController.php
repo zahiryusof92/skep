@@ -5,10 +5,10 @@ namespace Api;
 use Exception;
 use BaseController;
 use Files;
+use Strata;
+use Helper\Helper;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-
-use Strata;
 
 class StrataController extends BaseController {
 
@@ -52,7 +52,11 @@ class StrataController extends BaseController {
                                     $query->where('strata.name', "like", "%". $request['term'] ."%");
                                 }
                                 if(!empty($request['file_id'])) {
-                                    $query->where('strata.file_id', $request['file_id']);
+                                    if(!is_numeric($request['file_id'])) {
+                                        $query->where('strata.file_id', Helper::decode($request['file_id']));
+                                    } else {
+                                        $query->where('strata.file_id', $request['file_id']);
+                                    }
                                 }
                                 if(!empty($request['company_id'])) {
                                     $file_ids = [];
@@ -79,6 +83,7 @@ class StrataController extends BaseController {
                             ->groupBy(['strata.name'])
                             ->chunk(200, function($models) use(&$options, $request)
                             {
+                                array_push($options, ['id' => "", 'text' => trans('app.forms.please_select')]);
                                 foreach ($models as $model)
                                 {
                                     if(!empty($request['type']) && $request['type'] == 'id') {

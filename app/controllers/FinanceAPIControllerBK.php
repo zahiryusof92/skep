@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Symfony\Component\Finder\Finder;
 
-class FinanceAPIController extends BaseController {
+class FinanceAPIControllerBK extends BaseController {
 
     public function __construct() {
         $this->config = Config::get('constant.module.finance.tabs');

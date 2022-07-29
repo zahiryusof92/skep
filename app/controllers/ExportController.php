@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Queue;
-use Job\GetExportData;
+use Repositories\ReportRepo;
 
 class ExportController extends BaseController {
 
@@ -294,7 +294,7 @@ class ExportController extends BaseController {
     public function strataName() { 
         $items = Strata::join('files', 'strata.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
-                        ->where('company.short_name', 'MPS')
+                        ->where('company.short_name', 'MBPJ')
                         ->select(['strata.*', 'files.file_no as file_no'])
                         ->get();
                     
@@ -361,6 +361,7 @@ class ExportController extends BaseController {
                         ->whereIn('id', $file_ids)
                         ->where('files.is_deleted', false)
                         ->orderBy('company_id','asc')
+                        ->take(10)
                         ->get();
         
         $types = ['Developer','JMB','MC','Agent','Others'];
@@ -406,61 +407,185 @@ class ExportController extends BaseController {
 
             }
         }
-        // dd($data);
-        // $file_ids = Files::with(['managementDeveloper', 'managementJMB', 'managementMC', 'managementAgent', 'managementOthers', 'ajk_details', 'buyer', 'company', 'strata'])
-        //                 ->join('strata', 'strata.file_id', '=', 'files.id')
-        //                 ->leftJoin('residential_block', 'residential_block.file_id', '=', 'files.id')
-        //                 ->leftJoin('commercial_block', 'commercial_block.file_id', '=', 'files.id')
-        //                 ->where('residential_block.unit_no', '>=', 500)
-        //                 ->orWhere('commercial_block.unit_no', '>=', 500)
-        //                 ->get();
-        // $files = Files::with(['managementDeveloper', 'managementJMB', 'managementMC', 'managementAgent', 'managementOthers', 'ajk_details', 'buyer', 'company', 'strata'])
-        //                 ->whereIn('id', array_pluck($file_ids, 'id'))
-        //                 ->get();
-
-        //             // dd($files);
-        // $data = [];
-        // $i = 0;
-        // $total = 0;
-        // foreach($files as $key => $file) {
-        //     $city = City::where('id', $file->city)->first();                   
-        //     $state = State::where('id', $file->state)->first();                   
-        //     $new_data[$key]['no'] = ($key + 1);
-        //     $new_data[$key]['file no'] = $file->file_no;
-        //     $new_data[$key]['strata'] = $file->strata->name;
-        //     $new_data[$key]['council'] = $file->company->short_name;
-        //     $new_data[$key]['address'] = $file->address1 .', '. $file->address2 .', '. $file->address3
-        //                                 .', '. $file->address4 .', '. $file->poscode .', ';
-        //     $new_data[$key]['address'] .= (empty($city))? '' : $city->description;
-        //     $new_data[$key]['address'] .= (empty($state))? '' : (' '. $state->name);
-
-        //     $new_data[$key]['address'] .= (empty($state))? '' : (' '. $state->name);
-        
-        //     if(!empty($file->managementJMB)) {
-        //         $new_data[$key]['management']['type']['jmb']['name'] = $file->managementJMB->name;
-        //         $new_data[$key]['management']['type']['jmb']['phone_no'] = $file->managementJMB->phone_no;    
-        //     }
-        //     if(!empty($file->managementMC)) {
-        //         $new_data[$key]['management']['type']['mc']['name'] = $file->managementMC->name;
-        //         $new_data[$key]['management']['type']['mc']['phone_no'] = $file->managementMC->phone_no;
-        //     }
-        //     if(!empty($file->ajk_details)) {
-        //         $new_data[$key]['management']['type']['ajk'] = [];
-        //         foreach($file->ajk_details as $key_ajk => $ajk) {
-        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['name'] = $ajk->name;
-        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['email'] = $ajk->email;
-        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['designation'] = $ajk->designation;
-        //             $new_data[$key]['management']['type']['ajk'][$key_ajk]['phone_no'] = $ajk->phone_no;
-        //         }
-        //     }
-            
-
-        //     $data = array_merge($data, $new_data);
-        // }
         return Excel::create('file-details-'. date('YmdHis'), function($excel) use ($data) {
             $excel->sheet('mySheet', function($sheet) use ($data)
             {
                 $sheet->loadView('exports.file-detail', array('datas' => $data));
+                
+            });
+        })->download();
+    }
+
+    public function generateReport() {
+        $request = Request::all();
+        $items = (new ReportRepo())->generateReport($request);
+        $i = 0;
+        $data = [];
+        foreach($items as $key => $item) { 
+            $new_data[$i]['No'] = ($key + 1);
+            if(in_array('file_no', $request['selected'])) {
+                $new_data[$i]['NO FAIL'] = $item->file_no;
+            }
+            
+            if(in_array('city', $request['selected'])) {
+                $new_data[$i]['BANDAR'] = $item->strata->town? Str::upper($item->strata->towns->description) : '-';
+            }
+            if(in_array('strata', $request['selected'])) {
+                $new_data[$i]['KAWASAN PEMAJUAN'] = $item->strata->name;
+            }
+            if(in_array('category', $request['selected'])) {
+                $new_data[$i]['KATEGORI'] = $item->strata->category? $item->strata->categories->description : "-";
+            }
+            if(in_array('file_draft_latest_date', $request['selected'])) {
+                $new_data[$i]['Tarikh VP'] = !empty($item->draft)? $item->draft->created_at->toDateTimeString() : '-';
+            }
+            if(in_array('latest_agm_date', $request['selected'])) {
+                $new_data[$i]['Tarikh mesyuarat AGM Terkini'] = $item->latestMeetingDocument? $item->latestMeetingDocument->created_at->toDateTimeString() : "-";
+            }
+            if(in_array('latest_insurance_date', $request['selected'])) {
+                $new_data[$i]['Tarikh Insurans Terkini'] = $item->insurance->count()? $item->insurance()->latest()->first()->created_at->toDateTimeString() : "-";
+            }
+            if(in_array('jmb_date_formed', $request['selected'])) {
+                $new_data[$i]['Tarikh Sijil JMB'] = $item->management->is_jmb? $item->managementJMB->date_formed : '-';
+            }
+            if(in_array('mc_date_formed', $request['selected'])) {
+                $new_data[$i]['Tarikh Sijil MC'] = $item->management->is_mc? $item->managementMC->date_formed : '-';
+            }
+            if(in_array('total_floor', $request['selected'])) {
+                $new_data[$i]['Tingkat'] = $item->strata->total_floor;
+            }
+            $residential = Residential::where('file_id', $item->id)->sum('unit_no');
+            $residential_extra = ResidentialExtra::where('file_id', $item->id)->sum('unit_no');
+            
+            if(in_array('residential_block', $request['selected'])) {
+                $new_data[$i]['Rumah'] = $residential + $residential_extra;
+            }
+            $commercial = Commercial::where('file_id', $item->id)->sum('unit_no');
+            $commercial_extra = CommercialExtra::where('file_id', $item->id)->sum('unit_no');
+            
+            if(in_array('commercial_block', $request['selected'])) {
+                $new_data[$i]['Kedai'] = $commercial + $commercial_extra;
+            }
+            if(in_array('block', $request['selected'])) {
+                $new_data[$i]['Blok'] = $item->strata->block_no;
+            }
+            $management = "-";
+            if($item->management->is_jmb) {
+                $management = "JMB";
+            } else if($item->management->is_mc) {
+                $management = "MC";
+            } else if($item->management->is_developer) {
+                $management = "Developer";
+            } else if($item->management->liquidator) {
+                $management = "Liquidator";
+            } else if($item->management->under_10_units) {
+                $management = "Strata < 10 unit";
+            } else if($item->management->bankruptcy) {
+                $management = "Bankruptcy";
+            }
+            
+            if(in_array('management', $request['selected'])) {
+                $new_data[$i]['MANAGEMENT'] = $management; //MANAGEMENT
+            }
+            if(in_array('is_active', $request['selected'])) {
+                $new_data[$i]['IS ACTIVE'] = $item->is_active ? trans('app.forms.yes') : trans('app.forms.no');
+            }
+            
+            $data = array_merge($data, $new_data);
+        }
+
+        return Excel::create('listing-report-'. date('YmdHis'), function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function ajk() {
+        $items = Files::with(['company', 'houseScheme', 'managementDeveloper', 'managementJMB', 'managementMC', 'managementAgent', 'managementOthers', 'ajk_details'])
+                        ->file()
+                        ->where('company_id', 9)
+                        // ->take(10)
+                        ->get();
+                    
+        $data = [];
+        $i = 0;
+        foreach($items as $key => $item) {                 
+            $data[$key]['cob'] = $item->company->short_name;
+            $data[$key]['file_no'] = $item->file_no;
+            $data[$key]['file_name'] = $item->houseScheme->name;
+            $data[$key]['management'] = [];
+            $data[$key]['ajk'] = [];
+            if($item->managementDeveloper) {
+                $developer_data = [
+                    'type' => 'Developer',
+                    'name' => $item->managementDeveloper->name,
+                    'address' => $item->managementDeveloper->address_1 . " " . $item->managementDeveloper->address_2 . " " . $item->managementDeveloper->address_3 . " " . $item->managementDeveloper->address_4,
+                    'email' => $item->managementDeveloper->email,
+                    'phone_no' => $item->managementDeveloper->phone_no,
+                ];
+                array_push($data[$key]['management'], $developer_data);
+            }
+            if($item->managementJMB) {
+                $jmb_data = [
+                    'type' => 'JMB',
+                    'name' => $item->managementJMB->name,
+                    'address' => $item->managementJMB->address_1 . " " . $item->managementJMB->address_2 . " " . $item->managementJMB->address_3 . " " . $item->managementJMB->address_4,
+                    'email' => $item->managementJMB->email,
+                    'phone_no' => $item->managementJMB->phone_no,
+                ];
+                array_push($data[$key]['management'], $jmb_data);
+            }
+            if($item->managementMC) {
+                $mc_data = [
+                    'type' => 'MC',
+                    'name' => $item->managementMC->name,
+                    'address' => $item->managementMC->address_1 . " " . $item->managementMC->address_2 . " " . $item->managementMC->address_3 . " " . $item->managementMC->address_4,
+                    'email' => $item->managementMC->email,
+                    'phone_no' => $item->managementMC->phone_no,
+                ];
+                array_push($data[$key]['management'], $mc_data);
+            }
+            if($item->managementAgent) {
+                $agent_data = [
+                    'type' => 'Agent',
+                    'name' => $item->managementAgent->name,
+                    'address' => $item->managementAgent->address_1 . " " . $item->managementAgent->address_2 . " " . $item->managementAgent->address_3 . " " . $item->managementAgent->address_4,
+                    'email' => $item->managementAgent->email,
+                    'phone_no' => $item->managementAgent->phone_no,
+                ];
+                array_push($data[$key]['management'], $agent_data);
+            }
+            if($item->managementOthers) {
+                $others_data = [
+                    'type' => 'Others',
+                    'name' => $item->managementOthers->name,
+                    'address' => $item->managementOthers->address_1 . " " . $item->managementOthers->address_2 . " " . $item->managementOthers->address_3 . " " . $item->managementOthers->address_4,
+                    'email' => $item->managementOthers->email,
+                    'phone_no' => $item->managementOthers->phone_no,
+                ];
+                array_push($data[$key]['management'], $others_data);
+            }
+            foreach($item->ajk_details as $ajk) {
+                $ajk_data = [
+                    'name' => $ajk->name,
+                    'designation' => $ajk->designations->description,
+                    'phone_no' => $ajk->phone_no,
+                    'email' => $ajk->email,
+                    'month' => $ajk->month,
+                    'start_year' => $ajk->start_year,
+                    'end_year' => $ajk->end_year,
+                ];
+                array_push($data[$key]['ajk'], $ajk_data);
+            }
+        }
+        
+        return Excel::create('ajk-details-'. date('YmdHis'), function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->loadView('exports.ajk-detail', array('datas' => $data));
                 
             });
         })->download();

@@ -40,7 +40,8 @@ foreach ($user_permission as $permission) {
                                     {{ trans('app.forms.download_csv_template') }} &nbsp;<i class="fa fa-download"></i>
                                 </button>
                             </a>
-
+                            <button type="submit" class="btn btn-own float-right" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                            
                             <div class="modal fade" id="importForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                                 <div class="modal-dialog">
                                     <form id="form_import" enctype="multipart/form-data" class="form-horizontal" data-parsley-validate>
@@ -201,12 +202,13 @@ foreach ($user_permission as $permission) {
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>&nbsp;</label><br/>
-                                        <button type="submit" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                        <label>{{ trans('app.forms.scheme_name') }}</label>
+                                        <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                        </select>
                                     </div>
-                                </div>
+                                </div> 
                             </div>
                         </form>
                     </div>
@@ -285,6 +287,9 @@ foreach ($user_permission as $permission) {
         });
         $('#file_no').on('change', function () {
             oTable.columns(1).search(this.value).draw();
+        });
+        $('#strata').on('change', function () {
+            oTable.columns(2).search(this.value).draw();
         });
     });
 

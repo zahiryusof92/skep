@@ -546,14 +546,6 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(27))
-                    <li id="management_summary_list">
-                        <a class="left-menu-link" href="{{URL::action('ReportController@managementSummary')}}">
-                            {{ trans('app.menus.reporting.management_summary') }}
-                        </a>
-                    </li>
-                    @endif
-
                     @if (AccessGroup::hasAccess(28))
                     <li id="cob_file_management_list">
                         <a class="left-menu-link" href="{{URL::action('ReportController@cobFileManagement')}}">
