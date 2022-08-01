@@ -101,7 +101,7 @@ class Helper
     public static function validateEmail($email)
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-           return true;
+            return true;
         }
 
         return false;

@@ -497,7 +497,7 @@ class EPKSController extends \BaseController {
                 if(Config::get('mail.driver') != '') {
                     $delay = 0;
                     $incrementDelay = 2;
-                    if(!empty($model->user->email) && Helper::validateEmail($model->user->email) {
+                    if(!empty($model->user->email) && Helper::validateEmail($model->user->email)) {
                         Mail::later(Carbon::now()->addSeconds($delay), 'emails.epks.new_application', array('model' => $model, 'status' => $model->getStatusText()), function($message) use ($model)
                         {
                             $message->to($model->user->email, $model->user->full_name)->subject('New Application for e-Pusat Kitar Strata');
