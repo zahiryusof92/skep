@@ -75,7 +75,7 @@ class EmailLogController extends BaseController {
             'description' => $data['description'],
         ]);
         
-        if ($email_log) {                                                                                  
+        if ($email_log && Helper::validateEmail($email_log->user->email)) {                                                                                  
             // if(getenv('MAIL_HOST', false) == 'smtp.mailtrap.io'){
             //     sleep(1); //use usleep(500000) for half a second or less
             // }        
