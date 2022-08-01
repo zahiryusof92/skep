@@ -3,6 +3,10 @@
 class Developer extends Eloquent {
     protected $table = 'developer';
 
+    public function scopeSelf() {
+        return self::where('is_active', true)->where('is_deleted', false);
+    }
+
     public static function getData() {
         $query = self::where('is_deleted', 0)
                      ->where('is_active', 1);

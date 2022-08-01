@@ -15,6 +15,10 @@ class Category extends Eloquent {
         return $list;
     }
 
+    public function scopeSelf() {
+        return self::where('is_active', true)->where('is_deleted', false);
+    }
+
     public function strata() {
         return $this->belongsTo('Strata', 'category');
     }

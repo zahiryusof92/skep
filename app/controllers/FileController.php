@@ -1016,4 +1016,29 @@ class FileController extends BaseController {
         // }
     }
 
+    public function uploadInsuranceFile() {
+        $file = Input::file('insurance_file');
+        
+        ## EAI Call
+        // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['file_upload'];
+        $data['insurance_file'] = curl_file_create($_FILES['insurance_file']['tmp_name'], $_FILES['insurance_file']['type'], $_FILES['insurance_file']['name']);
+        
+        // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+        //                         $url,
+        //                         ($data), true)));
+                                
+        // if(empty($response->status) == false && $response->status == 200) {
+            if ($file) {
+                $destinationPath = 'uploads/insurance_files';
+                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $upload = $file->move($destinationPath, $filename);
+    
+                if ($upload) {
+                    return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                }
+            }
+        
+        // }
+    }
+
 }

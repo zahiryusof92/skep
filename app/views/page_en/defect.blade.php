@@ -50,6 +50,13 @@ foreach ($user_permission as $permissions) {
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.strata') }}</label>
+                                        <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                        </select>
+                                    </div>
+                                </div> 
                             </div>
                         </form>
                     </div>
@@ -63,10 +70,11 @@ foreach ($user_permission as $permissions) {
                             <thead>
                                 <tr>
                                     <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.strata') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.defect_category') }}</th>
                                     <th style="width:20%;">{{ trans('app.forms.defect_name') }}</th>
                                     <th style="width:35%;">{{ trans('app.forms.defect_description') }}</th>
-                                    <th style="width:35%;">{{ trans('app.forms.status') }}</th>
+                                    <th style="width:15%;">{{ trans('app.forms.status') }}</th>
                                     <?php if ($update_permission) { ?>
                                         <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                         <?php } ?>
@@ -102,6 +110,9 @@ foreach ($user_permission as $permissions) {
 
         $('#file_no').on('change', function () {
             oTable.columns(0).search(this.value).draw();
+        });
+        $('#strata').on('change', function () {
+            oTable.columns(1).search(this.value).draw();
         });
     });
 

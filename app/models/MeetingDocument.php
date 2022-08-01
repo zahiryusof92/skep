@@ -11,7 +11,8 @@ class MeetingDocument extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'file_id'
+        'file_id',
+        'strata_id',
     ];
 
     public function files()

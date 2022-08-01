@@ -81,6 +81,13 @@ foreach ($user_permission as $permission) {
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.strata') }}</label>
+                                        <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                        </select>
+                                    </div>
+                                </div> 
                             </div>
                         </form>
                     </div>
@@ -96,10 +103,12 @@ foreach ($user_permission as $permission) {
                                     <tr>
                                         <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
                                         <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.strata') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.designation') }}</th>
-                                        <th style="width:15%;">{{ trans('app.forms.name') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.name') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.email') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.allowance') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                         <th style="width:5%;">{{ trans('app.forms.start_year') }}</th>
                                         <th style="width:5%;">{{ trans('app.forms.end_year') }}</th>
@@ -149,6 +158,9 @@ foreach ($user_permission as $permission) {
         });
         $('#start_year').on('change', function () {
             oTable.columns(6).search(this.value).draw();
+        });
+        $('#strata').on('change', function () {
+            oTable.columns(2).search(this.value).draw();
         });
     });
 

@@ -6,11 +6,13 @@ class AJKDetails extends Eloquent {
     
     protected $fillable = [
         'file_id',
+        'strata_id',
         'monitoring_id',
         'designation',
         'name',
         'email',
         'phone_no',
+        'allowance',
         'month',
         'start_year',
         'end_year',
@@ -39,6 +41,10 @@ class AJKDetails extends Eloquent {
 
     public function file() {
         return $this->belongsTo('Files', 'file_id');
+    }
+
+    public function strata() {
+        return $this->belongsTo('Strata', 'strata_id');
     }
 
     public function designations() {

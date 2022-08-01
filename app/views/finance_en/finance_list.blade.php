@@ -247,6 +247,13 @@ foreach ($user_permission as $permission) {
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.strata') }}</label>
+                                        <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                        </select>
+                                    </div>
+                                </div> 
                                 <div class="col-lg-6">
                                     <div class="form-group float-left">
                                         <label>{{ trans('app.forms.date_finance_file') }} </label><br>
@@ -370,6 +377,9 @@ foreach ($user_permission as $permission) {
         });
         $('#year').on('change', function () {
             oTable.columns(4).search(this.value).draw();
+        });
+        $('#strata').on('change', function () {
+            oTable.columns(2).search(this.value).draw();
         });
         
         $('#start_date').datetimepicker({

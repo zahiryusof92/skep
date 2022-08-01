@@ -1,4 +1,4 @@
-@extends('layout.english_layout.default')
+@extends('layout.english_layout.default_custom')
 
 @section('content')
 
@@ -33,13 +33,22 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                        <select id="file_id" class="form-control select2" name="file_id">
+                                        <select id="file_id" name="file_id" class="form-control">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($files as $file_no)
-                                            <option value="{{$file_no->id}}">{{$file_no->file_no}}</option>
-                                            @endforeach
                                         </select>
-                                        <div id="file_id_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'file_id'])
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.strata') }}</label>
+                                        <select id="strata_id" name="strata_id" class="form-control">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        </select>
+                                        @include('alert.feedback-ajax', ['field' => 'strata_id'])
                                     </div>
                                 </div>
                             </div>
@@ -48,13 +57,13 @@ foreach ($user_permission as $permissions) {
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.defect_category') }}</label>
-                                        <select id="defect_category" class="form-control select2" name="defect_category">
+                                        <select id="defect_category" name="defect_category" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($defectCategory as $dc)
                                             <option value="{{$dc->id}}">{{$dc->name}}</option>
                                             @endforeach
                                         </select>
-                                        <div id="defect_category_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'defect_category'])
                                     </div>
                                 </div>
                             </div>
@@ -64,7 +73,7 @@ foreach ($user_permission as $permissions) {
                                     <div class="form-group">
                                         <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.defect_name') }}</label>
                                         <input id="name" name="name" class="form-control" type="text" placeholder="{{ trans('app.forms.defect_name') }}">
-                                        <div id="name_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'name'])
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +83,7 @@ foreach ($user_permission as $permissions) {
                                     <div class="form-group">
                                         <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.defect_description') }}</label>
                                         <textarea id="description" name="description" rows="5" class="form-control" placeholder="{{ trans('app.forms.defect_description') }}"></textarea>
-                                        <div id="description_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'description'])
                                     </div>
                                 </div>
                             </div>
@@ -89,8 +98,8 @@ foreach ($user_permission as $permissions) {
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <button type="button" id="clear_defect_attachment" class="btn btn-xs btn-danger" onclick="clearDefectAttachment()" style="display: none;"><i class="fa fa-times"></i></button>
                                         &nbsp;
-                                        <input type="file" name="defect_attachment" id="defect_attachment" />
-                                        <div id="validation-errors_defect_attachment"></div>
+                                        <input type="file" id="defect_attachment" name="defect_attachment" />
+                                        @include('alert.feedback-ajax', ['field' => 'defect_attachment'])
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +108,7 @@ foreach ($user_permission as $permissions) {
                         <form>
                             <div class="form-actions">
                                 <?php if ($insert_permission) { ?>
-                                    <input type="hidden" id="defect_attachment_url" value=""/>
+                                    <input type="hidden" id="defect_attachment_url" name="defect_attachment_url" value=""/>
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="submitAddDefect()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AdminController@defect') }}'">{{ trans('app.forms.cancel') }}</button>
@@ -117,11 +126,55 @@ foreach ($user_permission as $permissions) {
 <!-- Page Scripts -->
 <script>
     $(document).ready(function () {
+        $('.select2').select2();
+        $("#strata_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.strata.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    return {
+                        term: params.term, // search term
+                        file_id: $('#file_id').val(),
+                        type: 'id',
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+        $("#file_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.files.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    return {
+                        term: params.term, // search term
+                        strata: $('#strata_id').val()
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
         $('body').delegate('#defect_attachment', 'change', function () {
             $('#upload_defect_attachment').ajaxForm({
                 dataType: 'json',
                 beforeSubmit: function () {
-                    $("#validation-errors_defect_attachment").hide().empty();
+                    $("#defect_attachment_error").hide().empty();
                     return true;
                 },
                 success: function (response) {
@@ -129,15 +182,15 @@ foreach ($user_permission as $permissions) {
                         var arr = response.errors;
                         $.each(arr, function (index, value) {
                             if (value.length != 0) {
-                                $("#validation-errors_defect_attachment").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                                $("#defect_attachment_error").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
                             }
                         });
-                        $("#validation-errors_defect_attachment").show();
+                        $("#defect_attachment_error").show();
                         $("#defect_attachment").css("color", "red");
                     } else {
                         $("#clear_defect_attachment").show();
-                        $("#validation-errors_defect_attachment").html("<i class='fa fa-check' id='check_defect_attachment' style='color:green;'></i>");
-                        $("#validation-errors_defect_attachment").show();
+                        $("#defect_attachment_error").html("<i class='fa fa-check' id='check_defect_attachment' style='color:green;'></i>");
+                        $("#defect_attachment_error").show();
                         $("#defect_attachment").css("color", "green");
                         $("#defect_attachment_url").val(response.file);
                     }
@@ -154,74 +207,80 @@ foreach ($user_permission as $permissions) {
     }
 
     function submitAddDefect() {
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#cancel_button").attr("disabled", "disabled");
+        // $("#loading").css("display", "inline-block");
+        // $("#submit_button").attr("disabled", "disabled");
+        // $("#cancel_button").attr("disabled", "disabled");
 
-        var file_id = $("#file_id").val(),
-                defect_category = $("#defect_category").val(),
-                name = $("#name").val(),
-                description = $("#description").val(),
-                defect_attachment = $("#defect_attachment_url").val();
+        // var file_id = $("#file_id").val(),
+        //         defect_category = $("#defect_category").val(),
+        //         name = $("#name").val(),
+        //         description = $("#description").val(),
+        //         defect_attachment = $("#defect_attachment_url").val();
 
-        var error = 0;
+        // var error = 0;
 
-        if (file_id.trim() == "") {
-            $("#file_id_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"File No"]) }}</span>');
-            $("#file_id_error").css("display", "block");
-            error = 1;
-        }
-        if (defect_category.trim() == "") {
-            $("#defect_category_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Complaint Category"]) }}</span>');
-            $("#defect_category_error").css("display", "block");
-            error = 1;
-        }
-        if (name.trim() == "") {
-            $("#name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Complaint Name"]) }}</span>');
-            $("#name_error").css("display", "block");
-            error = 1;
-        }
-        if (description.trim() == "") {
-            $("#description_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Description"]) }}</span>');
-            $("#description_error").css("display", "block");
-            error = 1;
-        }
-        if (defect_attachment.trim() == "") {
-            $("#validation-errors_defect_attachment").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.file", ["attribute"=>"Complaint Attachment"]) }}</span>');
-            $("#validation-errors_defect_attachment").css("display", "block");
-            error = 1;
-        }
+        // if (file_id.trim() == "") {
+        //     $("#file_id_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"File No"]) }}</span>');
+        //     $("#file_id_error").css("display", "block");
+        //     error = 1;
+        // }
+        // if (defect_category.trim() == "") {
+        //     $("#defect_category_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Complaint Category"]) }}</span>');
+        //     $("#defect_category_error").css("display", "block");
+        //     error = 1;
+        // }
+        // if (name.trim() == "") {
+        //     $("#name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Complaint Name"]) }}</span>');
+        //     $("#name_error").css("display", "block");
+        //     error = 1;
+        // }
+        // if (description.trim() == "") {
+        //     $("#description_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Description"]) }}</span>');
+        //     $("#description_error").css("display", "block");
+        //     error = 1;
+        // }
+        // if (defect_attachment.trim() == "") {
+        //     $("#defect_attachment_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.file", ["attribute"=>"Complaint Attachment"]) }}</span>');
+        //     $("#defect_attachment_error").css("display", "block");
+        //     error = 1;
+        // }
 
-        if (error == 0) {
-            $.ajax({
-                url: "{{ URL::action('AdminController@submitAddDefect') }}",
-                type: "POST",
-                data: {
-                    file_id: file_id,
-                    defect_category: defect_category,
-                    name: name,
-                    description: description,
-                    defect_attachment: defect_attachment,
-                },
-                success: function (data) {
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#cancel_button").removeAttr("disabled");
-                    if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
-                            window.location = '{{URL::action("AdminController@defect") }}';
-                        });
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                    }
+        let formData = $('form').serializeArray();
+        $.ajax({
+            url: "{{ URL::action('AdminController@submitAddDefect') }}",
+            type: "POST",
+            data: formData,
+            beforeSend: function() {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                $("#loading").css("display", "inline-block");
+                $("#submit_button").attr("disabled", "disabled");
+                $("#cancel_button").attr("disabled", "disabled");
+                $.each(formData, function (key, value) {
+                    $("#" + value['name'] + "_error").children("strong").text("");
+                });
+            },
+            success: function (data) {
+                if (data.trim() == "true") {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>", function () {
+                        window.location = '{{URL::action("AdminController@defect") }}';
+                    });
                 }
-            });
-        } else {
-            $("#file_id").focus();
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-            $("#cancel_button").removeAttr("disabled");
-        }
+            },
+            error: function (err) {
+                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                if(err.responseJSON.errors) {
+                    $.each(err.responseJSON.errors, function (key, value) {
+                        $("#" + key + "_error").children("strong").text(value);
+                    });
+                }
+            },
+            complete: function() {
+                $.unblockUI();
+                $("#loading").css("display", "none");
+                $("#submit_button").removeAttr("disabled");
+                $("#cancel_button").removeAttr("disabled");
+            },
+        });
     }
 
     function deleteDefectAttachment(id) {
@@ -241,6 +300,9 @@ foreach ($user_permission as $permissions) {
                 data: {
                     id: id
                 },
+                beforeSend: function() {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                },
                 success: function (data) {
                     if (data.trim() == "true") {
                         swal({
@@ -254,7 +316,10 @@ foreach ($user_permission as $permissions) {
                     } else {
                         bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                     }
-                }
+                },
+                complete: function() {
+                    $.unblockUI();
+                },
             });
         });
     }

@@ -27,11 +27,11 @@ class BaseController extends Controller {
 
     /**
      * Create Log.
-     * @param int $file_id
+     * @param int $file_id, $user_id
      * @param string $module. $remarks
      * @return void
      */
-    protected function addAudit($file_id = 0, $module, $remarks) {
+    protected function addAudit($file_id = 0, $module, $remarks, $user_id = 0) {
         # Audit Trail        
         $agent = [
             'ip' => Request::ip(),
@@ -43,11 +43,12 @@ class BaseController extends Controller {
         }
         $auditTrail = AuditTrail::create([
             'file_id' => $file_id,
+            'strata_id' => $file_id? Strata::where('file_id', $file_id)->first()->getKey() : 0,
             'company_id' => !empty(Session::get('admin_cob'))? Session::get('admin_cob') : Auth::user()->company_id,
             'module' => $module,
             'remarks' => is_array($remarks)? json_encode($remarks) : $remarks,
             'agent' => json_encode($agent),
-            'audit_by' => Auth::user()->id,
+            'audit_by' => $user_id? $user_id : Auth::user()->id,
         ]);   
     }
 

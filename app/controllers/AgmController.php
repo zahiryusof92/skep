@@ -93,10 +93,12 @@ class AgmController extends BaseController {
                 $data_raw = array(
                     $ajk_details->file->company->short_name,
                     $ajk_details->file->file_no,
+                    $ajk_details->file->strata->name,
                     $designation->description,
                     $ajk_details->name,
                     $ajk_details->email,
                     $ajk_details->phone_no,
+                    $ajk_details->allowance,
                     $ajk_details->monthName(),
                     $ajk_details->start_year,
                     $ajk_details->end_year,
@@ -125,20 +127,6 @@ class AgmController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
-
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(30));
 
         $viewData = array(
@@ -147,7 +135,6 @@ class AgmController extends BaseController {
             'main_nav_active' => 'agm_main',
             'sub_nav_active' => 'agmdesignsub_list',
             'user_permission' => $user_permission,
-            'files' => $files,
             'designation' => $designation,
             'month' => AJKDetails::monthList(),
             'image' => ''
@@ -159,12 +146,34 @@ class AgmController extends BaseController {
     public function submitAddAJK() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'file_id' => 'required',
+                // 'strata_id' => 'required',
+                'designation' => 'required',
+                'name' => 'required',
+                'email' => 'required',
+                'phone_no' => 'required',
+                'month' => 'required',
+                'start_year' => 'required',
+                'end_year' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
 
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id']? $data['strata_id'] : Strata::where('file_id', $data['file_id'])->first()->getKey();
             $designation = $data['designation'];
             $name = $data['name'];
             $email = $data['email'];
             $phone_no = $data['phone_no'];
+            $allowance = $data['allowance'];
             $month = $data['month'];
             $start_year = $data['start_year'];
             $end_year = $data['end_year'];
@@ -172,10 +181,12 @@ class AgmController extends BaseController {
 
             $ajk_detail = new AJKDetails();
             $ajk_detail->file_id = $file_id;
+            $ajk_detail->strata_id = $strata_id;
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
             $ajk_detail->email = $email;
             $ajk_detail->phone_no = $phone_no;
+            $ajk_detail->allowance = $allowance;
             $ajk_detail->month = $month;
             $ajk_detail->start_year = $start_year;
             $ajk_detail->end_year = $end_year;
@@ -215,21 +226,6 @@ class AgmController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
-
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
-
         $ajk_details = AJKDetails::findOrFail(Helper::decode($id));
         $disallow = Helper::isAllow($ajk_details->file_id, $ajk_details->file->company_id, !AccessGroup::hasUpdate(30));
 
@@ -239,7 +235,6 @@ class AgmController extends BaseController {
             'main_nav_active' => 'agm_main',
             'sub_nav_active' => 'agmdesignsub_list',
             'user_permission' => $user_permission,
-            'files' => $files,
             'designation' => $designation,
             'month' => AJKDetails::monthList(),
             'ajk_details' => $ajk_details,
@@ -252,13 +247,35 @@ class AgmController extends BaseController {
     public function submitEditAJK() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                // 'file_id' => 'required',
+                // 'strata_id' => 'required',
+                'designation' => 'required',
+                'name' => 'required',
+                'email' => 'required',
+                'phone_no' => 'required',
+                'month' => 'required',
+                'start_year' => 'required',
+                'end_year' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
 
             $id = Helper::decode($data['id']);
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $designation = $data['designation'];
             $name = $data['name'];
             $email = $data['email'];
             $phone_no = $data['phone_no'];
+            $allowance = $data['allowance'];
             $month = $data['month'];
             $start_year = $data['start_year'];
             $end_year = $data['end_year'];
@@ -273,6 +290,7 @@ class AgmController extends BaseController {
                 $new_line .= $name != $ajk_detail->name? "name, " : "";
                 $new_line .= $email != $ajk_detail->email? "email, " : "";
                 $new_line .= $phone_no != $ajk_detail->phone_no? "phone no, " : "";
+                $new_line .= $allowance != $ajk_detail->allowance? "allowance, " : "";
                 $new_line .= $month != $ajk_detail->month? "month, " : "";
                 $new_line .= $start_year != $ajk_detail->start_year? "start year, " : "";
                 $new_line .= $end_year != $ajk_detail->end_year? "end year, " : "";
@@ -283,11 +301,13 @@ class AgmController extends BaseController {
                 }
                 /** End Arrange audit fields changes */
 
-                $ajk_detail->file_id = $file_id;
+                $ajk_detail->file_id = !empty($file_id)? $file_id : $ajk_detail->file_id;
+                $ajk_detail->strata_id = !empty($strata_id)? $strata_id : Strata::where('file_id', $ajk_detail->file_id)->first()->getKey();
                 $ajk_detail->designation = $designation;
                 $ajk_detail->name = $name;
                 $ajk_detail->email = $email;
                 $ajk_detail->phone_no = $phone_no;
+                $ajk_detail->allowance = $allowance;
                 $ajk_detail->month = $month;
                 $ajk_detail->start_year = $start_year;
                 $ajk_detail->end_year = $end_year;
@@ -490,20 +510,6 @@ class AgmController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'desc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('year', 'desc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'desc')->get();
-            }
-        }
-
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $nationality = Nationality::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(31));
@@ -514,7 +520,6 @@ class AgmController extends BaseController {
             'main_nav_active' => 'agm_main',
             'sub_nav_active' => 'agmpurchasesub_list',
             'user_permission' => $user_permission,
-            'files' => $files,
             'race' => $race,
             'nationality' => $nationality,
             'image' => ''
@@ -526,8 +531,25 @@ class AgmController extends BaseController {
     public function submitPurchaser() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'file_id' => 'required',
+                'unit_no' => 'required',
+                'owner_name' => 'required',
+                'race' => 'required',
+                'nationality' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
 
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id']? $data['strata_id'] : Strata::where('file_id', $data['file_id'])->first()->getKey();
             $unit_no = $data['unit_no'];
             $unit_share = $data['unit_share'];
             $owner_name = $data['owner_name'];
@@ -554,6 +576,7 @@ class AgmController extends BaseController {
             if (count($checkFile) > 0) {
                 $buyer = new Buyer();
                 $buyer->file_id = $file_id;
+                $buyer->strata_id = $strata_id;
                 $buyer->unit_no = $unit_no;
                 $buyer->unit_share = $unit_share;
                 $buyer->owner_name = $owner_name;
@@ -652,6 +675,7 @@ class AgmController extends BaseController {
         if (Request::ajax()) {
 
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $unit_no = $data['unit_no'];
             $unit_share = $data['unit_share'];
             $owner_name = $data['owner_name'];
@@ -709,6 +733,7 @@ class AgmController extends BaseController {
                     /** End Arrange audit fields changes */
 
                     $buyer->file_id = $file_id;
+                    $buyer->strata_id = $strata_id;
                     $buyer->unit_no = $unit_no;
                     $buyer->unit_share = $unit_share;
                     $buyer->owner_name = $owner_name;
@@ -1072,6 +1097,7 @@ class AgmController extends BaseController {
         if (Request::ajax()) {
 
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $unit_no = $data['unit_no'];
             $tenant_name = $data['tenant_name'];
             $ic_company_no = $data['ic_company_no'];
@@ -1097,6 +1123,7 @@ class AgmController extends BaseController {
             if (count($checkFile) > 0) {
                 $tenant = new Tenant();
                 $tenant->file_id = $file_id;
+                $tenant->strata_id = $strata_id;
                 $tenant->unit_no = $unit_no;
                 $tenant->tenant_name = $tenant_name;
                 $tenant->ic_company_no = $ic_company_no;
@@ -1194,6 +1221,7 @@ class AgmController extends BaseController {
         if (Request::ajax()) {
 
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $unit_no = $data['unit_no'];
             $tenant_name = $data['tenant_name'];
             $ic_company_no = $data['ic_company_no'];
@@ -1249,6 +1277,7 @@ class AgmController extends BaseController {
                     /** End Arrange audit fields changes */
 
                     $tenant->file_id = $file_id;
+                    $tenant->strata_id = $strata_id;
                     $tenant->unit_no = $unit_no;
                     $tenant->tenant_name = $tenant_name;
                     $tenant->ic_company_no = $ic_company_no;
@@ -1725,6 +1754,7 @@ class AgmController extends BaseController {
         if (Request::ajax()) {
 
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $agm_date = $data['agm_date'];
             $agm = $data['agm'];
             $agm_file_url = $data['agm_file_url'];
@@ -1765,6 +1795,7 @@ class AgmController extends BaseController {
 
             $agm_detail = new MeetingDocument();
             $agm_detail->file_id = $file_id;
+            $agm_detail->strata_id = $strata_id;
             $agm_detail->agm_date = $agm_date;
             $agm_detail->agm = $agm;
             if (!empty($agm_file_url)) {
@@ -1936,6 +1967,7 @@ class AgmController extends BaseController {
 
             $id = Helper::decode($data['id']);
             $file_id = $data['file_id'];
+            $strata_id = $data['strata_id'];
             $agm_date = $data['agm_date'];
             $agm = $data['agm'];
             $agm_file_url = $data['agm_file_url'];
@@ -2024,6 +2056,7 @@ class AgmController extends BaseController {
                 /** End Arrange audit fields changes */
 
                 $agm_detail->file_id = $file_id;
+                $agm_detail->strata_id = $strata_id;
                 $agm_detail->agm_date = $agm_date;
                 $agm_detail->agm = $agm;
                 if (!empty($agm_file_url)) {
@@ -2280,6 +2313,7 @@ class AgmController extends BaseController {
 
                 $data_raw = array(
                     (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
+                    (!empty($documents->file_id) ? $documents->file->strata->name : '<i>(not set)</i>'),
                     $documents->type->name,
                     $documents->name,
                     $is_hidden,
@@ -2443,6 +2477,7 @@ class AgmController extends BaseController {
                 
                 $document = new Document();
                 $document->file_id = Helper::decode($data['file_id']);
+                $document->strata_id = $data['strata_id'];
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];
@@ -2540,6 +2575,7 @@ class AgmController extends BaseController {
                 /** End Arrange audit fields changes */
 
                 $document->file_id = $data['file_id'];
+                $document->strata_id = $data['strata_id'];
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];

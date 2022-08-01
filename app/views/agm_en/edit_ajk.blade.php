@@ -1,4 +1,4 @@
-@extends('layout.english_layout.default')
+@extends('layout.english_layout.default_custom')
 
 @section('content')
 
@@ -33,97 +33,113 @@ foreach ($user_permission as $permission) {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
-                                        <select id="file_id" class="form-control select2">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_id" name="file_id" class="form-control" data-placeholder="{{ $ajk_details->file_id? $ajk_details->file->file_no : trans('app.forms.please_select') }}">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($files as $file)
-                                            <option value="{{$file->id}}" {{ ($ajk_details->file_id == $file->id ? 'selected' : '' ) }}>{{$file->file_no}}</option>
-                                            @endforeach
                                         </select>
-                                        <div id="file_id_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'file_id'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label> {{ trans('app.forms.strata') }}</label>
+                                        <select id="strata_id" name="strata_id" class="form-control" data-placeholder="{{ $ajk_details->strata_id? $ajk_details->strata->name : trans('app.forms.please_select') }}">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        </select>
+                                        @include('alert.feedback-ajax', ['field' => 'strata_id'])
+                                    </div>
+                                </div> 
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.designation') }}</label>
-                                        <select id="designation" class="form-control select2">
+                                        <select id="designation" name="designation" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($designation as $designations)
                                             <option value="{{$designations->id}}" {{ ($ajk_details->designation == $designations->id ? 'selected' : '' ) }}>{{$designations->description}}</option>
                                             @endforeach
                                         </select>
-                                        <div id="designation_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'designation'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.name') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="name" value="{{ $ajk_details->name }}"/>
-                                        <div id="name_error" style="display:none;"></div>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.name') }}" id="name" name="name" value="{{ $ajk_details->name }}"/>
+                                        @include('alert.feedback-ajax', ['field' => 'name'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.email') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{ $ajk_details->email }}"/>
-                                        <div id="email_error" style="display:none;"></div>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" name="email" value="{{ $ajk_details->email }}"/>
+                                        @include('alert.feedback-ajax', ['field' => 'email'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.phone_number') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{ $ajk_details->phone_no }}"/>
-                                        <div id="phone_no_error" style="display:none;"></div>
-                                        <div id="phone_no_invalid_error" style="display:none;"></div>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" name="phone_no" value="{{ $ajk_details->phone_no }}"/>
+                                        @include('alert.feedback-ajax', ['field' => 'phone_no'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label">{{ trans('app.forms.allowance') }}</label>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.allowance') }}" id="allowance" name="allowance" value="{{ $ajk_details->allowance }}"/>
+                                        @include('alert.feedback-ajax', ['field' => 'allowance'])
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label><span style="color: red;">*</span> {{ trans('app.forms.month') }}</label>
-                                        <select id="month" class="form-control select2">
+                                        <select id="month" name="month" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($month as $value => $months)
                                             <option value="{{ $value }}" {{ ($ajk_details->month == $value ? 'selected' : '' ) }}>{{ $months }}</option>
                                             @endforeach
                                         </select>
-                                        <div id="month_error" style="display:none;"></div>
+                                        @include('alert.feedback-ajax', ['field' => 'month'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.start_year') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.start_year') }}" id="start_year" value="{{ $ajk_details->start_year }}"/>
-                                        <div id="start_year_error" style="display:none;"></div>
-                                        <div id="start_year_invalid_error" style="display:none;"></div>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.start_year') }}" id="start_year" name="start_year" value="{{ $ajk_details->start_year }}"/>
+                                        @include('alert.feedback-ajax', ['field' => 'start_year'])
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-2">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.end_year') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.end_year') }}" id="end_year" value="{{ $ajk_details->end_year }}"/>
-                                        <div id="end_year_error" style="display:none;"></div>
-                                        <div id="end_year_invalid_error" style="display:none;"></div>
+                                        <input type="text" class="form-control" placeholder="{{ trans('app.forms.end_year') }}" id="end_year" name="end_year" value="{{ $ajk_details->end_year }}"/>
+                                        @include('alert.feedback-ajax', ['field' => 'end_year'])
                                     </div>
                                 </div>
                             </div>
@@ -132,13 +148,14 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label">{{ trans('app.forms.remarks') }}</label>
-                                        <textarea class="form-control" placeholder="{{ trans('app.forms.remarks') }}" id="remarks" rows="5">{{ $ajk_details->remarks }}</textarea>
+                                        <textarea class="form-control" placeholder="{{ trans('app.forms.remarks') }}" id="remarks" name="remarks" rows="5">{{ $ajk_details->remarks }}</textarea>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-actions">
                                 <?php if ($update_permission == 1) { ?>
+                                    <input type="hidden" id="id" name="id" value="{{ \Helper\Helper::encode($ajk_details->id) }}">
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="editAJKDetail()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location = '{{ URL::action('AgmController@AJK') }}'">{{ trans('app.forms.cancel') }}</button>
@@ -155,146 +172,92 @@ foreach ($user_permission as $permission) {
 
 <!-- Page Scripts -->
 <script>
+    $(function() {
+        $('.select2').select2();
+        $("#strata_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.strata.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    let file_id = "{{ $ajk_details->file_id }}";
+                    return {
+                        term: params.term, // search term
+                        file_id: file_id? file_id : $('#file_id').val(),
+                        type: 'id',
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+        $("#file_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.files.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    let strata_id = "{{ $ajk_details->strata_id }}";
+                    return {
+                        term: params.term, // search term
+                        strata: strata_id? strata_id : $('#strata_id').val()
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+    });
+
     function editAJKDetail() {
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#cancel_button").attr("disabled", "disabled");
-        $("#file_id_error").css("display", "none");
-        $("#designation_error").css("display", "none");
-        $("#name_error").css("display", "none");
-        $("#email_error").css("display", "none");
-        $("#phone_no_error").css("display", "none");
-        $("#phone_no_invalid_error").css("display", "none");
-        $("#month_error").css("display", "none");
-        $("#start_year_error").css("display", "none");
-        $("#start_year_invalid_error").css("display", "none");
-        $("#end_year_error").css("display", "none");
-        $("#end_year_invalid_error").css("display", "none");
-
-        var file_id = $("#file_id").val(),
-                designation = $("#designation").val(),
-                name = $("#name").val(),
-                email = $("#email").val(),
-                phone_no = $("#phone_no").val(),
-                month = $("#month").val(),
-                start_year = $("#start_year").val(),
-                end_year = $("#end_year").val(),
-                remarks = $("#remarks").val();
-
-        var error = 0;
-
-        if (file_id.trim() == "") {
-            $("#file_id_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"File No"]) }}</span>');
-            $("#file_id_error").css("display", "block");
-            error = 1;
-        }
-
-        if (designation.trim() == "") {
-            $("#designation_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Designation"]) }}</span>');
-            $("#designation_error").css("display", "block");
-            error = 1;
-        }
-
-        if (name.trim() == "") {
-            $("#name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-            $("#name_error").css("display", "block");
-            error = 1;
-        }
-
-        if (email.trim() == "") {
-            $("#email_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Email"]) }}</span>');
-            $("#email_error").css("display", "block");
-            error = 1;
-        }
-
-        if (phone_no.trim() == "") {
-            $("#phone_no_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Phone Number"]) }}</span>');
-            $("#phone_no_error").css("display", "block");
-            $("#phone_no_invalid_error").css("display", "none");
-            error = 1;
-        }
-
-        if (isNaN(phone_no)) {
-            $("#phone_no_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Phone Number"]) }}</span>');
-            $("#phone_no_invalid_error").css("display", "block");
-            $("#phone_no_error").css("display", "none");
-            error = 1;
-        }
-
-        if (month.trim() == "") {
-            $("#month_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Month"]) }}</span>');
-            $("#month_error").css("display", "block");
-            error = 1;
-        }
-
-        if (start_year.trim() == "") {
-            $("#start_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Start Year"]) }}</span>');
-            $("#start_year_error").css("display", "block");
-            $("#start_year_invalid_error").css("display", "none");
-            error = 1;
-        }
-
-        if (isNaN(start_year)) {
-            $("#start_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"Start Year"]) }}</span>');
-            $("#start_year_invalid_error").css("display", "block");
-            $("#start_year_error").css("display", "none");
-            error = 1;
-        }
-
-        if (end_year.trim() == "") {
-            $("#end_year_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"End Year"]) }}</span>');
-            $("#end_year_error").css("display", "block");
-            $("#end_year_invalid_error").css("display", "none");
-            error = 1;
-        }
-
-        if (isNaN(end_year)) {
-            $("#end_year_invalid_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required_valid", ["attribute"=>"End Year"]) }}</span>');
-            $("#end_year_invalid_error").css("display", "block");
-            $("#end_year_error").css("display", "none");
-            error = 1;
-        }
-
-        if (error == 0) {
-            $.ajax({
-                url: "{{ URL::action('AgmController@submitEditAJK') }}",
-                type: "POST",
-                data: {
-                    file_id: file_id,
-                    designation: designation,
-                    name: name,
-                    email: email,
-                    phone_no: phone_no,
-                    month: month,
-                    start_year: start_year,
-                    end_year:end_year,
-                    remarks: remarks,
-                    id: "{{ \Helper\Helper::encode($ajk_details->id) }}"
-                },
-                beforeSend: function() {
-                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-                },
-                success: function (data) {
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#cancel_button").removeAttr("disabled");
-                    if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.ajk.update') }}</span>", function () {
-                            window.location = '{{URL::action("AgmController@AJK") }}';
-                        });
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                    }
-                },
-                complete: function() {
-                    $.unblockUI();
-                },
-            });
-        } else {
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-            $("#cancel_button").removeAttr("disabled");
-        }
+        let formData = $('form').serializeArray();
+        $.ajax({
+            url: "{{ URL::action('AgmController@submitEditAJK') }}",
+            type: "POST",
+            data: formData,
+            beforeSend: function() {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                $("#loading").css("display", "inline-block");
+                $("#submit_button").attr("disabled", "disabled");
+                $("#cancel_button").attr("disabled", "disabled");
+                $.each(formData, function (key, value) {
+                    $("#" + value['name'] + "_error").children("strong").text("");
+                });
+            },
+            success: function (data) {
+                if (data.trim() == "true") {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.ajk.update') }}</span>", function () {
+                        window.location = '{{URL::action("AgmController@AJK") }}';
+                    });
+                }
+            },
+            error: function (err) {
+                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                if(err.responseJSON.errors) {
+                    $.each(err.responseJSON.errors, function (key, value) {
+                        $("#" + key + "_error").children("strong").text(value);
+                    });
+                }
+            },
+            complete: function() {
+                $.unblockUI();
+                $("#loading").css("display", "none");
+                $("#submit_button").removeAttr("disabled");
+                $("#cancel_button").removeAttr("disabled");
+            },
+        });
     }
 </script>
 <!-- End Page Scripts-->

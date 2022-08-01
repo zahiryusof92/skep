@@ -3703,14 +3703,17 @@ class AdminController extends BaseController {
             $name = $data['ajk_name'];
             $email = $data['ajk_email'];
             $phone_no = $data['ajk_phone_no'];
+            $allowance = $data['ajk_allowance'];
             $start_year = $data['ajk_start_year'];
             $end_year = $data['ajk_end_year'];
 
             $ajk_detail->file_id = $files->id;
+            $ajk_detail->strata_id = $files->strata->id;
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
             $ajk_detail->email = $email;
             $ajk_detail->phone_no = $phone_no;
+            $ajk_detail->allowance = $allowance;
             $ajk_detail->start_year = $start_year;
             $ajk_detail->end_year = $end_year;
             $ajk_detail->save();
@@ -3747,6 +3750,7 @@ class AdminController extends BaseController {
             $name = $data['ajk_name'];
             $email = $data['ajk_email'];
             $phone_no = $data['ajk_phone_no'];
+            $allowance = $data['ajk_allowance'];
             $start_year = $data['ajk_start_year'];
             $end_year = $data['ajk_end_year'];
 
@@ -3757,6 +3761,7 @@ class AdminController extends BaseController {
             $new_line .= $name != $ajk_detail->name? "name, " : "";
             $new_line .= $email != $ajk_detail->email? "email, " : "";
             $new_line .= $phone_no != $ajk_detail->phone_no? "phone no, " : "";
+            $new_line .= $allowance != $ajk_detail->allowance? "allowance, " : "";
             $new_line .= $start_year != $ajk_detail->start_year? "start year, " : "";
             $new_line .= $end_year != $ajk_detail->end_year? "end year, " : "";
             if(!empty($new_line)) {
@@ -3765,10 +3770,12 @@ class AdminController extends BaseController {
             }
             /** End Arrange audit fields changes */
 
+            $ajk_detail->strata_id = Strata::where('file_id', $ajk_detail->file_id)->first()->getKey();
             $ajk_detail->designation = $designation;
             $ajk_detail->name = $name;
             $ajk_detail->email = $email;
             $ajk_detail->phone_no = $phone_no;
+            $ajk_detail->allowance = $allowance;
             $ajk_detail->start_year = $start_year;
             $ajk_detail->end_year = $end_year;
             $ajk_detail->save();
@@ -3813,6 +3820,7 @@ class AdminController extends BaseController {
                     $ajk_details->name,
                     $ajk_details->email,
                     $ajk_details->phone_no,
+                    $ajk_details->allowance,
                     $ajk_details->start_year,
                     $ajk_details->end_year,
                     $button
@@ -4733,6 +4741,7 @@ class AdminController extends BaseController {
             if (count($checkFile) > 0) {
                 $buyer = new Buyer();
                 $buyer->file_id = $file_id;
+                $buyer->strata_id = $checkFile->strata->id;
                 $buyer->unit_no = $unit_no;
                 $buyer->unit_share = $unit_share;
                 $buyer->owner_name = $owner_name;
@@ -5310,6 +5319,7 @@ class AdminController extends BaseController {
 
             $document = new Document();
             $document->file_id = Helper::decode($data['file_id']);
+            $document->strata_id = Strata::where('file_id', Helper::decode($data['file_id']))->first()->getKey();
             $document->document_type_id = $data['document_type'];
             $document->name = $data['name'];
             $document->remarks = $data['remarks'];
@@ -6377,7 +6387,6 @@ class AdminController extends BaseController {
     public function submitUser() {
         $data = Input::all();
         if (Request::ajax()) {
-            dd($data);
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['user']['add'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
@@ -8472,6 +8481,7 @@ class AdminController extends BaseController {
 
                 $data_raw = array(
                     (!empty($defects->file_id) ? $defects->file->file_no : '<i>(not set)</i>'),
+                    (!empty($defects->file_id) ? $defects->file->strata->name : '<i>(not set)</i>'),
                     $defects->category->name,
                     $defects->name,
                     $defects->description,
@@ -8513,6 +8523,22 @@ class AdminController extends BaseController {
                     $remarks = 'Defect: ' . $defect->name . $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($defect->file_id, "Defect", $remarks);
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $defect->file->strata;
+                        $notify_data['file_id'] = $defect->file_id;
+                        $notify_data['route'] = route('defect.index');
+                        $notify_data['cob_route'] = route('defect.index');
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $defect->file->file_no;
+                        $notify_data['title'] = "Complaint";
+                        $notify_data['module'] = "Complaint";
+                        
+                        (new NotificationService())->store($notify_data, 'deleted');
+                    }
+
                     return "true";
                 } else {
                     return "false";
@@ -8539,6 +8565,22 @@ class AdminController extends BaseController {
                     $remarks = 'Defect: ' . $defect->name . ' attachement' . $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($defect->file_id, "Defect", $remarks);
 
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $defect->file->strata;
+                        $notify_data['file_id'] = $defect->file_id;
+                        $notify_data['route'] = route('defect.edit', ['id' => Helper::encode($defect->id)]);
+                        $notify_data['cob_route'] = route('defect.edit', ['id' => Helper::encode($defect->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $defect->file->file_no;
+                        $notify_data['title'] = "Complaint Attachment";
+                        $notify_data['module'] = "Complaint";
+                        
+                        (new NotificationService())->store($notify_data, 'deleted');
+                    }
+
                     return "true";
                 } else {
                     return "false";
@@ -8552,19 +8594,6 @@ class AdminController extends BaseController {
     public function addDefect() {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(45));
       
@@ -8574,7 +8603,6 @@ class AdminController extends BaseController {
             'main_nav_active' => '',
             'sub_nav_active' => 'defect_list',
             'user_permission' => $user_permission,
-            'files' => $files,
             'defectCategory' => $defectCategory,
             'image' => ""
         );
@@ -8585,13 +8613,30 @@ class AdminController extends BaseController {
     public function submitAddDefect() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'file_id' => 'required',
+                'defect_category' => 'required',
+                'name' => 'required',
+                'description' => 'required',
+                'defect_attachment_url' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
 
             $defect = new Defect();
             $defect->file_id = $data['file_id'];
+            $defect->strata_id = $data['strata_id']? $data['strata_id'] : Strata::where('file_id', $data['file_id'])->first()->getKey();
             $defect->defect_category_id = $data['defect_category'];
             $defect->name = $data['name'];
             $defect->description = $data['description'];
-            $defect->attachment_url = $data['defect_attachment'];
+            $defect->attachment_url = $data['defect_attachment_url'];
             $success = $defect->save();
 
             if ($success) {
@@ -8599,6 +8644,21 @@ class AdminController extends BaseController {
                 $remarks = 'Defect: ' . $defect->name . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($defect->file_id, "Defect", $remarks);
 
+                if(Auth::user()->isJMB()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $defect->file->strata;
+                    $notify_data['file_id'] = $defect->file_id;
+                    $notify_data['route'] = route('defect.edit', ['id' => Helper::encode($defect->id)]);
+                    $notify_data['cob_route'] = route('defect.edit', ['id' => Helper::encode($defect->id)]);
+                    $notify_data['strata'] = "You";
+                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $defect->file->file_no;
+                    $notify_data['title'] = "Complaint";
+                    $notify_data['module'] = "Complaint";
+                    
+                    (new NotificationService())->store($notify_data);
+                }
                 return "true";
             } else {
                 return "false";
@@ -8610,19 +8670,6 @@ class AdminController extends BaseController {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $defect = Defect::findOrFail(Helper::decode($id));
-        if (!Auth::user()->getAdmin()) {
-            if (!empty(Auth::user()->file_id)) {
-                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            } else {
-                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
-            }
-        }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow($defect->file_id, $defect->file->company_id, !AccessGroup::hasUpdate(45));
       
@@ -8633,7 +8680,6 @@ class AdminController extends BaseController {
             'sub_nav_active' => 'defect_list',
             'user_permission' => $user_permission,
             'defect' => $defect,
-            'files' => $files,
             'defectCategory' => $defectCategory,
             'image' => ""
         );
@@ -8644,6 +8690,22 @@ class AdminController extends BaseController {
     public function submitUpdateDefect() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'defect_category' => 'required',
+                'name' => 'required',
+                'description' => 'required',
+                'defect_attachment_url' => 'required',
+                'status' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
             $id = Helper::decode($data['id']);
 
             $defect = Defect::findOrFail($id);
@@ -8652,10 +8714,11 @@ class AdminController extends BaseController {
                 $audit_fields_changed = '';
                 $new_line = '';
                 $new_line .= $data['file_id'] != $defect->file_id? "file id, " : "";
+                $new_line .= $data['strata_id'] != $defect->strata_id? "strata id, " : "";
                 $new_line .= $data['defect_category'] != $defect->defect_category_id? "defect category, " : "";
                 $new_line .= $data['name'] != $defect->name? "name, " : "";
                 $new_line .= $data['description'] != $defect->description? "description, " : "";
-                $new_line .= $data['defect_attachment'] != $defect->attachment_url? "attachment, " : "";
+                $new_line .= $data['defect_attachment_url'] != $defect->attachment_url? "attachment, " : "";
                 $new_line .= (!empty($data['status']) && ($data['status'] != $defect->status))? "status, " : "";
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Fields : (";
@@ -8663,11 +8726,12 @@ class AdminController extends BaseController {
                 }
                 /** End Arrange audit fields changes */
 
-                $defect->file_id = $data['file_id'];
+                $defect->file_id = !empty($data['file_id'])? $data['file_id'] : $defect->file_id;
+                $defect->strata_id = !empty($data['strata_id'])? $data['strata_id'] : Strata::where('file_id', $defect->file_id)->first()->getKey();
                 $defect->defect_category_id = $data['defect_category'];
                 $defect->name = $data['name'];
                 $defect->description = $data['description'];
-                $defect->attachment_url = $data['defect_attachment'];
+                $defect->attachment_url = $data['defect_attachment_url'];
                 if ($data['status']) {
                     $defect->status = $data['status'];
                 }
@@ -8678,6 +8742,21 @@ class AdminController extends BaseController {
                     if(!empty($audit_fields_changed)) {
                         $remarks = 'Defect: ' . $defect->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($defect->file_id, "Defect", $remarks);
+                    }
+                    if(Auth::user()->isJMB()) {
+                        /**
+                         * Add Notification & send email to COB and JMB
+                         */
+                        $not_draft_strata = $defect->file->strata;
+                        $notify_data['file_id'] = $defect->file_id;
+                        $notify_data['route'] = route('defect.edit', ['id' => Helper::encode($defect->id)]);
+                        $notify_data['cob_route'] = route('defect.edit', ['id' => Helper::encode($defect->id)]);
+                        $notify_data['strata'] = "your";
+                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $defect->file->file_no;
+                        $notify_data['title'] = "Complaint";
+                        $notify_data['module'] = "Complaint";
+                        
+                        (new NotificationService())->store($notify_data, 'updated');
                     }
 
                     return "true";
@@ -8952,6 +9031,42 @@ class AdminController extends BaseController {
         }
     }
 
+    public function deleteInsuranceFile() {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['file_delete'];
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            // if(empty($response->status) == false && $response->status == 200) {
+
+            $id = Helper::decode($data['id']);
+
+            $insurance = Insurance::findOrFail($id);
+            if ($insurance) {
+                $insurance->filename = "";
+                $deleted = $insurance->save();
+
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'Insurance (' . $insurance->id . ') file' . $this->module['audit']['text']['data_deleted'];
+                    $this->addAudit($insurance->file->id, "Insurance", $remarks);
+
+                    return "true";
+                } else {
+                    return "false";
+                }
+            } else {
+                return "false";
+            }
+            // } else {
+            //     return "false";
+            // }
+        }
+    }
+
     public function addInsurance($id) {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -9044,6 +9159,19 @@ class AdminController extends BaseController {
     public function submitAddInsurance() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'file_id' => 'required',
+                'insurance_provider' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
 
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['add'];
@@ -9053,6 +9181,7 @@ class AdminController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
             $insurance = new Insurance();
             $insurance->file_id = Helper::decode($data['file_id']);
+            $insurance->strata_id = !empty($data['strata_id'])? $data['strata_id'] : Strata::where('file_id', Helper::decode($data['file_id']))->first()->getKey();
             $insurance->insurance_provider_id = $data['insurance_provider'];
             $insurance->public_liability_coverage = $data['public_liability_coverage'];
             $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
@@ -9062,6 +9191,7 @@ class AdminController extends BaseController {
             $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
             $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
             $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
+            $insurance->filename = $data['filename'];
             $insurance->remarks = $data['remarks'];
             $success = $insurance->save();
 
@@ -9190,6 +9320,18 @@ class AdminController extends BaseController {
     public function submitUpdateInsurance() {
         $data = Input::all();
         if (Request::ajax()) {
+            $rules = array(
+                'insurance_provider' => 'required',
+            );
+            $validator = Validator::make($data, $rules);
+    
+            if ($validator->fails()) {
+                return Response::json([
+                    'error' => true, 
+                    'errors' => $validator->errors(), 
+                    'message' => trans('Validation Fail')
+                ], 422);
+            }
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['file']['cob']['insurance']['update'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
@@ -9213,6 +9355,7 @@ class AdminController extends BaseController {
                 $new_line .= $data['fic_premium_per_year'] != $insurance->fic_premium_per_year? "fic premium per year, " : "";
                 $new_line .= $data['fic_validity_from'] != $insurance->fic_validity_from? "fic validity from, " : "";
                 $new_line .= $data['fic_validity_to'] != $insurance->fic_validity_to? "fic validity to, " : "";
+                $new_line .= $data['filename'] != $insurance->filename? "file, " : "";
                 $new_line .= $data['remarks'] != $insurance->remarks? "remarks, " : "";
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Insurance : (";
@@ -9220,7 +9363,8 @@ class AdminController extends BaseController {
                 }
                 /** End Arrange audit fields changes */
 
-                $insurance->file_id = Helper::decode($data['file_id']);
+                $insurance->file_id = !empty($data['file_id'])? Helper::decode($data['file_id']) : $insurance->file_id;
+                $insurance->strata_id = !empty($data['strata_id'])? $data['strata_id'] : Strata::where('file_id', $insurance->file_id)->first()->getKey();
                 $insurance->insurance_provider_id = $data['insurance_provider'];
                 $insurance->public_liability_coverage = $data['public_liability_coverage'];
                 $insurance->plc_premium_per_year = $data['plc_premium_per_year'];
@@ -9230,6 +9374,7 @@ class AdminController extends BaseController {
                 $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
                 $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
                 $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
+                $insurance->filename = $data['filename'];
                 $insurance->remarks = $data['remarks'];
                 $success = $insurance->save();
 

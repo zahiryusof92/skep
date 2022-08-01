@@ -4,6 +4,11 @@ class Finance extends Eloquent {
 
     protected $table = 'finance_file';
 
+    protected $fillable = [
+        'file_id',
+        'strata_id',
+    ];
+    
     public static function monthList() {
         $month = [
             '01' => 'JAN',
@@ -25,6 +30,10 @@ class Finance extends Eloquent {
 
     public function file() {
         return $this->belongsTo('Files', 'file_id');
+    }
+
+    public function strata() {
+        return $this->belongsTo('Strata', 'strata_id');
     }
 
     public function financeSummary() {

@@ -26,6 +26,31 @@ class DeveloperController extends BaseController {
         }
     }
 
+    public function getOption() {
+        if(Request::ajax()) {
+            $request = Request::all();
+            $options = [];
+            $developers = Developer::self()
+                            ->where(function($query) use($request) {
+                                if(!empty($request['term'])) {
+                                    $query->where('name', "like", "%". $request['term'] ."%");
+                                }
+                            })
+                            ->chunk(200, function($models) use(&$options)
+                            {
+                                foreach ($models as $model)
+                                {
+                                    array_push($options, ['id' => $model->id, 'text' => $model->name]);
+                                }
+                            });
+                            
+            return Response::json(['success' => true, 'message' => trans('Success'), 'results' => $options]);
+
+        }
+
+        return Response::json(['error' => true, 'message' => trans('Fail')]);
+    }
+
     public function getAnalyticData() {
         try {
             $request = Request::all();

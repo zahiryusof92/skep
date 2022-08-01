@@ -216,6 +216,13 @@ foreach ($user_permission as $permission) {
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ trans('app.forms.strata') }}</label>
+                                                <select id="strata" name="strata" class="form-control select2" data-ajax--url="{{ route('v3.api.strata.getOption') }}" data-ajax--cache="true">
+                                                </select>
+                                            </div>
+                                        </div> 
                                         @endif
                                     </div>
                                 </form>
@@ -269,6 +276,10 @@ foreach ($user_permission as $permission) {
 
                     $('#company').on('change', function () {
                         oTable.columns(2).search(this.value).draw();
+                    });
+
+                    $('#strata').on('change', function () {
+                        oTable.columns(1).search(this.value).draw();
                     });
                 });
             </script>

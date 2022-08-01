@@ -1,4 +1,4 @@
-@extends('layout.english_layout.default')
+@extends('layout.english_layout.default_custom')
 
 @section('content')
 
@@ -23,7 +23,7 @@ foreach ($user_permission as $permission) {
             <section class="panel panel-pad">
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
-                        <form id="add_finance_support" class="form-horizontal" name="add_fileprefix">
+                        <form id="add_finance_support" class="form-horizontal">
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <label class="form-control-label" style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
@@ -35,13 +35,22 @@ foreach ($user_permission as $permission) {
                                     <label><span style="color: red;">*</span> {{ trans('app.forms.file_no') }}</label>
                                 </div>
                                 <div class="col-md-6">
-                                    <select id="file_id" class="form-control select2">
+                                    <select id="file_id" name="file_id" class="form-control" data-placeholder="{{ $financesupportdata->file_id? $financesupportdata->file->file_no : trans('app.forms.please_select') }}">
                                         <option value="">{{ trans('app.forms.please_select') }}</option>
-                                        @foreach ($file_no as $files)
-                                        <option value="{{$files->id}}" {{($files->id == $financesupportdata->file_id ? " selected" : "")}}>{{$files->file_no}}</option>
-                                        @endforeach
                                     </select>
-                                    <div id="file_no_error" style="display:none;"></div>
+                                    @include('alert.feedback-ajax', ['field' => 'file_id'])
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label>{{ trans('app.forms.strata') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select id="strata_id" name="strata_id" class="form-control" data-placeholder="{{ $financesupportdata->strata_id? $financesupportdata->strata->name : trans('app.forms.please_select') }}">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    </select>
+                                    @include('alert.feedback-ajax', ['field' => 'strata_id'])
                                 </div>
                             </div>
 
@@ -49,19 +58,19 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-12">
                                     <label><span style="color: red;">*</span> {{ trans('app.forms.name') }}</label>
                                 </div>
-                                <div class="col-md-8">
-                                    <input id="name" class="form-control" type="text" value="{{ $financesupportdata->name }}">
-                                    <div id="name_error" style="display:none;"></div>
+                                <div class="col-md-6">
+                                    <input id="name" name="name" class="form-control" type="text" value="{{ $financesupportdata->name }}">
+                                    @include('alert.feedback-ajax', ['field' => 'name'])
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <label><span style="color: red;">*</span> {{ trans("app.forms.date") }}</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <input id="date" class="form-control" type="text" value="{{ date('d/m/Y', strtotime($financesupportdata->date)) }}">
-                                    <input type="hidden" name="mirror_date" id="mirror_date" value="{{ $financesupportdata->date }}">
-                                    <div id="date_error" style="display:none;"></div>
+                                <div class="col-md-6">
+                                    <input id="mirror_date" class="form-control" type="text" value="{{ date('d/m/Y', strtotime($financesupportdata->date)) }}">
+                                    <input type="hidden" id="date" name="date" value="{{ $financesupportdata->date }}">
+                                    @include('alert.feedback-ajax', ['field' => 'date'])
                                 </div>
                             </div>
 
@@ -69,18 +78,18 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-12">
                                     <label><span style="color: red;">*</span> {{ trans("app.forms.amount") }}</label>
                                 </div>
-                                <div class="col-md-4">
-                                    <input id="amount" class="form-control" placeholder="0.00" type="text" value="{{ $financesupportdata->amount }}">
-                                    <div id="amount_error" style="display:none;"></div>
+                                <div class="col-md-6">
+                                    <input id="amount" name="amount" class="form-control" placeholder="0.00" type="text" value="{{ $financesupportdata->amount }}">
+                                    @include('alert.feedback-ajax', ['field' => 'amount'])
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <label><span style="color: red;">*</span> {{ trans("app.forms.remarks") }}</label>
                                 </div>
-                                <div class="col-md-8">
-                                    <textarea name="remark" id="remark" class="form-control" rows="5">{{ $financesupportdata->remark }}</textarea>
-                                    <div id="remark_error" style="display:none;"></div>
+                                <div class="col-md-6">
+                                    <textarea id="remark" name="remark" class="form-control" rows="5">{{ $financesupportdata->remark }}</textarea>
+                                    @include('alert.feedback-ajax', ['field' => 'remark'])
                                 </div>
                             </div>
                             <div class="form-actions">
@@ -102,7 +111,50 @@ foreach ($user_permission as $permission) {
 <!-- Page Scripts -->
 <script>
     $(function () {
-        $('#date').datetimepicker({
+        $("#strata_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.strata.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    return {
+                        term: params.term, // search term
+                        file_id: $('#file_id').val(),
+                        type: 'id',
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+        $("#file_id").select2({
+            ajax: {
+                url: "{{ route('v3.api.files.getOption') }}",
+                type: "get",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                allowClear: true,
+                data: function(params) {
+                    return {
+                        term: params.term, // search term
+                        strata: $('#strata_id').val()
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response.results
+                    };
+                }
+            }
+        });
+        $('#mirror_date').datetimepicker({
             widgetPositioning: {
                 horizontal: 'left'
             },
@@ -117,99 +169,50 @@ foreach ($user_permission as $permission) {
             format: 'DD/MM/YYYY',
         }).on('dp.change', function () {
             let currentDate = $(this).val().split('/');
-//            console.log(currentDate);
-            $("#mirror_date").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
+            $("#date").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
         });
     });
 
     function submitFinanceSupport() {
-        $("#loading").css("display", "inline-block");
-        $("#submit_button").attr("disabled", "disabled");
-        $("#cancel_button").attr("disabled", "disabled");
-        $("#file_no_error").css("display", "none");
-        $("#date_error").css("display", "none");
-        $("#name_error").css("display", "none");
-        $("#amount_error").css("display", "none");
-        $("#remark_error").css("display", "none");
-
-        var file_no = $("#file_id").val(),
-                date = $("#mirror_date").val(),
-                name = $("#name").val(),
-                amount = $("#amount").val(),
-                remark = $("#remark").val(),
-                id = $("#id").val();
-
-        var error = 0;
-
-        if (file_no.trim() == "") {
-            $("#file_no_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"File Number"]) }}</span>');
-            $("#file_no_error").css("display", "block");
-            error = 1;
-        }
-
-        if (date.trim() == "") {
-            $("#date_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Date"]) }}</span>');
-            $("#date_error").css("display", "block");
-            error = 1;
-        }
-
-        if (name.trim() == "") {
-            $("#name_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Name"]) }}</span>');
-            $("#name_error").css("display", "block");
-            error = 1;
-        }
-
-        if (amount.trim() == "") {
-            $("#amount_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Amount"]) }}</span>');
-            $("#amount_error").css("display", "block");
-            error = 1;
-        }
-
-        if (remark.trim() == "") {
-            $("#remark_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Remarks"]) }}</span>');
-            $("#remark_error").css("display", "block");
-            error = 1;
-        }
-
-        if (error == 0) {
-            $.ajax({
-                url: "{{ URL::action('FinanceController@updateFinanceSupport') }}",
-                type: "POST",
-                data: {
-                    file_id: file_no,
-                    date: date,
-                    name: name,
-                    remark: remark,
-                    amount: amount,
-                    id: id
-                },
-                beforeSend: function() {
-                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-                },
-                success: function (data) {
-                    $("#loading").css("display", "none");
-                    $("#submit_button").removeAttr("disabled");
-                    $("#cancel_button").removeAttr("disabled");
-                    if (data.trim() == "true") {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.finance_file.update') }}</span>", function () {
-                            window.location = '{{URL::action("FinanceController@financeSupport") }}';
-                        });
-                    } else if (data.trim() == "file_already_exists") {
-                        $("#file_already_exists_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"file"]) }}</span>');
-                        $("#file_already_exists_error").css("display", "block");
-                    } else {
-                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                    }
-                },
-                complete: function() {
-                    $.unblockUI();
-                },
-            });
-        } else {
-            $("#loading").css("display", "none");
-            $("#submit_button").removeAttr("disabled");
-            $("#cancel_button").removeAttr("disabled");
-        }
+        let formData = $('form').serializeArray();
+        $.ajax({
+            url: "{{ URL::action('FinanceController@updateFinanceSupport') }}",
+            type: "POST",
+            data: formData,
+            beforeSend: function() {
+                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                $("#loading").css("display", "inline-block");
+                $("#submit_button").attr("disabled", "disabled");
+                $("#cancel_button").attr("disabled", "disabled");
+                $.each(formData, function (key, value) {
+                    $("#" + value['name'] + "_error").children("strong").text("");
+                });
+            },
+            success: function (data) {
+                if (data.trim() == "true") {
+                    bootbox.alert("<span style='color:green;'>{{ trans('app.successes.finance_file.update') }}</span>", function () {
+                        window.location = '{{URL::action("FinanceController@financeSupport") }}';
+                    });
+                } else if (data.trim() == "file_already_exists") {
+                    $("#file_already_exists_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.exist2", ["attribute"=>"file"]) }}</span>');
+                    $("#file_already_exists_error").css("display", "block");
+                }
+            },
+            error: function (err) {
+                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                if(err.responseJSON.errors) {
+                    $.each(err.responseJSON.errors, function (key, value) {
+                        $("#" + key + "_error").children("strong").text(value);
+                    });
+                }
+            },
+            complete: function() {
+                $.unblockUI();
+                $("#loading").css("display", "none");
+                $("#submit_button").removeAttr("disabled");
+                $("#cancel_button").removeAttr("disabled");
+            },
+        });
     }
 </script>
 

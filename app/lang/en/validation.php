@@ -101,6 +101,9 @@ return array(
 	|
 	*/
 
-	'attributes' => array(),
+	'attributes' => array(
+		'file_id' => 'file no',
+		'strata_id' => 'strata',
+	),
 
 );
