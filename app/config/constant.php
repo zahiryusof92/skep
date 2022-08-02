@@ -23,7 +23,7 @@ return [
                 'status_active' => " status has been updated to Active.",
                 'status_inactive' => " status has been updated to In-Active.",
                 'status_activate' => " status has been updated to Activate.",
-                'status_deactivate' => " status has been updated to Deactivate.", 
+                'status_deactivate' => " status has been updated to Deactivate.",
             ]
         ],
         'cob' => [
@@ -853,6 +853,92 @@ return [
                 ],
             ],
         ],
+        "eservice" => [
+            'name' => 'eservice',
+            "cob" => [
+                'mbpj' => [
+                    'type' => [
+                        'surat_kebocoran_antara_tingkat' => [
+                            'name' => 'surat_kebocoran_antara_tingkat',
+                            'title' => trans('app.eservice.surat_kebocoran_antara_tingkat'),
+                            'only' => [
+                                'bill_no',
+                                'date',
+                                'building_name',
+                                'management_name',
+                                'management_address',
+                                'management_phone',
+                                'cover_letter'
+                            ],
+                        ],
+                        'surat_peringatan_tunggakan_caj' => [
+                            'name' => 'surat_peringatan_tunggakan_caj',
+                            'title' => trans('app.eservice.surat_peringatan_tunggakan_caj'),
+                            'only' => [
+                                'bill_no',
+                                'date',
+                                'building_name',
+                                'management_name',
+                                'management_address',
+                                'management_phone',
+                                'cover_letter',
+                                'reminder_type'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'fields' => [
+                'bill_no' => [
+                    'label' => trans('app.forms.bill_no'),
+                    'name' => 'bill_no',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'date' => [
+                    'label' => trans('app.forms.date'),
+                    'name' => 'date',
+                    'type' => 'date',
+                    'required' => true
+                ],
+                'building_name' => [
+                    'label' => trans('app.forms.building_name'),
+                    'name' => 'building_name',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'management_name' => [
+                    'label' => trans('app.forms.management_name'),
+                    'name' => 'management_name',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'management_address' => [
+                    'label' => trans('app.forms.management_address'),
+                    'name' => 'management_address',
+                    'type' => 'textarea',
+                    'required' => true
+                ],
+                'management_phone' => [
+                    'label' => trans('app.forms.management_phone'),
+                    'name' => 'management_phone',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'cover_letter' => [
+                    'label' => trans('app.forms.cover_letter'),
+                    'name' => 'cover_letter',
+                    'type' => 'file',
+                    'required' => true
+                ],
+                'reminder_type' => [
+                    'label' => trans('app.forms.reminder_type'),
+                    'name' => 'reminder_type',
+                    'type' => 'radio',
+                    'required' => true
+                ]
+            ],
+        ],
         'file_draft_reject' => [
             'name' => 'file_draft_reject',
             'type' => [
@@ -1001,7 +1087,7 @@ return [
                         'update' => 'file/cob/insurance/update',
                         'delete' => 'file/cob/insurance/delete',
                     ],
-                    
+
                 ],
             ],
             'user' => [

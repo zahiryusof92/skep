@@ -522,11 +522,27 @@ class HomeController extends BaseController {
         }
     }
 
-    public function getMemoHome() {
+    public function getMemoHome()
+    {
         $today = date('Y-m-d');
 
         if (!Auth::user()->getAdmin()) {
-            $memo = Memo::where('publish_date', '<=', $today)
+            if (!empty(Auth::user()->file_id)) {
+                $memo = Memo::where('publish_date', '<=', $today)
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where(function ($query) {
+                        $query->where('company_id', Auth::user()->company_id)->orWhere('company_id', 99);
+                    })
+                    ->where(function ($query) {
+                        $query->where('file_id', Auth::user()->file_id)->whereNotNull('file_id');
+                        $query->orWhereNull('file_id');
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0);
+            } else {
+                $memo = Memo::where('publish_date', '<=', $today)
                     ->where(function ($query) use ($today) {
                         $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
                     })
@@ -535,35 +551,36 @@ class HomeController extends BaseController {
                     })
                     ->where('is_active', 1)
                     ->where('is_deleted', 0);
+            }
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $memo = Memo::where('publish_date', '<=', $today)
-                        ->where(function ($query) use ($today) {
-                            $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
-                        })
-                        ->where('is_active', 1)
-                        ->where('is_deleted', 0);
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0);
             } else {
                 $memo = Memo::where('publish_date', '<=', $today)
-                        ->where(function ($query) use ($today) {
-                            $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
-                        })
-                        ->where(function ($query) {
-                            $query->where('company_id', Session::get('admin_cob'))->orWhere('company_id', 99);
-                        })
-                        ->where('is_active', 1)
-                        ->where('is_deleted', 0);
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where(function ($query) {
+                        $query->where('company_id', Session::get('admin_cob'))->orWhere('company_id', 99);
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0);
             }
         }
 
         return Datatables::of($memo)
-                        ->editColumn('memo_date', function ($model) {
-                            return ($model->memo_date ? date('d-M-Y', strtotime($model->memo_date)) : '');
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.view') . '</button>';
-                        })
-                        ->make(true);
+            ->editColumn('memo_date', function ($model) {
+                return ($model->memo_date ? date('d-M-Y', strtotime($model->memo_date)) : '');
+            })
+            ->addColumn('action', function ($model) {
+                return '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.view') . '</button>';
+            })
+            ->make(true);
     }
 
     public function getMemoDetails() {

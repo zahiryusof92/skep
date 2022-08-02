@@ -1007,6 +1007,12 @@ Route::group(array('before' => 'authMember'), function() {
     Route::resource('cob_letter', 'CobLetterController');
 
     /**
+     * EService
+     */
+    Route::get('eservice/getForm', array('as' => 'eservice.getForm', 'uses' => 'EServiceController@getForm'));
+    Route::resource('eservice', 'EServiceController');
+
+    /**
      * API Client
      */
     Route::resource('clients', 'APIClientController');
@@ -1146,6 +1152,7 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('tenant/getListing', 'Api\TenantController@getListing');
         Route::get('tenant/getAnalyticData', 'Api\TenantController@getAnalyticData');
         Route::get('cob_letter/getTypeOptions', array('as' => 'v3.api.cob_letter.getTypeOptions', 'uses' => 'Api\COBLetterController@getTypeOptions'));
+        Route::get('eservice/getTypeOptions', array('as' => 'v3.api.eservice.getTypeOptions', 'uses' => 'Api\EServiceController@getTypeOptions'));
     });
 
     Route::group(array('prefix' => 'finance'), function() {

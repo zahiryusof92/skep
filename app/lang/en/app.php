@@ -235,6 +235,12 @@ return array(
         "cob_letter" => array(
             "name" => "COB Letter",
         ),
+        "eservice" => array(
+            "name" => "EServices",
+            "name1" => "-Service",
+            "list" => "eServices",
+            "create" => "New Application",
+        ),
         'api' => array(
             'name' => 'API',
             'client' => 'API Client',
@@ -694,6 +700,23 @@ return array(
         'accepted' => 'Accepted',
         'rejected' => 'Rejected',
         'old' => 'Old',
+        'allowance' => 'Allowance',
+        'file_draft_latest_date' => "Tarikh VP",
+        'file_draft_latest_date' => "File Draft Latest Date",
+        'latest_agm_date' => "Latest AGM Date",
+        'latest_insurance_date' => "Latest Insurance Date",
+        'jmb_date_formed' => "JMB Date Formed",
+        'mc_date_formed' => "MC Date Formed",
+        'total_floor' => "Total Floor",
+        'block' => "Block",
+        "files_no_management" => "Fail Tiada Pengurusan",
+        "files_no_unit" => "Fail Tiada Petak",
+        'activities' => "Activities",
+        'audit_by' => "Audit By",
+        'management_name' => 'Management Name',
+        'management_address' => 'Management Address',
+        'management_phone' => 'Management Phone',
+        'cover_letter' => 'Cover Letter',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1172,4 +1195,8 @@ return array(
         'approved' => 'Approved',
         'rejected' => 'Rejected',
     ],
+    'eservice' => [
+        'surat_kebocoran_antara_tingkat' => 'Surat Kebocoran Antara Tingkat',
+        'surat_peringatan_tunggakan_caj' => 'Surat Peringatan Tunggakan Caj'
+    ]
 );

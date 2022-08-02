@@ -212,6 +212,24 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Auth::user()->isJMB())
+            <li class="left-menu-list-submenu" id="eservice_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-recycle">
+                        <!-- -->
+                    </i>
+                    <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span>
+                </a>
+                <ul class="left-menu-list list-unstyled" id="eservice_main">
+                    <li class="left-menu-list-link" id="eservice_create">
+                        <a class="left-menu-link" href="{{ route('eservice.create') }}">
+                            {{ trans('app.menus.eservice.create') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+
             @if (Module::hasAccessModule("API Client"))
             <li class="left-menu-list-submenu" id="api_panel">
                 <a class="left-menu-link" href="javascript: void(0);">

@@ -30,6 +30,7 @@ foreach ($user_permission as $permission) {
                                     </div>
                                 </div>
                             </div>
+                            
                             @if (Auth::user()->getAdmin())
                             <div class="row">
                                 <div class="col-md-6">
@@ -50,6 +51,24 @@ foreach ($user_permission as $permission) {
                             @else
                             <input type="hidden" id="company" name="company" value="{{ Auth::user()->company_id }}"/>
                             @endif
+
+                            @if ($fileList)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_id" name="file_id" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($fileList as $id => $name)
+                                            <option value="{{ $id }}" {{($memo->file_id == $id ? " selected" : "")}}>{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_id_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -64,6 +83,7 @@ foreach ($user_permission as $permission) {
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -293,6 +313,7 @@ foreach ($user_permission as $permission) {
         $("#cancel_button").attr("disabled", "disabled");
 
         var company = $("#company").val(),
+                file = $("#file_id").val(),
                 memo_type = $("#memo_type").val(),
                 memo_date = $("#memo_date").val(),
                 publish_date = $("#publish_date").val(),
@@ -347,6 +368,7 @@ foreach ($user_permission as $permission) {
                 url: "{{ URL::action('AdminController@submitUpdateMemo') }}",
                 type: "POST",
                 data: {
+                    file: file,
                     company: company,
                     memo_type: memo_type,
                     memo_date: memo_date,

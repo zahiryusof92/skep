@@ -6924,7 +6924,9 @@ class AdminController extends BaseController {
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
-        $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
+
+        $fileList = Files::fileList();
+        $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();        
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(7));
 
         $viewData = array(
@@ -6934,6 +6936,7 @@ class AdminController extends BaseController {
             'sub_nav_active' => 'memo_maintenence_list',
             'user_permission' => $user_permission,
             'cob' => $cob,
+            'fileList' => $fileList,
             'memotype' => $memotype,
             'image' => ""
         );
@@ -6945,6 +6948,7 @@ class AdminController extends BaseController {
         $data = Input::all();
         if (Request::ajax()) {
             $company = $data['company'];
+            $file_id = $data['file'];
             $memo_type = $data['memo_type'];
             $memo_date = $data['memo_date'];
             $publish_date = $data['publish_date'];
@@ -6957,6 +6961,7 @@ class AdminController extends BaseController {
 
             $memo = new Memo();
             $memo->company_id = $company;
+            $memo->file_id = (!empty($file_id) ? $file_id : null);
             $memo->memo_type_id = $memo_type;
             $memo->memo_date = $memo_date;
             $memo->publish_date = $publish_date;
@@ -7024,6 +7029,9 @@ class AdminController extends BaseController {
                             })
                             ->addColumn('company', function ($model) {
                                 return (($model->company_id && $model->company_id != 99) ? $model->company->short_name : trans('app.forms.all'));
+                            })
+                            ->addColumn('file_no', function ($model) {
+                                return ($model->file ? $model->file->file_no : '-');
                             })
                             ->editColumn('is_active', function ($model) {
                                 $status = trans('app.forms.inactive');
@@ -7121,6 +7129,7 @@ class AdminController extends BaseController {
             $cob = Company::where('id', Session::get('admin_cob'))->lists('name', 'id');
         }
         $memo = Memo::findOrFail(Helper::decode($id));
+        $fileList = Files::fileList();
         $memotype = MemoType::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow(0, $memo->company_id, !AccessGroup::hasAccess(7));
 
@@ -7132,6 +7141,7 @@ class AdminController extends BaseController {
             'user_permission' => $user_permission,
             'cob' => $cob,
             'memo' => $memo,
+            'fileList' => $fileList,
             'memotype' => $memotype,
             'image' => ""
         );
@@ -7144,6 +7154,7 @@ class AdminController extends BaseController {
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
             $company = $data['company'];
+            $file_id = $data['file'];
             $memo_type = $data['memo_type'];
             $memo_date = $data['memo_date'];
             $publish_date = $data['publish_date'];
@@ -7159,6 +7170,7 @@ class AdminController extends BaseController {
             $audit_fields_changed = '';
             $new_line = '';
             $new_line .= $company != $memo->company_id? "company, " : "";
+            $new_line .= $company != $memo->file_id? "file id, " : "";
             $new_line .= $memo_type != $memo->memo_type_id? "memo type, " : "";
             $new_line .= $memo_date != $memo->memo_date? "memo date, " : "";
             $new_line .= $publish_date != $memo->publish_date? "publish date, " : "";
@@ -7175,6 +7187,7 @@ class AdminController extends BaseController {
             /** End Arrange audit fields changes */
             
             $memo->company_id = $company;
+            $memo->file_id = (!empty($file_id) ? $file_id : null);
             $memo->memo_type_id = $memo_type;
             $memo->memo_date = $memo_date;
             $memo->publish_date = $publish_date;

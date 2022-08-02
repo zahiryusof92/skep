@@ -2383,4 +2383,44 @@ class Files extends Eloquent {
         return $files;
     }
 
+    public static function fileList() {
+        $files = '';
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('files.id as file_id', DB::raw("CONCAT(files.file_no,' - ', strata.name) as strata_name"))
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('files.status', 'asc')
+                    ->lists('strata_name', 'file_id');
+            } else {
+                $files = Files::join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('files.id as file_id', DB::raw("CONCAT(files.file_no,' - ', strata.name) as strata_name"))
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('files.status', 'asc')
+                    ->lists('strata_name', 'file_id');
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('files.id as file_id', DB::raw("CONCAT(files.file_no,' - ', strata.name) as strata_name"))
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('files.status', 'asc')
+                    ->lists('strata_name', 'file_id');
+            } else {
+                $files = Files::join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select('files.id as file_id', DB::raw("CONCAT(files.file_no,' - ', strata.name) as strata_name"))
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_deleted', 0)
+                    ->orderBy('files.status', 'asc')
+                    ->lists('strata_name', 'file_id');
+            }
+        }
+
+        return $files;
+    }
+
 }
