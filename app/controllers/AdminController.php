@@ -6377,7 +6377,6 @@ class AdminController extends BaseController {
     public function submitUser() {
         $data = Input::all();
         if (Request::ajax()) {
-            dd($data);
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['user']['add'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
