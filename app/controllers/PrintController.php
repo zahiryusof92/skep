@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
 use Repositories\ReportRepo;
 
-class PrintController extends BaseController {
+class PrintController extends BaseController
+{
 
     //audit trail
-    public function printAuditTrail() {
+    public function printAuditTrail()
+    {
         $data = Input::all();
-        
+
         $start = $data['start'];
         $end = $data['end'];
-        
+
         $query = DB::table('audit_trail')
-                    ->join('users', 'audit_trail.audit_by', '=', 'users.id')
-                    ->select('audit_trail.*', 'users.full_name as name');
+            ->join('users', 'audit_trail.audit_by', '=', 'users.id')
+            ->select('audit_trail.*', 'users.full_name as name');
         if (!Auth::user()->getAdmin()) {
             $query = $query->where('files.company_id', Auth::user()->company_id);
         } else {
@@ -25,15 +27,15 @@ class PrintController extends BaseController {
                 $query = $query->where('files.company_id', Session::get('admin_cob'));
             }
         }
-        if(!empty($start)) {
-            $query = $query->where('audit_trail.created_at', '>=', $start. '00:00:00');
+        if (!empty($start)) {
+            $query = $query->where('audit_trail.created_at', '>=', $start . '00:00:00');
         }
-        if(!empty($end)) {
-            $query = $query->where('audit_trail.created_at', '<=', $end. '23:59:59');
+        if (!empty($end)) {
+            $query = $query->where('audit_trail.created_at', '<=', $end . '23:59:59');
         }
-        
+
         $audit_trail = $query->orderBy('audit_trail.id', 'desc')
-                            ->get();
+            ->get();
 
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
@@ -48,42 +50,43 @@ class PrintController extends BaseController {
         return View::make('print_en.audit_trail', $viewData);
     }
 
-    public function printAuditTrailNew() {
+    public function printAuditTrailNew()
+    {
         $request = Request::all();
         $request['module'] = $request['print_module'];
         $request['date_from'] = $request['print_date_from'];
         $request['date_to'] = $request['print_date_to'];
         $data = AuditTrail::getAnalyticData($request);
         $models = AuditTrail::self()
-                ->where(function($query) use($request) {
-                    if(!empty($request['company_id'])) {
-                        $query->where('users.company_id', $request['company_id']);
-                    }
-                    if(!empty($request['role_id'])) {
-                        $query->where('users.role', $request['role_id']);
-                    }
-                    if(!empty($request['module'])) {
-                        $query->where('audit_trail.module', $request['module']);
-                    }
-                    if(!empty($request['file_id'])) {
-                        $query->where('users.file_id', $request['file_id']);
-                    }
-                    if(!empty($request['date_from']) && empty($request['date_to'])) {
-                        $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
-                        $query->where('audit_trail.created_at', '>=', $date_from);
-                    }
-                    if(!empty($request['date_to']) && empty($request['date_from'])) {
-                        $date_to = date('Y-m-d', strtotime($request['date_to']));
-                        $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
-                    }
-                    if(!empty($request['date_from']) && !empty($request['date_to'])) {
-                        $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
-                        $date_to = date('Y-m-d', strtotime($request['date_to']));
-                        $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
-                    }
-                })
-                ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no'])
-                ->get();
+            ->where(function ($query) use ($request) {
+                if (!empty($request['company_id'])) {
+                    $query->where('users.company_id', $request['company_id']);
+                }
+                if (!empty($request['role_id'])) {
+                    $query->where('users.role', $request['role_id']);
+                }
+                if (!empty($request['module'])) {
+                    $query->where('audit_trail.module', $request['module']);
+                }
+                if (!empty($request['file_id'])) {
+                    $query->where('users.file_id', $request['file_id']);
+                }
+                if (!empty($request['date_from']) && empty($request['date_to'])) {
+                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                    $query->where('audit_trail.created_at', '>=', $date_from);
+                }
+                if (!empty($request['date_to']) && empty($request['date_from'])) {
+                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                    $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                }
+                if (!empty($request['date_from']) && !empty($request['date_to'])) {
+                    $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                    $date_to = date('Y-m-d', strtotime($request['date_to']));
+                    $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                }
+            })
+            ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no'])
+            ->get();
         $viewData = array(
             'title' => trans('app.menus.reporting.audit_trail_report'),
             'panel_nav_active' => '',
@@ -97,7 +100,8 @@ class PrintController extends BaseController {
     }
 
     //file by location
-    public function printFileByLocation() {
+    public function printFileByLocation()
+    {
         $viewData = array(
             'title' => trans('app.menus.reporting.file_by_location_report'),
             'panel_nav_active' => '',
@@ -109,7 +113,8 @@ class PrintController extends BaseController {
     }
 
     //rating summary
-    public function printRatingSummary() {
+    public function printRatingSummary()
+    {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
@@ -175,7 +180,8 @@ class PrintController extends BaseController {
     }
 
     //management summary
-    public function printManagementSummary() {
+    public function printManagementSummary()
+    {
         $data = Files::getManagementSummaryCOB();
 
         $viewData = array(
@@ -191,7 +197,8 @@ class PrintController extends BaseController {
     }
 
     //cob file / management
-    public function printCobFileManagement() {
+    public function printCobFileManagement()
+    {
         $data = Files::getManagementSummaryCOB();
 
         $viewData = array(
@@ -206,7 +213,8 @@ class PrintController extends BaseController {
         return View::make('print_en.cob_file_management', $viewData);
     }
 
-    public function printOwnerTenant($id) {
+    public function printOwnerTenant($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
@@ -257,7 +265,8 @@ class PrintController extends BaseController {
         return View::make('print_en.owner_tenant', $viewData);
     }
 
-    public function printStrataProfile($id) {
+    public function printStrataProfile($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $access_permission = 0;
@@ -271,8 +280,8 @@ class PrintController extends BaseController {
             $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no')->get();
 
             $files = Files::with(['financeLatest'])
-                            ->file()
-                            ->find(Helper::decode($id));
+                ->file()
+                ->find(Helper::decode($id));
             if ($files) {
                 $pbt = '';
                 $strata_name = '';
@@ -324,6 +333,8 @@ class PrintController extends BaseController {
                     $finance_income = $finance->financeIncome;
                     $finance_report_fee = $finance->financeReport;
                     $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
+                    $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+
                     if ($finance_income) {
                         foreach ($finance_report_fee as $report) {
                             if ($report->type == 'MF') {
@@ -340,12 +351,12 @@ class PrintController extends BaseController {
                             }
                         }
                     }
-    
+
                     if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
                         $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
                     }
-    
-                    if($finance_report_fee_semasa > 0) {
+
+                    if ($finance_report_fee_semasa > 0) {
                         if ($purata_dikutip >= 80) {
                             $zone = 'BIRU';
                         } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
@@ -361,13 +372,13 @@ class PrintController extends BaseController {
                 }
             }
             $finances = Finance::with(['financeIncome', 'financeReport'])
-                            ->join('files', 'finance_file.file_id', '=', 'files.id')
-                            ->where('finance_file.file_id', $files->id)
-                            ->where('finance_file.is_active', true)
-                            ->where('finance_file.is_deleted', false)
-                            ->selectRaw('finance_file.*, files.file_no')
-                            ->orderBy('finance_file.id', 'desc')
-                            ->get();
+                ->join('files', 'finance_file.file_id', '=', 'files.id')
+                ->where('finance_file.file_id', $files->id)
+                ->where('finance_file.is_active', true)
+                ->where('finance_file.is_deleted', false)
+                ->selectRaw('finance_file.*, files.file_no')
+                ->orderBy('finance_file.id', 'desc')
+                ->get();
 
             $result = array(
                 'pbt' => $pbt,
@@ -386,7 +397,7 @@ class PrintController extends BaseController {
                 'finances' => $finances
             );
 
-//            return "<pre>" . print_r($result, true) . "</pre>";
+            //            return "<pre>" . print_r($result, true) . "</pre>";
 
             $viewData = array(
                 'title' => trans('app.menus.reporting.strata_profile'),
@@ -414,7 +425,8 @@ class PrintController extends BaseController {
     }
 
     //purchaser
-    public function printPurchaser() {
+    public function printPurchaser()
+    {
         $purchaser = array();
         $data = Input::all();
 
@@ -457,90 +469,90 @@ class PrintController extends BaseController {
 
         if (!empty($cob_company) && !empty($file_no)) {
             $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['buyer.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('files.file_no', $file_no)
-                    ->where('buyer.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['buyer.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('files.file_no', $file_no)
+                ->where('buyer.is_deleted', 0)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->orderBy('unit_no', 'ASC')
+                ->get();
         } else if (!empty($cob_company)) {
             $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['buyer.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('buyer.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['buyer.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('buyer.is_deleted', 0)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->orderBy('unit_no', 'ASC')
+                ->get();
         } else if (!empty($file_no)) {
             $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['buyer.*'])
-                    ->where('files.file_no', $file_no)
-                    ->where('buyer.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['buyer.*'])
+                ->where('files.file_no', $file_no)
+                ->where('buyer.is_deleted', 0)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->orderBy('unit_no', 'ASC')
+                ->get();
         } else {
             if (!Auth::user()->getAdmin()) {
                 if (!empty(Auth::user()->file_id)) {
                     $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('files.id', Auth::user()->file_id)
-                            ->where('files.company_id', Auth::user()->company_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 } else {
                     $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('files.company_id', Auth::user()->company_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 }
             } else {
                 if (empty(Session::get('admin_cob'))) {
                     $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 } else {
                     $purchaser = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('files.company_id', Session::get('admin_cob'))
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 }
             }
         }
@@ -565,7 +577,8 @@ class PrintController extends BaseController {
         return View::make('print_en.purchaser', $viewData);
     }
 
-    public function printTenant() {
+    public function printTenant()
+    {
         $tenant = array();
         $data = Input::all();
 
@@ -608,90 +621,90 @@ class PrintController extends BaseController {
 
         if (!empty($cob_company) && !empty($file_no)) {
             $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['tenant.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('files.file_no', $file_no)
-                    ->where('tenant.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['tenant.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('files.file_no', $file_no)
+                ->where('tenant.is_deleted', 0)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->orderBy('unit_no', 'ASC')
+                ->get();
         } else if (!empty($cob_company)) {
             $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['tenant.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('tenant.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['tenant.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('tenant.is_deleted', 0)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->orderBy('unit_no', 'ASC')
+                ->get();
         } else if (!empty($file_no)) {
             $tenant = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['tenant.*'])
-                    ->where('files.file_no', $file_no)
-                    ->where('tenant.is_deleted', 0)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->orderBy('unit_no', 'ASC')
-                    ->get();
+                ->join('company', 'files.company_id', '=', 'company.id')
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['tenant.*'])
+                ->where('files.file_no', $file_no)
+                ->where('tenant.is_deleted', 0)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->orderBy('unit_no', 'ASC')
+                ->get();
         } else {
             if (!Auth::user()->getAdmin()) {
                 if (!empty(Auth::user()->file_id)) {
                     $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('files.id', Auth::user()->file_id)
-                            ->where('files.company_id', Auth::user()->company_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 } else {
                     $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('files.company_id', Auth::user()->company_id)
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 }
             } else {
                 if (empty(Session::get('admin_cob'))) {
                     $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 } else {
                     $tenant = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                            ->join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['buyer.*'])
-                            ->where('files.company_id', Session::get('admin_cob'))
-                            ->where('buyer.is_deleted', 0)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->orderBy('unit_no', 'ASC')
-                            ->get();
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['buyer.*'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('buyer.is_deleted', 0)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->orderBy('unit_no', 'ASC')
+                        ->get();
                 }
             }
         }
@@ -716,7 +729,8 @@ class PrintController extends BaseController {
         return View::make('print_en.tenant', $viewData);
     }
 
-    public function printInsurance($cob_id) {
+    public function printInsurance($cob_id)
+    {
         if ($cob_id && $cob_id != 'all') {
             $file_info = Files::getInsuranceReportByCOB(Helper::decode($cob_id));
         } else {
@@ -738,7 +752,8 @@ class PrintController extends BaseController {
         return View::make('print_en.insurance', $viewData);
     }
 
-    public function printComplaint($cob_id) {
+    public function printComplaint($cob_id)
+    {
         if ($cob_id && $cob_id != 'all') {
             $file_info = Files::getComplaintReportByCOB(Helper::decode($cob_id));
         } else {
@@ -760,7 +775,8 @@ class PrintController extends BaseController {
         return View::make('print_en.complaint', $viewData);
     }
 
-    public function printCollection($cob_id) {
+    public function printCollection($cob_id)
+    {
         if ($cob_id && $cob_id != 'all') {
             $file_info = Files::getCollectionReportByCOB(Helper::decode($cob_id));
         } else {
@@ -779,7 +795,8 @@ class PrintController extends BaseController {
         return View::make('print_en.collection', $viewData);
     }
 
-    public function printCouncil($cob_id) {
+    public function printCouncil($cob_id)
+    {
         if ($cob_id && $cob_id != 'all') {
             $file_info = Files::getCouncilReportByCOB(Helper::decode($cob_id));
         } else {
@@ -798,7 +815,8 @@ class PrintController extends BaseController {
         return View::make('print_en.council', $viewData);
     }
 
-    public function printDun($cob_id) {
+    public function printDun($cob_id)
+    {
         if ($cob_id && $cob_id != 'all') {
             $file_info = Files::getDunReportByCOB(Helper::decode($cob_id));
         } else {
@@ -821,7 +839,8 @@ class PrintController extends BaseController {
         return View::make('print_en.dun', $viewData);
     }
 
-    public function printParliment($cob_id) {
+    public function printParliment($cob_id)
+    {
         if ($cob_id && $cob_id != 'all') {
             $file_info = Files::getParlimentReportByCOB(Helper::decode($cob_id));
         } else {
@@ -844,7 +863,8 @@ class PrintController extends BaseController {
         return View::make('print_en.parliment', $viewData);
     }
 
-    public function printVp() {
+    public function printVp()
+    {
         $data = Input::all();
 
         if (isset($data['cob_id']) && !empty($data['cob_id'])) {
@@ -881,7 +901,8 @@ class PrintController extends BaseController {
         return View::make('print_en.vp', $viewData);
     }
 
-    public function printManagementList() {
+    public function printManagementList()
+    {
         $result = array();
         $data = Input::all();
 
@@ -920,106 +941,106 @@ class PrintController extends BaseController {
 
         if ((!empty($cob_company) && !empty($file_no)) && !empty($filename)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('files.file_no', $file_no)
-                    ->where('strata.name', $filename)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('files.file_no', $file_no)
+                ->where('strata.name', $filename)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else if (!empty($cob_company) && !empty($filename)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('strata.name', $filename)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('strata.name', $filename)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else if (!empty($file_no) && !empty($filename)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('files.file_no', $file_no)
-                    ->where('strata.name', $filename)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('files.file_no', $file_no)
+                ->where('strata.name', $filename)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else if (!empty($cob_company) && !empty($file_no)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->where('files.file_no', $file_no)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('company.short_name', $cob_company)
+                ->where('files.file_no', $file_no)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else if (!empty($cob_company)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('company.short_name', $cob_company)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('company.short_name', $cob_company)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else if (!empty($file_no)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('files.file_no', $file_no)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('files.file_no', $file_no)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else if (!empty($filename)) {
             $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['files.*'])
-                    ->where('strata.name', $filename)
-                    ->orderBy('company.short_name', 'ASC')
-                    ->orderBy('files.file_no', 'ASC')
-                    ->get();
+                ->join('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['files.*'])
+                ->where('strata.name', $filename)
+                ->orderBy('company.short_name', 'ASC')
+                ->orderBy('files.file_no', 'ASC')
+                ->get();
         } else {
             if (!Auth::user()->getAdmin()) {
                 if (!empty(Auth::user()->file_id)) {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['files.*'])
-                            ->where('id', Auth::user()->file_id)
-                            ->where('company_id', Auth::user()->company_id)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->get();
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*'])
+                        ->where('id', Auth::user()->file_id)
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->get();
                 } else {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['files.*'])
-                            ->where('company_id', Auth::user()->company_id)
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->get();
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*'])
+                        ->where('company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->get();
                 }
             } else {
                 if (empty(Session::get('admin_cob'))) {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['files.*'])
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->get();
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*'])
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->get();
                 } else {
                     $files = Files::join('company', 'files.company_id', '=', 'company.id')
-                            ->join('strata', 'files.id', '=', 'strata.file_id')
-                            ->select(['files.*'])
-                            ->where('company_id', Session::get('admin_cob'))
-                            ->where('files.is_deleted', 0)
-                            ->orderBy('company.short_name', 'ASC')
-                            ->orderBy('files.file_no', 'ASC')
-                            ->get();
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['files.*'])
+                        ->where('company_id', Session::get('admin_cob'))
+                        ->where('files.is_deleted', 0)
+                        ->orderBy('company.short_name', 'ASC')
+                        ->orderBy('files.file_no', 'ASC')
+                        ->get();
                 }
             }
         }
@@ -1150,7 +1171,7 @@ class PrintController extends BaseController {
             }
         }
 
-//        return "<pre>" . print_r($result, true) . "</pre>";
+        //        return "<pre>" . print_r($result, true) . "</pre>";
 
         $viewData = array(
             'title' => trans('app.menus.reporting.purchaser'),
@@ -1170,7 +1191,8 @@ class PrintController extends BaseController {
         return View::make('print_en.management_list', $viewData);
     }
 
-    public function printFinanceFile($id) {
+    public function printFinanceFile($id)
+    {
         $finance = Finance::find(Helper::decode($id));
         if ($finance) {
             $file_no = Files::where('is_active', 1)->where('is_deleted', 0)->get();
@@ -1224,7 +1246,8 @@ class PrintController extends BaseController {
         }
     }
 
-    public function printLandTitle($cob_id, $land_title_id) {
+    public function printLandTitle($cob_id, $land_title_id)
+    {
         if (!AccessGroup::hasAccess(60)) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
@@ -1236,10 +1259,10 @@ class PrintController extends BaseController {
 
             return View::make('404_en', $viewData);
         }
-        
+
         if (!empty($cob_id) && $cob_id == 'all') {
             $cob_id = '';
-        } elseif(!empty($cob_id && $cob_id != 'all')) {
+        } elseif (!empty($cob_id && $cob_id != 'all')) {
             $cob_id = Helper::decode($cob_id);
         }
         if (!empty($land_title_id) && $land_title_id == 'all') {
@@ -1262,30 +1285,30 @@ class PrintController extends BaseController {
     }
 
     //print finance support
-    public function financeSupport() {
+    public function financeSupport()
+    {
         $data = Input::all();
 
-        $company_id = !empty($data['company'])? $data['company'] : '';
+        $company_id = !empty($data['company']) ? $data['company'] : '';
 
-        if(!Auth::user()->getAdmin()) {
+        if (!Auth::user()->getAdmin()) {
             $company_id = Auth::user()->company_id;
         } else {
-            if(!empty($company_id)) {
+            if (!empty($company_id)) {
                 $company = Company::where('short_name', $company_id)->firstOrFail();
                 $company_id = $company->id;
             }
-            if(!empty(Session::get('admin_cob'))) {
+            if (!empty(Session::get('admin_cob'))) {
                 $company_id = Session::get('admin_cob');
             }
-            
         }
         $query = FinanceSupport::where('is_deleted', 0)
-                                ->where('is_active', 1);
-        if(!empty($company_id)) {
+            ->where('is_active', 1);
+        if (!empty($company_id)) {
             $query = $query->where('company_id', $company_id);
         }
         $items = $query->get();
-        
+
         $viewData = array(
             'title' => trans('app.menus.finance.finance_support'),
             'panel_nav_active' => 'finance_panel',
@@ -1296,20 +1319,20 @@ class PrintController extends BaseController {
         );
 
         return View::make('print_en.finance_support', $viewData);
-
     }
 
-    public function epks() {
+    public function epks()
+    {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(64));
         $request = Input::all();
-        if(!empty($request['from'])) {
+        if (!empty($request['from'])) {
             $request['date_from'] = $request['from'];
         }
-        if(!empty($request['to'])) {
+        if (!empty($request['to'])) {
             $request['date_to'] = $request['to'];
         }
         $data = Epks::getAnalyticData($request);
-        
+
         $viewData = array(
             'title' => trans('app.menus.reporting.epks'),
             'panel_nav_active' => 'reporting_panel',
@@ -1320,14 +1343,14 @@ class PrintController extends BaseController {
         );
 
         return View::make('print_en.epks', $viewData);
-
     }
 
-    public function statistic() {
+    public function statistic()
+    {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Statistics Report"));
         $datas = (new ReportRepo())->statisticsReport(Request::all());
         $cities = City::self()->get();
-        
+
         $viewData = array(
             'title' => trans('app.menus.reporting.statistic'),
             'panel_nav_active' => 'reporting_panel',
@@ -1340,5 +1363,4 @@ class PrintController extends BaseController {
 
         return View::make('print_en.statistic', $viewData);
     }
-
 }
