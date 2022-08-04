@@ -103,7 +103,7 @@ class FinanceController extends BaseController
                          */
                         $check = new FinanceCheck();
                         $check->finance_file_id = $finance->id;
-                        $check->is_active = 0;
+                        $check->is_active = 1;
                         // if(!empty($previous_file)) {
                         //     /** Clone Finance Check */
                         //     $check->date = $previous_file->financeCheck->date;
