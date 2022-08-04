@@ -2226,4 +2226,107 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Insurance - ' . strtoupper($cob));
     }
+
+    public function financeOutstanding($cob = null)
+    {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+                        if ($file->financeLatest) {
+                            $finance = $file->financeLatest;
+
+                            $mf_sepatut_dikutip = $finance->financeReport()->where('type', 'MF')->sum('fee_semasa');
+                            $mf_extra_sepatut_dikutip = $finance->financeReportExtra()->where('type', 'MF')->sum('fee_semasa');
+
+                            $sf_sepatut_dikutip = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
+                            $sf_extra_sepatut_dikutip = $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+
+                            $mf_sf_sepatut_dikutip = $finance->financeReport()->sum('fee_semasa');
+                            $mf_sf_extra_sepatut_dikutip = $finance->financeReportExtra()->sum('fee_semasa');
+
+                            $total_mf_sepatut_dikutip = $mf_sepatut_dikutip + $mf_extra_sepatut_dikutip;
+                            $total_sf_sepatut_dikutip = $sf_sepatut_dikutip + $sf_extra_sepatut_dikutip;
+                            $total_mf_sf_sepatut_dikutip = $mf_sf_sepatut_dikutip + $mf_sf_extra_sepatut_dikutip;
+
+                            $total_mf_berjaya_dikutip = $finance->financeIncome()->where('name', 'MAINTENANCE FEE')->sum('semasa');
+                            $total_sf_berjaya_dikutip = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
+                            $total_mf_sf_berjaya_dikutip = $total_mf_berjaya_dikutip + $total_sf_berjaya_dikutip;
+
+                            $total_mf_outstanding = $total_mf_sepatut_dikutip - $total_mf_berjaya_dikutip;
+                            $total_sf_outstanding = $total_sf_sepatut_dikutip - $total_sf_berjaya_dikutip;
+                            $total_mf_sf_outstanding = $total_mf_sf_sepatut_dikutip - $total_mf_sf_berjaya_dikutip;
+                            
+                            $developer_name = '';
+                            $developer_phone = '';
+                            if ($file->managementDeveloper) {
+                                $developer_name = $file->managementDeveloper->name;
+                                $developer_phone = $file->managementDeveloper->phone_no;
+                            }
+
+                            $jmb_name = '';
+                            $jmb_phone = '';
+                            if ($file->managementJMB) {
+                                $jmb_name = $file->managementJMB->name;
+                                $jmb_phone = $file->managementJMB->phone_no;
+                            }
+
+                            $mc_name = '';
+                            $mc_phone = '';
+                            if ($file->managementMC) {
+                                $mc_name = $file->managementMC->name;
+                                $mc_phone = $file->managementMC->phone_no;
+                            }
+
+                            $agent_name = '';
+                            $agent_phone = '';
+                            if ($file->managementAgent) {
+                                $agent_name = $file->managementAgent->name;
+                                $agent_phone = $file->managementAgent->phone_no;
+                            }
+
+                            $other_name = '';
+                            $other_phone = '';
+                            if ($file->managementOthers) {
+                                $other_name = $file->managementOthers->name;
+                                $other_phone = $file->managementOthers->phone_no;
+                            }
+                            
+                            $result[$file->id] = [
+                                'Council' => $council->short_name,
+                                'File No' => $file->file_no,
+                                'Strata Name' => $file->strata->name,
+                                'Developer Name' => $developer_name,
+                                'Developer Phone No.' => $developer_phone,
+                                'JMB Name' => $jmb_name,
+                                'JMB Phone No.' => $jmb_phone,
+                                'MC Name' => $mc_name,
+                                'MC Phone No.' => $mc_phone,
+                                'Agent Name' => $agent_name,
+                                'Agent Phone No.' => $agent_phone,
+                                'Other Name' => $other_name,
+                                'Other Phone No.' => $other_phone,
+                                'Finance Last Updated' => strtoupper($finance->monthName()) . ' - ' . $finance->year,
+                                'MF Amount (RM)' => number_format($total_mf_sepatut_dikutip, 2),
+                                'SF Amount (RM)' => number_format($total_sf_sepatut_dikutip, 2),
+                                'MF & SF Amount (RM)' => number_format($total_mf_sf_sepatut_dikutip, 2),
+                                'Total MF Collected (RM)' => number_format($total_mf_berjaya_dikutip, 2),
+                                'Total SF Collected (RM)' => number_format($total_sf_berjaya_dikutip, 2),
+                                'Total MF & SF Collected (RM)' => number_format($total_mf_sf_berjaya_dikutip, 2),
+                                'Total MF Outstanding (RM)' => number_format($total_mf_outstanding, 2),
+                                'Total SF Outstanding (RM)' => number_format($total_sf_outstanding, 2),
+                                'Total MF & SF Outstanding (RM)' => number_format($total_mf_sf_outstanding, 2),
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Finance_Outstanding_' . strtoupper($cob));
+    }
 }
