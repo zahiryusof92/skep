@@ -17,7 +17,7 @@
                 </tr>
                 <tr>
                     <th style="width: 20%">{{ trans("app.forms.status") }}</th>
-                    <td style="width: 80%">{{ ($checkdata->is_active ? trans('app.forms.active') : trans('app.forms.inactive')) }}</td>
+                    <td style="width: 80%">{{ ($checkdata->is_active == 1 ? trans('app.forms.approved') : trans('app.forms.rejected')) }}</td>
                 </tr>
                 <tr>
                     <th style="width: 20%">{{ trans("app.forms.remarks") }}</th>
