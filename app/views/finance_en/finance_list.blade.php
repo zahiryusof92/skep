@@ -321,7 +321,7 @@ foreach ($user_permission as $permission) {
             },
             lengthMenu: [[15, 30, 50], [15, 30, 50]],
             pageLength: 30,
-            order: [[0, "asc"], [1, 'asc'], [3, 'desc'], [4, 'desc']],
+            order: [[0, "asc"], [1, 'asc'], [4, 'desc'], [3, 'desc']],
             responsive: false,
             scrollX: true,
             columns: [

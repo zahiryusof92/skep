@@ -61,6 +61,8 @@ Route::get('/lphs/due12MonthsAGM/{council}', 'LPHSController@due12MonthsAGM');
 Route::get('/lphs/due15MonthsAGM/{council}', 'LPHSController@due15MonthsAGM');
 Route::get('/lphs/insurance/{council}', 'LPHSController@insurance');
 
+Route::get('/lphs/financeOutstanding/{council}', 'LPHSController@financeOutstanding');
+
 /*
  * LPHS REPORT END
  */
