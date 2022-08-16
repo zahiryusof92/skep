@@ -9,5 +9,5 @@
 </style>
 
 <footer>
-    <img src="{{ asset('assets/common/img/eservice/mbpj/letterhead_footer.jpg') }}" style="width: 100%;" />
+    <img src="{{ public_path('assets/common/img/eservice/mbpj/letterhead_footer.jpg') }}" style="width: 100%;" />
 </footer>

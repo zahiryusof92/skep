@@ -9,5 +9,5 @@
 </style>
 
 <header>
-    <img src="{{ asset('assets/common/img/eservice/mbpj/letterhead_header.jpg') }}" style="width: 100%;" />
+    <img src="{{ public_path('assets/common/img/eservice/mbpj/letterhead_header.jpg') }}" style="width: 100%;" />
 </header>
