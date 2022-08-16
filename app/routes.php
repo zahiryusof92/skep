@@ -1011,9 +1011,21 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * EService
      */
-    Route::get('eservice/getForm', array('as' => 'eservice.getForm', 'uses' => 'EServiceController@getForm'));
-    Route::resource('eservice', 'EServiceController');
+    Route::resource('eservicePrice', 'EServicePriceController');
 
+    Route::get('eservice/approval', ['as' => 'eservice.approval', 'uses' => 'EServiceController@index']);
+    Route::get('eservice/draft', ['as' => 'eservice.draft', 'uses' => 'EServiceController@index']);
+    Route::resource('eservice', 'EServiceController');
+    Route::get('eservice/getForm', array('as' => 'eservice.getForm', 'uses' => 'EServiceController@getForm'));
+    Route::get('eservice/create/{type}', array('as' => 'eservice.create', 'uses' => 'EServiceController@create'));
+    Route::post('eservice/fileUpload', ['as' => 'eservice.fileUpload', 'uses' => 'EServiceController@fileUpload']);
+    Route::get('eservice/payment/{id}', array('as' => 'eservice.payment', 'uses' => 'EServiceController@payment'));
+    Route::post('eservice/submitPayment', array('as' => 'eservice.submitPayment', 'uses' => 'EServiceController@submitPayment'));
+    Route::post('eservice/submitConfirm/{id}', ['as' => 'eservice.submitConfirm', 'uses' => 'EServiceController@submitConfirm']);
+    Route::post('eservice/submitByCOB/{id}', ['as' => 'eservice.submitByCOB', 'uses' => 'EServiceController@submitByCOB']);
+    Route::get('eservice/getLetterPDF/{id}', ['as' => 'eservice.getLetterPDF', 'uses' => 'EServiceController@getLetterPDF']);
+    Route::get('eservice/getLetterWord/{id}', ['as' => 'eservice.getLetterWord', 'uses' => 'EServiceController@getLetterWord']);
+    
     /**
      * API Client
      */

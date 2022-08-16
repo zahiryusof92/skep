@@ -11,7 +11,8 @@
         "yajra/laravel-datatables-oracle": "~3.0",
         "tymon/jwt-auth": "0.4.*",
         "hashids/hashids": "^2.0",
-        "laravel/homestead": "~2.0"
+        "laravel/homestead": "~2.0",
+        "barryvdh/laravel-dompdf": "0.4.*"
     },
     "autoload": {
         "classmap": [

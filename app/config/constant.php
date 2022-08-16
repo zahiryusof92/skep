@@ -862,27 +862,61 @@ return [
                             'name' => 'surat_kebocoran_antara_tingkat',
                             'title' => trans('app.eservice.surat_kebocoran_antara_tingkat'),
                             'only' => [
-                                'bill_no',
-                                'date',
                                 'building_name',
                                 'management_name',
-                                'management_address',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
                                 'management_phone',
-                                'cover_letter'
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                                'affected_unit',
+                                'affected_remark',
+                                'cover_letter',
+                                'complaint_letter',
+                                'copy_of_form_28',
+                                'proof_of_notice_28',
+                                'image_of_affected',
                             ],
                         ],
                         'surat_peringatan_tunggakan_caj' => [
                             'name' => 'surat_peringatan_tunggakan_caj',
                             'title' => trans('app.eservice.surat_peringatan_tunggakan_caj'),
                             'only' => [
-                                'bill_no',
-                                'date',
                                 'building_name',
                                 'management_name',
-                                'management_address',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
                                 'management_phone',
+                                'reminder_type',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                                'total_overdue',
+                                'date_overdue',
+                                'reference_no',
                                 'cover_letter',
-                                'reminder_type'
+                                'account_statement',
+                                'copy_of_form',
+                                'proof_of_notice',
                             ],
                         ],
                     ],
@@ -890,53 +924,207 @@ return [
             ],
             'fields' => [
                 'bill_no' => [
-                    'label' => trans('app.forms.bill_no'),
+                    'label' => trans('app.forms.eservice.bill_no'),
                     'name' => 'bill_no',
                     'type' => 'text',
                     'required' => true
                 ],
                 'date' => [
-                    'label' => trans('app.forms.date'),
+                    'label' => trans('app.forms.eservice.date'),
                     'name' => 'date',
                     'type' => 'date',
                     'required' => true
                 ],
                 'building_name' => [
-                    'label' => trans('app.forms.building_name'),
+                    'label' => trans('app.forms.eservice.building_name'),
                     'name' => 'building_name',
                     'type' => 'text',
                     'required' => true
                 ],
                 'management_name' => [
-                    'label' => trans('app.forms.management_name'),
+                    'label' => trans('app.forms.eservice.management_name'),
                     'name' => 'management_name',
                     'type' => 'text',
                     'required' => true
                 ],
-                'management_address' => [
-                    'label' => trans('app.forms.management_address'),
-                    'name' => 'management_address',
-                    'type' => 'textarea',
-                    'required' => true
-                ],
-                'management_phone' => [
-                    'label' => trans('app.forms.management_phone'),
-                    'name' => 'management_phone',
+                'management_address1' => [
+                    'label' => trans('app.forms.eservice.management_address'),
+                    'name' => 'management_address1',
                     'type' => 'text',
                     'required' => true
                 ],
+                'management_address2' => [
+                    'label' => '',
+                    'name' => 'management_address2',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'management_address3' => [
+                    'label' => '',
+                    'name' => 'management_address3',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'management_postcode' => [
+                    'label' => trans('app.forms.eservice.management_postcode'),
+                    'name' => 'management_postcode',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'management_city' => [
+                    'label' => trans('app.forms.eservice.management_city'),
+                    'name' => 'management_city',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'management_state' => [
+                    'label' => trans('app.forms.eservice.management_state'),
+                    'name' => 'management_state',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'management_phone' => [
+                    'label' => trans('app.forms.eservice.management_phone'),
+                    'name' => 'management_phone',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'affected_unit' => [
+                    'label' => trans('app.forms.eservice.affected_unit'),
+                    'name' => 'affected_unit',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'affected_remark' => [
+                    'label' => trans('app.forms.eservice.affected_remark'),
+                    'name' => 'affected_remark',
+                    'type' => 'textarea',
+                    'required' => false
+                ],
                 'cover_letter' => [
-                    'label' => trans('app.forms.cover_letter'),
+                    'label' => trans('app.forms.eservice.cover_letter'),
                     'name' => 'cover_letter',
                     'type' => 'file',
                     'required' => true
                 ],
+                'complaint_letter' => [
+                    'label' => trans('app.forms.eservice.complaint_letter'),
+                    'name' => 'complaint_letter',
+                    'type' => 'file',
+                    'required' => true
+                ],
+                'copy_of_form_28' => [
+                    'label' => trans('app.forms.eservice.copy_of_form_28'),
+                    'name' => 'copy_of_form_28',
+                    'type' => 'file',
+                    'required' => true
+                ],
+                'proof_of_notice_28' => [
+                    'label' => trans('app.forms.eservice.proof_of_notice_28'),
+                    'name' => 'proof_of_notice_28',
+                    'type' => 'file',
+                    'required' => true
+                ],
+                'image_of_affected' => [
+                    'label' => trans('app.forms.eservice.image_of_affected'),
+                    'name' => 'image_of_affected',
+                    'type' => 'file',
+                    'required' => true
+                ],
                 'reminder_type' => [
-                    'label' => trans('app.forms.reminder_type'),
+                    'label' => trans('app.forms.eservice.reminder_type'),
                     'name' => 'reminder_type',
                     'type' => 'radio',
+                    'required' => true,
+                    'options' => [
+                        'first_reminder' => trans('app.forms.eservice.reminder_type_option_1'),
+                        'second_reminder' => trans('app.forms.eservice.reminder_type_option_2'),
+                    ],
+                ],
+                'unit_no' => [
+                    'label' => trans('app.forms.eservice.unit_no'),
+                    'name' => 'unit_no',
+                    'type' => 'text',
                     'required' => true
-                ]
+                ],
+                'owner_name' => [
+                    'label' => trans('app.forms.eservice.owner_name'),
+                    'name' => 'owner_name',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'owner_address1' => [
+                    'label' => trans('app.forms.eservice.owner_address'),
+                    'name' => 'owner_address1',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'owner_address2' => [
+                    'label' => '',
+                    'name' => 'owner_address2',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'owner_address3' => [
+                    'label' => '',
+                    'name' => 'owner_address3',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'owner_postcode' => [
+                    'label' => trans('app.forms.eservice.owner_postcode'),
+                    'name' => 'owner_postcode',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'owner_city' => [
+                    'label' => trans('app.forms.eservice.owner_city'),
+                    'name' => 'owner_city',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'owner_state' => [
+                    'label' => trans('app.forms.eservice.owner_state'),
+                    'name' => 'owner_state',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'total_overdue' => [
+                    'label' => trans('app.forms.eservice.total_overdue'),
+                    'name' => 'total_overdue',
+                    'type' => 'text',
+                    'required' => true
+                ],
+                'date_overdue' => [
+                    'label' => trans('app.forms.eservice.date_overdue'),
+                    'name' => 'date_overdue',
+                    'type' => 'date',
+                    'required' => true
+                ],
+                'reference_no' => [
+                    'label' => trans('app.forms.eservice.reference_no'),
+                    'name' => 'reference_no',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'account_statement' => [
+                    'label' => trans('app.forms.eservice.account_statement'),
+                    'name' => 'account_statement',
+                    'type' => 'file',
+                    'required' => true
+                ],
+                'copy_of_form' => [
+                    'label' => trans('app.forms.eservice.copy_of_form'),
+                    'name' => 'copy_of_form',
+                    'type' => 'file',
+                    'required' => true
+                ],
+                'proof_of_notice' => [
+                    'label' => trans('app.forms.eservice.proof_of_notice'),
+                    'name' => 'proof_of_notice',
+                    'type' => 'file',
+                    'required' => true
+                ],
             ],
         ],
         'file_draft_reject' => [
@@ -1306,6 +1494,7 @@ return [
         ],
     ],
     'file_directory' => [
-        'epks' => 'uploads/epks'
+        'epks' => 'uploads/epks',
+        'eservice' => 'uploads/eservice'
     ]
 ];

@@ -25,30 +25,17 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label class="form-control-label"><span style="color: red;">*</span> {{ trans('app.forms.scheme_name') }}</label>
-                                        <select id="scheme_name" name="scheme_name" class="form-control select2" data-placeholder="{{ trans('app.forms.please_select') }}" data-ajax--url="{{ route('v3.api.strata.getOption', ['type' => 'id']) }}" data-ajax--cache="true">
-                                        </select>
-                                        @include('alert.feedback-ajax', ['field' => 'scheme_name'])
-                                    </div>
-                                </div>
-                            </div>
-
                             @if (!empty($form))
                             {{ $form }}
                             @endif
 
                             <div class="form-actions">
-                                <input id="cob" name="cob" value="{{ Auth::user()->getCOB->short_name }}" hidden>
-                                <input id="type" name="type" value="{{ $type }}" hidden>
-
-                                <button type="button" class="btn btn-own" id="submit_button">
+                                <input type="hidden" name="order_details" value="{{ $order_details->id }}">
+                                <button type="submit" class="btn btn-own" id="submit_button">
                                     {{ trans('app.forms.save') }}
                                 </button>
                                 <button type="button" class="btn btn-default" id="cancel_button"
-                                    onclick="window.location ='{{ route('eservice.create', '') }}'">
+                                    onclick="window.location ='{{ route('eservice.show', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
                                     {{ trans('app.forms.cancel') }}
                                 </button>
                             </div>
@@ -71,11 +58,13 @@
         $("#submit_button").click(function (e) {
             e.preventDefault();
             $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+            let route = "{{ route('eservice.update', [':id']) }}";
+            route = route.replace(':id', "{{ \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id) }}");
 
             let formData = $('form').serialize();
             $.ajax({
-                url: "{{ route('eservice.store') }}",
-                type: "POST",
+                url: route,
+                type: "PUT",
                 data: formData,
                 dataType: 'JSON',
                 beforeSend: function() {
@@ -88,7 +77,7 @@
                     console.log(res);
 
                     if (res.success == true) {
-                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.eservice.submit') }}</span>", function () {
+                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.eservice.update') }}</span>", function () {
                             let url = "{{ route('eservice.show', [':id']) }}";
                             url = url.replace(":id", res.id);
                             window.location = url;

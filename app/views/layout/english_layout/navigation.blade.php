@@ -212,18 +212,32 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (Auth::user()->isJMB())
+            {{-- e-service --}}
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MBPJ")))
             <li class="left-menu-list-submenu" id="eservice_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon fa fa-recycle">
-                        <!-- -->
-                    </i>
-                    <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span>
+                    <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
+                    <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()) ! @endif</span>
                 </a>
                 <ul class="left-menu-list list-unstyled" id="eservice_main">
                     <li class="left-menu-list-link" id="eservice_create">
-                        <a class="left-menu-link" href="{{ route('eservice.create') }}">
+                        <a class="left-menu-link" href="{{ route('eservice.create', '') }}">
                             {{ trans('app.menus.eservice.create') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_list">
+                        <a class="left-menu-link" href="{{ route('eservice.index') }}">
+                            {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()]) }}</span>
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_approval">
+                        <a class="left-menu-link" href="{{ route('eservice.approval') }}">
+                            {{ trans('app.menus.eservice.approval') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_draft">
+                        <a class="left-menu-link" href="{{ route('eservice.draft') }}">
+                            {{ trans('app.menus.eservice.draft') }}
                         </a>
                     </li>
                 </ul>
@@ -517,6 +531,12 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
                     @endif
+
+                    <li id="eservice_price_list">
+                        <a class="left-menu-link" href="{{ route('eservicePrice.index') }}">
+                            {{ trans('app.menus.master.eservice_price') }}
+                        </a>
+                    </li>
 
                 </ul>
             </li>

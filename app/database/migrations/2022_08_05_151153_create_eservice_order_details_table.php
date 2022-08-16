@@ -2,10 +2,8 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
 
-class CreateEservicesTable extends Migration
-{
+class CreateEserviceOrderDetailsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -14,13 +12,14 @@ class CreateEservicesTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('eservices', function (Blueprint $table) {
+		Schema::create('eservices_order_details', function(Blueprint $table)
+		{
 			$table->increments('id');
-			$table->integer('company_id')->nullable();
+			$table->integer('eservice_order_id')->nullable();			
 			$table->string('type')->nullable();
-			$table->date('date')->nullable();
 			$table->longText('value')->nullable();
-			$table->integer('causer_by')->nullable();
+			$table->double('price')->default(0);
+			$table->string('status')->nullable();
 			$table->softDeletes();
 			$table->timestamps();
 		});
@@ -33,6 +32,7 @@ class CreateEservicesTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::drop('eservices');
+		Schema::drop('eservices_order_details');
 	}
+
 }
