@@ -237,9 +237,9 @@ return array(
             "name" => "COB Letter",
         ),
         "eservice" => array(
-            "name" => "E-Perkhimatan",
-            "name1" => "-Perkhimatan",
-            "list" => "e-Perkhimatan",
+            "name" => "E-Perkhidmatan",
+            "name1" => "-Perkhidmatan",
+            "list" => "e-Perkhidmatan",
             "draft" => "Draft List",
             "review" => "Review List",
             "approval" => "Approval List",
