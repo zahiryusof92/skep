@@ -45,8 +45,7 @@
             :
         </td>
         <td>
-            {{ (!empty($details->date) ?
-            \Carbon\Carbon::createFromTimestamp(strtotime($details->date))->format('d F Y') : '') }}
+            {{ (!empty($details->date) ? \Helper\Helper::localizedDate($details->date) : '') }}
         </td>
     </tr>
     <tr>
