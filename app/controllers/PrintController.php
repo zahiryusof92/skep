@@ -1211,9 +1211,11 @@ class PrintController extends BaseController
             $financeFileIncome = FinanceIncome::where('finance_file_id', Helper::decode($id))->orderBy('sort_no', 'asc')->get();
 
             $mfreport = FinanceReport::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->first();
+            $mfreportExtras = FinanceReportExtra::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->get();
             $reportMF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'MF')->orderBy('sort_no', 'asc')->get();
 
             $sfreport = FinanceReport::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->first();
+            $sfreportExtras = FinanceReportExtra::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->get();
             $reportSF = FinanceReportPerbelanjaan::where('finance_file_id', Helper::decode($id))->where('type', 'SF')->orderBy('sort_no', 'asc')->get();
 
             $viewData = array(
@@ -1236,8 +1238,10 @@ class PrintController extends BaseController
                 'utila' => $financeFileUtilityA,
                 'utilb' => $financeFileUtilityB,
                 'mfreport' => $mfreport,
+                'mfreportExtras' => $mfreportExtras,
                 'reportMF' => $reportMF,
                 'sfreport' => $sfreport,
+                'sfreportExtras' => $sfreportExtras,
                 'reportSF' => $reportSF,
                 'finance_file_id' => Helper::decode($id)
             );

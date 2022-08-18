@@ -9,22 +9,38 @@ $count = 0;
         <h6>2. LAPORAN RINGKAS PENCAPAIAN KUTIPAN KUMPULAN WANG PENJELAS (SINGING FUND)</h6>
         <table class="table table-sm table-bordered" style="width: 100%">
             <tbody>
+                <?php
+                $sf_fee_semasa = $sfreport['fee_semasa'];
+                ?>
                 <tr>
                     <td class="text-left" width="35%">SINKING FUND SEBULAN (PER UNIT)</td>
-                    <td class="text-right" width="15%">{{ $sfreport['fee_sebulan'] }}</td>
+                    <td class="text-right" width="15%">{{ number_format($sfreport['fee_sebulan'], 2) }}</td>
                     <td class="text-left" width="35%">JUMLAH UNIT</td>
                     <td class="text-right" width="15%">{{ $sfreport['unit'] }}</td>
                 </tr>
+                @if ($sfreportExtras)
+                @foreach ($sfreportExtras as $sfreportExtra)
+                <?php
+                $sf_fee_semasa += $sfreportExtra['fee_semasa'];
+                ?>
+                <tr>
+                    <td class="text-left" width="35%">SINKING FUND SEBULAN (PER UNIT)</td>
+                    <td class="text-right" width="15%">{{ number_format($sfreportExtra['fee_sebulan'], 2) }}</td>
+                    <td class="text-left" width="35%">JUMLAH UNIT</td>
+                    <td class="text-right" width="15%">{{ $sfreportExtra['unit'] }}</td>
+                </tr>
+                @endforeach
+                @endif
                 <tr>
                     <td class="text-left">JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])</td>
                     <td class="text-right" id="{{$prefix}}kutipan"></td>
                     <td class="text-left">JUMLAH SINKING FUND SEPATUT DIKUTIP SEMASA</td>
-                    <td class="text-right">{{ number_format($sfreport['fee_semasa'], 2) }}</td>
+                    <td class="text-right">{{ number_format($sf_fee_semasa, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="2">&nbsp;</td>
-                    <th class="padding-table">JUMLAH SINKING FUND BERJAYA DIKUTIP SEMASA</th>
-                    <th></th>
+                    <th class="text-left">JUMLAH SINKING FUND BERJAYA DIKUTIP SEMASA</th>
+                    <th class="text-right" id="{{$prefix}}total_income"></th>
                 </tr>
             </tbody>
         </table>
@@ -43,7 +59,8 @@ $count = 0;
                     <td>&nbsp;</td>
                     <td class="text-left">{{ $reportSFs['name'] }}</td>
                     <td class="text-right">
-                        <input type="text" class="{{ $prefix . $reportSFs['report_key'] }}" name="{{ $prefix }}amount[]" value="{{ $reportSFs['amount'] }}" hidden>
+                        <input type="text" class="{{ $prefix . $reportSFs['report_key'] }}" name="{{ $prefix }}amount[]"
+                            value="{{ $reportSFs['amount'] }}" hidden>
                         {{ number_format($reportSFs['amount'], 2) }}
                     </td>
                 </tr>
@@ -64,7 +81,7 @@ $count = 0;
             <tbody>
                 <tr>
                     <td class="text-left" width="35%">NO. AKAUN</td>
-                    <td class="text-left"width="15%">{{ $sfreport['no_akaun'] }}</td>
+                    <td class="text-left" width="15%">{{ $sfreport['no_akaun'] }}</td>
                     <td class="text-left" width="35%">BAKI BANK (AWAL)</td>
                     <td class="text-right" width="15%">{{ number_format($sfreport['baki_bank_awal'], 2) }}</td>
                 </tr>
@@ -86,25 +103,19 @@ $count = 0;
 
     function calculateSFR() {
         var sfr_kutipan = $("[id=income_total_income_2]").val();
-        $('#{{ $prefix }}kutipan').text(parseFloat(sfr_kutipan).toFixed(2));
+        $('#{{ $prefix }}kutipan').text(toCommas(parseFloat(sfr_kutipan).toFixed(2)));
 
         var sfr_total_income = $("[id=income_semasa_2]").val();
-        $('#{{ $prefix }}total_income').text(parseFloat(sfr_total_income).toFixed(2));
-
-        var sfr_repair = $("[id=repair_singkingfund_total_all]").val();
-        $('#{{ $prefix }}repair').text(parseFloat(sfr_repair).toFixed(2));
-
-        var sfr_vandalisme = $("[id=singkingfund_total_all]").val();
-        $('#{{ $prefix }}vandalisme').text(parseFloat(sfr_vandalisme).toFixed(2));
+        $('#{{ $prefix }}total_income').text(toCommas(parseFloat(sfr_total_income).toFixed(2)));
 
         var sfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var sfr_bayar_total = 0;
         for (var i = 0; i < sfr_bayar.length; i++) {
             sfr_bayar_total += Number(sfr_bayar[i].value);
         }
-        $('#{{ $prefix }}bayar_total').text(parseFloat(sfr_bayar_total).toFixed(2));
+        $('#{{ $prefix }}bayar_total').text(toCommas(parseFloat(sfr_bayar_total).toFixed(2)));
 
         var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_bayar_total);
-        $('#{{ $prefix }}lebihan_kurangan').text(parseFloat(sfr_lebihan_kurangan).toFixed(2));
+        $('#{{ $prefix }}lebihan_kurangan').text(toCommas(parseFloat(sfr_lebihan_kurangan).toFixed(2)));
     }
 </script>

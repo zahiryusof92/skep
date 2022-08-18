@@ -114,4 +114,10 @@ $company = Company::find(Auth::user()->company_id);
     </tr>
 </table>
 
+<script>
+    function toCommas(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+</script>
+
 @stop

@@ -110,7 +110,7 @@ $prefix = 'staff_';
         calculateStaffTotal();
         
         // summary staff
-        $('#sum_staff').val($('#staff_total_gaji').val());
+        $('#sum_staff').val($('#staff_total_all').val());
         calculateSummaryTotal();
     });
 
