@@ -169,7 +169,9 @@ $prefix3 = 'utilab_';
         calculateUtilityABTotal();
         
         // summary utility
-        let utility_amount = Number($('#utilb_total_all').val()) - (Number($('#utilb_total_income_1').val()) + Number($('#utilb_total_income_2').val()));
+        let others_a = Number($('#util_total_all').val()) - (Number($('#util_total_income_1').val()) + Number($('#util_total_income_2').val()));
+        let others_b = Number($('#utilb_total_all').val()) - (Number($('#utilb_total_income_1').val()) + Number($('#utilb_total_income_2').val()));
+        let utility_amount = Number(others_a + others_b);
         $('#sum_utility').val(parseFloat(utility_amount).toFixed(2));
         calculateSummaryTotal();
     });

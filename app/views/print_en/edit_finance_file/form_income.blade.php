@@ -37,6 +37,7 @@ $prefix = 'income_';
                     <td class="text-center">
                         {{ $count }}
                         <input id="income_total_income_{{$count}}" value="{{ $total_income }}" hidden >
+                        <input id="income_semasa_{{$count}}" value="{{ $incomeFiles['semasa'] }}" hidden >
                     </td>
                     <td class="text-left">{{ $incomeFiles['name'] }}</td>
                     <td class="text-right">{{ number_format($incomeFiles['tunggakan'], 2) }}</td>

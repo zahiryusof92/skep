@@ -7,22 +7,39 @@ $prefix = 'mfr_';
         <h6>1. LAPORAN RINGKAS PENCAPAIAN KUTIPAN CAJ PENYENGGARAAN (MAINTENANCE FEE)</h6>
         <table class="table table-sm table-bordered" style="width: 100%">
             <tbody>
+                <?php
+                $mf_fee_semasa = $mfreport['fee_semasa'];
+                ?>
                 <tr>
                     <td class="text-left" width="35%">MAINTENANCE FEE SEBULAN (PER UNIT)</td>
-                    <td class="text-right" width="15%">{{ $mfreport['fee_sebulan'] }}</td>
+                    <td class="text-right" width="15%">{{ number_format($mfreport['fee_sebulan'], 2) }}</td>
                     <td class="text-left" width="35%">JUMLAH UNIT</td>
                     <td class="text-right" width="15%">{{ $mfreport['unit'] }}</td>
                 </tr>
+
+                @if ($mfreportExtras)
+                @foreach ($mfreportExtras as $mfreportExtra)
+                <?php
+                $mf_fee_semasa += $mfreportExtra['fee_semasa'];
+                ?>
+                <tr>
+                    <td class="text-left" width="35%">MAINTENANCE FEE SEBULAN (PER UNIT)</td>
+                    <td class="text-right" width="15%">{{ number_format($mfreportExtra['fee_sebulan'], 2) }}</td>
+                    <td class="text-left" width="35%">JUMLAH UNIT</td>
+                    <td class="text-right" width="15%">{{ $mfreportExtra['unit'] }}</td>
+                </tr>
+                @endforeach
+                @endif
                 <tr>
                     <td class="text-left">JUMLAH DIKUTIP (TUNGGAKAN + SEMASA + ADVANCED [A])</td>
                     <td class="text-right" id="{{$prefix}}kutipan"></td>
                     <td class="text-left">JUMLAH SERVICE FEE SEPATUT DIKUTIP SEMASA</td>
-                    <td class="text-right" id>{{ number_format($mfreport['fee_semasa'], 2) }}</td>
+                    <td class="text-right">{{ number_format($mf_fee_semasa, 2) }}</td>
                 </tr>
                 <tr>
                     <th colspan="2"></th>
                     <th class="text-left">JUMLAH SERVICE FEE BERJAYA DIKUTIP SEMASA</th>
-                    <th class="text-right"></th>
+                    <th class="text-right" id="{{$prefix}}total_income"></th>
                 </tr>
             </tbody>
         </table>
@@ -36,26 +53,26 @@ $prefix = 'mfr_';
                 </tr>
             </thead>
             <tbody>
-                @for($i=0 ; $i < count($reportMF) ; $i++)
-                <tr>
+                @for($i=0 ; $i < count($reportMF) ; $i++) <tr>
                     <td>&nbsp;</td>
                     <td class="text-left">{{ $reportMF[$i]['name'] }}</td>
                     <td class="text-right">
-                        <input type="text" class="{{ $prefix . $reportMF[$i]['report_key'] }}" name="{{ $prefix }}amount[]" value="{{ $reportMF[$i]['amount'] }}" hidden>
+                        <input type="text" class="{{ $prefix . $reportMF[$i]['report_key'] }}"
+                            name="{{ $prefix }}amount[]" value="{{ $reportMF[$i]['amount'] }}" hidden>
                         {{ number_format($reportMF[$i]['amount'], 2) }}
                     </td>
-                </tr>
-                @endfor
-                <tr>
-                    <td>&nbsp;</td>
-                    <td class="text-left">JUMLAH TELAH BAYAR [B]</td>
-                    <td class="text-right" id="{{ $prefix }}bayar_total"></td>
-                </tr>
+                    </tr>
+                    @endfor
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="text-left">JUMLAH TELAH BAYAR [B]</td>
+                        <td class="text-right" id="{{ $prefix }}bayar_total"></td>
+                    </tr>
 
-                <tr>
-                    <td class="text-left" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - (B)</td>
-                    <td class="text-right" id="{{ $prefix }}lebihan_kurangan"></td>
-                </tr>
+                    <tr>
+                        <td class="text-left" colspan="2">LEBIHAN / KURANGAN PENDAPATAN (A) - (B)</td>
+                        <td class="text-right" id="{{ $prefix }}lebihan_kurangan"></td>
+                    </tr>
             </tbody>
         </table>
 
@@ -83,21 +100,20 @@ $prefix = 'mfr_';
     });
 
     function calculateMFR() {
-        var mfr_kutipan = $("[id=income_total_income_1]").val();
-        $('#{{ $prefix }}kutipan').text(parseFloat(mfr_kutipan).toFixed(2));
-        
+        var mfr_kutipan = Number($("[id=income_total_income_1]").val());
+        $('#{{ $prefix }}kutipan').text(toCommas(parseFloat(mfr_kutipan).toFixed(2)));
+
+        var mfr_total_income = Number($("[id=income_semasa_1]").val());
+        $('#{{ $prefix }}total_income').text(toCommas(parseFloat(mfr_total_income).toFixed(2)));
 
         var mfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var mfr_bayar_total = 0;
         for (var i = 0; i < mfr_bayar.length; i++) {
-            console.log('number',mfr_bayar[i])
-            console.log('number',mfr_bayar[i].id)
-            console.log('number',mfr_bayar[i].value)
             mfr_bayar_total += Number(mfr_bayar[i].value);
         }
-        $('#{{ $prefix }}bayar_total').text(parseFloat(mfr_bayar_total).toFixed(2));
+        $('#{{ $prefix }}bayar_total').text(toCommas(parseFloat(mfr_bayar_total).toFixed(2)));
 
         var mfr_lebihan_kurangan = Number(mfr_kutipan) - Number(mfr_bayar_total);
-        $('#{{ $prefix }}lebihan_kurangan').text(parseFloat(mfr_lebihan_kurangan).toFixed(2));
+        $('#{{ $prefix }}lebihan_kurangan').text(toCommas(parseFloat(mfr_lebihan_kurangan).toFixed(2)));
     }
 </script>
