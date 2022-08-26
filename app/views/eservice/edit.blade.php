@@ -30,7 +30,6 @@
                             @endif
 
                             <div class="form-actions">
-                                <input type="hidden" name="order_details" value="{{ $order_details->id }}">
                                 <button type="submit" class="btn btn-own" id="submit_button">
                                     {{ trans('app.forms.save') }}
                                 </button>

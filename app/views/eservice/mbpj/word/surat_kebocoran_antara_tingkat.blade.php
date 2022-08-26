@@ -34,7 +34,7 @@
             :
         </td>
         <td>
-            {{ (!empty($details->bill_no) ? $details->bill_no : '') }}
+            {{ (!empty($order->bill_no) ? $order->bill_no : '') }}
         </td>
     </tr>
     <tr>
@@ -45,7 +45,7 @@
             :
         </td>
         <td>
-            {{ (!empty($details->date) ? \Helper\Helper::localizedDate($details->date) : '') }}
+            {{ (!empty($order->date) ? \Helper\Helper::localizedDate($order->date) : '') }}
         </td>
     </tr>
     <tr>

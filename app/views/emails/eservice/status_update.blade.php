@@ -1,7 +1,7 @@
 @extends('emails.layouts.app')
 
 @section('title')
-Your Application e-Perkhidmatan has been {{ $status }}
+Your Application e-Perkhidmatan has been {{ Str::upper($status) }}
 @endsection
 
 @section('fullname')
@@ -16,7 +16,9 @@ Your Application e-Perkhidmatan has been {{ $status }}
             <td style="overflow-wrap:break-word;word-break:break-word;padding:25px 10px 0px 30px;font-family:'Montserrat',sans-serif;" align="left">
 
                 <div style="color: #264653; line-height: 140%; text-align: left; word-wrap: break-word;">
-                    <p style="font-size: 14px; line-height: 140%;"><span style="font-family: Lato, sans-serif; font-size: 14px; line-height: 22.4px; color: #264653;">We are pleased to inform you that following application e-Perkhidmatan was {{ $status }}.</span></p>
+                    <p style="font-size: 14px; line-height: 140%;">
+                        <span style="font-family: Lato, sans-serif; font-size: 14px; line-height: 22.4px; color: #264653;">We are pleased to inform you that following application e-Perkhidmatan has been <strong>{{ Str::upper($status) }}</strong>.</span>
+                    </p>
                 </div>
 
             </td>

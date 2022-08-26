@@ -25,17 +25,6 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label class="form-control-label"><span style="color: red;">*</span> {{ trans('app.forms.scheme_name') }}</label>
-                                        <select id="scheme_name" name="scheme_name" class="form-control select2" data-placeholder="{{ trans('app.forms.please_select') }}" data-ajax--url="{{ route('v3.api.strata.getOption', ['type' => 'id']) }}" data-ajax--cache="true">
-                                        </select>
-                                        @include('alert.feedback-ajax', ['field' => 'scheme_name'])
-                                    </div>
-                                </div>
-                            </div>
-
                             @if (!empty($form))
                             {{ $form }}
                             @endif
@@ -107,8 +96,6 @@
                         
                         if(res.message != "Validation Fail") {
                             bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
-                        } else {
-                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                         }
                     }
                 },

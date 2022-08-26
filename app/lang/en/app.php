@@ -242,7 +242,9 @@ return array(
             "list" => "e-Perkhidmatan",
             "draft" => "Draft List",
             "review" => "Review List",
-            "approval" => "Approval List",
+            "approved" => "Approved List",
+            "rejected" => "Rejected List",
+            'report' => 'Report',
             "create" => "New Application",
             'edit' => 'Edit Application',
             'show' => 'View Application',            
@@ -627,7 +629,7 @@ return array(
         "insurance_reminder" => "Insurance Reminder",
         "file_draft" => "Draft COB File",
         "draft" => "Draft Created by JMB",
-        "created_at" => "Created At",
+        "created_at" => "Date Created",
         'eagm_property' => 'eAGM Property',
         'finance_support' => 'Finance Support',
         "under_ten_units" => "Under 10 Units",
@@ -728,6 +730,7 @@ return array(
         'approval_by' => 'Approval By',
         'approval_date' => 'Approval Date',
         'approval_remark' => 'Remark',
+        'submit_by' => 'Submitted By',
         'eservice' => [
             'bill_no' => 'Rujukan Kami',
             'date' => 'Tarikh',
@@ -1256,6 +1259,7 @@ return array(
         'inprogress' => 'In-progress',
         'approved' => 'Approved',
         'rejected' => 'Rejected',
+        'email_sent' => 'E-mail Sent'
     ],
     'months' => [
         1 => 'Januari',

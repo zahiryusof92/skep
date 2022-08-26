@@ -17,7 +17,7 @@ folders:
       to: "/home/vagrant/skep"
 
 sites:
-    - map: skep.app
+    - map: skep.test
       to: "/home/vagrant/skep"
 
 databases:

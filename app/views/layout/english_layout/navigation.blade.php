@@ -220,19 +220,10 @@ if (!Auth::user()->getAdmin()) {
                     <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()) ! @endif</span>
                 </a>
                 <ul class="left-menu-list list-unstyled" id="eservice_main">
+                    @if (Auth::user()->isJMB())
                     <li class="left-menu-list-link" id="eservice_create">
                         <a class="left-menu-link" href="{{ route('eservice.create', '') }}">
                             {{ trans('app.menus.eservice.create') }}
-                        </a>
-                    </li>
-                    <li class="left-menu-list-link" id="eservice_list">
-                        <a class="left-menu-link" href="{{ route('eservice.index') }}">
-                            {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()]) }}</span>
-                        </a>
-                    </li>
-                    <li class="left-menu-list-link" id="eservice_approval">
-                        <a class="left-menu-link" href="{{ route('eservice.approval') }}">
-                            {{ trans('app.menus.eservice.approval') }}
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="eservice_draft">
@@ -240,6 +231,29 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.eservice.draft') }}
                         </a>
                     </li>
+                    @endif
+                    <li class="left-menu-list-link" id="eservice_list">
+                        <a class="left-menu-link" href="{{ route('eservice.index') }}">
+                            {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()]) }}</span>
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_approved">
+                        <a class="left-menu-link" href="{{ route('eservice.approved') }}">
+                            {{ trans('app.menus.eservice.approved') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_rejected">
+                        <a class="left-menu-link" href="{{ route('eservice.rejected') }}">
+                            {{ trans('app.menus.eservice.rejected') }}
+                        </a>
+                    </li>                   
+                    @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                    <li class="left-menu-list-link" id="eservice_report">
+                        <a class="left-menu-link" href="{{ route('eservice.report') }}">
+                            {{ trans('app.menus.eservice.report') }}
+                        </a>
+                    </li>
+                    @endif
                 </ul>
             </li>
             @endif

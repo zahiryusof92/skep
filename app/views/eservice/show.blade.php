@@ -35,24 +35,31 @@
                                 </dd>
 
                                 <dt class="col-sm-4">
+                                    {{ trans('app.forms.type') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    {{ $order->getTypeText() }}
+                                </dd>
+
+                                <dt class="col-sm-4">
                                     {{ trans('app.forms.file_no') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $order->file->file_no }}
+                                    {{ ($order->file ? $order->file->file_no : '') }}
                                 </dd>
 
                                 <dt class="col-sm-4">
                                     {{ trans('app.forms.strata') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $order->strata->name }}
+                                    {{ ($order->strata ? $order->strata->name : '') }}
                                 </dd>
 
                                 <dt class="col-sm-4">
                                     {{ trans('app.forms.amount') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    RM {{ $order->details->price }}
+                                    RM {{ $order->price }}
                                 </dd>
 
                                 @if ($order->transaction)
@@ -70,6 +77,13 @@
                                     {{ $order->transaction->getStatusText() }}
                                 </dd>
                                 @endif
+
+                                <dt class="col-sm-4">
+                                    {{ trans('app.forms.submit_by') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    {{ $order->user->full_name }} ({{ $order->user->email }})
+                                </dd>
 
                                 @if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS])
                                 && (Auth::user()->getAdmin() || Auth::user()->isCOB()))
@@ -191,16 +205,20 @@
                                     <a href="{{ route('eservice.getLetterWord', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}"
                                         target="_blank">
                                         <button type="button" class="btn btn-sm btn-primary btn-rounded"
-                                            data-toggle="tooltip" data-placement="bottom" title="Download File">
-                                            <i class="icmn-file-word"></i>&nbsp;{{ $letter_type }}
+                                            data-toggle="tooltip" data-placement="bottom" title="Download File"
+                                            style="margin-bottom: 5px;">
+                                            <i class="fa fa-file-word-o" style="margin-right: 2px;"></i>
+                                            {{ $order->getTypeText() }} (Word)
                                         </button>
                                     </a>
+                                    <br />
                                     @endif
                                     <a href="{{ route('eservice.getLetterPDF', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}"
                                         target="_blank">
-                                        <button type="button" class="btn btn-sm btn-success btn-rounded"
+                                        <button type="button" class="btn btn-sm btn-success btn-rounded mb-2"
                                             data-toggle="tooltip" data-placement="bottom" title="Download File">
-                                            <i class="icmn-file-pdf"></i>&nbsp;{{ $letter_type }}
+                                            <i class="fa fa-file-pdf-o" style="margin-right: 2px;"></i>
+                                            {{ $order->getTypeText() }} (PDF)
                                         </button>
                                     </a>
                                 </dd>
@@ -226,7 +244,7 @@
                         @if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS]) &&
                         (Auth::user()->getAdmin() || Auth::user()->isCOB()))
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-own" id="submit_button">
+                            <button type="button" class="btn btn-own" id="submit_button">
                                 {{ trans('app.forms.save') }}
                             </button>
                         </div>
@@ -242,20 +260,30 @@
 
                         <h4>{{ trans('Form') }}</h4>
 
-                        @if ($order->details)
-                        @if (!empty($order->details->bill_no))
+                        @if (!empty($order->bill_no))
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label class="form-control-label">
                                         {{ trans('app.forms.bill_no') }}
                                     </label>
-                                    <input type="text" class="form-control" value="{{ $order->details->bill_no }}"
-                                        readonly="">
+                                    <input type="text" class="form-control" value="{{ $order->bill_no }}" readonly="">
                                 </div>
                             </div>
                         </div>
                         @endif
+
+                        @if (!empty($order->date))
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">
+                                        {{ trans('app.forms.date') }}
+                                    </label>
+                                    <input type="text" class="form-control" value="{{ $order->date }}" readonly="">
+                                </div>
+                            </div>
+                        </div>
                         @endif
 
                         @if (!empty($form))
@@ -272,14 +300,24 @@
                     onclick="window.location ='{{ route('eservice.index') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
+                @elseif ($order->status == EServiceOrder::DRAFT)
+                <button type="button" class="btn btn-default" id="cancel_button"
+                    onclick="window.location ='{{ route('eservice.draft') }}'">
+                    {{ trans('app.forms.cancel') }}
+                </button>
                 @elseif ($order->status == EServiceOrder::APPROVED)
                 <button type="button" class="btn btn-default" id="cancel_button"
-                    onclick="window.location ='{{ route('eservice.approval') }}'">
+                    onclick="window.location ='{{ route('eservice.approved') }}'">
+                    {{ trans('app.forms.cancel') }}
+                </button>
+                @elseif ($order->status == EServiceOrder::REJECTED)
+                <button type="button" class="btn btn-default" id="cancel_button"
+                    onclick="window.location ='{{ route('eservice.rejected') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @else
                 <button type="button" class="btn btn-default" id="cancel_button"
-                    onclick="window.location ='{{ route('eservice.draft') }}'">
+                    onclick="window.location ='{{ route('eservice.index') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @endif
@@ -291,6 +329,53 @@
     <!-- End -->
 </div>
 
+<div class="modal fade" id="verifyModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+    data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <form id="verifyForm" class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ trans('Verify') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label style="color: red; font-style: italic;">*
+                                    {{ trans('app.forms.mandatory_fields') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-control-label">
+                                    <span style="color: red;">*</span>
+                                    {{ trans('app.forms.password') }}
+                                </label>
+                                <input type="password" id="password" name="password" class="form-control"
+                                    placeholder="{{ trans('app.forms.password') }}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <img id="loading_modal" style="display:none;"
+                        src="{{asset('assets/common/img/input-spinner.gif')}}" />
+                    <button type="modal" id="submit_button_modal" class="btn btn-own">
+                        {{ trans('app.forms.submit') }}
+                    </button>
+                    <button data-dismiss="modal" id="cancel_button_modal" class="btn btn-default" type="button">
+                        {{ trans('app.forms.cancel') }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready( function () {
         $('.select2').select2();
@@ -312,70 +397,72 @@
 
         $("#submit_button").click(function (e) {
             e.preventDefault();
-            swal({
-                title: "Verification Code",
-                text: "Please verification code",
-                type: "input",
-                showCancelButton: true,
-                closeOnConfirm: false,
-                inputPlaceholder: "Verification Code"
-            }, function (inputValue) {
-                if (inputValue === false) return false;
-                if (inputValue === "") {
-                    return false
-                }
 
-                swal.close();
-
-                $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-                let route = "{{ route('eservice.submitByCOB', [':id']) }}";
-                route = route.replace(':id', "{{ \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id) }}");
-
-                let formData = $('form').serialize();
-                $.ajax({
-                    url: route,
-                    type: "POST",
-                    data: formData,
-                    dataType: 'JSON',
-                    beforeSend: function() {
-                        $('.help-block').text("");
-                        $("#loading").css("display", "inline-block");
-                        $("#submit_button").attr("disabled", "disabled");
-                        $("#cancel_button").attr("disabled", "disabled");
-                    },
-                    success: function (res) {
-                        console.log(res);
-                        if (res.success == true) {
-                            bootbox.alert("<span style='color:green;'>{{ trans('app.successes.eservice.update') }}</span>", function () {
-                                location.reload();
-                            });
-                        } else {
-                            if(res.errors !== undefined) {
-                                $.each(res.errors, function (key, value) {
-                                    if(key.includes('_tmp')) {
-                                        let myId = key.replace(/_tmp/g, '');
-                                        $("#" + myId + "_error").children("strong").text(value);
-                                    } else {
-                                        $("#" + key + "_error").children("strong").text(value);
-                                    }
-                                });
-                            }
-                            
-                            if(res.message != "Validation Fail") {
-                                bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
-                            } else {
-                                bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                            }
+            (async () => {
+                const { value: password } = await Swal.fire({
+                    title: 'Your password',
+                    input: 'password',
+                    inputPlaceholder: 'Enter your password',
+                    showCancelButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Please enter your password!'
                         }
-                    },
-                    complete: function() {
-                        $.unblockUI();
-                        $("#loading").css("display", "none");
-                        $("#submit_button").removeAttr("disabled");
-                        $("#cancel_button").removeAttr("disabled");
-                    },
-                });
-            });
+                    }
+                })
+
+                if (password) {
+                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                    let route = "{{ route('eservice.submitByCOB', [':id']) }}";
+                    route = route.replace(':id', "{{ \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id) }}");
+
+                    let formData = $('#eservice-form').serialize();
+                    $.ajax({
+                        url: route,
+                        type: "POST",
+                        data: formData,
+                        dataType: 'JSON',
+                        beforeSend: function() {
+                            $('.help-block').text("");
+                            $("#loading").css("display", "inline-block");
+                            $("#submit_button").attr("disabled", "disabled");
+                            $("#cancel_button").attr("disabled", "disabled");
+                        },
+                        success: function (res) {
+                            if (res.success == true) {
+                                bootbox.alert("<span style='color:green;'>{{ trans('app.successes.eservice.update') }}</span>", function () {
+                                    location.reload();
+                                });
+                            } else {
+                                if(res.errors !== undefined) {
+                                    $.each(res.errors, function (key, value) {
+                                        if(key.includes('_tmp')) {
+                                            let myId = key.replace(/_tmp/g, '');
+                                            $("#" + myId + "_error").children("strong").text(value);
+                                        } else {
+                                            $("#" + key + "_error").children("strong").text(value);
+                                        }
+                                    });
+                                }
+                                
+                                if(res.message != "Validation Fail") {
+                                    bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
+                                } else {
+                                    bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                                }
+                            }
+                        },
+                        complete: function() {
+                            $.unblockUI();
+                            $("#loading").css("display", "none");
+                            $("#submit_button").removeAttr("disabled");
+                            $("#cancel_button").removeAttr("disabled");
+                        },
+                    });
+                }
+            })()             
         });
     });
 

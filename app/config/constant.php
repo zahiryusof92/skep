@@ -872,7 +872,7 @@ return [
                                 'management_state',
                                 'management_phone',
                                 'unit_no',
-                                'owner_name',
+                                'owner_name', 
                                 'owner_address1',
                                 'owner_address2',
                                 'owner_address3',
