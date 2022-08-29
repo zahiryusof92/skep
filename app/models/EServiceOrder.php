@@ -87,14 +87,39 @@ class EServiceOrder extends Eloquent
     {
         $options = [];
 
-        if (Auth::user()->getCOB) {
-            $cob = Auth::user()->getCOB->short_name;
-            if (!empty($cob)) {
+        if (!Auth::user()->getAdmin()) {
+            if (Auth::user()->getCOB) {
+                $cob = Auth::user()->getCOB->short_name;
+                if (!empty($cob)) {
+                    $types = (!empty(self::module()['cob'][Str::lower($cob)])) ? self::module()['cob'][Str::lower($cob)]['type'] : '';
+
+                    if (!empty($types)) {
+                        foreach ($types as $type) {
+                            $options[$type['name']] = $type['title'];
+                        }
+                    }
+                }
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $cob = 'MBPJ';
+
                 $types = (!empty(self::module()['cob'][Str::lower($cob)])) ? self::module()['cob'][Str::lower($cob)]['type'] : '';
 
                 if (!empty($types)) {
                     foreach ($types as $type) {
                         $options[$type['name']] = $type['title'];
+                    }
+                }
+            } else {
+                $cob = Company::find(Session::get('admin_cob'));
+                if ($cob) {
+                    $types = (!empty(self::module()['cob'][Str::lower($cob->short_name)])) ? self::module()['cob'][Str::lower($cob->short_name)]['type'] : '';
+
+                    if (!empty($types)) {
+                        foreach ($types as $type) {
+                            $options[$type['name']] = $type['title'];
+                        }
                     }
                 }
             }
@@ -207,6 +232,7 @@ class EServiceOrder extends Eloquent
 
         $statuses = EServiceOrder::getStatusList();
         $types = EServiceOrder::getTypeList();
+
         if ($statuses && $types) {
             foreach ($statuses as $status) {
                 $data['categories'][] = $status;

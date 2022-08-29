@@ -711,10 +711,6 @@ class EServiceController extends \BaseController
 
 		$data = EServiceOrder::getGraphData();
 
-		// $types = EServiceOrder::getTypeList();
-
-		// return '<pre>'. print_r($types, true) . '</pre>';
-
 		$viewData = array(
 			'title' => trans('app.menus.eservice.report'),
 			'panel_nav_active' => 'eservice_panel',
