@@ -1866,6 +1866,7 @@ class LPHSController extends BaseController
 
                             $result[] = [
                                 trans('Council') => $council->name . ' (' . $council->short_name . ')',
+                                trans('File No') => $files->file_no,
                                 trans('Building Name') => $files->strata->name,
                                 trans('Address 1') => $files->strata->address1,
                                 trans('Address 2') => $files->strata->address2,
