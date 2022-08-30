@@ -204,6 +204,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return $balance;
     }
 
+    public function scopeSelf($query) {
+        return $query->where('is_active', 1)->where('is_deleted', false);
+    }
+
     public function auditTrails() {
         return $this->hasMany('AuditTrail', 'audit_by')->orderBy('id');
     }

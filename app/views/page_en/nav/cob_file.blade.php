@@ -59,6 +59,11 @@
             {{ trans('app.forms.finance_support') }}
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link @if(Request::is('*fileMovement/*') || Request::is('*FileMovement/*')) active @endif custom-tab" @if(!Request::is('*fileMovement/*') || !Request::is('*FileMovement/*')) href="{{ route('cob.file-movement.index', \Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)) }}" @endif>
+            {{ trans('app.forms.file_movement') }}
+        </a>
+    </li>
     @endif
 </ul>
 @else

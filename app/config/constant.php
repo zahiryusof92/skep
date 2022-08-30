@@ -27,6 +27,12 @@ return [
             ]
         ],
         'cob' => [
+            'file' => [
+                'name' => 'file'
+            ],
+            'file_movement' => [
+                'name' => 'file_movement'
+            ],
             'facility' => [
                 'management_office' => [
                     'name' => 'management_office',
@@ -879,6 +885,9 @@ return [
         ],
         'api_building' => [
             'name' => 'api_building',
+        ],
+        'file_movement' => [
+            'name' => 'file_movement'
         ],
     ],
     'third_party' => [

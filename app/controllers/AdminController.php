@@ -351,6 +351,39 @@ class AdminController extends BaseController {
         return View::make('page_en.add_file', $viewData);
     }
 
+    public function getLatestFile() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            if(!empty($data['city']) || !empty($data['file_id'])) {
+                $file = Files::file()
+                            ->join('strata', 'strata.file_id', '=', 'files.id')
+                            // ->where('strata.town', $data['city'])
+                            ->where(function($query) use($data){
+                                if(!empty($data['city'])) {
+                                    $query->where('strata.town', $data['city']);
+                                }
+                                if(!empty($data['file_id'])) {
+                                    $query->where('files.id', Helper::decode($data['file_id'], $this->module['cob']['file']['name']));
+                                }
+                            })
+                            ->select(['files.*', 'strata.name as strata_name'])
+                            ->orderBy('id', 'desc')
+                            ->first();
+                if($file) {
+                    $latest_file = Files::orderBy('created_at', 'desc')
+                                    ->first();
+                    return [
+                        'status' => true,
+                        'strata_name' => $file->strata_name,
+                        'file_name' => $file->name,
+                        'ref_no' => $latest_file->ref_no,
+                        'bil_no' => $file->bil_no,
+                    ];
+                }
+            }
+        }
+    }
+
     public function submitFile() {
         $data = Input::all();
         if (Request::ajax()) {

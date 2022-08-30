@@ -150,6 +150,7 @@ Route::post('/draft/submitOthers', 'DraftController@submitOthers')->before('auth
 Route::post('/draft/deleteFile', 'DraftController@deleteFile')->before('authMember');
 
 //add file
+Route::get('/getLatestFile', 'AdminController@getLatestFile')->before('authMember');
 Route::get('/addFile', 'AdminController@addFile')->before('authMember');
 Route::post('/submitFile', 'AdminController@submitFile')->before('authMember');
 
@@ -962,7 +963,14 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('epks/submitConfirm/{id}', ['as' => 'epks.submitConfirm', 'uses' => 'EPKSController@submitConfirm']);
     Route::post('epks/submitByCOB/{id}', ['as' => 'epks.submitByCOB', 'uses' => 'EPKSController@submitByCOB']);
     Route::resource('epks', 'EPKSController');
-    
+
+    /**
+     * AGM Postpone
+     */
+    Route::get('postponeAGM/approved', ['as' => 'postponeAGM.approved', 'uses' => 'PostponeAGMController@approved']);
+    Route::get('postponeAGM/rejected', ['as' => 'postponeAGM.rejected', 'uses' => 'PostponeAGMController@rejected']);
+    Route::get('postponeAGM/report', ['as' => 'postponeAGM.report', 'uses' => 'PostponeAGMController@report']);
+    Route::resource('postponeAGM', 'PostponeAGMController');    
 
     /**
      * Reporting
@@ -979,6 +987,16 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('cob/get-option', 'CobController@getOption');
     Route::post('buyer/sync', 'CobSyncController@submitBuyerSync');
     Route::get('cob/get-property', 'CobSyncController@getProperty');
+
+    Route::resource('file-movement', 'FileMovementController');
+
+    /** COB File Movement */
+    Route::get('update/fileMovement/{file_id}', array('as' => 'cob.file-movement.index', 'uses' => 'CobFileMovementController@index'));
+    Route::get('update/addFileMovement/{file_id}', array('as' => 'cob.file-movement.create', 'uses' => 'CobFileMovementController@create'));
+    Route::post('update/submitAddFileMovement', array('as' => 'cob.file-movement.store', 'uses' => 'CobFileMovementController@store'));
+    Route::get('update/updateFileMovement/{id}/{file_id}', array('as' => 'cob.file-movement.edit', 'uses' => 'CobFileMovementController@edit'));
+    Route::put('update/submitUpdateFileMovement/{id}', array('as' => 'cob.file-movement.update', 'uses' => 'CobFileMovementController@update'));
+    Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
 
     /**
      * COB Draft Reject

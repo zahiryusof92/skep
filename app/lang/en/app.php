@@ -29,6 +29,8 @@ return array(
         "logout" => "Logout",
         "cob" => array(
             "maintenance" => "COB Maintenance",
+            "file_movement" => "File Movement",
+            "edit_file_movement" => "Edit File Movement",
             "finance_file" => "Finance File",
             "file_prefix" => "COB File Prefix",
             "add_cob_file" => "Add COB File",
@@ -694,6 +696,7 @@ return array(
         'accepted' => 'Accepted',
         'rejected' => 'Rejected',
         'old' => 'Old',
+        "file_movement" => "File Movement",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -946,6 +949,12 @@ return array(
             "destroy" => "Unit of Measure deleted successfully!",
             "submit" => "Unit of Measure submitted successfully!",
         ),
+        "file_movement" => array(
+            "store" => "File Movement added successfully!",
+            "update" => "File Movement updated successfully!",
+            "destroy" => "File Movement deleted successfully!",
+            "submit" => "File Movement submitted successfully!",
+        ),
         'payment_successfully' => 'Payment Success',
         "epks" => array(
             "store" => "Application added successfully!",
@@ -1009,6 +1018,7 @@ return array(
         "add_insurance_provider" => "Add Insurance Provider",
         "add_defect" => "Add Complaint",
         "add_insurance" => "Add Insurance",
+        "add_file_movement" => "Add File Movement",
         "submit_payment" => "Submit Payment",
         "reset" => "Reset",
         "accept" => "Accept",

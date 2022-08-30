@@ -756,6 +756,44 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            <li class="left-menu-list-submenu" id="agm_postpone_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
+                    <span>{{ trans('app.menus.agm_postpone.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger"></span>
+                </a>
+                <ul class="left-menu-list list-unstyled" id="agm_postpone_main">
+                    @if (Auth::user()->isJMB())
+                    <li class="left-menu-list-link" id="agm_postpone_create">
+                        <a class="left-menu-link" href="{{ route('postponeAGM.create') }}">
+                            {{ trans('app.menus.agm_postpone.create') }}
+                        </a>
+                    </li>
+                    @endif
+                    <li class="left-menu-list-link" id="agm_postpone_list">
+                        <a class="left-menu-link" href="{{ route('postponeAGM.index') }}">
+                            {{ trans('app.menus.agm_postpone.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;</span>
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="agm_postpone_approved">
+                        <a class="left-menu-link" href="{{ route('postponeAGM.approved') }}">
+                            {{ trans('app.menus.agm_postpone.approved') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="agm_postpone_rejected">
+                        <a class="left-menu-link" href="{{ route('postponeAGM.rejected') }}">
+                            {{ trans('app.menus.agm_postpone.rejected') }}
+                        </a>
+                    </li>                   
+                    @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                    <li class="left-menu-list-link" id="agm_postpone_report">
+                        <a class="left-menu-link" href="{{ route('postponeAGM.report') }}">
+                            {{ trans('app.menus.agm_postpone.report') }}
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+            </li>
+
             @if (Module::hasAccess(8))
             <li class="left-menu-list-submenu" id="directory_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
