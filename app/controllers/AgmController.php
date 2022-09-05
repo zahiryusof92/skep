@@ -188,7 +188,7 @@ class AgmController extends BaseController {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -301,7 +301,7 @@ class AgmController extends BaseController {
                         $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
 
-                        if(Auth::user()->isJMB()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -343,7 +343,7 @@ class AgmController extends BaseController {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -582,7 +582,7 @@ class AgmController extends BaseController {
                     $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB File", $remarks);
 
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -738,7 +738,7 @@ class AgmController extends BaseController {
                             $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
-                        if(Auth::user()->isJMB()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -781,7 +781,7 @@ class AgmController extends BaseController {
                 $files = Files::find($buyer->file_id);
                 $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1124,7 +1124,7 @@ class AgmController extends BaseController {
                     $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit' . $tenant->unit_no . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB File", $remarks);
                     
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -1277,7 +1277,7 @@ class AgmController extends BaseController {
                             $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
-                        if(Auth::user()->isJMB()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -1320,7 +1320,7 @@ class AgmController extends BaseController {
                 $files = Files::find($tenant->file_id);
                 $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1858,7 +1858,7 @@ class AgmController extends BaseController {
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2129,7 +2129,7 @@ class AgmController extends BaseController {
                         $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
                     }
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -2170,7 +2170,7 @@ class AgmController extends BaseController {
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2328,7 +2328,7 @@ class AgmController extends BaseController {
                         # Audit Trail
                         $remarks = 'Document: ' . $document->name . $this->module['audit']['text']['data_deleted'];
                         $this->addAudit($document->file_id, "Document", $remarks);
-                        if(Auth::user()->isJMB()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -2455,7 +2455,7 @@ class AgmController extends BaseController {
                     # Audit Trail
                     $remarks = 'Document: ' . $document->name_en . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($document->file_id, "Document", $remarks);
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -2554,7 +2554,7 @@ class AgmController extends BaseController {
                         $remarks = 'Document id: ' . $document->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($document->file_id, "Document", $remarks);
                     }
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */

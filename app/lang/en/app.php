@@ -237,6 +237,19 @@ return array(
         "cob_letter" => array(
             "name" => "COB Letter",
         ),
+        "agm_postpone" => array(
+            "name" => "Postponed AGM",
+            "list" => "Postponed AGM",
+            "draft" => "Draft List",
+            "review" => "Review List",
+            "approved" => "Approved List",
+            "rejected" => "Rejected List",
+            'report' => 'Report',
+            "create" => "New Application",
+            'edit' => 'Edit Application',
+            'show' => 'View Application',
+            "pending" => ":count pending",
+        ),
         'api' => array(
             'name' => 'API',
             'client' => 'API Client',
@@ -699,6 +712,8 @@ return array(
         'rejected' => 'Rejected',
         'old' => 'Old',
         "file_movement" => "File Movement",
+        'attachment' => 'Attachment',
+        'application_no' => 'Application No',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1179,6 +1194,12 @@ return array(
     ],
     'epks' => [
         'draft' => 'Draft',
+        'pending' => 'Pending',
+        'inprogress' => 'In-progress',
+        'approved' => 'Approved',
+        'rejected' => 'Rejected',
+    ],
+    'agm_postpone' => [
         'pending' => 'Pending',
         'inprogress' => 'In-progress',
         'approved' => 'Approved',

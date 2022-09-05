@@ -943,7 +943,7 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
             if (count($house_scheme) <= 0) {
@@ -997,7 +997,7 @@ class AdminController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $house_scheme = HouseSchemeDraft::firstOrNew(array('file_id' => $files->id));
                 $house_scheme->reference_id = $data['reference_id'];
 
@@ -1141,7 +1141,7 @@ class AdminController extends BaseController {
             }
             /** End Arrange audit fields changes */
 
-            if (!Auth::user()->isJMB()) {
+            if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()) {
                 $files->is_active = $is_active;
                 $files->save();
             }
@@ -1183,7 +1183,7 @@ class AdminController extends BaseController {
             $house_scheme->save();
 
             # Audit Trail
-            if(Auth::user()->isJMB()) {
+            if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
@@ -1273,7 +1273,7 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
         
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $strata = StrataDraft::where('file_id', $files->id)->first();
             $residential = ResidentialDraft::where('file_id', $files->id)->first();
             $residential_extra = ResidentialExtra::where('file_id', $files->id)->get();
@@ -1409,7 +1409,7 @@ class AdminController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $strata = StrataDraft::firstOrNew(array('file_id' => $files->id));
                 $commercial = CommercialDraft::firstOrNew(array('file_id' => $files->id));
                 $residential = ResidentialDraft::firstOrNew(array('file_id' => $files->id));
@@ -1520,7 +1520,7 @@ class AdminController extends BaseController {
 
             
             /** Arrange audit fields changes */
-            if(!Auth::user()->isJMB()) {
+            if(!Auth::user()->isJMB() && !Auth::user()->isDeveloper()) {
                 $audit_fields_changed = "";
                 $strata_title_field = $title == $strata->title? "": "strata title";
                 $strata_name_field = $name == $strata->name? "": "strata name";
@@ -1834,7 +1834,7 @@ class AdminController extends BaseController {
                 $residential->sinking_fund_option = $residential_sinking_fund_option;
                 $residential->save();
                 
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     $delete_old_residential_extra = ResidentialExtraDraft::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
                 } else {
                     $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
@@ -1844,7 +1844,7 @@ class AdminController extends BaseController {
                     if($total_residential_custom > 0) {
                         for($i = 0; $i < $total_residential_custom; $i++) {
                             $custom_residential =  new ResidentialExtra();
-                            if (Auth::user()->isJMB()) {
+                            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                                 $custom_residential =  new ResidentialExtraDraft();
                             }
                             $custom_residential->file_id = $residential->file_id;
@@ -1861,7 +1861,7 @@ class AdminController extends BaseController {
                 }
                 
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ResidentialDraft::where('file_id', $files->id)->delete();
                 } else {
                     Residential::where('file_id', $files->id)->delete();
@@ -1877,7 +1877,7 @@ class AdminController extends BaseController {
                 $commercial->sinking_fund_option = $commercial_sinking_fund_option;
                 $commercial->save();
                 
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     $delete_old_commercial_extra = CommercialExtraDraft::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
                 } else {
                     $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
@@ -1887,7 +1887,7 @@ class AdminController extends BaseController {
                     if($total_commercial_custom > 0) {
                         for($i = 0; $i < $total_commercial_custom; $i++) {
                             $custom_commercial =  new CommercialExtra();
-                            if (Auth::user()->isJMB()) {
+                            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                                 $custom_commercial =  new CommercialExtraDraft();
                             }
                             $custom_commercial->file_id = $commercial->file_id;
@@ -1903,7 +1903,7 @@ class AdminController extends BaseController {
                     }
                 }
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     CommercialDraft::where('file_id', $files->id)->delete();
                 } else {
                     Commercial::where('file_id', $files->id)->delete();
@@ -1939,7 +1939,7 @@ class AdminController extends BaseController {
             $facility->save();
 
             # Audit Trail
-            if(Auth::user()->isJMB()) {
+            if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
@@ -2038,7 +2038,7 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
             $management = ManagementDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
@@ -2095,7 +2095,7 @@ class AdminController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $management = ManagementDraft::firstOrNew(array('file_id' => $files->id));
                 $management->reference_id = $data['reference_id'];
 
@@ -2393,7 +2393,7 @@ class AdminController extends BaseController {
                 $developer->remarks = $developer_remarks;
                 $developer->save();
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ManagementDeveloperDraft::where('file_id', $files->id)->delete();
                 } else {
                     ManagementDeveloper::where('file_id', $files->id)->delete();
@@ -2417,7 +2417,7 @@ class AdminController extends BaseController {
                 $jmb->email = $jmb_email;
                 $jmb->save();
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ManagementJMBDraft::where('file_id', $files->id)->delete();
                 } else {
                     ManagementJMB::where('file_id', $files->id)->delete();
@@ -2442,7 +2442,7 @@ class AdminController extends BaseController {
                 $mc->email = $mc_email;
                 $mc->save();
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ManagementMCDraft::where('file_id', $files->id)->delete();
                 } else {
                     ManagementMC::where('file_id', $files->id)->delete();
@@ -2465,7 +2465,7 @@ class AdminController extends BaseController {
                 $agent->email = $agent_email;
                 $agent->save();
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ManagementAgentDraft::where('file_id', $files->id)->delete();
                 } else {
                     ManagementAgent::where('file_id', $files->id)->delete();
@@ -2487,7 +2487,7 @@ class AdminController extends BaseController {
                 $others->email = $others_email;
                 $others->save();
             } else {
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ManagementOthersDraft::where('file_id', $files->id)->delete();
                 } else {
                     ManagementOthers::where('file_id', $files->id)->delete();
@@ -2495,7 +2495,7 @@ class AdminController extends BaseController {
             }
 
             # Audit Trail
-            if(Auth::user()->isJMB()) {
+            if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
@@ -2516,7 +2516,7 @@ class AdminController extends BaseController {
     }
 
     public function viewMonitoring($id) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('updateFile/others/' . $id);
         }
         //get user permission
@@ -2543,7 +2543,7 @@ class AdminController extends BaseController {
     }
 
     public function monitoring($id) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('updateFile/others/' . $id);
         }
 
@@ -3931,7 +3931,7 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::with(['buyer'])->findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $other_details = OtherDetailsDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
             if (count($other_details) <= 0) {
@@ -3984,7 +3984,7 @@ class AdminController extends BaseController {
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $others = OtherDetailsDraft::firstOrNew(array('file_id' => $files->id));
                 $others->reference_id = $data['reference_id'];
 
@@ -4249,7 +4249,7 @@ class AdminController extends BaseController {
     }
 
     public function viewScoring($id) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -4275,7 +4275,7 @@ class AdminController extends BaseController {
     }
 
     public function scoring($id) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -4652,7 +4652,7 @@ class AdminController extends BaseController {
 
     public function viewBuyer($id) {
         //get user permission
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -4679,7 +4679,7 @@ class AdminController extends BaseController {
     }
 
     public function buyer($id) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -5160,7 +5160,7 @@ class AdminController extends BaseController {
 
     //document
     public function document($id) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
 
@@ -6348,7 +6348,7 @@ class AdminController extends BaseController {
             if (Auth::user()->isCOB()) {
                 if (Auth::user()->getRole->is_paid) {
                     $role = Role::where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
                             })
                             ->orWhere(function ($query) {
                                 $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
@@ -6360,7 +6360,7 @@ class AdminController extends BaseController {
                             ->lists('name', 'id');
                 } else {
                     $role = Role::where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
                             })
                             ->orWhere(function ($query) {
                                 $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
@@ -6445,7 +6445,7 @@ class AdminController extends BaseController {
                     $user->email = $email;
                     $user->phone_no = $phone_no;
                     $user->role = $getRole->id;
-                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
+                    if (($getRole->name == Role::JMB || $getRole->name == Role::MC) || $getRole->name == Role::DEVELOPER) {
                         if (!empty($start_date)) {
                             $user->start_date = $start_date;
                         }
@@ -6757,7 +6757,7 @@ class AdminController extends BaseController {
             if (Auth::user()->isCOB()) {
                 if (Auth::user()->getRole->is_paid) {
                     $query_role = $query_role->where(function ($query) {
-                                    $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                                    $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
                                 })
                                 ->orWhere(function ($query) {
                                     $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
@@ -6765,7 +6765,7 @@ class AdminController extends BaseController {
                                 ->where('is_admin', 0);
                 } else {
                     $query_role = $query_role->where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC);
+                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
                             })
                             ->orWhere(function ($query) {
                                 $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
@@ -6851,7 +6851,7 @@ class AdminController extends BaseController {
                     $new_line .= $phone_no != $user->phone_no? "phone no, " : "";
                     $new_line .= $is_active != $user->is_active? "is active, " : "";
                     $new_line .= $getRole->id != $user->role? "role, " : "";
-                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
+                    if (($getRole->name == Role::JMB || $getRole->name == Role::MC) || $getRole->name == Role::DEVELOPER) {
                         $new_line .= (!empty($start_date) && ($start_date != $user->start_date))? "start date, " : "";
                         $new_line .= (!empty($end_date) && ($end_date != $user->end_date))? "end date, " : "";
                         $new_line .= (!empty($file_id) && ($file_id != $user->file_id))? "file id, " : "";
@@ -6871,7 +6871,7 @@ class AdminController extends BaseController {
                     $user->email = $email;
                     $user->phone_no = $phone_no;
                     $user->role = $getRole->id;
-                    if ($getRole->name == Role::JMB || $getRole->name == Role::MC) {
+                    if (($getRole->name == Role::JMB || $getRole->name == Role::MC)  || $getRole->name == Role::DEVELOPER) {
                         if (!empty($start_date)) {
                             $user->start_date = $start_date;
                         }
@@ -8777,7 +8777,7 @@ class AdminController extends BaseController {
                 
         } else {
             $file = Files::findOrFail(Helper::decode($id));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
@@ -8955,7 +8955,7 @@ class AdminController extends BaseController {
                     $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9030,7 +9030,7 @@ class AdminController extends BaseController {
                 
         } else {
             $file = Files::findOrFail(Helper::decode($id));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
@@ -9102,7 +9102,7 @@ class AdminController extends BaseController {
                 $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
-                if(Auth::user()->isJMB()) {
+                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -9174,7 +9174,7 @@ class AdminController extends BaseController {
             return View::make('insurance_en.edit_insurance', $viewData);
         } else {
             $file = Files::findOrFail(Helper::decode($id));
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
@@ -9272,7 +9272,7 @@ class AdminController extends BaseController {
                         $this->addAudit($insurance->file->id, "Insurance", $remarks);
                     }
 
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9305,7 +9305,7 @@ class AdminController extends BaseController {
 
     //finance support
     public function financeSupport($id) {
-        if (Auth::user()->isJMB() || Auth::user()->isPreSale()) {
+        if ((Auth::user()->isJMB() || Auth::user()->isDeveloper()) || Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         //get user permission
@@ -9414,7 +9414,7 @@ class AdminController extends BaseController {
                     $remarks = 'COB File (' . $files->file_no . ') has a Finance Support with id : ' . $finance->id .  $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB Finance Support", $remarks);
 
-                    if(Auth::user()->isJMB()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9501,7 +9501,7 @@ class AdminController extends BaseController {
                             $this->addAudit($files->id, "COB Finance Support", $remarks);
                         }
                         
-                        if(Auth::user()->isJMB()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -9553,7 +9553,7 @@ class AdminController extends BaseController {
     }
 
     public function createOrUpdateFileDraft($files) {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $draft = FileDrafts::firstOrNew(array('file_id' => $files->id));
             $draft->created_by = Auth::user()->id;
             $draft->is_deleted = 0;

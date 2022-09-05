@@ -650,7 +650,7 @@ class FinanceController extends BaseController
                         $remarks = 'Finance File : ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) .  $this->module['audit']['text']['data_inserted'];
                         $this->addAudit($finance->file_id, "COB Finance", $remarks);
 
-                        if (Auth::user()->isJMB()) {
+                        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -863,7 +863,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File : ' . $finance->file->file_no . " " . $finance->year . "-" . strtoupper($finance->monthName()) .  $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($finance->file_id, "COB Finance", $remarks);
 
-                    if (Auth::user()->isJMB()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -1041,7 +1041,7 @@ class FinanceController extends BaseController
                         $this->addAudit($files->file_id, "COB Finance", $remarks);
                     }
 
-                    if (Auth::user()->isJMB()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -1310,7 +1310,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1527,7 +1527,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1636,7 +1636,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1743,7 +1743,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1863,7 +1863,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1983,7 +1983,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2103,7 +2103,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2212,7 +2212,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2325,7 +2325,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance File: ' . $files->file->file_no . " " . $files->year . "-" . strtoupper($files->monthName()) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->file_id, "COB Finance File", $remarks);
                 }
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2790,7 +2790,7 @@ class FinanceController extends BaseController
                     $remarks = 'Finance Support : ' . $finance->name . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
 
-                    if (Auth::user()->isJMB()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -2894,7 +2894,7 @@ class FinanceController extends BaseController
                             $this->addAudit($finance->file_id, "COB Finance Support", $remarks);
                         }
 
-                        if (Auth::user()->isJMB()) {
+                        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -2938,7 +2938,7 @@ class FinanceController extends BaseController
                 $remarks = 'Finance File : ' . $finance_file->file->file_no . " " . $finance_file->year . "-" . strtoupper($finance_file->monthName()) . $this->module['audit']['text']['status_active'];
                 $this->addAudit($finance_file->file_id, "COB Finance File", $remarks);
 
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2975,7 +2975,7 @@ class FinanceController extends BaseController
                 $remarks = 'Finance File : ' . $finance_file->file->file_no . " " . $finance_file->year . "-" . strtoupper($finance_file->monthName()) . $this->module['audit']['text']['status_inactive'];
                 $this->addAudit($finance_file->file_id, "COB Finance File", $remarks);
 
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -3012,7 +3012,7 @@ class FinanceController extends BaseController
                 $remarks = 'Finance Support : ' . $finance_support->name . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($finance_support->file_id, "COB Finance Support", $remarks);
 
-                if (Auth::user()->isJMB()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */

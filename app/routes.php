@@ -970,7 +970,10 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('postponeAGM/approved', ['as' => 'postponeAGM.approved', 'uses' => 'PostponeAGMController@approved']);
     Route::get('postponeAGM/rejected', ['as' => 'postponeAGM.rejected', 'uses' => 'PostponeAGMController@rejected']);
     Route::get('postponeAGM/report', ['as' => 'postponeAGM.report', 'uses' => 'PostponeAGMController@report']);
-    Route::resource('postponeAGM', 'PostponeAGMController');    
+    Route::post('postponeAGM/fileUpload', ['as' => 'postponeAGM.fileUpload', 'uses' => 'PostponeAGMController@fileUpload']);
+    Route::post('postponeAGM/review', ['as' => 'postponeAGM.review', 'uses' => 'PostponeAGMController@review']);
+    Route::post('postponeAGM/submitByCOB/{id}', ['as' => 'postponeAGM.submitByCOB', 'uses' => 'PostponeAGMController@submitByCOB']);
+    Route::resource('postponeAGM', 'PostponeAGMController'); 
 
     /**
      * Reporting

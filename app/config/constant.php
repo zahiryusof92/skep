@@ -1229,6 +1229,7 @@ return [
         ],
     ],
     'file_directory' => [
-        'epks' => 'uploads/epks'
+        'epks' => 'uploads/epks',
+        'postponed_agm' => 'uploads/postponed_agm',
     ]
 ];

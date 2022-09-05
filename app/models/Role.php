@@ -21,6 +21,7 @@ class Role extends Eloquent {
     const COB_PREMIUM_ADMIN = 'COB PREMIUM ADMIN';
     const MPS = 'MPS';
     const PRE_SALE = 'PRE-SALE';
+    const DEVELOPER = 'DEVELOPER';
 
     public function scopeSelf($query) {
         if (!Auth::user()->getAdmin() && !Auth::user()->isCOBManager()) {

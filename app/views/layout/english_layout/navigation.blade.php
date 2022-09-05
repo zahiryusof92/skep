@@ -504,7 +504,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (Module::hasAccess(4) && !Auth::user()->isJMB())
+            @if (Module::hasAccess(4) && (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()))
             <li class="left-menu-list-submenu" id="reporting_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/report.png')}}"/>
@@ -756,10 +756,14 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isJMB())
             <li class="left-menu-list-submenu" id="agm_postpone_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
-                    <span>{{ trans('app.menus.agm_postpone.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger"></span>
+                    <span>{{ trans('app.menus.agm_postpone.name') }}</span> &nbsp;
+                    <span class="label left-menu-label label-danger">
+                        @if (PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count()) ! @endif
+                    </span>
                 </a>
                 <ul class="left-menu-list list-unstyled" id="agm_postpone_main">
                     @if (Auth::user()->isJMB())
@@ -771,7 +775,10 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     <li class="left-menu-list-link" id="agm_postpone_list">
                         <a class="left-menu-link" href="{{ route('postponeAGM.index') }}">
-                            {{ trans('app.menus.agm_postpone.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;</span>
+                            {{ trans('app.menus.agm_postpone.review') }} &nbsp;
+                            <span class="label left-menu-label label-danger">
+                                {{ trans('app.menus.agm_postpone.pending', ['count'=> PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count()]) }}
+                            </span>
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="agm_postpone_approved">
@@ -793,6 +800,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                 </ul>
             </li>
+            @endif
 
             @if (Module::hasAccess(8))
             <li class="left-menu-list-submenu" id="directory_panel">
