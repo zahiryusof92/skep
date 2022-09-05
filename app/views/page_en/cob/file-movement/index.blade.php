@@ -12,7 +12,6 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h6>{{ trans('app.forms.file_no') }}: {{$files->file_no}}</h6>
-                    <h6>{{ trans('app.forms.ref_no') }}: {{$files->ref_no ? ucfirst($files->ref_no) : '-'}}</h6>
                     <div id="update_files_lists">
                         @include('page_en.nav.cob_file')
 

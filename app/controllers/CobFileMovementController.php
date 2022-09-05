@@ -40,23 +40,19 @@ class CobFileMovementController extends \BaseController
 					return $content;
 				})
 				->addColumn('action', function ($model) use ($file_id) {
-					if (AccessGroup::hasUpdate(63)) {
-						$btn = '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;'
-							. '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
-							. '<input type="hidden" name="_method" value="DELETE">'
-							. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
-							. '</form>';
+					$btn = '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;'
+						. '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
+						. '<input type="hidden" name="_method" value="DELETE">'
+						. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
+						. '</form>';
 
-						return $btn;
-					} else {
-						return '';
-					}
+					return $btn;
 				})
 				->make(true);
 		}
 
 		$file = Files::find(Helper::decode($file_id, $this->module['cob']['file']['name']));
-		
+
 		$viewData = array(
 			'title' => trans('app.menus.cob.update_cob_file'),
 			'panel_nav_active' => 'cob_panel',
@@ -78,7 +74,6 @@ class CobFileMovementController extends \BaseController
 	{
 		$file = Files::find(Helper::decode($file_id, $this->module['cob']['file']['name']));
 		$userList = User::self()->whereNotIn('role', [1, 2, 24])->get();
-		$disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(63));
 
 		$viewData = array(
 			'title' => trans('app.menus.cob.update_cob_file'),
@@ -183,7 +178,6 @@ class CobFileMovementController extends \BaseController
 	public function edit($id, $file_id)
 	{
 		$model = FileMovement::find(Helper::decode($id, $this->module['file_movement']['name']));
-		$disallow = Helper::isAllow(0, 0, !AccessGroup::hasUpdate(63));
 		if ($model) {
 			$file = Files::find(Helper::decode($file_id, $this->module['cob']['file']['name']));
 			$userList = User::self()->whereNotIn('role', [1, 2, 24])->get();
