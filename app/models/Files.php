@@ -83,6 +83,42 @@ class Files extends Eloquent {
         return $this->hasOne('Management', 'file_id');
     }
 
+    public function managementDevelopers() {
+        return $this->hasMany('ManagementDeveloper', 'file_id');
+    }
+
+    public function managementJMBs() {
+        return $this->hasMany('ManagementJMB', 'file_id');
+    }
+
+    public function managementMCs() {
+        return $this->hasMany('ManagementMC', 'file_id');
+    }
+
+    public function managementAgents() {
+        return $this->hasMany('ManagementAgent', 'file_id');
+    }
+
+    public function managementDeveloperLatest() {
+        return $this->hasOne('ManagementDeveloper', 'file_id')->latest();
+    }
+
+    public function managementJMBLatest() {
+        return $this->hasOne('ManagementJMB', 'file_id')->latest();
+    }
+
+    public function managementMCLatest() {
+        return $this->hasOne('ManagementMC', 'file_id')->latest();
+    }
+
+    public function managementAgentLatest() {
+        return $this->hasOne('ManagementAgent', 'file_id')->latest();
+    }
+
+    public function managementOthersLatest() {
+        return $this->hasOne('ManagementOthers', 'file_id')->latest();
+    }
+
     public function managementDeveloper() {
         return $this->hasOne('ManagementDeveloper', 'file_id');
     }
@@ -117,6 +153,10 @@ class Files extends Eloquent {
 
     public function personInCharge() {
         return $this->hasMany('HousingSchemeUser', 'file_id');
+    }
+
+    public function file_movements() {
+        return $this->hasMany('FileMovement', 'file_id')->where('is_deleted', 0);
     }
 
     public function scopeFile($query) {

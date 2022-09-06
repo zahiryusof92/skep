@@ -1349,6 +1349,23 @@ class PrintController extends BaseController
         return View::make('print_en.epks', $viewData);
     }
 
+    public function generate() {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Report Generator"));
+        $request = Request::all();
+        $models = (new ReportRepo())->generateReport($request);
+        $viewData = array(
+            'title' => trans('app.menus.reporting.generate'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'generate_report_list',
+            'models' => $models,
+            'selected' => $request['selected'],
+            'image' => ''
+        );
+
+        return View::make('print_en.generate', $viewData);
+    }
+
     public function statistic()
     {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Statistics Report"));
