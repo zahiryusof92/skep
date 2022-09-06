@@ -714,6 +714,10 @@ return array(
         "file_movement" => "File Movement",
         'attachment' => 'Attachment',
         'application_no' => 'Application No',
+        'approval_by' => 'Approval By',
+        'approval_date' => 'Approval Date',
+        'approval_remark' => 'Remark',
+        'submit_by' => 'Submitted By',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

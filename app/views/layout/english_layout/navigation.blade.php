@@ -760,11 +760,11 @@ if (!Auth::user()->getAdmin()) {
             <li class="left-menu-list-submenu" id="agm_postpone_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
-                    <span>{{ trans('app.menus.agm_postpone.name') }}</span> &nbsp;
-                    <span class="label left-menu-label label-danger">
-                        @if (PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count()) ! @endif
-                    </span>
-                </a>
+                    <span>{{ trans('app.menus.agm_postpone.name') }}</span>
+                    @if (PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count())
+                    &nbsp;<span class="label left-menu-label label-danger">!</span>
+                    @endif
+                   </a>
                 <ul class="left-menu-list list-unstyled" id="agm_postpone_main">
                     @if (Auth::user()->isJMB())
                     <li class="left-menu-list-link" id="agm_postpone_create">
@@ -790,14 +790,7 @@ if (!Auth::user()->getAdmin()) {
                         <a class="left-menu-link" href="{{ route('postponeAGM.rejected') }}">
                             {{ trans('app.menus.agm_postpone.rejected') }}
                         </a>
-                    </li>                   
-                    @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
-                    <li class="left-menu-list-link" id="agm_postpone_report">
-                        <a class="left-menu-link" href="{{ route('postponeAGM.report') }}">
-                            {{ trans('app.menus.agm_postpone.report') }}
-                        </a>
                     </li>
-                    @endif
                 </ul>
             </li>
             @endif

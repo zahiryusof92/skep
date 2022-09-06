@@ -66,6 +66,7 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </section>
         </div>
@@ -78,7 +79,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                'url' : "{{ route('postponeAGM.index') }}",
+                'url' : "{{ route('postponeAGM.approved') }}",
                 'data': function(data) {
                     var company = $('#company').val();
                     var start_date = $('#start_date').val();

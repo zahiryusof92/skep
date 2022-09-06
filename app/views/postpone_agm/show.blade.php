@@ -156,16 +156,18 @@
 
                                 @endif
                             </dl>
+
+
+                            @if ($model->status == PostponedAGM::PENDING && (Auth::user()->getAdmin() ||
+                            Auth::user()->isCOB()))
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-own" id="submit_button">
+                                    {{ trans('app.forms.save') }}
+                                </button>
+                            </div>
+                            @endif
                         </form>
 
-                        @if ($model->status == PostponedAGM::PENDING && (Auth::user()->getAdmin() ||
-                        Auth::user()->isCOB()))
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-own" id="submit_button">
-                                {{ trans('app.forms.save') }}
-                            </button>
-                        </div>
-                        @endif
                     </div>
 
                 </div>
@@ -284,7 +286,7 @@
                 if (password) {
                     $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
                     let route = "{{ route('postponeAGM.submitByCOB', [':id']) }}";
-                    route = route.replace(':id', "{{ $model->id }}");
+                    route = route.replace(':id', "{{ \Helper\Helper::encode($model->id) }}");
                     let formData = $('#postponed_agm_form').serialize();
                     $.ajax({
                         url: route,
@@ -298,6 +300,7 @@
                             $("#cancel_button").attr("disabled", "disabled");
                         },
                         success: function (res) {
+                            console.log(res);
                             if (res.success == true) {
                                 bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
                                     location.reload();
@@ -314,7 +317,7 @@
                                     });
                                 }
                                 
-                                if(res.message != "Validation Fail") {
+                                if (res.message != "Validation Fail") {
                                     bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
                                 } else {
                                     bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");

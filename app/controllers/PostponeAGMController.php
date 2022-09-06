@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Helper\Helper;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -304,18 +305,47 @@ class PostponeAGMController extends \BaseController
 					'status' => PostponedAGM::PENDING,
 				]);
 
-				/**
-				 * add audit trail 
-				 */
-				$module = 'Postponed AGM';
-				$remarks = $module . ': New application #' . $application_no . ' has been submitted.';
-				$this->addAudit($file->id, $module, $remarks);
+				if ($application) {
+					/**
+					 * Send an email to JMB / MC and copy to COB
+					 */
+					if (Config::get('mail.driver') != '') {
+						$delay = 0;
 
-				return Response::json([
-					'success' => true,
-					'id' => $this->encodeID($application->id),
-					'message' => trans('app.successes.saved_successfully')
-				]);
+						if (!empty($application->user->email) && Helper::validateEmail($application->user->email)) {
+							// Mail::later(Carbon::now()->addSeconds($delay), 'emails.postpone_agm.new_application', array('model' => $application, 'status' => $application->getStatusText()), function ($message) use ($application) {
+							// 	$message->to($application->user->email, $application->user->full_name)->subject('New Application');
+							// });
+
+							Mail::send('emails.postpone_agm.new_application', array('model' => $application, 'status' => $application->getStatusText()), function ($message) use ($application) {
+								$message->to($application->user->email, $application->user->full_name)->subject('New Application');
+							});
+						}
+
+						if ($application->user->isJMB() || $application->user->isMC()) {
+							// Mail::later(Carbon::now()->addSeconds($delay), 'emails.postpone_agm.new_application_cob', array('model' => $application, 'date' => $application->created_at->toDayDateTimeString(), 'status' => $application->getStatusText()), function ($message) {
+							// 	$message->to('cob@mbpj.gov.my', 'COB')->subject('New Application');
+							// });
+
+							Mail::send('emails.postpone_agm.new_application_cob', array('model' => $application, 'date' => $application->created_at->toDayDateTimeString(), 'status' => $application->getStatusText()), function ($message) {
+								$message->to('cob@mbpj.gov.my', 'COB')->subject('New Application');
+							});
+						}
+					}
+
+					/**
+					 * add audit trail
+					 */
+					$module = Str::upper($this->getModule());
+					$remarks = $module . ': New Application #' . $application->application_no . ' has been submitted.';
+					$this->addAudit($application->file_id, $module, $remarks);
+
+					return Response::json([
+						'success' => true,
+						'id' => $this->encodeID($application->id),
+						'message' => trans('app.successes.saved_successfully')
+					]);
+				}
 			}
 		}
 
@@ -350,7 +380,7 @@ class PostponeAGMController extends \BaseController
 			}
 
 			$viewData = array(
-				'title' => trans('app.menus.eservice.show'),
+				'title' => trans('app.menus.agm_postpone.show'),
 				'panel_nav_active' => 'agm_postpone_panel',
 				'main_nav_active' => 'agm_postpone_main',
 				'sub_nav_active' => $sub_nav_active,
@@ -422,6 +452,148 @@ class PostponeAGMController extends \BaseController
 		return Response::json(['error' => true, 'message' => "Fail"]);
 	}
 
+	public function submitByCOB($id)
+	{
+		$this->checkAvailableAccess();
+
+		$request = Request::all();
+		$rules = [];
+
+		$status = $request['status'];
+
+		$rules = array(
+			'status' => 'required',
+		);
+
+		if ($status == PostponedAGM::REJECTED) {
+			$rules['approval_remark'] = 'required';;
+		}
+
+		$validator = Validator::make($request, $rules);
+
+		if ($validator->fails()) {
+			return Response::json([
+				'error' => true,
+				'errors' => $validator->errors(),
+				'message' => trans('Validation Fail')
+			]);
+		} else {
+			if ($status == PostponedAGM::APPROVED) {
+				$this->approvedByID($id);
+			} else if ($status == PostponedAGM::REJECTED) {
+				$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
+
+				$this->rejectedByID($id, $approval_remark);
+			}
+
+			return Response::json([
+				'success' => true,
+				'message' => trans('app.successes.updated_successfully')
+			]);
+		}
+
+		return Response::json([
+			'error' => true,
+			'message' => trans('app.errors.occurred')
+		]);
+	}
+
+	private function approvedByID($id)
+	{
+		$model = PostponedAGM::with(['user'])->find($this->decodeID($id));
+		if ($model) {
+			$old_status = $model->status;
+
+			$success = $model->update([
+				'status' => PostponedAGM::APPROVED,
+				'approval_by' => Auth::user()->id,
+				'approval_date' => Carbon::now(),
+				'approval_remark' => null,
+			]);
+
+			if ($success) {
+				/**
+				 * If status rejected or success send an email to JMB / MC
+				 */
+				if (Config::get('mail.driver') != '') {
+					$delay = 0;
+
+					if (in_array($model->status, [PostponedAGM::PENDING, PostponedAGM::APPROVED, PostponedAGM::REJECTED])) {
+						if (!empty($model->user->email) && Helper::validateEmail($model->user->email)) {
+							// Mail::later(Carbon::now()->addSeconds($delay), 'emails.postpone_agm.status_update', array('model' => $model, 'status' => $model->getStatusText()), function ($message) use ($model) {
+							// 	$message->to($model->user->email, $model->user->full_name)->subject("Your Application has been " . Str::upper($model->getStatusText()));
+							// });
+
+							Mail::send('emails.postpone_agm.status_update', array('model' => $model, 'status' => $model->getStatusText()), function ($message) use ($model) {
+								$message->to($model->user->email, $model->user->full_name)->subject("Your Application has been " . Str::upper($model->getStatusText()));
+							});
+						}
+					}
+				}
+
+				/**
+				 * add audit trail
+				 */
+				$module = Str::upper($this->getModule());
+				$status = ($old_status == $model->status ? '' : 'status');
+				if (!empty($status)) {
+					$audit_fields_changed = $model->getStatusText();
+					$remarks = $module . ': ' . $model->id . $this->module['audit']['text']['status_updated'] . $audit_fields_changed;
+
+					$this->addAudit($model->file_id, $module, $remarks);
+				}
+			}
+		}
+	}
+
+	private function rejectedByID($id, $approval_remark)
+	{
+		$model = PostponedAGM::with(['user'])->find($this->decodeID($id));
+		if ($model) {
+			$old_status = $model->status;
+
+			$success = $model->update([
+				'status' => PostponedAGM::REJECTED,
+				'approval_by' => Auth::user()->id,
+				'approval_date' => Carbon::now(),
+				'approval_remark' => (!empty($approval_remark) ? $approval_remark : null),
+			]);
+
+			if ($success) {
+				/**
+				 * If status rejected or success send an email to JMB / MC
+				 */
+				if (Config::get('mail.driver') != '') {
+					$delay = 0;
+
+					if (in_array($model->status, [PostponedAGM::PENDING, PostponedAGM::APPROVED, PostponedAGM::REJECTED])) {
+						if (!empty($model->user->email) && Helper::validateEmail($model->user->email)) {
+							// Mail::later(Carbon::now()->addSeconds($delay), 'emails.postpone_agm.status_update', array('model' => $model, 'status' => $model->getStatusText()), function ($message) use ($model) {
+							// 	$message->to($model->user->email, $model->user->full_name)->subject("Your Application has been " . Str::upper($model->getStatusText()));
+							// });
+
+							Mail::send('emails.postpone_agm.status_update', array('model' => $model, 'status' => $model->getStatusText()), function ($message) use ($model) {
+								$message->to($model->user->email, $model->user->full_name)->subject("Your Application has been " . Str::upper($model->getStatusText()));
+							});
+						}
+					}
+				}
+
+				/**
+				 * add audit trail
+				 */
+				$module = Str::upper($this->getModule());
+				$status = ($old_status == $model->status ? '' : 'status');
+				if (!empty($status)) {
+					$audit_fields_changed = $model->getStatusText();
+					$remarks = $module . ': ' . $model->id . $this->module['audit']['text']['status_updated'] . $audit_fields_changed;
+
+					$this->addAudit($model->file_id, $module, $remarks);
+				}
+			}
+		}
+	}
+
 	private function encodeID($id)
 	{
 		return Helper::encode($id);
@@ -430,6 +602,11 @@ class PostponeAGMController extends \BaseController
 	private function decodeID($id)
 	{
 		return Helper::decode($id);
+	}
+
+	private function getModule()
+	{
+		return 'Postpone AGM';
 	}
 
 	private function checkAvailableAccess()

@@ -33,7 +33,6 @@ class PostponedAGM extends Eloquent
             $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.agm_postpone.pending') . '</span>';
         } else if ($this->status == self::APPROVED) {
             $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.agm_postpone.approved') . '</span>';
-            $status .= '<br/><span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.eservice.email_sent') . '</span>&nbsp;<i class="fa fa-check text-success"></i>';
         } else if ($this->status == self::REJECTED) {
             $status = '<span class="label label-pill label-danger" style="font-size:12px;">' . trans('app.agm_postpone.rejected') . '</span>';
         }
@@ -59,6 +58,7 @@ class PostponedAGM extends Eloquent
     {
         $options = [
             '' => trans('- Please Select -'),
+            self::PENDING => trans('app.agm_postpone.pending'),
             self::APPROVED => trans('app.agm_postpone.approved'),
             self::REJECTED => trans('app.agm_postpone.rejected'),
         ];
