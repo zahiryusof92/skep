@@ -611,7 +611,7 @@ class PostponeAGMController extends \BaseController
 
 	private function checkAvailableAccess()
 	{
-		if (!Auth::user()->getAdmin() && !Auth::user()->isJMB()) {
+		if ((!Auth::user()->getAdmin() && !Auth::user()->isCOB()) && !Auth::user()->isJMB()) {
 			App::abort(404);
 		}
 	}

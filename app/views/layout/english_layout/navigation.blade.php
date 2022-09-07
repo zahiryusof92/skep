@@ -795,6 +795,32 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isDeveloper())
+            <li class="left-menu-list-submenu" id="dlp_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-clock-o"><!-- --></i>
+                    <span>{{ trans('app.menus.dlp.name') }}</span>
+                   </a>
+                <ul class="left-menu-list list-unstyled" id="dlp_main">
+                    <li class="left-menu-list-link" id="dlp_deposit">
+                        <a class="left-menu-link" href="{{ route('dlp.deposit') }}">
+                            {{ trans('app.menus.dlp.deposit') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="dlp_progress">
+                        <a class="left-menu-link" href="{{ route('dlp.progress') }}">
+                            {{ trans('app.menus.dlp.progress') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="dlp_period">
+                        <a class="left-menu-link" href="{{ route('dlp.period') }}">
+                            {{ trans('app.menus.dlp.period') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+
             @if (Module::hasAccess(8))
             <li class="left-menu-list-submenu" id="directory_panel">
                 <a class="left-menu-link" href="javascript: void(0);">

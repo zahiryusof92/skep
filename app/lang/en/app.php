@@ -250,6 +250,12 @@ return array(
             'show' => 'View Application',
             "pending" => ":count pending",
         ),
+        "dlp" => array(
+            "name" => "Defect Liability Period (DLP)",
+            "deposit" => "Deposit",
+            "progress" => "Progress Report",
+            "period" => "Duration Period",
+        ),
         'api' => array(
             'name' => 'API',
             'client' => 'API Client',
@@ -718,6 +724,8 @@ return array(
         'approval_date' => 'Approval Date',
         'approval_remark' => 'Remark',
         'submit_by' => 'Submitted By',
+        'maturity_date' => 'Maturity Date',
+        'duration' => 'Duration',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

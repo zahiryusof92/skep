@@ -1231,5 +1231,6 @@ return [
     'file_directory' => [
         'epks' => 'uploads/epks',
         'postponed_agm' => 'uploads/postponed_agm',
+        'dlp_deposit' => 'uploads/dlp_deposit',
     ]
 ];

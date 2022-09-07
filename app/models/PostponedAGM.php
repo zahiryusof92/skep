@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 class PostponedAGM extends Eloquent
 {
+    use SoftDeletingTrait;
+    
     const DRAFT = 'draft';
     const PENDING = 'pending';
     const APPROVED = 'approved';

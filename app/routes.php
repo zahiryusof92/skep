@@ -976,6 +976,17 @@ Route::group(array('before' => 'authMember'), function() {
     Route::resource('postponeAGM', 'PostponeAGMController'); 
 
     /**
+     * DLP
+     */
+    Route::get('dlp/deposit', ['as' => 'dlp.deposit', 'uses' => 'DlpController@deposit']);
+    Route::post('dlp/fileUpload', ['as' => 'dlp.fileUpload', 'uses' => 'DlpController@fileUpload']);
+    Route::post('dlp/deposit/store', ['as' => 'dlp.deposit.store', 'uses' => 'DlpController@storeDeposit']);
+    Route::get('dlp/progress', ['as' => 'dlp.progress', 'uses' => 'DlpController@progress']);
+    Route::post('dlp/progress/store', ['as' => 'dlp.progress.store', 'uses' => 'DlpController@storeProgress']);
+    Route::get('dlp/period', ['as' => 'dlp.period', 'uses' => 'DlpController@period']);
+    Route::post('dlp/period/store', ['as' => 'dlp.period.store', 'uses' => 'DlpController@storePeriod']);
+
+    /**
      * Reporting
      */
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
