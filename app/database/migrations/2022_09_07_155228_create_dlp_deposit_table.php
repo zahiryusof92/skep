@@ -16,7 +16,10 @@ class CreateDlpDepositTable extends Migration
 	{
 		Schema::create('dlp_deposits', function (Blueprint $table) {
 			$table->increments('id');
+			$table->integer('company_id')->default(0);
 			$table->integer('file_id')->default(0);
+			$table->integer('strata_id')->nullable();
+			$table->integer('user_id')->nullable();
 			$table->double('amount')->default(0);
 			$table->date('maturity_date')->nullable();
 			$table->text('attachment')->nullable();

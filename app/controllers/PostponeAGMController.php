@@ -73,10 +73,10 @@ class PostponeAGMController extends \BaseController
 					$btn .= '<a href="' . route('postponeAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
 					if (!Str::contains(Request::fullUrl(), 'approval') && !in_array($model->status, [PostponedAGM::APPROVED, PostponedAGM::REJECTED, PostponedAGM::PENDING])) {
 						$btn .= '<a href="' . route('postponeAGM.edit', $this->encodeID($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-						$btn .= '<form action="' . route('postponeAGM.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
-						$btn .= '<input type="hidden" name="_method" value="DELETE">';
-						$btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $this->encodeID($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
-						$btn .= '</form>';
+						// $btn .= '<form action="' . route('postponeAGM.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
+						// $btn .= '<input type="hidden" name="_method" value="DELETE">';
+						// $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $this->encodeID($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+						// $btn .= '</form>';
 					}
 
 					return $btn;

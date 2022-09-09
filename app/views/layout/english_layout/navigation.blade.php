@@ -800,11 +800,17 @@ if (!Auth::user()->getAdmin()) {
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-clock-o"><!-- --></i>
                     <span>{{ trans('app.menus.dlp.name') }}</span>
-                   </a>
+                    @if (DlpDeposit::self()->notPending()->where('dlp_deposits.status', '!=', DlpDeposit::REJECTED)->count())
+                    &nbsp;<span class="label left-menu-label label-danger">!</span>
+                    @endif
+                </a>
                 <ul class="left-menu-list list-unstyled" id="dlp_main">
                     <li class="left-menu-list-link" id="dlp_deposit">
                         <a class="left-menu-link" href="{{ route('dlp.deposit') }}">
-                            {{ trans('app.menus.dlp.deposit') }}
+                            {{ trans('app.menus.dlp.deposit') }} &nbsp;
+                            <span class="label left-menu-label label-danger">
+                                {{ trans('app.menus.dlp.pending', ['count'=> DlpDeposit::self()->notPending()->where('dlp_deposits.status', '!=', DlpDeposit::REJECTED)->count()]) }}
+                            </span>
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="dlp_progress">

@@ -35,7 +35,7 @@ return array(
             "file_prefix" => "COB File Prefix",
             "add_cob_file" => "Add COB File",
             "file_list" => "COB File List",
-            "file_list_before_vp" => "COB File List Before VP",            
+            "file_list_before_vp" => "COB File List Before VP",
             "file_prefix_maintenance" => "COB File Prefix Maintenance",
             "add_cob_file_prefix" => "Add COB File Prefix",
             "update_cob_file_prefix" => "Update COB File Prefix",
@@ -255,6 +255,7 @@ return array(
             "deposit" => "Deposit",
             "progress" => "Progress Report",
             "period" => "Duration Period",
+            'pending' => ':count pending',
         ),
         'api' => array(
             'name' => 'API',
@@ -1216,5 +1217,12 @@ return array(
         'inprogress' => 'In-progress',
         'approved' => 'Approved',
         'rejected' => 'Rejected',
+    ],
+    'dlp' => [
+        'deposit' => [
+            'pending' => 'Pending',
+            'approved' => 'Approved',
+            'rejected' => 'Rejected',
+        ],
     ],
 );

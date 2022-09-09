@@ -32,12 +32,7 @@
                                             <span style="color: red;">*</span>
                                             {{ trans('app.forms.amount') }} (RM)
                                         </label>
-                                        @if (empty($model))
-                                        <input type="text" id="amount" name="amount" class="form-control" />
-                                        @include('alert.feedback-ajax', ['field' => 'amount'])
-                                        @else
                                         <input type="text" class="form-control" value="{{ $model->amount }}" readonly />
-                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -49,14 +44,6 @@
                                             {{ trans('app.forms.attachment') }}
                                         </label>
                                         <br />
-                                        @if (empty($model))
-                                        <input type="file" id="attachment_tmp" name="attachment_tmp"
-                                            onChange="onUpload(this)" />
-                                        <input hidden id="attachment" name="attachment" />
-                                        <br />
-                                        <div id="attachment_preview"></div>
-                                        @include('alert.feedback-ajax', ['field' => 'attachment'])
-                                        @else
                                         @if (!empty($model->attachment))
                                         <a href="{{ asset($model->attachment) }}" target="_blank">
                                             <button type="button" class="btn btn-sm btn-success" data-toggle="tooltip"
@@ -67,7 +54,6 @@
                                         </a>
                                         @else
                                         -
-                                        @endif
                                         @endif
                                     </div>
                                 </div>
@@ -80,34 +66,134 @@
                                             <span style="color: red;">*</span>
                                             {{ trans('app.forms.maturity_date') }}
                                         </label>
-                                        @if (empty($model))
-                                        <label class="input-group">
-                                            <input type="text" id="maturity_date" name="maturity_date"
-                                                class="form-control date_picker" />
-                                            <span class="input-group-addon">
-                                                <i class="icmn-calendar"></i>
-                                            </span>
-                                        </label>
-                                        @include('alert.feedback-ajax', ['field' => 'maturity_date'])
-                                        @else
                                         <input type="text" class="form-control" value="{{ $model->maturity_date }}"
                                             readonly />
-                                        @endif
                                     </div>
                                 </div>
                             </div>
 
                             @if (!empty($model))
+                            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label">
+                                            <span style="color: red;">*</span>
+                                            {{ trans('app.forms.status') }}
+                                        </label>
+                                        <select class="form-control select2" id="status" name="status"
+                                            onchange="statusChange(this.value)" {{ ($model->status ==
+                                            DlpDeposit::APPROVED ? 'disabled' : null) }}>
+                                            @foreach($statusOptions as $key => $option)
+                                            <option value="{{ $key }}" {{ ($model->status == $key ? 'selected' : '') }}>
+                                                {{ $option }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        @include('alert.feedback-ajax', ['field' => "status"])
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="reject_field" style="display: none;">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label">
+                                                <span style="color: red;">*</span>
+                                                {{ trans('app.forms.approval_remark') }}
+                                            </label>
+                                            <textarea id="approval_remark" name="approval_remark" class="form-control"
+                                                rows="5"></textarea>
+                                            @include('alert.feedback-ajax', ['field' => "approval_remark"])
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                @if ($model->status != DlpDeposit::APPROVED)
+                                <img id="loading" style="display:none;"
+                                    src="{{ asset('assets/common/img/input-spinner.gif') }}" />
+                                <button type="button" class="btn btn-own" id="approval_button">
+                                    {{ trans('app.forms.save') }}
+                                </button>
+                                @endif
+                                <button type="button" class="btn btn-default" id="cancel_button"
+                                    onclick="window.location ='{{ route('dlp.deposit') }}'">
+                                    {{ trans('app.forms.cancel') }}
+                                </button>
+                            </div>
+
+                            <script>
+                                function statusChange(value) {
+                                    if (value == '{{ PostponedAGM::REJECTED }}') {
+                                        $('#reject_field').show();
+                                    }  else {
+                                        $('#reject_field').hide();
+                                    }
+                                }
+
+                                $("#approval_button").click(function (e) {
+                                    e.preventDefault();
+                                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+                                    let formData = $('form').serialize();
+                                    $.ajax({
+                                        url: "{{ route('dlp.deposit.approval', \Helper\Helper::encode($model->id)) }}",
+                                        type: "POST",
+                                        data: formData,
+                                        dataType: 'JSON',
+                                        beforeSend: function() {
+                                            $('.help-block').text("");
+                                            $("#loading").css("display", "inline-block");
+                                            $("#submit_button").attr("disabled", "disabled");
+                                            $("#cancel_button").attr("disabled", "disabled");
+                                        },
+                                        success: function (res) {
+                                            console.log(res);
+                                            if (res.success == true) {
+                                                bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
+                                                    location.reload();
+                                                });
+                                            } else {
+                                                if(res.errors !== undefined) {
+                                                    $.each(res.errors, function (key, value) {
+                                                        if(key.includes('_tmp')) {
+                                                            let myId = key.replace(/_tmp/g, '');
+                                                            $("#" + myId + "_error").children("strong").text(value);
+                                                        } else {
+                                                            $("#" + key + "_error").children("strong").text(value);
+                                                        }
+                                                    });
+                                                }
+                                                
+                                                if(res.message != "Validation Fail") {
+                                                    bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
+                                                }
+                                            }
+                                        },
+                                        complete: function() {
+                                            $.unblockUI();
+                                            $("#loading").css("display", "none");
+                                            $("#submit_button").removeAttr("disabled");
+                                            $("#cancel_button").removeAttr("disabled");
+                                        },
+                                    });
+                                });
+                            </script>
+                            @else
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-control-label">
                                             {{ trans('app.forms.status') }}
                                         </label>
-                                        <input type="text" class="form-control" value="{{ Str::upper($model->status) }}" readonly />
+                                        <input type="text" class="form-control" value="{{ Str::upper($model->status) }}"
+                                            readonly />
                                     </div>
                                 </div>
                             </div>
+                            @endif
                             @endif
 
                             @if (empty($model))
@@ -123,13 +209,14 @@
                             @endif
 
                         </form>
-
                     </div>
                 </div>
             </section>
         </div>
-
     </section>
+</div>
+
+</section>
 </div>
 
 <script>

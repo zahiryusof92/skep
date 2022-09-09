@@ -72,6 +72,26 @@
                     </div>
                 </div>
             </section>
+
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <table class="table table-hover nowrap table-own table-striped" id="dlp_progress_table"
+                            width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%;">{{ trans('app.forms.date') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.percentage') }} (%)</th>
+                                    <th style="width:30%;">{{ trans('app.forms.created_at') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </div>
 
     </section>
@@ -139,6 +159,26 @@
                     $("#cancel_button").removeAttr("disabled");
                 },
             });
+        });
+
+        let oTable = $('#dlp_progress_table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                'url' : "{{ route('dlp.progress.list') }}",
+            },
+            lengthMenu: [[15, 30, 50], [15, 30, 50]],
+            pageLength: 15,
+            order: [[2, "desc"]],
+            columns: [
+                {data: 'date', name: 'dlp_progresses.date'},
+                {data: 'percentage', name: 'dlp_progresses.percentage'},
+                {data: 'created_at', name: 'dlp_progresses.created_at'},               
+                {data: 'action', name: 'action', orderable: false, searchable: false}
+            ],
+            columnDefs: [{"targets": -1, "className": "text-center"}],
+            responsive: false,
+            scrollX: true,
         });
     });
 </script>
