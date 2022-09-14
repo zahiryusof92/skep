@@ -257,6 +257,9 @@ return array(
             "period" => "Duration Period",
             'pending' => ':count pending',
         ),
+        'ledger' => array(
+            'name' => 'Ledger',
+        ),
         'api' => array(
             'name' => 'API',
             'client' => 'API Client',

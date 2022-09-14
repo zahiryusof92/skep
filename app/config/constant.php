@@ -897,7 +897,11 @@ return [
             'oauth_client_secret' => getenv('eagm_oauth_secret'),
             'oauth_username' => getenv('eagm_oauth_username'),
             'oauth_password' => getenv('eagm_oauth_password'),
-        ]
+        ],
+        'life' => [
+            'api_domain' => getenv('life_domain'),
+            'api_token' => getenv('life_token'),
+        ],
     ],
     'eai' => [
         'domain' => 'http://127.0.0.1:94/api/v1/',

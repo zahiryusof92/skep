@@ -19,9 +19,9 @@ class State extends Eloquent {
             "Q" => "Sarawak",
             "B" => "Selangor",
             "T" => "Terengganu",
-            "WKL" => "WP Kuala Lumpur",
+            "WPKL" => "WP Kuala Lumpur",
             "WPL" => "WP Labuan",
-            "WPJ" => "WP Putrajaya"
+            "WPP" => "WP Putrajaya"
         ];
 
         return $list;

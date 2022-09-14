@@ -997,6 +997,11 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('dlp/period/show/{id}', ['as' => 'dlp.period.show', 'uses' => 'DlpController@showPeriod']);
 
     /**
+     * Ledger
+     */
+    Route::resource('ledger', 'LedgerController');
+
+    /**
      * Reporting
      */
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));

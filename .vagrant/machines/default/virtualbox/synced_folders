@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/vagrant/skep":{"type":null,"mount_options":["uid=900","gid=900","_netdev"],"guestpath":"/home/vagrant/skep","hostpath":"C:/laragon/www/skep","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/laragon/www/skep","disabled":false,"__vagrantfile":true}}}

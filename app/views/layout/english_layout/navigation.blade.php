@@ -827,6 +827,15 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Auth::user()->isJMB())
+            <li class="left-menu-list-link" id="ledger">
+                <a class="left-menu-link" href="{{ route('ledger.index') }}">
+                    <i class="left-menu-link-icon fa fa-book"><!-- --></i>
+                    {{ trans('app.menus.ledger.name') }}
+                </a>
+            </li>
+            @endif
+
             @if (Module::hasAccess(8))
             <li class="left-menu-list-submenu" id="directory_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
