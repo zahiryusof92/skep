@@ -460,12 +460,12 @@ class DlpController extends \BaseController
 					$btn = '';
 					$btn .= '<a href="' . route('dlp.progress.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Show"><i class="fa fa-eye"></i></a>&nbsp;';
 
-					if (Auth::user()->isDeveloper()) {
-						$btn .= '<form action="' . route('dlp.progress.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
-						$btn .= '<input type="hidden" name="_method" value="DELETE">';
-						$btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $this->encodeID($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
-						$btn .= '</form>';
-					}
+					// if (Auth::user()->isDeveloper()) {
+					// 	$btn .= '<form action="' . route('dlp.progress.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
+					// 	$btn .= '<input type="hidden" name="_method" value="DELETE">';
+					// 	$btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $this->encodeID($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+					// 	$btn .= '</form>';
+					// }
 
 					return $btn;
 				})

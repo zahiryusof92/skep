@@ -12,45 +12,45 @@
             <section class="panel panel-pad">
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <label class="form-control-label">
-                                    <span style="color: red;">* {{ trans('app.forms.mandatory_fields') }}</span>
-                                </label>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <label class="form-control-label">
-                                        <span style="color: red;">*</span>
-                                        {{ trans('app.forms.date') }}
-                                    </label>
-                                    <input type="text" class="form-control" value="{{ $model->date }}"
-                                        readonly />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <label class="form-control-label">
-                                        <span style="color: red;">*</span>
-                                        {{ trans('app.forms.percentage') }} (%)
-                                    </label>
-                                    <input type="text" class="form-control" value="{{ $model->percentage }}"
-                                        readonly />
-                                </div>
-                            </div>
-                        </div>
+                        <dl class="row">
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.cob') }}
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ ($model->company ? $model->company->name : '') }}
+                            </dd>
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.file_no') }}
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ ($model->file ? $model->file->file_no : '') }}
+                            </dd>
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.strata') }}
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ ($model->strata ? $model->strata->name : '') }}
+                            </dd>
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.date') }}
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ $model->date }}
+                            </dd>
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.percentage') }} (%)
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ $model->percentage }}
+                            </dd>
+                        </dl>
 
                         @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                         <div class="form-actions">
-                            <button type="button" class="btn btn-default" id="cancel_button"
+                            <button type="button" class="btn btn-default" id="back_button"
                                 onclick="window.location ='{{ route('dlp.progress') }}'">
-                                {{ trans('app.forms.cancel') }}
+                                {{ trans('app.forms.back') }}
                             </button>
                         </div>
                         @endif

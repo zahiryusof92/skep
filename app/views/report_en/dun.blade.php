@@ -75,7 +75,7 @@
                                         <th style="width:30%; text-align: center !important; vertical-align:middle !important;">COB</th>
                                         <th style="width:30%; text-align: center !important; vertical-align:middle !important;">DUN</th>
                                         <th style="width:30%; text-align: center !important; vertical-align:middle !important;">KATEGORI</th>
-                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">TOTAL</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">JUMLAH FAIL</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -148,7 +148,7 @@
             height: <?php echo count($file_info) * count($category) * 50; ?>
         },
         title: {
-            text: 'Jumlah berdasarkan dun'
+            text: 'Jumlah fail berdasarkan dun'
         },
         xAxis: {
             categories: <?php echo json_encode($dunChart); ?>,
@@ -159,7 +159,7 @@
         yAxis: {
             min: 0,
             title: {
-                text: 'Population (millions)',
+                text: 'Fail',
                 align: 'high'
             },
             labels: {
@@ -167,7 +167,7 @@
             }
         },
         tooltip: {
-            valueSuffix: ' millions'
+            valueSuffix: ' fail'
         },
         plotOptions: {
             bar: {

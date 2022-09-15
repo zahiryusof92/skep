@@ -1387,6 +1387,8 @@ class ReportController extends BaseController
             'image' => ''
         );
 
+        // return '<pre>' . print_r($file_info, true) . '</pre>';
+
         return View::make('report_en.dun', $viewData);
     }
 
