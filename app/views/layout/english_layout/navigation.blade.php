@@ -181,7 +181,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccess(63))
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('EPKS'))
             <li class="left-menu-list-submenu" id="epks_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-recycle"><!-- --></i>

@@ -1134,6 +1134,7 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
     Route::get('tunggakanFinance', 'ExportController@tunggakanFinance');
     Route::get('fileDetails', 'ExportController@fileDetails');
+    Route::post('generateReport', array('as' => 'api.v1.export.generateReport', 'uses' => 'ExportController@generateReport'));
 });
 
 

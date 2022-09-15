@@ -63,7 +63,7 @@
                                 {{ trans('app.forms.save') }}
                             </button>
                             <button type="button" class="btn btn-default" id="cancel_button"
-                                onclick="window.location ='{{ route('dlp.deposit') }}'">
+                                onclick="window.location ='{{ route('dlp.progress') }}'">
                                 {{ trans('app.forms.cancel') }}
                             </button>
                         </div>
