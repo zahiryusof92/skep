@@ -148,7 +148,7 @@
             height: <?php echo count($file_info) * count($category) * 50; ?>
         },
         title: {
-            text: 'Jumlah berdasarkan dun'
+            text: 'Jumlah fail berdasarkan dun'
         },
         xAxis: {
             categories: <?php echo json_encode($dunChart); ?>,
@@ -159,7 +159,7 @@
         yAxis: {
             min: 0,
             title: {
-                text: 'Population (millions)',
+                text: 'Fail',
                 align: 'high'
             },
             labels: {
@@ -167,7 +167,7 @@
             }
         },
         tooltip: {
-            valueSuffix: ' millions'
+            valueSuffix: ' fail'
         },
         plotOptions: {
             bar: {
