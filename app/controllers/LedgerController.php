@@ -13,7 +13,7 @@ class LedgerController extends \BaseController
 	public function index()
 	{
 		$user = User::find(Auth::user()->id);
-		if ($user) {
+		if ($user && $user->isJMB()) {
 			$council = Company::find($user->getCOB->id);
 			if ($council) {
 				$file = Files::find($user->getFile->id);
