@@ -26,15 +26,73 @@
                             </div>
 
                             <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label">
+                                            <span style="color: red;">*</span>
+                                            {{ trans('app.forms.agm_date') }}
+                                        </label>
+                                        <label class="input-group">
+                                            <input type="text" id="agm_date" name="agm_date" class="form-control date_picker" />
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        @include('alert.feedback-ajax', ['field' => 'agm_date'])
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.new_agm_date') }}
+                                        </label>
+                                        <label class="input-group">
+                                            <input type="text" id="new_agm_date" name="new_agm_date" class="form-control date_picker" />
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        @include('alert.feedback-ajax', ['field' => 'new_agm_date'])
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label class="form-control-label">
                                             <span style="color: red;">*</span>
                                             {{ trans('app.forms.reason') }}
                                         </label>
-                                        <textarea id="reason" name="reason" class="form-control" rows="5"
-                                            placeholder="{{ trans('app.forms.reason') }}"></textarea>
+                                        @if ($reasons)
+                                        @foreach ($reasons as $key => $reason)
+                                        <div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="reason" value="{{ $key }}">
+                                                    {{ $reason }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                        @endif
                                         @include('alert.feedback-ajax', ['field' => 'reason'])
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.other_reason') }}
+                                        </label>
+                                        <textarea id="other_reason" name="other_reason" class="form-control" rows="5"
+                                            placeholder="{{ trans('app.forms.reason') }}"></textarea>
+                                        @include('alert.feedback-ajax', ['field' => 'other_reason'])
                                     </div>
                                 </div>
                             </div>
@@ -79,6 +137,22 @@
 <script>
     $(document).ready( function () {
         $('.select2').select2();
+
+        $(".date_picker").datetimepicker({
+            widgetPositioning: {
+                horizontal: 'left'
+            },
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+            },
+            format: 'YYYY-MM-DD'
+        });
+
         $("#submit_button").click(function (e) {
             e.preventDefault();
             $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
@@ -128,6 +202,7 @@
             });
         });
     });
+    
     function onUpload(e) {
         let id = e.getAttribute('id');
         let myId = id.replace(/_tmp/g, '');

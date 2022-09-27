@@ -674,6 +674,10 @@ class DlpController extends \BaseController
 
 	private function checkAvailableAccess()
 	{
+		if (!AccessGroup::hasAccessModule('Defect Liability Period')) {
+			App::abort(404);
+		}
+
 		if ((!Auth::user()->getAdmin() && !Auth::user()->isCOB()) && !Auth::user()->isDeveloper()) {
 			App::abort(404);
 		}

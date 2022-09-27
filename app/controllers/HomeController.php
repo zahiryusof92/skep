@@ -34,6 +34,7 @@ class HomeController extends BaseController
         }
         $year = Files::getVPYear();
         $data = Files::getDashboardData();
+        $activeMemo = self::getActiveMemoHome();
 
         if (Auth::user()->isLawyer()) {
             $viewData = array(
@@ -56,6 +57,7 @@ class HomeController extends BaseController
             'data' => $data,
             'cob' => $cob,
             'year' => $year,
+            'activeMemo' => $activeMemo,
             'image' => ""
         );
 
@@ -589,6 +591,64 @@ class HomeController extends BaseController
                 return '<button type="button" class="btn btn-xs btn-success" onclick="getMemoDetails(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.view') . '</button>';
             })
             ->make(true);
+    }
+
+    public function getActiveMemoHome()
+    {
+        $today = date('Y-m-d');
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $memo = Memo::where('publish_date', '<=', $today)
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where(function ($query) {
+                        $query->where('company_id', Auth::user()->company_id)->orWhere('company_id', 99);
+                    })
+                    ->where(function ($query) {
+                        $query->where('file_id', Auth::user()->file_id)->whereNotNull('file_id');
+                        $query->orWhereNull('file_id');
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->get();
+            } else {
+                $memo = Memo::where('publish_date', '<=', $today)
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where(function ($query) {
+                        $query->where('company_id', Auth::user()->company_id)->orWhere('company_id', 99);
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $memo = Memo::where('publish_date', '<=', $today)
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->get();
+            } else {
+                $memo = Memo::where('publish_date', '<=', $today)
+                    ->where(function ($query) use ($today) {
+                        $query->where('expired_date', '>=', $today)->orWhereNull('expired_date');
+                    })
+                    ->where(function ($query) {
+                        $query->where('company_id', Session::get('admin_cob'))->orWhere('company_id', 99);
+                    })
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->get();
+            }
+        }
+
+        return $memo;
     }
 
     public function getMemoDetails()

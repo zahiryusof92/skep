@@ -770,91 +770,91 @@ return [
                 'receiver_address_1' => [
                     'label' => trans('app.forms.receiver_address_1'),
                     'name' => 'receiver_address_1',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_2' => [
                     'label' => trans('app.forms.receiver_address_2'),
                     'name' => 'receiver_address_2',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_3' => [
                     'label' => trans('app.forms.receiver_address_3'),
                     'name' => 'receiver_address_3',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_4' => [
                     'label' => trans('app.forms.receiver_address_4'),
                     'name' => 'receiver_address_4',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_5' => [
                     'label' => trans('app.forms.receiver_address_5'),
                     'name' => 'receiver_address_5',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => false
                 ],
                 'management_address_1' => [
                     'label' => trans('app.forms.management_address_1'),
                     'name' => 'management_address_1',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_2' => [
                     'label' => trans('app.forms.management_address_2'),
                     'name' => 'management_address_2',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_3' => [
                     'label' => trans('app.forms.management_address_3'),
                     'name' => 'management_address_3',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_4' => [
                     'label' => trans('app.forms.management_address_4'),
                     'name' => 'management_address_4',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_5' => [
                     'label' => trans('app.forms.management_address_5'),
                     'name' => 'management_address_5',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => false
                 ],
                 'from_address_1' => [
                     'label' => trans('app.forms.from_address_1'),
                     'name' => 'from_address_1',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_2' => [
                     'label' => trans('app.forms.from_address_2'),
                     'name' => 'from_address_2',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_3' => [
                     'label' => trans('app.forms.from_address_3'),
                     'name' => 'from_address_3',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_4' => [
                     'label' => trans('app.forms.from_address_4'),
                     'name' => 'from_address_4',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_5' => [
                     'label' => trans('app.forms.from_address_5'),
                     'name' => 'from_address_5',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => false
                 ],
             ],
@@ -1235,6 +1235,7 @@ return [
     'file_directory' => [
         'epks' => 'uploads/epks',
         'postponed_agm' => 'uploads/postponed_agm',
+        'postponed_agm_approval' => 'uploads/postponed_agm_approval',
         'dlp_deposit' => 'uploads/dlp_deposit',
     ]
 ];

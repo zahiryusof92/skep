@@ -31,7 +31,7 @@
                                     {{ trans('app.forms.created_at') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $model->created_at }}
+                                    {{ (!empty($model->created_at) ? \Helper\Helper::getFormattedDateTime($model->created_at) : '-') }}
                                 </dd>
 
                                 <dt class="col-sm-4">
@@ -49,7 +49,28 @@
                                 </dd>
 
                                 <dt class="col-sm-4">
+                                    {{ trans('app.forms.agm_date') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    {{ (!empty($model->agm_date) ? \Helper\Helper::getFormattedDate($model->agm_date) : '-') }}
+                                </dd>
+
+                                <dt class="col-sm-4">
+                                    {{ trans('app.forms.new_agm_date') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    {{ (!empty($model->new_agm_date) ? \Helper\Helper::getFormattedDate($model->new_agm_date) : '-') }}
+                                </dd>
+
+                                <dt class="col-sm-4">
                                     {{ trans('app.forms.reason') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    {{ ($model->postponedAGMReason ? $model->postponedAGMReason->name : '-') }}
+                                </dd>
+
+                                <dt class="col-sm-4">
+                                    {{ trans('app.forms.other_reason') }}
                                 </dt>
                                 <dd class="col-sm-8">
                                     {{ $model->reason }}
@@ -89,14 +110,11 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <select
-                                                class="form-control select2 {{ $errors->has('status') ? 'has-danger' : '' }}"
+                                                class="form-control select2"
                                                 id="status" name="status" onchange="statusChange(this.value)" {{
                                                 $readonly ? "disabled" : "" }}>
                                                 @foreach($statusOptions as $key => $option)
-                                                <option value="{{ $key }}" {{ $model->status == $key ||
-                                                    Input::old('status') == $key ? "selected" :
-                                                    ""
-                                                    }}>
+                                                <option value="{{ $key }}" {{ ($model->status == $key ? "selected" : "") }}>
                                                     {{ $option }}
                                                 </option>
                                                 @endforeach
@@ -107,7 +125,7 @@
                                 </dd>
 
                                 <div id="reject_field"
-                                    style="display: {{ (Input::old('status') == PostponedAGM::REJECTED ? 'show' : 'none') }};">
+                                    style="display: none;">
                                     <dt class="col-sm-4">
                                         <span style="color: red;">*</span>
                                         {{ trans('app.forms.approval_remark') }}
@@ -116,13 +134,30 @@
                                         <div class="row">
                                             <div class="col-sm-10">
                                                 <textarea id="approval_remark" name="approval_remark"
-                                                    class="form-control {{ $errors->has('approval_remark') ? 'has-danger' : '' }}"
-                                                    rows="5">{{ Input::old('approval_remark') }}</textarea>
+                                                    class="form-control"
+                                                    rows="5"></textarea>
                                                 @include('alert.feedback-ajax', ['field' => "approval_remark"])
                                             </div>
                                         </div>
                                     </dd>
                                 </div>
+
+                                <dt class="col-sm-4">
+                                    {{ trans('app.forms.approval_attachment') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="file" id="approval_attachment_tmp" name="approval_attachment_tmp"
+                                                onChange="onUpload(this)" />
+                                            <input hidden id="approval_attachment" name="approval_attachment" />
+                                            <br />
+                                            <div id="approval_attachment_preview"></div>
+                                            @include('alert.feedback-ajax', ['field' => 'approval_attachment'])
+                                        </div>
+                                    </div>
+                                </dd>
+
                                 @else
                                 <dt class="col-sm-4">
                                     {{ trans('app.forms.status') }}
@@ -142,7 +177,7 @@
                                     {{ trans('app.forms.approval_date') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ (!empty($model->approval_date) ? $model->approval_date : '') }}
+                                    {{ (!empty($model->approval_date) ? \Helper\Helper::getFormattedDateTime($model->approval_date) : '-') }}
                                 </dd>
                                 @if (!empty($model->approval_remark))
                                 <dt class="col-sm-4">
@@ -152,6 +187,22 @@
                                     {{ $model->approval_remark }}
                                 </dd>
                                 @endif
+                                <dt class="col-sm-4">
+                                    {{ trans('app.forms.approval_attachment') }}
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @if (!empty($model->approval_attachment))
+                                    <a href="{{ asset($model->approval_attachment) }}" target="_blank">
+                                        <button type="button" class="btn btn-xs btn-success" data-toggle="tooltip"
+                                            data-placement="bottom" title="{{ trans('app.forms.attachment') }}">
+                                            <i class="fa fa-file-pdf-o" style="margin-right: 2px;"></i>
+                                            {{ trans('app.forms.attachment') }}
+                                        </button>
+                                    </a>
+                                    @else
+                                    -
+                                    @endif
+                                </dd>
                                 @endif
 
                                 @endif
@@ -342,6 +393,64 @@
         }  else {
             $('#reject_field').hide();
         }
+    }
+
+    function onUpload(e) {
+        let id = e.getAttribute('id');
+        let myId = id.replace(/_tmp/g, '');
+        let data = new FormData();
+        if (e.files.length > 0) {
+            data.append(myId, e.files[0]);
+        }
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "{{ route('postponeAGM.approvalUpload') }}",
+            data: data,
+            async: true,
+            contentType: false, // The content type used when sending data to the server.
+            cache: false, // To unable request pages to be cached
+            processData: false,
+            beforeSubmit: function() {
+                console.log(myId);
+                $("#"+ myId + "_error").hide().empty();
+                return true;
+            },
+            success: function(response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function(index, value) {
+                        if (value.length != 0) {
+                            $("#"+ myId + "_error").html(value);
+                        }
+                    });
+                    $("#"+ myId + "_error").show();
+                    $("#"+ myId + "_tmp").css("color", "red");
+                } else {
+                    if(response.error == true) {
+                        bootbox.alert("<span style='color:red;'>" + response.message + "</span>");
+                    } else {
+                        $("#" + myId + "_preview").html("<button id='clear_" + id + "' class='btn btn-xs btn-danger' onclick='clearFile(this)'><i class='fa fa-times'></i> Delete</button>");
+                        $("#clear_" + myId).show();
+                        $("#" + myId + "_preview").show();
+                        $("#" + myId + "_tmp").css("color", "green");
+                        $("#" + myId).val(response.file);
+                    }
+                }
+            }
+        });
+    }
+
+    function clearFile(e) {
+        let id = e.getAttribute('id');
+        let name = e.getAttribute('name');
+        id = id.replace("clear_", "");
+        let myId = id.replace(/_tmp/g, '');;;
+        
+        $("#" + myId).val("");
+        $("#" + myId + "_tmp").val("");
+        $("#" + myId + "_tmp").css("color", "");
+        $("#" + myId + "_preview").empty().hide();
     }
 </script>
 @endsection

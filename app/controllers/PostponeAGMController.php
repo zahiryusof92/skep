@@ -91,7 +91,7 @@ class PostponeAGMController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.agm_postpone.review'),
+			'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.review'),
 			'panel_nav_active' => 'agm_postpone_panel',
 			'main_nav_active' => 'agm_postpone_main',
 			'sub_nav_active' => 'agm_postpone_list',
@@ -169,7 +169,7 @@ class PostponeAGMController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.agm_postpone.approved'),
+			'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.approved'),
 			'panel_nav_active' => 'agm_postpone_panel',
 			'main_nav_active' => 'agm_postpone_main',
 			'sub_nav_active' => 'agm_postpone_approved',
@@ -236,7 +236,7 @@ class PostponeAGMController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.agm_postpone.rejected'),
+			'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.rejected'),
 			'panel_nav_active' => 'agm_postpone_panel',
 			'main_nav_active' => 'agm_postpone_main',
 			'sub_nav_active' => 'agm_postpone_rejected',
@@ -255,17 +255,21 @@ class PostponeAGMController extends \BaseController
 	 */
 	public function create()
 	{
+		$reasons = PostponedAGMReason::getData();
+
 		$viewData = array(
-			'title' => trans('app.menus.agm_postpone.create'),
+			'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.create'),
 			'panel_nav_active' => 'agm_postpone_panel',
 			'main_nav_active' => 'agm_postpone_main',
 			'sub_nav_active' => 'agm_postpone_create',
+			'reasons' => $reasons,
 			'image' => ''
 		);
 
+		// return '<pre>' . print_r($reasons, true) . '</pre>';
+
 		return View::make('postpone_agm.create', $viewData);
 	}
-
 
 	/**
 	 * Store a newly created resource in storage.
@@ -279,7 +283,10 @@ class PostponeAGMController extends \BaseController
 		$request = Request::all();
 
 		$rules = [
+			'agm_date' => 'required|date',
+			'new_agm_date' => 'date',
 			'reason' => 'required',
+			'other_reason' => 'string',
 		];
 
 		$validator = Validator::make($request, $rules);
@@ -300,7 +307,10 @@ class PostponeAGMController extends \BaseController
 					'strata_id' => $file->strata->id,
 					'user_id' => Auth::user()->id,
 					'application_no' => $application_no,
-					'reason' => $request['reason'],
+					'agm_date' => $request['agm_date'],
+					'new_agm_date' => (!empty($request['new_agm_date']) ? $request['new_agm_date'] : null),
+					'postponed_agm_reason_id' => $request['reason'],
+					'reason' => (!empty($request['other_reason']) ? $request['other_reason'] : null),
 					'attachment' => (!empty($request['attachment']) ? $request['attachment'] : null),
 					'status' => PostponedAGM::PENDING,
 				]);
@@ -380,7 +390,7 @@ class PostponeAGMController extends \BaseController
 			}
 
 			$viewData = array(
-				'title' => trans('app.menus.agm_postpone.show'),
+				'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.show'),
 				'panel_nav_active' => 'agm_postpone_panel',
 				'main_nav_active' => 'agm_postpone_main',
 				'sub_nav_active' => $sub_nav_active,
@@ -452,6 +462,27 @@ class PostponeAGMController extends \BaseController
 		return Response::json(['error' => true, 'message' => "Fail"]);
 	}
 
+	public function approvalUpload()
+	{
+		$this->checkAvailableAccess();
+
+		if (Request::ajax()) {
+			$files = Request::file();
+
+			foreach ($files as $file) {
+				$destinationPath = Config::get('constant.file_directory.postponed_agm_approval');
+				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$upload = $file->move($destinationPath, $filename);
+
+				if ($upload) {
+					return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+				}
+			}
+		}
+
+		return Response::json(['error' => true, 'message' => "Fail"]);
+	}
+
 	public function submitByCOB($id)
 	{
 		$this->checkAvailableAccess();
@@ -479,11 +510,9 @@ class PostponeAGMController extends \BaseController
 			]);
 		} else {
 			if ($status == PostponedAGM::APPROVED) {
-				$this->approvedByID($id);
+				$this->approvedByID($id, $request);
 			} else if ($status == PostponedAGM::REJECTED) {
-				$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
-
-				$this->rejectedByID($id, $approval_remark);
+				$this->rejectedByID($id, $request);
 			}
 
 			return Response::json([
@@ -498,17 +527,19 @@ class PostponeAGMController extends \BaseController
 		]);
 	}
 
-	private function approvedByID($id)
+	private function approvedByID($id, $request)
 	{
 		$model = PostponedAGM::with(['user'])->find($this->decodeID($id));
 		if ($model) {
 			$old_status = $model->status;
+			$approval_attachment = (isset($request['approval_attachment']) ? $request['approval_attachment'] : null);
 
 			$success = $model->update([
 				'status' => PostponedAGM::APPROVED,
 				'approval_by' => Auth::user()->id,
 				'approval_date' => Carbon::now(),
 				'approval_remark' => null,
+				'approval_attachment' => $approval_attachment,
 			]);
 
 			if ($success) {
@@ -546,17 +577,20 @@ class PostponeAGMController extends \BaseController
 		}
 	}
 
-	private function rejectedByID($id, $approval_remark)
+	private function rejectedByID($id, $request)
 	{
 		$model = PostponedAGM::with(['user'])->find($this->decodeID($id));
 		if ($model) {
 			$old_status = $model->status;
+			$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
+			$approval_attachment = (isset($request['approval_attachment']) ? $request['approval_attachment'] : null);
 
 			$success = $model->update([
 				'status' => PostponedAGM::REJECTED,
 				'approval_by' => Auth::user()->id,
 				'approval_date' => Carbon::now(),
 				'approval_remark' => (!empty($approval_remark) ? $approval_remark : null),
+				'approval_attachment' => $approval_attachment,
 			]);
 
 			if ($success) {
@@ -611,6 +645,10 @@ class PostponeAGMController extends \BaseController
 
 	private function checkAvailableAccess()
 	{
+		if (!AccessGroup::hasAccessModule('Postponed AGM')) {
+			App::abort(404);
+		}
+
 		if ((!Auth::user()->getAdmin() && !Auth::user()->isCOB()) && !Auth::user()->isJMB()) {
 			App::abort(404);
 		}

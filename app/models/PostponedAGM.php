@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletingTrait;
 class PostponedAGM extends Eloquent
 {
     use SoftDeletingTrait;
-    
+
     const DRAFT = 'draft';
     const PENDING = 'pending';
     const APPROVED = 'approved';
@@ -20,12 +20,16 @@ class PostponedAGM extends Eloquent
         'strata_id',
         'user_id',
         'application_no',
+        'agm_date',
+        'new_agm_date',
+        'postponed_agm_reason_id',
         'reason',
         'attachment',
         'status',
         'approval_by',
         'approval_date',
         'approval_remark',
+        'approval_attachment',
     ];
 
     public function getStatusBadge()
@@ -135,5 +139,10 @@ class PostponedAGM extends Eloquent
     public function approver()
     {
         return $this->belongsTo('User', 'approval_by');
+    }
+
+    public function postponedAGMReason()
+    {
+        return $this->belongsTo('PostponedAGMReason', 'postponed_agm_reason_id');
     }
 }

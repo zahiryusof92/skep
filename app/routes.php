@@ -122,6 +122,7 @@ Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMembe
 Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
 Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 Route::get('/home/getInsuranceRemainder', 'HomeController@getInsuranceRemainder')->before('authMember');
+Route::get('/home/getActiveMemoHome', 'HomeController@getActiveMemoHome')->before('authMember');
 
 // --- COB Maintenance --- //
 //file prefix
@@ -499,6 +500,10 @@ Route::post('/deleteDefectAttachment', 'AdminController@deleteDefectAttachment')
 Route::post('/uploadDefectAttachment', 'FileController@uploadDefectAttachment')->before('authMember');
 
 ########################## Master Setup ##########################
+
+//postponeAGMReason
+Route::resource('postponeAGMReason', 'PostponeAGMReasonController');
+
 //area
 Route::get('/area', 'SettingController@area')->before('authMember');
 Route::get('/addArea', 'SettingController@addArea')->before('authMember');
@@ -973,6 +978,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('postponeAGM/fileUpload', ['as' => 'postponeAGM.fileUpload', 'uses' => 'PostponeAGMController@fileUpload']);
     Route::post('postponeAGM/review', ['as' => 'postponeAGM.review', 'uses' => 'PostponeAGMController@review']);
     Route::post('postponeAGM/submitByCOB/{id}', ['as' => 'postponeAGM.submitByCOB', 'uses' => 'PostponeAGMController@submitByCOB']);
+    Route::post('postponeAGM/approvalUpload', ['as' => 'postponeAGM.approvalUpload', 'uses' => 'PostponeAGMController@approvalUpload']);
     Route::resource('postponeAGM', 'PostponeAGMController'); 
 
     /**

@@ -12,8 +12,10 @@ class LedgerController extends \BaseController
 	 */
 	public function index()
 	{
+		$this->checkAvailableAccess();
+
 		$user = User::find(Auth::user()->id);
-		if ($user && $user->isJMB()) {
+		if ($user) {
 			$council = Company::find($user->getCOB->id);
 			if ($council) {
 				$file = Files::find($user->getFile->id);
@@ -174,5 +176,16 @@ class LedgerController extends \BaseController
 		}
 
 		return $name;
+	}
+
+	private function checkAvailableAccess()
+	{
+		if (!AccessGroup::hasAccessModule('Ledger')) {
+			App::abort(404);
+		}
+
+		if (!Auth::user()->isJMB()) {
+			App::abort(404);
+		}
 	}
 }

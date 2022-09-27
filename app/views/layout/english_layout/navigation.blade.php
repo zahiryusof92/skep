@@ -500,6 +500,14 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
+                    @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
+                    <li id="postpone_agm_reason_list">
+                        <a class="left-menu-link" href="{{ route('postponeAGMReason.index') }}">
+                            {{ trans('app.menus.master.postpone_agm_reason') }}
+                        </a>
+                    </li>
+                    @endif
+
                 </ul>
             </li>
             @endif
@@ -756,6 +764,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (AccessGroup::hasAccessModule('Postponed AGM'))
             @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isJMB())
             <li class="left-menu-list-submenu" id="agm_postpone_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -794,8 +803,10 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
+            @endif
 
-            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isDeveloper())
+            @if (AccessGroup::hasAccessModule('Defect Liability Period'))
+            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isDeveloper())            
             <li class="left-menu-list-submenu" id="dlp_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-clock-o"><!-- --></i>
@@ -826,7 +837,9 @@ if (!Auth::user()->getAdmin()) {
                 </ul>
             </li>
             @endif
+            @endif
 
+            @if (AccessGroup::hasAccessModule('Ledger'))
             @if (Auth::user()->isJMB())
             <li class="left-menu-list-link" id="ledger">
                 <a class="left-menu-link" href="{{ route('ledger.index') }}">
@@ -834,6 +847,7 @@ if (!Auth::user()->getAdmin()) {
                     {{ trans('app.menus.ledger.name') }}
                 </a>
             </li>
+            @endif
             @endif
 
             @if (Module::hasAccess(8))
