@@ -750,6 +750,7 @@ return array(
         "new_agm_date" => "Proposed New AGM Date",
         'other_reason' => 'Other Reason',
         'approval_attachment' => 'Approval Attachment',
+        'until' => 'Until',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

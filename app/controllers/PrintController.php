@@ -903,7 +903,6 @@ class PrintController extends BaseController
 
     public function printManagementList()
     {
-        $result = array();
         $data = Input::all();
 
         $cob_company = '';
@@ -937,6 +936,14 @@ class PrintController extends BaseController
         $phone_number = '';
         if (isset($data['phone_number'])) {
             $phone_number = $data['phone_number'];
+        }
+        $date_from = '';
+        if (isset($data['date_from']) && !empty($data['date_from'])) {
+            $date_from = $data['date_from'];
+        }
+        $date_to = '';
+        if (isset($data['date_to']) && !empty($data['date_to'])) {
+            $date_to = $data['date_to'];
         }
 
         if ((!empty($cob_company) && !empty($file_no)) && !empty($filename)) {
@@ -1045,136 +1052,242 @@ class PrintController extends BaseController
             }
         }
 
-        if ($files) {
-            foreach ($files as $file) {
+        if ($files->count() > 0) {
+            $data = array();
+
+            $files->reduce(function ($carry, $file) use (&$data, &$date_from, &$date_to, &$type) {
+                $data_raw = array();
+
                 if ($type == 'JMB') {
                     if ($file->managementJMB) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'JMB',
-                            $file->managementJMB->name,
-                            ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
-                            $file->managementJMB->email,
-                            $file->managementJMB->phone_no
-                        );
+                        if (!empty($date_from) && !empty($date_to)) {
+                            if (!empty($file->managementJMB->date_formed) && $file->managementJMB->date_formed != '0000-00-00') {
+                                if ($file->managementJMB->date_formed >= $date_from && $file->managementJMB->date_formed <= $date_to) {
+                                    $data_raw = array(
+                                        $file->company->short_name,
+                                        $file->file_no,
+                                        $file->strata->name,
+                                        'JMB',
+                                        (!empty($file->managementJMB->date_formed) && $file->managementJMB->date_formed != '0000-00-00' ? $file->managementJMB->date_formed : ''),
+                                        $file->managementJMB->name,
+                                        ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+                                        $file->managementJMB->email,
+                                        $file->managementJMB->phone_no
+                                    );
+                                }
+                            }
+                        } else {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'JMB',
+                                (!empty($file->managementJMB->date_formed) && $file->managementJMB->date_formed != '0000-00-00' ? $file->managementJMB->date_formed : ''),
+                                $file->managementJMB->name,
+                                ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+                                $file->managementJMB->email,
+                                $file->managementJMB->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
                 } else if ($type == 'MC') {
                     if ($file->managementMC) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'MC',
-                            $file->managementMC->name,
-                            ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
-                            $file->managementMC->email,
-                            $file->managementMC->phone_no
-                        );
+                        if (!empty($date_from) && !empty($date_to)) {
+                            if (!empty($file->managementMC->date_formed) && $file->managementMC->date_formed != '0000-00-00') {
+                                if ($file->managementMC->date_formed >= $date_from && $file->managementMC->date_formed <= $date_to) {
+                                    $data_raw = array(
+                                        $file->company->short_name,
+                                        $file->file_no,
+                                        $file->strata->name,
+                                        'MC',
+                                        (!empty($file->managementMC->date_formed) && $file->managementMC->date_formed != '0000-00-00' ? $file->managementMC->date_formed : ''),
+                                        $file->managementMC->name,
+                                        ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+                                        $file->managementMC->email,
+                                        $file->managementMC->phone_no
+                                    );
+                                }
+                            }
+                        } else {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'MC',
+                                (!empty($file->managementMC->date_formed) && $file->managementMC->date_formed != '0000-00-00' ? $file->managementMC->date_formed : ''),
+                                $file->managementMC->name,
+                                ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+                                $file->managementMC->email,
+                                $file->managementMC->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
                 } else if ($type == 'Agent') {
                     if ($file->managementAgent) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'Agent',
-                            $file->managementAgent->agent,
-                            ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
-                            $file->managementAgent->email,
-                            $file->managementAgent->phone_no
-                        );
+                        if (empty($date_from) && empty($date_to)) {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'Agent',
+                                '',
+                                $file->managementAgent->agent,
+                                ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
+                                $file->managementAgent->email,
+                                $file->managementAgent->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
                 } else if ($type == 'Others') {
                     if ($file->managementOthers) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'Others',
-                            $file->managementOthers->name,
-                            ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
-                            $file->managementOthers->email,
-                            $file->managementOthers->phone_no
-                        );
+                        if (empty($date_from) && empty($date_to)) {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'Others',
+                                '',
+                                $file->managementOthers->name,
+                                ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
+                                $file->managementOthers->email,
+                                $file->managementOthers->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
                 } else {
                     if ($file->managementJMB) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'JMB',
-                            $file->managementJMB->name,
-                            ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
-                            $file->managementJMB->email,
-                            $file->managementJMB->phone_no
-                        );
+                        if (!empty($date_from) && !empty($date_to)) {
+                            if (!empty($file->managementJMB->date_formed) && $file->managementJMB->date_formed != '0000-00-00') {
+                                if ($file->managementJMB->date_formed >= $date_from && $file->managementJMB->date_formed <= $date_to) {
+                                    $data_raw = array(
+                                        $file->company->short_name,
+                                        $file->file_no,
+                                        $file->strata->name,
+                                        'JMB',
+                                        (!empty($file->managementJMB->date_formed) && $file->managementJMB->date_formed != '0000-00-00' ? $file->managementJMB->date_formed : ''),
+                                        $file->managementJMB->name,
+                                        ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+                                        $file->managementJMB->email,
+                                        $file->managementJMB->phone_no
+                                    );
+                                }
+                            }
+                        } else {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'JMB',
+                                (!empty($file->managementJMB->date_formed) && $file->managementJMB->date_formed != '0000-00-00' ? $file->managementJMB->date_formed : ''),
+                                $file->managementJMB->name,
+                                ($file->managementJMB->address1 ? $file->managementJMB->address1 : '') . ($file->managementJMB->address2 ? '<br/>' . $file->managementJMB->address2 : '') . ($file->managementJMB->address3 ? '<br/>' . $file->managementJMB->address3 : ''),
+                                $file->managementJMB->email,
+                                $file->managementJMB->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
 
                     if ($file->managementMC) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'MC',
-                            $file->managementMC->name,
-                            ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
-                            $file->managementMC->email,
-                            $file->managementMC->phone_no
-                        );
+                        if (!empty($date_from) && !empty($date_to)) {
+                            if (!empty($file->managementMC->date_formed) && $file->managementMC->date_formed != '0000-00-00') {
+                                if ($file->managementMC->date_formed >= $date_from && $file->managementMC->date_formed <= $date_to) {
+                                    $data_raw = array(
+                                        $file->company->short_name,
+                                        $file->file_no,
+                                        $file->strata->name,
+                                        'MC',
+                                        (!empty($file->managementMC->date_formed) && $file->managementMC->date_formed != '0000-00-00' ? $file->managementMC->date_formed : ''),
+                                        $file->managementMC->name,
+                                        ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+                                        $file->managementMC->email,
+                                        $file->managementMC->phone_no
+                                    );
+                                }
+                            }
+                        } else {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'MC',
+                                (!empty($file->managementMC->date_formed) && $file->managementMC->date_formed != '0000-00-00' ? $file->managementMC->date_formed : ''),
+                                $file->managementMC->name,
+                                ($file->managementMC->address1 ? $file->managementMC->address1 : '') . ($file->managementMC->address2 ? '<br/>' . $file->managementMC->address2 : '') . ($file->managementMC->address3 ? '<br/>' . $file->managementMC->address3 : ''),
+                                $file->managementMC->email,
+                                $file->managementMC->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
 
                     if ($file->managementAgent) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'Agent',
-                            $file->managementAgent->agent,
-                            ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
-                            $file->managementAgent->email,
-                            $file->managementAgent->phone_no
-                        );
+                        if (empty($date_from) && empty($date_to)) {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'Agent',
+                                '',
+                                $file->managementAgent->agent,
+                                ($file->managementAgent->address1 ? $file->managementAgent->address1 : '') . ($file->managementAgent->address2 ? '<br/>' . $file->managementAgent->address2 : '') . ($file->managementAgent->address3 ? '<br/>' . $file->managementAgent->address3 : ''),
+                                $file->managementAgent->email,
+                                $file->managementAgent->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
 
                     if ($file->managementOthers) {
-                        $data_raw = array(
-                            $file->company->short_name,
-                            $file->file_no,
-                            $file->strata->name,
-                            'Others',
-                            $file->managementOthers->name,
-                            ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
-                            $file->managementOthers->email,
-                            $file->managementOthers->phone_no
-                        );
+                        if (empty($date_from) && empty($date_to)) {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'Others',
+                                '',
+                                $file->managementOthers->name,
+                                ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
+                                $file->managementOthers->email,
+                                $file->managementOthers->phone_no
+                            );
+                        }
 
-                        array_push($result, $data_raw);
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
                     }
                 }
-            }
+            });
         }
 
-        //        return "<pre>" . print_r($result, true) . "</pre>";
-
         $viewData = array(
-            'title' => trans('app.menus.reporting.purchaser'),
+            'title' => trans('app.menus.reporting.management_list'),
             'panel_nav_active' => '',
             'main_nav_active' => '',
             'sub_nav_active' => '',
@@ -1185,7 +1298,7 @@ class PrintController extends BaseController
             'address' => $address,
             'email' => $email,
             'phone_number' => $phone_number,
-            'result' => $result
+            'result' => $data
         );
 
         return View::make('print_en.management_list', $viewData);
@@ -1349,7 +1462,8 @@ class PrintController extends BaseController
         return View::make('print_en.epks', $viewData);
     }
 
-    public function generate() {
+    public function generate()
+    {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Report Generator"));
         $request = Request::all();
         $models = (new ReportRepo())->generateReport($request);

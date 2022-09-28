@@ -829,11 +829,11 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.dlp.progress') }}
                         </a>
                     </li>
-                    <li class="left-menu-list-link" id="dlp_period">
+                    {{-- <li class="left-menu-list-link" id="dlp_period">
                         <a class="left-menu-link" href="{{ route('dlp.period') }}">
                             {{ trans('app.menus.dlp.period') }}
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </li>
             @endif

@@ -57,13 +57,7 @@
                                 @endif
                             </dd>
                             <dt class="col-sm-3">
-                                {{ trans('app.forms.amount') }}
-                            </dt>
-                            <dd class="col-sm-9">
-                                {{ $model->amount }}
-                            </dd>
-                            <dt class="col-sm-3">
-                                {{ trans('app.forms.maturity_date') }} (RM)
+                                {{ trans('app.forms.maturity_date') }}
                             </dt>
                             <dd class="col-sm-9">
                                 {{ $model->maturity_date }}

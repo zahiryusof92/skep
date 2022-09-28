@@ -38,35 +38,49 @@
                         <div class="col-lg-12">
                             <form action="{{ url('/print/managementList') }}" method="POST" target="_blank" >
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.cob') }}</label>
                                             <input type="hidden" name="company" value="{{ $cob_company }}"/>
                                             <p>{{ $cob_name}}</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.file_no') }}</label>
                                             <input type="hidden" name="file_no" value="{{ $file_no }}"/>
                                             <p>{{ $file_name}}</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.file_name') }}</label>
                                             <input type="hidden" name="file_name" value="{{ $filename }}"/>
                                             <p>{{ $fname }}</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.type') }}</label>
                                             <input type="hidden" name="type" value="{{ $type }}"/>
                                             <p>{{ $type_name }}</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+
+                                <div class="row">
+                                    @if (!empty($date_from) && !empty($date_to))
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.date_formed') }}</label>
+                                            <input type="hidden" name="date_from" value="{{ $date_from }}"/>
+                                            <input type="hidden" name="date_to" value="{{ $date_to }}"/>
+                                            <p>{{ $date_from }} {{ Str::lower(trans('app.forms.until')) }} {{ $date_to }}</p>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Filter</label>
                                             <div class="row">
@@ -102,11 +116,12 @@
                                         <tr>
                                             <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.cob') }}</th>
                                             <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_no') }}</th>
-                                            <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_name') }}</th>
-                                            <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type') }}</th>
-                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type_name') }}</th>
-                                            <th style="width:20%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.address') }}</th>
-                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.email') }}</th>
+                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.file_name') }}</th>
+                                            <th style="width:5%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.type') }}</th>
+                                            <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.date_formed') }}</th>
+                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.name') }}</th>
+                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.address') }}</th>
+                                            <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.email') }}</th>
                                             <th style="width:10%; text-align: center !important; vertical-align:middle !important;">{{ trans('app.forms.phone_number') }}</th>
                                         </tr>
                                     </thead>                                
@@ -122,11 +137,12 @@
                                             <td>{{ $res[5] }}</td>
                                             <td>{{ $res[6] }}</td>
                                             <td>{{ $res[7] }}</td>
+                                            <td>{{ $res[8] }}</td>
                                         </tr>
                                         @endforeach
                                         @else
                                         <tr>
-                                            <td colspan="7">No data availabe</td>
+                                            <td colspan="9">No data availabe</td>
                                         </tr>
                                         @endif
                                     </tbody>

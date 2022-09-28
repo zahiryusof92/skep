@@ -997,10 +997,10 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('dlp/progress/show/{id}', ['as' => 'dlp.progress.show', 'uses' => 'DlpController@showProgress']);
     Route::delete('dlp/progress/destroy/{id}', ['as' => 'dlp.progress.destroy', 'uses' => 'DlpController@destroyProgress']);
 
-    Route::get('dlp/period', ['as' => 'dlp.period', 'uses' => 'DlpController@period']);
-    Route::post('dlp/period/store', ['as' => 'dlp.period.store', 'uses' => 'DlpController@storePeriod']);
-    Route::get('dlp/period/list', ['as' => 'dlp.period.list', 'uses' => 'DlpController@listPeriod']);
-    Route::get('dlp/period/show/{id}', ['as' => 'dlp.period.show', 'uses' => 'DlpController@showPeriod']);
+    // Route::get('dlp/period', ['as' => 'dlp.period', 'uses' => 'DlpController@period']);
+    // Route::post('dlp/period/store', ['as' => 'dlp.period.store', 'uses' => 'DlpController@storePeriod']);
+    // Route::get('dlp/period/list', ['as' => 'dlp.period.list', 'uses' => 'DlpController@listPeriod']);
+    // Route::get('dlp/period/show/{id}', ['as' => 'dlp.period.show', 'uses' => 'DlpController@showPeriod']);
 
     /**
      * Ledger
