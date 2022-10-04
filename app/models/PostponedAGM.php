@@ -9,7 +9,7 @@ class PostponedAGM extends Eloquent
 
     const DRAFT = 'draft';
     const PENDING = 'pending';
-    const APPROVED = 'approved';
+    const APPROVED = 'acknowledged';
     const REJECTED = 'rejected';
 
     protected $table = 'postponed_agms';
@@ -39,7 +39,7 @@ class PostponedAGM extends Eloquent
         if ($this->status == self::PENDING) {
             $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.agm_postpone.pending') . '</span>';
         } else if ($this->status == self::APPROVED) {
-            $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.agm_postpone.approved') . '</span>';
+            $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.agm_postpone.acknowledged') . '</span>';
         } else if ($this->status == self::REJECTED) {
             $status = '<span class="label label-pill label-danger" style="font-size:12px;">' . trans('app.agm_postpone.rejected') . '</span>';
         }
@@ -51,11 +51,11 @@ class PostponedAGM extends Eloquent
     {
         $status = 'Draft';
         if ($this->status == self::PENDING) {
-            $status = "Pending";
+            $status = trans('app.agm_postpone.pending');
         } else if ($this->status == self::APPROVED) {
-            $status = "Approved";
+            $status = trans('app.agm_postpone.acknowledged');
         } else if ($this->status == self::REJECTED) {
-            $status = "Rejected";
+            $status = trans('app.agm_postpone.rejected');
         }
 
         return $status;
@@ -66,8 +66,8 @@ class PostponedAGM extends Eloquent
         $options = [
             '' => trans('- Please Select -'),
             self::PENDING => trans('app.agm_postpone.pending'),
-            self::APPROVED => trans('app.agm_postpone.approved'),
-            self::REJECTED => trans('app.agm_postpone.rejected'),
+            self::APPROVED => trans('app.agm_postpone.acknowledge'),
+            self::REJECTED => trans('app.agm_postpone.reject'),
         ];
 
         return $options;

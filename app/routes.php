@@ -972,7 +972,7 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * AGM Postpone
      */
-    Route::get('postponeAGM/approved', ['as' => 'postponeAGM.approved', 'uses' => 'PostponeAGMController@approved']);
+    Route::get('postponeAGM/acknowldged', ['as' => 'postponeAGM.approved', 'uses' => 'PostponeAGMController@approved']);
     Route::get('postponeAGM/rejected', ['as' => 'postponeAGM.rejected', 'uses' => 'PostponeAGMController@rejected']);
     Route::get('postponeAGM/report', ['as' => 'postponeAGM.report', 'uses' => 'PostponeAGMController@report']);
     Route::post('postponeAGM/fileUpload', ['as' => 'postponeAGM.fileUpload', 'uses' => 'PostponeAGMController@fileUpload']);

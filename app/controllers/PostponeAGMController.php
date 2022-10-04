@@ -284,7 +284,7 @@ class PostponeAGMController extends \BaseController
 
 		$rules = [
 			'agm_date' => 'required|date',
-			'new_agm_date' => 'date',
+			'new_agm_date' => 'required|date',
 			'reason' => 'required',
 			'other_reason' => 'string',
 		];

@@ -33,7 +33,8 @@
                                             {{ trans('app.forms.agm_date') }}
                                         </label>
                                         <label class="input-group">
-                                            <input type="text" id="agm_date" name="agm_date" class="form-control date_picker" />
+                                            <input type="text" id="agm_date" name="agm_date"
+                                                class="form-control date_picker" />
                                             <span class="input-group-addon">
                                                 <i class="icmn-calendar"></i>
                                             </span>
@@ -47,10 +48,12 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-control-label">
+                                            <span style="color: red;">*</span>
                                             {{ trans('app.forms.new_agm_date') }}
                                         </label>
                                         <label class="input-group">
-                                            <input type="text" id="new_agm_date" name="new_agm_date" class="form-control date_picker" />
+                                            <input type="text" id="new_agm_date" name="new_agm_date"
+                                                class="form-control date_picker" />
                                             <span class="input-group-addon">
                                                 <i class="icmn-calendar"></i>
                                             </span>
@@ -68,18 +71,16 @@
                                             {{ trans('app.forms.reason') }}
                                         </label>
                                         @if ($reasons)
-                                        @foreach ($reasons as $key => $reason)
-                                        <div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="reason" value="{{ $key }}">
-                                                    {{ $reason }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                        @endif
+                                        <select id="reason" name="reason" class="form-control select2">
+                                            <option value="" selected>{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($reasons as $key => $reason)
+                                            <option value="{{ $key }}">
+                                                {{ $reason }}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                         @include('alert.feedback-ajax', ['field' => 'reason'])
+                                        @endif                                        
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +89,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label class="form-control-label">
-                                            {{ trans('app.forms.other_reason') }}
+                                            {{ trans('app.forms.other_reason') }} (if have)
                                         </label>
                                         <textarea id="other_reason" name="other_reason" class="form-control" rows="5"
                                             placeholder="{{ trans('app.forms.reason') }}"></textarea>
@@ -136,9 +137,13 @@
 
 <script>
     $(document).ready( function () {
+        var year = new Date().getFullYear();
+        var minDate = new Date();
+        var maxDate = new Date(year, 11, 31);
+
         $('.select2').select2();
 
-        $(".date_picker").datetimepicker({
+        $("#agm_date").datetimepicker({
             widgetPositioning: {
                 horizontal: 'left'
             },
@@ -150,7 +155,40 @@
                 previous: "fa fa-chevron-left",
                 next: "fa fa-chevron-right",
             },
-            format: 'YYYY-MM-DD'
+            minDate: minDate,
+            maxDate: maxDate,
+            format: 'YYYY-MM-DD',
+            useCurrent: false
+        }).on("dp.change", function (e) {
+            var days = 10;
+            var newMaxDate = new Date(e.date);
+            newMaxDate.setDate(newMaxDate.getDate() + days);
+            var newYear = new Date(newMaxDate).getFullYear();
+            if (newYear != year) {
+                $('#new_agm_date').data("DateTimePicker").minDate(e.date).maxDate(maxDate);
+            } else {
+                $('#new_agm_date').data("DateTimePicker").minDate(e.date).maxDate(newMaxDate);
+            }            
+        });
+
+        $("#new_agm_date").datetimepicker({
+            widgetPositioning: {
+                horizontal: 'left'
+            },
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+            },
+            minDate: minDate,
+            maxDate: maxDate,
+            format: 'YYYY-MM-DD',
+            useCurrent: false
+        }).on("dp.change", function (e) {
+            $('#agm_date').data("DateTimePicker").maxDate(e.date);
         });
 
         $("#submit_button").click(function (e) {

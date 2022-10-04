@@ -243,7 +243,7 @@ return array(
             "list" => "Postponed AGM",
             "draft" => "Draft List",
             "review" => "Review List",
-            "approved" => "Approved List",
+            "approved" => "Acknowledged List",
             "rejected" => "Rejected List",
             'report' => 'Report',
             "create" => "New Application",
@@ -1238,10 +1238,15 @@ return array(
         'rejected' => 'Rejected',
     ],
     'agm_postpone' => [
+        'draft' => 'Draft',
         'pending' => 'Pending',
         'inprogress' => 'In-progress',
+        'approve' => 'Approve',
+        'reject' => 'Reject',
+        'acknowledge' => 'Acknowledge',
         'approved' => 'Approved',
         'rejected' => 'Rejected',
+        'acknowledged' => 'Acknowledged',
     ],
     'dlp' => [
         'deposit' => [
