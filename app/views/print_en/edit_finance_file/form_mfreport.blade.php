@@ -12,7 +12,7 @@ $prefix = 'mfr_';
                 ?>
                 <tr>
                     <td class="text-left" width="35%">MAINTENANCE FEE SEBULAN (PER UNIT)</td>
-                    <td class="text-right" width="15%">{{ number_format($mfreport['fee_sebulan'], 2) }}</td>
+                    <td class="text-right" width="15%">{{ number_format((double) $mfreport['fee_sebulan'], 2) }}</td>
                     <td class="text-left" width="35%">JUMLAH UNIT</td>
                     <td class="text-right" width="15%">{{ $mfreport['unit'] }}</td>
                 </tr>
@@ -24,7 +24,7 @@ $prefix = 'mfr_';
                 ?>
                 <tr>
                     <td class="text-left" width="35%">MAINTENANCE FEE SEBULAN (PER UNIT)</td>
-                    <td class="text-right" width="15%">{{ number_format($mfreportExtra['fee_sebulan'], 2) }}</td>
+                    <td class="text-right" width="15%">{{ number_format((double) $mfreportExtra['fee_sebulan'], 2) }}</td>
                     <td class="text-left" width="35%">JUMLAH UNIT</td>
                     <td class="text-right" width="15%">{{ $mfreportExtra['unit'] }}</td>
                 </tr>

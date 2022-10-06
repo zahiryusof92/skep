@@ -14,7 +14,7 @@ $count = 0;
                 ?>
                 <tr>
                     <td class="text-left" width="35%">SINKING FUND SEBULAN (PER UNIT)</td>
-                    <td class="text-right" width="15%">{{ number_format($sfreport['fee_sebulan'], 2) }}</td>
+                    <td class="text-right" width="15%">{{ number_format((double) $sfreport['fee_sebulan'], 2) }}</td>
                     <td class="text-left" width="35%">JUMLAH UNIT</td>
                     <td class="text-right" width="15%">{{ $sfreport['unit'] }}</td>
                 </tr>
@@ -25,7 +25,7 @@ $count = 0;
                 ?>
                 <tr>
                     <td class="text-left" width="35%">SINKING FUND SEBULAN (PER UNIT)</td>
-                    <td class="text-right" width="15%">{{ number_format($sfreportExtra['fee_sebulan'], 2) }}</td>
+                    <td class="text-right" width="15%">{{ number_format((double) $sfreportExtra['fee_sebulan'], 2) }}</td>
                     <td class="text-left" width="35%">JUMLAH UNIT</td>
                     <td class="text-right" width="15%">{{ $sfreportExtra['unit'] }}</td>
                 </tr>
