@@ -11,6 +11,14 @@
         <div class="panel-body">
             <section class="panel panel-pad">
                 <div class="row padding-vertical-20">
+
+                    <div class="col-lg-12">
+                        <button onclick="window.location = '{{ route('dlp.deposit.create') }}'"
+                            type="button" class="btn btn-own margin-bottom-25">
+                            {{ trans('app.buttons.add_deposit') }}
+                        </button>
+                    </div>
+
                     <div class="col-lg-12">
                         <table class="table table-hover nowrap table-own table-striped" id="dlp_deposit_table"
                             width="100%">

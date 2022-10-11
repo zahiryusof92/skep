@@ -11,6 +11,35 @@ use yajra\Datatables\Facades\Datatables;
 
 class DlpController extends \BaseController
 {
+	public function createDeposit()
+	{
+		if (!Auth::user()->getAdmin()) {
+			if (!empty(Auth::user()->file_id)) {
+				$files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+			} else {
+				$files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+			}
+		} else {
+			if (empty(Session::get('admin_cob'))) {
+				$files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+			} else {
+				$files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+			}
+		}
+
+		$viewData = array(
+			'title' => trans('app.menus.dlp.deposit'),
+			'panel_nav_active' => 'dlp_panel',
+			'main_nav_active' => 'dlp_main',
+			'sub_nav_active' => 'dlp_deposit',
+			'image' => '',
+			'files' => $files,
+			'model' => null,
+		);
+
+		return View::make('dlp.deposit.create', $viewData);
+	}
+
 	public function deposit()
 	{
 		$this->checkAvailableAccess();
@@ -68,7 +97,11 @@ class DlpController extends \BaseController
 			$request = Request::all();
 
 			$rules = [
+				'file' => 'required',
+				'type' => 'required',
+				'development_cost' => 'required|numeric',
 				'amount' => 'required|numeric',
+				'start_date' => 'required|date',
 				'maturity_date' => 'required|date',
 			];
 
@@ -82,17 +115,30 @@ class DlpController extends \BaseController
 			} else {
 				if (Auth::user()->getFile) {
 					$file = Files::find(Auth::user()->getFile->id);
+				} else if (isset($request['file']) && !empty($request['file'])) {
+					$file = Files::find($request['file']);
+				} else {
+					return Response::json([
+						'error' => true,
+						'message' => trans('app.errors.occurred')
+					]);
+				}
 
-					if ($file) {
+				if ($file) {
+					$exist = DlpDeposit::where('file_id', $file->id)->first();
+					if (!$exist) {
 						$application = DlpDeposit::create([
 							'company_id' => ($file->company ? $file->company->id : null),
 							'file_id' => $file->id,
 							'strata_id' => ($file->strata ? $file->strata->id : null),
 							'user_id' => Auth::user()->id,
+							'type' => $request['type'],
+							'development_cost' => $request['development_cost'],
 							'amount' => $request['amount'],
+							'start_date' => $request['start_date'],
 							'maturity_date' => $request['maturity_date'],
 							'attachment' => (!empty($request['attachment']) ? $request['attachment'] : null),
-							'status' => DlpDeposit::PENDING,
+							'status' => DlpDeposit::APPROVED,
 						]);
 
 						if ($application) {
@@ -135,6 +181,11 @@ class DlpController extends \BaseController
 								'message' => trans('app.successes.saved_successfully')
 							]);
 						}
+					} else {
+						return Response::json([
+							'error' => true,
+							'message' => trans('app.errors.already_exist')
+						]);
 					}
 				}
 			}

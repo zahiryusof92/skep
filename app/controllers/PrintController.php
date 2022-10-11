@@ -1170,6 +1170,26 @@ class PrintController extends BaseController
                             array_push($data, $data_raw);
                         }
                     }
+                } else if ($type == 'Developer') {
+                    if ($file->managementDeveloper) {
+                        if (empty($date_from) && empty($date_to)) {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'Developer',
+                                '',
+                                $file->managementDeveloper->name,
+                                ($file->managementDeveloper->address_1 ? $file->managementDeveloper->address_1 : '') . ($file->managementDeveloper->address_2 ? '<br/>' . $file->managementDeveloper->address_2 : '') . ($file->managementDeveloper->address_3 ? '<br/>' . $file->managementDeveloper->address_3 : ''),
+                                '',
+                                $file->managementDeveloper->phone_no
+                            );
+                        }
+
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
+                    }
                 } else {
                     if ($file->managementJMB) {
                         if (!empty($date_from) && !empty($date_to)) {
@@ -1275,6 +1295,26 @@ class PrintController extends BaseController
                                 ($file->managementOthers->address1 ? $file->managementOthers->address1 : '') . ($file->managementOthers->address2 ? '<br/>' . $file->managementOthers->address2 : '') . ($file->managementOthers->address3 ? '<br/>' . $file->managementOthers->address3 : ''),
                                 $file->managementOthers->email,
                                 $file->managementOthers->phone_no
+                            );
+                        }
+
+                        if (!empty($data_raw)) {
+                            array_push($data, $data_raw);
+                        }
+                    }
+
+                    if ($file->managementDeveloper) {
+                        if (empty($date_from) && empty($date_to)) {
+                            $data_raw = array(
+                                $file->company->short_name,
+                                $file->file_no,
+                                $file->strata->name,
+                                'Developer',
+                                '',
+                                $file->managementDeveloper->name,
+                                ($file->managementDeveloper->address_1 ? $file->managementDeveloper->address_1 : '') . ($file->managementDeveloper->address_2 ? '<br/>' . $file->managementDeveloper->address_2 : '') . ($file->managementDeveloper->address_3 ? '<br/>' . $file->managementDeveloper->address_3 : ''),
+                                '',
+                                $file->managementDeveloper->phone_no
                             );
                         }
 

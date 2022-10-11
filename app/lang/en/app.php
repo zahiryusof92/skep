@@ -751,6 +751,7 @@ return array(
         'other_reason' => 'Other Reason',
         'approval_attachment' => 'Approval Attachment',
         'until' => 'Until',
+        'development_cost' => 'Development Cost',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -770,6 +771,7 @@ return array(
         "account_expired" => "Account Expired",
         "wrong_username_password" => "Wrong Username/Password",
         'payment_failed' => 'Payment Failed',
+        "already_exist" => "Error, data already exist.",
     ),
     "successes" => array(
         "deleted_title" => "Deleted",
@@ -1081,6 +1083,7 @@ return array(
         "add_new" => "Add New",
         "reject" => "Reject",
         'postpone_agm_reason' => 'Postponed AGM Reason',
+        'add_deposit' => 'Add Deposit',
     ),
     'directory' => [
         'title' => 'Directory',

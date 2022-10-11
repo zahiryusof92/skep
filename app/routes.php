@@ -741,6 +741,7 @@ Route::get('/reporting/ratingSummary', 'ReportController@ratingSummary')->before
 //management summary
 Route::get('/reporting/managementSummary', 'ReportController@managementSummary')->before('authMember');
 
+
 //cob file / management
 Route::get('/reporting/cobFileManagement', 'ReportController@cobFileManagement')->before('authMember');
 
@@ -984,8 +985,9 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * DLP
      */
-    Route::get('dlp/deposit', ['as' => 'dlp.deposit', 'uses' => 'DlpController@deposit']);
     Route::post('dlp/fileUpload', ['as' => 'dlp.fileUpload', 'uses' => 'DlpController@fileUpload']);
+    Route::get('dlp/deposit', ['as' => 'dlp.deposit', 'uses' => 'DlpController@deposit']);
+    Route::get('dlp/deposit/create', ['as' => 'dlp.deposit.create', 'uses' => 'DlpController@createDeposit']);    
     Route::post('dlp/deposit/store', ['as' => 'dlp.deposit.store', 'uses' => 'DlpController@storeDeposit']);
     Route::get('dlp/deposit/list', ['as' => 'dlp.deposit.list', 'uses' => 'DlpController@listDeposit']);
     Route::get('dlp/deposit/show/{id}', ['as' => 'dlp.deposit.show', 'uses' => 'DlpController@showDeposit']);

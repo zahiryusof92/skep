@@ -172,7 +172,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('COB Letter'))
+            @if (AccessGroup::hasAccessModule('COB Letter'))
             <li class="left-menu-list-link" id="cob_letter_list">
                 <a class="left-menu-link" href="{{ route('cob_letter.index') }}">
                     <i class="left-menu-link-icon fa fa-paper-plane" aria-hidden="true"></i>
@@ -811,17 +811,11 @@ if (!Auth::user()->getAdmin()) {
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-clock-o"><!-- --></i>
                     <span>{{ trans('app.menus.dlp.name') }}</span>
-                    @if (DlpDeposit::self()->notPending()->where('dlp_deposits.status', '!=', DlpDeposit::REJECTED)->count())
-                    &nbsp;<span class="label left-menu-label label-danger">!</span>
-                    @endif
                 </a>
                 <ul class="left-menu-list list-unstyled" id="dlp_main">
                     <li class="left-menu-list-link" id="dlp_deposit">
                         <a class="left-menu-link" href="{{ route('dlp.deposit') }}">
-                            {{ trans('app.menus.dlp.deposit') }} &nbsp;
-                            <span class="label left-menu-label label-danger">
-                                {{ trans('app.menus.dlp.pending', ['count'=> DlpDeposit::self()->notPending()->where('dlp_deposits.status', '!=', DlpDeposit::REJECTED)->count()]) }}
-                            </span>
+                            {{ trans('app.menus.dlp.deposit') }}
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="dlp_progress">
@@ -834,6 +828,13 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.dlp.period') }}
                         </a>
                     </li> --}}
+                    @if (AccessGroup::hasAccess(31))
+                    <li id="agmpurchasesub_list">
+                        <a class="left-menu-link" href="{{ URL::action('AgmController@purchaser') }}">
+                            {{ trans('app.menus.agm.purchaser') }}
+                        </a>
+                    </li>
+                    @endif
                 </ul>
             </li>
             @endif
