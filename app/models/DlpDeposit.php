@@ -10,6 +10,7 @@ class DlpDeposit extends Eloquent
     const PENDING = 'pending';
     const APPROVED = 'approved';
     const REJECTED = 'rejected';
+    const RETURNED = 'returned';
 
     protected $table = 'dlp_deposits';
 
@@ -21,8 +22,10 @@ class DlpDeposit extends Eloquent
         'type',
         'development_cost',
         'amount',
+        'balance',
         'start_date',
         'maturity_date',
+        'checklist',
         'attachment',
         'status',
         'approval_by',
@@ -60,9 +63,11 @@ class DlpDeposit extends Eloquent
         $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.dlp.deposit.pending') . '</span>';
 
         if ($this->status == self::APPROVED) {
-            $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.dlp.deposit.approved') . '</span>';
+            $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.dlp.deposit.received') . '</span>';
         } else if ($this->status == self::REJECTED) {
             $status = '<span class="label label-pill label-danger" style="font-size:12px;">' . trans('app.dlp.deposit.rejected') . '</span>';
+        } else if ($this->status == self::RETURNED) {
+            $status = '<span class="label label-pill label-info" style="font-size:12px;">' . trans('app.dlp.deposit.returned') . '</span>';
         }
 
         return $status;
@@ -132,5 +137,9 @@ class DlpDeposit extends Eloquent
     public function approver()
     {
         return $this->belongsTo('User', 'approval_by');
+    }
+
+    public function usages() {
+        return $this->hasMany('DlpDeposit', 'dlp_deposit_id');
     }
 }

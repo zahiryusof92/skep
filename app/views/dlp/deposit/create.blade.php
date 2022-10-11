@@ -32,7 +32,8 @@
                                             <span style="color: red;">*</span>
                                             {{ trans('app.forms.file_no') }}
                                         </label>
-                                        <select class="form-control select2" id="file" name="file" {{ (!empty($model) ? 'disabled' : '') }}>
+                                        <select class="form-control select2" id="file" name="file" {{ (!empty($model)
+                                            ? 'disabled' : '' ) }}>
                                             @if (empty($model))
                                             <option value="">
                                                 {{ trans('app.forms.please_select') }}
@@ -59,7 +60,7 @@
                                             {{ trans('app.forms.type') }}
                                         </label>
                                         <select class="form-control select2" id="type" name="type"
-                                            onchange="getType(this.value)" {{ (!empty($model) ? 'disabled' : '') }}>
+                                            onchange="getType(this.value)" {{ (!empty($model) ? 'disabled' : '' ) }}>
                                             @if (empty($model))
                                             <option value="">
                                                 {{ trans('app.forms.please_select') }}
@@ -71,10 +72,12 @@
                                                 {{ trans('app.forms.residential') }}
                                             </option>
                                             @else
-                                            <option value="commercial" {{ ($model->type == 'commercial' ? 'selected' : '') }}>
+                                            <option value="commercial" {{ ($model->type == 'commercial' ? 'selected' :
+                                                '') }}>
                                                 {{ trans('app.forms.commercial') }}
                                             </option>
-                                            <option value="residential" {{ ($model->type == 'commercial' ? 'residential' : '') }}>
+                                            <option value="residential" {{ ($model->type == 'commercial' ? 'residential'
+                                                : '') }}>
                                                 {{ trans('app.forms.residential') }}
                                             </option>
                                             @endif
@@ -167,6 +170,43 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if ($checklists)
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.checklist') }}
+                                        </label>
+                                        @if (empty($model))
+                                        @foreach ($checklists as $key => $value)
+                                        <div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="checklist[]" value="{{ $key }}">
+                                                    {{ $value }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                        @include('alert.feedback-ajax', ['field' => 'checklist'])
+                                        @else
+                                        {{ print_r(json_decode($model->checklist), true) }}
+                                        @foreach ($checklists as $key => $value)
+                                        <div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="checklist[]" value="{{ $key }}" {{ (array_key_exists($key, json_decode($model->checklist)) ? 'checked' : '') }}>
+                                                    {{ $value }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
 
                             <div class="row">
                                 <div class="col-lg-4">

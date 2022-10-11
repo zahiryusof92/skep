@@ -704,13 +704,13 @@ foreach ($user_permission as $permission) {
             yAxis: {
                 min: 0,
                 title: {
-                    text: '(total)'
+                    text: '%'
                 }
             },
             tooltip: {
                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                 pointFormat: '<tr>' +
-                    '<td style="padding:0"><b>{point.y} total</b></td></tr>',
+                    '<td style="padding:0"><b>{point.y} %</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true

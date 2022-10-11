@@ -1624,9 +1624,21 @@ class Files extends Eloquent {
                             ->selectRaw('count(files.id) as total, company.short_name')
                             ->groupBy(['company.short_name'])
                             ->get();
+                            
         foreach($items_never as $item) {
+            $council = Company::where('short_name', $item->short_name)->first();
+            $total_files = self::where('company_id', $council->id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->count();
+            
+            $percentage = 0;
+            if ($total_files > 0 && $item->total > 0) {
+                $percentage = ($item->total / $total_files) * 100;
+            }
+
             array_push($never['categories'], [$item->short_name]);
-            array_push($never['data'], [$item->total]);
+            array_push($never['data'], [round($percentage, 2)]);
         }
         
         $result = array(
@@ -2045,9 +2057,13 @@ class Files extends Eloquent {
         $others = 0;
         $residential = 0;
         $commercial = 0;
+        $count_less3 = 0;
+        $count_more3 = 0;
         $count_less10 = 0;
         $count_more10 = 0;
         $count_all = 0;
+        $sum_less3 = 0;
+        $sum_more3 = 0;
         $sum_less10 = 0;
         $sum_more10 = 0;
         $sum_all = 0;
@@ -2135,9 +2151,23 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->count('residential_block.unit_no');
 
+                $count_residential_less3 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 3)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('residential_block.unit_no');
+
                 $count_residential_less10 = DB::table('residential_block')
                         ->join('files', 'residential_block.file_id', '=', 'files.id')
                         ->where('residential_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('residential_block.unit_no');
+
+                $count_residential_more3 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 3)
                         ->where('files.company_id', $cob->id)
                         ->where('files.is_deleted', 0)
                         ->count('residential_block.unit_no');
@@ -2155,9 +2185,23 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->count('commercial_block.unit_no');
 
+                $count_commercial_less3 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '<=', 3)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('commercial_block.unit_no');
+
                 $count_commercial_less10 = DB::table('commercial_block')
                         ->join('files', 'commercial_block.file_id', '=', 'files.id')
                         ->where('commercial_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->count('commercial_block.unit_no');
+            
+                $count_commercial_more3 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '>', 3)
                         ->where('files.company_id', $cob->id)
                         ->where('files.is_deleted', 0)
                         ->count('commercial_block.unit_no');
@@ -2175,6 +2219,13 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->sum('residential_block.unit_no');
 
+                $sum_residential_less3 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '<=', 3)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('residential_block.unit_no');
+
                 $sum_residential_less10 = DB::table('residential_block')
                         ->join('files', 'residential_block.file_id', '=', 'files.id')
                         ->where('residential_block.unit_no', '<=', 10)
@@ -2182,6 +2233,13 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->sum('residential_block.unit_no');
 
+                $sum_residential_more3 = DB::table('residential_block')
+                        ->join('files', 'residential_block.file_id', '=', 'files.id')
+                        ->where('residential_block.unit_no', '>', 3)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('residential_block.unit_no');
+                
                 $sum_residential_more10 = DB::table('residential_block')
                         ->join('files', 'residential_block.file_id', '=', 'files.id')
                         ->where('residential_block.unit_no', '>', 10)
@@ -2195,9 +2253,23 @@ class Files extends Eloquent {
                         ->where('files.is_deleted', 0)
                         ->sum('commercial_block.unit_no');
 
+                $sum_commercial_less3 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '<=', 3)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('commercial_block.unit_no');
+
                 $sum_commercial_less10 = DB::table('commercial_block')
                         ->join('files', 'commercial_block.file_id', '=', 'files.id')
                         ->where('commercial_block.unit_no', '<=', 10)
+                        ->where('files.company_id', $cob->id)
+                        ->where('files.is_deleted', 0)
+                        ->sum('commercial_block.unit_no');
+                
+                $sum_commercial_more3 = DB::table('commercial_block')
+                        ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                        ->where('commercial_block.unit_no', '>', 3)
                         ->where('files.company_id', $cob->id)
                         ->where('files.is_deleted', 0)
                         ->sum('commercial_block.unit_no');
@@ -2217,10 +2289,14 @@ class Files extends Eloquent {
                 $others = $others + $total_others;
                 $residential = $residential + $sum_residential;
                 $commercial = $commercial + $sum_commercial;
+                $count_less3 = $count_less3 + ($count_residential_less3 + $count_commercial_less3);
+                $count_more3 = $count_more3 + ($count_residential_more3 + $count_commercial_more3);
                 $count_less10 = $count_less10 + ($count_residential_less10 + $count_commercial_less10);
                 $count_more10 = $count_more10 + ($count_residential_more10 + $count_commercial_more10);
                 $count_all = $count_all + ($count_residential + $count_commercial);
+                $sum_less3 = $sum_less3 + ($sum_residential_less3 + $sum_commercial_less3);
                 $sum_less10 = $sum_less10 + ($sum_residential_less10 + $sum_commercial_less10);
+                $sum_more3 = $sum_more3 + ($sum_residential_more3 + $sum_commercial_more3);
                 $sum_more10 = $sum_more10 + ($sum_residential_more10 + $sum_commercial_more10);
                 $sum_all = $sum_all + ($sum_residential + $sum_commercial);
                 $total_all = $total_all + (($total_developer) + $total_liquidator + $total_jmb + $total_mc + $total_agent + $total_others);
@@ -2236,9 +2312,13 @@ class Files extends Eloquent {
             'others' => $others,
             'residential' => $residential,
             'commercial' => $commercial,
+            'count_less3' => $count_less3,
+            'count_more3' => $count_more3,
             'count_less10' => $count_less10,
             'count_more10' => $count_more10,
             'count_all' => $count_all,
+            'sum_less3' => $sum_less3,
+            'sum_more3' => $sum_more3,
             'sum_less10' => $sum_less10,
             'sum_more10' => $sum_more10,
             'sum_all' => $sum_all,

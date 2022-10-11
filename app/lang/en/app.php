@@ -752,6 +752,9 @@ return array(
         'approval_attachment' => 'Approval Attachment',
         'until' => 'Until',
         'development_cost' => 'Development Cost',
+        'balance' => 'Balance',
+        'commercial' => 'Commercial',
+        'residential' => 'Residential',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1255,7 +1258,9 @@ return array(
         'deposit' => [
             'pending' => 'Pending',
             'approved' => 'Approved',
+            'received' => 'Received',
             'rejected' => 'Rejected',
+            'returned' => 'Returned',
         ],
     ],
 );

@@ -57,12 +57,18 @@
                             </dt>
                             <dd class="col-sm-9">
                                 {{ $model->start_date }}
-                            </dd>                         
+                            </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.maturity_date') }}
                             </dt>
                             <dd class="col-sm-9">
                                 {{ $model->maturity_date }}
+                            </dd>
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.balance') }} (RM)
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ $model->balance }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.attachment') }}
@@ -80,18 +86,108 @@
                                 -
                                 @endif
                             </dd>
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.status') }}
+                            </dt>
+                            <dd class="col-sm-9">
+                                {{ $model->getStatusBadge() }}
+                            </dd>
+                            <dt class="col-sm-3">
+                                &nbsp;
+                            </dt>
+                            <dd class="col-sm-9">
+                                <button class="btn btn-sm btn-info" onclick="returnDeposit()">
+                                    {{ trans('Return the deposit') }}
+                                </button>
+                            </dd>
                         </dl>
-
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-default" id="cancel_button"
-                                onclick="window.location ='{{ route('dlp.deposit') }}'">
-                                {{ trans('app.forms.cancel') }}
-                            </button>
-                        </div>
                     </div>
                 </div>
             </section>
+
+            <section class="panel panel-pad">
+                <div class="row padding-vertical-20">
+                    <div class="col-lg-12">
+                        <table class="table table-hover nowrap table-own table-striped" id="dlp_deposit_usage_table"
+                            width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:20%;">{{ trans('app.forms.created_at') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.description') }}</th>
+                                    <th style="width:20%;">{{ trans('app.forms.amount') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-default" id="cancel_button"
+                        onclick="window.location ='{{ route('dlp.deposit') }}'">
+                        {{ trans('app.forms.back') }}
+                    </button>
+                </div>
+            </section>
+
         </div>
     </section>
 </div>
+
+<script>
+    $(document).ready( function () {
+        let oTable = $('#dlp_deposit_usage_table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('dlp.deposit.usage', \Helper\Helper::encode($model->id)) }}",
+            lengthMenu: [[15, 30, 50], [15, 30, 50]],
+            pageLength: 15,
+            order: [[0, "desc"]],
+            columns: [         
+                {data: 'created_at', name: 'created_at'},   
+                {data: 'description', name: 'description'}, 
+                {data: 'amount', name: 'amount'},          
+                {data: 'action', name: 'action', orderable: false, searchable: false}
+            ],
+            columnDefs: [{"targets": -1, "className": "text-center"}],
+            responsive: false,
+            scrollX: true,
+        });
+    });
+
+    function returnDeposit(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Return",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+</script>
 @endsection

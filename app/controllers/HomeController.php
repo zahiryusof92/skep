@@ -36,6 +36,8 @@ class HomeController extends BaseController
         $data = Files::getDashboardData();
         $activeMemo = self::getActiveMemoHome();
 
+        // return '<pre>' . print_r($data['never'], true) . '</pre>';
+
         if (Auth::user()->isLawyer()) {
             $viewData = array(
                 'title' => trans('app.app_name_short'),

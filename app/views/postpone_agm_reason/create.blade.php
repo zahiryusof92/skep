@@ -41,7 +41,7 @@
                                     <div class="form-group">
                                         <label class="form-control-label">
                                             <span style="color: red;">*</span>
-                                            {{ trans('app.forms.sort') }}
+                                            {{ trans('app.forms.sort_no') }}
                                         </label>
                                         <input type="number" id="sort" name="sort" class="form-control"
                                             placeholder="{{ trans('app.forms.sort_no') }}" />

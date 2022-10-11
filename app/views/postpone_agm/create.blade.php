@@ -160,7 +160,7 @@
             format: 'YYYY-MM-DD',
             useCurrent: false
         }).on("dp.change", function (e) {
-            var days = 10;
+            var days = 90;
             var newMaxDate = new Date(e.date);
             newMaxDate.setDate(newMaxDate.getDate() + days);
             var newYear = new Date(newMaxDate).getFullYear();

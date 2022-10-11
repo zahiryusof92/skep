@@ -27,6 +27,10 @@ class DlpController extends \BaseController
 			}
 		}
 
+		$checklists = Config::get('constant.dlp_checklist');
+
+		// dd($checklists);
+
 		$viewData = array(
 			'title' => trans('app.menus.dlp.deposit'),
 			'panel_nav_active' => 'dlp_panel',
@@ -35,6 +39,7 @@ class DlpController extends \BaseController
 			'image' => '',
 			'files' => $files,
 			'model' => null,
+			'checklists' => $checklists,
 		);
 
 		return View::make('dlp.deposit.create', $viewData);
@@ -45,6 +50,21 @@ class DlpController extends \BaseController
 		$this->checkAvailableAccess();
 
 		if (Auth::user()->getFile) {
+			if (!Auth::user()->getAdmin()) {
+				if (!empty(Auth::user()->file_id)) {
+					$files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+				} else {
+					$files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+				}
+			} else {
+				if (empty(Session::get('admin_cob'))) {
+					$files = Files::where('is_deleted', 0)->orderBy('id', 'asc')->get();
+				} else {
+					$files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'asc')->get();
+				}
+			}
+
+			$checklists = Config::get('constant.dlp_checklist');
 			$model = DlpDeposit::where('file_id', Auth::user()->getFile->id)->first();
 
 			$viewData = array(
@@ -53,7 +73,9 @@ class DlpController extends \BaseController
 				'main_nav_active' => 'dlp_main',
 				'sub_nav_active' => 'dlp_deposit',
 				'image' => '',
+				'files' => $files,
 				'model' => (!empty($model) ? $model : null),
+				'checklists' => $checklists,
 			);
 
 			return View::make('dlp.deposit.create', $viewData);
@@ -103,6 +125,7 @@ class DlpController extends \BaseController
 				'amount' => 'required|numeric',
 				'start_date' => 'required|date',
 				'maturity_date' => 'required|date',
+				'checklist' => '',
 			];
 
 			$validator = Validator::make($request, $rules);
@@ -137,6 +160,7 @@ class DlpController extends \BaseController
 							'amount' => $request['amount'],
 							'start_date' => $request['start_date'],
 							'maturity_date' => $request['maturity_date'],
+							'checklist' => ((isset($request['checklist']) && !empty($request['checklist'])) ? json_encode($request['checklist']) : null),
 							'attachment' => (!empty($request['attachment']) ? $request['attachment'] : null),
 							'status' => DlpDeposit::APPROVED,
 						]);
@@ -228,6 +252,33 @@ class DlpController extends \BaseController
 				->addColumn('action', function ($model) {
 					$btn = '';
 					$btn .= '<a href="' . route('dlp.deposit.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Show"><i class="fa fa-eye"></i></a>&nbsp;';
+
+					return $btn;
+				})
+				->make(true);
+		}
+	}
+
+	public function usageDeposit($id)
+	{
+		if (Request::ajax()) {
+			$model = DlpDepositUsage::where('dlp_deposit_id', $this->decodeID($id));
+
+			return Datatables::of($model)
+				->editColumn('created_at', function ($model) {
+					$created_at =  $model->created_at ? $model->created_at->format('d-M-Y H:i A') : "-";
+
+					return $created_at;
+				})
+				->editColumn('description', function ($model) {
+					return $model->description;
+				})
+				->editColumn('amount', function ($model) {
+					return $model->amount;
+				})
+				->addColumn('action', function ($model) {
+					$btn = '';
+					$btn .= '<a href="#" class="btn btn-xs btn-danger" title="Delete"><i class="fa fa-trash"></i></a>';
 
 					return $btn;
 				})
