@@ -1237,10 +1237,15 @@ return [
         'postponed_agm' => 'uploads/postponed_agm',
         'postponed_agm_approval' => 'uploads/postponed_agm_approval',
         'dlp_deposit' => 'uploads/dlp_deposit',
+        'dlp_deposit_usage' => 'uploads/dlp_deposit_usage',
     ],
     'dlp_checklist' => [
         'surat_rasmi' => 'SURAT RASMI SERAHAN CEK',
         'borang_perakuan_pendeposit' => 'BORANG PERAKUAN PENDEPOSIT',
         'borang_25' => 'SALINAN BORANG 25',
-    ]
+    ],
+    'dlp_return_checklist' => [
+        'surat_rasmi' => 'SURAT RASMI SERAHAN CEK',
+        'borang_25' => 'SALINAN BORANG 25',
+    ],
 ];

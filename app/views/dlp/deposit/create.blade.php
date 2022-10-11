@@ -171,6 +171,30 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label">
+                                            <span style="color: red;">*</span>
+                                            {{ trans('app.forms.date_vp') }}
+                                        </label>
+                                        @if (empty($model))
+                                        <label class="input-group">
+                                            <input type="text" id="date_vp" name="date_vp"
+                                                class="form-control date_picker" />
+                                            <span class="input-group-addon">
+                                                <i class="icmn-calendar"></i>
+                                            </span>
+                                        </label>
+                                        @include('alert.feedback-ajax', ['field' => 'date_vp'])
+                                        @else
+                                        <input type="text" class="form-control" value="{{ $model->date_vp }}"
+                                            readonly />
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
                             @if ($checklists)
                             <div class="row">
                                 <div class="col-lg-4">
@@ -191,12 +215,11 @@
                                         @endforeach
                                         @include('alert.feedback-ajax', ['field' => 'checklist'])
                                         @else
-                                        {{ print_r(json_decode($model->checklist), true) }}
                                         @foreach ($checklists as $key => $value)
                                         <div>
                                             <div class="checkbox">
                                                 <label>
-                                                    <input type="checkbox" name="checklist[]" value="{{ $key }}" {{ (array_key_exists($key, json_decode($model->checklist)) ? 'checked' : '') }}>
+                                                    <input type="checkbox" name="checklist[]" value="{{ $key }}" {{ (in_array($key, json_decode($model->checklist, true)) ? 'checked' : '') }} disabled>
                                                     {{ $value }}
                                                 </label>
                                             </div>
@@ -286,6 +309,21 @@
                                         },
                                         format: 'YYYY-MM-DD'
                                     })
+
+                                    $("#date_vp").datetimepicker({
+                                        widgetPositioning: {
+                                            horizontal: 'left'
+                                        },
+                                        icons: {
+                                            time: "fa fa-clock-o",
+                                            date: "fa fa-calendar",
+                                            up: "fa fa-arrow-up",
+                                            down: "fa fa-arrow-down",
+                                            previous: "fa fa-chevron-left",
+                                            next: "fa fa-chevron-right",
+                                        },
+                                        format: 'YYYY-MM-DD'
+                                    })
                             
                                     $("#submit_button").click(function (e) {
                                         e.preventDefault();
@@ -306,7 +344,7 @@
                                                 console.log(res);
                                                 if (res.success == true) {
                                                     bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
-                                                        location.reload();
+                                                        window.location = "{{ route('dlp.deposit') }}";
                                                     });
                                                 } else {
                                                     if(res.errors !== undefined) {

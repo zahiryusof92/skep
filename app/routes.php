@@ -991,8 +991,12 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('dlp/deposit/store', ['as' => 'dlp.deposit.store', 'uses' => 'DlpController@storeDeposit']);
     Route::get('dlp/deposit/list', ['as' => 'dlp.deposit.list', 'uses' => 'DlpController@listDeposit']);
     Route::get('dlp/deposit/show/{id}', ['as' => 'dlp.deposit.show', 'uses' => 'DlpController@showDeposit']);
+    Route::post('dlp/deposit/return/{id}', ['as' => 'dlp.deposit.return', 'uses' => 'DlpController@returnDeposit']);
     Route::post('dlp/deposit/approval/{id}', ['as' => 'dlp.deposit.approval', 'uses' => 'DlpController@approvalDeposit']);
+    Route::post('dlp/deposit/usage/create/{id}', ['as' => 'dlp.deposit.usage.create', 'uses' => 'DlpController@createUsageDeposit']);
     Route::get('dlp/deposit/usage/{id}', ['as' => 'dlp.deposit.usage', 'uses' => 'DlpController@usageDeposit']);
+    Route::post('dlp/deposit/usage/fileUpload', ['as' => 'dlp.deposit.usage.fileUpload', 'uses' => 'DlpController@fileUploadUsageDeposit']);
+    Route::post('dlp/deposit/usage/delete{id}', ['as' => 'dlp.deposit.usage.delete', 'uses' => 'DlpController@deleteUsageDeposit']);
 
     // Route::get('dlp/progress', ['as' => 'dlp.progress', 'uses' => 'DlpController@progress']);
     // Route::post('dlp/progress/store', ['as' => 'dlp.progress.store', 'uses' => 'DlpController@storeProgress']);

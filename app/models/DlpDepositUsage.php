@@ -13,8 +13,9 @@ class DlpDepositUsage extends Eloquent
         'dlp_deposit_id',
         'description',
         'amount',
-        'amount-before',
+        'amount_before',
         'amount_after',
+        'attachment',
     ];
 
     public function dlpDeposit()

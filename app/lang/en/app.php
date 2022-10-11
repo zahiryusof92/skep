@@ -755,6 +755,7 @@ return array(
         'balance' => 'Balance',
         'commercial' => 'Commercial',
         'residential' => 'Residential',
+        'checklist' => 'Checklist',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
