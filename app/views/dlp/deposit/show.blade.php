@@ -20,19 +20,19 @@
                                 {{ trans('app.forms.cob') }}
                             </dt>
                             <dd class="col-sm-9">
-                                {{ ($model->company ? $model->company->name : '') }}
+                                {{ ($model->company ? $model->company->name : '-') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.file_no') }}
                             </dt>
                             <dd class="col-sm-9">
-                                {{ ($model->file ? $model->file->file_no : '') }}
+                                {{ ($model->file ? $model->file->file_no : '-') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.strata') }}
                             </dt>
                             <dd class="col-sm-9">
-                                {{ ($model->strata ? $model->strata->name : '') }}
+                                {{ ($model->strata ? (!empty($model->strata->name) ? $model->strata->name : '-') : '-') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.type') }}

@@ -45,7 +45,7 @@
                                     {{ trans('app.forms.strata') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ ($model->strata ? $model->strata->name : '') }}
+                                    {{ ($model->strata ? (!empty($model->strata->name) ? $model->strata->name : '-') : '-') }}
                                 </dd>
 
                                 <dt class="col-sm-4">
@@ -73,7 +73,7 @@
                                     {{ trans('app.forms.other_reason') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $model->reason }}
+                                    {{ (!empty($model->reason) ? $model->reason : '-') }}
                                 </dd>
 
                                 <dt class="col-sm-4">

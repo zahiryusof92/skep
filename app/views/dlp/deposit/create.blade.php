@@ -188,7 +188,7 @@
                                         </label>
                                         @include('alert.feedback-ajax', ['field' => 'date_vp'])
                                         @else
-                                        <input type="text" class="form-control" value="{{ $model->date_vp }}"
+                                        <input type="text" class="form-control" value="{{ $model->vp_date }}"
                                             readonly />
                                         @endif
                                     </div>
