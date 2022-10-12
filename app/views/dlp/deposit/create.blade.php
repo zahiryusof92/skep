@@ -197,7 +197,7 @@
 
                             @if ($checklists)
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label class="form-control-label">
                                             {{ trans('app.forms.checklist') }}

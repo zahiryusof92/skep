@@ -85,7 +85,7 @@
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="checklist[]" value="{{ $key }}" {{
-                                                (in_array($key, json_decode($model->checklist, true)) ? 'checked' : '')
+                                                ((!empty($model->checklist) ? in_array($key, json_decode($model->checklist, true)) ? 'checked' : '' : ''))
                                             }} disabled>
                                             {{ $value }}
                                         </label>
@@ -93,6 +93,25 @@
                                 </div>
                                 @endforeach
                             </dd>
+                            @if ($model->status == DlpDeposit::RETURNED)
+                            <dt class="col-sm-3">
+                                {{ trans('app.forms.return_checklist') }}
+                            </dt>
+                            <dd class="col-sm-9">
+                                @foreach ($returnChecklists as $key => $value)
+                                <div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="return_checklist[]" value="{{ $key }}" {{
+                                                ((!empty($model->return_checklist) ? in_array($key, json_decode($model->return_checklist, true)) ? 'checked' : '' : ''))
+                                            }} disabled>
+                                            {{ $value }}
+                                        </label>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </dd>
+                            @endif
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.attachment') }}
                             </dt>
@@ -116,10 +135,10 @@
                                 {{ $model->getStatusBadge() }}
                             </dd>
                             @if ($model->status == DlpDeposit::APPROVED)
-                            <dt class="col-sm-3">
+                            <dt class="col-sm-3" style="margin-top: 20px;">
                                 &nbsp;
                             </dt>
-                            <dd class="col-sm-9">
+                            <dd class="col-sm-9" style="margin-top: 20px;">
                                 <button class="btn btn-sm btn-own" data-toggle="modal" data-target="#returnForm">
                                     {{ trans('Return the deposit') }}
                                 </button>
