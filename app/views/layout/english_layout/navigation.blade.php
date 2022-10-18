@@ -502,7 +502,7 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
                     <li id="postpone_agm_reason_list">
-                        <a class="left-menu-link" href="{{ route('postponeAGMReason.index') }}">
+                        <a class="left-menu-link" href="{{ route('statusAGMReason.index') }}">
                             {{ trans('app.menus.master.postpone_agm_reason') }}
                         </a>
                     </li>
@@ -777,13 +777,13 @@ if (!Auth::user()->getAdmin()) {
                 <ul class="left-menu-list list-unstyled" id="agm_postpone_main">
                     @if (Auth::user()->isJMB())
                     <li class="left-menu-list-link" id="agm_postpone_create">
-                        <a class="left-menu-link" href="{{ route('postponeAGM.create') }}">
+                        <a class="left-menu-link" href="{{ route('statusAGM.create') }}">
                             {{ trans('app.menus.agm_postpone.create') }}
                         </a>
                     </li>
                     @endif
                     <li class="left-menu-list-link" id="agm_postpone_list">
-                        <a class="left-menu-link" href="{{ route('postponeAGM.index') }}">
+                        <a class="left-menu-link" href="{{ route('statusAGM.index') }}">
                             {{ trans('app.menus.agm_postpone.review') }} &nbsp;
                             <span class="label left-menu-label label-danger">
                                 {{ trans('app.menus.agm_postpone.pending', ['count'=> PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count()]) }}
@@ -791,12 +791,12 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="agm_postpone_approved">
-                        <a class="left-menu-link" href="{{ route('postponeAGM.approved') }}">
+                        <a class="left-menu-link" href="{{ route('statusAGM.approved') }}">
                             {{ trans('app.menus.agm_postpone.approved') }}
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="agm_postpone_rejected">
-                        <a class="left-menu-link" href="{{ route('postponeAGM.rejected') }}">
+                        <a class="left-menu-link" href="{{ route('statusAGM.rejected') }}">
                             {{ trans('app.menus.agm_postpone.rejected') }}
                         </a>
                     </li>

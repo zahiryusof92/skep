@@ -502,7 +502,7 @@ Route::post('/uploadDefectAttachment', 'FileController@uploadDefectAttachment')-
 ########################## Master Setup ##########################
 
 //postponeAGMReason
-Route::resource('postponeAGMReason', 'PostponeAGMReasonController');
+Route::resource('statusAGMReason', 'PostponeAGMReasonController');
 
 //area
 Route::get('/area', 'SettingController@area')->before('authMember');
@@ -973,14 +973,14 @@ Route::group(array('before' => 'authMember'), function() {
     /**
      * AGM Postpone
      */
-    Route::get('postponeAGM/acknowldged', ['as' => 'postponeAGM.approved', 'uses' => 'PostponeAGMController@approved']);
-    Route::get('postponeAGM/rejected', ['as' => 'postponeAGM.rejected', 'uses' => 'PostponeAGMController@rejected']);
-    Route::get('postponeAGM/report', ['as' => 'postponeAGM.report', 'uses' => 'PostponeAGMController@report']);
-    Route::post('postponeAGM/fileUpload', ['as' => 'postponeAGM.fileUpload', 'uses' => 'PostponeAGMController@fileUpload']);
-    Route::post('postponeAGM/review', ['as' => 'postponeAGM.review', 'uses' => 'PostponeAGMController@review']);
-    Route::post('postponeAGM/submitByCOB/{id}', ['as' => 'postponeAGM.submitByCOB', 'uses' => 'PostponeAGMController@submitByCOB']);
-    Route::post('postponeAGM/approvalUpload', ['as' => 'postponeAGM.approvalUpload', 'uses' => 'PostponeAGMController@approvalUpload']);
-    Route::resource('postponeAGM', 'PostponeAGMController'); 
+    Route::get('statusAGM/acknowldged', ['as' => 'statusAGM.approved', 'uses' => 'PostponeAGMController@approved']);
+    Route::get('statusAGM/rejected', ['as' => 'statusAGM.rejected', 'uses' => 'PostponeAGMController@rejected']);
+    Route::get('statusAGM/report', ['as' => 'statusAGM.report', 'uses' => 'PostponeAGMController@report']);
+    Route::post('statusAGM/fileUpload', ['as' => 'statusAGM.fileUpload', 'uses' => 'PostponeAGMController@fileUpload']);
+    Route::post('statusAGM/review', ['as' => 'statusAGM.review', 'uses' => 'PostponeAGMController@review']);
+    Route::post('statusAGM/submitByCOB/{id}', ['as' => 'statusAGM.submitByCOB', 'uses' => 'PostponeAGMController@submitByCOB']);
+    Route::post('statusAGM/approvalUpload', ['as' => 'statusAGM.approvalUpload', 'uses' => 'PostponeAGMController@approvalUpload']);
+    Route::resource('statusAGM', 'PostponeAGMController'); 
 
     /**
      * DLP

@@ -44,7 +44,7 @@ New Application
             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px 30px;font-family:'Montserrat',sans-serif;" align="left">
 
                 <div style="color: #264653; line-height: 160%; text-align: left; word-wrap: break-word;">
-                    <p style="font-size: 14px; line-height: 160%;"><span style="font-family: Lato, sans-serif; font-size: 14px; line-height: 22.4px; color: #264653;">Link : <a href="{{ route('postponeAGM.show', \Helper\Helper::encode($model['id'])) }}"><u>{{ route('postponeAGM.show', \Helper\Helper::encode($model['id'])) }}</u></a> </span></p>
+                    <p style="font-size: 14px; line-height: 160%;"><span style="font-family: Lato, sans-serif; font-size: 14px; line-height: 22.4px; color: #264653;">Link : <a href="{{ route('statusAGM.show', \Helper\Helper::encode($model['id'])) }}"><u>{{ route('statusAGM.show', \Helper\Helper::encode($model['id'])) }}</u></a> </span></p>
                 </div>
 
             </td>

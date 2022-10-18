@@ -38,19 +38,19 @@
                                 {{ trans('app.forms.type') }}
                             </dt>
                             <dd class="col-sm-9">
-                                {{ ucwords($model->type) }}
+                                {{ (!empty($model->type) ? ucwords($model->type) : '-') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.development_cost') }} (RM)
                             </dt>
                             <dd class="col-sm-9">
-                                {{ $model->development_cost }}
+                                {{ (!empty($model->development_cost) ? $model->development_cost : '0') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.amount') }} (RM)
                             </dt>
                             <dd class="col-sm-9">
-                                {{ $model->amount }}
+                                {{ (!empty($model->amount) ? $model->amount : '0') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.date_start') }}
@@ -74,7 +74,7 @@
                                 {{ trans('app.forms.balance') }} (RM)
                             </dt>
                             <dd class="col-sm-9">
-                                {{ $model->balance }}
+                                {{ (!empty($model->balance) ? $model->balance : '0') }}
                             </dd>
                             <dt class="col-sm-3">
                                 {{ trans('app.forms.checklist') }}

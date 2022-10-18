@@ -16,7 +16,7 @@
 
                     <div class="col-lg-12">
 
-                        <a href="{{ route('postponeAGMReason.create') }}">
+                        <a href="{{ route('statusAGMReason.create') }}">
                             <button type="button" class="btn btn-own">
                                 {{ trans('app.buttons.postpone_agm_reason') }}
                             </button>
@@ -51,7 +51,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                'url' : "{{ route('postponeAGMReason.index') }}",
+                'url' : "{{ route('statusAGMReason.index') }}",
             },
             lengthMenu: [[15, 30, 50], [15, 30, 50]],
             pageLength: 15,

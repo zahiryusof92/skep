@@ -227,22 +227,22 @@
             <div class="form-actions">
                 @if ($model->status == PostponedAGM::APPROVED)
                 <button type="button" class="btn btn-default" id="cancel_button"
-                    onclick="window.location ='{{ route('postponeAGM.index') }}'">
+                    onclick="window.location ='{{ route('statusAGM.index') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @elseif ($model->status == PostponedAGM::APPROVED)
                 <button type="button" class="btn btn-default" id="cancel_button"
-                    onclick="window.location ='{{ route('postponeAGM.approved') }}'">
+                    onclick="window.location ='{{ route('statusAGM.approved') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @elseif ($model->status == PostponedAGM::REJECTED)
                 <button type="button" class="btn btn-default" id="cancel_button"
-                    onclick="window.location ='{{ route('postponeAGM.rejected') }}'">
+                    onclick="window.location ='{{ route('statusAGM.rejected') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @else
                 <button type="button" class="btn btn-default" id="cancel_button"
-                    onclick="window.location ='{{ route('postponeAGM.index') }}'">
+                    onclick="window.location ='{{ route('statusAGM.index') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @endif
@@ -336,7 +336,7 @@
                 })
                 if (password) {
                     $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-                    let route = "{{ route('postponeAGM.submitByCOB', [':id']) }}";
+                    let route = "{{ route('statusAGM.submitByCOB', [':id']) }}";
                     route = route.replace(':id', "{{ \Helper\Helper::encode($model->id) }}");
                     let formData = $('#postponed_agm_form').serialize();
                     $.ajax({
@@ -405,7 +405,7 @@
         $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
-            url: "{{ route('postponeAGM.approvalUpload') }}",
+            url: "{{ route('statusAGM.approvalUpload') }}",
             data: data,
             async: true,
             contentType: false, // The content type used when sending data to the server.

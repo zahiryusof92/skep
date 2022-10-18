@@ -120,7 +120,7 @@
                                     {{ trans('app.forms.save') }}
                                 </button>
                                 <button type="button" class="btn btn-default" id="cancel_button"
-                                    onclick="window.location ='{{ route('postponeAGM.index') }}'">
+                                    onclick="window.location ='{{ route('statusAGM.index') }}'">
                                     {{ trans('app.forms.cancel') }}
                                 </button>
                             </div>
@@ -196,7 +196,7 @@
             $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
             let formData = $('form').serialize();
             $.ajax({
-                url: "{{ route('postponeAGM.store') }}",
+                url: "{{ route('statusAGM.store') }}",
                 type: "POST",
                 data: formData,
                 dataType: 'JSON',
@@ -210,7 +210,7 @@
                     console.log(res);
                     if (res.success == true) {
                         bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
-                            let url = "{{ route('postponeAGM.show', [':id']) }}";
+                            let url = "{{ route('statusAGM.show', [':id']) }}";
                             url = url.replace(":id", res.id);
                             window.location = url;
                         });
@@ -251,7 +251,7 @@
         $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
-            url: "{{ route('postponeAGM.fileUpload') }}",
+            url: "{{ route('statusAGM.fileUpload') }}",
             data: data,
             async: true,
             contentType: false, // The content type used when sending data to the server.

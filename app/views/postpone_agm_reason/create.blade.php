@@ -72,7 +72,7 @@
                                     {{ trans('app.forms.save') }}
                                 </button>
                                 <button type="button" class="btn btn-default" id="cancel_button"
-                                    onclick="window.location ='{{ route('postponeAGMReason.index') }}'">
+                                    onclick="window.location ='{{ route('statusAGMReason.index') }}'">
                                     {{ trans('app.forms.cancel') }}
                                 </button>
                             </div>
@@ -95,7 +95,7 @@
             $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
             let formData = $('form').serialize();
             $.ajax({
-                url: "{{ route('postponeAGMReason.store') }}",
+                url: "{{ route('statusAGMReason.store') }}",
                 type: "POST",
                 data: formData,
                 dataType: 'JSON',
@@ -109,7 +109,7 @@
                     console.log(res);
                     if (res.success == true) {
                         bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
-                            let url = "{{ route('postponeAGMReason.index') }}";
+                            let url = "{{ route('statusAGMReason.index') }}";
                             window.location = url;
                         });
                     } else {

@@ -156,7 +156,7 @@ return array(
             "add_insurance_provider" => "Add Insurance Provider",
             "edit_insurance_provider" => "Edit Insurance Provider",
             "conversion" => "Conversion Rate",
-            'postpone_agm_reason' => 'Postponed AGM Reason',
+            'postpone_agm_reason' => 'Status AGM Reason',
         ),
         "reporting" => array(
             "reporting" => "Reporting",
@@ -239,8 +239,8 @@ return array(
             "name" => "COB Letter",
         ),
         "agm_postpone" => array(
-            "name" => "Postponed AGM",
-            "list" => "Postponed AGM",
+            "name" => "Status AGM",
+            "list" => "Status AGM",
             "draft" => "Draft List",
             "review" => "Review List",
             "approved" => "Acknowledged List",
@@ -253,7 +253,7 @@ return array(
         ),
         "dlp" => array(
             "name" => "Defect Liability Period (DLP)",
-            "deposit" => "Deposit",
+            "deposit" => "Pemfailan Deposit",
             "progress" => "Progress Report",
             "period" => "Duration Period",
             'pending' => ':count pending',
@@ -268,9 +268,9 @@ return array(
             'building_log' => 'API Building Log'
         ),
         'postpone_agm_reason' => array(
-            'name' => 'Postponed AGM Reason',
-            'create' => 'Create Postponed AGM Reason',
-            'edit' => 'Edit Postponed AGM Reason',
+            'name' => 'Status AGM Reason',
+            'create' => 'Create Status AGM Reason',
+            'edit' => 'Edit Status AGM Reason',
         )
     ),
     "forms" => array(
@@ -751,7 +751,7 @@ return array(
         'other_reason' => 'Other Reason',
         'approval_attachment' => 'Approval Attachment',
         'until' => 'Until',
-        'development_cost' => 'Development Cost',
+        'development_cost' => 'Gross Development Cost',
         'balance' => 'Balance',
         'commercial' => 'Commercial',
         'residential' => 'Residential',
@@ -1087,7 +1087,7 @@ return array(
         "add_new_application" => "Add New Application",
         "add_new" => "Add New",
         "reject" => "Reject",
-        'postpone_agm_reason' => 'Postponed AGM Reason',
+        'postpone_agm_reason' => 'Status AGM Reason',
         'add_deposit' => 'Add Deposit',
     ),
     'directory' => [

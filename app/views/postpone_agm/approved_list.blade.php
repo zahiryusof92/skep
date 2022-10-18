@@ -79,7 +79,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                'url' : "{{ route('postponeAGM.approved') }}",
+                'url' : "{{ route('statusAGM.approved') }}",
                 'data': function(data) {
                     var company = $('#company').val();
                     var start_date = $('#start_date').val();

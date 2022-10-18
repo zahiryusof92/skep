@@ -54,7 +54,7 @@ class PostponeAGMController extends \BaseController
 					return $html;
 				})
 				->editColumn('created_at', function ($model) {
-					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('postponeAGM.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
+					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('statusAGM.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
 
 					return $created_at;
 				})
@@ -70,10 +70,10 @@ class PostponeAGMController extends \BaseController
 				})
 				->addColumn('action', function ($model) {
 					$btn = '';
-					$btn .= '<a href="' . route('postponeAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
+					$btn .= '<a href="' . route('statusAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
 					if (!Str::contains(Request::fullUrl(), 'approval') && !in_array($model->status, [PostponedAGM::APPROVED, PostponedAGM::REJECTED, PostponedAGM::PENDING])) {
-						$btn .= '<a href="' . route('postponeAGM.edit', $this->encodeID($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-						// $btn .= '<form action="' . route('postponeAGM.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
+						$btn .= '<a href="' . route('statusAGM.edit', $this->encodeID($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+						// $btn .= '<form action="' . route('statusAGM.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
 						// $btn .= '<input type="hidden" name="_method" value="DELETE">';
 						// $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $this->encodeID($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
 						// $btn .= '</form>';
@@ -139,7 +139,7 @@ class PostponeAGMController extends \BaseController
 					return $html;
 				})
 				->editColumn('created_at', function ($model) {
-					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('postponeAGM.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
+					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('statusAGM.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
 
 					return $created_at;
 				})
@@ -155,7 +155,7 @@ class PostponeAGMController extends \BaseController
 				})
 				->addColumn('action', function ($model) {
 					$btn = '';
-					$btn .= '<a href="' . route('postponeAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
+					$btn .= '<a href="' . route('statusAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
 
 					return $btn;
 				})
@@ -207,7 +207,7 @@ class PostponeAGMController extends \BaseController
 
 			return Datatables::of($model)
 				->editColumn('created_at', function ($model) {
-					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('postponeAGM.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
+					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('statusAGM.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
 
 					return $created_at;
 				})
@@ -222,7 +222,7 @@ class PostponeAGMController extends \BaseController
 				})
 				->addColumn('action', function ($model) {
 					$btn = '';
-					$btn .= '<a href="' . route('postponeAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
+					$btn .= '<a href="' . route('statusAGM.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
 
 					return $btn;
 				})

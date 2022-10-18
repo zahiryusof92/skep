@@ -37,8 +37,8 @@ class PostponeAGMReasonController extends \BaseController
 				})
 				->addColumn('action', function ($model) {
 					$btn = '';
-					$btn .= '<a href="' . route('postponeAGMReason.edit', $this->encodeID($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-					$btn .= '<form action="' . route('postponeAGMReason.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
+					$btn .= '<a href="' . route('statusAGMReason.edit', $this->encodeID($model->id)) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+					$btn .= '<form action="' . route('statusAGMReason.destroy', $this->encodeID($model->id)) . '" method="POST" id="delete_form_' . $this->encodeID($model->id) . '" style="display:inline-block;">';
 					$btn .= '<input type="hidden" name="_method" value="DELETE">';
 					$btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . $this->encodeID($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
 					$btn .= '</form>';
@@ -265,7 +265,7 @@ class PostponeAGMReasonController extends \BaseController
 				$remarks = $this->getModule() . ': ' . $model->name . $this->module['audit']['text']['data_deleted'];
 				$this->addAudit(0, "Master Setup", $remarks);
 
-				return Redirect::route('postponeAGMReason.index')->with('success', trans('app.successes.deleted_successfully'));
+				return Redirect::route('statusAGMReason.index')->with('success', trans('app.successes.deleted_successfully'));
 			}
 		}
 
