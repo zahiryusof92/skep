@@ -255,20 +255,32 @@ class PostponeAGMController extends \BaseController
 	 */
 	public function create()
 	{
-		$reasons = PostponedAGMReason::getData();
+		if (Auth::user()->file_id) {
+			$file = Files::find(Auth::user()->file_id);
+			if ($file) {
+				$reasons = PostponedAGMReason::getData();
+				$last_agm_date = $file->lastAGMDate();
+				if (!empty($last_agm_date)) {
+					$agm_date = date('Y-m-d', strtotime('+1 year', strtotime($last_agm_date)));
+				}
 
-		$viewData = array(
-			'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.create'),
-			'panel_nav_active' => 'agm_postpone_panel',
-			'main_nav_active' => 'agm_postpone_main',
-			'sub_nav_active' => 'agm_postpone_create',
-			'reasons' => $reasons,
-			'image' => ''
-		);
+				$viewData = array(
+					'title' => trans('app.menus.agm_postpone.name') . ' - ' . trans('app.menus.agm_postpone.create'),
+					'panel_nav_active' => 'agm_postpone_panel',
+					'main_nav_active' => 'agm_postpone_main',
+					'sub_nav_active' => 'agm_postpone_create',
+					'reasons' => $reasons,
+					'agm_date' => $agm_date,
+					'image' => ''
+				);
 
-		// return '<pre>' . print_r($reasons, true) . '</pre>';
+				// return '<pre>' . print_r($reasons, true) . '</pre>';
 
-		return View::make('postpone_agm.create', $viewData);
+				return View::make('postpone_agm.create', $viewData);
+			}
+		}
+
+		App::abort(404);
 	}
 
 	/**
@@ -286,6 +298,7 @@ class PostponeAGMController extends \BaseController
 			'agm_date' => 'required|date',
 			'new_agm_date' => 'required|date',
 			'reason' => 'required',
+			'attachment' => 'required',
 			'other_reason' => 'string',
 		];
 

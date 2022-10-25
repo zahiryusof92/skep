@@ -102,6 +102,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label class="form-control-label">
+                                            <span style="color: red;">*</span>
                                             {{ trans('app.forms.attachment') }}
                                         </label>
                                         <br />
