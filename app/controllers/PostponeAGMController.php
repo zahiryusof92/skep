@@ -260,6 +260,8 @@ class PostponeAGMController extends \BaseController
 			if ($file) {
 				$reasons = PostponedAGMReason::getData();
 				$last_agm_date = $file->lastAGMDate();
+
+				$agm_date = '';
 				if (!empty($last_agm_date)) {
 					$agm_date = date('Y-m-d', strtotime('+1 year', strtotime($last_agm_date)));
 				}
