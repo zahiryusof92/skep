@@ -729,18 +729,20 @@ class FinanceController extends BaseController
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['finance_file.*', 'strata.id as strata_id'])
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
                     ->where('files.id', Auth::user()->file_id)
                     ->where('files.company_id', Auth::user()->company_id)
                     ->where('files.is_deleted', 0)
                     ->where('finance_file.is_deleted', 0);
             } else {
                 $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['finance_file.*', 'strata.id as strata_id'])
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
                     ->where('files.company_id', Auth::user()->company_id)
                     ->where('files.is_deleted', 0)
                     ->where('finance_file.is_deleted', 0);
@@ -748,16 +750,18 @@ class FinanceController extends BaseController
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['finance_file.*', 'strata.id as strata_id'])
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
                     ->where('files.is_deleted', 0)
                     ->where('finance_file.is_deleted', 0);
             } else {
                 $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->join('strata', 'files.id', '=', 'strata.file_id')
-                    ->select(['finance_file.*', 'strata.id as strata_id'])
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
                     ->where('files.company_id', Session::get('admin_cob'))
                     ->where('files.is_deleted', 0)
                     ->where('finance_file.is_deleted', 0);
@@ -817,11 +821,11 @@ class FinanceController extends BaseController
             ->editColumn('year', function ($model) {
                 return ($model->year != '0' ? $model->year : '');
             })
-            ->addColumn('active', function ($model) {
-                if ($model->is_active == 1) {
-                    $is_active = trans('app.forms.active');
+            ->addColumn('status', function ($model) {
+                if ($model->status == 1) {
+                    $is_active = trans('app.forms.approved');
                 } else {
-                    $is_active = trans('app.forms.inactive');
+                    $is_active = trans('app.forms.rejected');
                 }
 
                 return $is_active;
@@ -829,15 +833,15 @@ class FinanceController extends BaseController
             ->addColumn('action', function ($model) {
                 $button = '';
                 if (AccessGroup::hasUpdate(38)) {
-                    if ($model->is_active == 1) {
-                        $status = trans('app.forms.active');
-                        $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/disable-eye.png") . ' width="20px"></a>&nbsp;';
-                    } else {
-                        $status = trans('app.forms.inactive');
-                        $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/eye.png") . ' width="28px"></a>&nbsp;';
-                    }
-                    $button .= '<a href="' . route('finance_file.edit', [Helper::encode($model->id)]) . '" class=""><img src=' . asset("assets/common/img/icon/edit.png") . ' width="20px"></a>&nbsp;';
-                    $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/trash.png") . ' width="20px"></a>&nbsp;';
+                    // if ($model->is_active == 1) {
+                    //     $status = trans('app.forms.active');
+                    //     $button .= '<a href="#" class="" onclick="inactiveFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/disable-eye.png") . ' width="20px"></a>&nbsp;';
+                    // } else {
+                    //     $status = trans('app.forms.inactive');
+                    //     $button .= '<a href="#" class="" onclick="activeFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/eye.png") . ' width="28px"></a>&nbsp;';
+                    // }
+                    $button .= '<a href="' . route('finance_file.edit', [Helper::encode($model->id)]) . '" class=""><img src=' . asset("assets/common/img/icon/edit.png") . ' width="20px"></a>&nbsp;&nbsp;';
+                    $button .= '<a href="#" class="" onclick="deleteFinanceList(\'' . Helper::encode($model->id) . '\')"><img src=' . asset("assets/common/img/icon/trash.png") . ' width="20px"></a>';
                 }
 
                 return $button;
