@@ -2383,4 +2383,8 @@ class Files extends Eloquent {
         return $files;
     }
 
+    public function approvedEpks() {
+        return $this->hasOne('Epks', 'file_id')->where('status', Epks::APPROVED)->first();
+    }
+
 }
