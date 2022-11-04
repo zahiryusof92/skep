@@ -1172,4 +1172,22 @@ return array(
         'approved' => 'Approved',
         'rejected' => 'Rejected',
     ],
+    'epks_statement' => [
+        'buy' => 'Belian',
+        'sell' => 'Jualan',
+        'profit' => 'Untung/Rugi',
+        'date' => 'Tarikh',
+        'buy_amount' => 'Hasil Belian', 
+        'sell_amount' => 'Hasil Jualan',        
+        'income' => 'Pendapatan',
+        'others_income' => 'Lain-lain Hasil (Modal MPS)',
+        'total' => 'Jumlah',
+        'total_all' => 'Jumlah Keseluruhan',
+        'product_cost' => 'Kos Produk Dijual',
+        'sell_cost' => 'Kos Jualan',
+        'gross_profit' => 'Untung Kasar',
+        'expenses' => 'Perbelanjaan',
+        'salary' => 'Gaji, Elaun & Upah',
+        'general' => 'Perbelanjaan Am',
+    ]
 );

@@ -81,7 +81,42 @@ class EpksStatementController extends \BaseController
 
 		$request = Request::all();
 
-		return '<pre>' . print_r($request, true) . '</pre>';
+		$model = EpksStatement::find($request['model_id']);
+		if ($model) {
+			if (!empty($request['buy_date'])) {
+				for ($i = 0; $i < count($request['buy_date']); $i++) {
+					if (!empty($request['buy_date'][$i])) {
+						EpksTrade::create([
+							'file_id' => $model->file->id,
+							'strata_id' => $model->strata->id,
+							'epks_id' => $model->epks->id,
+							'epks_statement_id' => $model->id,
+							'date' => $request['buy_date'][$i],
+							'amount' => $request['buy_amount'][$i],
+							'debit' => true,
+						]);
+					}
+				}
+			}
+
+			if (!empty($request['sell_date'])) {
+				for ($i = 0; $i < count($request['sell_date']); $i++) {
+					if (!empty($request['sell_date'][$i])) {
+						EpksTrade::create([
+							'file_id' => $model->file->id,
+							'strata_id' => $model->strata->id,
+							'epks_id' => $model->epks->id,
+							'epks_statement_id' => $model->id,
+							'date' => $request['sell_date'][$i],
+							'amount' => $request['sell_amount'][$i],
+							'debit' => false,
+						]);
+					}
+				}
+			}
+
+			return '<pre>' . print_r($request, true) . '</pre>';
+		}
 	}
 
 
@@ -97,15 +132,27 @@ class EpksStatementController extends \BaseController
 
 		$model = EpksStatement::findOrFail(Helper::decode($id, $this->moduleName()));
 		if ($model) {
+			$sells = EpksTrade::where('epks_statement_id', $model->id)
+				->where('debit', false)
+				->orderBy('id', 'asc')
+				->get();
+
+			$buys = EpksTrade::where('epks_statement_id', $model->id)
+				->where('debit', true)
+				->orderBy('id', 'asc')
+				->get();
+
 			$viewData = array(
 				'title' => trans('app.menus.epks_statement'),
 				'panel_nav_active' => 'epks_panel',
 				'main_nav_active' => 'epks_main',
 				'sub_nav_active' => 'epks_statement',
 				'model' => $model,
-				'image' => ""
+				'sells' => $sells,
+				'buys' => $buys,
+				'image' => ''
 			);
-	
+
 			return View::make('epks_statement.show', $viewData);
 		}
 
