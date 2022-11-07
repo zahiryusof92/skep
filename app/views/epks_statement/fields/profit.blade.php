@@ -42,7 +42,7 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="others_income" name="ledger[others_income]" oninput="calcProfit()"
-                            class="form-control form-control-sm" />
+                            class="form-control form-control-sm" value="{{ (!empty($others_income) ? number_format($others_income->amount, 2) : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -130,7 +130,7 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="salary" name="ledger[salary]" oninput="calcProfit()"
-                            class="form-control form-control-sm" />
+                            class="form-control form-control-sm" value="{{ (!empty($salary) ? number_format($salary->amount, 2) : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -142,7 +142,7 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="general" name="ledger[general]" oninput="calcProfit()"
-                            class="form-control form-control-sm" />
+                            class="form-control form-control-sm" value="{{ (!empty($general) ? number_format($general->amount, 2) : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;

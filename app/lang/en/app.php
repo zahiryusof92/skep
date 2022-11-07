@@ -241,6 +241,9 @@ return array(
             'building' => 'API Building',
             'building_log' => 'API Building Log'
         ),
+        'epks_statement' => [
+            'name' => 'Statement'
+        ]
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
@@ -1016,6 +1019,7 @@ return array(
         "add_new_application" => "Add New Application",
         "add_new" => "Add New",
         "reject" => "Reject",
+        'add_epks_statement' => 'Add New Statement',
     ),
     'directory' => [
         'title' => 'Directory',

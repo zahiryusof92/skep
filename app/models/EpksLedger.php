@@ -15,7 +15,6 @@ class EpksLedger extends Eloquent
         'epks_statement_id',
         'name',
         'amount',
-        'debit',
     ];
 
     public function file()

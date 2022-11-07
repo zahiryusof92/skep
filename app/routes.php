@@ -969,6 +969,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('epks/submitByCOB/{id}', ['as' => 'epks.submitByCOB', 'uses' => 'EPKSController@submitByCOB']);
     Route::resource('epks', 'EPKSController');
 
+    Route::get('epks/print/{id}', ['as' => 'epksStatement.print', 'uses' => 'EpksStatementController@print']);
     Route::resource('epksStatement', 'EpksStatementController');
     
 

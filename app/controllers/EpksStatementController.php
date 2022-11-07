@@ -48,7 +48,7 @@ class EpksStatementController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.epks_statement'),
+			'title' => trans('app.menus.epks_statement.name'),
 			'panel_nav_active' => 'epks_panel',
 			'main_nav_active' => 'epks_main',
 			'sub_nav_active' => 'epks_statement',
@@ -127,11 +127,6 @@ class EpksStatementController extends \BaseController
 				EpksLedger::where('epks_statement_id', $model->id)->forceDelete();
 
 				foreach ($request['ledger'] as $name => $value) {
-					$debit = true;
-					if ($name == 'others_income') {
-						$debit = false;
-					}
-
 					EpksLedger::create([
 						'file_id' => $model->file->id,
 						'strata_id' => $model->strata->id,
@@ -139,12 +134,11 @@ class EpksStatementController extends \BaseController
 						'epks_statement_id' => $model->id,
 						'name' => $name,
 						'amount' => $value,
-						'debit' => $debit,
 					]);
 				}
 			}
 
-			return '<pre>' . print_r($request, true) . '</pre>';
+			// return '<pre>' . print_r($request, true) . '</pre>';
 
 			return Redirect::back()->with('success', trans('app.successes.submit_successfully'));
 		}
@@ -175,21 +169,33 @@ class EpksStatementController extends \BaseController
 				->orderBy('id', 'asc')
 				->get();
 
-			$ledger = EpksLedger::where('epks_statement_id', $model->id)
-				->orderBy('id', 'asc')
-				->get();
+			$others_income = EpksLedger::where('epks_statement_id', $model->id)
+				->where('name', 'others_income')
+				->first();
+
+			$salary = EpksLedger::where('epks_statement_id', $model->id)
+				->where('name', 'salary')
+				->first();
+
+			$general = EpksLedger::where('epks_statement_id', $model->id)
+				->where('name', 'general')
+				->first();
 
 			$viewData = array(
-				'title' => trans('app.menus.epks_statement'),
+				'title' => trans('app.menus.epks_statement.name'),
 				'panel_nav_active' => 'epks_panel',
 				'main_nav_active' => 'epks_main',
 				'sub_nav_active' => 'epks_statement',
 				'model' => $model,
 				'sells' => $sells,
 				'buys' => $buys,
-				'ledger' => $ledger,
+				'others_income' => $others_income,
+				'salary' => $salary,
+				'general' => $general,
 				'image' => ''
 			);
+
+			// return '<pre>' . print_r($ledgers->toArray(), true) . '</pre>';
 
 			return View::make('epks_statement.show', $viewData);
 		}

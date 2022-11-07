@@ -10,7 +10,17 @@
 <div class="page-content-inner">
     <section class="panel panel-style">
         <div class="panel-heading">
-            <h3>{{ $title }}</h3>
+            <div class="row">
+                <div class="col-md-10">
+                    <h3>{{ $title }}</h3>
+                </div>
+                <div class="col-md-2">
+                    <a href="{{ route('epksStatement.print', \Helper\Helper::encode($model->id)) }}" target="_blank"
+                        class="btn btn-sm btn-own margin-inline pull-right">
+                        {{ trans('Print') }}
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="panel-body">
 

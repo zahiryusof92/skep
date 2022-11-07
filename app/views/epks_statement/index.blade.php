@@ -15,8 +15,8 @@
                     <div class="col-lg-12">
 
                         <div class="margin-bottom-30">
-                            <a href="" class="btn btn-own">
-                                {{ trans('app.buttons.add_new_application') }}
+                            <a href="{{ route('epksStatement.create') }}" class="btn btn-own">
+                                {{ trans('app.buttons.add_epks_statement') }}
                             </a>
                         </div>
 

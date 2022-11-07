@@ -22,7 +22,6 @@ class CreateEpksLedgersTable extends Migration
 			$table->integer('epks_statement_id')->default(0);
 			$table->string('name')->nullable();
 			$table->double('amount')->default(0);
-			$table->boolean('debit')->default(true);
 			$table->softDeletes();
 			$table->timestamps();
 		});
