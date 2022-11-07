@@ -63,6 +63,8 @@ Route::get('/lphs/insurance/{council}', 'LPHSController@insurance');
 
 Route::get('/lphs/financeOutstanding/{council}', 'LPHSController@financeOutstanding');
 
+Route::get('/lphs/strataByCategory/{council}', 'LPHSController@strataByCategory');
+
 /*
  * LPHS REPORT END
  */
