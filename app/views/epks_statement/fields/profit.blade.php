@@ -29,8 +29,8 @@
                         {{ trans("app.epks_statement.sell") }}
                     </td>
                     <td style="text-align: center;">
-                        <input type="currency" id="total_sell_profit" name="total_sell_profit"
-                            class="form-control form-control-sm" value="" readonly />
+                        <input type="currency" id="total_sell_profit" name="ledger[total_sell]"
+                            class="form-control form-control-sm" readonly />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -41,7 +41,7 @@
                         {{ trans("app.epks_statement.others_income") }}
                     </td>
                     <td style="text-align: center;">
-                        <input type="currency" id="others_income" name="others_income" oninput="calcProfit()"
+                        <input type="currency" id="others_income" name="ledger[others_income]" oninput="calcProfit()"
                             class="form-control form-control-sm" />
                     </td>
                     <td class="align-middle">
@@ -53,7 +53,7 @@
                         {{ trans("app.epks_statement.total") }}
                     </th>
                     <td style="text-align: center;">
-                        <input type="currency" id="total_income" name="total_income"
+                        <input type="currency" id="total_income" name="ledger[total_income]"
                             class="form-control form-control-sm" readonly />
                     </td>
                 </tr>
@@ -72,8 +72,8 @@
                         {{ trans("app.epks_statement.sell_cost") }}
                     </td>
                     <td style="text-align: center;">
-                        <input type="currency" id="sell_cost" name="sell_cost" class="form-control form-control-sm"
-                            readonly />
+                        <input type="currency" id="sell_cost" name="ledger[sell_cost]"
+                            class="form-control form-control-sm" readonly />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -84,7 +84,7 @@
                         {{ trans("app.epks_statement.total") }}
                     </th>
                     <td style="text-align: center;">
-                        <input type="currency" id="total_product_cost" name="total_product_cost"
+                        <input type="currency" id="total_product_cost" name="ledger[total_product_cost]"
                             class="form-control form-control-sm" readonly />
                     </td>
                 </tr>
@@ -98,7 +98,7 @@
                         {{ trans("app.epks_statement.gross_profit") }}
                     </th>
                     <td style="text-align: center;">
-                        <input type="currency" id="gross_profit" name="gross_profit"
+                        <input type="currency" id="gross_profit" name="ledger[gross_profit]"
                             class="form-control form-control-sm" readonly />
                     </td>
                 </tr>
@@ -117,7 +117,7 @@
                         {{ trans("app.epks_statement.buy") }}
                     </td>
                     <td style="text-align: center;">
-                        <input type="currency" id="total_buy_profit" name="total_buy_profit"
+                        <input type="currency" id="total_buy_profit" name="ledger[total_buy]"
                             class="form-control form-control-sm" readonly />
                     </td>
                     <td class="align-middle">
@@ -129,7 +129,7 @@
                         {{ trans("app.epks_statement.salary") }}
                     </td>
                     <td style="text-align: center;">
-                        <input type="currency" id="salary" name="salary" oninput="calcProfit()"
+                        <input type="currency" id="salary" name="ledger[salary]" oninput="calcProfit()"
                             class="form-control form-control-sm" />
                     </td>
                     <td class="align-middle">
@@ -141,7 +141,7 @@
                         {{ trans("app.epks_statement.general") }}
                     </td>
                     <td style="text-align: center;">
-                        <input type="currency" id="general" name="general" oninput="calcProfit()"
+                        <input type="currency" id="general" name="ledger[general]" oninput="calcProfit()"
                             class="form-control form-control-sm" />
                     </td>
                     <td class="align-middle">
@@ -153,7 +153,7 @@
                         {{ trans("app.epks_statement.total") }}
                     </th>
                     <td style="text-align: center;">
-                        <input type="currency" id="total_expenses" name="total_expenses"
+                        <input type="currency" id="total_expenses" name="ledger[total_expenses]"
                             class="form-control form-control-sm" readonly />
                     </td>
                 </tr>
@@ -167,8 +167,8 @@
                         {{ trans("app.epks_statement.profit") }}
                     </th>
                     <td style="text-align: center;">
-                        <input type="currency" id="nett_profit" name="nett_profit" class="form-control form-control-sm"
-                            readonly />
+                        <input type="currency" id="nett_profit" name="ledger[nett_profit]"
+                            class="form-control form-control-sm" readonly />
                     </td>
                 </tr>
             </tbody>

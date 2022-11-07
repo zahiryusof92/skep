@@ -6,7 +6,7 @@ class EpksLedger extends Eloquent
 {
     use SoftDeletingTrait;
 
-    protected $table = 'epks_ladgers';
+    protected $table = 'epks_ledgers';
 
     protected $fillable = [
         'file_id',

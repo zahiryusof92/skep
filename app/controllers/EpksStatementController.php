@@ -84,6 +84,10 @@ class EpksStatementController extends \BaseController
 		$model = EpksStatement::find($request['model_id']);
 		if ($model) {
 			if (!empty($request['buy_date'])) {
+				EpksTrade::where('epks_statement_id', $model->id)
+					->where('debit', true)
+					->forceDelete();
+
 				for ($i = 0; $i < count($request['buy_date']); $i++) {
 					if (!empty($request['buy_date'][$i])) {
 						EpksTrade::create([
@@ -100,6 +104,10 @@ class EpksStatementController extends \BaseController
 			}
 
 			if (!empty($request['sell_date'])) {
+				EpksTrade::where('epks_statement_id', $model->id)
+					->where('debit', false)
+					->forceDelete();
+
 				for ($i = 0; $i < count($request['sell_date']); $i++) {
 					if (!empty($request['sell_date'][$i])) {
 						EpksTrade::create([
@@ -115,8 +123,33 @@ class EpksStatementController extends \BaseController
 				}
 			}
 
+			if (!empty($request['ledger'])) {
+				EpksLedger::where('epks_statement_id', $model->id)->forceDelete();
+
+				foreach ($request['ledger'] as $name => $value) {
+					$debit = true;
+					if ($name == 'others_income') {
+						$debit = false;
+					}
+
+					EpksLedger::create([
+						'file_id' => $model->file->id,
+						'strata_id' => $model->strata->id,
+						'epks_id' => $model->epks->id,
+						'epks_statement_id' => $model->id,
+						'name' => $name,
+						'amount' => $value,
+						'debit' => $debit,
+					]);
+				}
+			}
+
 			return '<pre>' . print_r($request, true) . '</pre>';
+
+			return Redirect::back()->with('success', trans('app.successes.submit_successfully'));
 		}
+
+		return Redirect::back()->with('error', trans('app.errors.occurred'));
 	}
 
 
@@ -142,6 +175,10 @@ class EpksStatementController extends \BaseController
 				->orderBy('id', 'asc')
 				->get();
 
+			$ledger = EpksLedger::where('epks_statement_id', $model->id)
+				->orderBy('id', 'asc')
+				->get();
+
 			$viewData = array(
 				'title' => trans('app.menus.epks_statement'),
 				'panel_nav_active' => 'epks_panel',
@@ -150,6 +187,7 @@ class EpksStatementController extends \BaseController
 				'model' => $model,
 				'sells' => $sells,
 				'buys' => $buys,
+				'ledger' => $ledger,
 				'image' => ''
 			);
 
