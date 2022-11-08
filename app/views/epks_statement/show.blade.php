@@ -83,7 +83,10 @@
                     </ul>
 
                     <section class="panel panel-pad">
-                        <form id="epks_statement_form" action="{{ route('epksStatement.store') }}" method="POST">
+                        <form id="epks_statement_form"
+                            action="{{ route('epksStatement.update', \Helper\Helper::encode($module, $model->id)) }}"
+                            method="POST" autocomplete="off">
+                            <input type="hidden" name="_method" value="PUT">
 
                             <div class="tab-content padding-vertical-10" id="statementTabContent">
                                 <div class="tab-pane fade active show in" id="buy" role="tabpanel"
@@ -100,7 +103,6 @@
                                 </div>
 
                                 <div class="form-actions">
-                                    <input type="hidden" name="model_id" value="{{ $model->id }}" />
                                     <button type="submit" class="btn btn-own" id="submit_button">
                                         {{ trans('app.forms.save') }}
                                     </button>

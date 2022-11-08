@@ -2,6 +2,7 @@
 
 use Helper\Helper;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
 use yajra\Datatables\Facades\Datatables;
 
 class EpksStatementController extends \BaseController
@@ -66,9 +67,37 @@ class EpksStatementController extends \BaseController
 	 */
 	public function create()
 	{
-		//
-	}
+		$this->checkAvailableAccess();
 
+		if (!Auth::user()->getAdmin()) {
+			if (!empty(Auth::user()->file_id)) {
+				$file_no = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+			} else {
+				$file_no = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+			}
+		} else {
+			if (empty(Session::get('admin_cob'))) {
+				$file_no = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+			} else {
+				$file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+			}
+		}
+		$year = Files::getVPYear();
+		$month = EpksStatement::monthList();
+
+		$viewData = array(
+			'title' => trans('app.menus.epks_statement.create'),
+			'panel_nav_active' => 'epks_panel',
+			'main_nav_active' => 'epks_main',
+			'sub_nav_active' => 'epks_statement',
+			'image' => '',
+			'file_no' => $file_no,
+			'year' => $year,
+			'month' => $month,
+		);
+
+		return View::make('epks_statement.create', $viewData);
+	}
 
 	/**
 	 * Store a newly created resource in storage.
@@ -81,7 +110,129 @@ class EpksStatementController extends \BaseController
 
 		$request = Request::all();
 
-		$model = EpksStatement::find($request['model_id']);
+		$rules = [
+			'file_id' => 'required',
+			'year' => 'required',
+			'month' => 'required',
+		];
+
+		$validator = Validator::make($request, $rules);
+		if ($validator->fails()) {
+			return Redirect::back()->withErrors($validator);
+		} else {
+			if (Auth::user()->myEpks()) {
+				$epks = Auth::user()->myEpks();
+
+				$model = Epks::find($epks->id);
+				if ($model) {
+					$existing = EpksStatement::where('file_id', $model->file->id)
+						->where('month', $request['month'])
+						->where('year', $request['year'])
+						->count();
+
+					if ($existing <= 0) {
+						$statement = EpksStatement::create([
+							'file_id' => $model->file->id,
+							'strata_id' => $model->file->strata->id,
+							'epks_id' => $model->id,
+							'month' => $request['month'],
+							'year' => $request['year'],
+						]);
+
+						return Redirect::route('epksStatement.show', Helper::encode($this->moduleName(), $statement->id))->with('success', trans('app.successes.submit_successfully'));
+					}
+					return Redirect::back()->with('error', trans('app.errors.exist2', ['attribute' => 'record']));
+				}
+			}
+		}
+
+		return Redirect::back()->with('error', trans('app.errors.occurred'));
+	}
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		$this->checkAvailableAccess();
+
+		$model = EpksStatement::findOrFail(Helper::decode($id, $this->moduleName()));
+		if ($model) {
+			$sells = EpksTrade::where('epks_statement_id', $model->id)
+				->where('debit', false)
+				->orderBy('id', 'asc')
+				->get();
+
+			$buys = EpksTrade::where('epks_statement_id', $model->id)
+				->where('debit', true)
+				->orderBy('id', 'asc')
+				->get();
+
+			$others_income = EpksLedger::where('epks_statement_id', $model->id)
+				->where('name', 'others_income')
+				->first();
+
+			$salary = EpksLedger::where('epks_statement_id', $model->id)
+				->where('name', 'salary')
+				->first();
+
+			$general = EpksLedger::where('epks_statement_id', $model->id)
+				->where('name', 'general')
+				->first();
+
+			$viewData = array(
+				'title' => trans('app.menus.epks_statement.name'),
+				'panel_nav_active' => 'epks_panel',
+				'main_nav_active' => 'epks_main',
+				'sub_nav_active' => 'epks_statement',
+				'model' => $model,
+				'sells' => $sells,
+				'buys' => $buys,
+				'others_income' => $others_income,
+				'salary' => $salary,
+				'general' => $general,
+				'module' => $this->moduleName(),
+				'image' => ''
+			);
+
+			// return '<pre>' . print_r($ledgers->toArray(), true) . '</pre>';
+
+			return View::make('epks_statement.show', $viewData);
+		}
+
+		App::abort(404);
+	}
+
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function edit($id)
+	{
+		//
+	}
+
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		$this->checkAvailableAccess();
+
+		$request = Request::all();
+
+		$model = EpksStatement::find(Helper::decode($id, $this->moduleName()));
 		if ($model) {
 			if (!empty($request['buy_date'])) {
 				EpksTrade::where('epks_statement_id', $model->id)
@@ -135,6 +286,12 @@ class EpksStatementController extends \BaseController
 						'name' => $name,
 						'amount' => $value,
 					]);
+
+					if ($name == 'nett_profit') {
+						$model->update([
+							'profit' => $value,
+						]);
+					}
 				}
 			}
 
@@ -148,87 +305,6 @@ class EpksStatementController extends \BaseController
 
 
 	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		$this->checkAvailableAccess();
-
-		$model = EpksStatement::findOrFail(Helper::decode($id, $this->moduleName()));
-		if ($model) {
-			$sells = EpksTrade::where('epks_statement_id', $model->id)
-				->where('debit', false)
-				->orderBy('id', 'asc')
-				->get();
-
-			$buys = EpksTrade::where('epks_statement_id', $model->id)
-				->where('debit', true)
-				->orderBy('id', 'asc')
-				->get();
-
-			$others_income = EpksLedger::where('epks_statement_id', $model->id)
-				->where('name', 'others_income')
-				->first();
-
-			$salary = EpksLedger::where('epks_statement_id', $model->id)
-				->where('name', 'salary')
-				->first();
-
-			$general = EpksLedger::where('epks_statement_id', $model->id)
-				->where('name', 'general')
-				->first();
-
-			$viewData = array(
-				'title' => trans('app.menus.epks_statement.name'),
-				'panel_nav_active' => 'epks_panel',
-				'main_nav_active' => 'epks_main',
-				'sub_nav_active' => 'epks_statement',
-				'model' => $model,
-				'sells' => $sells,
-				'buys' => $buys,
-				'others_income' => $others_income,
-				'salary' => $salary,
-				'general' => $general,
-				'image' => ''
-			);
-
-			// return '<pre>' . print_r($ledgers->toArray(), true) . '</pre>';
-
-			return View::make('epks_statement.show', $viewData);
-		}
-
-		App::abort(404);
-	}
-
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-
-	/**
 	 * Remove the specified resource from storage.
 	 *
 	 * @param  int  $id
@@ -238,7 +314,7 @@ class EpksStatementController extends \BaseController
 	{
 		$this->checkAvailableAccess();
 
-		$model = EpksStatement::findOrFail(Helper::decode($id, $this->moduleName()));
+		$model = EpksStatement::find(Helper::decode($id, $this->moduleName()));
 		if ($model) {
 			$success = $model->delete();
 

@@ -226,4 +226,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function myEpks() {
+        if (Auth::user()->isJMB()) {
+            if (Auth::user()->file_id) {
+                $file = Files::find(Auth::user()->file_id);
+
+                if ($file && $file->approvedEpks()) {
+                    return $file->approvedEpks();
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

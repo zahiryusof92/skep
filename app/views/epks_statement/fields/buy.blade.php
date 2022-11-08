@@ -27,7 +27,7 @@
             <tbody>
                 <?php $count = 0; ?>
 
-                @if (!empty($buys))
+                @if ($buys->count() > 0)
                 @foreach ($buys as $buy)
                 <tr id="buy_row_{{ ++$count }}">
                     <td>
