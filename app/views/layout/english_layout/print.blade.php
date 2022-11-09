@@ -39,6 +39,15 @@
         <!--Rating Star-->
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/common/css/source/ratingstar/rating.css')}}">
 
+       <style>
+            @media print {
+                .pagebreak {
+                    clear: both;
+                    page-break-after: always;
+                }
+            }
+        </style>
+
         <!-- Vendors Scripts -->
         <!-- v1.0.0 -->
         <script src="{{ asset('assets/vendors/jquery/jquery.min.js') }}"></script>

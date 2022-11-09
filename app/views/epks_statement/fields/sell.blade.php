@@ -1,23 +1,37 @@
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
-        <h5>
-            {{ trans('app.epks_statement.sell') }}
-        </h5>
 
-        <label class="form-control-label">
-            <span style="color: red;">* {{ trans('app.forms.mandatory_fields') }}</span>
-        </label>
+        <div>
+            <label class="form-control-label">
+                <span style="color: red;">* {{ trans('app.forms.mandatory_fields') }}</span>
+            </label>
+        </div>
+
+        <div class="text-center">
+            <strong>
+                {{ Str::upper('LAPORAN HASIL JUALAN KEPADA VENDOR BARANGAN KITAR SEMULA') }}
+                <br />
+                {{ Str::upper('PUSAT KITAR STRATA BAGI PANGSAPURI') }}
+                <br />
+                {{ Str::upper($model->strata->strataName()) }}
+            </strong>
+            <br />
+            {{ Str::upper('BAGI BULAN') }} {{ $model->monthName() }}
+            {{ Str::upper('TAHUN') }} {{ $model->year }}
+        </div>
+
+        <hr />
 
         <table class="table table-sm borderless" id="dynamic_form_sell" style="width: 100%;">
             <thead>
                 <tr>
                     <th width="45%" style="text-align: center;" class="align-middle">
                         <span style="color: red;">*</span>
-                        {{ trans("app.epks_statement.date") }}
+                        {{ Str::upper(trans("app.epks_statement.date")) }}
                     </th>
                     <th width="45%" style="text-align: center;" class="align-middle">
                         <span style="color: red;">*</span>
-                        {{ trans("app.epks_statement.sell_amount") }} (RM)
+                        {{ Str::upper(trans("app.epks_statement.sell_amount")) }} (RM)
                     </th>
                     <th width="10%" style="text-align: center;" class="align-middle">
                         &nbsp;
@@ -92,7 +106,7 @@
             <tfoot>
                 <tr>
                     <th colspan="2" style="text-align: center;" class="align-middle">
-                        {{ trans("app.epks_statement.total_all") }}
+                        {{ Str::upper(trans("app.epks_statement.total_all")) }}
                     </th>
                 </tr>
                 <tr>

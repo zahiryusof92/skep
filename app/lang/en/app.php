@@ -242,7 +242,8 @@ return array(
             'building_log' => 'API Building Log'
         ),
         'epks_statement' => [
-            'name' => 'Statement'
+            'name' => 'Statement',
+            'create' => 'Create Statement',
         ]
     ),
     "forms" => array(
@@ -697,6 +698,8 @@ return array(
         'accepted' => 'Accepted',
         'rejected' => 'Rejected',
         'old' => 'Old',
+        'prepared_by' => 'Prepared By',
+        'prepared_date' => 'Prepared Date',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

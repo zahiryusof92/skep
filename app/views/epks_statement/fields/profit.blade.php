@@ -1,8 +1,18 @@
 <div class="row padding-vertical-10">
     <div class="col-lg-12">
-        <h5>
-            {{ trans('app.epks_statement.profit') }}
-        </h5>
+
+        <div class="text-center">
+            <strong>
+                {{ Str::upper('Penyata Untung Rugi Pusat Kitar Strata') }}
+                <br />
+                {{ Str::upper($model->strata->strataName()) }}
+            </strong>
+            <br />
+            {{ Str::upper('BAGI BULAN') }} {{ $model->monthName() }}
+            {{ Str::upper('TAHUN') }} {{ $model->year }}
+        </div>
+
+        <hr />
 
         <table class="table table-sm table-bordered" style="width: 100%;">
             <thead>
@@ -21,7 +31,9 @@
             <tbody>
                 <tr>
                     <th colspan="3" class="align-middle">
-                        {{ trans("app.epks_statement.income") }}
+                        <u>
+                            {{ Str::upper(trans('app.epks_statement.income')) }}
+                        </u>
                     </th>
                 </tr>
                 <tr>
@@ -42,7 +54,8 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="others_income" name="ledger[others_income]" oninput="calcProfit()"
-                            class="form-control form-control-sm" value="{{ (!empty($others_income) ? number_format($others_income->amount, 2) : NULL) }}" />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($others_income) ? number_format($others_income->amount, 2) : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -64,7 +77,9 @@
                 </tr>
                 <tr>
                     <th colspan="3" class="align-middle">
-                        {{ trans("app.epks_statement.product_cost") }}
+                        <u>
+                            {{ Str::upper(trans('app.epks_statement.product_cost')) }}
+                        </u>
                     </th>
                 </tr>
                 <tr>
@@ -109,7 +124,9 @@
                 </tr>
                 <tr>
                     <th colspan="3" class="align-middle">
-                        {{ trans("app.epks_statement.expenses") }}
+                        <u>
+                            {{ Str::upper(trans('app.epks_statement.expenses')) }}
+                        </u>
                     </th>
                 </tr>
                 <tr>
@@ -130,7 +147,8 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="salary" name="ledger[salary]" oninput="calcProfit()"
-                            class="form-control form-control-sm" value="{{ (!empty($salary) ? number_format($salary->amount, 2) : NULL) }}" />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($salary) ? number_format($salary->amount, 2) : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -142,7 +160,8 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="general" name="ledger[general]" oninput="calcProfit()"
-                            class="form-control form-control-sm" value="{{ (!empty($general) ? number_format($general->amount, 2) : NULL) }}" />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($general) ? number_format($general->amount, 2) : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;

@@ -15,7 +15,7 @@
                     <h3>{{ $title }}</h3>
                 </div>
                 <div class="col-md-2">
-                    <a href="{{ route('epksStatement.print', \Helper\Helper::encode($model->id)) }}" target="_blank"
+                    <a href="{{ route('epksStatement.print', \Helper\Helper::encode($module, $model->id)) }}" target="_blank"
                         class="btn btn-sm btn-own margin-inline pull-right">
                         {{ trans('Print') }}
                     </a>
@@ -33,19 +33,22 @@
                             <table class="table table-bordered  margin-bottom-0" style="width: 100%;">
                                 <tbody>
                                     <tr>
-                                        <th colspan="6" style="width: 100%; text-align: center;">
-                                            LAPORAN HASIL JUALAN KEPADA VENDOR BARANGAN KITAR SEMULA PUSAT KITAR STRATA
-                                            <br />
-                                            BAGI PANGSAPURI {{ Str::upper($model->strata->strataName()) }}
-                                        </th>
+                                        <th style="width: 15%;">{{ trans("app.forms.strata") }}</th>
+                                        <td style="width: 35%;">{{ $model->strata->strataName() }}</td>
+                                        <th style="width: 15%;">{{ trans("app.forms.file_no") }}</th>
+                                        <td style="width: 35%;">{{ $model->file->file_no }}</td>
                                     </tr>
-                                    <tr>
-                                        <th style="width: 10%;">{{ trans("app.forms.file_no") }}</th>
-                                        <td style="width: 50%;">{{ $model->file->file_no }}</td>
-                                        <th style="width: 10%;">{{ trans("app.forms.month") }}</th>
-                                        <td style="width: 10%;">{{ $model->monthName() }}</td>
-                                        <th style="width: 10%;">{{ trans("app.forms.year") }}</th>
-                                        <td style="width: 10%;">{{ $model->year }}</td>
+                                    <tr>                                        
+                                        <th>{{ trans("app.forms.month") }}</th>
+                                        <td>{{ $model->monthName() }}</td>
+                                        <th>{{ trans("app.forms.year") }}</th>
+                                        <td>{{ $model->year }}</td>
+                                    </tr>
+                                    <tr>                                        
+                                        <th>{{ trans("app.forms.prepared_by") }}</th>
+                                        <td>{{ ($model->preparedBy ? $model->preparedBy->full_name : '') }}</td>
+                                        <th>{{ trans("app.forms.prepared_date") }}</th>
+                                        <td>{{ $model->created_at->format('Y-m-d') }}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -67,4 +67,24 @@ class EpksStatement extends Eloquent
     {
         return $this->belongsTo('Epks', 'epks_id');
     }
+
+    public function preparedBy()
+    {
+        return $this->belongsTo('User', 'prepared_by');
+    }
+
+    public function sells()
+    {
+        return $this->hasMany('EpksTrade', 'epks_statement_id')->where('debit', true);
+    }
+
+    public function buys()
+    {
+        return $this->hasMany('EpksTrade', 'epks_statement_id')->where('debit', false);
+    }
+
+    public function ledgers()
+    {
+        return $this->hasMany('EpksLedger', 'epks_statement_id');
+    }
 }

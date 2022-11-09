@@ -71,15 +71,43 @@ class EpksStatementController extends \BaseController
 
 		if (!Auth::user()->getAdmin()) {
 			if (!empty(Auth::user()->file_id)) {
-				$file_no = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+				$file_no = Files::with('epks')
+					->whereHas('epks', function ($q) {
+						$q->where('epks.status', Epks::APPROVED);
+					})
+					->where('files.id', Auth::user()->file_id)
+					->where('files.company_id', Auth::user()->company_id)
+					->where('files.is_deleted', 0)
+					->orderBy('files.year', 'asc')
+					->get();
 			} else {
-				$file_no = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+				$file_no = Files::with('epks')
+					->whereHas('epks', function ($q) {
+						$q->where('epks.status', Epks::APPROVED);
+					})
+					->where('files.company_id', Auth::user()->company_id)
+					->where('files.is_deleted', 0)
+					->orderBy('files.year', 'asc')
+					->get();
 			}
 		} else {
 			if (empty(Session::get('admin_cob'))) {
-				$file_no = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
+				$file_no = Files::with('epks')
+					->whereHas('epks', function ($q) {
+						$q->where('epks.status', Epks::APPROVED);
+					})
+					->where('files.is_deleted', 0)
+					->orderBy('files.year', 'asc')
+					->get();
 			} else {
-				$file_no = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
+				$file_no = Files::with('epks')
+					->whereHas('epks', function ($q) {
+						$q->where('epks.status', Epks::APPROVED);
+					})
+					->where('company_id', Session::get('admin_cob'))
+					->where('files.is_deleted', 0)
+					->orderBy('files.year', 'asc')
+					->get();
 			}
 		}
 		$year = Files::getVPYear();
@@ -118,31 +146,31 @@ class EpksStatementController extends \BaseController
 
 		$validator = Validator::make($request, $rules);
 		if ($validator->fails()) {
-			return Redirect::back()->withErrors($validator);
+			return Redirect::back()->withErrors($validator)->withInput();
 		} else {
-			if (Auth::user()->myEpks()) {
-				$epks = Auth::user()->myEpks();
+			$model = Epks::where('file_id', $request['file_id'])
+				->where('status', Epks::APPROVED)
+				->first();
 
-				$model = Epks::find($epks->id);
-				if ($model) {
-					$existing = EpksStatement::where('file_id', $model->file->id)
-						->where('month', $request['month'])
-						->where('year', $request['year'])
-						->count();
+			if ($model->count() > 0) {
+				$existing = EpksStatement::where('file_id', $model->file->id)
+					->where('month', $request['month'])
+					->where('year', $request['year'])
+					->count();
 
-					if ($existing <= 0) {
-						$statement = EpksStatement::create([
-							'file_id' => $model->file->id,
-							'strata_id' => $model->file->strata->id,
-							'epks_id' => $model->id,
-							'month' => $request['month'],
-							'year' => $request['year'],
-						]);
+				if ($existing <= 0) {
+					$statement = EpksStatement::create([
+						'file_id' => $model->file->id,
+						'strata_id' => $model->file->strata->id,
+						'epks_id' => $model->id,
+						'month' => $request['month'],
+						'year' => $request['year'],
+						'prepared_by' => Auth::user()->id,
+					]);
 
-						return Redirect::route('epksStatement.show', Helper::encode($this->moduleName(), $statement->id))->with('success', trans('app.successes.submit_successfully'));
-					}
-					return Redirect::back()->with('error', trans('app.errors.exist2', ['attribute' => 'record']));
+					return Redirect::route('epksStatement.show', Helper::encode($this->moduleName(), $statement->id))->with('success', trans('app.successes.submit_successfully'));
 				}
+				return Redirect::back()->with('error', trans('app.errors.exist2', ['attribute' => 'record']))->withInput();
 			}
 		}
 
@@ -333,6 +361,41 @@ class EpksStatementController extends \BaseController
 		return Redirect::back()->with('error', trans('app.errors.occurred'));
 	}
 
+	public function printStatement($id)
+	{
+		$this->checkAvailableAccess();
+
+		$model = EpksStatement::with(['epks', 'buys', 'sells', 'ledgers'])
+			->find(Helper::decode($id, $this->moduleName()));
+
+		if ($model) {
+			$company = Company::find($model->file->company->id);
+
+			$buys = ($model->buys->count() > 0 ? $model->buys->lists('amount', 'date') : '');
+			$sells = ($model->sells->count() > 0 ? $model->sells->lists('amount', 'date') : '');
+			$ledgers = ($model->ledgers->count() > 0 ? $model->ledgers->lists('amount', 'name') : '');
+
+			$viewData = array(
+				'title' => trans('app.menus.epks_statement.name'),
+				'panel_nav_active' => 'epks_panel',
+				'main_nav_active' => 'epks_main',
+				'sub_nav_active' => 'epks_statement',
+				'company' => $company,
+				'model' => $model,
+				'buys' => $buys,
+				'sells' => $sells,
+				'ledgers' => $ledgers,
+				'image' => ''
+			);
+
+			// return '<pre>' . print_r($ledgers, true) . '</pre>';
+
+			return View::make('epks_statement.print', $viewData);
+		}
+
+		App::abort(404);
+	}
+
 	private function moduleName()
 	{
 		return 'EPKS Statement';
@@ -340,8 +403,10 @@ class EpksStatementController extends \BaseController
 
 	private function checkAvailableAccess($model = '')
 	{
-		if (!Auth::user()->hasEpks()) {
-			App::abort(404);
+		if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->hasEpks()) {
+			return true;
 		}
+
+		App::abort(404);
 	}
 }

@@ -208,7 +208,7 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.epks.draft') }}
                         </a>
                     </li>
-                    @if (Auth::user()->hasEpks())
+                    @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->hasEpks())
                     <li class="left-menu-list-link" id="epks_statement">
                         <a class="left-menu-link" href="{{ route('epksStatement.index') }}">
                             {{ trans('app.menus.epks_statement.name') }}
