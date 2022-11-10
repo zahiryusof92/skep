@@ -71,7 +71,7 @@ class EpksStatementController extends \BaseController
 
 		if (!Auth::user()->getAdmin()) {
 			if (!empty(Auth::user()->file_id)) {
-				$file_no = Files::with('epks')
+				$file_no = Files::with(['strata', 'epks'])
 					->whereHas('epks', function ($q) {
 						$q->where('epks.status', Epks::APPROVED);
 					})
@@ -81,7 +81,7 @@ class EpksStatementController extends \BaseController
 					->orderBy('files.year', 'asc')
 					->get();
 			} else {
-				$file_no = Files::with('epks')
+				$file_no = Files::with(['strata', 'epks'])
 					->whereHas('epks', function ($q) {
 						$q->where('epks.status', Epks::APPROVED);
 					})
@@ -92,7 +92,7 @@ class EpksStatementController extends \BaseController
 			}
 		} else {
 			if (empty(Session::get('admin_cob'))) {
-				$file_no = Files::with('epks')
+				$file_no = Files::with(['strata', 'epks'])
 					->whereHas('epks', function ($q) {
 						$q->where('epks.status', Epks::APPROVED);
 					})
@@ -100,7 +100,7 @@ class EpksStatementController extends \BaseController
 					->orderBy('files.year', 'asc')
 					->get();
 			} else {
-				$file_no = Files::with('epks')
+				$file_no = Files::with(['strata', 'epks'])
 					->whereHas('epks', function ($q) {
 						$q->where('epks.status', Epks::APPROVED);
 					})

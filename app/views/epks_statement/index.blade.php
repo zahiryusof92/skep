@@ -24,10 +24,10 @@
                             width="100%">
                             <thead>
                                 <tr>
-                                    <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.year') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.month') }}</th>
                                     <th style="width:30%;">{{ trans('app.forms.file_no') }}</th>
-                                    <th style="width:30%;">{{ trans('app.forms.name') }}</th>
+                                    <th style="width:30%;">{{ trans('app.forms.strata') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.created_at') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                 </tr>
@@ -52,11 +52,11 @@
             ajax: "{{ route('epksStatement.index') }}",
             lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
             pageLength: 10,
-            order: [[0, 'desc'], [1, 'desc']],
+            order: [[1, 'desc'], [0, 'desc']],
             responsive: true,
             columns: [
-                {data: 'month', name: 'month'},
                 {data: 'year', name: 'year'},
+                {data: 'month', name: 'month'},
                 {data: 'file_id', name: 'file_id'},
                 {data: 'strata_id', name: 'strata_id'},                
                 {data: 'created_at', name: ' created_at'},

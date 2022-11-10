@@ -34,7 +34,9 @@
                                         <select id="file_id" name="file_id" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($file_no as $files)
-                                            <option value="{{ $files->id }}" {{ (Input::old('file_id') == $files->id ? 'selected' : '') }}>{{ $files->file_no }}</option>
+                                            <option value="{{ $files->id }}" {{ (Input::old('file_id') == $files->id ? 'selected' : '') }}>
+                                                {{ $files->file_no }} - ({{ $files->strata->name }})
+                                            </option>
                                             @endforeach
                                         </select>
                                         @include('alert.feedback', ['field' => 'file_id'])
@@ -48,7 +50,9 @@
                                         </label>
                                         <select id="year" name="year" class="form-control select2">
                                             @foreach ($year as $value => $years)
-                                            <option value="{{ $value }}" {{ (Input::old('year') == $value ? 'selected' : '') }}>{{ $years }}</option>
+                                            <option value="{{ $value }}" {{ (Input::old('year') == $value ? 'selected' : '') }}>
+                                                {{ $years }}
+                                            </option>
                                             @endforeach
                                         </select>
                                         @include('alert.feedback', ['field' => 'year'])
@@ -63,7 +67,9 @@
                                         <select id="month" name="month" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach ($month as $value => $months)
-                                            <option value="{{ $value }}" {{ (Input::old('month') == $value ? 'selected' : '') }}>{{ $months }}</option>
+                                            <option value="{{ $value }}" {{ (Input::old('month') == $value ? 'selected' : '') }}>
+                                                {{ $months }}
+                                            </option>
                                             @endforeach
                                         </select>
                                         @include('alert.feedback', ['field' => 'month'])
