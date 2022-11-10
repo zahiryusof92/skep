@@ -41,14 +41,14 @@
             <tbody>
                 <?php $count = 0; ?>
 
-                @if ($buys->count() > 0)
-                @foreach ($buys as $buy)
+                @if (!empty($buys))
+                @foreach ($buys as $date => $amount)
                 <tr id="buy_row_{{ ++$count }}">
                     <td>
                         <label class="input-group">
                             <input type="text" id="buy_date_{{ $count }}" name="buy_date[]"
                                 class="form-control form-control-sm date_picker"
-                                value="{{ (!empty($buy->date) ? $buy->date : '') }}" required />
+                                value="{{ $date }}" required />
                             <span class="input-group-addon">
                                 <i class="icmn-calendar"></i>
                             </span>
@@ -57,7 +57,7 @@
                     <td>
                         <input type="currency" id="buy_amount_{{ $count }}" name="buy_amount[]" oninput="totalBuy()"
                             class="form-control form-control-sm"
-                            value="{{ (!empty($buy->amount) ? number_format($buy->amount, 2) : '') }}" required />
+                            value="{{ $amount }}" required />
                     </td>
                     <td class="align-middle">
                         @if ($count > 1)
@@ -112,7 +112,9 @@
                 <tr>
                     <th colspan="2" class="align-middle">
                         <input type="currency" id="total_buy" name="total_buy"
-                            class="form-control form-control-sm text-center" readonly />
+                            class="form-control form-control-sm text-center"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_buy'] : NULL) }}"
+                            readonly />
                     </th>
                 </tr>
             </tfoot>
@@ -138,12 +140,16 @@
     }
 
     function totalBuy() {
+        var buy_amount = 0;
         var sum_buy_total = 0;
         var buy_total = document.getElementsByName("buy_amount[]");
         
         for (var i = 0; i < buy_total.length; i++) {
-            sum_buy_total += Number(buy_total[i].value);
-        }
+            buy_amount = parseFloat(buy_total[i].value.replace(/,/g, ''));
+            if (buy_amount > 0) {
+                sum_buy_total += Number(buy_amount);
+            }
+        }        
 
         $('#total_buy').val(parseFloat(sum_buy_total).toFixed(2));
         $('#total_buy_profit').val(parseFloat(sum_buy_total).toFixed(2));

@@ -42,7 +42,8 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="total_sell_profit" name="ledger[total_sell]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_sell'] : NULL) }}" readonly />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -55,7 +56,7 @@
                     <td style="text-align: center;">
                         <input type="currency" id="others_income" name="ledger[others_income]" oninput="calcProfit()"
                             class="form-control form-control-sm"
-                            value="{{ (!empty($others_income) ? number_format($others_income->amount, 2) : NULL) }}" />
+                            value="{{ (!empty($ledgers) ? $ledgers['others_income'] : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -67,7 +68,8 @@
                     </th>
                     <td style="text-align: center;">
                         <input type="currency" id="total_income" name="ledger[total_income]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_income'] : NULL) }}" readonly />
                     </td>
                 </tr>
                 <tr>
@@ -88,7 +90,8 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="sell_cost" name="ledger[sell_cost]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['sell_cost'] : NULL) }}" readonly />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -100,7 +103,8 @@
                     </th>
                     <td style="text-align: center;">
                         <input type="currency" id="total_product_cost" name="ledger[total_product_cost]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_product_cost'] : NULL) }}" readonly />
                     </td>
                 </tr>
                 <tr>
@@ -114,7 +118,8 @@
                     </th>
                     <td style="text-align: center;">
                         <input type="currency" id="gross_profit" name="ledger[gross_profit]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['gross_profit'] : NULL) }}" readonly />
                     </td>
                 </tr>
                 <tr>
@@ -135,7 +140,8 @@
                     </td>
                     <td style="text-align: center;">
                         <input type="currency" id="total_buy_profit" name="ledger[total_buy]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_buy'] : NULL) }}" readonly />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -148,7 +154,7 @@
                     <td style="text-align: center;">
                         <input type="currency" id="salary" name="ledger[salary]" oninput="calcProfit()"
                             class="form-control form-control-sm"
-                            value="{{ (!empty($salary) ? number_format($salary->amount, 2) : NULL) }}" />
+                            value="{{ (!empty($ledgers) ? $ledgers['salary'] : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -161,7 +167,7 @@
                     <td style="text-align: center;">
                         <input type="currency" id="general" name="ledger[general]" oninput="calcProfit()"
                             class="form-control form-control-sm"
-                            value="{{ (!empty($general) ? number_format($general->amount, 2) : NULL) }}" />
+                            value="{{ (!empty($ledgers) ? $ledgers['general'] : NULL) }}" />
                     </td>
                     <td class="align-middle">
                         &nbsp;
@@ -173,7 +179,8 @@
                     </th>
                     <td style="text-align: center;">
                         <input type="currency" id="total_expenses" name="ledger[total_expenses]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_expenses'] : NULL) }}" readonly />
                     </td>
                 </tr>
                 <tr>
@@ -187,7 +194,8 @@
                     </th>
                     <td style="text-align: center;">
                         <input type="currency" id="nett_profit" name="ledger[nett_profit]"
-                            class="form-control form-control-sm" readonly />
+                            class="form-control form-control-sm"
+                            value="{{ (!empty($ledgers) ? $ledgers['nett_profit'] : NULL) }}" readonly />
                     </td>
                 </tr>
             </tbody>

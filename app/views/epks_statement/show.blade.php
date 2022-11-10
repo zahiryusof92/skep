@@ -135,6 +135,11 @@
         if (window.location.hash) {
             $('#statementTab a[href="' + window.location.hash + '"]').tab('show');
         }
+        
+        let input = $("input[type='currency']");
+        for (var i = 0; i < input.length; i++) {
+            $('#' + input[i].id).val(parseFloat(input[i].value).toFixed(2));
+        }
 
         datePicker();
         convertCurrency();
@@ -161,13 +166,13 @@
     }
 
     function convertCurrency() {
-        $("input[type='currency']").on({
+        $("input[type='currency']").on({            
             keyup: function () {
                 formatCurrency($(this));
             },
             blur: function () {
                 formatCurrency($(this), "blur");
-            }
+            },
         });
     }
 

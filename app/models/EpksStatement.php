@@ -73,14 +73,19 @@ class EpksStatement extends Eloquent
         return $this->belongsTo('User', 'prepared_by');
     }
 
+    public function approvedBy()
+    {
+        return $this->belongsTo('User', 'approved_by');
+    }
+
     public function sells()
     {
-        return $this->hasMany('EpksTrade', 'epks_statement_id')->where('debit', true);
+        return $this->hasMany('EpksTrade', 'epks_statement_id')->where('debit', false);
     }
 
     public function buys()
     {
-        return $this->hasMany('EpksTrade', 'epks_statement_id')->where('debit', false);
+        return $this->hasMany('EpksTrade', 'epks_statement_id')->where('debit', true);
     }
 
     public function ledgers()

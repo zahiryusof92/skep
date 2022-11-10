@@ -41,14 +41,14 @@
             <tbody>
                 <?php $count = 0; ?>
 
-                @if ($sells->count() > 0)
-                @foreach ($sells as $sell)
+                @if (!empty($sells))
+                @foreach ($sells as $date => $amount)
                 <tr id="sell_row_{{ ++$count }}">
                     <td>
                         <label class="input-group">
                             <input type="text" id="sell_date_{{ $count }}" name="sell_date[]"
                                 class="form-control form-control-sm date_picker"
-                                value="{{ (!empty($sell->date) ? $sell->date : '') }}" required />
+                                value="{{ (!empty($date) ? $date : '') }}" required />
                             <span class="input-group-addon">
                                 <i class="icmn-calendar"></i>
                             </span>
@@ -57,7 +57,7 @@
                     <td>
                         <input type="currency" id="sell_amount_{{ $count }}" name="sell_amount[]" oninput="totalSell()"
                             class="form-control form-control-sm"
-                            value="{{ (!empty($sell->amount) ? number_format($sell->amount, 2) : '') }}" required />
+                            value="{{ (!empty($amount) ? $amount : '') }}" required />
                     </td>
                     <td class="align-middle">
                         @if ($count > 1)
@@ -112,7 +112,9 @@
                 <tr>
                     <th colspan="2" class="align-middle">
                         <input type="currency" id="total_sell" name="total_sell"
-                            class="form-control form-control-sm text-center" readonly />
+                            class="form-control form-control-sm text-center"
+                            value="{{ (!empty($ledgers) ? $ledgers['total_sell'] : NULL) }}"
+                            readonly />
                     </th>
                 </tr>
             </tfoot>
@@ -138,11 +140,15 @@
     }
 
     function totalSell() {
-        var sum_sell_total = 0;
-        var sell_total = document.getElementsByName("sell_amount[]");
+        let sell_amount = 0;
+        let sum_sell_total = 0;
+        let sell_total = document.getElementsByName("sell_amount[]");
         
         for (var i = 0; i < sell_total.length; i++) {
-            sum_sell_total += Number(sell_total[i].value);
+            sell_amount = parseFloat(sell_total[i].value.replace(/,/g, ''));
+            if (sell_amount > 0) {
+                sum_sell_total += Number(sell_amount);
+            }
         }
 
         $('#total_sell').val(parseFloat(sum_sell_total).toFixed(2));

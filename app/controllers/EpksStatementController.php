@@ -188,29 +188,34 @@ class EpksStatementController extends \BaseController
 	{
 		$this->checkAvailableAccess();
 
-		$model = EpksStatement::findOrFail(Helper::decode($id, $this->moduleName()));
+		$model = EpksStatement::with(['epks', 'buys', 'sells', 'ledgers'])
+			->find(Helper::decode($id, $this->moduleName()));
 		if ($model) {
-			$sells = EpksTrade::where('epks_statement_id', $model->id)
-				->where('debit', false)
-				->orderBy('id', 'asc')
-				->get();
+			$buys = ($model->buys->count() > 0 ? $model->buys->lists('amount', 'date') : '');
+			$sells = ($model->sells->count() > 0 ? $model->sells->lists('amount', 'date') : '');
+			$ledgers = ($model->ledgers->count() > 0 ? $model->ledgers->lists('amount', 'name') : '');
 
-			$buys = EpksTrade::where('epks_statement_id', $model->id)
-				->where('debit', true)
-				->orderBy('id', 'asc')
-				->get();
+			// $sells = EpksTrade::where('epks_statement_id', $model->id)
+			// 	->where('debit', false)
+			// 	->orderBy('id', 'asc')
+			// 	->get();
 
-			$others_income = EpksLedger::where('epks_statement_id', $model->id)
-				->where('name', 'others_income')
-				->first();
+			// $buys = EpksTrade::where('epks_statement_id', $model->id)
+			// 	->where('debit', true)
+			// 	->orderBy('id', 'asc')
+			// 	->get();
 
-			$salary = EpksLedger::where('epks_statement_id', $model->id)
-				->where('name', 'salary')
-				->first();
+			// $others_income = EpksLedger::where('epks_statement_id', $model->id)
+			// 	->where('name', 'others_income')
+			// 	->first();
 
-			$general = EpksLedger::where('epks_statement_id', $model->id)
-				->where('name', 'general')
-				->first();
+			// $salary = EpksLedger::where('epks_statement_id', $model->id)
+			// 	->where('name', 'salary')
+			// 	->first();
+
+			// $general = EpksLedger::where('epks_statement_id', $model->id)
+			// 	->where('name', 'general')
+			// 	->first();
 
 			$viewData = array(
 				'title' => trans('app.menus.epks_statement.name'),
@@ -220,9 +225,10 @@ class EpksStatementController extends \BaseController
 				'model' => $model,
 				'sells' => $sells,
 				'buys' => $buys,
-				'others_income' => $others_income,
-				'salary' => $salary,
-				'general' => $general,
+				'ledgers' => $ledgers,
+				// 'others_income' => $others_income,
+				// 'salary' => $salary,
+				// 'general' => $general,
 				'module' => $this->moduleName(),
 				'image' => ''
 			);
@@ -262,58 +268,68 @@ class EpksStatementController extends \BaseController
 
 		$model = EpksStatement::find(Helper::decode($id, $this->moduleName()));
 		if ($model) {
-			if (!empty($request['buy_date'])) {
-				EpksTrade::where('epks_statement_id', $model->id)
-					->where('debit', true)
-					->forceDelete();
+			$existingTrade = [];
 
+			if (!empty($request['buy_date'])) {
 				for ($i = 0; $i < count($request['buy_date']); $i++) {
 					if (!empty($request['buy_date'][$i])) {
-						EpksTrade::create([
-							'file_id' => $model->file->id,
-							'strata_id' => $model->strata->id,
-							'epks_id' => $model->epks->id,
-							'epks_statement_id' => $model->id,
-							'date' => $request['buy_date'][$i],
-							'amount' => $request['buy_amount'][$i],
-							'debit' => true,
-						]);
+						$buy = EpksTrade::updateOrCreate(
+							[
+								'file_id' => $model->file->id,
+								'strata_id' => $model->strata->id,
+								'epks_id' => $model->epks->id,
+								'epks_statement_id' => $model->id,
+								'date' => $request['buy_date'][$i],
+								'debit' => true,
+							],
+							[
+								'amount' => $request['buy_amount'][$i],
+							]
+						);
+
+						array_push($existingTrade, $buy->id);
 					}
 				}
 			}
 
 			if (!empty($request['sell_date'])) {
-				EpksTrade::where('epks_statement_id', $model->id)
-					->where('debit', false)
-					->forceDelete();
-
 				for ($i = 0; $i < count($request['sell_date']); $i++) {
 					if (!empty($request['sell_date'][$i])) {
-						EpksTrade::create([
-							'file_id' => $model->file->id,
-							'strata_id' => $model->strata->id,
-							'epks_id' => $model->epks->id,
-							'epks_statement_id' => $model->id,
-							'date' => $request['sell_date'][$i],
-							'amount' => $request['sell_amount'][$i],
-							'debit' => false,
-						]);
+						$sell = EpksTrade::updateOrCreate(
+							[
+								'file_id' => $model->file->id,
+								'strata_id' => $model->strata->id,
+								'epks_id' => $model->epks->id,
+								'epks_statement_id' => $model->id,
+								'date' => $request['sell_date'][$i],
+								'debit' => false,
+							],
+							[
+								'amount' => $request['sell_amount'][$i],
+							]
+						);
+
+						array_push($existingTrade, $sell->id);
 					}
 				}
 			}
 
-			if (!empty($request['ledger'])) {
-				EpksLedger::where('epks_statement_id', $model->id)->forceDelete();
+			EpksTrade::whereNotIn('id', $existingTrade)->delete();
 
+			if (!empty($request['ledger'])) {
 				foreach ($request['ledger'] as $name => $value) {
-					EpksLedger::create([
-						'file_id' => $model->file->id,
-						'strata_id' => $model->strata->id,
-						'epks_id' => $model->epks->id,
-						'epks_statement_id' => $model->id,
-						'name' => $name,
-						'amount' => $value,
-					]);
+					EpksLedger::updateOrCreate(
+						[
+							'file_id' => $model->file->id,
+							'strata_id' => $model->strata->id,
+							'epks_id' => $model->epks->id,
+							'epks_statement_id' => $model->id,
+							'name' => $name,
+						],
+						[
+							'amount' => $value,
+						]
+					);
 
 					if ($name == 'nett_profit') {
 						$model->update([
@@ -322,8 +338,6 @@ class EpksStatementController extends \BaseController
 					}
 				}
 			}
-
-			// return '<pre>' . print_r($request, true) . '</pre>';
 
 			return Redirect::back()->with('success', trans('app.successes.submit_successfully'));
 		}
