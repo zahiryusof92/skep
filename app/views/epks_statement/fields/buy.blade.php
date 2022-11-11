@@ -84,7 +84,7 @@
                     </td>
                     <td>
                         <input type="currency" id="buy_amount_{{ $count }}" name="buy_amount[]" oninput="totalBuy()"
-                            class="form-control form-control-sm" required />
+                            class="form-control form-control-sm" value="0" required />
                     </td>
                     <td>
                         &nbsp;
