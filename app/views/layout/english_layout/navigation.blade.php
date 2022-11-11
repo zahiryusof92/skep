@@ -93,7 +93,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
-                    <li id="cob_sync">
+                    <li id="cob_draft_reject_list">
                         <a class="left-menu-link" href="{{ route('file.draft.reject.index') }}">
                             {{ trans('app.menus.cob.file_reject_list') }}
                         </a>
@@ -208,13 +208,11 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.epks.draft') }}
                         </a>
                     </li>
-                    @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->hasEpks())
                     <li class="left-menu-list-link" id="epks_statement">
                         <a class="left-menu-link" href="{{ route('epksStatement.index') }}">
                             {{ trans('app.menus.epks_statement.name') }}
                         </a>
                     </li>
-                    @endif
                 </ul>
             </li>
             @endif

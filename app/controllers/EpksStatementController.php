@@ -18,7 +18,35 @@ class EpksStatementController extends \BaseController
 		$this->checkAvailableAccess();
 
 		if (Request::ajax()) {
-			$model = EpksStatement::query();
+			if (!Auth::user()->getAdmin()) {
+				if (!empty(Auth::user()->file_id)) {
+					$model = EpksStatement::with(['file'])
+						->whereHas('file', function ($q) {
+							$q->where('files.id', Auth::user()->file_id);
+							$q->where('files.company_id', Auth::user()->company_id);
+							$q->where('files.is_deleted', 0);
+						});
+				} else {
+					$model = EpksStatement::with(['file'])
+						->whereHas('file', function ($q) {
+							$q->where('files.company_id', Auth::user()->company_id);
+							$q->where('files.is_deleted', 0);
+						});
+				}
+			} else {
+				if (empty(Session::get('admin_cob'))) {
+					$model = EpksStatement::with(['file'])
+						->whereHas('file', function ($q) {
+							$q->where('files.is_deleted', 0);
+						});
+				} else {
+					$model = EpksStatement::with(['file'])
+						->whereHas('file', function ($q) {
+							$q->where('files.company_id', Session::get('admin_cob'));
+							$q->where('files.is_deleted', 0);
+						});
+				}
+			}
 
 			return Datatables::of($model)
 				->editColumn('month', function ($model) {
@@ -71,20 +99,14 @@ class EpksStatementController extends \BaseController
 
 		if (!Auth::user()->getAdmin()) {
 			if (!empty(Auth::user()->file_id)) {
-				$file_no = Files::with(['strata', 'epks'])
-					->whereHas('epks', function ($q) {
-						$q->where('epks.status', Epks::APPROVED);
-					})
+				$file_no = Files::with(['strata'])
 					->where('files.id', Auth::user()->file_id)
 					->where('files.company_id', Auth::user()->company_id)
 					->where('files.is_deleted', 0)
 					->orderBy('files.year', 'asc')
 					->get();
 			} else {
-				$file_no = Files::with(['strata', 'epks'])
-					->whereHas('epks', function ($q) {
-						$q->where('epks.status', Epks::APPROVED);
-					})
+				$file_no = Files::with(['strata'])
 					->where('files.company_id', Auth::user()->company_id)
 					->where('files.is_deleted', 0)
 					->orderBy('files.year', 'asc')
@@ -92,19 +114,13 @@ class EpksStatementController extends \BaseController
 			}
 		} else {
 			if (empty(Session::get('admin_cob'))) {
-				$file_no = Files::with(['strata', 'epks'])
-					->whereHas('epks', function ($q) {
-						$q->where('epks.status', Epks::APPROVED);
-					})
+				$file_no = Files::with(['strata'])
 					->where('files.is_deleted', 0)
 					->orderBy('files.year', 'asc')
 					->get();
 			} else {
-				$file_no = Files::with(['strata', 'epks'])
-					->whereHas('epks', function ($q) {
-						$q->where('epks.status', Epks::APPROVED);
-					})
-					->where('company_id', Session::get('admin_cob'))
+				$file_no = Files::with(['strata'])
+					->where('files.company_id', Session::get('admin_cob'))
 					->where('files.is_deleted', 0)
 					->orderBy('files.year', 'asc')
 					->get();
@@ -148,21 +164,18 @@ class EpksStatementController extends \BaseController
 		if ($validator->fails()) {
 			return Redirect::back()->withErrors($validator)->withInput();
 		} else {
-			$model = Epks::where('file_id', $request['file_id'])
-				->where('status', Epks::APPROVED)
-				->first();
-
+			$model = Files::with(['strata', 'approvedEpks'])->find($request['file_id']);
 			if ($model->count() > 0) {
-				$existing = EpksStatement::where('file_id', $model->file->id)
+				$existing = EpksStatement::where('file_id', $model->id)
 					->where('month', $request['month'])
 					->where('year', $request['year'])
 					->count();
 
 				if ($existing <= 0) {
 					$statement = EpksStatement::create([
-						'file_id' => $model->file->id,
-						'strata_id' => $model->file->strata->id,
-						'epks_id' => $model->id,
+						'file_id' => $model->id,
+						'strata_id' => $model->strata->id,
+						'epks_id' => ($model->approvedEpks ? $model->approvedEpks->id : 0),
 						'month' => $request['month'],
 						'year' => $request['year'],
 						'prepared_by' => Auth::user()->id,
@@ -170,6 +183,7 @@ class EpksStatementController extends \BaseController
 
 					return Redirect::route('epksStatement.show', Helper::encode($this->moduleName(), $statement->id))->with('success', trans('app.successes.submit_successfully'));
 				}
+
 				return Redirect::back()->with('error', trans('app.errors.exist2', ['attribute' => 'record']))->withInput();
 			}
 		}
@@ -188,34 +202,12 @@ class EpksStatementController extends \BaseController
 	{
 		$this->checkAvailableAccess();
 
-		$model = EpksStatement::with(['epks', 'buys', 'sells', 'ledgers'])
+		$model = EpksStatement::with(['buys', 'sells', 'ledgers'])
 			->find(Helper::decode($id, $this->moduleName()));
 		if ($model) {
 			$buys = ($model->buys->count() > 0 ? $model->buys->lists('amount', 'date') : '');
 			$sells = ($model->sells->count() > 0 ? $model->sells->lists('amount', 'date') : '');
 			$ledgers = ($model->ledgers->count() > 0 ? $model->ledgers->lists('amount', 'name') : '');
-
-			// $sells = EpksTrade::where('epks_statement_id', $model->id)
-			// 	->where('debit', false)
-			// 	->orderBy('id', 'asc')
-			// 	->get();
-
-			// $buys = EpksTrade::where('epks_statement_id', $model->id)
-			// 	->where('debit', true)
-			// 	->orderBy('id', 'asc')
-			// 	->get();
-
-			// $others_income = EpksLedger::where('epks_statement_id', $model->id)
-			// 	->where('name', 'others_income')
-			// 	->first();
-
-			// $salary = EpksLedger::where('epks_statement_id', $model->id)
-			// 	->where('name', 'salary')
-			// 	->first();
-
-			// $general = EpksLedger::where('epks_statement_id', $model->id)
-			// 	->where('name', 'general')
-			// 	->first();
 
 			$viewData = array(
 				'title' => trans('app.menus.epks_statement.name'),
@@ -226,14 +218,9 @@ class EpksStatementController extends \BaseController
 				'sells' => $sells,
 				'buys' => $buys,
 				'ledgers' => $ledgers,
-				// 'others_income' => $others_income,
-				// 'salary' => $salary,
-				// 'general' => $general,
 				'module' => $this->moduleName(),
 				'image' => ''
 			);
-
-			// return '<pre>' . print_r($ledgers->toArray(), true) . '</pre>';
 
 			return View::make('epks_statement.show', $viewData);
 		}
@@ -266,7 +253,8 @@ class EpksStatementController extends \BaseController
 
 		$request = Request::all();
 
-		$model = EpksStatement::find(Helper::decode($id, $this->moduleName()));
+		$model = EpksStatement::with(['file', 'strata', 'epks'])->find(Helper::decode($id, $this->moduleName()));
+
 		if ($model) {
 			$existingTrade = [];
 
@@ -276,8 +264,8 @@ class EpksStatementController extends \BaseController
 						$buy = EpksTrade::updateOrCreate(
 							[
 								'file_id' => $model->file->id,
-								'strata_id' => $model->strata->id,
-								'epks_id' => $model->epks->id,
+								'strata_id' => ($model->strata ? $model->strata->id : 0),
+								'epks_id' => ($model->epks ? $model->epks->id : 0),
 								'epks_statement_id' => $model->id,
 								'date' => $request['buy_date'][$i],
 								'debit' => true,
@@ -298,8 +286,8 @@ class EpksStatementController extends \BaseController
 						$sell = EpksTrade::updateOrCreate(
 							[
 								'file_id' => $model->file->id,
-								'strata_id' => $model->strata->id,
-								'epks_id' => $model->epks->id,
+								'strata_id' => ($model->strata ? $model->strata->id : 0),
+								'epks_id' => ($model->epks ? $model->epks->id : 0),
 								'epks_statement_id' => $model->id,
 								'date' => $request['sell_date'][$i],
 								'debit' => false,
@@ -314,15 +302,18 @@ class EpksStatementController extends \BaseController
 				}
 			}
 
-			EpksTrade::whereNotIn('id', $existingTrade)->delete();
+			EpksTrade::whereNotIn('id', $existingTrade)
+				->where('file_id', $model->file->id)
+				->where('epks_statement_id', $model->id)
+				->delete();
 
 			if (!empty($request['ledger'])) {
 				foreach ($request['ledger'] as $name => $value) {
 					EpksLedger::updateOrCreate(
 						[
 							'file_id' => $model->file->id,
-							'strata_id' => $model->strata->id,
-							'epks_id' => $model->epks->id,
+							'strata_id' => ($model->strata ? $model->strata->id : 0),
+							'epks_id' => ($model->epks ? $model->epks->id : 0),
 							'epks_statement_id' => $model->id,
 							'name' => $name,
 						],
@@ -417,10 +408,8 @@ class EpksStatementController extends \BaseController
 
 	private function checkAvailableAccess($model = '')
 	{
-		if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->hasEpks()) {
-			return true;
-		}
-
-		App::abort(404);
+		if(!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name != "MPS")) {
+            App::abort(404);
+        }
 	}
 }
