@@ -172,6 +172,9 @@ Route::post('/deleteFileList', 'AdminController@deleteFileList')->before('authMe
 
 Route::post('/updateFileNo', 'AdminController@updateFileNo')->before('authMember');
 
+//fixed deposit
+Route::get('/update/fixedDeposit/{id}', array('as' => 'cob.file.fixedDeposit.edit', 'uses' => 'FixedDepositController@edit'))->before('authMember');
+
 //house scheme
 Route::get('/view/house/{id}', 'AdminController@viewHouse')->before('authMember');
 Route::get('/update/house/{id}', array('as' => 'cob.file.house.edit', 'uses' => 'AdminController@house'))->before('authMember');
@@ -957,6 +960,7 @@ Route::group(array('before' => 'authMember'), function() {
     /*
      * My Point End
      */
+
     Route::get('epks/approval', ['as' => 'epks.approval', 'uses' => 'EPKSController@index']);
     Route::get('epks/draft', ['as' => 'epks.draft', 'uses' => 'EPKSController@index']);
     Route::post('epks/fileUpload', ['as' => 'epks.fileUpload', 'uses' => 'EPKSController@fileUpload']);
@@ -964,6 +968,10 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('epks/submitConfirm/{id}', ['as' => 'epks.submitConfirm', 'uses' => 'EPKSController@submitConfirm']);
     Route::post('epks/submitByCOB/{id}', ['as' => 'epks.submitByCOB', 'uses' => 'EPKSController@submitByCOB']);
     Route::resource('epks', 'EPKSController');
+    
+    Route::post('epksStatement/submit/{id}', ['as' => 'epksStatement.submit', 'uses' => 'EpksStatementController@submit']);
+    Route::get('epksStatement/print/{id}', ['as' => 'epksStatement.print', 'uses' => 'EpksStatementController@printStatement']);
+    Route::resource('epksStatement', 'EpksStatementController');
     
 
     /**

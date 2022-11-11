@@ -241,6 +241,10 @@ return array(
             'building' => 'API Building',
             'building_log' => 'API Building Log'
         ),
+        'epks_statement' => [
+            'name' => 'Statement',
+            'create' => 'Create Statement',
+        ]
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
@@ -694,6 +698,8 @@ return array(
         'accepted' => 'Accepted',
         'rejected' => 'Rejected',
         'old' => 'Old',
+        'prepared_by' => 'Prepared By',
+        'prepared_date' => 'Prepared Date',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1016,6 +1022,7 @@ return array(
         "add_new_application" => "Add New Application",
         "add_new" => "Add New",
         "reject" => "Reject",
+        'add_epks_statement' => 'Add New Statement',
     ),
     'directory' => [
         'title' => 'Directory',
@@ -1172,4 +1179,22 @@ return array(
         'approved' => 'Approved',
         'rejected' => 'Rejected',
     ],
+    'epks_statement' => [
+        'buy' => 'Belian',
+        'sell' => 'Jualan',
+        'profit' => 'Untung/Rugi',
+        'date' => 'Tarikh',
+        'buy_amount' => 'Hasil Belian', 
+        'sell_amount' => 'Hasil Jualan',        
+        'income' => 'Pendapatan',
+        'others_income' => 'Lain-lain Hasil (Modal MPS)',
+        'total' => 'Jumlah',
+        'total_all' => 'Jumlah Keseluruhan',
+        'product_cost' => 'Kos Produk Dijual',
+        'sell_cost' => 'Kos Jualan',
+        'gross_profit' => 'Untung Kasar',
+        'expenses' => 'Perbelanjaan',
+        'salary' => 'Gaji, Elaun & Upah',
+        'general' => 'Perbelanjaan Am',
+    ]
 );

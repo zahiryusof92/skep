@@ -60,6 +60,13 @@
         </a>
     </li>
     @endif
+
+    {{-- <li class="nav-item">
+        <a class="nav-link @if(Request::is('update/fixedDeposit/*')) active @endif custom-tab" @if(!Request::is('update/fixedDeposit/*')) href="{{ route('cob.file.fixedDeposit.edit', \Helper\Helper::encode($files->id)) }}" @endif>
+            {{ trans('app.forms.fixed_deposit') }}
+        </a>
+    </li> --}}
+
 </ul>
 @else
 <ul class="nav nav-pills nav-justified" role="tablist">
