@@ -254,6 +254,7 @@ class EpksStatementController extends \BaseController
 		$request = Request::all();
 
 		$model = EpksStatement::with(['file', 'strata', 'epks'])->find(Helper::decode($id, $this->moduleName()));
+
 		if ($model) {
 			$existingTrade = [];
 
