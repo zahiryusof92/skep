@@ -99,30 +99,41 @@
                             </table>
                         </div>
                     </div>
+
+                    <?php
+                    $barData[] = array(
+                        'name' => 'Zon Biru',
+                        'data' => $barBiru,
+                        'color' => 'blue'
+                    );
+
+                    $barData[] = array(
+                        'name' => 'Zon Kuning',
+                        'data' => $barKuning,
+                        'color' => 'yellow'
+                    );
+
+                    $barData[] = array(
+                        'name' => 'Zon Merah',
+                        'data' => $barMerah,
+                        'color' => 'red'
+                    );
+
+                    $height = (count($file_info) * 3) * 30;
+                    ?>
+                    @else
+                    <?php 
+                    $height = 0;
+                    
+                    $category = '';
+                    $barBiru = '';
+                    $barKuning = '';
+                    $barMerah = '';
+
+                    $barData = '';
+                    ?>
+                    @endif
                 </section>
-
-                <?php
-                $barData[] = array(
-                    'name' => 'Zon Biru',
-                    'data' => $barBiru,
-                    'color' => 'blue'
-                );
-
-                $barData[] = array(
-                    'name' => 'Zon Kuning',
-                    'data' => $barKuning,
-                    'color' => 'yellow'
-                );
-
-                $barData[] = array(
-                    'name' => 'Zon Merah',
-                    'data' => $barMerah,
-                    'color' => 'red'
-                );
-
-                $height = (count($file_info) * 3) * 30;
-                ?>
-                @endif
 
                 <hr/>
 

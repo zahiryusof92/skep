@@ -128,6 +128,11 @@
                             </table>
                         </div>
                     </div>
+                    @else
+                    <?php
+                        $dunChart = '';
+                        $catChart = '';
+                    ?>
                     @endif
                 </section>
 

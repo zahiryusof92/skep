@@ -595,6 +595,8 @@ class ReportController extends BaseController
 
     public function strataProfile()
     {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
@@ -609,7 +611,6 @@ class ReportController extends BaseController
         }
 
         $data = Files::getStrataProfileAnalytic();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
 
         $viewData = array(
             'title' => trans('app.menus.reporting.strata_profile'),
@@ -790,6 +791,7 @@ class ReportController extends BaseController
                 $lif = 'TIADA';
                 $lif_unit = 0;
                 $type_meter = '';
+                $ageing = [];
 
                 if ($files) {
                     $pbt = $files->company->short_name;
@@ -863,7 +865,27 @@ class ReportController extends BaseController
                 } else {
                     $zone = "KELABU";
                 }
+
+                $finances = Finance::with(['financeIncome'])
+                    ->whereHas('financeIncome', function ($q) {
+                        $q->where('finance_file_income.name', 'MAINTENANCE FEE');
+                        $q->orWhere('finance_file_income.name', 'SINKING FUND');
+                    })
+                    ->where('finance_file.file_id', $files->id)
+                    ->where('finance_file.is_active', 1)
+                    ->where('finance_file.is_deleted', 0)
+                    ->orderBy('finance_file.year', 'desc')
+                    ->orderBy('finance_file.month', 'desc')
+                    ->get();
+
+                if ($finances->count() > 0) {
+                    foreach ($finances as $finance) {
+                        $ageing[$finance->year][$finance->month] = $finance->toArray();
+                    }
+                }
             }
+
+            return '<pre>' . print_r($ageing, true) . '</pre>';
 
             $result = array(
                 'pbt' => $pbt,

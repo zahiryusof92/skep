@@ -77,14 +77,6 @@ $company = Company::find(Auth::user()->company_id);
                                     </select>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.strata') }}</label>
-                                    <select id="strata" name="strata" class="form-control">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    </select>
-                                </div>
-                            </div> --}}
                             <div class="col-lg-12">
                                 <span style="font-size: 12px;"><b>{{ trans('app.forms.date_audited') }}: </b></span>&nbsp;
                                 <input style="font-size: 12px;" id="date_from" data-column="0" type="text" class="form-control width-150 display-inline-block datetimepicker" placeholder="From"/>
