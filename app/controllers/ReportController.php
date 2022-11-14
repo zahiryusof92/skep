@@ -716,7 +716,8 @@ class ReportController extends BaseController
             ->where('finance_file.is_active', true)
             ->where('finance_file.is_deleted', false)
             ->selectRaw('finance_file.*, files.file_no')
-            ->orderBy('finance_file.id', 'desc');
+            ->orderBy('finance_file.year', 'desc')
+            ->orderBy('finance_file.month', 'desc');
 
         return Datatables::of($finance)
             ->addColumn('zone', function ($model) {
@@ -791,6 +792,9 @@ class ReportController extends BaseController
                 $lif = 'TIADA';
                 $lif_unit = 0;
                 $type_meter = '';
+                $latest_percentage = 0;
+                $zone = 'KELABU';
+                $rate = [];
                 $ageing = [];
 
                 if ($files) {
@@ -823,54 +827,60 @@ class ReportController extends BaseController
                     $tnb = ucfirst($files->other->tnb);
                 }
 
-                if ($files->financeLatest) {
-                    $finance = $files->financeLatest;
-                    $finance_income = $finance->financeIncome;
-                    $finance_report_fee = $finance->financeReport;
-                    $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
-                    $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+                
 
-                    if ($finance_income) {
-                        foreach ($finance_report_fee as $report) {
-                            if ($report->type == 'MF') {
-                                $mf_rate = $report->fee_sebulan;
-                            }
-                            if ($report->type == 'SF') {
-                                $sf_rate = $report->fee_sebulan;
-                                $sepatut_dikutip = $sepatut_dikutip + $report->fee_semasa;
-                            }
-                        }
-                        foreach ($finance_income as $income) {
-                            if ($income->name == 'SINKING FUND') {
-                                $berjaya_dikutip = $berjaya_dikutip + $income->semasa;
-                            }
-                        }
+                $latest_finance = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
+                    ->where('finance_file.file_id', $files->id)
+                    ->where('finance_file.is_active', 1)
+                    ->where('finance_file.is_deleted', 0)
+                    ->orderBy('finance_file.year', 'desc')
+                    ->orderBy('finance_file.month', 'desc')
+                    ->first();
+
+                if ($latest_finance->count() > 0) {
+                    $latest_mf_fee_semasa = $latest_finance->financeReportMF->sum('fee_semasa');
+                    $latest_sf_fee_semasa = $latest_finance->financeReportSF->sum('fee_semasa');
+                    $latest_fee_semasa = $latest_mf_fee_semasa + $latest_sf_fee_semasa;
+
+                    $latest_mf_fee_semasa_extra = $latest_finance->financeReportMFExtra->sum('fee_semasa');
+                    $latest_sf_fee_semasa_extra = $latest_finance->financeReportSFExtra->sum('fee_semasa');
+                    $latest_fee_semasa_extra = $latest_mf_fee_semasa_extra + $latest_sf_fee_semasa_extra;
+
+                    $total_latest_sepatut_dikutip = $latest_fee_semasa + $latest_fee_semasa_extra;
+
+                    $latest_mf_income = $latest_finance->financeIncomeMF->sum('semasa');
+                    $latest_sf_income = $latest_finance->financeIncomeSF->sum('semasa');
+                    $total_latest_berjaya_dikutip = $latest_mf_income + $latest_sf_income;
+
+                    if ($total_latest_berjaya_dikutip > 0 && $total_latest_sepatut_dikutip > 0) {
+                        $latest_percentage = round(($total_latest_berjaya_dikutip / $total_latest_sepatut_dikutip) * 100, 2);
                     }
 
-                    if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
-                        $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
-                    }
-
-                    if ($finance_report_fee_semasa > 0) {
-                        if ($purata_dikutip >= 80) {
-                            $zone = 'BIRU';
-                        } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
-                            $zone = 'KUNING';
-                        } else {
-                            $zone = "MERAH";
-                        }
+                    if ($latest_percentage >= 80) {
+                        $zone = 'BIRU';
+                    } else if ($latest_percentage < 79 && $latest_percentage >= 50) {
+                        $zone = 'KUNING';
                     } else {
-                        $zone = "KELABU";
+                        $zone = "MERAH";
                     }
-                } else {
-                    $zone = "KELABU";
+
+                    $rate = [
+                        'mf_fee' => $latest_finance->financeReportMF->lists('fee_sebulan'),
+                        'mf_fee_extra' => $latest_finance->financeReportMFExtra->lists('fee_sebulan'),
+                        'sf_fee' => $latest_finance->financeReportSF->lists('fee_sebulan'),
+                        'sf_fee_extra' => $latest_finance->financeReportSFExtra->lists('fee_sebulan'),
+                    ];
                 }
 
-                $finances = Finance::with(['financeIncome'])
-                    ->whereHas('financeIncome', function ($q) {
-                        $q->where('finance_file_income.name', 'MAINTENANCE FEE');
-                        $q->orWhere('finance_file_income.name', 'SINKING FUND');
-                    })
+                $collection = [
+                    'rate' => $rate,
+                    'percentage' => $latest_percentage,
+                    'zone' => $zone,
+                ];
+
+                // return '<pre>' . print_r($collection, true) . '</pre>';
+
+                $finances = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
                     ->where('finance_file.file_id', $files->id)
                     ->where('finance_file.is_active', 1)
                     ->where('finance_file.is_deleted', 0)
@@ -880,12 +890,37 @@ class ReportController extends BaseController
 
                 if ($finances->count() > 0) {
                     foreach ($finances as $finance) {
-                        $ageing[$finance->year][$finance->month] = $finance->toArray();
+                        $mf_fee_semasa = $finance->financeReportMF->sum('fee_semasa');
+                        $sf_fee_semasa = $finance->financeReportSF->sum('fee_semasa');
+                        $fee_semasa = $mf_fee_semasa + $sf_fee_semasa;
+
+                        $mf_fee_semasa_extra = $finance->financeReportMFExtra->sum('fee_semasa');
+                        $sf_fee_semasa_extra = $finance->financeReportSFExtra->sum('fee_semasa');
+                        $fee_semasa_extra = $mf_fee_semasa_extra + $sf_fee_semasa_extra;
+
+                        $total_sepatut_dikutip = $fee_semasa + $fee_semasa_extra;
+
+                        $mf_income = $finance->financeIncomeMF->sum('semasa');
+                        $sf_income = $finance->financeIncomeSF->sum('semasa');
+                        $total_berjaya_dikutip = $mf_income + $sf_income;
+
+                        $percentage = 0;
+                        if ($total_berjaya_dikutip > 0 && $total_sepatut_dikutip > 0) {
+                            $percentage = round(($total_berjaya_dikutip / $total_sepatut_dikutip) * 100, 2);
+                        }
+
+                        $ageing[$finance->year][$finance->monthName()] = [
+                            'fee_semasa' => $fee_semasa,
+                            'fee_semasa_extra' => $fee_semasa_extra,
+                            'sepatut_dikutip' => $total_sepatut_dikutip,
+                            'berjaya_dikutip' => $total_berjaya_dikutip,
+                            'percentage' => $percentage,
+                        ];
                     }
                 }
             }
 
-            return '<pre>' . print_r($ageing, true) . '</pre>';
+            // return '<pre>' . print_r($ageing, true) . '</pre>';
 
             $result = array(
                 'pbt' => $pbt,
@@ -900,8 +935,12 @@ class ReportController extends BaseController
                 'lif_unit' => $lif_unit,
                 'type_meter' => $type_meter,
                 'tnb' => $tnb,
-                'purata_dikutip' => $purata_dikutip
+                'purata_dikutip' => $purata_dikutip,
+                'collection' => $collection,
+                'ageing' => $ageing,
             );
+
+            // return '<pre>' . print_r($result, true) . '</pre>';
 
             $viewData = array(
                 'title' => trans('app.menus.reporting.strata_profile'),

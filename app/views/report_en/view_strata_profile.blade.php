@@ -80,6 +80,9 @@
                     </div>
                 </div>
 
+                <pre>{{ print_r($result['collection'], true) }}</pre>
+
+                @if (!empty($result['collection']))
                 <div class="row" style="margin-top: 25px;">
                     <div class="col-lg-12">
                         <table border="1" id="fee_table" width="100%">
@@ -87,7 +90,7 @@
                                 <tr>
                                     <th style="width:35%; text-align: center !important; vertical-align:middle !important;">KADAR CAJ (RM)</th>
                                     <th style="width:35%; text-align: center !important; vertical-align:middle !important;">KADAR SINKING FUND (RM)</th>
-                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">% PURATA KUTIPAN TAHUNAN</th>
+                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">PURATA KUTIPAN TAHUNAN (%)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,6 +99,46 @@
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['sf_rate'] }}</td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">{{ $result['purata_dikutip'] }}</td>
                                 </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @endif
+                @endif
+
+                @if (!empty($result['ageing']))
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-lg-12">
+                        <table border="1" id="support_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                        {{ trans('TAHUN') }}
+                                    </th>
+                                    <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                        {{ trans('BULAN') }}
+                                    </th>
+                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
+                                        {{ trans('PURATA KUTIPAN') }} (%)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($result['ageing'] as $year => $months)
+                                    @foreach ($months as $month => $data)
+                                        <tr>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $year }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $month }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $data['percentage'] }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -304,8 +347,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -321,12 +362,10 @@
                                 'url' : route,
                             },
                             lengthMenu: [[15, 30, 50], [15, 30, 50]],
-                            pageLength: 30,
-                            order: [[1, "desc"]],
-                            responsive: true,
+                            pageLength: 15,
                             scrollX: true,
                             columns: [
-                                {data: 'file_id', name: 'files.file_no'},
+                                {data: 'file_id', name: 'files.file_no', orderable: false},
                                 {data: 'zone', name: 'zone', orderable: false, searchable: false}
                             ],
                             columnDefs: [

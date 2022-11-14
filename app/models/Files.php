@@ -31,8 +31,12 @@ class Files extends Eloquent {
         return $this->hasMany('Finance', 'file_id');
     }
 
-    public function financeLatest() {
-        return $this->hasOne('Finance', 'file_id')->where('is_active', true)->latest();
+    public function financeLatest()
+    {
+        return $this->hasOne('Finance', 'file_id')
+            ->where('finance_file.is_active', true)
+            ->orderBy('finance_file.year', 'desc')
+            ->orderBy('finance_file.month', 'desc');
     }
 
     public function company() {
