@@ -80,9 +80,6 @@
                     </div>
                 </div>
 
-                <pre>{{ print_r($result['collection'], true) }}</pre>
-
-                @if (!empty($result['collection']))
                 <div class="row" style="margin-top: 25px;">
                     <div class="col-lg-12">
                         <table border="1" id="fee_table" width="100%">
@@ -104,7 +101,6 @@
                     </div>
                 </div>
                 @endif
-                @endif
 
                 @if (!empty($result['ageing']))
                 <div class="row" style="margin-top: 25px;">
@@ -119,30 +115,62 @@
                                         {{ trans('BULAN') }}
                                     </th>
                                     <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
-                                        {{ trans('PURATA KUTIPAN') }} (%)
+                                        {{ trans('PERATUSAN KUTIPAN BULANAN') }} (%)
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($result['ageing'] as $year => $months)
-                                    @foreach ($months as $month => $data)
-                                        <tr>
-                                            <td style="text-align: center !important; vertical-align:middle !important;">
-                                                {{ $year }}
-                                            </td>
-                                            <td style="text-align: center !important; vertical-align:middle !important;">
-                                                {{ $month }}
-                                            </td>
-                                            <td style="text-align: center !important; vertical-align:middle !important;">
-                                                {{ $data['percentage'] }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                @foreach ($result['ageing'] as $ageing)
+                                <tr>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">
+                                        {{ $ageing['year'] }}
+                                    </td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">
+                                        {{ Str::upper($ageing['month_name']) }}
+                                    </td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">
+                                        {{ $ageing['percentage'] }}
+                                    </td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
+                @endif
+
+                @if (!empty($result['ageing_graph']))
+                <div id="ageing_chart" style="margin-top: 20px;"></div>
+
+                <script>
+                    Highcharts.chart('ageing_chart', {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: '{{ trans("Peratusan Kutipan Bulanan") }}'
+                        },
+                        xAxis: {
+                            categories : <?php echo json_encode($result['ageing_graph']['months']); ?>
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Peratus (%)'
+                            }
+                        },
+                        plotOptions: {
+                            line: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                            }
+                        },
+                        series: [{
+                            name: 'Peratusan Kutipan',
+                            data: <?php echo json_encode($result['ageing_graph']['percentages']); ?>
+                        }]
+                    });
+                </script>
                 @endif
 
                 @if ($files->financeSupport)
