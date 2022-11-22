@@ -271,7 +271,7 @@ return array(
             'name' => 'Status AGM Reason',
             'create' => 'Create Status AGM Reason',
             'edit' => 'Edit Status AGM Reason',
-        )
+        ),
         'epks_statement' => [
             'name' => 'Statement',
             'create' => 'Create Statement',
