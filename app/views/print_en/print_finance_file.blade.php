@@ -32,7 +32,7 @@ $company = Company::find(Auth::user()->company_id);
             <table class="table table-sm table-bordered" style="width: 100%">
                 <tbody>
                     <tr>
-                        <th style="width: 20%">{{ trans("app.forms.finance_management") }}</th>
+                        <th style="width: 20%">{{ trans("app.forms.file_no") }}</th>
                         <td style="width: 80%">{{ $financefiledata->file->file_no }}</td>
                     </tr>
                     <tr>
@@ -40,13 +40,13 @@ $company = Company::find(Auth::user()->company_id);
                         <td>{{ $financefiledata->file->strata->strataName() }}</td>
                     </tr>
                     <tr>
-                        <th>{{ trans("app.forms.year") }}</th>
-                        <td>{{ $financefiledata->year }}</td>
-                    </tr>
-                    <tr>
                         <th>{{ trans("app.forms.month") }}</th>
                         <td>{{ $financefiledata->monthName() }}</td>
-                    </tr>                            
+                    </tr> 
+                    <tr>
+                        <th>{{ trans("app.forms.year") }}</th>
+                        <td>{{ $financefiledata->year }}</td>
+                    </tr>                                               
                 </tbody>
             </table>
 

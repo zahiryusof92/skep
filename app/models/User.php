@@ -224,4 +224,32 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return $this->hasOne('AuditTrail', 'audit_by')->where('remarks', 'like', '%' . 'is signed' . '%');
     }
 
+    public function hasEpks() {
+        if (Auth::user()->isJMB()) {
+            if (Auth::user()->file_id) {
+                $file = Files::find(Auth::user()->file_id);
+
+                if ($file && $file->approvedEpks()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function myEpks() {
+        if (Auth::user()->isJMB()) {
+            if (Auth::user()->file_id) {
+                $file = Files::find(Auth::user()->file_id);
+
+                if ($file && $file->approvedEpks()) {
+                    return $file->approvedEpks();
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

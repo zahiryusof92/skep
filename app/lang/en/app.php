@@ -272,6 +272,10 @@ return array(
             'create' => 'Create Status AGM Reason',
             'edit' => 'Edit Status AGM Reason',
         )
+        'epks_statement' => [
+            'name' => 'Statement',
+            'create' => 'Create Statement',
+        ]
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
@@ -757,6 +761,8 @@ return array(
         'residential' => 'Residential',
         'checklist' => 'Checklist',
         'return_checklist' => 'Return Checklist',
+        'prepared_by' => 'Prepared By',
+        'prepared_date' => 'Prepared Date',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1089,6 +1095,7 @@ return array(
         "reject" => "Reject",
         'postpone_agm_reason' => 'Status AGM Reason',
         'add_deposit' => 'Add Deposit',
+        'add_epks_statement' => 'Add New Statement',
     ),
     'directory' => [
         'title' => 'Directory',
@@ -1265,4 +1272,22 @@ return array(
             'returned' => 'Returned',
         ],
     ],
+    'epks_statement' => [
+        'buy' => 'Belian',
+        'sell' => 'Jualan',
+        'profit' => 'Untung/Rugi',
+        'date' => 'Tarikh',
+        'buy_amount' => 'Hasil Belian', 
+        'sell_amount' => 'Hasil Jualan',        
+        'income' => 'Pendapatan',
+        'others_income' => 'Lain-lain Hasil (Modal MPS)',
+        'total' => 'Jumlah',
+        'total_all' => 'Jumlah Keseluruhan',
+        'product_cost' => 'Kos Produk Dijual',
+        'sell_cost' => 'Kos Jualan',
+        'gross_profit' => 'Untung Kasar',
+        'expenses' => 'Perbelanjaan',
+        'salary' => 'Gaji, Elaun & Upah',
+        'general' => 'Perbelanjaan Am',
+    ]
 );

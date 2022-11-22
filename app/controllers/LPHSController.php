@@ -2261,7 +2261,7 @@ class LPHSController extends BaseController
                             $total_mf_outstanding = $total_mf_sepatut_dikutip - $total_mf_berjaya_dikutip;
                             $total_sf_outstanding = $total_sf_sepatut_dikutip - $total_sf_berjaya_dikutip;
                             $total_mf_sf_outstanding = $total_mf_sf_sepatut_dikutip - $total_mf_sf_berjaya_dikutip;
-                            
+
                             $developer_name = '';
                             $developer_phone = '';
                             if ($file->managementDeveloper) {
@@ -2296,7 +2296,7 @@ class LPHSController extends BaseController
                                 $other_name = $file->managementOthers->name;
                                 $other_phone = $file->managementOthers->phone_no;
                             }
-                            
+
                             $result[$file->id] = [
                                 'Council' => $council->short_name,
                                 'File No' => $file->file_no,
@@ -2329,5 +2329,82 @@ class LPHSController extends BaseController
         }
 
         return $this->result($result, $filename = 'Finance_Outstanding_' . strtoupper($cob));
+    }
+
+    public function strataByCategory($cob = null)
+    {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+                        $strata = ($file->strata ? $file->strata->name : '');
+                        $category = ($file->strata->categories ? $file->strata->categories->description : '');
+                        $resident = ($file->resident ? $file->resident->unit_no : 0);
+                        $commercial = ($file->commercial ? $file->commercial->unit_no : 0);
+
+                        $developer_name = '';
+                        $developer_phone = '';
+                        if ($file->managementDeveloper) {
+                            $developer_name = $file->managementDeveloper->name;
+                            $developer_phone = $file->managementDeveloper->phone_no;
+                        }
+
+                        $jmb_name = '';
+                        $jmb_phone = '';
+                        if ($file->managementJMB) {
+                            $jmb_name = $file->managementJMB->name;
+                            $jmb_phone = $file->managementJMB->phone_no;
+                        }
+
+                        $mc_name = '';
+                        $mc_phone = '';
+                        if ($file->managementMC) {
+                            $mc_name = $file->managementMC->name;
+                            $mc_phone = $file->managementMC->phone_no;
+                        }
+
+                        $agent_name = '';
+                        $agent_phone = '';
+                        if ($file->managementAgent) {
+                            $agent_name = $file->managementAgent->name;
+                            $agent_phone = $file->managementAgent->phone_no;
+                        }
+
+                        $other_name = '';
+                        $other_phone = '';
+                        if ($file->managementOthers) {
+                            $other_name = $file->managementOthers->name;
+                            $other_phone = $file->managementOthers->phone_no;
+                        }
+
+                        $result[$file->id] = [
+                            'Council' => $file->company->short_name,
+                            'File No' => $file->file_no,
+                            'Strata Name' => $strata,
+                            'Category' => $category,
+                            'Resident' => $resident,
+                            'Commercial' => $commercial,
+                            'Total Unit' => $resident + $commercial,
+                            'Developer Name' => $developer_name,
+                            'Developer Phone No.' => $developer_phone,
+                            'JMB Name' => $jmb_name,
+                            'JMB Phone No.' => $jmb_phone,
+                            'MC Name' => $mc_name,
+                            'MC Phone No.' => $mc_phone,
+                            'Agent Name' => $agent_name,
+                            'Agent Phone No.' => $agent_phone,
+                            'Other Name' => $other_name,
+                            'Other Phone No.' => $other_phone,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Strata_By_Category_' . strtoupper($cob));
     }
 }

@@ -330,7 +330,7 @@ foreach ($user_permission as $permission) {
                 {data: 'strata', name: 'strata.name'},
                 {data: 'month', name: 'finance_file.month'},
                 {data: 'year', name: 'finance_file.year'},
-                {data: 'active', name: 'files.is_active', searchable: false},
+                {data: 'status', name: 'status', searchable: false},
                 {data: 'created_at', name: 'finance_file.created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],

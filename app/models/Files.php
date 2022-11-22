@@ -621,11 +621,16 @@ class Files extends Eloquent
         $max_year = date('Y');
 
         $year = array('' => trans('app.forms.please_select'));
-        for ($max_year; $max_year >= $min_year; $max_year--) {
-            $year += array($max_year => $max_year);
+
+        if (!empty($min_year)) {
+            for ($max_year; $max_year >= $min_year; $max_year--) {
+                $year += array($max_year => $max_year);
+            }
+
+            return $year;
         }
 
-        return $year;
+        return $year += array($max_year => $max_year);
     }
 
     public static function getVPReport($cob_id = NULL, $year = NULL)
@@ -2621,4 +2626,13 @@ class Files extends Eloquent
 
         return '';
     }
+    
+    public function epks() {
+        return $this->hasOne('Epks', 'file_id');
+    }
+
+    public function approvedEpks() {
+        return $this->hasOne('Epks', 'file_id')->where('epks.status', Epks::APPROVED);
+    }
+
 }

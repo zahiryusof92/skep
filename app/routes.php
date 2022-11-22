@@ -63,6 +63,8 @@ Route::get('/lphs/insurance/{council}', 'LPHSController@insurance');
 
 Route::get('/lphs/financeOutstanding/{council}', 'LPHSController@financeOutstanding');
 
+Route::get('/lphs/strataByCategory/{council}', 'LPHSController@strataByCategory');
+
 /*
  * LPHS REPORT END
  */
@@ -171,6 +173,9 @@ Route::post('/inactiveFileList', 'AdminController@inactiveFileList')->before('au
 Route::post('/deleteFileList', 'AdminController@deleteFileList')->before('authMember');
 
 Route::post('/updateFileNo', 'AdminController@updateFileNo')->before('authMember');
+
+//fixed deposit
+Route::get('/update/fixedDeposit/{id}', array('as' => 'cob.file.fixedDeposit.edit', 'uses' => 'FixedDepositController@edit'))->before('authMember');
 
 //house scheme
 Route::get('/view/house/{id}', 'AdminController@viewHouse')->before('authMember');
@@ -962,6 +967,7 @@ Route::group(array('before' => 'authMember'), function() {
     /*
      * My Point End
      */
+
     Route::get('epks/approval', ['as' => 'epks.approval', 'uses' => 'EPKSController@index']);
     Route::get('epks/draft', ['as' => 'epks.draft', 'uses' => 'EPKSController@index']);
     Route::post('epks/fileUpload', ['as' => 'epks.fileUpload', 'uses' => 'EPKSController@fileUpload']);
@@ -1013,6 +1019,10 @@ Route::group(array('before' => 'authMember'), function() {
      * Ledger
      */
     Route::resource('ledger', 'LedgerController');
+    
+    Route::post('epksStatement/submit/{id}', ['as' => 'epksStatement.submit', 'uses' => 'EpksStatementController@submit']);
+    Route::get('epksStatement/print/{id}', ['as' => 'epksStatement.print', 'uses' => 'EpksStatementController@printStatement']);
+    Route::resource('epksStatement', 'EpksStatementController');
 
     /**
      * Reporting
