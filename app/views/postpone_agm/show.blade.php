@@ -254,56 +254,10 @@
     <!-- End -->
 </div>
 
-<div class="modal fade" id="verifyModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
-    data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <form id="verifyForm" class="form-horizontal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{ trans('Verify') }}</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label style="color: red; font-style: italic;">*
-                                    {{ trans('app.forms.mandatory_fields') }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="form-control-label">
-                                    <span style="color: red;">*</span>
-                                    {{ trans('app.forms.password') }}
-                                </label>
-                                <input type="password" id="password" name="password" class="form-control"
-                                    placeholder="{{ trans('app.forms.password') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <img id="loading_modal" style="display:none;"
-                        src="{{asset('assets/common/img/input-spinner.gif')}}" />
-                    <button type="modal" id="submit_button_modal" class="btn btn-own">
-                        {{ trans('app.forms.submit') }}
-                    </button>
-                    <button data-dismiss="modal" id="cancel_button_modal" class="btn btn-default" type="button">
-                        {{ trans('app.forms.cancel') }}
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready( function () {
         $('.select2').select2();
+
         $(".date_picker").datetimepicker({
             widgetPositioning: {
                 horizontal: 'left'
@@ -318,72 +272,57 @@
             },
             format: 'YYYY-MM-DD'
         });
+
         $("#submit_button").click(function (e) {
             e.preventDefault();
-            (async () => {
-                const { value: password } = await Swal.fire({
-                    title: 'Your password',
-                    input: 'password',
-                    inputPlaceholder: 'Enter your password',
-                    showCancelButton: true,
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'Please enter your password!'
+
+            $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
+            let route = "{{ route('statusAGM.submitByCOB', [':id']) }}";
+            route = route.replace(':id', "{{ \Helper\Helper::encode($model->id) }}");
+            let formData = $('#postponed_agm_form').serialize();
+            $.ajax({
+                url: route,
+                type: "POST",
+                data: formData,
+                dataType: 'JSON',
+                beforeSend: function() {
+                    $('.help-block').text("");
+                    $("#loading").css("display", "inline-block");
+                    $("#submit_button").attr("disabled", "disabled");
+                    $("#cancel_button").attr("disabled", "disabled");
+                },
+                success: function (res) {
+                    console.log(res);
+                    if (res.success == true) {
+                        bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
+                            location.reload();
+                        });
+                    } else {
+                        if(res.errors !== undefined) {
+                            $.each(res.errors, function (key, value) {
+                                if(key.includes('_tmp')) {
+                                    let myId = key.replace(/_tmp/g, '');
+                                    $("#" + myId + "_error").children("strong").text(value);
+                                } else {
+                                    $("#" + key + "_error").children("strong").text(value);
+                                }
+                            });
+                        }
+                        
+                        if (res.message != "Validation Fail") {
+                            bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
+                        } else {
+                            bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
                         }
                     }
-                })
-                if (password) {
-                    $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
-                    let route = "{{ route('statusAGM.submitByCOB', [':id']) }}";
-                    route = route.replace(':id', "{{ \Helper\Helper::encode($model->id) }}");
-                    let formData = $('#postponed_agm_form').serialize();
-                    $.ajax({
-                        url: route,
-                        type: "POST",
-                        data: formData,
-                        dataType: 'JSON',
-                        beforeSend: function() {
-                            $('.help-block').text("");
-                            $("#loading").css("display", "inline-block");
-                            $("#submit_button").attr("disabled", "disabled");
-                            $("#cancel_button").attr("disabled", "disabled");
-                        },
-                        success: function (res) {
-                            console.log(res);
-                            if (res.success == true) {
-                                bootbox.alert("<span style='color:green;'>" + res.message + "</span>", function () {
-                                    location.reload();
-                                });
-                            } else {
-                                if(res.errors !== undefined) {
-                                    $.each(res.errors, function (key, value) {
-                                        if(key.includes('_tmp')) {
-                                            let myId = key.replace(/_tmp/g, '');
-                                            $("#" + myId + "_error").children("strong").text(value);
-                                        } else {
-                                            $("#" + key + "_error").children("strong").text(value);
-                                        }
-                                    });
-                                }
-                                
-                                if (res.message != "Validation Fail") {
-                                    bootbox.alert("<span style='color:red;'>" + res.message + "</span>");
-                                } else {
-                                    bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
-                                }
-                            }
-                        },
-                        complete: function() {
-                            $.unblockUI();
-                            $("#loading").css("display", "none");
-                            $("#submit_button").removeAttr("disabled");
-                            $("#cancel_button").removeAttr("disabled");
-                        },
-                    });
-                }
-            })()             
+                },
+                complete: function() {
+                    $.unblockUI();
+                    $("#loading").css("display", "none");
+                    $("#submit_button").removeAttr("disabled");
+                    $("#cancel_button").removeAttr("disabled");
+                },
+            });                          
         });
     });
 
