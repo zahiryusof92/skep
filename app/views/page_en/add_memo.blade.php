@@ -52,6 +52,23 @@ foreach ($user_permission as $permission) {
                             <input type="hidden" id="company" name="company" value="{{ Auth::user()->company_id }}"/>
                             @endif
 
+                            @if ($fileList)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ trans('app.forms.file_no') }}</label>
+                                        <select id="file_id" name="file_id" class="form-control select2">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            @foreach ($fileList as $id => $name)
+                                            <option value="{{ $id }}">{{ $name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div id="file_id_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
                             <div class="row">                            
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -274,6 +291,7 @@ foreach ($user_permission as $permission) {
         $("#loading").css("display", "inline-block");
 
         var company = $("#company").val(),
+                file = $("#file_id").val(),
                 memo_type = $("#memo_type").val(),
                 memo_date = $("#memo_date").val(),
                 publish_date = $("#publish_date").val(),
@@ -329,6 +347,7 @@ foreach ($user_permission as $permission) {
                 type: "POST",
                 data: {
                     company: company,
+                    file: file,
                     memo_type: memo_type,
                     memo_date: memo_date,
                     publish_date: publish_date,

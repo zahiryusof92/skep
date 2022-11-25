@@ -124,6 +124,7 @@ Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMembe
 Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
 Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 Route::get('/home/getInsuranceRemainder', 'HomeController@getInsuranceRemainder')->before('authMember');
+Route::get('/home/getActiveMemoHome', 'HomeController@getActiveMemoHome')->before('authMember');
 
 // --- COB Maintenance --- //
 //file prefix
@@ -152,6 +153,7 @@ Route::post('/draft/submitOthers', 'DraftController@submitOthers')->before('auth
 Route::post('/draft/deleteFile', 'DraftController@deleteFile')->before('authMember');
 
 //add file
+Route::get('/getLatestFile', 'AdminController@getLatestFile')->before('authMember');
 Route::get('/addFile', 'AdminController@addFile')->before('authMember');
 Route::post('/submitFile', 'AdminController@submitFile')->before('authMember');
 
@@ -503,6 +505,10 @@ Route::post('/deleteDefectAttachment', 'AdminController@deleteDefectAttachment')
 Route::post('/uploadDefectAttachment', 'FileController@uploadDefectAttachment')->before('authMember');
 
 ########################## Master Setup ##########################
+
+//postponeAGMReason
+Route::resource('statusAGMReason', 'PostponeAGMReasonController');
+
 //area
 Route::get('/area', 'SettingController@area')->before('authMember');
 Route::get('/addArea', 'SettingController@addArea')->before('authMember');
@@ -740,6 +746,7 @@ Route::get('/reporting/ratingSummary', 'ReportController@ratingSummary')->before
 //management summary
 Route::get('/reporting/managementSummary', 'ReportController@managementSummary')->before('authMember');
 
+
 //cob file / management
 Route::get('/reporting/cobFileManagement', 'ReportController@cobFileManagement')->before('authMember');
 
@@ -968,18 +975,63 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('epks/submitConfirm/{id}', ['as' => 'epks.submitConfirm', 'uses' => 'EPKSController@submitConfirm']);
     Route::post('epks/submitByCOB/{id}', ['as' => 'epks.submitByCOB', 'uses' => 'EPKSController@submitByCOB']);
     Route::resource('epks', 'EPKSController');
+
+    /**
+     * AGM Postpone
+     */
+    Route::get('statusAGM/acknowldged', ['as' => 'statusAGM.approved', 'uses' => 'PostponeAGMController@approved']);
+    Route::get('statusAGM/rejected', ['as' => 'statusAGM.rejected', 'uses' => 'PostponeAGMController@rejected']);
+    Route::get('statusAGM/report', ['as' => 'statusAGM.report', 'uses' => 'PostponeAGMController@report']);
+    Route::post('statusAGM/fileUpload', ['as' => 'statusAGM.fileUpload', 'uses' => 'PostponeAGMController@fileUpload']);
+    Route::post('statusAGM/review', ['as' => 'statusAGM.review', 'uses' => 'PostponeAGMController@review']);
+    Route::post('statusAGM/submitByCOB/{id}', ['as' => 'statusAGM.submitByCOB', 'uses' => 'PostponeAGMController@submitByCOB']);
+    Route::post('statusAGM/approvalUpload', ['as' => 'statusAGM.approvalUpload', 'uses' => 'PostponeAGMController@approvalUpload']);
+    Route::resource('statusAGM', 'PostponeAGMController'); 
+
+    /**
+     * DLP
+     */
+    Route::post('dlp/fileUpload', ['as' => 'dlp.fileUpload', 'uses' => 'DlpController@fileUpload']);
+    Route::get('dlp/deposit', ['as' => 'dlp.deposit', 'uses' => 'DlpController@deposit']);
+    Route::get('dlp/deposit/create', ['as' => 'dlp.deposit.create', 'uses' => 'DlpController@createDeposit']);    
+    Route::post('dlp/deposit/store', ['as' => 'dlp.deposit.store', 'uses' => 'DlpController@storeDeposit']);
+    Route::get('dlp/deposit/list', ['as' => 'dlp.deposit.list', 'uses' => 'DlpController@listDeposit']);
+    Route::get('dlp/deposit/show/{id}', ['as' => 'dlp.deposit.show', 'uses' => 'DlpController@showDeposit']);
+    Route::post('dlp/deposit/return/{id}', ['as' => 'dlp.deposit.return', 'uses' => 'DlpController@returnDeposit']);
+    Route::post('dlp/deposit/approval/{id}', ['as' => 'dlp.deposit.approval', 'uses' => 'DlpController@approvalDeposit']);
+    Route::post('dlp/deposit/usage/create/{id}', ['as' => 'dlp.deposit.usage.create', 'uses' => 'DlpController@createUsageDeposit']);
+    Route::get('dlp/deposit/usage/{id}', ['as' => 'dlp.deposit.usage', 'uses' => 'DlpController@usageDeposit']);
+    Route::post('dlp/deposit/usage/fileUpload', ['as' => 'dlp.deposit.usage.fileUpload', 'uses' => 'DlpController@fileUploadUsageDeposit']);
+    Route::post('dlp/deposit/usage/delete{id}', ['as' => 'dlp.deposit.usage.delete', 'uses' => 'DlpController@deleteUsageDeposit']);
+
+    // Route::get('dlp/progress', ['as' => 'dlp.progress', 'uses' => 'DlpController@progress']);
+    // Route::post('dlp/progress/store', ['as' => 'dlp.progress.store', 'uses' => 'DlpController@storeProgress']);
+    // Route::get('dlp/progress/list', ['as' => 'dlp.progress.list', 'uses' => 'DlpController@listProgress']);
+    // Route::get('dlp/progress/show/{id}', ['as' => 'dlp.progress.show', 'uses' => 'DlpController@showProgress']);
+    // Route::delete('dlp/progress/destroy/{id}', ['as' => 'dlp.progress.destroy', 'uses' => 'DlpController@destroyProgress']);
+
+    // Route::get('dlp/period', ['as' => 'dlp.period', 'uses' => 'DlpController@period']);
+    // Route::post('dlp/period/store', ['as' => 'dlp.period.store', 'uses' => 'DlpController@storePeriod']);
+    // Route::get('dlp/period/list', ['as' => 'dlp.period.list', 'uses' => 'DlpController@listPeriod']);
+    // Route::get('dlp/period/show/{id}', ['as' => 'dlp.period.show', 'uses' => 'DlpController@showPeriod'])
+
+    /**
+     * Ledger
+     */
+    Route::resource('ledger', 'LedgerController');
     
     Route::post('epksStatement/submit/{id}', ['as' => 'epksStatement.submit', 'uses' => 'EpksStatementController@submit']);
     Route::get('epksStatement/print/{id}', ['as' => 'epksStatement.print', 'uses' => 'EpksStatementController@printStatement']);
     Route::resource('epksStatement', 'EpksStatementController');
-    
 
     /**
      * Reporting
      */
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
     Route::post('/print/epks',  array('as' => 'reporting.print.epks', 'uses' => 'PrintController@epks'));
+    Route::post('print/generate',  array('as' => 'print.generate.index', 'uses' => 'PrintController@generate'));
     Route::get('/reporting/generate',  array('as' => 'report.generate.index', 'uses' => 'ReportController@generate'));
+    Route::get('reporting/generate/selected',  array('as' => 'report.generateSelected.index', 'uses' => 'ReportController@generateSelected'));
     Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
     Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
     
@@ -989,6 +1041,16 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('cob/get-option', 'CobController@getOption');
     Route::post('buyer/sync', 'CobSyncController@submitBuyerSync');
     Route::get('cob/get-property', 'CobSyncController@getProperty');
+
+    Route::resource('file-movement', 'FileMovementController');
+
+    /** COB File Movement */
+    Route::get('update/fileMovement/{file_id}', array('as' => 'cob.file-movement.index', 'uses' => 'CobFileMovementController@index'));
+    Route::get('update/addFileMovement/{file_id}', array('as' => 'cob.file-movement.create', 'uses' => 'CobFileMovementController@create'));
+    Route::post('update/submitAddFileMovement', array('as' => 'cob.file-movement.store', 'uses' => 'CobFileMovementController@store'));
+    Route::get('update/updateFileMovement/{id}/{file_id}', array('as' => 'cob.file-movement.edit', 'uses' => 'CobFileMovementController@edit'));
+    Route::put('update/submitUpdateFileMovement/{id}', array('as' => 'cob.file-movement.update', 'uses' => 'CobFileMovementController@update'));
+    Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
 
     /**
      * COB Draft Reject
@@ -1095,6 +1157,7 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
     Route::get('JMBMCSignByCouncil', 'ExportController@JMBMCSignByCouncil');
     Route::get('tunggakanFinance', 'ExportController@tunggakanFinance');
     Route::get('fileDetails', 'ExportController@fileDetails');
+    Route::post('generateReport', array('as' => 'api.v1.export.generateReport', 'uses' => 'ExportController@generateReport'));
 });
 
 
@@ -1143,6 +1206,12 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('audit_trail/getOption', array('as' => 'v3.api.audit_trail.getModuleOption', 'uses' => 'Api\AuditTrailController@getModuleOption'));
         Route::get('role/getOption', array('as' => 'v3.api.role.getOption', 'uses' => 'Api\RoleController@getOption'));
         Route::get('strata/getOption',  array('as' => 'v3.api.strata.getOption', 'uses' => 'Api\StrataController@getOption'));
+        Route::get('city/getOption',  array('as' => 'v3.api.city.getOption', 'uses' => 'Api\CityController@getOption'));
+        Route::get('developer/getOption',  array('as' => 'v3.api.developer.getOption', 'uses' => 'Api\DeveloperController@getOption'));
+        Route::get('dun/getOption',  array('as' => 'v3.api.dun.getOption', 'uses' => 'Api\DunController@getOption'));
+        Route::get('area/getOption',  array('as' => 'v3.api.area.getOption', 'uses' => 'Api\AreaController@getOption'));
+        Route::get('category/getOption',  array('as' => 'v3.api.category.getOption', 'uses' => 'Api\CategoryController@getOption'));
+
         Route::get('insurance/getAnalyticData', 'Api\InsuranceController@getAnalyticData');
         Route::get('insurance/getListing', 'Api\InsuranceController@getListing');
         Route::get('management/getAnalyticData', 'Api\ManagementController@getAnalyticData');

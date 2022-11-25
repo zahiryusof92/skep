@@ -342,7 +342,11 @@ class CobLetterController extends BaseController {
     }
 
     private function checkAvailableAccess() {
-        if(!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name != "MPS")) {
+        if(!AccessGroup::hasAccessModule('Postponed AGM')) {
+            App::abort(404);
+        }
+
+        if (!Auth::user()->getAdmin() && !Auth::user()->isCOB()) {
             App::abort(404);
         }
     }

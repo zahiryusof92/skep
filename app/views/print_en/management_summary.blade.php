@@ -30,18 +30,20 @@ $company = Company::find(Auth::user()->company_id);
             <table border="1" id="" width="100%">
                 <thead>
                     <tr>
-                        <th colspan="3" style="width:30%; text-align: center !important; vertical-align:middle !important;">BIL KAWASAN PEMAJUAN (PETAK)</th>
+                        <th colspan="5" style="width:30%; text-align: center !important; vertical-align:middle !important;">BIL KAWASAN PEMAJUAN (PETAK)</th>
                         <th colspan="5" style="width:70%; text-align: center !important; vertical-align:middle !important;">BILANGAN SAMPEL DAN PERATUSAN (%)</th>
                     </tr>
                     <tr>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;"><= 3 (PETAK)</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">> 3 (PETAK)</th>
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;"><= 10 (PETAK)</th>
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">> 10 (PETAK)</th>
                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">JUMLAH (PETAK)</th>
-                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">PEMAJU & LIQUIDATOR</th>
-                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">JMB</th>
-                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">MC</th>
-                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
-                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">PEMAJU & LIQUIDATOR</th>
+                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">JMB</th>
+                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">MC</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
+                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</th>
                     </tr>
                 </thead>
 

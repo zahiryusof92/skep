@@ -1,14 +1,10 @@
----
-ip: "192.168.15.15"
+ip: 192.168.15.15
 memory: 2048
-cpus: 1
+cpus: 2
 hostname: skep
 name: skep
 provider: virtualbox
-ssl: false
-
 authorize: ~/.ssh/id_rsa.pub
-
 keys:
     - ~/.ssh/id_rsa
 

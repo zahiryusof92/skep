@@ -3,32 +3,39 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class SubModuleTableSeeder extends Seeder {
+class SubModuleTableSeeder extends Seeder
+{
 
     public function run()
     {
-        $table = SubModule::where('name_en', 'Liquidator')->first();
-
-        if(!$table) {
-            $module = Module::where('name_en', 'Master Setup')->first();
-            if($module) {
-                SubModule::firstOrCreate([
-                    'module_id' => $module->id,
-                    'name_en' => 'Liquidator',
-                    'name_my' => 'Liquidator',
-                    'sort_no' => 21
-                ]);
-            }
+        $cob_module = Module::where('name_en', 'COB Maintenance')->first();
+        if ($cob_module) {
+            SubModule::firstOrCreate([
+                'module_id' => $cob_module->id,
+                'name_en' => 'File Movement',
+                'name_my' => 'Pergerakan Fail',
+                'sort_no' => 10
+            ]);
         }
-        
+
+        $master_module = Module::where('name_en', 'Master Setup')->first();
+        if ($master_module) {
+            SubModule::firstOrCreate([
+                'module_id' => $master_module->id,
+                'name_en' => 'Liquidator',
+                'name_my' => 'Liquidator',
+                'sort_no' => 21
+            ]);
+        }
+
         $epks = Module::where('name_en', 'EPKS')->first();
-        if(empty($epks)) {
+        if (empty($epks)) {
             $epks = new Module;
             $epks->name_en = "EPKS";
             $epks->name_my = "EPKS";
             $epks->save();
         }
-        if($epks) {
+        if ($epks) {
             SubModule::firstOrCreate([
                 'module_id' => $epks->id,
                 'name_en' => 'EPKS',
@@ -36,8 +43,9 @@ class SubModuleTableSeeder extends Seeder {
                 'sort_no' => 1
             ]);
         }
+
         $report = Module::where('name_en', 'Reporting')->first();
-        if($report) {
+        if ($report) {
             SubModule::firstOrCreate([
                 'module_id' => $report->id,
                 'name_en' => 'EPKS',
@@ -69,15 +77,15 @@ class SubModuleTableSeeder extends Seeder {
                 'sort_no' => 22
             ]);
         }
-        
+
         $cob_letter = Module::where('name_en', 'COB Letter')->first();
-        if(empty($cob_letter)) {
+        if (empty($cob_letter)) {
             $cob_letter = new Module;
             $cob_letter->name_en = "COB Letter";
             $cob_letter->name_my = "Surat COB";
             $cob_letter->save();
         }
-        if($cob_letter) {
+        if ($cob_letter) {
             SubModule::firstOrCreate([
                 'module_id' => $cob_letter->id,
                 'name_en' => 'COB Letter',
@@ -85,15 +93,15 @@ class SubModuleTableSeeder extends Seeder {
                 'sort_no' => 1
             ]);
         }
-        
+
         $api_client = Module::where('name_en', 'API Client')->first();
-        if(empty($api_client)) {
+        if (empty($api_client)) {
             $api_client = new Module;
             $api_client->name_en = "API Client";
             $api_client->name_my = "Pelanggan API";
             $api_client->save();
         }
-        if($api_client) {
+        if ($api_client) {
             SubModule::firstOrCreate([
                 'module_id' => $api_client->id,
                 'name_en' => 'API Client',
@@ -108,5 +116,4 @@ class SubModuleTableSeeder extends Seeder {
             ]);
         }
     }
-
 }

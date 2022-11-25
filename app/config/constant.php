@@ -27,6 +27,12 @@ return [
             ]
         ],
         'cob' => [
+            'file' => [
+                'name' => 'file'
+            ],
+            'file_movement' => [
+                'name' => 'file_movement'
+            ],
             'facility' => [
                 'management_office' => [
                     'name' => 'management_office',
@@ -764,91 +770,91 @@ return [
                 'receiver_address_1' => [
                     'label' => trans('app.forms.receiver_address_1'),
                     'name' => 'receiver_address_1',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_2' => [
                     'label' => trans('app.forms.receiver_address_2'),
                     'name' => 'receiver_address_2',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_3' => [
                     'label' => trans('app.forms.receiver_address_3'),
                     'name' => 'receiver_address_3',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_4' => [
                     'label' => trans('app.forms.receiver_address_4'),
                     'name' => 'receiver_address_4',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'receiver_address_5' => [
                     'label' => trans('app.forms.receiver_address_5'),
                     'name' => 'receiver_address_5',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => false
                 ],
                 'management_address_1' => [
                     'label' => trans('app.forms.management_address_1'),
                     'name' => 'management_address_1',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_2' => [
                     'label' => trans('app.forms.management_address_2'),
                     'name' => 'management_address_2',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_3' => [
                     'label' => trans('app.forms.management_address_3'),
                     'name' => 'management_address_3',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_4' => [
                     'label' => trans('app.forms.management_address_4'),
                     'name' => 'management_address_4',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'management_address_5' => [
                     'label' => trans('app.forms.management_address_5'),
                     'name' => 'management_address_5',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => false
                 ],
                 'from_address_1' => [
                     'label' => trans('app.forms.from_address_1'),
                     'name' => 'from_address_1',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_2' => [
                     'label' => trans('app.forms.from_address_2'),
                     'name' => 'from_address_2',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_3' => [
                     'label' => trans('app.forms.from_address_3'),
                     'name' => 'from_address_3',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_4' => [
                     'label' => trans('app.forms.from_address_4'),
                     'name' => 'from_address_4',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => true
                 ],
                 'from_address_5' => [
                     'label' => trans('app.forms.from_address_5'),
                     'name' => 'from_address_5',
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'required' => false
                 ],
             ],
@@ -880,6 +886,9 @@ return [
         'api_building' => [
             'name' => 'api_building',
         ],
+        'file_movement' => [
+            'name' => 'file_movement'
+        ],
     ],
     'third_party' => [
         'eagm' => [
@@ -888,7 +897,11 @@ return [
             'oauth_client_secret' => getenv('eagm_oauth_secret'),
             'oauth_username' => getenv('eagm_oauth_username'),
             'oauth_password' => getenv('eagm_oauth_password'),
-        ]
+        ],
+        'life' => [
+            'api_domain' => getenv('life_domain'),
+            'api_token' => getenv('life_token'),
+        ],
     ],
     'eai' => [
         'domain' => 'http://127.0.0.1:94/api/v1/',
@@ -1220,6 +1233,28 @@ return [
         ],
     ],
     'file_directory' => [
-        'epks' => 'uploads/epks'
-    ]
+        'epks' => 'uploads/epks',
+        'postponed_agm' => 'uploads/postponed_agm',
+        'postponed_agm_approval' => 'uploads/postponed_agm_approval',
+        'dlp_deposit' => 'uploads/dlp_deposit',
+        'dlp_deposit_usage' => 'uploads/dlp_deposit_usage',
+    ],
+    'dlp_checklist' => [
+        1 => 'Surat Rasmi Serahan Cek',
+        2 => 'Borang Perakuan Pendeposit',
+        3 => 'Surat Pemakluman Pemilikan Kosong (VP) Dan Tempoh DLP',
+        4 => 'Salinan Borang 25',
+        5 => 'Salinan Resit Pembayaran Pemfailan Notis Mengenai Niat Pemaju Untuk Serahan Milikan Kosong',
+        6 => 'Salinan Surat Akuan Penyerahan Milikan Kosong (VP) Kepada Pembeli',        
+    ],
+    'dlp_return_checklist' => [
+        1 => 'Surat Permohonan daripada Pemaju',
+        2 => 'Borang Perakuan Pendeposit yang lengkap diisi dan ditandatangani',
+        3 => 'Surat Akujanji Cagaran yang lengkap diisi dan ditandatangani',
+        4 => 'Borang 27/ Senarai aduan yang melibatkan kerosakan harta bersama Semasa tempoh DLP (Yang diperakukan oleh Badan Professional Teknikal)',
+        5 => 'Laporan tindakan dan selesai kerja yang dilaksanakan',
+        6 => 'Surat pengesahan selesai kerja daripada pihak Badan Pengurusan JMB/MC (Jika Berkaitan)',
+        7 => 'Salinan resit pembayaran deposit',
+        8 => 'Surat kuasa wakil & salinan kad pengenalan',
+    ],
 ];

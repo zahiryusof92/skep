@@ -32,7 +32,7 @@ foreach ($user_permission as $permission) {
                     <dd>{{($user->getCOB->name != "" ? $user->getCOB->name : "-")}}</dd>
                     <dt>{{ trans('app.forms.access_group') }}</dt>
                     <dd>{{($user->getRole->name != "" ? $user->getRole->name : "-")}}</dd>
-                    @if ($user->getRole->name == 'JMB' || $user->getRole->name == 'MC')
+                    @if (($user->getRole->name == 'JMB' || $user->getRole->name == 'MC') || $user->getRole->name == 'DEVELOPER')
                     <dt>{{ trans('app.forms.date_start') }}</dt>
                     <dd>{{($user->start_date != "" ? date('d-m-Y', strtotime($user->start_date)) : "-")}}</dd>
                     <dt>{{ trans('app.forms.date_end') }}</dt>
