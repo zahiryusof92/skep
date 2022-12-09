@@ -214,8 +214,7 @@ foreach ($user_permission as $permission) {
 
     function viewExpiryDate(role) {
         role.toUpperCase();
-
-        if (role.trim() == 'JMB' || role.trim() == 'MC') {
+        if ((role.trim() == 'JMB' || role.trim() == 'MC') || role.trim() == 'DEVELOPER') {
             $("#expiry_date").fadeIn();
             $("#file_form").fadeIn();
         } else {
@@ -227,8 +226,7 @@ foreach ($user_permission as $permission) {
     function showExpiryDate(value) {
         var role = $("#role").val();
         role.toUpperCase();
-
-        if (role.trim() == 'JMB' || role.trim() == 'MC') {
+        if ((role.trim() == 'JMB' || role.trim() == 'MC') || role.trim() == 'DEVELOPER') {
             $("#expiry_date").fadeIn();
             $("#file_form").fadeIn();
         } else {
@@ -307,7 +305,8 @@ foreach ($user_permission as $permission) {
 
         var error = 0;
 
-        if (role == 'JMB' || role == 'MC') {
+        role.toUpperCase();
+        if ((role.trim() == 'JMB' || role.trim() == 'MC') || role.trim() == 'DEVELOPER') {
             if (start_date.trim() == "") {
                 $("#start_date_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute" => "Start Date"]) }}</span>');
                 $("#start_date_error").css("display", "block");

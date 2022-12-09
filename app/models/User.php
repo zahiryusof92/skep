@@ -184,6 +184,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isDeveloper() {
+        if (stripos($this->getRole->name, Role::DEVELOPER) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function getLawyer() {
         $lawyer = '';
 
@@ -204,12 +212,44 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return $balance;
     }
 
+    public function scopeSelf($query) {
+        return $query->where('is_active', 1)->where('is_deleted', false);
+    }
+
     public function auditTrails() {
         return $this->hasMany('AuditTrail', 'audit_by')->orderBy('id');
     }
 
     public function hasSignedIn() {
         return $this->hasOne('AuditTrail', 'audit_by')->where('remarks', 'like', '%' . 'is signed' . '%');
+    }
+
+    public function hasEpks() {
+        if (Auth::user()->isJMB()) {
+            if (Auth::user()->file_id) {
+                $file = Files::find(Auth::user()->file_id);
+
+                if ($file && $file->approvedEpks()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function myEpks() {
+        if (Auth::user()->isJMB()) {
+            if (Auth::user()->file_id) {
+                $file = Files::find(Auth::user()->file_id);
+
+                if ($file && $file->approvedEpks()) {
+                    return $file->approvedEpks();
+                }
+            }
+        }
+
+        return false;
     }
 
 }

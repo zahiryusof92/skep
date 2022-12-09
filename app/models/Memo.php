@@ -12,4 +12,8 @@ class Memo extends Eloquent {
         return $this->belongsTo('Company', 'company_id');
     }
 
+    public function file() {
+        return $this->belongsTo('Files', 'file_id');
+    }
+
 }

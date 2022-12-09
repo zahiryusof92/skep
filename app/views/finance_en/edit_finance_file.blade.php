@@ -33,7 +33,8 @@ foreach ($user_permission as $permission) {
                     <h3>{{ $title }}</h3>
                 </div>
                 <div class="col-md-2">
-                    <a href="{{ url('print/financeFile', \Helper\Helper::encode($financefiledata->id)) }}" target="_blank" class="btn btn-sm btn-own margin-inline pull-right">Print</a>
+                    <a href="{{ url('print/financeFile', \Helper\Helper::encode($financefiledata->id)) }}" target="_blank"
+                        class="btn btn-sm btn-own margin-inline pull-right">Print</a>
                 </div>
             </div>
         </div>
@@ -41,33 +42,29 @@ foreach ($user_permission as $permission) {
             <section class="panel">
                 <div class="row">
                     <div class="col-lg-12">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td>{{ trans("app.forms.finance_management") }}
-                                    <div></div></td>
-                                    <td>{{ $financefiledata->file->file_no }}</td>
-                                    <td>{{ trans("app.forms.finance_management_id") }}</td>
-                                    <td>{{ $financefiledata->id }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ trans("app.forms.year") }}</td>
-                                    <td>{{ $financefiledata->year }}</td>
-                                    <td>{{ trans("app.forms.month") }}</td>
-                                    <td>{{ $financefiledata->monthName() }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ trans("app.forms.strata") }}</td>
-                                    <td colspan="3">{{ $financefiledata->file->strata->strataName() }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-bordered  margin-bottom-0" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 10%;">{{ trans("app.forms.file_no") }}</th>
+                                        <td style="width: 70%;">{{ $financefiledata->file->file_no }}</td>
+                                        <th style="width: 10%;">{{ trans("app.forms.month") }}</th>
+                                        <td style="width: 10%;">{{ $financefiledata->monthName() }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 10%;">{{ trans("app.forms.strata") }}</th>
+                                        <td style="width: 70%;">{{ $financefiledata->file->strata->strataName() }}</td>
+                                        <th style="width: 10%;">{{ trans("app.forms.year") }}</th>
+                                        <td style="width: 10%;">{{ $financefiledata->year }}</td>                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
     </section>
-
     
     <section class="panel panel-style">
         <div class="panel-body">

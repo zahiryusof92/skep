@@ -25,7 +25,7 @@ foreach ($user_permission as $permission) {
                         <a href="{{ route('cob.file.index') }}">
                             <div class="step-block">
                                 <span class="step-digit">
-                                    <img src="{{asset('assets/common/img/icon/strata.png')}}"/>
+                                    <img src="{{asset('assets/common/img/icon/strata.png')}}" />
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">Strata</span>
@@ -38,10 +38,10 @@ foreach ($user_permission as $permission) {
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                         <a href="{{ route('report.generate.index',['management' => 'jmb']) }}">
-                        @endif
+                            @endif
                             <div class="step-block">
                                 <span class="step-digit">
-                                    <img src="{{asset('assets/common/img/icon/hirechy.png')}}"/>
+                                    <img src="{{asset('assets/common/img/icon/hirechy.png')}}" />
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">JMB</span>
@@ -50,17 +50,17 @@ foreach ($user_permission as $permission) {
                                     </p>
                                 </div>
                             </div>
-                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                         </a>
                         @endif
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                         <a href="{{ route('report.generate.index',['management' => 'mc']) }}">
-                        @endif
+                            @endif
                             <div class="step-block">
                                 <span class="step-digit">
-                                    <img src="{{asset('assets/common/img/icon/profile.png')}}"/>
+                                    <img src="{{asset('assets/common/img/icon/profile.png')}}" />
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">MC</span>
@@ -69,14 +69,14 @@ foreach ($user_permission as $permission) {
                                     </p>
                                 </div>
                             </div>
-                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                         </a>
                         @endif
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         <div class="step-block">
                             <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/key.png')}}"/>
+                                <img src="{{asset('assets/common/img/icon/key.png')}}" />
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">Owner</span>
@@ -89,7 +89,7 @@ foreach ($user_permission as $permission) {
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         <div class="step-block">
                             <span class="step-digit">
-                                <img src="{{asset('assets/common/img/icon/tenant1.png')}}"/>
+                                <img src="{{asset('assets/common/img/icon/tenant1.png')}}" />
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">Tenant</span>
@@ -141,12 +141,37 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
+            <hr />
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>{{ trans('app.forms.memo') }}</h4>
+                    <section class="panel panel-pad">
+                        <div class="tab-content padding-vertical-20">
+                            <table class="table table-hover table-own table-striped" id="memo" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:70%;">{{ trans('app.forms.subject') }}</th>
+                                        <th style="width:20%;">{{ trans('app.forms.memo_date') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <hr />
+
             <div class="row">
                 <div class="col-lg-6">
                     <div class="margin-bottom-50 chart-custom">
                         <!--<h4 class="text-center">Star Rating of Development Area</h4>-->
                         <!--<div class="chart-pie-chart"></div>-->
-                        <div id="rating_star"></div>                            
+                        <div id="rating_star"></div>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -159,7 +184,7 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-12">
                     <div class="margin-bottom-50 chart-custom">
-                        <div id="never_has_agm_chart"></div>                            
+                        <div id="never_has_agm_chart"></div>
                     </div>
                 </div>
             </div>
@@ -169,9 +194,12 @@ foreach ($user_permission as $permission) {
                     <div>
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-20">
-                                <h4>{{ trans('app.forms.never_has_agm') }}<button class='btn btn-xs btn-danger float-right' onclick='closeTableCustomNeverAGM()'><i class='fa fa-times'></i> </button></h4>
+                                <h4>{{ trans('app.forms.never_has_agm') }}<button
+                                        class='btn btn-xs btn-danger float-right'
+                                        onclick='closeTableCustomNeverAGM()'><i class='fa fa-times'></i> </button></h4>
                                 <div class="tab-pane active" id="tabInsurance1" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="custom_never_has_agm" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="custom_never_has_agm"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -191,13 +219,13 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr/>
+            <hr />
 
             @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
             <div class="row">
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.file_draft') }}</h4>
-                    <section class="panel panel-pad">                
+                    <section class="panel panel-pad">
                         <div class="row margin-top-20">
                             <div class="col-lg-12 text-center">
                                 <form>
@@ -211,7 +239,8 @@ foreach ($user_permission as $permission) {
                                                     <option value="">{{ trans('app.forms.please_select') }}</option>
                                                     @endif
                                                     @foreach ($cob as $companies)
-                                                    <option value="{{ $companies->short_name }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                    <option value="{{ $companies->short_name }}">{{ $companies->name }}
+                                                        ({{ $companies->short_name }})</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -222,13 +251,14 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
 
-                        <hr/>
+                        <hr />
 
                         <div class="row">
                             <div class="col-lg-12">
-                                <table class="table table-hover table-own table-striped" id="file_draft_list" width="100%">
+                                <table class="table table-hover table-own table-striped" id="file_draft_list"
+                                    width="100%">
                                     <thead>
-                                        <tr>                                
+                                        <tr>
                                             <th style="width:35%;">{{ trans('app.forms.file_no') }}</th>
                                             <th style="width:35%;">{{ trans('app.forms.name') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -245,7 +275,7 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr/>
+            <hr />
 
             <script type="text/javascript">
                 $(document).ready(function () {
@@ -280,22 +310,27 @@ foreach ($user_permission as $permission) {
                     <div>
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab">{{ trans('app.forms.agm_reminder') }}</a>
+                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab"
+                                    data-target="#tab1" role="tab">{{ trans('app.forms.agm_reminder') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab">{{ trans('app.forms.never_has_agm') }}</a>
+                                <a class="nav-link custom-tab" href="javascript: void(0);" data-toggle="tab"
+                                    data-target="#tab2" role="tab">{{ trans('app.forms.never_has_agm') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab">{{ trans('app.forms.more_than_12_months') }}</a>
+                                <a class="nav-link custom-tab" href="javascript: void(0);" data-toggle="tab"
+                                    data-target="#tab3" role="tab">{{ trans('app.forms.more_than_12_months') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab">{{ trans('app.forms.more_than_15_months') }}</a>
+                                <a class="nav-link custom-tab" href="javascript: void(0);" data-toggle="tab"
+                                    data-target="#tab4" role="tab">{{ trans('app.forms.more_than_15_months') }}</a>
                             </li>
                         </ul>
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-20">
                                 <div class="tab-pane active" id="tab1" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="agm_remainder" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="agm_remainder"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -311,7 +346,8 @@ foreach ($user_permission as $permission) {
                                     </table>
                                 </div>
                                 <div class="tab-pane" id="tab2" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="never_agm" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="never_agm"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -325,7 +361,8 @@ foreach ($user_permission as $permission) {
                                     </table>
                                 </div>
                                 <div class="tab-pane" id="tab3" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="more_12months" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="more_12months"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -341,7 +378,8 @@ foreach ($user_permission as $permission) {
                                     </table>
                                 </div>
                                 <div class="tab-pane" id="tab4" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="more_15months" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="more_15months"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
@@ -362,7 +400,7 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr/>
+            <hr />
 
             <div class="row">
                 <div class="col-lg-12">
@@ -370,13 +408,16 @@ foreach ($user_permission as $permission) {
                     <div>
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tabDesignation1" role="tab">{{ trans('app.forms.designation_reminder') }}</a>
+                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab"
+                                    data-target="#tabDesignation1" role="tab">{{ trans('app.forms.designation_reminder')
+                                    }}</a>
                             </li>
                         </ul>
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-20">
                                 <div class="tab-pane active" id="tabDesignation1" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="designation_remainder" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="designation_remainder"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
@@ -403,7 +444,7 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr/>
+            <hr />
 
             <div class="row">
                 <div class="col-lg-12">
@@ -411,20 +452,24 @@ foreach ($user_permission as $permission) {
                     <div>
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab" data-target="#tabInsurance1" role="tab">{{ trans('app.forms.insurance_reminder') }}</a>
+                                <a class="nav-link active custom-tab" href="javascript: void(0);" data-toggle="tab"
+                                    data-target="#tabInsurance1" role="tab">{{ trans('app.forms.insurance_reminder')
+                                    }}</a>
                             </li>
                         </ul>
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-20">
                                 <div class="tab-pane active" id="tabInsurance1" role="tabpanel">
-                                    <table class="table table-hover table-own table-striped" id="insurance_remainder" width="100%">
+                                    <table class="table table-hover table-own table-striped" id="insurance_remainder"
+                                        width="100%">
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                                 <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
                                                 <th style="width:25%;">{{ trans('app.forms.scheme_name') }}</th>
                                                 <th style="width:20%;">{{ trans('app.forms.insurance_provider') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.validity') }} {{ trans("app.forms.to") }}</th>
+                                                <th style="width:15%;">{{ trans('app.forms.validity') }} {{
+                                                    trans("app.forms.to") }}</th>
                                                 <th style="width:5%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
@@ -439,29 +484,6 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr/>
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <h4>{{ trans('app.forms.memo') }}</h4>
-                    <section class="panel panel-pad">
-                        <div class="tab-content padding-vertical-20">
-                            <table class="table table-hover table-own table-striped" id="memo" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th style="width:70%;">{{ trans('app.forms.subject') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.memo_date') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
         </div>
     </section>
 </div>
@@ -471,6 +493,16 @@ foreach ($user_permission as $permission) {
         <div class="modal-content"></div>
     </div>
 </div>
+
+@if ($activeMemo->count() > 0)
+@foreach ($activeMemo as $alertMemo)
+<script type="text/javascript">
+    $(document).ready(function () {
+        getMemoDetails('{{ Helper\Helper::encode($alertMemo->id) }}')
+    });     
+</script>
+@endforeach
+@endif
 
 <script type="text/javascript">
     var custom_never_table, short_name;
@@ -672,13 +704,13 @@ foreach ($user_permission as $permission) {
             yAxis: {
                 min: 0,
                 title: {
-                    text: '(total)'
+                    text: '%'
                 }
             },
             tooltip: {
                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                 pointFormat: '<tr>' +
-                    '<td style="padding:0"><b>{point.y} total</b></td></tr>',
+                    '<td style="padding:0"><b>{point.y} %</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true
