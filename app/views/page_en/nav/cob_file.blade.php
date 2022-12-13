@@ -18,7 +18,7 @@
             {{ trans('app.forms.management') }}
         </a>
     </li>
-    @if (!Auth::user()->isJMB())
+    @if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('update/monitoring/*')) active @endif custom-tab" @if(!Request::is('update/monitoring/*')) href="{{URL::action('AdminController@monitoring', \Helper\Helper::encode($files->id))}}" @endif>
             {{ trans('app.forms.monitoring') }}
@@ -33,7 +33,7 @@
     </li>
     @endif
     @endif
-    @if (!Auth::user()->isJMB() && !Auth::user()->isPreSale() && !Auth::user()->isMPS())
+    @if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper() && !Auth::user()->isPreSale() && !Auth::user()->isMPS())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('update/scoring/*')) active @endif custom-tab" @if(!Request::is('update/scoring/*')) href="{{URL::action('AdminController@scoring', \Helper\Helper::encode($files->id))}}" @endif>
             {{ trans('app.forms.scoring_component_value') }}
@@ -59,7 +59,19 @@
             {{ trans('app.forms.finance_support') }}
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link @if(Request::is('*fileMovement/*') || Request::is('*FileMovement/*')) active @endif custom-tab" @if(!Request::is('*fileMovement/*') || !Request::is('*FileMovement/*')) href="{{ route('cob.file-movement.index', \Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)) }}" @endif>
+            {{ trans('app.forms.file_movement') }}
+        </a>
+    </li>
     @endif
+
+    {{-- <li class="nav-item">
+        <a class="nav-link @if(Request::is('update/fixedDeposit/*')) active @endif custom-tab" @if(!Request::is('update/fixedDeposit/*')) href="{{ route('cob.file.fixedDeposit.edit', \Helper\Helper::encode($files->id)) }}" @endif>
+            {{ trans('app.forms.fixed_deposit') }}
+        </a>
+    </li> --}}
+
 </ul>
 @else
 <ul class="nav nav-pills nav-justified" role="tablist">
@@ -78,7 +90,7 @@
             {{ trans('app.forms.management') }}
         </a>
     </li>
-    @if (!Auth::user()->isJMB())
+    @if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('view/monitoring/*')) active @endif custom-tab" @if(!Request::is('view/monitoring/*')) href="{{URL::action('AdminController@viewMonitoring', \Helper\Helper::encode($files->id))}}" @endif>
             {{ trans('app.forms.monitoring') }}
@@ -92,7 +104,7 @@
         </a>
     </li>
     @endif
-    @if (!Auth::user()->isJMB() && !Auth::user()->isPreSale())
+    @if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper() && !Auth::user()->isPreSale())
     <li class="nav-item">
         <a class="nav-link @if(Request::is('view/scoring/*')) active @endif custom-tab" @if(!Request::is('view/scoring/*')) href="{{URL::action('AdminController@viewScoring', \Helper\Helper::encode($files->id))}}" @endif>
             {{ trans('app.forms.scoring_component_value') }}

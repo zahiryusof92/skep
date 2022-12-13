@@ -370,6 +370,7 @@ foreach ($user_permission as $permission) {
                 data: {
                     file: file,
                     company: company,
+                    file: file,
                     memo_type: memo_type,
                     memo_date: memo_date,
                     publish_date: publish_date,

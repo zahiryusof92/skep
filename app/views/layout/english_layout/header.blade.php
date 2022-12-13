@@ -27,7 +27,7 @@ $swith_lang = true;
                 <a class="dropdown-inline-button" data-toggle="dropdown" href="#" aria-expanded="false">
                     <i class="dropdown-icon fa fa-bell theme-icon"></i>
                     @if($notifications->count())
-                    <span class="badge badge-pill badge-danger navbar-badge">{{ $notification_total }}</span>
+                    <span class="badge badge-pill badge-danger navbar-badge" style="top: 3px; right: -10px;;">{{ $notification_total }}</span>
                     @endif
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" aria-labelledby="" role="menu">

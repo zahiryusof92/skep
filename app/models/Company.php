@@ -37,4 +37,7 @@ class Company extends Eloquent {
         return $this->hasMany('User', 'company_id');
     }
 
+    public function states() {
+        return $this->belongsTo('State', 'state');
+    }
 }

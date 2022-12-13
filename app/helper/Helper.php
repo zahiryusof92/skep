@@ -120,4 +120,40 @@ class Helper
 
         return '';
     }
+
+    public static function getFormattedDateTime($datetime)
+    {
+        if ($datetime == '') {
+            return null;
+        }
+
+        $dt['datetime'] = date('Y-m-d H:i:s', strtotime($datetime));
+        $dt['formatted'] = date('d-M-Y, h:i:s A', strtotime($datetime));
+
+        return $dt['formatted'];
+    }
+
+    public static function getFormattedDate($date)
+    {
+        if ($date == '') {
+            return null;
+        }
+
+        $dt['date'] = date('Y-m-d', strtotime($date));
+        $dt['formatted'] = date('d-M-Y', strtotime($date));
+
+        return $dt['formatted'];
+    }
+
+    public static function getFormattedTime($time)
+    {
+        if ($time == '') {
+            return null;
+        }
+
+        $dt['time'] = date('H:i:s', strtotime($time));
+        $dt['formatted'] = date('h:i:s A', strtotime($time));
+
+        return $dt['formatted'];
+    }
 }

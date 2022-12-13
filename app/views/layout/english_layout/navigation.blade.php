@@ -93,7 +93,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
-                    <li id="cob_sync">
+                    <li id="cob_draft_reject_list">
                         <a class="left-menu-link" href="{{ route('file.draft.reject.index') }}">
                             {{ trans('app.menus.cob.file_reject_list') }}
                         </a>
@@ -172,7 +172,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('COB Letter'))
+            @if (AccessGroup::hasAccessModule('COB Letter'))
             <li class="left-menu-list-link" id="cob_letter_list">
                 <a class="left-menu-link" href="{{ route('cob_letter.index') }}">
                     <i class="left-menu-link-icon fa fa-paper-plane" aria-hidden="true"></i>
@@ -181,7 +181,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccess(63))
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('EPKS'))
             <li class="left-menu-list-submenu" id="epks_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-recycle"><!-- --></i>
@@ -206,6 +206,11 @@ if (!Auth::user()->getAdmin()) {
                     <li class="left-menu-list-link" id="epks_draft">
                         <a class="left-menu-link" href="{{ route('epks.draft') }}">
                             {{ trans('app.menus.epks.draft') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="epks_statement">
+                        <a class="left-menu-link" href="{{ route('epksStatement.index') }}">
+                            {{ trans('app.menus.epks_statement.name') }}
                         </a>
                     </li>
                 </ul>
@@ -551,12 +556,20 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.master.eservice_price') }}
                         </a>
                     </li>
+                    
+                    @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
+                    <li id="postpone_agm_reason_list">
+                        <a class="left-menu-link" href="{{ route('statusAGMReason.index') }}">
+                            {{ trans('app.menus.master.postpone_agm_reason') }}
+                        </a>
+                    </li>
+                    @endif
 
                 </ul>
             </li>
             @endif
 
-            @if (Module::hasAccess(4) && !Auth::user()->isJMB())
+            @if (Module::hasAccess(4) && (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()))
             <li class="left-menu-list-submenu" id="reporting_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/report.png')}}"/>
@@ -806,6 +819,93 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                 </ul>
             </li>
+            @endif
+
+            @if (AccessGroup::hasAccessModule('Postponed AGM'))
+            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isJMB())
+            <li class="left-menu-list-submenu" id="agm_postpone_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
+                    <span>{{ trans('app.menus.agm_postpone.name') }}</span>
+                    @if (PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count())
+                    &nbsp;<span class="label left-menu-label label-danger">!</span>
+                    @endif
+                   </a>
+                <ul class="left-menu-list list-unstyled" id="agm_postpone_main">
+                    @if (Auth::user()->isJMB())
+                    <li class="left-menu-list-link" id="agm_postpone_create">
+                        <a class="left-menu-link" href="{{ route('statusAGM.create') }}">
+                            {{ trans('app.menus.agm_postpone.create') }}
+                        </a>
+                    </li>
+                    @endif
+                    <li class="left-menu-list-link" id="agm_postpone_list">
+                        <a class="left-menu-link" href="{{ route('statusAGM.index') }}">
+                            {{ trans('app.menus.agm_postpone.review') }} &nbsp;
+                            <span class="label left-menu-label label-danger">
+                                {{ trans('app.menus.agm_postpone.pending', ['count'=> PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count()]) }}
+                            </span>
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="agm_postpone_approved">
+                        <a class="left-menu-link" href="{{ route('statusAGM.approved') }}">
+                            {{ trans('app.menus.agm_postpone.approved') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="agm_postpone_rejected">
+                        <a class="left-menu-link" href="{{ route('statusAGM.rejected') }}">
+                            {{ trans('app.menus.agm_postpone.rejected') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+            @endif
+
+            @if (AccessGroup::hasAccessModule('Defect Liability Period'))
+            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isDeveloper())            
+            <li class="left-menu-list-submenu" id="dlp_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-clock-o"><!-- --></i>
+                    <span>{{ trans('app.menus.dlp.name') }}</span>
+                </a>
+                <ul class="left-menu-list list-unstyled" id="dlp_main">
+                    <li class="left-menu-list-link" id="dlp_deposit">
+                        <a class="left-menu-link" href="{{ route('dlp.deposit') }}">
+                            {{ trans('app.menus.dlp.deposit') }}
+                        </a>
+                    </li>
+                    {{-- <li class="left-menu-list-link" id="dlp_progress">
+                        <a class="left-menu-link" href="{{ route('dlp.progress') }}">
+                            {{ trans('app.menus.dlp.progress') }}
+                        </a>
+                    </li> --}}
+                    {{-- <li class="left-menu-list-link" id="dlp_period">
+                        <a class="left-menu-link" href="{{ route('dlp.period') }}">
+                            {{ trans('app.menus.dlp.period') }}
+                        </a>
+                    </li> --}}
+                    @if (AccessGroup::hasAccess(31))
+                    <li id="agmpurchasesub_list">
+                        <a class="left-menu-link" href="{{ URL::action('AgmController@purchaser') }}">
+                            {{ trans('app.menus.agm.purchaser') }}
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+            </li>
+            @endif
+            @endif
+
+            @if (AccessGroup::hasAccessModule('Ledger'))
+            @if (Auth::user()->isJMB())
+            <li class="left-menu-list-link" id="ledger">
+                <a class="left-menu-link" href="{{ route('ledger.index') }}">
+                    <i class="left-menu-link-icon fa fa-book"><!-- --></i>
+                    {{ trans('app.menus.ledger.name') }}
+                </a>
+            </li>
+            @endif
             @endif
 
             @if (Module::hasAccess(8))

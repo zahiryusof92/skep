@@ -143,6 +143,31 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
+            <hr />
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>{{ trans('app.forms.memo') }}</h4>
+                    <section class="panel panel-pad">
+                        <div class="tab-content padding-vertical-20">
+                            <table class="table table-hover table-own table-striped" id="memo" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:70%;">{{ trans('app.forms.subject') }}</th>
+                                        <th style="width:20%;">{{ trans('app.forms.memo_date') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <hr />
+
             <div class="row">
                 <div class="col-lg-6">
                     <div class="margin-bottom-50 chart-custom">
@@ -494,6 +519,16 @@ foreach ($user_permission as $permission) {
     </div>
 </div>
 
+@if ($activeMemo->count() > 0)
+@foreach ($activeMemo as $alertMemo)
+<script type="text/javascript">
+    $(document).ready(function () {
+        getMemoDetails('{{ Helper\Helper::encode($alertMemo->id) }}')
+    });     
+</script>
+@endforeach
+@endif
+
 <script type="text/javascript">
     var custom_never_table, short_name;
     $(document).ready(function () {
@@ -694,13 +729,13 @@ foreach ($user_permission as $permission) {
             yAxis: {
                 min: 0,
                 title: {
-                    text: '(total)'
+                    text: '%'
                 }
             },
             tooltip: {
                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                 pointFormat: '<tr>' +
-                    '<td style="padding:0"><b>{point.y} total</b></td></tr>',
+                    '<td style="padding:0"><b>{point.y} %</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true

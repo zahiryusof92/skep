@@ -32,7 +32,7 @@
                             <option value="{{ $key }}" {{ $checkdata->is_active == $key ? "selected" : "" }}>{{ $status }}</option>
                         @endforeach
                     </select>
-                    @if((!Auth::user()->getAdmin() || !Auth::user()->isCOBManager()))
+                    @if(!Auth::user()->getAdmin() && !Auth::user()->isCOBManager())
                     <input type="hidden" name="is_active" id="is_active" value="{{ $checkdata->is_active }}">
                     @endif
                     <div id="is_active_err" style="display:none;"></div>
