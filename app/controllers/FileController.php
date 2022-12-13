@@ -19,6 +19,9 @@ class FileController extends BaseController {
 
     public function uploadDocumentFile() {
         $file = Input::file('document_file');
+
+        $allowedFile = ['pdf'];
+        $allowedSize = '10000000';
         
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['file_upload'];
@@ -30,12 +33,20 @@ class FileController extends BaseController {
                                 
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file) {
-                $destinationPath = 'uploads/document_files';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
-                $upload = $file->move($destinationPath, $filename);
-    
-                if ($upload) {
-                    return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                    if ($file->getClientSize() <= $allowedSize) {
+                        $destinationPath = 'uploads/document_files';
+                        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                        $upload = $file->move($destinationPath, $filename);
+            
+                        if ($upload) {
+                            return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                        }
+                    } else {
+                        return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['Please upload only PDF file!']]);
                 }
             }
         

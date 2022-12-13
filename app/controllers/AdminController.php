@@ -5346,8 +5346,8 @@ class AdminController extends BaseController {
             $document->document_type_id = $data['document_type'];
             $document->name = $data['name'];
             $document->remarks = $data['remarks'];
-            $document->is_hidden = $data['is_hidden'];
-            $document->is_readonly = $data['is_readonly'];
+            $document->is_hidden = false;
+            $document->is_readonly = false;
             $document->file_url = $data['document_url'];
             $success = $document->save();
 
@@ -5413,8 +5413,6 @@ class AdminController extends BaseController {
                 $new_line .= $data['name'] != $document->name? "name, " : "";
                 $new_line .= $data['document_type'] != $document->document_type? "document type, " : "";
                 $new_line .= $data['remarks'] != $document->remarks? "remarks, " : "";
-                $new_line .= $data['is_hidden'] != $document->is_hidden? "is hidden, " : "";
-                $new_line .= $data['is_readonly'] != $document->is_readonly? "is readonly, " : "";
                 $new_line .= $data['document_url'] != $document->document_url? "document file, " : "";
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> COB Document : (";
@@ -5425,8 +5423,8 @@ class AdminController extends BaseController {
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];
-                $document->is_hidden = $data['is_hidden'];
-                $document->is_readonly = $data['is_readonly'];
+                $document->is_hidden = false;
+                $document->is_readonly = false;
                 $document->file_url = $data['document_url'];
                 $success = $document->save();
 

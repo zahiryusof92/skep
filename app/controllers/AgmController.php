@@ -2446,8 +2446,8 @@ class AgmController extends BaseController {
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];
-                $document->is_hidden = $data['is_hidden'];
-                $document->is_readonly = $data['is_readonly'];
+                $document->is_hidden = false;
+                $document->is_readonly = false;
                 $document->file_url = $data['document_url'];
                 $success = $document->save();
 
@@ -2530,8 +2530,6 @@ class AgmController extends BaseController {
                 $new_line .= $data['document_type'] != $document->document_type_id? "document type, " : "";
                 $new_line .= $data['name'] != $document->name? "name, " : "";
                 $new_line .= $data['remarks'] != $document->remarks? "remarks, " : "";
-                $new_line .= $data['is_hidden'] != $document->is_hidden? "is hidden, " : "";
-                $new_line .= $data['is_readonly'] != $document->is_readonly? "is readonly, " : "";
                 $new_line .= $data['document_url'] != $document->file_url? "document, " : "";
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Document : (";
@@ -2543,8 +2541,8 @@ class AgmController extends BaseController {
                 $document->document_type_id = $data['document_type'];
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];
-                $document->is_hidden = $data['is_hidden'];
-                $document->is_readonly = $data['is_readonly'];
+                $document->is_hidden = false;
+                $document->is_readonly = false;;
                 $document->file_url = $data['document_url'];
                 $success = $document->save();
 
