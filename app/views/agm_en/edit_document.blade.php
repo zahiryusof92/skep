@@ -99,7 +99,7 @@ foreach ($user_permission as $permission) {
                                         <br/>
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <button type="button" id="clear_document_file" class="btn btn-xs btn-danger" onclick="clearDocumentFile()" style="display: none;"><i class="fa fa-times"></i></button>
-                                        &nbsp;<input type="file" name="document_file" id="document_file" />
+                                        &nbsp;<input type="file" name="document_file" id="document_file" accept="application/pdf" />
                                         <div>
                                             <small>* Accept PDF only. Maximum size: 10MB.</small>
                                         </div>
@@ -116,6 +116,120 @@ foreach ($user_permission as $permission) {
                         </form>
 
                         <form>
+                            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.status') }}</label>
+                                        <select id="status" class="form-control" name="status">
+                                            <option value="">{{ trans('app.forms.please_select') }}</option>
+                                            <option value="{{ Document::PENDING }}" {{ $document->status == Document::PENDING ? 'selected' : '' }}>
+                                                {{ trans("Pending") }}
+                                            </option>
+                                            <option value="{{ Document::APPROVED }}" {{ $document->status == Document::APPROVED ? 'selected' : '' }}>
+                                                {{ trans("Approved") }}
+                                            </option>
+                                            <option value="{{ Document::REJECTED }}" {{ $document->status == Document::REJECTED ? 'selected' : '' }}>
+                                                {{ trans("Rejected") }}
+                                            </option>
+                                        </select>
+                                        <div id="status_error" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('Approval Remarks') }}</label>
+                                        <textarea class="form-control" id="approval_remark" name="approval_remark" rows="3">{{ $document->approval_remark }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if ($document->approvalBy)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('Approval By') }}</label>
+                                        <p>{{ $document->approvalBy->full_name }} ({{ $document->approvalBy->email }})</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if (!empty($document->approval_date))
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('Approval Date') }}</label>
+                                        <p>{{ Helper\Helper::getFormattedDateTime($document->approval_date) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            @else
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('app.forms.status') }}</label>
+                                        <select class="form-control" disabled>
+                                            @if ($document->status == Document::PENDING)
+                                            <option value="{{ $document->status }}">
+                                                {{ trans("Pending") }}
+                                            </option>
+                                            @elseif ($document->status == Document::APPROVED)
+                                            <option value="{{ $document->status }}">
+                                                {{ trans("Approved") }}
+                                            </option>
+                                            @elseif ($document->status == Document::REJECTED)
+                                            <option value="{{ $document->status }}">
+                                                {{ trans("Rejected") }}
+                                            </option>
+                                            @else
+                                            <option value="{{ $document->status }}">
+                                                -
+                                            </option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (!empty($document->approval_remark))
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('Approval Remarks') }}</label>
+                                        <p>{{ $document->approval_remark }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if ($document->approvalBy)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('Approval By') }}</label>
+                                        <p>{{ $document->approvalBy->full_name }} ({{ $document->approvalBy->email }})</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if (!empty($document->approval_date))
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">{{ trans('Approval Date') }}</label>
+                                        <p>{{ Helper\Helper::getFormattedDateTime($document->approval_date) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            @endif
+
                             <div class="form-actions">
                                 <?php if ($update_permission == 1) { ?>
                                     <input type="hidden" id="document_file_url" value="{{$document->file_url}}"/>
@@ -188,7 +302,9 @@ foreach ($user_permission as $permission) {
                 document_type = $("#document_type").val(),
                 name = $("#name").val(),
                 remarks = $("#remarks").val(),
-                document_url = $("#document_file_url").val();
+                document_url = $("#document_file_url").val(),
+                status = $('#status').val(),
+                approval_remark = $('#approval_remark').val();
 
         var error = 0;
 
@@ -223,12 +339,15 @@ foreach ($user_permission as $permission) {
                     name: name,
                     remarks: remarks,
                     document_url: document_url,
+                    status: status,
+                    approval_remark: approval_remark,
                     id: "{{ \Helper\Helper::encode($document->id) }}"
                 },
                 beforeSend: function() {
                     $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
                 },
                 success: function (data) {
+                    console.log(data);
                     $("#loading").css("display", "none");
                     $("#submit_button").removeAttr("disabled");
                     $("#cancel_button").removeAttr("disabled");

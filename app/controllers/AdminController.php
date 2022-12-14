@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Helper\Helper;
 use Helper\KCurl;
 use Illuminate\Support\Facades\Auth;
@@ -5202,6 +5203,7 @@ class AdminController extends BaseController {
                 $data_raw = array(
                     $documents->type->name,
                     $documents->name,
+                    $documents->getStatusText(),
                     $button
                 );
 
@@ -5335,6 +5337,15 @@ class AdminController extends BaseController {
             $document->is_hidden = false;
             $document->is_readonly = false;
             $document->file_url = $data['document_url'];
+
+            if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+                $document->status = Document::APPROVED;
+                $document->approval_by = Auth::user()->id;
+                $document->approval_date = Carbon::now();
+            } else {
+                $document->status = Document::PENDING;
+            }
+
             $success = $document->save();
 
             if ($success) {
@@ -5400,6 +5411,18 @@ class AdminController extends BaseController {
                 $new_line .= $data['document_type'] != $document->document_type? "document type, " : "";
                 $new_line .= $data['remarks'] != $document->remarks? "remarks, " : "";
                 $new_line .= $data['document_url'] != $document->document_url? "document file, " : "";
+
+                if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+                    if (isset($data['status']) && $document->status != $data['status']) {
+                        $new_line .= $data['status'] != $document->status? "status, " : "";
+                        $new_line .= Auth::user()->id != $document->status? "approval by, " : "";
+                        $new_line .= Carbon::now() != $document->status? "approval date, " : "";
+                    }
+                    if (isset($data['approval_remark']) && $document->approval_remark != $data['approval_remark']) {
+                        $new_line .= $data['approval_remark'] != $document->status? "approval remark, " : "";
+                    }
+                }
+
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> COB Document : (";
                     $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
@@ -5412,6 +5435,18 @@ class AdminController extends BaseController {
                 $document->is_hidden = false;
                 $document->is_readonly = false;
                 $document->file_url = $data['document_url'];
+
+                if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+                    if (isset($data['status']) && $document->status != $data['status']) {
+                        $document->status = $data['status'];
+                        $document->approval_by = Auth::user()->id;
+                        $document->approval_date = Carbon::now();
+                    }
+                    if (isset($data['approval_remark']) && $document->approval_remark != $data['approval_remark']) {
+                        $document->approval_remark = $data['approval_remark'];
+                    }
+                }
+
                 $success = $document->save();
 
                 if ($success) {

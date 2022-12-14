@@ -2270,6 +2270,7 @@ class AgmController extends BaseController {
                     (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
                     $documents->type->name,
                     $documents->name,
+                    $documents->getStatusText(),
                     $button
                 );
 
@@ -2435,6 +2436,15 @@ class AgmController extends BaseController {
                 $document->is_hidden = false;
                 $document->is_readonly = false;
                 $document->file_url = $data['document_url'];
+
+                if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+                    $document->status = Document::APPROVED;
+                    $document->approval_by = Auth::user()->id;
+                    $document->approval_date = Carbon::now();
+                } else {
+                    $document->status = Document::PENDING;
+                }
+
                 $success = $document->save();
 
                 if ($success) {
@@ -2505,6 +2515,7 @@ class AgmController extends BaseController {
 
     public function submitUpdateDocument() {
         $data = Input::all();
+
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
 
@@ -2517,6 +2528,18 @@ class AgmController extends BaseController {
                 $new_line .= $data['name'] != $document->name? "name, " : "";
                 $new_line .= $data['remarks'] != $document->remarks? "remarks, " : "";
                 $new_line .= $data['document_url'] != $document->file_url? "document, " : "";
+
+                if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+                    if (isset($data['status']) && $document->status != $data['status']) {
+                        $new_line .= $data['status'] != $document->status? "status, " : "";
+                        $new_line .= Auth::user()->id != $document->status? "approval by, " : "";
+                        $new_line .= Carbon::now() != $document->status? "approval date, " : "";
+                    }
+                    if (isset($data['approval_remark']) && $document->approval_remark != $data['approval_remark']) {
+                        $new_line .= $data['approval_remark'] != $document->status? "approval remark, " : "";
+                    }
+                }
+
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Document : (";
                     $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
@@ -2528,8 +2551,20 @@ class AgmController extends BaseController {
                 $document->name = $data['name'];
                 $document->remarks = $data['remarks'];
                 $document->is_hidden = false;
-                $document->is_readonly = false;;
+                $document->is_readonly = false;
                 $document->file_url = $data['document_url'];
+                
+                if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+                    if (isset($data['status']) && $document->status != $data['status']) {
+                        $document->status = $data['status'];
+                        $document->approval_by = Auth::user()->id;
+                        $document->approval_date = Carbon::now();
+                    }
+                    if (isset($data['approval_remark']) && $document->approval_remark != $data['approval_remark']) {
+                        $document->approval_remark = $data['approval_remark'];
+                    }
+                }
+
                 $success = $document->save();
 
                 if ($success) {

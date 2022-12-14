@@ -99,7 +99,7 @@ foreach ($user_permission as $permission) {
                                         <br/>
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <button type="button" id="clear_document_file" class="btn btn-xs btn-danger" onclick="clearDocumentFile()" style="display: none;"><i class="fa fa-times"></i></button>
-                                        &nbsp;<input type="file" name="document_file" id="document_file" />
+                                        &nbsp;<input type="file" name="document_file" id="document_file" accept="application/pdf" />
                                         <div>
                                             <small>* Accept PDF only. Maximum size: 10MB.</small>
                                         </div>
