@@ -217,6 +217,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Module::hasAccessModule("e-Service"))
             {{-- e-service --}}
             @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MBPJ")))
             <li class="left-menu-list-submenu" id="eservice_panel">
@@ -261,6 +262,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                 </ul>
             </li>
+            @endif
             @endif
 
             @if (Module::hasAccessModule("API Client"))

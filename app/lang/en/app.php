@@ -246,6 +246,13 @@ return array(
             "draft" => "Draft List",
             "review" => "Review List",
             "approved" => "Approved List",
+            "rejected" => "Rejected List",
+            'report' => 'Report',
+            "create" => "New Application",
+            'edit' => 'Edit Application',
+            'show' => 'View Application',
+            "pending" => ":count pending",
+            'payment' => 'Payment',
         ),
         "agm_postpone" => array(
             "name" => "Status AGM",
