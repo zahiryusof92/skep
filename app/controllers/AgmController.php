@@ -2263,18 +2263,6 @@ class AgmController extends BaseController {
                     }
                 }
 
-                if ($documents->is_hidden == 1) {
-                    $is_hidden = 'Yes';
-                } else {
-                    $is_hidden = trans('app.forms.no');
-                }
-
-                if ($documents->is_readonly == 1) {
-                    $is_readonly = 'Yes';
-                } else {
-                    $is_readonly = trans('app.forms.no');
-                }
-
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@updateDocument', Helper::encode($documents->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . Helper::encode($documents->id) . '\')"><i class="fa fa-trash"></i></button>';
 
@@ -2282,8 +2270,6 @@ class AgmController extends BaseController {
                     (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
                     $documents->type->name,
                     $documents->name,
-                    $is_hidden,
-                    $is_readonly,
                     $button
                 );
 

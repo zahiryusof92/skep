@@ -23,9 +23,19 @@ foreach ($user_permission as $permission) {
                     <div class="col-lg-12">
                         <form id="documentSubmit" class="form-horizontal" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label style="color: red;">
+                                            * {{ trans('app.forms.mandatory_elements') }}    
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -90,6 +100,9 @@ foreach ($user_permission as $permission) {
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <button type="button" id="clear_document_file" class="btn btn-xs btn-danger" onclick="clearDocumentFile()" style="display: none;"><i class="fa fa-times"></i></button>
                                         &nbsp;<input type="file" name="document_file" id="document_file" />
+                                        <div>
+                                            <small>* Accept PDF only. Maximum size: 10MB.</small>
+                                        </div>
                                         <div id="validation-errors_document_file"></div>
                                         @if ($document->file_url != "")
                                         <a href="{{asset($document->file_url)}}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
@@ -103,34 +116,6 @@ foreach ($user_permission as $permission) {
                         </form>
 
                         <form>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.hidden') }}</label>
-                                        <select id="is_hidden" class="form-control" name="is_hidden">
-                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            <option value="1" {{ $document->is_hidden == '1' ? 'selected' : '' }}>{{ trans("app.forms.yes") }}</option>
-                                            <option value="0" {{ $document->is_hidden == '0' ? 'selected' : '' }}>{{ trans("app.forms.no") }}</option>
-                                        </select>
-                                        <div id="is_hidden_error" style="display:none;"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="form-label"><span style="color: red; font-style: italic;">*</span> {{ trans('app.forms.read_only') }}</label>
-                                        <select id="is_readonly" class="form-control" name="is_readonly">
-                                            <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            <option value="1" {{ $document->is_readonly == '1' ? 'selected' : '' }}>{{ trans("app.forms.yes") }}</option>
-                                            <option value="0" {{ $document->is_readonly == '0' ? 'selected' : '' }}>{{ trans("app.forms.no") }}</option>
-                                        </select>
-                                        <div id="is_readonly_error" style="display:none;"></div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="form-actions">
                                 <?php if ($update_permission == 1) { ?>
                                     <input type="hidden" id="document_file_url" value="{{$document->file_url}}"/>
@@ -173,7 +158,7 @@ foreach ($user_permission as $permission) {
             var arr = response.errors;
             $.each(arr, function (index, value) {
                 if (value.length != 0) {
-                    $("#validation-errors_document_file").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                    $("#validation-errors_document_file").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                 }
             });
             $("#validation-errors_document_file").show();
@@ -203,9 +188,7 @@ foreach ($user_permission as $permission) {
                 document_type = $("#document_type").val(),
                 name = $("#name").val(),
                 remarks = $("#remarks").val(),
-                document_url = $("#document_file_url").val(),
-                is_hidden = $("#is_hidden").val(),
-                is_readonly = $("#is_readonly").val();
+                document_url = $("#document_file_url").val();
 
         var error = 0;
 
@@ -229,16 +212,6 @@ foreach ($user_permission as $permission) {
             $("#validation-errors_document_file").css("display", "block");
             error = 1;
         }
-        if (is_hidden.trim() == "") {
-            $("#is_hidden_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.required", ["attribute"=>"Sort No"]) }}</span>');
-            $("#is_hidden_error").css("display", "block");
-            error = 1;
-        }
-        if (is_readonly.trim() == "") {
-            $("#is_readonly_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"Status"]) }}</span>');
-            $("#is_readonly_error").css("display", "block");
-            error = 1;
-        }
 
         if (error == 0) {
             $.ajax({
@@ -250,8 +223,6 @@ foreach ($user_permission as $permission) {
                     name: name,
                     remarks: remarks,
                     document_url: document_url,
-                    is_hidden: is_hidden,
-                    is_readonly: is_readonly,
                     id: "{{ \Helper\Helper::encode($document->id) }}"
                 },
                 beforeSend: function() {

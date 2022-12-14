@@ -242,6 +242,7 @@ return array(
     ),
     "forms" => array(
         "mandatory_fields" => "Ruangan Wajib",
+        'mandatory_elements' => 'Undang undang kecil, perjanjian pengurusan, Sijil CCC atau bon adalah mandatori untuk dimuat naik.',
         "check_mandatory_fields" => "Sila pastikan semua ruangan berwajib telah diisi. Semak semua tab.",
         "update_file_no" => "Kemas Kini Nombor Fail",
         "please_select" => "Sila Pilih",

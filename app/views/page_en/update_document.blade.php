@@ -39,10 +39,8 @@ foreach ($user_permission as $permission) {
                                                 <table class="table table-hover nowrap table-own table-striped" id="document" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th style="width:25%;">{{ trans('app.forms.document_type') }}</th>
-                                                            <th style="width:45%;">{{ trans('app.forms.document_name') }}</th>
-                                                            <th style="width:10%;">{{ trans('app.forms.hidden') }}</th>
-                                                            <th style="width:10%;">{{ trans('app.forms.read_only') }}</th>
+                                                            <th style="width:30%;">{{ trans('app.forms.document_type') }}</th>
+                                                            <th style="width:60%;">{{ trans('app.forms.document_name') }}</th>
                                                             <?php if ($update_permission == 1) { ?>
                                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                                                 <?php } ?>

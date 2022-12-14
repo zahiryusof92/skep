@@ -254,6 +254,11 @@ return array(
             "pending" => ":count pending",
             'payment' => 'Payment',
         ),
+        "eservice_price" => array(
+            "name" => "E-Perkhidmatan Pricing",
+            "name1" => "-Perkhidmatan Pricing",
+            "list" => "e-Perkhidmatan Pricing",
+        ),
         "agm_postpone" => array(
             "name" => "Status AGM",
             "list" => "Status AGM",
@@ -298,6 +303,7 @@ return array(
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
+        'mandatory_elements' => 'By Laws, Management Agreement, CCC Certificate or Bon are required to upload.',
         "check_mandatory_fields" => "Please make sure all mandatory fields already key-in. Check all tabs.",
         "update_file_no" => "Update File No",
         "please_select" => "Please Select",
@@ -833,6 +839,7 @@ return array(
         'return_checklist' => 'Return Checklist',
         'prepared_by' => 'Prepared By',
         'prepared_date' => 'Prepared Date',
+        'price' => 'Price',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

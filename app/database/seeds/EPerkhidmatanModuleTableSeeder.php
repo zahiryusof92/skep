@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class SubModuleTableSeeder extends Seeder
+class EPerkhidmatanModuleTableSeeder extends Seeder
 {
     public function run()
     {

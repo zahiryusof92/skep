@@ -31,7 +31,7 @@ foreach ($user_permission as $permission) {
                                         <div class="col-lg-12">
                                             <form id="documentSubmit" class="form-horizontal" enctype="multipart/form-data">
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
                                                         </div>
@@ -39,10 +39,10 @@ foreach ($user_permission as $permission) {
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label style="color: red;">
-                                                                Important!
+                                                                * {{ trans('app.forms.mandatory_elements') }}
                                                             </label>
                                                         </div>
                                                     </div>

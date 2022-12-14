@@ -101,14 +101,27 @@ class EServiceController extends \BaseController
 
 		$types = [];
 		$cob = Auth::user()->getCOB->short_name;
-		if (!empty($cob)) {
+		if (!empty($cob) && $cob != 'LPHS') {
 			$options = (!empty($this->getModule()['cob'][Str::lower($cob)])) ? $this->getModule()['cob'][Str::lower($cob)]['type'] : '';
 			if (!empty($options)) {
 				foreach ($options as $type) {
 					array_push($types, ['id' => $type['name'], 'text' => $type['title']]);
 				}
 			}
+		} else {
+			$cobs = Company::where('is_deleted', 0)->get();
+			if ($cobs) {
+				foreach ($cobs as $cob) {
+					$options = (!empty($this->getModule()['cob'][Str::lower($cob->short_name)])) ? $this->getModule()['cob'][Str::lower($cob->short_name)]['type'] : '';
+					if (!empty($options)) {
+						foreach ($options as $type) {
+							array_push($types, ['id' => $type['name'], 'text' => $type['title']]);
+						}
+					}
+				}
+			}
 		}
+
 		$viewData = array(
 			'title' => trans('app.menus.eservice.review'),
 			'panel_nav_active' => 'eservice_panel',
@@ -1335,6 +1348,10 @@ class EServiceController extends \BaseController
 
 	private function checkAvailableAccess($model = '')
 	{
+		if (!AccessGroup::hasAccessModule('e-Service')) {
+			App::abort(404);
+		}
+
 		if (!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name != "MBPJ")) {
 			App::abort(404);
 		}
