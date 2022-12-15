@@ -18,7 +18,7 @@ class Module extends Eloquent {
         if ($name) {
             $user = User::find(Auth::user()->id);
             if ($user) {
-                $module = self::where('name_en', 'API Client')->first();
+                $module = self::where('name_en', $name)->first();
                 if ($module) {
                     $submodules = SubModule::where('module_id', $module->id)->get();
                     if ($submodules) {

@@ -76,6 +76,7 @@ foreach ($user_permission as $permission) {
                                 <tr>                                
                                     <th style="width:10%;">{{ trans('app.forms.memo_date') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
+                                    <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
                                     <th style="width:20%;">{{ trans('app.forms.memo_type') }}</th>
                                     <th style="width:30%;">{{ trans('app.forms.subject') }}</th>
                                     <th style="width:10%;">{{ trans('app.forms.publish_date') }}</th>
@@ -91,6 +92,7 @@ foreach ($user_permission as $permission) {
                         </table>
                     </div>
                 </div>
+            </section>
         </div>
     </section>
     <!-- End  -->
@@ -111,6 +113,7 @@ foreach ($user_permission as $permission) {
             columns: [                
                 {data: 'memo_date', name: 'memo.memo_date'},
                 {data: 'company', name: 'memo.company_id'},
+                {data: 'file_no', name: 'memo.file_no'},
                 {data: 'memo_type', name: 'memo_type.description'},
                 {data: 'subject', name: 'memo.subject'},
                 {data: 'publish_date', name: 'memo.publish_date'},

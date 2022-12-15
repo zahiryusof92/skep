@@ -217,6 +217,54 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if (Module::hasAccessModule("e-Service"))
+            {{-- e-service --}}
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MBPJ")))
+            <li class="left-menu-list-submenu" id="eservice_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
+                    <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()) ! @endif</span>
+                </a>
+                <ul class="left-menu-list list-unstyled" id="eservice_main">
+                    @if (Auth::user()->isJMB())
+                    <li class="left-menu-list-link" id="eservice_create">
+                        <a class="left-menu-link" href="{{ route('eservice.create', '') }}">
+                            {{ trans('app.menus.eservice.create') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_draft">
+                        <a class="left-menu-link" href="{{ route('eservice.draft') }}">
+                            {{ trans('app.menus.eservice.draft') }}
+                        </a>
+                    </li>
+                    @endif
+                    <li class="left-menu-list-link" id="eservice_list">
+                        <a class="left-menu-link" href="{{ route('eservice.index') }}">
+                            {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()]) }}</span>
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_approved">
+                        <a class="left-menu-link" href="{{ route('eservice.approved') }}">
+                            {{ trans('app.menus.eservice.approved') }}
+                        </a>
+                    </li>
+                    <li class="left-menu-list-link" id="eservice_rejected">
+                        <a class="left-menu-link" href="{{ route('eservice.rejected') }}">
+                            {{ trans('app.menus.eservice.rejected') }}
+                        </a>
+                    </li>                   
+                    @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
+                    <li class="left-menu-list-link" id="eservice_report">
+                        <a class="left-menu-link" href="{{ route('eservice.report') }}">
+                            {{ trans('app.menus.eservice.report') }}
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+            </li>
+            @endif
+            @endif
+
             @if (Module::hasAccessModule("API Client"))
             <li class="left-menu-list-submenu" id="api_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
@@ -505,6 +553,12 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
+                    <li id="eservice_price_list">
+                        <a class="left-menu-link" href="{{ route('eservicePrice.index') }}">
+                            {{ trans('app.menus.master.eservice_price') }}
+                        </a>
+                    </li>
+                    
                     @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
                     <li id="postpone_agm_reason_list">
                         <a class="left-menu-link" href="{{ route('statusAGMReason.index') }}">

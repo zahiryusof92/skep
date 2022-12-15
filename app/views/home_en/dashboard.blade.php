@@ -18,7 +18,9 @@ foreach ($user_permission as $permission) {
         <div class="panel-heading">
             <h3>Dashboard</h3>
         </div>
+
         <div class="panel-body">
+
             <div class="widget widget-four background-transparent">
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">

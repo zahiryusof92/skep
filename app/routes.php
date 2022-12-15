@@ -1081,6 +1081,31 @@ Route::group(array('before' => 'authMember'), function() {
     Route::resource('cob_letter', 'CobLetterController');
 
     /**
+     * EService
+     */
+    Route::resource('eservicePrice', 'EServicePriceController');
+
+    Route::get('eservice/draft', ['as' => 'eservice.draft', 'uses' => 'EServiceController@draft']);
+    Route::get('eservice/approved', ['as' => 'eservice.approved', 'uses' => 'EServiceController@approved']);
+    Route::get('eservice/rejected', ['as' => 'eservice.rejected', 'uses' => 'EServiceController@rejected']);
+
+    Route::post('eservice/verify', ['as' => 'eservice.verify', 'uses' => 'EServiceController@verify']);
+    Route::get('eservice/report', ['as' => 'eservice.report', 'uses' => 'EServiceController@report']);
+
+    Route::resource('eservice', 'EServiceController');
+    Route::get('eservice/getForm', array('as' => 'eservice.getForm', 'uses' => 'EServiceController@getForm'));
+    Route::get('eservice/create/{type}', array('as' => 'eservice.create', 'uses' => 'EServiceController@create'));
+    Route::post('eservice/fileUpload', ['as' => 'eservice.fileUpload', 'uses' => 'EServiceController@fileUpload']);
+    Route::get('eservice/payment/{id}', array('as' => 'eservice.payment', 'uses' => 'EServiceController@payment'));
+    Route::post('eservice/submitPayment', array('as' => 'eservice.submitPayment', 'uses' => 'EServiceController@submitPayment'));
+    Route::post('eservice/submitByCOB/{id}', ['as' => 'eservice.submitByCOB', 'uses' => 'EServiceController@submitByCOB']);
+    Route::get('eservice/getLetterPDF/{id}', ['as' => 'eservice.getLetterPDF', 'uses' => 'EServiceController@getLetterPDF']);
+    Route::get('eservice/getLetterWord/{id}', ['as' => 'eservice.getLetterWord', 'uses' => 'EServiceController@getLetterWord']);
+    Route::post('eservice/review', ['as' => 'eservice.review', 'uses' => 'EServiceController@review']);
+    Route::post('eservice/submitApprove', ['as' => 'eservice.submitApprove', 'uses' => 'EServiceController@submitApprove']);
+    Route::post('eservice/submitReject', ['as' => 'eservice.submitReject', 'uses' => 'EServiceController@submitReject']);
+   
+    /**
      * API Client
      */
     Route::resource('clients', 'APIClientController');
@@ -1227,6 +1252,7 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('tenant/getListing', 'Api\TenantController@getListing');
         Route::get('tenant/getAnalyticData', 'Api\TenantController@getAnalyticData');
         Route::get('cob_letter/getTypeOptions', array('as' => 'v3.api.cob_letter.getTypeOptions', 'uses' => 'Api\COBLetterController@getTypeOptions'));
+        Route::get('eservice/getTypeOptions', array('as' => 'v3.api.eservice.getTypeOptions', 'uses' => 'Api\EServiceController@getTypeOptions'));
     });
 
     Route::group(array('prefix' => 'finance'), function() {
