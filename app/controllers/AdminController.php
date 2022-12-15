@@ -5343,7 +5343,11 @@ class AdminController extends BaseController {
                 $document->approval_by = Auth::user()->id;
                 $document->approval_date = Carbon::now();
             } else {
-                $document->status = Document::PENDING;
+                if (Auth::user()->getCOB && Auth::user()->getCOB->short_name == "MBPJ") {
+                    $document->status = Document::PENDING;
+                } else {
+                    $document->status = Document::APPROVED;
+                }
             }
 
             $success = $document->save();
