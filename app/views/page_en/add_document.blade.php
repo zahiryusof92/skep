@@ -38,15 +38,17 @@ foreach ($user_permission as $permission) {
                                                     </div>
                                                 </div>
 
+                                                @if (Auth::user()->getCOB && Auth::user()->getCOB->short_name == "MBPJ")
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label style="color: red;">
-                                                                * {{ trans('app.forms.mandatory_elements') }}
+                                                                * {{ trans('app.forms.mandatory_elements') }}    
                                                             </label>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
 
                                                 <div class="row">
                                                     <div class="col-md-4">
