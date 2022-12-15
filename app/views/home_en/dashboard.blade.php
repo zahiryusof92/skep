@@ -486,29 +486,6 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr />
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <h4>{{ trans('app.forms.memo') }}</h4>
-                    <section class="panel panel-pad">
-                        <div class="tab-content padding-vertical-20">
-                            <table class="table table-hover table-own table-striped" id="memo" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th style="width:70%;">{{ trans('app.forms.subject') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.memo_date') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
         </div>
     </section>
 </div>
