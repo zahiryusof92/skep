@@ -1539,7 +1539,7 @@ class LPHSController extends BaseController
                 $jmb_role = Role::where('name', Role::JMB)->pluck('id');
                 $users = User::where('role', $jmb_role)
                     ->where('company_id', $council->id)
-                    ->where('remarks', 'Created by System')
+                    // ->where('remarks', 'Created by System')
                     ->where('is_active', 1)
                     ->where('is_deleted', 0)
                     ->get();
