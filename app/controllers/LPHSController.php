@@ -1531,7 +1531,7 @@ class LPHSController extends BaseController
         return $this->result($result, $filename = 'Tenant');
     }
 
-    public function updateJMBExpiration($cob = null)
+    public function updateJMBExpiration($cob = null, $date = null)
     {
         $councils = $this->council($cob);
         if ($councils) {
@@ -1545,7 +1545,7 @@ class LPHSController extends BaseController
                     ->get();
 
                 foreach ($users as $user) {
-                    $user->end_date = '2022-12-31';
+                    $user->end_date = (!empty($date) ? $date : date('Y') . '-12-31');
                     $user->save();
                 }
             }
