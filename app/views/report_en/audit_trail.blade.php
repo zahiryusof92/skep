@@ -12,8 +12,9 @@ $company = Company::find(Auth::user()->company_id);
             <h3>{{$title}}</h3>
         </div>
         <div class="panel-body">
-            <form target="_blank" action="{{ route('print.log') }}" method="POST">
-                <div class="invoice-block">
+            
+            <div class="invoice-block">
+                <form target="_blank" action="{{ route('print.log') }}" method="POST">
                     <div class="row">
                         <table width="100%">
                             <tr>
@@ -97,45 +98,63 @@ $company = Company::find(Auth::user()->company_id);
                             </div>
                         </div>
                     </section>
-                    <br/>
+                </form>
 
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="margin-bottom-50 chart-custom">
-                                <div id="files_chart"></div>                            
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="margin-bottom-50 chart-custom">
-                                <div id="jmb_chart"></div>                            
-                            </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="margin-bottom-50 chart-custom">
+                            <div id="files_chart"></div>                            
                         </div>
                     </div>
-
-                    <section class="panel panel-pad">
-                        <br/>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <table class="table table-hover table-own table-striped" id="audit_trail" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:5%; text-align: center !important;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.file_no') }}</th>
-                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
-                                            <th style="width:45%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
-                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.role') }}</th>
-                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
-                                            <th style="width:10%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="col-lg-6">
+                        <div class="margin-bottom-50 chart-custom">
+                            <div id="jmb_chart"></div>                            
                         </div>
-                    </section>
+                    </div>
                 </div>
-            </form>
+
+                <section class="panel panel-pad">
+                    <br/>
+
+                    <div style="margin-bottom: 20px;">
+                        <form target="_blank" action="{{ route('export.log') }}" method="POST">
+                            <input type="hidden" name="export_company_id" id="export_company_id">
+                            <input type="hidden" name="export_role_id" id="export_role_id">
+                            <input type="hidden" name="export_module" id="export_module">
+                            <input type="hidden" name="export_file_id" id="export_file_id">
+                            <input type="hidden" name="export_date_from" id="export_date_from">
+                            <input type="hidden" name="export_date_to" id="export_date_to">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Export">
+                                    <i class="fa fa-file-excel-o"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table class="table table-hover table-own table-striped" id="audit_trail" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:5%; text-align: center !important;">{{ trans('app.forms.cob') }}</th>
+                                        <th style="width:10%; text-align: center !important;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:10%; text-align: center !important;">{{ trans('app.forms.module') }}</th>
+                                        <th style="width:45%; text-align: center !important;">{{ trans('app.forms.activities') }}</th>
+                                        <th style="width:10%; text-align: center !important;">{{ trans('app.forms.role') }}</th>
+                                        <th style="width:10%; text-align: center !important;">{{ trans('app.forms.action_from') }}</th>
+                                        <th style="width:10%; text-align: center !important;">{{ trans('app.forms.date') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </div>
     </section>
     <!-- End  -->
@@ -166,6 +185,14 @@ $company = Company::find(Auth::user()->company_id);
                     $('#print_file_id').val(file_id);
                     $('#print_date_from').val(date_from);
                     $('#print_date_to').val(date_to);
+
+                    $('#export_company_id').val(company_id);
+                    $('#export_role_id').val(role_id);
+                    $('#export_module').val(module_name);
+                    $('#export_file_id').val(file_id);
+                    $('#export_date_from').val(date_from);
+                    $('#export_date_to').val(date_to);
+
                     // Append to data
                     data.company_id = company_id;
                     data.role_id = role_id;
