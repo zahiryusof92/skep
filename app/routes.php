@@ -733,6 +733,8 @@ Route::post('/deleteInsuranceProvider/{id}', 'SettingController@deleteInsuranceP
 // --- Reporting --- //
 //audit trail
 Route::get('/reporting/auditTrail', array('as' => 'reporting.log.index', 'uses' => 'ReportController@auditTrail'))->before('authMember');
+Route::post('/export/auditTrail', array('as' => 'export.log', 'uses' => 'ExportController@auditTrail'))->before('authMember');
+
 Route::get('/reporting/auditLogon', array('as' => 'reporting.logon.index', 'uses' => 'ReportController@auditLogon'))->before('authMember');
 Route::get('/reporting/auditLogon/old', array('as' => 'reporting.logon.old.index', 'uses' => 'ReportController@auditLogonOld'))->before('authMember');
 
