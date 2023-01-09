@@ -1199,7 +1199,19 @@ Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
 Route::group(array('prefix' => 'api/v4'), function() {
     // Files API
     Route::get('files', 'Api\FileController@files');
-    Route::get('syncFile', 'Api\FileController@syncFile');
+    Route::get('filesHouseScheme', 'Api\FileController@filesHouseScheme');
+    Route::get('filesStrata', 'Api\FileController@filesStrata');
+    Route::get('filesFacility', 'Api\FileController@filesFacility');
+    Route::get('filesManagement', 'Api\FileController@filesManagement');
+    Route::get('filesManagementJMB', 'Api\FileController@filesManagementJMB');
+    Route::get('filesManagementMC', 'Api\FileController@filesManagementMC');
+    Route::get('filesManagementAgent', 'Api\FileController@filesManagementAgent');
+    Route::get('filesManagementOthers', 'Api\FileController@filesManagementOthers');
+    Route::get('filesManagementDeveloper', 'Api\FileController@filesManagementDeveloper');
+    Route::get('filesMonitoring', 'Api\FileController@filesMonitoring');
+    Route::get('filesMonitoringDocument', 'Api\FileController@filesMonitoringDocument');
+    Route::get('filesOther', 'Api\FileController@filesOther');
+    Route::get('filesRating', 'Api\FileController@filesRating');
 
     // Finance API
     Route::get('financeFile', 'Api\FinanceController@financeFile');
@@ -1216,6 +1228,7 @@ Route::group(array('prefix' => 'api/v4'), function() {
     Route::get('financeStaff', 'Api\FinanceController@financeStaff');
     Route::get('financeAdmin', 'Api\FinanceController@financeAdmin');
 
+    Route::get('syncFile', 'Api\FileController@syncFile');
     Route::get('syncFinance', 'Api\FinanceController@syncFinance');
 });
 
