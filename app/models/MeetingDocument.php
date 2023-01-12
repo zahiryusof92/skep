@@ -28,4 +28,8 @@ class MeetingDocument extends Eloquent
     {
         return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->latest();
     }
+
+    public function minutesMeetingOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_meeting')->latest();
+    }
 }

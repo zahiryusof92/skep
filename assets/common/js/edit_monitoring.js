@@ -57,7 +57,6 @@ $(document).ready(function() {
                 return true;
             },
             success: function(result) {
-                console.log('result', result)
                 if (result.success) {
                     $("#agm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearAGMFile()'><i class='fa fa-times'></i></button>").show();
                     $("#agm_file_clear").show();
@@ -81,7 +80,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 if (result.success) {
-                    $("#egm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearEGMFile()'><i class='fa fa-times'></i></button>").show();
+                    $("#egm_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearEGMFile()'><i class='fa fa-times'></i> </button>").show();
                     $("#egm_file_clear").show();
                     $("#egm_file").css("color", "green");
                     $("#egm_file_url").val(result.file);
@@ -103,7 +102,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 if (result.success) {
-                    $("#minutes_meeting_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
+                    $("#minutes_meeting_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i> </button>").show();
                     $("#minutes_meeting_file_clear").show();
                     $("#minutes_meeting_file").css("color", "green");
                     $("#minutes_meeting_file_url").val(result.file);
@@ -125,7 +124,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 if (result.success) {
-                    $("#jmc_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
+                    $("#jmc_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearJMCFile()'><i class='fa fa-times'></i> </button>").show();
                     $("#jmc_file_clear").show();
                     $("#jmc_file").css("color", "green");
                     $("#jmc_file_url").val(result.file);
@@ -147,7 +146,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 if (result.success) {
-                    $("#ic_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
+                    $("#ic_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearICFile()'><i class='fa fa-times'></i> </button>").show();
                     $("#ic_file_clear").show();
                     $("#ic_file").css("color", "green");
                     $("#ic_file_url").val(result.file);
@@ -169,7 +168,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 if (result.success) {
-                    $("#attendance_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
+                    $("#attendance_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAttendanceFile()'><i class='fa fa-times'></i> </button>").show();
                     $("#attendance_file_clear").show();
                     $("#attendance_file").css("color", "green");
                     $("#attendance_file_url").val(result.file);
@@ -191,7 +190,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 if (result.success) {
-                    $("#audited_financial_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button class='btn btn-xs btn-danger' onclick='clearMinutesMeetingFile()'><i class='fa fa-times'></i></button>").show();
+                    $("#audited_financial_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAuditedFinancialFile()'><i class='fa fa-times'></i> </button>").show();
                     $("#audited_financial_file_clear").show();
                     $("#audited_financial_file").css("color", "green");
                     $("#audited_financial_file_url").val(result.file);
@@ -882,4 +881,38 @@ function clearHouseRules() {
     $("#house_rules").css("color", "grey");
     $("#clear_house_rules").hide();
     $("#check_house_rules").hide();
+}
+
+$('body').delegate('#minutes_meeting_ocr', 'change', function() {
+    $('#upload_minutes_meeting_ocr').ajaxForm({
+        beforeSubmit: function() {
+            $("#minutes_meeting_ocr_error").empty().hide();
+            return true;
+        },
+        success: function(result) {
+            if (result.success) {
+                $("#minutes_meeting_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingOcr()'><i class='fa fa-times'></i> </button>").show();
+                $("#minutes_meeting_ocr_clear").show();
+                $("#minutes_meeting_ocr").css("color", "green");
+                $("#minutes_meeting_ocr_url").val(result.file);
+            } else {
+                var arr = result.errors;
+                $.each(arr, function (index, value) {
+                    if (value.length != 0) {
+                        $("#minutes_meeting_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                    }
+                });
+                $("#minutes_meeting_ocr_error").show();
+                $("#minutes_meeting_ocr").css("color", "red");
+            }
+        },
+        dataType: 'json'
+    }).submit();
+});
+
+function clearMinutesMeetingOcr() {
+    $("#minutes_meeting_ocr").val("");
+    $("#minutes_meeting_ocr_url").val("");
+    $("#minutes_meeting_ocr").css("color", "grey");
+    $("#minutes_meeting_ocr_error").hide();
 }

@@ -1825,6 +1825,17 @@ class AgmController extends BaseController {
             $success = $agm_detail->save();
 
             if ($success) {
+                if (isset($data['minutes_meeting_file_ocr']) && !empty($data['minutes_meeting_file_ocr'])) {
+                    Ocr::create([
+                        'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                        'file_id' => $agm_detail->file_id,
+                        'strata_id' => $agm_detail->strata_id,
+                        'meeting_document_id' => $agm_detail->id,
+                        'type' =>  'minutes_meeting',
+                        'url' => $data['minutes_meeting_file_ocr'],
+                    ]);
+                }
+
                 $file = $agm_detail->files;
 
                 // if ($file) {

@@ -1027,4 +1027,32 @@ class FileController extends BaseController {
         // }
     }
 
+    public function uploadOcr() {
+        $files = Input::file();
+
+        $allowedFile = ['txt'];
+        $allowedSize = '10000000';
+        
+        if (isset($files['minutes_meeting_ocr'])) {
+            $file = $files['minutes_meeting_ocr'];
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/ocr_files';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+        
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only PDF file!']]);
+            }
+        }
+
+        return Response::json(['success' => false, 'errors' => ['Please upload file!']]);
+    }
+
 }

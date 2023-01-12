@@ -77,7 +77,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="agm_file" id="agm_file">
                                     @if ($meeting_doc->agm_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->agm_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -113,7 +113,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="egm_file" id="egm_file">
                                     @if ($meeting_doc->egm_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->egm_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -141,6 +141,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
                         </form>
+
                         <form id="upload_minutes_meeting_file" enctype="multipart/form-data" method="post" action="{{ url('uploadMinutesMeetingFile') }}" autocomplete="off">
                             <div class="form-group row">
                                 <div class="col-md-6">
@@ -149,7 +150,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="minutes_meeting_file" id="minutes_meeting_file">
                                     @if ($meeting_doc->minutes_meeting_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->minutes_meeting_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -160,6 +161,34 @@ foreach ($user_permission as $permission) {
                                     </div>
                                     @endif
                                     <div id="minutes_meeting_file_error"></div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form id="upload_minutes_meeting_ocr" enctype="multipart/form-data" method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">&nbsp;</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-control-label">OCR</label>
+                                    <br/>
+                                    <input type="file" name="minutes_meeting_ocr" id="minutes_meeting_ocr">
+                                    <div>
+                                        <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                    </div>
+                                    <div id="minutes_meeting_ocr_error"></div>
+                                    @if ($meeting_doc->minutesMeetingOcr && !empty($meeting_doc->minutesMeetingOcr->url))
+                                    <div>
+                                        <a href="{{ asset($meeting_doc->minutesMeetingOcr->url) }}" target="_blank">
+                                            <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
+                                                <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
+                                            </button>
+                                        </a>
+                                        &nbsp;
+                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesMeetingOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </form>
@@ -185,7 +214,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="jmc_file" id="jmc_file">
                                     @if ($meeting_doc->jmc_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->jmc_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -221,7 +250,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="ic_file" id="ic_file">
                                     @if ($meeting_doc->ic_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->ic_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -257,7 +286,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="attendance_file" id="attendance_file">
                                     @if ($meeting_doc->attendance_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->attendance_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -293,7 +322,7 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="audited_financial_file" id="audited_financial_file">
                                     @if ($meeting_doc->audited_financial_file_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->audited_financial_file_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -328,7 +357,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="audit_report_file" id="audit_report_file">
                                     @if ($meeting_doc->audit_report_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->audit_report_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -353,7 +382,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="letter_integrity" id="letter_integrity">
                                     @if ($meeting_doc->letter_integrity_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->letter_integrity_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -378,7 +407,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="letter_bankruptcy" id="letter_bankruptcy">
                                     @if ($meeting_doc->letter_bankruptcy_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->letter_bankruptcy_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -436,7 +465,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="notice_agm_egm" id="notice_agm_egm">
                                     @if ($meeting_doc->notice_agm_egm_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->notice_agm_egm_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -461,7 +490,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="minutes_agm_egm" id="minutes_agm_egm">
                                     @if ($meeting_doc->minutes_agm_egm_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->minutes_agm_egm_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -486,7 +515,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="minutes_ajk" id="minutes_ajk">
                                     @if ($meeting_doc->minutes_ajk_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->minutes_ajk_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -511,7 +540,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="eligible_vote" id="eligible_vote">
                                     @if ($meeting_doc->eligible_vote_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->eligible_vote_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -536,7 +565,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="attend_meeting" id="attend_meeting">
                                     @if ($meeting_doc->attend_meeting_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->attend_meeting_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -561,7 +590,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="proksi" id="proksi">
                                     @if ($meeting_doc->proksi_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->proksi_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -586,7 +615,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="ajk_info" id="ajk_info">
                                     @if ($meeting_doc->ajk_info_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->ajk_info_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -611,7 +640,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="ic" id="ic">
                                     @if ($meeting_doc->ic_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->ic_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -637,7 +666,7 @@ foreach ($user_permission as $permission) {
                                         &nbsp;
                                         <input type="file" name="purchase_aggrement" id="purchase_aggrement">
                                         @if ($meeting_doc->purchase_aggrement_url != "")
-                                        <div class="col-md-6">
+                                        <div>
                                             <a href="{{ asset($meeting_doc->purchase_aggrement_url) }}" target="_blank">
                                                 <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                     <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -664,7 +693,7 @@ foreach ($user_permission as $permission) {
                                         &nbsp;
                                         <input type="file" name="strata_title" id="strata_title">
                                         @if ($meeting_doc->strata_title_url != "")
-                                        <div class="col-md-6">
+                                        <div>
                                             <a href="{{ asset($meeting_doc->strata_title_url) }}" target="_blank">
                                                 <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                     <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -690,7 +719,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="maintenance_statement" id="maintenance_statement">
                                     @if ($meeting_doc->maintenance_statement_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->maintenance_statement_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -715,7 +744,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="integrity_pledge" id="integrity_pledge">
                                     @if ($meeting_doc->integrity_pledge_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->integrity_pledge_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -740,7 +769,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="report_audited_financial" id="report_audited_financial">
                                     @if ($meeting_doc->report_audited_financial_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->report_audited_financial_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -765,7 +794,7 @@ foreach ($user_permission as $permission) {
                                     &nbsp;
                                     <input type="file" name="house_rules" id="house_rules">
                                     @if ($meeting_doc->house_rules_url != "")
-                                    <div class="col-md-6">
+                                    <div>
                                         <a href="{{ asset($meeting_doc->house_rules_url) }}" target="_blank">
                                             <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
                                                 <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
@@ -926,6 +955,7 @@ foreach ($user_permission as $permission) {
                                     <input type="hidden" id="integrity_pledge_url" value="{{ $meeting_doc->integrity_pledge_url }}"/>
                                     <input type="hidden" id="report_audited_financial_url" value="{{ $meeting_doc->report_audited_financial_url }}"/>
                                     <input type="hidden" id="house_rules_url" value="{{ $meeting_doc->house_rules_url }}"/>
+                                    <input type="hidden" id="minutes_meeting_ocr_url" value="{{ ($meeting_doc->minutesMeetingOcr ? $meeting_doc->minutesMeetingOcr->url : '') }}"/>
                                     
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="editMinutes()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
@@ -992,7 +1022,8 @@ function editMinutes() {
             status = $("#status").val(),
             reason = $("#reason").val(),
             endorsed_by = $("#endorsed_by").val(),
-            endorsed_email = $("#endorsed_email").val();
+            endorsed_email = $("#endorsed_email").val()
+            minutes_meeting_file_ocr = $("#minutes_meeting_file_ocr").val();
 
     if (document.getElementById('agm').checked) {
         agm = 1;
@@ -1103,6 +1134,7 @@ function editMinutes() {
                 reason: reason,
                 endorsed_by: endorsed_by,
                 endorsed_email: endorsed_email,
+                minutes_meeting_file_ocr: minutes_meeting_file_ocr,
                 id: '{{ \Helper\Helper::encode($meeting_doc->id) }}'
             },
             beforeSend: function() {
