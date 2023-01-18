@@ -1825,15 +1825,39 @@ class AgmController extends BaseController {
             $success = $agm_detail->save();
 
             if ($success) {
-                if (isset($data['minutes_meeting_file_ocr']) && !empty($data['minutes_meeting_file_ocr'])) {
-                    Ocr::create([
-                        'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
-                        'file_id' => $agm_detail->file_id,
-                        'strata_id' => $agm_detail->strata_id,
-                        'meeting_document_id' => $agm_detail->id,
-                        'type' =>  'minutes_meeting',
-                        'url' => $data['minutes_meeting_file_ocr'],
-                    ]);
+                /**
+                 * OCR
+                 */
+                if (isset($data['minutes_meeting_ocr_url']) && !empty($data['minutes_meeting_ocr_url'])) {
+                    Ocr::updateOrCreate(
+                        [
+                            'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                            'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                            'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                            'meeting_document_id' => $agm_detail->id,
+                            'type' =>  'minutes_meeting',
+                        ],
+                        [
+                            'url' => $data['minutes_meeting_ocr_url'],
+                            'created_by' => Auth::user()->id,
+                        ]
+                    );
+                }
+
+                if (isset($data['copy_of_spa_ocr_url']) && !empty($data['copy_of_spa_ocr_url'])) {
+                    Ocr::updateOrCreate(
+                        [
+                            'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                            'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                            'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                            'meeting_document_id' => $agm_detail->id,
+                            'type' =>  'copy_of_spa',
+                        ],
+                        [
+                            'url' => $data['copy_of_spa_ocr_url'],
+                            'created_by' => Auth::user()->id,
+                        ]
+                    );
                 }
 
                 $file = $agm_detail->files;
@@ -1943,8 +1967,8 @@ class AgmController extends BaseController {
 
     public function submitEditMinutes() {
         $data = Input::all();
+        
         if (Request::ajax()) {
-
             $id = Helper::decode($data['id']);
             $file_id = $data['file_id'];
             $agm_date = $data['agm_date'];
@@ -1990,8 +2014,9 @@ class AgmController extends BaseController {
 
             $agm_detail = MeetingDocument::findOrFail($id);
             if ($agm_detail) {
-                /** Arrange audit fields changes */
                 $audit_fields_changed = '';
+
+                /** Arrange audit fields changes */
                 $new_line = '';
                 $new_line .= $agm_date != $agm_detail->agm_date? "agm date, " : "";
                 $new_line .= $agm != $agm_detail->agm? "agm, " : "";
@@ -2028,10 +2053,6 @@ class AgmController extends BaseController {
                 $new_line .= $integrity_pledge_url != $agm_detail->integrity_pledge_url? "integrity pledge, " : "";
                 $new_line .= $house_rules_url != $agm_detail->house_rules_url? "house rules, " : "";
                 $new_line .= $remarks != $agm_detail->remarks? "remarks, " : "";
-                if(!empty($new_line)) {
-                    $audit_fields_changed .= "<br/><ul><li> AGM Detail : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
-                }
                 /** End Arrange audit fields changes */
 
                 $agm_detail->file_id = $file_id;
@@ -2096,6 +2117,41 @@ class AgmController extends BaseController {
                 if ($success) {
                     $files = Files::find($agm_detail->file_id);
 
+                    /**
+                     * OCR
+                     */
+                    if (isset($data['minutes_meeting_ocr_url']) && !empty($data['minutes_meeting_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'minutes_meeting',
+                            ],
+                            [
+                                'url' => $data['minutes_meeting_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+    
+                    if (isset($data['copy_of_spa_ocr_url']) && !empty($data['copy_of_spa_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'copy_of_spa',
+                            ],
+                            [
+                                'url' => $data['copy_of_spa_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
                     /** Added status */
                     if (!empty($status)) {
                         MeetingDocumentStatus::updateOrCreate(
@@ -2133,6 +2189,11 @@ class AgmController extends BaseController {
                         //         $message->to($receipant->email, $receipant->full_name)->subject('Endorsement Minutes of Meeting');
                         //     });
                         // }
+                    }
+
+                    if (!empty($new_line)) {
+                        $audit_fields_changed .= "<br/><ul><li> AGM Detail : (";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
                     }
 
                     # Audit Trail                   

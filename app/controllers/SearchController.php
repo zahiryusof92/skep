@@ -24,7 +24,7 @@ class SearchController extends BaseController
 
         $keyword = $request['keyword'];
 
-        $ocrs = Ocr::with('meetingDocument')->get();
+        $ocrs = Ocr::self()->get();
         if ($ocrs) {
             foreach ($ocrs as $ocr) {
                 if ($ocr->meetingDocument) {

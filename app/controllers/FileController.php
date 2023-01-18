@@ -1048,7 +1048,26 @@ class FileController extends BaseController {
                     return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
                 }
             } else {
-                return Response::json(['success' => false, 'errors' => ['Please upload only PDF file!']]);
+                return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
+            }
+        }
+
+        if (isset($files['copy_of_spa_ocr'])) {
+            $file = $files['copy_of_spa_ocr'];
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/ocr_files';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+        
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
             }
         }
 

@@ -32,4 +32,8 @@ class MeetingDocument extends Eloquent
     public function minutesMeetingOcr() {
         return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_meeting')->latest();
     }
+
+    public function copyOfSpaOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'copy_of_spa')->latest();
+    }
 }

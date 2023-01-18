@@ -153,6 +153,7 @@ foreach ($user_permission as $permission) {
                             </div>
                         </form>
 
+                        <!-- OCR -->
                         <form id="upload_minutes_meeting_ocr" enctype="multipart/form-data" method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
                             <div class="form-group row">
                                 <div class="col-md-6">
@@ -183,6 +184,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
                         </form>
+
                         <form id="upload_jmc_file" enctype="multipart/form-data" method="post" action="{{ url('uploadJMCFile') }}" autocomplete="off">
                             <div class="form-group row">
                                 <div class="col-md-6">
@@ -191,6 +193,24 @@ foreach ($user_permission as $permission) {
                                 <div class="col-md-6">
                                     <input type="file" name="jmc_file" id="jmc_file">
                                     <div id="jmc_file_error"></div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- OCR -->
+                        <form id="upload_copy_of_spa_ocr" enctype="multipart/form-data" method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">&nbsp;</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-control-label">OCR</label>
+                                    <br/>
+                                    <input type="file" name="copy_of_spa_ocr" id="copy_of_spa_ocr">
+                                    <div>
+                                        <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                    </div>
+                                    <div id="copy_of_spa_ocr_error"></div>
                                 </div>
                             </div>
                         </form>
@@ -617,6 +637,7 @@ foreach ($user_permission as $permission) {
                                     <input type="hidden" id="report_audited_financial_url"/>
                                     <input type="hidden" id="house_rules_url"/>
                                     <input type="hidden" id="minutes_meeting_ocr_url"/>
+                                    <input type="hidden" id="copy_of_spa_ocr_url"/>
 
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="addMinutes()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
@@ -697,7 +718,8 @@ foreach ($user_permission as $permission) {
                 house_rules_url = $("#house_rules_url").val(),
                 type = $("#type").val(),
                 remarks = $("#remarks").val()
-                minutes_meeting_ocr_url = $("#minutes_meeting_ocr_url").val();
+                minutes_meeting_ocr_url = $("#minutes_meeting_ocr_url").val(),
+                copy_of_spa_ocr_url = $("#copy_of_spa_ocr_url").val();
 
         if (document.getElementById('agm').checked) {
             agm = 1;
@@ -794,7 +816,8 @@ foreach ($user_permission as $permission) {
                     house_rules_url: house_rules_url,
                     type: type,
                     remarks: remarks,
-                    minutes_meeting_ocr_url: minutes_meeting_ocr_url
+                    minutes_meeting_ocr_url: minutes_meeting_ocr_url,
+                    copy_of_spa_ocr_url: copy_of_spa_ocr_url
                 },
                 beforeSend: function() {
                     $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});

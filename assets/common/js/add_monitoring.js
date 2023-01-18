@@ -916,3 +916,37 @@ function clearMinutesMeetingOcr() {
     $("#minutes_meeting_ocr").css("color", "grey");
     $("#minutes_meeting_ocr_error").hide();
 }
+
+$('body').delegate('#copy_of_spa_ocr', 'change', function() {
+    $('#upload_copy_of_spa_ocr').ajaxForm({
+        beforeSubmit: function() {
+            $("#copy_of_spa_ocr_error").empty().hide();
+            return true;
+        },
+        success: function(result) {
+            if (result.success) {
+                $("#copy_of_spa_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearCopyOfSpaOcr()'><i class='fa fa-times'></i> </button>").show();
+                $("#copy_of_spa_ocr_clear").show();
+                $("#copy_of_spa_ocr").css("color", "green");
+                $("#copy_of_spa_ocr_url").val(result.file);
+            } else {
+                var arr = result.errors;
+                $.each(arr, function (index, value) {
+                    if (value.length != 0) {
+                        $("#copy_of_spa_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                    }
+                });
+                $("#copy_of_spa_ocr_error").show();
+                $("#copy_of_spa_ocr").css("color", "red");
+            }
+        },
+        dataType: 'json'
+    }).submit();
+});
+
+function clearCopyOfSpaOcr() {
+    $("#copy_of_spa_ocr").val("");
+    $("#copy_of_spa_ocr_url").val("");
+    $("#copy_of_spa_ocr").css("color", "grey");
+    $("#copy_of_spa_ocr_error").hide();
+}

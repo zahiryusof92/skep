@@ -1,12 +1,65 @@
 <?php
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class Ocr extends Eloquent
 {
     use SoftDeletingTrait;
 
     protected $table = 'ocrs';
+
+    protected $fillable = array(
+        'company_id',
+        'file_id',
+        'strata_id',
+        'meeting_document_id',
+        'type',
+        'url',
+        'created_by',
+    );
+
+    public function scopeself(Builder $builder)
+    {
+        $query = $builder->with('meetingDocument');
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $query->whereHas('file', function ($q) {
+                    $q->where('files.id', Auth::user()->file_id);
+                });
+                $query->whereHas('company', function ($q) {
+                    $q->where('company.id', Auth::user()->company_id);
+                });
+            } else {
+                $query->whereHas('file', function ($q) {
+                    //
+                });
+                $query->whereHas('company', function ($q) {
+                    $q->where('company.id', Auth::user()->company_id);
+                });
+            }
+        } else {
+            if (!empty(Session::get('admin_cob'))) {
+                $query->whereHas('file', function ($q) {
+                    $q->where('files.company_id', Session::get('admin_cob'));
+                });
+                $query->whereHas('company', function ($q) {
+                    //
+                });
+            } else {
+                $query->whereHas('file', function ($q) {
+                    //
+                });
+                $query->whereHas('company', function ($q) {
+                    //
+                });
+            }
+        }
+
+        return $query;
+    }
 
     public function company()
     {

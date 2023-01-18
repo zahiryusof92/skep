@@ -84,7 +84,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAGMFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAGMFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="agm_file_error"></div>
@@ -120,7 +120,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEGMFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEGMFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="egm_file_error"></div>
@@ -157,7 +157,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesMeetingFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesMeetingFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="minutes_meeting_file_error"></div>
@@ -165,6 +165,7 @@ foreach ($user_permission as $permission) {
                             </div>
                         </form>
 
+                        <!-- OCR -->
                         <form id="upload_minutes_meeting_ocr" enctype="multipart/form-data" method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
                             <div class="form-group row">
                                 <div class="col-md-6">
@@ -186,7 +187,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesMeetingOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesMeetingOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                 </div>
@@ -206,6 +207,7 @@ foreach ($user_permission as $permission) {
                                 </div>
                             </div>
                         </form>
+
                         <form id="upload_jmc_file" enctype="multipart/form-data" method="post" action="{{ url('uploadJMCFile') }}" autocomplete="off">
                             <div class="form-group row">
                                 <div class="col-md-6">
@@ -221,10 +223,39 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteJMCFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteJMCFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="jmc_file_error"></div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- OCR -->
+                        <form id="upload_copy_of_spa_ocr" enctype="multipart/form-data" method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">&nbsp;</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-control-label">OCR</label>
+                                    <br/>
+                                    <input type="file" name="copy_of_spa_ocr" id="copy_of_spa_ocr">
+                                    <div>
+                                        <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                    </div>
+                                    <div id="copy_of_spa_ocr_error"></div>
+                                    @if ($meeting_doc->copyOfSpaOcr && !empty($meeting_doc->copyOfSpaOcr->url))
+                                    <div>
+                                        <a href="{{ asset($meeting_doc->copyOfSpaOcr->url) }}" target="_blank">
+                                            <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File">
+                                                <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
+                                            </button>
+                                        </a>
+                                        &nbsp;
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesMeetingOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </form>
@@ -257,7 +288,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteICFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteICFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="ic_file_error"></div>
@@ -293,7 +324,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendanceFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendanceFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="attendance_file_error"></div>
@@ -329,7 +360,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditedFinancialFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditedFinancialFile('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="audited_financial_file_error"></div>
@@ -364,7 +395,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditReport('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAuditReport('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-errors_audit_report_file"></div>
@@ -389,7 +420,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterIntegrity('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterIntegrity('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-errors_letter_integrity"></div>
@@ -414,7 +445,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterBankruptcy('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteLetterBankruptcy('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-errors_letter_bankruptcy"></div>
@@ -472,7 +503,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteNoticeAgmEgm('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteNoticeAgmEgm('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-notice_agm_egm"></div>
@@ -497,7 +528,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgm('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgm('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-minutes_agm_egm"></div>
@@ -522,7 +553,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAjk('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAjk('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-minutes_ajk"></div>
@@ -547,7 +578,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEligibleVote('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteEligibleVote('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-eligible_vote"></div>
@@ -572,7 +603,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendMeeting('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttendMeeting('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-attend_meeting"></div>
@@ -597,7 +628,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteProksi('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteProksi('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-proksi"></div>
@@ -622,7 +653,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAjkInfo('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAjkInfo('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-ajk_info"></div>
@@ -647,7 +678,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIc('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIc('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-ic"></div>
@@ -673,7 +704,7 @@ foreach ($user_permission as $permission) {
                                                 </button>
                                             </a>
                                             &nbsp;
-                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                            {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                         </div>
                                         @endif
                                         <div id="validation-purchase_aggrement"></div>
@@ -700,7 +731,7 @@ foreach ($user_permission as $permission) {
                                                 </button>
                                             </a>
                                             &nbsp;
-                                            <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataTitle('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                            {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataTitle('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                         </div>
                                         @endif
                                         <div id="validation-strata_title"></div>
@@ -726,7 +757,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMaintenanceStatement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMaintenanceStatement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-maintenance_statement"></div>
@@ -751,7 +782,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-integrity_pledge"></div>
@@ -776,7 +807,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancial('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancial('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-report_audited_financial"></div>
@@ -801,7 +832,7 @@ foreach ($user_permission as $permission) {
                                             </button>
                                         </a>
                                         &nbsp;
-                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteHouseRules('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button>
+                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteHouseRules('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                     </div>
                                     @endif
                                     <div id="validation-house_rules"></div>
@@ -956,6 +987,7 @@ foreach ($user_permission as $permission) {
                                     <input type="hidden" id="report_audited_financial_url" value="{{ $meeting_doc->report_audited_financial_url }}"/>
                                     <input type="hidden" id="house_rules_url" value="{{ $meeting_doc->house_rules_url }}"/>
                                     <input type="hidden" id="minutes_meeting_ocr_url" value="{{ ($meeting_doc->minutesMeetingOcr ? $meeting_doc->minutesMeetingOcr->url : '') }}"/>
+                                    <input type="hidden" id="copy_of_spa_ocr_url"  value="{{ ($meeting_doc->copyOfSpaOcr ? $meeting_doc->copyOfSpaOcr->url : '') }}"/>
                                     
                                     <button type="button" class="btn btn-own" id="submit_button" onclick="editMinutes()">{{ trans('app.forms.submit') }}</button>
                                 <?php } ?>
@@ -1019,11 +1051,12 @@ function editMinutes() {
             report_audited_financial_url = $("#report_audited_financial_url").val(),
             house_rules_url = $("#house_rules_url").val(),
             remarks = $("#remarks").val(),
+            minutes_meeting_ocr_url = $("#minutes_meeting_ocr_url").val(),
+            copy_of_spa_ocr_url = $("#copy_of_spa_ocr_url").val(),
             status = $("#status").val(),
             reason = $("#reason").val(),
             endorsed_by = $("#endorsed_by").val(),
-            endorsed_email = $("#endorsed_email").val()
-            minutes_meeting_file_ocr = $("#minutes_meeting_file_ocr").val();
+            endorsed_email = $("#endorsed_email").val();
 
     if (document.getElementById('agm').checked) {
         agm = 1;
@@ -1130,11 +1163,12 @@ function editMinutes() {
                 report_audited_financial_url: report_audited_financial_url,
                 house_rules_url: house_rules_url,
                 remarks: remarks,
+                minutes_meeting_ocr_url: minutes_meeting_ocr_url,
+                copy_of_spa_ocr_url: copy_of_spa_ocr_url,
                 status: status,
                 reason: reason,
                 endorsed_by: endorsed_by,
                 endorsed_email: endorsed_email,
-                minutes_meeting_file_ocr: minutes_meeting_file_ocr,
                 id: '{{ \Helper\Helper::encode($meeting_doc->id) }}'
             },
             beforeSend: function() {
