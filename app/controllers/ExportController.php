@@ -638,7 +638,7 @@ class ExportController extends BaseController {
                  */
                 if (!empty($log->company_id)) {
                     $raw_data[$key][trans('app.forms.cob')] = $log->company;
-                } else if (!empty($log->user->getCOB)) {
+                } else if ($log->user->getCOB) {
                     $raw_data[$key][trans('app.forms.cob')] = Str::upper($log->user->getCOB->short_name);
                 } else {
                     $raw_data[$key][trans('app.forms.cob')] = '-';
@@ -650,7 +650,7 @@ class ExportController extends BaseController {
                 if (!empty($log->file_id)) {
                     $raw_data[$key][trans('app.forms.file_no')] = $log->file_no;
                 } else if ($log->user->isJMB()) {
-                    if (!empty($log->user->getFile)) {
+                    if ($log->user->getFile) {
                         $raw_data[$key][trans('app.forms.file_no')] = $log->user->getFile->file_no;
                     } else {
                         $raw_data[$key][trans('app.forms.file_no')] = '-';
