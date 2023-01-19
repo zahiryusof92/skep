@@ -30,6 +30,7 @@ foreach ($user_permission as $permission) {
                                     </div>
                                 </div>
                             </div>
+                            
                             @if (Auth::user()->getAdmin())
                             <div class="row">
                                 <div class="col-md-6">
@@ -82,6 +83,7 @@ foreach ($user_permission as $permission) {
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -366,6 +368,7 @@ foreach ($user_permission as $permission) {
                 url: "{{ URL::action('AdminController@submitUpdateMemo') }}",
                 type: "POST",
                 data: {
+                    file: file,
                     company: company,
                     file: file,
                     memo_type: memo_type,

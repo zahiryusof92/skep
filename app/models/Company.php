@@ -18,6 +18,17 @@ class Company extends Eloquent {
         return $query->where('is_active', 1)->where('is_deleted', 0);
     }
 
+    public function checkIfExistEService()
+    {
+        $module = Config::get('constant.module.eservice');
+
+        if (isset($module['cob'][Str::lower($this->short_name)])) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function files() {
         return $this->hasMany('Files', 'company_id')->orderBy('files.id');
     }
