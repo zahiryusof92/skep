@@ -569,6 +569,7 @@ return array(
         "view_map" => "View Map",
         "close" => "Close",
         "before_vp" => "Before VP",
+        "bankrupt" => "Bankrupt",
         "pms_system" => "PMS System",
         "owner_occupied" => "Owner Occupied",
         "rented" => "Rented",

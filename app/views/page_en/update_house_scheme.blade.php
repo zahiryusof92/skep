@@ -176,6 +176,7 @@ foreach ($user_permission as $permission) {
                                                                     <option value="1" {{($house_scheme->is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
                                                                     <option value="0" {{($house_scheme->is_active == '0' ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
                                                                     <option value="2" {{($house_scheme->is_active == '2' ? " selected" : "")}}>{{ trans('app.forms.before_vp') }}</option>
+                                                                    <option value="3" {{($house_scheme->is_active == '3' ? " selected" : "")}}>{{ trans('app.forms.bankrupt') }}</option>
                                                                 </select>
                                                                 <div id="is_active_error" style="display:none;"></div>
                                                             </div>
@@ -329,6 +330,7 @@ foreach ($user_permission as $permission) {
                                                                     <option value="1" {{($house_scheme->liquidator_is_active == '1' ? " selected" : "")}}>{{ trans('app.forms.active') }}</option>
                                                                     <option value="0" {{($house_scheme->liquidator_is_active == '0' ? " selected" : "")}}>{{ trans('app.forms.inactive') }}</option>
                                                                     <option value="2" {{($house_scheme->liquidator_is_active == '2' ? " selected" : "")}}>{{ trans('app.forms.before_vp') }}</option>
+                                                                    <option value="3" {{($house_scheme->liquidator_is_active == '3' ? " selected" : "")}}>{{ trans('app.forms.bankrupt') }}</option>
                                                                 </select>
                                                                 <div id="liquidator_is_active_error" style="display:none;"></div>
                                                             </div>
