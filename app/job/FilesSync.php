@@ -2,6 +2,7 @@
 
 namespace Job;
 
+use AuditTrail;
 use Carbon\Carbon;
 use City;
 use Company;
@@ -41,6 +42,7 @@ class FilesSync
         if (!empty($data)) {
             $council_code = $data['council_code'];
             $file = $data['file'];
+            $user_id = $data['user_id'];
 
             // log
             $fileLog = FileSyncLog::create([
@@ -52,10 +54,6 @@ class FilesSync
             $council = Company::where('short_name', $council_code)->first();
             if ($council && !empty($file)) {
 
-                $superadmin = User::where('role', Role::SUPERADMIN)
-                    ->where('is_deleted', 0)
-                    ->first();
-
                 $file = Files::updateOrCreate(
                     [
                         'company_id' => $council->id,
@@ -66,186 +64,193 @@ class FilesSync
                         'is_active' => $file['is_active'],
                         'is_deleted' => $file['is_deleted'],
                         'status' => $file['status'],
-                        'approved_by' => (!empty($superadmin) ? $superadmin->id : ''),
+                        'approved_by' => (!empty($user_id) ? $user_id : ''),
                         'approved_at' => (!empty($file['approved_at']) ? date('Y-m-d H:i:s', strtotime($file['approved_at'])) : date('Y-m-d H:i:s')),
                         'remarks' => $file['remarks'],
-                        'created_by' => (!empty($superadmin) ? $superadmin->id : ''),
+                        'created_by' => (!empty($user_id) ? $user_id : ''),
                         'created_at' => (!empty($file['created_at']) ? date('Y-m-d H:i:s', strtotime($file['created_at'])) : date('Y-m-d H:i:s')),
                         'updated_at' => (!empty($file['updated_at']) ? date('Y-m-d H:i:s', strtotime($file['updated_at'])) : date('Y-m-d H:i:s')),
                     ]
                 );
 
+                $this->auditTrail($remarks = $file->file_no . ' has been synced.', $user_id);
+
+                /**
+                 * House Scheme
+                 */
                 $this->houseScheme($file->id);
 
 
 
-                $exist_file = Files::where('company_id', $council->id)
-                    ->where('file_no', $file['file_no'])
-                    ->where('is_deleted', 0)
-                    ->first();
-
-                if (!$exist_file) {
 
 
-                    $exist_file = new Files();
-                    $exist_file->company_id = $council->id;
-                    $exist_file->file_no = $file['file_no'];
-                    $exist_file->year = $file['year'];
-                    $exist_file->is_active = $file['is_active'];
-                    $exist_file->is_deleted = $file['is_deleted'];
-                    $exist_file->status = $file['status'];
-                    $exist_file->approved_by = (!empty($superadmin) ? $superadmin->id : '');
-                    $exist_file->approved_at = $file['approved_at'];
-                    $exist_file->remarks = $file['remarks'];
-                    $exist_file->created_by = (!empty($superadmin) ? $superadmin->id : '');
-                    $exist_file->created_at = date('Y-m-d H:i:s', strtotime($file['created_at']));
-                    $exist_file->updated_at = date('Y-m-d H:i:s', strtotime($file['updated_at']));
-                    $success = $exist_file->save();
+                // $exist_file = Files::where('company_id', $council->id)
+                //     ->where('file_no', $file['file_no'])
+                //     ->where('is_deleted', 0)
+                //     ->first();
 
-                    if ($success) {
-                        $new_house_scheme = new HouseScheme();
-                        $new_house_scheme->file_id = $exist_file->id;
-                        $new_house_scheme->is_active = "1";
-                        $new_house_scheme->save();
+                // if (!$exist_file) {
 
-                        $new_strata = new Strata();
-                        $new_strata->file_id = $exist_file->id;
-                        if (!empty($strata)) {
-                            $new_strata->name = $strata['name'];
-                            $new_strata->title = $strata['title'];
-                            $new_strata->address1 = $strata['address1'];
-                            $new_strata->address2 = $strata['address2'];
-                            $new_strata->address3 = $strata['address3'];
-                            $new_strata->address4 = $strata['address4'];
-                            $new_strata->poscode = $strata['poscode'];
-                            $new_strata->block_no = $strata['block_no'];
-                            $new_strata->total_floor = $strata['total_floor'];
-                            $new_strata->year = (!empty($strata['year']) ? $strata['year'] : null);
-                            $new_strata->ownership_no = $strata['ownership_no'];
-                            $new_strata->land_area = $strata['land_area'];
-                            $new_strata->lot_no = $strata['lot_no'];
-                            $new_strata->total_share_unit = $strata['total_share_unit'];
-                            $new_strata->ccc_no = $strata['ccc_no'];
-                            $new_strata->ccc_date = ($strata['ccc_date'] != '0000-00-00' ? $strata['ccc_date'] : null);
-                            $new_strata->is_residential = $strata['is_residential'];
-                            $new_strata->is_commercial = $strata['is_commercial'];
-                            $new_strata->created_at = date('Y-m-d H:i:s', strtotime($strata['created_at']));
-                            $new_strata->updated_at = date('Y-m-d H:i:s', strtotime($strata['updated_at']));
-                        }
-                        $new_strata->save();
 
-                        $new_facility = new Facility();
-                        $new_facility->file_id = $exist_file->id;
-                        $new_facility->strata_id = $new_strata->id;
-                        $new_facility->save();
+                //     $exist_file = new Files();
+                //     $exist_file->company_id = $council->id;
+                //     $exist_file->file_no = $file['file_no'];
+                //     $exist_file->year = $file['year'];
+                //     $exist_file->is_active = $file['is_active'];
+                //     $exist_file->is_deleted = $file['is_deleted'];
+                //     $exist_file->status = $file['status'];
+                //     $exist_file->approved_by = (!empty($superadmin) ? $superadmin->id : '');
+                //     $exist_file->approved_at = $file['approved_at'];
+                //     $exist_file->remarks = $file['remarks'];
+                //     $exist_file->created_by = (!empty($superadmin) ? $superadmin->id : '');
+                //     $exist_file->created_at = date('Y-m-d H:i:s', strtotime($file['created_at']));
+                //     $exist_file->updated_at = date('Y-m-d H:i:s', strtotime($file['updated_at']));
+                //     $success = $exist_file->save();
 
-                        $new_management = new Management();
-                        $new_management->file_id = $exist_file->id;
-                        $new_management->save();
+                //     if ($success) {
+                //         $new_house_scheme = new HouseScheme();
+                //         $new_house_scheme->file_id = $exist_file->id;
+                //         $new_house_scheme->is_active = "1";
+                //         $new_house_scheme->save();
 
-                        $new_monitor = new Monitoring();
-                        $new_monitor->file_id = $exist_file->id;
-                        $new_monitor->save();
+                //         $new_strata = new Strata();
+                //         $new_strata->file_id = $exist_file->id;
+                //         if (!empty($strata)) {
+                //             $new_strata->name = $strata['name'];
+                //             $new_strata->title = $strata['title'];
+                //             $new_strata->address1 = $strata['address1'];
+                //             $new_strata->address2 = $strata['address2'];
+                //             $new_strata->address3 = $strata['address3'];
+                //             $new_strata->address4 = $strata['address4'];
+                //             $new_strata->poscode = $strata['poscode'];
+                //             $new_strata->block_no = $strata['block_no'];
+                //             $new_strata->total_floor = $strata['total_floor'];
+                //             $new_strata->year = (!empty($strata['year']) ? $strata['year'] : null);
+                //             $new_strata->ownership_no = $strata['ownership_no'];
+                //             $new_strata->land_area = $strata['land_area'];
+                //             $new_strata->lot_no = $strata['lot_no'];
+                //             $new_strata->total_share_unit = $strata['total_share_unit'];
+                //             $new_strata->ccc_no = $strata['ccc_no'];
+                //             $new_strata->ccc_date = ($strata['ccc_date'] != '0000-00-00' ? $strata['ccc_date'] : null);
+                //             $new_strata->is_residential = $strata['is_residential'];
+                //             $new_strata->is_commercial = $strata['is_commercial'];
+                //             $new_strata->created_at = date('Y-m-d H:i:s', strtotime($strata['created_at']));
+                //             $new_strata->updated_at = date('Y-m-d H:i:s', strtotime($strata['updated_at']));
+                //         }
+                //         $new_strata->save();
 
-                        $new_others = new OtherDetails();
-                        $new_others->file_id = $exist_file->id;
-                        $new_others->save();
-                    }
-                } else {
-                    $exist_file->year = $file['year'];
-                    $exist_file->is_active = $file['is_active'];
-                    $exist_file->is_deleted = $file['is_deleted'];
-                    $exist_file->status = $file['status'];
-                    $exist_file->remarks = $file['remarks'];
-                    $exist_file->created_at = date('Y-m-d H:i:s', strtotime($file['created_at']));
-                    $exist_file->updated_at = date('Y-m-d H:i:s', strtotime($file['updated_at']));
-                    $exist_file->save();
+                //         $new_facility = new Facility();
+                //         $new_facility->file_id = $exist_file->id;
+                //         $new_facility->strata_id = $new_strata->id;
+                //         $new_facility->save();
 
-                    $old_strata = Strata::where('file_id', $exist_file->id)->first();
-                    if (!$old_strata) {
-                        $new_strata = new Strata();
-                        $new_strata->file_id = $exist_file->id;
-                        if (!empty($strata)) {
-                            $new_strata->name = $strata['name'];
-                            $new_strata->title = $strata['title'];
-                            $new_strata->address1 = $strata['address1'];
-                            $new_strata->address2 = $strata['address2'];
-                            $new_strata->address3 = $strata['address3'];
-                            $new_strata->address4 = $strata['address4'];
-                            $new_strata->poscode = $strata['poscode'];
-                            $new_strata->block_no = $strata['block_no'];
-                            $new_strata->total_floor = $strata['total_floor'];
-                            $new_strata->year = (!empty($strata['year']) ? $strata['year'] : null);
-                            $new_strata->ownership_no = $strata['ownership_no'];
-                            $new_strata->land_area = $strata['land_area'];
-                            $new_strata->lot_no = $strata['lot_no'];
-                            $new_strata->total_share_unit = $strata['total_share_unit'];
-                            $new_strata->ccc_no = $strata['ccc_no'];
-                            $new_strata->ccc_date = ($strata['ccc_date'] != '0000-00-00' ? $strata['ccc_date'] : null);
-                            $new_strata->is_residential = $strata['is_residential'];
-                            $new_strata->is_commercial = $strata['is_commercial'];
-                            $new_strata->created_at = date('Y-m-d H:i:s', strtotime($strata['created_at']));
-                            $new_strata->updated_at = date('Y-m-d H:i:s', strtotime($strata['updated_at']));
-                        }
-                        $new_strata->save();
-                    } else {
-                        if (!empty($strata)) {
-                            $old_strata->name = $strata['name'];
-                            $old_strata->title = $strata['title'];
-                            $old_strata->address1 = $strata['address1'];
-                            $old_strata->address2 = $strata['address2'];
-                            $old_strata->address3 = $strata['address3'];
-                            $old_strata->address4 = $strata['address4'];
-                            $old_strata->poscode = $strata['poscode'];
-                            $old_strata->block_no = $strata['block_no'];
-                            $old_strata->total_floor = $strata['total_floor'];
-                            $old_strata->year = (!empty($strata['year']) ? $strata['year'] : null);
-                            $old_strata->ownership_no = $strata['ownership_no'];
-                            $old_strata->land_area = $strata['land_area'];
-                            $old_strata->lot_no = $strata['lot_no'];
-                            $old_strata->total_share_unit = $strata['total_share_unit'];
-                            $old_strata->ccc_no = $strata['ccc_no'];
-                            $old_strata->ccc_date = ($strata['ccc_date'] != '0000-00-00' ? $strata['ccc_date'] : null);
-                            $old_strata->is_residential = $strata['is_residential'];
-                            $old_strata->is_commercial = $strata['is_commercial'];
-                            $old_strata->created_at = date('Y-m-d H:i:s', strtotime($strata['created_at']));
-                            $old_strata->updated_at = date('Y-m-d H:i:s', strtotime($strata['updated_at']));
-                            $old_strata->save();
-                        }
-                    }
-                }
+                //         $new_management = new Management();
+                //         $new_management->file_id = $exist_file->id;
+                //         $new_management->save();
+
+                //         $new_monitor = new Monitoring();
+                //         $new_monitor->file_id = $exist_file->id;
+                //         $new_monitor->save();
+
+                //         $new_others = new OtherDetails();
+                //         $new_others->file_id = $exist_file->id;
+                //         $new_others->save();
+                //     }
+                // } else {
+                //     $exist_file->year = $file['year'];
+                //     $exist_file->is_active = $file['is_active'];
+                //     $exist_file->is_deleted = $file['is_deleted'];
+                //     $exist_file->status = $file['status'];
+                //     $exist_file->remarks = $file['remarks'];
+                //     $exist_file->created_at = date('Y-m-d H:i:s', strtotime($file['created_at']));
+                //     $exist_file->updated_at = date('Y-m-d H:i:s', strtotime($file['updated_at']));
+                //     $exist_file->save();
+
+                //     $old_strata = Strata::where('file_id', $exist_file->id)->first();
+                //     if (!$old_strata) {
+                //         $new_strata = new Strata();
+                //         $new_strata->file_id = $exist_file->id;
+                //         if (!empty($strata)) {
+                //             $new_strata->name = $strata['name'];
+                //             $new_strata->title = $strata['title'];
+                //             $new_strata->address1 = $strata['address1'];
+                //             $new_strata->address2 = $strata['address2'];
+                //             $new_strata->address3 = $strata['address3'];
+                //             $new_strata->address4 = $strata['address4'];
+                //             $new_strata->poscode = $strata['poscode'];
+                //             $new_strata->block_no = $strata['block_no'];
+                //             $new_strata->total_floor = $strata['total_floor'];
+                //             $new_strata->year = (!empty($strata['year']) ? $strata['year'] : null);
+                //             $new_strata->ownership_no = $strata['ownership_no'];
+                //             $new_strata->land_area = $strata['land_area'];
+                //             $new_strata->lot_no = $strata['lot_no'];
+                //             $new_strata->total_share_unit = $strata['total_share_unit'];
+                //             $new_strata->ccc_no = $strata['ccc_no'];
+                //             $new_strata->ccc_date = ($strata['ccc_date'] != '0000-00-00' ? $strata['ccc_date'] : null);
+                //             $new_strata->is_residential = $strata['is_residential'];
+                //             $new_strata->is_commercial = $strata['is_commercial'];
+                //             $new_strata->created_at = date('Y-m-d H:i:s', strtotime($strata['created_at']));
+                //             $new_strata->updated_at = date('Y-m-d H:i:s', strtotime($strata['updated_at']));
+                //         }
+                //         $new_strata->save();
+                //     } else {
+                //         if (!empty($strata)) {
+                //             $old_strata->name = $strata['name'];
+                //             $old_strata->title = $strata['title'];
+                //             $old_strata->address1 = $strata['address1'];
+                //             $old_strata->address2 = $strata['address2'];
+                //             $old_strata->address3 = $strata['address3'];
+                //             $old_strata->address4 = $strata['address4'];
+                //             $old_strata->poscode = $strata['poscode'];
+                //             $old_strata->block_no = $strata['block_no'];
+                //             $old_strata->total_floor = $strata['total_floor'];
+                //             $old_strata->year = (!empty($strata['year']) ? $strata['year'] : null);
+                //             $old_strata->ownership_no = $strata['ownership_no'];
+                //             $old_strata->land_area = $strata['land_area'];
+                //             $old_strata->lot_no = $strata['lot_no'];
+                //             $old_strata->total_share_unit = $strata['total_share_unit'];
+                //             $old_strata->ccc_no = $strata['ccc_no'];
+                //             $old_strata->ccc_date = ($strata['ccc_date'] != '0000-00-00' ? $strata['ccc_date'] : null);
+                //             $old_strata->is_residential = $strata['is_residential'];
+                //             $old_strata->is_commercial = $strata['is_commercial'];
+                //             $old_strata->created_at = date('Y-m-d H:i:s', strtotime($strata['created_at']));
+                //             $old_strata->updated_at = date('Y-m-d H:i:s', strtotime($strata['updated_at']));
+                //             $old_strata->save();
+                //         }
+                //     }
+                // }
 
                 // curl to get data
-                if (!empty($council->short_name) && !empty($exist_file->file_no)) {
-                    $fileLog->update([
-                        'file_id' => $exist_file->id,
-                        'status' => 'success',
-                    ]);
+                // if (!empty($council->short_name) && !empty($exist_file->file_no)) {
+                //     $fileLog->update([
+                //         'file_id' => $exist_file->id,
+                //         'status' => 'success',
+                //     ]);
 
-                    $path = 'financeFile?council_code=' . $council->short_name . '&file_no=' . urlencode($exist_file->file_no);
-                    $finances = json_decode($this->curl($path));
+                //     $path = 'financeFile?council_code=' . $council->short_name . '&file_no=' . urlencode($exist_file->file_no);
+                //     $finances = json_decode($this->curl($path));
 
-                    if (!empty($finances)) {
-                        $delay = 1;
-                        $incrementDelay = 2;
+                //     if (!empty($finances)) {
+                //         $delay = 1;
+                //         $incrementDelay = 2;
 
-                        foreach ($finances as $finance) {
-                            $data = [
-                                'council_code' => $council->short_name,
-                                'file_no' => $exist_file->file_no,
-                                'finance' => $finance
-                            ];
+                //         foreach ($finances as $finance) {
+                //             $data = [
+                //                 'council_code' => $council->short_name,
+                //                 'file_no' => $exist_file->file_no,
+                //                 'finance' => $finance
+                //             ];
 
-                            try {
-                                Queue::later(Carbon::now()->addSeconds($delay), FinanceSync::class, $data);
-                            } catch (Exception $e) {
-                                Log::error($e);
-                            }
+                //             try {
+                //                 Queue::later(Carbon::now()->addSeconds($delay), FinanceSync::class, $data);
+                //             } catch (Exception $e) {
+                //                 Log::error($e);
+                //             }
 
-                            $delay += $incrementDelay;
-                        }
-                    }
-                }
+                //             $delay += $incrementDelay;
+                //         }
+                //     }
+                // }
             }
         }
 
@@ -532,6 +537,15 @@ class FilesSync
                 ]
             );
         }
+    }
+
+    public function auditTrail($remarks, $user_id) {
+        # Audit Trail
+        $auditTrail = new AuditTrail();
+        $auditTrail->module = "COB File";
+        $auditTrail->remarks = $remarks;
+        $auditTrail->audit_by = $user_id;
+        $auditTrail->save();
     }
 
     public function getHeader()

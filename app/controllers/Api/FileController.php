@@ -816,7 +816,8 @@ class FileController extends BaseController
 				for ($page; $page <= $last_page; $page++) {
 					$data = [
 						'council_code' => $council_code,
-						'page' => $page
+						'page' => $page,
+						'user_id' => Auth::user()->id,
 					];
 
 					try {
