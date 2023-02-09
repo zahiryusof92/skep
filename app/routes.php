@@ -158,6 +158,9 @@ Route::post('/submitFile', 'AdminController@submitFile')->before('authMember');
 // import Files
 Route::post('/importCOBFile', 'ImportController@importCOBFile')->before('authMember');
 
+// export Files
+Route::post('/exportCOBFile', 'ExportController@exportCOBFile')->before('authMember');
+
 // file list
 Route::get('/fileList', array('as' => 'cob.file.index', 'uses' => 'AdminController@fileList'))->before('authMember');
 Route::get('/getFileList', 'AdminController@getFileList')->before('authMember');

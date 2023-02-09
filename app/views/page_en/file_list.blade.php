@@ -26,10 +26,61 @@ foreach ($user_permission as $permission) {
                         <button class="btn btn-own" data-toggle="modal" data-target="#importForm">
                             {{ trans('app.buttons.import_cob_files') }} &nbsp;<i class="fa fa-upload"></i>
                         </button>
+                    </div> 
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-own" data-toggle="modal" data-target="#exportForm">
+                            {{ trans('app.buttons.export_cob_files') }} &nbsp;<i class="fa fa-download"></i>
+                        </button>
                     </div>                    
                 </div>
 
                 <br/>
+
+                <div class="modal fade" id="exportForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog">
+                        <form id="form_export" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{{ trans('app.forms.export_cob_files') }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label style="color: red; font-style: italic;">* {{ trans('app.forms.mandatory_fields') }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label><span style="color: red;">*</span> {{ trans('app.forms.cob') }}</label>
+                                                <select name="export_company" id="export_company" class="form-control">
+                                                    @if (count($cob) > 1)
+                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                                    @endif
+                                                    @foreach ($cob as $companies)
+                                                    <option value="{{ $companies->id }}">{{ $companies->name }} ({{ $companies->short_name }})</option>
+                                                    @endforeach
+                                                </select>
+                                                <div id="export_company_error" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <img id="loading_export" style="display:none;" src="{{asset('assets/common/img/input-spinner.gif')}}"/>
+                                    <button id="submit_button_export" class="btn btn-own" type="submit">
+                                        {{ trans('app.forms.submit') }}
+                                    </button>
+                                    <button data-dismiss="modal" id="cancel_button_export" class="btn btn-default" type="button">
+                                        {{ trans('app.forms.cancel') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <div class="modal fade" id="importForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog">
@@ -87,6 +138,7 @@ foreach ($user_permission as $permission) {
                     </div>
                 </div>
                 <!-- modal -->
+                
                 <script>
                     $("#form_import").on('submit', (function (e) {
                         e.preventDefault();
@@ -157,6 +209,61 @@ foreach ($user_permission as $permission) {
                             $('#loading_import').css("display", "none");
                             $("#submit_button_import").removeAttr("disabled");
                             $("#cancel_button_import").removeAttr("disabled");
+                        }
+                    }));
+
+                    $("#form_export").on('submit', (function (e) {
+                        e.preventDefault();
+
+                        $('#loading_export').css("display", "inline-block");
+                        $("#submit_button_export").attr("disabled", "disabled");
+                        $("#cancel_button_export").attr("disabled", "disabled");
+                        $("#export_company_error").css("display", "none");
+
+                        var export_company = $("#export_company").val();
+
+                        var error = 0;
+
+                        if (export_company.trim() == "") {
+                            $("#export_company_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select", ["attribute"=>"COB"]) }}</span>');
+                            $("#export_company_error").css("display", "block");
+                            error = 1;
+                        }
+
+                        if (error == 0) {
+                            var formData = new FormData(this);
+                            $.ajax({
+                                url: "{{ URL::action('ExportController@exportCOBFile') }}",
+                                type: "POST",
+                                data: formData,
+                                async: true,
+                                contentType: false, // The content type used when sending data to the server.
+                                cache: false, // To unable request pages to be cached
+                                processData: false,
+                                success: function (data) { //function to be called if request succeeds
+                                    console.log(data);
+
+                                    $("#exportForm").modal("hide");
+                                    $('#loading_export').css("display", "none");
+                                    $("#submit_button_export").removeAttr("disabled");
+                                    $("#cancel_button_export").removeAttr("disabled");
+
+                                    if (data.trim() === "true") {
+                                        bootbox.alert("<span style='color:green;'>{{ trans('app.successes.export_successfully') }}</span>", function () {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>", function () {
+                                            window.location.reload();
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            $("#export_company").focus();
+                            $('#loading_export').css("display", "none");
+                            $("#submit_button_export").removeAttr("disabled");
+                            $("#cancel_button_export").removeAttr("disabled");
                         }
                     }));
                 </script>

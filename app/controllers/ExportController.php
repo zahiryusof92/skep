@@ -465,4 +465,27 @@ class ExportController extends BaseController {
             });
         })->download();
     }
+
+    public function exportCOBFile()
+    {
+        $data = [];
+
+        if (Request::ajax()) {
+            $company_id = Input::get('export_company');
+
+            $council = Company::find($company_id);
+
+            if ($council) {
+                Excel::create($council->short_name . '_files_' . date('YmdHis'), function ($excel) use ($data) {
+                    $excel->sheet('Sheet 1', function ($sheet) use ($data) {
+                        $sheet->fromArray($data);
+                    });
+                })->export();
+
+                return 'true';
+            }
+        }
+
+        return 'false';
+    }
 }
