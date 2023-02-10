@@ -112,6 +112,11 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
+                    <li id="export_file">
+                        <a class="left-menu-link" href="{{URL::action('ExportController@exportCOBFile')}}">
+                            Export COB Files
+                        </a>
+                    </li>
                     @endif
 
                 </ul>

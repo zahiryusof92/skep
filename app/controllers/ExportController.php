@@ -468,24 +468,249 @@ class ExportController extends BaseController {
 
     public function exportCOBFile()
     {
-        $data = [];
+        if (empty(Session::get('admin_cob'))) {
+            $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            $cob = Company::where('id', Session::get('admin_cob'))->get();
+        }
 
-        if (Request::ajax()) {
-            $company_id = Input::get('export_company');
+        $viewData = array(
+            'title' => trans('app.forms.export_cob_files'),
+            'panel_nav_active' => 'cob_panel',
+            'main_nav_active' => 'cob_main',
+            'sub_nav_active' => 'export_file',
+            'image' => '',
+            'cob' => $cob,
+        );
 
-            $council = Company::find($company_id);
+        return View::make('exports.files', $viewData);
+    }
 
+    public function submitExportCOBFile()
+    {
+        $data = Input::all();
+
+        $rules = [];
+        $message = [];
+
+        $rules = array(
+            'company' => 'required',
+        );
+
+        $messages = array(
+            'company.required' => 'The COB field is required.'
+        );
+
+        $validator = Validator::make($data, $rules, $messages);
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator)->withInput($data);
+        } else {
+            $data = [];
+
+            $company_id = Input::get('company');
+
+            $council = Company::with('files')->find($company_id);
             if ($council) {
-                Excel::create($council->short_name . '_files_' . date('YmdHis'), function ($excel) use ($data) {
-                    $excel->sheet('Sheet 1', function ($sheet) use ($data) {
-                        $sheet->fromArray($data);
-                    });
-                })->export();
 
-                return 'true';
+                if ($council->files->count() > 0) {
+                    $count = 1;
+
+                    foreach ($council->files as $file) {
+                        $houseScheme = HouseScheme::where('file_id', $file->id)->first();
+                        if ($houseScheme) {
+                            $developer = Developer::find($houseScheme->developer);
+                            if ($developer) {
+                                $developer_city = City::find($developer->city);
+                                $developer_state = State::find($developer->state);
+                                $developer_country = Country::find($developer->country);
+                            }
+                        }
+
+                        $strata = Strata::where('file_id', $file->id)->first();
+                        if ($strata) {
+                            $strata_parliament = Parliment::find($strata->parliament);
+                            $strata_dun = Dun::find($strata->dun);
+                            $strata_park = Park::find($strata->park);
+                            $strata_city = City::find($strata->city);
+                            $strata_state = State::find($strata->state);
+                            $strata_country = Country::find($strata->country);
+                        }
+
+                        $data[] = array(
+                            'Bil' => $count++,
+                            'File No.' => $file->file_no,
+                            'Cob File ID' => '',
+                            'Year' => (!empty($file->year) ? $file->year : ''),
+
+                            /**
+                             * Housing Scheme
+                             */
+                            'Name' => ($houseScheme ? $houseScheme->name : ''),
+                            'Housing Scheme Name' => ($houseScheme ? $houseScheme->name : ''),
+                            'Developer' => ($developer ? $developer->name : ''),
+                            'Developer Address 1' => ($developer ? $developer->address1 : ''),
+                            'Developer Address 2' => ($developer ? $developer->address2 : ''),
+                            'Developer Address 3' => ($developer ? $developer->address3 : ''),
+                            'Developer Address 4' => ($developer ? $developer->address4 : ''),
+                            'Developer Postcode' => ($developer ? $developer->poscode : ''),
+                            'Developer City' => ($developer_city ? $developer_city->description : ''),
+                            'Developer State' => ($developer_state ? $developer_state->name : ''),
+                            'Developer Country' => ($developer_country ? $developer_country->name : ''),
+                            'Developer Office No.' => ($developer ? $developer->phone_no : ''),
+                            'Developer Fax No.' => ($developer ? $developer->fax_no : ''),
+                            'Developer Status' => ($developer ? ($developer->is_active ? 'Active' : '') : ''),
+
+                            /**
+                             * Strata
+                             */
+                            'Strata Title' => ($strata ? ($strata->title ? 'Y' : '') : ''),
+                            'Strata' => ($strata ? $strata->name : ''),
+                            'Strata Parliament' => ($strata_parliament ? $strata_parliament->description : ''),
+                            'Strata DUN' => ($strata_dun ? $strata_dun->description : ''),
+                            'Strata Park' => ($strata_park ? $strata_park->description : ''),
+                            'Strata Address 1' => ($strata ? $strata->address1 : ''),
+                            'Strata Address 2' => ($strata ? $strata->address2 : ''),
+                            'Strata Address 3' => ($strata ? $strata->address3 : ''),
+                            'Strata Address 4' => ($strata ? $strata->address4 : ''),
+                            'Strata Postcode' => ($strata ? $strata->poscode : ''),
+                            'Strata City' => ($strata_city ? $strata_city->description : ''),
+                            'Strata State' => ($strata_state ? $strata_state->name : ''),
+                            'Strata Country' => ($strata_country ? $strata_country->name : ''),
+                            'Strata Total Block',
+                            'Strata Floor',
+                            'Strata Year',
+                            'Strata Ownership No',
+                            'Strata District',
+                            'Strata Area',
+                            'Strata Total Land Area',
+                            'Strata Total Land Area UOM',
+                            'Strata Lot No.',
+                            'Strata Vacant Possession Date',
+                            'Strata Date CCC',
+                            'Strata CCC No.',
+                            'Strata Land Title',
+                            'Strata Category',
+                            'Strata Perimeter',
+                            'Strata Total Share Unit',
+                            'Strata Residential',
+                            'Strata Residential Total Unit',
+                            'Strata Residential Maintenance Fee',
+                            'Strata Residential Maintenance Fee UOM',
+                            'Strata Residential Singking Fund',
+                            'Strata Residential Singking Fund UOM',
+                            'Strata Commercial',
+                            'Strata Commercial Total Unit',
+                            'Strata Commercial Maintenance Fee',
+                            'Strata Commercial Maintenance Fee UOM',
+                            'Strata Commercial Singking Fund',
+                            'Strata Commercial Singking Fund UOM',
+                            'Strata Others',
+
+                            /**
+                             * Management JMB
+                             */
+                            'Management JMB',
+                            'Management JMB Date Formed',
+                            'Management JMB Certificate Series No',
+                            'Management JMB Name',
+                            'Management JMB Address 1',
+                            'Management JMB Address 2',
+                            'Management JMB Address 3',
+                            'Management JMB Address 4',
+                            'Management JMB Postcode',
+                            'Management JMB City',
+                            'Management JMB State',
+                            'Management JMB Country',
+                            'Management JMB Office No.',
+                            'Management JMB Fax No.',
+                            'Management JMB Email',
+
+                            /**
+                             * Management MC
+                             */
+                            'Management MC',
+                            'Management MC Date Formed',
+                            'Management MC First AGM Date',
+                            'Management MC Name',
+                            'Management MC Address 1',
+                            'Management MC Address 2',
+                            'Management MC Address 3',
+                            'Management MC Address 4',
+                            'Management MC Postcode',
+                            'Management MC City',
+                            'Management MC State',
+                            'Management MC Country',
+                            'Management MC Office No.',
+                            'Management MC Fax No.',
+                            'Management MC Email',
+
+                            /**
+                             * Management Agent
+                             */
+                            'Management Agent',
+                            'Management Agent Selected By',
+                            'Management Agent Name',
+                            'Management Agent Address 1',
+                            'Management Agent Address 2',
+                            'Management Agent Address 3',
+                            'Management Agent Address 4',
+                            'Management Agent Postcode',
+                            'Management Agent City',
+                            'Management Agent State',
+                            'Management Agent Country',
+                            'Management Agent Office No.',
+                            'Management Agent Fax No.',
+                            'Management Agent Email',
+
+                            /**
+                             * Management Other
+                             */
+                            'Management Other',
+                            'Management Other Name',
+                            'Management Other Address 1',
+                            'Management Other Address 2',
+                            'Management Other Address 3',
+                            'Management Other Address 4',
+                            'Management Other Postcode',
+                            'Management Other City',
+                            'Management Other State',
+                            'Management Other Country',
+                            'Management Other Office No.',
+                            'Management Other Fax No.',
+                            'Management Other Email',
+
+                            /**
+                             * Monitoring
+                             */
+                            'Monitoring Precalculate Plan',
+                            'Monitoring Buyer Registration',
+                            'Monitoring Certificate No',
+                            'Monitoring Financial Report Start Month',
+
+                            /**
+                             * Others
+                             */
+                            'Others Name',
+                            'Others Latitude',
+                            'Others Longitude',
+
+                            'Status',
+                            'Certificate No',
+                            'New File No.',
+                        );
+                    }
+                }
+
+                return '<pre>' . print_r($data, true) . '</pre>';
+
+                // return Excel::create($council->short_name . '_files_' . date('YmdHis'), function ($excel) use ($data) {
+                //     $excel->sheet('Sheet1', function ($sheet) use ($data) {
+                //         $sheet->fromArray($data);
+                //     });
+                // })->export();
             }
         }
 
-        return 'false';
+        return Redirect::back()->with('error', trans('app.errors.occurred'));
     }
 }
