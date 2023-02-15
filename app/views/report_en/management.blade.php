@@ -31,14 +31,15 @@
                     </table>
                 </div>
 
-                <hr/>
+                <hr />
 
                 <section class="panel panel-pad">
                     <div class="row" style="margin-top: 30px;">
                         <div class="col-lg-12 text-center">
-                            <form action="{{ url('/reporting/managementList') }}" method="POST" target="_blank" >
+                            <form action="{{ url('/reporting/managementList') }}" method="POST" target="_blank">
+
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.cob') }}</label>
                                             <select class="form-control select2" id="company" name="company">
@@ -46,25 +47,28 @@
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @endif
                                                 @foreach ($cob as $cobs)
-                                                <option value="{{ $cobs->short_name }}">{{ $cobs->name }} ({{ $cobs->short_name }})</option>
+                                                <option value="{{ $cobs->short_name }}">{{ $cobs->name }} ({{
+                                                    $cobs->short_name }})</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.file_no') }}</label>
                                             <select id="file_no" name="file_no" class="form-control select2">
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 @foreach ($files as $files_no)
-                                                <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                                <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}
+                                                </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.file_name') }}</label>
                                             <select id="file_name" name="file_name" class="form-control select2">
@@ -75,7 +79,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.type') }}</label>
                                             <select id="type" name="type" class="form-control select2">
@@ -86,10 +90,30 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.date_formed') }}</label>
+                                            <div class="text-left">
+                                                <input style="width: 45%;" id="date_from" name="date_from" type="text"
+                                                    class="form-control display-inline-block datetimepicker"
+                                                    placeholder="From" />
+                                                <span style="width: 10%;" class="text-center">
+                                                    {{ Str::lower(trans('app.forms.until')) }}
+                                                </span>
+                                                <input style="width: 45%;" id="date_to" name="date_to" type="text"
+                                                    class="form-control display-inline-block datetimepicker"
+                                                    placeholder="To" />
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-1">
                                         <div class="form-group">
-                                            <label>&nbsp;</label><br/>
-                                            <button type="submit" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
+                                            <label>&nbsp;</label><br />
+                                            <button type="submit" class="btn btn-own" data-toggle="tooltip"
+                                                data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -97,21 +121,23 @@
                         </div>
                     </div>
 
-                    <hr/>
+                    <hr />
 
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="table-responsive">
-                                <table class="table table-hover nowrap table-own table-striped" id="management_list" width="100%">
+                                <table class="table table-hover nowrap table-own table-striped" id="management_list"
+                                    width="100%">
                                     <thead>
                                         <tr>
                                             <th style="width:5%;">{{ trans('app.forms.cob') }}</th>
-                                            <th style="width:20%;">{{ trans('app.forms.file_no') }}</th>
-                                            <th style="width:20%;">{{ trans('app.forms.file_name') }}</th>
-                                            <th style="width:10%;">{{ trans('app.forms.type') }}</th>
-                                            <th style="width:15%;">{{ trans('app.forms.type_name') }}</th>
-                                            <th style="width:25%;">{{ trans('app.forms.address') }}</th>
-                                            <th style="width:15%;">{{ trans('app.forms.email') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.file_name') }}</th>
+                                            <th style="width:5%;">{{ trans('app.forms.type') }}</th>
+                                            <th style="width:10%;">{{ trans('app.forms.date_formed') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.name') }}</th>
+                                            <th style="width:15%;">{{ trans('app.forms.address') }}</th>
+                                            <th style="width:10%;">{{ trans('app.forms.email') }}</th>
                                             <th style="width:10%;">{{ trans('app.forms.phone_number') }}</th>
                                         </tr>
                                     </thead>
@@ -135,9 +161,19 @@
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
 
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
     var oTable = $('#management_list').DataTable({
-        "sAjaxSource": "{{URL::action('ReportController@getManagementList')}}",
+        // "sAjaxSource": "{{URL::action('ReportController@getManagementList')}}",
+        "ajax": {
+            "url": "{{ URL::action('ReportController@getManagementList') }}",
+            'data': function(data) {
+                var date_from = $('#date_from').val();
+                var date_to = $('#date_to').val();
+
+                data.date_from = date_from;
+                data.date_to = date_to;
+            }
+        },
         "lengthMenu": [[15, 30, 50], [15, 30, 50]],
         "aoColumnDefs": [
             {
@@ -153,9 +189,9 @@ $(document).ready(function () {
                 "<'row'<'col-md-12'tr>>" +
                 "<'row'<'col-md-5'i><'col-md-7'p>>",
         "buttons": [{
-                extend: 'excel',
-                text: 'Export to Excel'
-            }]
+            extend: 'excel',
+            text: 'Export to Excel'
+        }]
     });
 
     $('#company').on('change', function () {
@@ -182,6 +218,23 @@ $(document).ready(function () {
     });
     $('#type').on('change', function () {
         oTable.columns(3).search(this.value).draw();
+    });
+
+    $('.datetimepicker').datetimepicker({
+        widgetPositioning: {
+            horizontal: 'left'
+        },
+        icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down",
+            previous: "fa fa-chevron-left",
+            next: "fa fa-chevron-right",
+        },
+        format: 'YYYY-MM-DD'
+    }).on('dp.change', function () {
+        oTable.ajax.reload();
     });
 });
 </script>

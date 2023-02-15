@@ -1,6 +1,7 @@
 <?php
 
-class Developer extends Eloquent {
+class Developer extends Eloquent
+{
     protected $table = 'developer';
 
     public function city() {
@@ -14,45 +15,51 @@ class Developer extends Eloquent {
     public function country() {
         return $this->belongsTo('Country', 'country');
     }
+    
+    public function scopeSelf()
+    {
+        return self::where('is_active', true)->where('is_deleted', false);
+    }
 
-    public static function getData() {
+    public static function getData()
+    {
         $query = self::where('is_deleted', 0)
-                     ->where('is_active', 1);
+            ->where('is_active', 1);
         $items = $query->selectRaw('name, is_active, created_at')
-                    ->get();
+            ->get();
         return $items;
     }
 
-    public static function getAnalyticData($request = []) {
+    public static function getAnalyticData($request = [])
+    {
         $active = function ($query) {
-            $query->where('files.is_deleted',0);
+            $query->where('files.is_deleted', 0);
         };
 
         $query = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                    ->join('company','files.company_id','=','company.id')
-                    ->join('developer','house_scheme.developer', '=', 'developer.id')
-                    ->where($active);
-        if(!empty($request['cob'])) {
-            $query = $query->where('company.short_name',$request['cob']);
+            ->join('files', 'house_scheme.file_id', '=', 'files.id')
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->join('developer', 'house_scheme.developer', '=', 'developer.id')
+            ->where($active);
+        if (!empty($request['cob'])) {
+            $query = $query->where('company.short_name', $request['cob']);
         }
         $items = $query->selectRaw('company.short_name, count(house_scheme.id) as total_id')
-                      ->groupBy('company.short_name')
-                      ->get();
+            ->groupBy('company.short_name')
+            ->get();
         $data = [];
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $new_data = [
                 'name' => $item->short_name,
                 'y' => $item->total_id
             ];
             array_push($data, $new_data);
-
         }
-        
+
         $result = array(
             'data' => $data,
         );
-        
+
         return $result;
     }
 }

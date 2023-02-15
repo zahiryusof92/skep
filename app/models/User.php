@@ -184,6 +184,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isDeveloper() {
+        if (stripos($this->getRole->name, Role::DEVELOPER) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function getLawyer() {
         $lawyer = '';
 
@@ -202,6 +210,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         $balance = (empty($point_transaction) == false)? round($point_transaction->point_balance, 0) : 0;
 
         return $balance;
+    }
+
+    public function scopeSelf($query) {
+        return $query->where('is_active', 1)->where('is_deleted', false);
     }
 
     public function auditTrails() {

@@ -19,7 +19,7 @@ class MyPointController extends \BaseController {
      */
     public function index() {
         $this->checkAvailableAccess();
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             if (Request::ajax()) {
                 $model = PointTransaction::where('user_id', Auth::user()->id);
 
@@ -119,7 +119,7 @@ class MyPointController extends \BaseController {
 
     public function reload() {
         $this->checkAvailableAccess();
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $package = PointPackage::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             $viewData = array(
                 'title' => trans('app.my_point.reload'),
@@ -138,7 +138,7 @@ class MyPointController extends \BaseController {
 
     public function orders() {
         $this->checkAvailableAccess();
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $data = Input::all();
 
             $rules = array(
@@ -182,7 +182,7 @@ class MyPointController extends \BaseController {
 
     public function payment() {
         $this->checkAvailableAccess();
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $model = Orders::find(Session::get('orderID'));
 
             if (!empty($model)) {
@@ -205,7 +205,7 @@ class MyPointController extends \BaseController {
     }
 
     public function submitPay() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $data = Input::all();
             $data['payment_gateway'] = 'revenue';
             $model = Orders::find($data['order_id']);

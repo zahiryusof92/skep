@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Request;
 use Job\GetExportData;
+use Repositories\ReportRepo;
 
 class ExportController extends BaseController
 {
@@ -454,7 +456,7 @@ class ExportController extends BaseController
             });
         })->download();
     }
-
+    
     public function exportCOBFile()
     {
         if (empty(Session::get('admin_cob'))) {
@@ -787,5 +789,263 @@ class ExportController extends BaseController
         }
 
         return Redirect::back()->with('error', trans('app.errors.occurred'));
+    }
+
+    public function generateReport() {
+        $request = Request::all();
+        $items = (new ReportRepo())->generateReport($request);
+        $i = 0;
+        $data = [];
+        foreach($items as $key => $item) { 
+            $new_data[$i]['No'] = ($key + 1);
+            if(in_array('ref_no', $request['selected'])) {
+                $new_data[$i]['BIL'] = $item->ref_no;
+            }
+            
+            if(in_array('city', $request['selected'])) {
+                $new_data[$i]['MUKIM'] = $item->strata->town? Str::upper($item->strata->towns->description) : '-';
+            }
+            if(in_array('housing_scheme', $request['selected'])) {
+                $new_data[$i]['SKIM PERUMAHAN'] = $item->houseScheme? Str::upper($item->houseScheme->name) : "-";
+            }
+            if(in_array('developer', $request['selected'])) {
+                $new_data[$i]['PEMAJU'] = $item->houseScheme->developer? Str::upper($item->houseScheme->developers->name) : "-";
+            }
+            if(in_array('lot_number', $request['selected'])) {
+                $new_data[$i]['NO LOT'] = $item->strata->lot_no? $item->strata->lot_no : "-";
+            }
+            if(in_array('ownership_number', $request['selected'])) {
+                $new_data[$i]['NO HS(D)'] = $item->strata->ownership_no? $item->strata->ownership_no : "-";
+            }
+            if(in_array('strata', $request['selected'])) {
+                $new_data[$i]['KAWASAN PEMAJUAN'] = $item->strata->name;
+            }
+            if(in_array('category', $request['selected'])) {
+                $new_data[$i]['KATEGORI'] = $item->strata->category? $item->strata->categories->description : "-";
+            }
+            $management = "-";
+            if($item->management->is_jmb) {
+                $management = "JMB";
+            } else if($item->management->is_mc) {
+                $management = "MC";
+            } else if($item->management->is_developer) {
+                $management = "Developer";
+            } else if($item->management->liquidator) {
+                $management = "Liquidator";
+            } else if($item->management->under_10_units) {
+                $management = "Strata < 10 unit";
+            } else if($item->management->bankruptcy) {
+                $management = "Bankruptcy";
+            }
+            
+            if(in_array('management', $request['selected'])) {
+                $new_data[$i]['STATUS'] = $management; //MANAGEMENT
+            }
+            if(in_array('file_no', $request['selected'])) {
+                $new_data[$i]['NO FAIL'] = $item->file_no;
+            }
+            if(in_array('remarks', $request['selected'])) {
+                $new_data[$i]['CATATAN'] = $item->houseScheme->remarks;
+            }
+            if(in_array('file_draft_latest_date', $request['selected'])) {
+                $new_data[$i]['Tarikh VP'] = !empty($item->draft)? $item->draft->created_at->toDateTimeString() : '-';
+            }
+            if(in_array('latest_insurance_date', $request['selected'])) {
+                $new_data[$i]['Tarikh Insurans Terkini'] = $item->insurance->count()? $item->insurance()->latest()->first()->created_at->toDateTimeString() : "-";
+            }
+            if(in_array('jmb_date_formed', $request['selected'])) {
+                $new_data[$i]['Tarikh Sijil JMB'] = $item->management->is_jmb? $item->managementJMBLatest->date_formed : '-';
+            }
+            if(in_array('mc_date_formed', $request['selected'])) {
+                $new_data[$i]['Tarikh Sijil MC'] = $item->management->is_mc? $item->managementMCLatest->date_formed : '-';
+            }
+            if(in_array('malay', $request['selected'])) {
+                $new_data[$i]['Melayu'] = $item->other->malay_composition;
+            }
+            if(in_array('chinese', $request['selected'])) {
+                $new_data[$i]['Cina'] = $item->other->chinese_composition;
+            }
+            if(in_array('indian', $request['selected'])) {
+                $new_data[$i]['India'] = $item->other->indian_composition;
+            }
+            if(in_array('foreigner', $request['selected'])) {
+                $new_data[$i]['Warga Asing'] = $item->other->foreigner_composition;
+            }
+            if(in_array('others', $request['selected'])) {
+                $new_data[$i]['Lain-lain'] = $item->other->others_composition;
+            }
+            if(in_array('total_floor', $request['selected'])) {
+                $new_data[$i]['Tingkat'] = $item->strata->total_floor;
+            }
+            $residential = Residential::where('file_id', $item->id)->sum('unit_no');
+            $residential_extra = ResidentialExtra::where('file_id', $item->id)->sum('unit_no');
+            
+            if(in_array('residential_block', $request['selected'])) {
+                $new_data[$i]['Rumah'] = $residential + $residential_extra;
+            }
+            $commercial = Commercial::where('file_id', $item->id)->sum('unit_no');
+            $commercial_extra = CommercialExtra::where('file_id', $item->id)->sum('unit_no');
+            
+            if(in_array('commercial_block', $request['selected'])) {
+                $new_data[$i]['Kedai'] = $commercial + $commercial_extra;
+            }
+            if(in_array('block', $request['selected'])) {
+                $new_data[$i]['Blok'] = $item->strata->block_no;
+            }
+            // $new_data[$i]['Maintenance Charges'] = 0; // kutipan sepatutnya dikutip -
+            // $new_data[$i]['Sinking Fund'] = 0; // kutipan sepatutnya dikutip -
+            // $new_data[$i]['Others Income'] = 0; // kutipan sepatutnya dikutip
+            // $new_data[$i]['Total Expenses'] = 0; // kutipan sepatutnya dikutip
+            // $new_data[$i]['Maintenance Charges'] = 0; // kutipan sebenar -
+            // $new_data[$i]['Sinking Fund'] = 0; // kutipan sebenar -
+            // $new_data[$i]['Others Income'] = 0; // kutipan sebenar -
+            // $new_data[$i]['Total Expenses'] = 0; // kutipan sebenar
+            // $new_data[$i]['Maintenance Charges'] = 0; // perbelanjaan Sebenar
+            // $new_data[$i]['Sinking Fund'] = 0; // perbelanjaan Sebenar
+            // $new_data[$i]['Others Income'] = 0; // perbelanjaan Sebenar
+            // $new_data[$i]['Total Expenses'] = 0; // perbelanjaan Sebenar
+            // $new_data[$i]['Total Kutipan - Jumlah Perbelanjaan'] = 0; // perbelanjaan Sebenar
+            
+            $data = array_merge($data, $new_data);
+        }
+
+        return Excel::create('listing-report-'. date('YmdHis'), function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+                
+            });
+        })->download();
+    }
+
+    public function auditTrail()
+    {
+        $data = [];
+        $request = Request::all();
+
+        $logs = AuditTrail::self()
+            ->where(function ($query) use ($request) {
+                if (!empty($request['export_company_id'])) {
+                    $query->where('users.company_id', $request['export_company_id']);
+                }
+                if (!empty($request['export_role_id'])) {
+                    $query->where('users.role', $request['export_role_id']);
+                }
+                if (!empty($request['export_module'])) {
+                    $query->where('audit_trail.module', $request['export_module']);
+                }
+                if (!empty($request['export_file_id'])) {
+                    $query->where('users.file_id', $request['export_file_id']);
+                }
+                if (!empty($request['export_date_from']) && empty($request['export_date_to'])) {
+                    $date_from = date('Y-m-d H:i:s', strtotime($request['export_date_from']));
+                    $query->where('audit_trail.created_at', '>=', $date_from);
+                }
+                if (!empty($request['export_date_to']) && empty($request['export_date_from'])) {
+                    $date_to = date('Y-m-d', strtotime($request['export_date_to']));
+                    $query->where('audit_trail.created_at', '<=', $date_to . " 23:59:59");
+                }
+                if (!empty($request['export_date_from']) && !empty($request['export_date_to'])) {
+                    $date_from = date('Y-m-d H:i:s', strtotime($request['export_date_from']));
+                    $date_to = date('Y-m-d', strtotime($request['export_date_to']));
+                    $query->whereBetween('audit_trail.created_at', [$date_from, $date_to . ' 23:59:59']);
+                }
+            })
+            ->select(['audit_trail.*', 'company.short_name as company', 'users.full_name as full_name', 'role.name as role_name', 'files.file_no'])
+            ->get();
+
+        if ($logs->count() > 0) {
+            foreach ($logs as $key => $log) {
+                /**
+                 * COB
+                 */
+                if (!empty($log->company_id)) {
+                    $raw_data[$key][trans('app.forms.cob')] = $log->company;
+                } else if ($log->user->getCOB) {
+                    $raw_data[$key][trans('app.forms.cob')] = Str::upper($log->user->getCOB->short_name);
+                } else {
+                    $raw_data[$key][trans('app.forms.cob')] = '-';
+                }
+
+                /**
+                 * File No
+                 */
+                if (!empty($log->file_id)) {
+                    $raw_data[$key][trans('app.forms.file_no')] = $log->file_no;
+                } else if ($log->user->isJMB()) {
+                    if ($log->user->getFile) {
+                        $raw_data[$key][trans('app.forms.file_no')] = $log->user->getFile->file_no;
+                    } else {
+                        $raw_data[$key][trans('app.forms.file_no')] = '-';
+                    }
+                } else {
+                    $raw_data[$key][trans('app.forms.file_no')] = '-';
+                }
+
+                /**
+                 * Module
+                 */
+                if (!empty($log->module)) {
+                    $raw_data[$key][trans('app.forms.module')] = $log->module;
+                } else {
+                    $raw_data[$key][trans('app.forms.module')] = '-';
+                }
+
+                /**
+                 * Activities
+                 */
+                if (!empty($log->remarks)) {
+                    $raw_data[$key][trans('app.forms.activities')] = strip_tags($log->remarks);
+                } else {
+                    $raw_data[$key][trans('app.forms.activities')] = '-';
+                }
+
+                /**
+                 * Role
+                 */
+                if (!empty($log->user->getAdmin())) {
+                    $raw_data[$key][trans('app.forms.role')] = trans('System Administrator');
+                } else {
+                    $raw_data[$key][trans('app.forms.role')] = Str::upper($log->role_name);
+                }
+
+                /**
+                 * Action From
+                 */
+                if (!empty($log->user)) {
+                    $raw_data[$key][trans('app.forms.action_from')] = $log->user->full_name;
+                } else {
+                    $raw_data[$key][trans('app.forms.action_from')] = '-';
+                }
+
+                /**
+                 * Date
+                 */
+                if (!empty($log->created_at)) {
+                    $raw_data[$key][trans('app.forms.date')] = date('d-m-Y H:i A', strtotime($log->created_at));
+                } else {
+                    $raw_data[$key][trans('app.forms.date')] = '-';
+                }
+            }
+
+            $output = array_merge($data, $raw_data);
+        } else {
+            $output = [
+                trans('app.forms.cob'),
+                trans('app.forms.file_no'),
+                trans('app.forms.module'),
+                trans('app.forms.activities'),
+                trans('app.forms.role'),
+                trans('app.forms.date')
+            ];
+        }
+
+        return Excel::create('audit-trail-' . date('YmdHis'), function ($excel) use ($output) {
+            $excel->sheet('mySheet', function ($sheet) use ($output) {
+                $sheet->fromArray($output);
+            });
+        })->download();
+
+        // return '<pre>' . print_r($output, true) . '</pre>';
     }
 }

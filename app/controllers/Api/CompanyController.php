@@ -50,7 +50,7 @@ class CompanyController extends BaseController {
                             ->get();
 
             foreach($models as $model) {
-                array_push($options, ['id' => $model->short_name, 'text' => $model->name]);
+                array_push($options, ['id' => $model->short_name, 'text' => $model->name . ' (' . $model->short_name .')']);
             }
             return Response::json(['success' => true, 'message' => trans('Success'), 'results' => $options]);
 

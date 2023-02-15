@@ -23,7 +23,7 @@ return array(
       | your application so that it is used when running Artisan tasks.
       |
      */
-    'url' => 'http://localhost',
+    'url' => getenv('app_url') ?: 'http://localhost',
     /*
       |--------------------------------------------------------------------------
       | Application Timezone
@@ -108,7 +108,8 @@ return array(
         'Illuminate\Workbench\WorkbenchServiceProvider',
         'Maatwebsite\Excel\ExcelServiceProvider',
         'yajra\Datatables\DatatablesServiceProvider',
-        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider'
+        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
+        'Barryvdh\DomPDF\ServiceProvider',
     ),
     /*
       |--------------------------------------------------------------------------
@@ -174,5 +175,6 @@ return array(
         'Datatables' => 'yajra\Datatables\Facades\Datatables',
         'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
         'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
+        'PDF' => 'Barryvdh\DomPDF\Facade',
     ),
 );

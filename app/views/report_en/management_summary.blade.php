@@ -45,25 +45,29 @@ $company = Company::find(Auth::user()->company_id);
                             <table border="1" id="file_location_list" width="100%" style="font-size: 12px;">
                                 <thead>
                                     <tr>
-                                        <th colspan="3" style="width:30%; text-align: center !important; vertical-align:middle !important;">BIL KAWASAN PEMAJUAN (PETAK)</th>
+                                        <th colspan="5" style="width:30%; text-align: center !important; vertical-align:middle !important;">BIL KAWASAN PEMAJUAN (PETAK)</th>
                                         <th colspan="5" style="width:70%; text-align: center !important; vertical-align:middle !important;">BILANGAN SAMPEL DAN PERATUSAN (%)</th>
                                     </tr>
                                     <tr>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;"><= 3 (PETAK)</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">> 3 (PETAK)</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;"><= 10 (PETAK)</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">> 10 (PETAK)</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">JUMLAH (PETAK)</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">PEMAJU</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">LIQUIDATOR</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">JMB</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">MC</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
-                                        <th style="width:7%; text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">PEMAJU</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LIQUIDATOR</th>
+                                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">JMB</th>
+                                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">MC</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
+                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     @if ($data)
                                     <tr>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_less3'] }} ({{ $data['sum_less3'] }})</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_more3'] }} ({{ $data['sum_more3'] }})</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_less10'] }} ({{ $data['sum_less10'] }})</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_more10'] }} ({{ $data['sum_more10'] }})</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['count_all'] }} ({{ $data['sum_all'] }})</td>
