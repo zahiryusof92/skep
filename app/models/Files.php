@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -40,7 +41,10 @@ class Files extends Eloquent
 
     public function financeLatest()
     {
-        return $this->hasOne('Finance', 'file_id')->where('is_active', true)->latest();
+        return $this->hasOne('Finance', 'file_id')
+            ->where('finance_file.is_active', true)
+            ->orderBy('finance_file.year', 'desc')
+            ->orderBy('finance_file.month', 'desc');
     }
 
     public function company()
@@ -2633,6 +2637,69 @@ class Files extends Eloquent
 
     public function approvedEpks() {
         return $this->hasOne('Epks', 'file_id')->where('epks.status', Epks::APPROVED);
+    }
+
+    public function financeAgeing()
+    {
+        $result = [];
+        $data = [];
+        $graph_month = [];
+        $graph_percentage = [];
+
+        $start = Carbon::today()->format('m');
+
+        for ($i = $start; $i >= 0; $i--) {
+            $percentage = 0;
+
+            $year = Carbon::today()->startOfMonth()->subMonth($i);
+            $month = Carbon::today()->startOfMonth()->subMonth($i);
+
+            $month_finance = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
+                ->where('finance_file.file_id', $this->id)
+                ->where('finance_file.year', $year->format('Y'))
+                ->where('finance_file.month', $month->format('m'))
+                ->where('finance_file.is_active', 1)
+                ->where('finance_file.is_deleted', 0)
+                ->first();
+
+            if (!empty($month_finance)) {
+                $mf_fee_semasa = $month_finance->financeReportMF->sum('fee_semasa');
+                $sf_fee_semasa = $month_finance->financeReportSF->sum('fee_semasa');
+                $fee_semasa = $mf_fee_semasa + $sf_fee_semasa;
+
+                $mf_fee_semasa_extra = $month_finance->financeReportMFExtra->sum('fee_semasa');
+                $sf_fee_semasa_extra = $month_finance->financeReportSFExtra->sum('fee_semasa');
+                $fee_semasa_extra = $mf_fee_semasa_extra + $sf_fee_semasa_extra;
+                $total_sepatut_dikutip = $fee_semasa + $fee_semasa_extra;
+
+                $mf_income = $month_finance->financeIncomeMF->sum('semasa');
+                $sf_income = $month_finance->financeIncomeSF->sum('semasa');
+                $total_berjaya_dikutip = $mf_income + $sf_income;
+
+                if ($total_berjaya_dikutip > 0 && $total_sepatut_dikutip > 0) {
+                    $percentage = round(($total_berjaya_dikutip / $total_sepatut_dikutip) * 100, 2);
+                }
+            }
+
+            array_push($graph_month, $month->format('F') . '<br />' . $month->format('Y'));
+            array_push($graph_percentage, $percentage);
+            array_push($data, [
+                'year' => $year->format('Y'),
+                'month' => $month->format('m'),
+                'month_name' => $month->format('F'),
+                'percentage' => $percentage,
+            ]);            
+        }
+
+        $result = [
+            'data' => $data,
+            'graph'=> [
+                'months' => $graph_month,
+                'percentages' => $graph_percentage,
+            ],
+        ];
+
+        return $result;
     }
 
 }

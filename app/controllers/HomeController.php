@@ -26,12 +26,14 @@ class HomeController extends BaseController
         if (Auth::user()->isMPS()) {
             return Redirect::to('/fileList');
         }
+
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
+        
         $year = Files::getVPYear();
         $data = Files::getDashboardData();
         $activeMemo = self::getActiveMemoHome();

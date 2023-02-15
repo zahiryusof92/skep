@@ -40,6 +40,7 @@ class CobSyncController extends BaseController
                 'cob' => $cob,
                 'api_domain' => $this->api_domain . 'api/v1/',
             );
+            
             return View::make('cob_en.cob_sync', $viewData);
         }
 

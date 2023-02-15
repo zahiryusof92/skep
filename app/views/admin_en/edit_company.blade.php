@@ -404,11 +404,6 @@ foreach ($user_permission as $permission) {
             $("#poscode_error").css("display", "block");
             error = 1;
         }
-        if (city.trim() == "") {
-            $("#city_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select",  ["attribute"=>"City"]) }}</span>');
-            $("#city_error").css("display", "block");
-            error = 1;
-        }
         if (state.trim() == "") {
             $("#state_error").html('<span style="color:red;font-style:italic;font-size:13px;">{{ trans("app.errors.select",  ["attribute"=>"State"]) }}</span>');
             $("#state_error").css("display", "block");

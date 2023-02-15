@@ -20,9 +20,12 @@ class MPSSync
     public function fire($job, $data)
     {
         // Process the job...
+        $result = [];
+
         if (!empty($data)) {
             $council_code = $data['council_code'];
             $page = $data['page'];
+            $user_id = $data['user_id'];
 
             $path = 'files?council_code=' . $council_code . '&page=' . $page;
             $files = json_decode($this->curl($path));
@@ -32,13 +35,14 @@ class MPSSync
                 $incrementDelay = 2;
 
                 foreach ($files->data as $file) {
-                    $data = [
+                    $result = [
                         'council_code' => $council_code,
                         'file' => $file,
+                        'user_id' => $user_id,
                     ];
 
                     try {
-                        Queue::later(Carbon::now()->addSeconds($delay), FileSync::class, $data);
+                        Queue::later(Carbon::now()->addSeconds($delay), FilesSync::class, $result);
                     } catch (Exception $e) {
                         Log::error($e);
                     }

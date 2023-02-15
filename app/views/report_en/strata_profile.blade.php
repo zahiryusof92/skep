@@ -67,14 +67,6 @@ $zone = [
                                 </div>
                             </div>
                             @endif
-                            {{-- <div class="col-lg-6">
-                                <div class="form-group float-left">
-                                    <label>{{ trans('app.forms.date_strata') }} </label><br>
-                                    <input id="start_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
-                                    <span class="margin-right-10">&nbsp; —</span>
-                                    <input id="end_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                 </div>

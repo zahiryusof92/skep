@@ -36,9 +36,20 @@ foreach ($user_permission as $permission) {
                         <form id="form_import" enctype="multipart/form-data" class="form-horizontal" data-parsley-validate>
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title">{{ trans('app.forms.import_cob_files_before_vp') }}</h4>
+                                    <h4 class="modal-title">
+                                        {{ trans('app.forms.import_cob_files_before_vp') }}
+                                    </h4>
                                 </div>
                                 <div class="modal-body">
+                                    @if (Auth::user()->isSuperadmin())
+                                    <div class="row" style="margin-bottom: 10px;">
+                                        <div class="col-md-6">
+                                            <a href="{{ asset('files/Template COB File (Latest).xlsx') }}" class="btn btn-sm btn-success">
+                                                <i class="fa fa-download"></i>&nbsp; Download Template
+                                            </a>
+                                        </div>
+                                    </div>
+                                    @endif
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
