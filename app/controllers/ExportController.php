@@ -505,7 +505,6 @@ class ExportController extends BaseController
                     $count = 1;
 
                     foreach ($council->files as $file) {
-                        $houseScheme = [];
                         $houseScheme = HouseScheme::where('file_id', $file->id)->first();
                         if ($houseScheme) {
                             $developer = Developer::find($houseScheme->developer);
@@ -514,9 +513,10 @@ class ExportController extends BaseController
                                 $developer_state = State::find($developer->state);
                                 $developer_country = Country::find($developer->country);
                             }
+                        } else {
+                            $developer = '';
                         }
 
-                        $strata = [];
                         $strata = Strata::where('file_id', $file->id)->first();
                         if ($strata) {
                             $strata_parliament = Parliment::find($strata->parliament);
@@ -532,62 +532,72 @@ class ExportController extends BaseController
                             $strata_category = Category::find($strata->category);
                             $strata_perimeter = Perimeter::find($strata->perimeter);
 
-                            if ($strata->is_residential) {
-                                $strata_residential = Residential::where('strata_id', $strata->id)->first();
-                                if ($strata_residential) {
-                                    $strata_residential_mf_uom = UnitOption::find($strata_residential->maintenance_fee_option);
-                                    $strata_residential_sf_uom = UnitOption::find($strata_residential->sinking_fund_option);
-                                }
+                            $strata_residential = Residential::where('strata_id', $strata->id)->first();
+                            if ($strata->is_residential && $strata_residential) {
+                                $strata_residential_mf_uom = UnitOption::find($strata_residential->maintenance_fee_option);
+                                $strata_residential_sf_uom = UnitOption::find($strata_residential->sinking_fund_option);
+                            } else {
+                                $strata_residential_mf_uom = '';
+                                $strata_residential_sf_uom = '';
                             }
 
-                            if ($strata->is_commercial) {
-                                $strata_commercial = Commercial::where('strata_id', $strata->id)->first();
-                                if ($strata_commercial) {
-                                    $strata_commercial_mf_uom = UnitOption::find($strata_commercial->maintenance_fee_option);
-                                    $strata_commercial_sf_uom = UnitOption::find($strata_commercial->sinking_fund_option);
-                                }
+                            $strata_commercial = Commercial::where('strata_id', $strata->id)->first();
+                            if ($strata->is_commercial && $strata_commercial) {
+                                $strata_commercial_mf_uom = UnitOption::find($strata_commercial->maintenance_fee_option);
+                                $strata_commercial_sf_uom = UnitOption::find($strata_commercial->sinking_fund_option);
+                            } else {
+                                $strata_commercial_mf_uom = '';
+                                $strata_commercial_sf_uom = '';
                             }
+                        } else {
+                            $strata_residential = '';
+                            $strata_commercial = '';
                         }
-
-                        $management = [];
-                        $management_jmb = [];
-                        $management_mc = [];
-                        $management_agent = [];
-                        $management_others = [];
 
                         $management = Management::where('file_id', $file->id)->first();
                         if ($management) {
-                            if ($management->is_jmb) {
-                                $management_jmb = ManagementJMB::where('file_id', $file->id)->first();
-                                if ($management_jmb) {
-                                    $management_jmb_city = City::find($management_jmb->city);
-                                    $management_jmb_state = State::find($management_jmb->state);
-                                    $management_jmb_country = Country::find($management_jmb->country);
-                                }
+                            $management_jmb = ManagementJMB::where('file_id', $file->id)->first();
+                            if ($management->is_jmb && $management_jmb) {
+                                $management_jmb_city = City::find($management_jmb->city);
+                                $management_jmb_state = State::find($management_jmb->state);
+                                $management_jmb_country = Country::find($management_jmb->country);
+                            } else {
+                                $management_jmb_city = '';
+                                $management_jmb_state = '';
+                                $management_jmb_country = '';
                             }
-                            if ($management->is_mc) {
-                                $management_mc = ManagementMC::where('file_id', $file->id)->first();
-                                if ($management_mc) {
-                                    $management_mc_city = City::find($management_mc->city);
-                                    $management_mc_state = State::find($management_mc->state);
-                                    $management_mc_country = Country::find($management_mc->country);
-                                }
+
+                            $management_mc = ManagementMC::where('file_id', $file->id)->first();
+                            if ($management->is_mc && $management_mc) {
+                                $management_mc_city = City::find($management_mc->city);
+                                $management_mc_state = State::find($management_mc->state);
+                                $management_mc_country = Country::find($management_mc->country);
+                            } else {
+                                $management_mc_city = '';
+                                $management_mc_state = '';
+                                $management_mc_country = '';
                             }
-                            if ($management->is_agent) {
-                                $management_agent = ManagementAgent::where('file_id', $file->id)->first();
-                                if ($management_agent) {
-                                    $management_agent_city = City::find($management_agent->city);
-                                    $management_agent_state = State::find($management_agent->state);
-                                    $management_agent_country = Country::find($management_agent->country);
-                                }
+
+                            $management_agent = ManagementAgent::where('file_id', $file->id)->first();
+                            if ($management->is_agent && $management_agent) {
+                                $management_agent_city = City::find($management_agent->city);
+                                $management_agent_state = State::find($management_agent->state);
+                                $management_agent_country = Country::find($management_agent->country);
+                            } else {
+                                $management_agent_city = '';
+                                $management_agent_state = '';
+                                $management_agent_country = '';
                             }
-                            if ($management->is_others) {
-                                $management_others = ManagementOthers::where('file_id', $file->id)->first();
-                                if ($management_others) {
-                                    $management_others_city = City::find($management_others->city);
-                                    $management_others_state = State::find($management_others->state);
-                                    $management_others_country = Country::find($management_others->country);
-                                }
+
+                            $management_others = ManagementOthers::where('file_id', $file->id)->first();
+                            if ($management->is_others && $management_others) {
+                                $management_others_city = City::find($management_others->city);
+                                $management_others_state = State::find($management_others->state);
+                                $management_others_country = Country::find($management_others->country);
+                            } else {
+                                $management_others_city = '';
+                                $management_others_state = '';
+                                $management_others_country = '';
                             }
                         }
 
@@ -611,9 +621,9 @@ class ExportController extends BaseController
                             'Developer Address 3' => ($developer ? $developer->address3 : ''),
                             'Developer Address 4' => ($developer ? $developer->address4 : ''),
                             'Developer Postcode' => ($developer ? $developer->poscode : ''),
-                            'Developer City' => ($developer_city ? $developer_city->description : ''),
-                            'Developer State' => ($developer_state ? $developer_state->name : ''),
-                            'Developer Country' => ($developer_country ? $developer_country->name : ''),
+                            'Developer City' => ($developer ? ($developer_city ? $developer_city->description : '') : ''),
+                            'Developer State' => ($developer ? ($developer_state ? $developer_state->name : '') : ''),
+                            'Developer Country' => ($developer ? ($developer_country ? $developer_country->name : '') : ''),
                             'Developer Office No.' => ($developer ? $developer->phone_no : ''),
                             'Developer Fax No.' => ($developer ? $developer->fax_no : ''),
                             'Developer Status' => ($developer ? ($developer->is_active ? 'Active' : '') : ''),
@@ -623,9 +633,9 @@ class ExportController extends BaseController
                              */
                             'Strata Title' => ($strata ? ($strata->title ? 'Y' : '') : ''),
                             'Strata' => ($strata ? $strata->name : ''),
-                            'Strata Parliament' => ($strata_parliament ? $strata_parliament->description : ''),
-                            'Strata DUN' => ($strata_dun ? $strata_dun->description : ''),
-                            'Strata Park' => ($strata_park ? $strata_park->description : ''),
+                            'Strata Parliament' => ($strata ? ($strata_parliament ? $strata_parliament->description : '') : ''),
+                            'Strata DUN' => ($strata ? ($strata_dun ? $strata_dun->description : '') : ''),
+                            'Strata Park' => ($strata ? ($strata_park ? $strata_park->description : '') : ''),
                             'Strata Address 1' => ($strata ? $strata->address1 : ''),
                             'Strata Address 2' => ($strata ? $strata->address2 : ''),
                             'Strata Address 3' => ($strata ? $strata->address3 : ''),
