@@ -299,7 +299,8 @@ return array(
         'epks_statement' => [
             'name' => 'Statement',
             'create' => 'Create Statement',
-        ]
+        ],
+        'search' => 'Search',
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",

@@ -32,6 +32,12 @@ Route::get('/systemDown', function() {
  */
 Route::get('/test/testMail', 'TestController@testMail');
 
+
+/**
+ * Route for search
+ */
+Route::post('search', array('as' => 'search.index', 'uses' => 'SearchController@index'));
+
 /*
  * LPHS REPORT START
  */
@@ -240,6 +246,11 @@ Route::post('/uploadJMCFile', 'FileController@uploadJMCFile');
 Route::post('/uploadICFile', 'FileController@uploadICFile');
 Route::post('/uploadAttendanceFile', 'FileController@uploadAttendanceFile');
 Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancialFile');
+
+/**
+ * OCR
+ */
+Route::post('/uploadOcr', 'FileController@uploadOcr');
 
 // Sept 2020
 Route::post('/uploadNoticeAgmEgm', 'FileController@uploadNoticeAgmEgm');
