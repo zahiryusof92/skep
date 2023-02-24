@@ -1050,10 +1050,76 @@ class FileController extends BaseController {
             } else {
                 return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
             }
-        }
-
-        if (isset($files['copy_of_spa_ocr'])) {
+        } else if (isset($files['copy_of_spa_ocr'])) {
             $file = $files['copy_of_spa_ocr'];
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/ocr_files';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+        
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
+            }
+        } else if (isset($files['attendance_ocr'])) {
+            $file = $files['attendance_ocr'];
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/ocr_files';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+        
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
+            }
+        } else if (isset($files['audited_financial_ocr'])) {
+            $file = $files['audited_financial_ocr'];
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/ocr_files';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+        
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
+            }
+        } else if (isset($files['eligible_vote_ocr'])) {
+            $file = $files['eligible_vote_ocr'];
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/ocr_files';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+        
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
+            }
+        } else if (isset($files['house_rules_ocr'])) {
+            $file = $files['house_rules_ocr'];
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';

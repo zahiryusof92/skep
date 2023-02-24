@@ -2152,6 +2152,70 @@ class AgmController extends BaseController {
                         );
                     }
 
+                    if (isset($data['attendance_ocr_url']) && !empty($data['attendance_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'attendance',
+                            ],
+                            [
+                                'url' => $data['attendance_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
+                    if (isset($data['audited_financial_ocr_url']) && !empty($data['audited_financial_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'audited_financial',
+                            ],
+                            [
+                                'url' => $data['audited_financial_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
+                    if (isset($data['eligible_vote_ocr_url']) && !empty($data['eligible_vote_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'eligible_vote',
+                            ],
+                            [
+                                'url' => $data['eligible_vote_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
+                    if (isset($data['house_rules_ocr_url']) && !empty($data['house_rules_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'house_rules',
+                            ],
+                            [
+                                'url' => $data['house_rules_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
                     /** Added status */
                     if (!empty($status)) {
                         MeetingDocumentStatus::updateOrCreate(

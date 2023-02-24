@@ -32,11 +32,23 @@ class SearchController extends BaseController
 
                     $url = '';
                     if ($ocr->type == 'minutes_meeting') {
-                        $type = 'Meeting Minutes';
+                        $type = 'Minutes of Meetings';
                         $url = $meeting->minutes_meeting_file_url;
                     } else if ($ocr->type == 'copy_of_spa') {
-                        $type = 'JMC SPA Copy';
+                        $type = 'Copy of JMC SPA';
                         $url = $meeting->jmc_file_url;
+                    } else if ($ocr->type == 'attendance') {
+                        $type = 'Attendance List';
+                        $url = $meeting->attendance_file_url;
+                    } else if ($ocr->type == 'audited_financial') {
+                        $type = 'Audited Accounts';
+                        $url = $meeting->audited_financial_file_url;
+                    } else if ($ocr->type == 'eligible_vote') {
+                        $type = 'Eligible Voter Listing';
+                        $url = $meeting->ligible_vote_url;
+                    } else if ($ocr->type == 'house_rules') {
+                        $type = 'Approved House Rules';
+                        $url = $meeting->house_rules_url;
                     }
 
                     if (!empty($url)) {
