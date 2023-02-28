@@ -38,6 +38,48 @@ foreach ($user_permission as $permission) {
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="step-block">
+                            <span class="step-digit">
+                                <i class="fa fa-thumbs-up"></i>
+                            </span>
+                            <div class="step-desc">
+                                <span class="step-title">{{ trans('Active Strata') }}</span>
+                                <p>
+                                    {{ $data['total_active_strata'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="step-block">
+                            <span class="step-digit">
+                                <i class="fa fa-thumbs-down"></i>
+                            </span>
+                            <div class="step-desc">
+                                <span class="step-title">{{ trans('Inactive Strata') }}</span>
+                                <p>
+                                    {{ $data['total_inactive_strata'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="step-block">
+                            <span class="step-digit">
+                                <i class="fa fa-cubes"></i>
+                            </span>
+                            <div class="step-desc">
+                                <span class="step-title">{{ trans('Strata >10 Units') }}</span>
+                                <p>
+                                    {{ $data['total_less_10_units'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                         <a href="{{ route('report.generate.index',['management' => 'jmb']) }}">
                             @endif

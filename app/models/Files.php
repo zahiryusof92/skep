@@ -1270,6 +1270,44 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
 
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+                
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1397,6 +1435,40 @@ class Files extends Eloquent
                     ->where('files.company_id', Auth::user()->company_id)
                     ->where($active)
                     ->count();
+
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
 
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
@@ -1511,6 +1583,36 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
 
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1633,6 +1735,40 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
 
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1705,6 +1841,9 @@ class Files extends Eloquent
             'total_developer' => $total_developer,
             'total_liquidator' => $total_liquidator,
             'total_strata' => $total_strata,
+            'total_active_strata' => $total_active_strata,
+            'total_inactive_strata' => $total_inactive_strata,
+            'total_less_10_units' => $total_less_10_units,
             'total_jmb' => $total_jmb,
             'total_mc' => $total_mc,
             'total_owner' => $total_owner,

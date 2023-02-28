@@ -10,7 +10,20 @@ class Management extends Eloquent {
      * @var array
      */
     protected $fillable = [
-        'file_id', 
+        'file_id',
+        'is_jmb',
+        'is_mc',
+        'is_agent',
+        'is_others',
+        'is_developer',
+        'no_management',
+        'start',
+        'end',
+        'liquidator',
+        'under_10_units',
+        'under_10_units_remarks',
+        'bankruptcy',
+        'bankruptcy_remarks',
     ];
 
     public function developer() {
@@ -31,6 +44,10 @@ class Management extends Eloquent {
 
     public function others() {
         return $this->hasOne('ManagementOthers', 'management_id');
+    }
+
+    public function liquidators() {
+        return $this->hasMany('ManagementLiquidator', 'management_id');
     }
 
     public function draft() {
