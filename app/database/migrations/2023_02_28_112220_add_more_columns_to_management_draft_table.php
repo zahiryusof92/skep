@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnsToManagementTable extends Migration {
+class AddMoreColumnsToManagementDraftTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -13,7 +13,7 @@ class AddColumnsToManagementTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('management', function (Blueprint $table) {
+		Schema::table('management_draft', function (Blueprint $table) {
 			$table->string('liquidator')->default(false)->index()->after('end');
 			$table->string('under_10_units')->default(false)->index()->after('liquidator');
 			$table->longText('under_10_units_remarks')->nullable()->after('under_10_units');
@@ -29,7 +29,7 @@ class AddColumnsToManagementTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('management', function (Blueprint $table) {
+		Schema::table('management_draft', function (Blueprint $table) {
 			$table->dropColumn('liquidator');
 			$table->dropColumn('under_10_units');
 			$table->dropColumn('under_10_units_remarks');
