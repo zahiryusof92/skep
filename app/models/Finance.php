@@ -47,6 +47,14 @@ class Finance extends Eloquent {
         return $this->hasMany('FinanceIncome', 'finance_file_id');
     }
 
+    public function financeIncomeMF() {
+        return $this->hasMany('FinanceIncome', 'finance_file_id')->where('finance_file_income.name', 'MAINTENANCE FEE');
+    }
+
+    public function financeIncomeSF() {
+        return $this->hasMany('FinanceIncome', 'finance_file_id')->where('finance_file_income.name', 'SINKING FUND');
+    }
+
     public function financeRepair() {
         return $this->hasMany('FinanceRepair', 'finance_file_id');
     }
@@ -59,8 +67,24 @@ class Finance extends Eloquent {
         return $this->hasMany('FinanceReport', 'finance_file_id');
     }
 
+    public function financeReportMF() {
+        return $this->hasMany('FinanceReport', 'finance_file_id')->where('finance_file_report.type', 'MF');
+    }
+
+    public function financeReportSF() {
+        return $this->hasMany('FinanceReport', 'finance_file_id')->where('finance_file_report.type', 'SF');
+    }
+
     public function financeReportExtra() {
         return $this->hasMany('FinanceReportExtra', 'finance_file_id');
+    }
+
+    public function financeReportMFExtra() {
+        return $this->hasMany('FinanceReportExtra', 'finance_file_id')->where('finance_file_report_extra.type', 'MF');
+    }
+
+    public function financeReportSFExtra() {
+        return $this->hasMany('FinanceReportExtra', 'finance_file_id')->where('finance_file_report_extra.type', 'SF');
     }
 
     public function financeStaff() {

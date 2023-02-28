@@ -595,6 +595,8 @@ class ReportController extends BaseController
 
     public function strataProfile()
     {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
@@ -609,7 +611,6 @@ class ReportController extends BaseController
         }
 
         $data = Files::getStrataProfileAnalytic();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
 
         $viewData = array(
             'title' => trans('app.menus.reporting.strata_profile'),
@@ -715,7 +716,8 @@ class ReportController extends BaseController
             ->where('finance_file.is_active', true)
             ->where('finance_file.is_deleted', false)
             ->selectRaw('finance_file.*, files.file_no')
-            ->orderBy('finance_file.id', 'desc');
+            ->orderBy('finance_file.year', 'desc')
+            ->orderBy('finance_file.month', 'desc');
 
         return Datatables::of($finance)
             ->addColumn('zone', function ($model) {
@@ -790,6 +792,8 @@ class ReportController extends BaseController
                 $lif = 'TIADA';
                 $lif_unit = 0;
                 $type_meter = '';
+                $zone = 'KELABU';
+                $ageing = [];
 
                 if ($files) {
                     $pbt = $files->company->short_name;
@@ -860,9 +864,50 @@ class ReportController extends BaseController
                     } else {
                         $zone = "KELABU";
                     }
-                } else {
-                    $zone = "KELABU";
                 }
+
+                // $finances = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
+                //     ->where('finance_file.file_id', $files->id)
+                //     ->where('finance_file.is_active', 1)
+                //     ->where('finance_file.is_deleted', 0)
+                //     ->orderBy('finance_file.year', 'desc')
+                //     ->orderBy('finance_file.month', 'desc')
+                //     ->get();
+
+                // if ($finances->count() > 0) {
+                //     foreach ($finances as $finance) {
+                //         $mf_fee_semasa = $finance->financeReportMF->sum('fee_semasa');
+                //         $sf_fee_semasa = $finance->financeReportSF->sum('fee_semasa');
+                //         $fee_semasa = $mf_fee_semasa + $sf_fee_semasa;
+
+                //         $mf_fee_semasa_extra = $finance->financeReportMFExtra->sum('fee_semasa');
+                //         $sf_fee_semasa_extra = $finance->financeReportSFExtra->sum('fee_semasa');
+                //         $fee_semasa_extra = $mf_fee_semasa_extra + $sf_fee_semasa_extra;
+
+                //         $total_sepatut_dikutip = $fee_semasa + $fee_semasa_extra;
+
+                //         $mf_income = $finance->financeIncomeMF->sum('semasa');
+                //         $sf_income = $finance->financeIncomeSF->sum('semasa');
+                //         $total_berjaya_dikutip = $mf_income + $sf_income;
+
+                //         $percentage = 0;
+                //         if ($total_berjaya_dikutip > 0 && $total_sepatut_dikutip > 0) {
+                //             $percentage = round(($total_berjaya_dikutip / $total_sepatut_dikutip) * 100, 2);
+                //         }
+
+                //         $ageing[$finance->year][$finance->monthName()] = [
+                //             'fee_semasa' => $fee_semasa,
+                //             'fee_semasa_extra' => $fee_semasa_extra,
+                //             'sepatut_dikutip' => $total_sepatut_dikutip,
+                //             'berjaya_dikutip' => $total_berjaya_dikutip,
+                //             'percentage' => $percentage,
+                //         ];
+                //     }
+                // }
+
+                $ageing = $files->financeAgeing();
+
+                // return '<pre>' . print_r($ageing, true) . '</pre>';
             }
 
             $result = array(
@@ -878,8 +923,12 @@ class ReportController extends BaseController
                 'lif_unit' => $lif_unit,
                 'type_meter' => $type_meter,
                 'tnb' => $tnb,
-                'purata_dikutip' => $purata_dikutip
+                'purata_dikutip' => $purata_dikutip,
+                'ageing' => $ageing['data'],
+                'ageing_graph' => $ageing['graph'],
             );
+
+            // return '<pre>' . print_r($result, true) . '</pre>';
 
             $viewData = array(
                 'title' => trans('app.menus.reporting.strata_profile'),

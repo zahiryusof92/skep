@@ -4,6 +4,18 @@ class Developer extends Eloquent
 {
     protected $table = 'developer';
 
+    public function city() {
+        return $this->belongsTo('City', 'city');
+    }
+
+    public function state() {
+        return $this->belongsTo('State', 'state');
+    }
+
+    public function country() {
+        return $this->belongsTo('Country', 'country');
+    }
+    
     public function scopeSelf()
     {
         return self::where('is_active', true)->where('is_deleted', false);

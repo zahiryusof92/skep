@@ -299,7 +299,8 @@ return array(
         'epks_statement' => [
             'name' => 'Statement',
             'create' => 'Create Statement',
-        ]
+        ],
+        'search' => 'Search',
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
@@ -498,6 +499,7 @@ return array(
         "approval" => "Approval",
         "file_approval" => "File Approval",
         "import_cob_files" => "Import COB Files",
+        "export_cob_files" => "Export COB Files",
         "import_cob_files_before_vp" => "Import COB Files Before VP",
         "import_finance_files" => "Import Finance Files",
         "excel_file" => "Excel File",
@@ -868,6 +870,7 @@ return array(
         "saved_successfully" => "Saved Successfully",
         "submit_successfully" => "Submit Successfully",
         "import_successfully" => "Import successfully!",
+        "export_successfully" => "Export successfully!",
         "updated_successfully" => "Updated successfully!",
         "password_changed_successfully" => "Password changed successfully!",
         "profile_edited_successfully" => "Profile edited successfully!",
@@ -1137,6 +1140,7 @@ return array(
         "add_access_group" => "Add Access Group",
         "update_access_group" => "Update Access Group",
         "import_cob_files" => "Import COB Files",
+        "export_cob_files" => "Export COB Files",
         "import_cob_files_before_vp" => "Import COB Files Before VP",
         "import_finance_files" => "Import Finance Files",
         "add_memo" => "Add Notice",

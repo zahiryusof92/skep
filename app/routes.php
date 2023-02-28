@@ -32,6 +32,12 @@ Route::get('/systemDown', function() {
  */
 Route::get('/test/testMail', 'TestController@testMail');
 
+
+/**
+ * Route for search
+ */
+Route::post('search', array('as' => 'search.index', 'uses' => 'SearchController@index'));
+
 /*
  * LPHS REPORT START
  */
@@ -160,6 +166,10 @@ Route::post('/submitFile', 'AdminController@submitFile')->before('authMember');
 // import Files
 Route::post('/importCOBFile', 'ImportController@importCOBFile')->before('authMember');
 
+// export Files
+Route::get('/exportCOBFile', 'ExportController@exportCOBFile')->before('authMember');
+Route::post('/submitExportCOBFile', 'ExportController@submitExportCOBFile')->before('authMember');
+
 // file list
 Route::get('/fileList', array('as' => 'cob.file.index', 'uses' => 'AdminController@fileList'))->before('authMember');
 Route::get('/getFileList', 'AdminController@getFileList')->before('authMember');
@@ -236,6 +246,11 @@ Route::post('/uploadJMCFile', 'FileController@uploadJMCFile');
 Route::post('/uploadICFile', 'FileController@uploadICFile');
 Route::post('/uploadAttendanceFile', 'FileController@uploadAttendanceFile');
 Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancialFile');
+
+/**
+ * OCR
+ */
+Route::post('/uploadOcr', 'FileController@uploadOcr');
 
 // Sept 2020
 Route::post('/uploadNoticeAgmEgm', 'FileController@uploadNoticeAgmEgm');
@@ -1296,7 +1311,19 @@ Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
 Route::group(array('prefix' => 'api/v4'), function() {
     // Files API
     Route::get('files', 'Api\FileController@files');
-    Route::get('syncFile', 'Api\FileController@syncFile');
+    Route::get('filesHouseScheme', 'Api\FileController@filesHouseScheme');
+    Route::get('filesStrata', 'Api\FileController@filesStrata');
+    Route::get('filesFacility', 'Api\FileController@filesFacility');
+    Route::get('filesManagement', 'Api\FileController@filesManagement');
+    Route::get('filesManagementJMB', 'Api\FileController@filesManagementJMB');
+    Route::get('filesManagementMC', 'Api\FileController@filesManagementMC');
+    Route::get('filesManagementAgent', 'Api\FileController@filesManagementAgent');
+    Route::get('filesManagementOthers', 'Api\FileController@filesManagementOthers');
+    Route::get('filesManagementDeveloper', 'Api\FileController@filesManagementDeveloper');
+    Route::get('filesMonitoring', 'Api\FileController@filesMonitoring');
+    Route::get('filesMonitoringDocument', 'Api\FileController@filesMonitoringDocument');
+    Route::get('filesOther', 'Api\FileController@filesOther');
+    Route::get('filesRating', 'Api\FileController@filesRating');
 
     // Finance API
     Route::get('financeFile', 'Api\FinanceController@financeFile');
@@ -1313,6 +1340,7 @@ Route::group(array('prefix' => 'api/v4'), function() {
     Route::get('financeStaff', 'Api\FinanceController@financeStaff');
     Route::get('financeAdmin', 'Api\FinanceController@financeAdmin');
 
+    Route::get('syncFile', 'Api\FileController@syncFile');
     Route::get('syncFinance', 'Api\FinanceController@syncFinance');
 });
 
