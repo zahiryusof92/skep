@@ -71,9 +71,23 @@ foreach ($user_permission as $permission) {
                                 <i class="fa fa-cubes"></i>
                             </span>
                             <div class="step-desc">
-                                <span class="step-title">{{ trans('Strata >10 Units') }}</span>
+                                <span class="step-title">{{ trans('Strata <10 Units') }}</span>
                                 <p>
                                     {{ $data['total_less_10_units'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="step-block">
+                            <span class="step-digit">
+                                <i class="fa fa-ban"></i>
+                            </span>
+                            <div class="step-desc">
+                                <span class="step-title">{{ trans('No Management') }}</span>
+                                <p>
+                                    {{ $data['total_no_management'] }}
                                 </p>
                             </div>
                         </div>

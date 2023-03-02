@@ -842,6 +842,15 @@ return array(
         'prepared_by' => 'Prepared By',
         'prepared_date' => 'Prepared Date',
         'price' => 'Price',
+        'under_10_units' => 'Strata under 10 units',
+        'bankruptcy' => 'Bankruptcy',
+        'audit_account' => 'Audited Account',
+        "closing_date" => "Closing Date",
+        "income_collection" => "Income Collection",
+        "expense_collection" => "Expenses Collection",
+        "collection_result" => "Collection Result",
+        "deficit" => "Deficit",
+        "surplus" => "Surplus",
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1102,6 +1111,12 @@ return array(
             "destroy" => "File Movement deleted successfully!",
             "submit" => "File Movement submitted successfully!",
         ),
+        "audit_account" => array(
+            "store" => "Audited Account added successfully!",
+            "update" => "Audited Account updated successfully!",
+            "destroy" => "Audited Account deleted successfully!",
+            "submit" => "Audited Account submitted successfully!",
+        ),
         'payment_successfully' => 'Payment Success',
         "epks" => array(
             "store" => "Application added successfully!",
@@ -1184,6 +1199,7 @@ return array(
         'postpone_agm_reason' => 'Status AGM Reason',
         'add_deposit' => 'Add Deposit',
         'add_epks_statement' => 'Add New Statement',
+        "add_audit_account" => "Add Audited Account",
     ),
     'directory' => [
         'title' => 'Directory',

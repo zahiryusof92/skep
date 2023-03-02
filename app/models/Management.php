@@ -46,10 +46,6 @@ class Management extends Eloquent {
         return $this->hasOne('ManagementOthers', 'management_id');
     }
 
-    public function liquidators() {
-        return $this->hasMany('ManagementLiquidator', 'management_id');
-    }
-
     public function draft() {
         return $this->hasOne('ManagementDraft', 'reference_id');
     }
@@ -104,6 +100,30 @@ class Management extends Eloquent {
         );
         
         return $result;
+    }
+
+    public function developers() {
+        return $this->hasMany('ManagementDeveloper', 'management_id');
+    }
+
+    public function jmbs() {
+        return $this->hasMany('ManagementJMB', 'management_id');
+    }
+
+    public function mcs() {
+        return $this->hasMany('ManagementMC', 'management_id');
+    }
+    
+    public function agents() {
+        return $this->hasMany('ManagementAgent', 'management_id');
+    }
+
+    public function otherses() {
+        return $this->hasMany('ManagementOthers', 'management_id');
+    }
+
+    public function liquidators() {
+        return $this->hasMany('ManagementLiquidator', 'management_id');
     }
 
 }

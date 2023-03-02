@@ -256,6 +256,262 @@
     </div>
     @endif
     <hr/>
+    @if (! $management->liquidators->count())
+    <div class="row margin-top-20">
+        <div class="col-lg-12">
+            <input type="checkbox" name="liquidator" id="liquidator" {{ $disable? "disabled" : ""}}/>
+            <label><h4> {{ trans('app.forms.liquidator') }}</h4></label>
+            <!-- liquidator Form -->
+            <div id="liquidator_form_container" style="display:none">
+                <div class="card padding-10 container-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.liquidator') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.liquidator') }}" id="liquidator_name_0" name="liquidator_name[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.address') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="liquidator_address1_0" name="liquidator_address1[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="liquidator_address2_0" name="liquidator_address2[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="liquidator_address3_0" name="liquidator_address3[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" id="liquidator_address4_0" name="liquidator_address4[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.city') }}</label>
+                                <select class="form-control select2" id="liquidator_city_0" name="liquidator_city[]" {{ $disable? "disabled" : ""}}>
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @foreach ($city as $cities)
+                                    <option value="{{$cities->id}}">{{$cities->description}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.postcode') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="liquidator_poscode_0" name="liquidator_poscode[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.state') }}</label>
+                                <select class="form-control select2" id="liquidator_state_0" name="liquidator_state[]" {{ $disable? "disabled" : ""}}>
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @foreach ($state as $states)
+                                    <option value="{{$states->id}}">{{$states->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.country') }}</label>
+                                <select class="form-control select2" id="liquidator_country_0" name="liquidator_country[]" {{ $disable? "disabled" : ""}}>
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @foreach ($country as $countries)
+                                    <option value="{{$countries->id}}">{{$countries->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.phone_number') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="liquidator_phone_no_0" name="liquidator_phone_no[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.fax_number') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="liquidator_fax_no_0" name="liquidator_fax_no[]" value="" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.remarks') }}</label>
+                                <textarea class="form-control" rows="3" id="liquidator_remarks_0" name="liquidator_remarks[]" {{ $disable? "readonly" : ""}}></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    @if(!$disable)
+                    <button class="liquidator-remove-item btn btn-danger btn-xs">{{ trans('app.forms.remove') }}</button>
+                    @endif
+                </div>
+            </div>
+            @if(!$disable)
+            <div id="liquidator_add_more_row" class="row" style="display: none;">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <a href="javascript:void(0);" id="add-more-liquidator" class="btn btn-success btn-xs">{{ trans('app.forms.add_more') }}</a>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+    @else
+    <div class="row padding-vertical-20">
+        <div class="col-lg-12">
+            <input type="checkbox" name="liquidator" id="liquidator" {{($management->liquidator == 1 ? " checked" : "")}} {{ $disable? "disabled" : ""}}/>
+            <label><h4> {{ trans('app.forms.liquidator') }}</h4></label>
+            <!-- liquidator Form -->
+            <div id="liquidator_form_container">
+                @foreach($management->liquidators as $key => $liquidator)
+                <div class="card padding-10 container-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.liquidator') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.liquidator') }}" id="liquidator_name_{{ $key }}" name="liquidator_name[]" value="{{$liquidator->name}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.address') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address') }}" id="liquidator_address1_{{ $key }}" name="liquidator_address1[]" value="{{$liquidator->address_1}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address2') }}" id="liquidator_address2_{{ $key }}" name="liquidator_address2[]"  value="{{$liquidator->address_2}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address3') }}" id="liquidator_address3_{{ $key }}" name="liquidator_address3[]"  value="{{$liquidator->address_3}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.address4') }}" id="liquidator_address4_{{ $key }}" name="liquidator_address4[]"  value="{{$liquidator->address_4}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.city') }}</label>
+                                <select class="form-control" id="liquidator_city_{{ $key }}" name="liquidator_city[]" {{ $disable? "disabled" : ""}}>
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @foreach ($city as $cities)
+                                    <option value="{{$cities->id}}" {{($liquidator->city == $cities->id ? " selected" : "")}}>{{$cities->description}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.postcode') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.postcode') }}" id="liquidator_poscode_{{ $key }}" name="liquidator_poscode[]" value="{{$liquidator->poscode}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.state') }}</label>
+                                <select class="form-control" id="liquidator_state_{{ $key }}" name="liquidator_state[]" {{ $disable? "disabled" : ""}}>
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @foreach ($state as $states)
+                                    <option value="{{$states->id}}" {{($liquidator->state == $states->id ? " selected" : "")}}>{{$states->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.country') }}</label>
+                                <select class="form-control" id="liquidator_country_{{ $key }}" name="liquidator_country[]" {{ $disable? "disabled" : ""}}>
+                                    <option value="">{{ trans('app.forms.please_select') }}</option>
+                                    @foreach ($country as $countries)
+                                    <option value="{{$countries->id}}" {{($liquidator->country == $countries->id ? " selected" : "")}}>{{$countries->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.phone_number') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="liquidator_phone_no_{{ $key }}" name="liquidator_phone_no[]" value="{{$liquidator->phone_no}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.fax_number') }}</label>
+                                <input type="text" class="form-control" placeholder="{{ trans('app.forms.fax_number') }}" id="liquidator_fax_no_{{ $key }}" name="liquidator_fax_no[]" value="{{$liquidator->fax_no}}" {{ $disable? "readonly" : ""}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.remarks') }}</label>
+                                <textarea class="form-control" rows="3" id="liquidator_remarks_{{ $key }}" name="liquidator_remarks[]" {{ $disable? "readonly" : ""}}>{{$liquidator->remarks}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    @if(!$disable)
+                    <button class="liquidator-remove-item btn btn-danger btn-xs">{{ trans('app.forms.remove') }}</button>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+            @if(!$disable)
+            <div id="liquidator_add_more_row" class="row" style="display: none;">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <a href="javascript:void(0);" id="add-more-liquidator" class="btn btn-success btn-xs">{{ trans('app.forms.add_more') }}</a>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+    @endif
+    <hr/>
     @if (! $management->jmbs->count())
     <div class="row">
         <div class="col-lg-12">
@@ -1130,7 +1386,7 @@
     </div>
     @endif
     <hr/>
-    @if (! $management->others->count())
+    @if (! $management->otherses->count())
     <div class="row">
         <div class="col-lg-12">
             <input type="checkbox" name="is_others" id="is_others" {{ $disable? "disabled" : ""}}/>
@@ -1256,7 +1512,7 @@
             <label><h4> {{ trans('app.forms.others') }}</h4></label>
             <!-- others Form -->
             <div id="others_form_container">
-                @foreach($management->others as $key => $other)
+                @foreach($management->otherses as $key => $other)
                 <div class="card padding-10 container-item">
                     <div class="row">
                         <div class="col-md-6">
@@ -1423,7 +1679,7 @@
                             <div class="form-group">
                                 <label>{{ trans('app.forms.date_start') }}</label>
                                 <label class="input-group">
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="no_management_date_start" name="no_management_date_start" value="{{ ($management->start != '0000-00-00' ? date('d-m-Y', strtotime($management->start)) : '') }}" {{ $disable? "readonly" : ""}}/>
+                                    <input type="text" class="form-control datepicker" placeholder="{{ trans('app.forms.date_formed') }}" id="no_management_date_start" name="no_management_date_start" value="{{ ($management->start != '0000-00-00' ? date('d-m-Y', strtotime($management->start)) : '') }}" {{ $disable? "readonly" : ""}}/>
                                     <span class="input-group-addon">
                                         <i class="icmn-calendar"></i>
                                     </span>
@@ -1436,7 +1692,7 @@
                             <div class="form-group">
                                 <label>{{ trans('app.forms.date_end') }}</label>
                                 <label class="input-group">
-                                    <input type="text" class="form-control" placeholder="{{ trans('app.forms.date_formed') }}" id="no_management_date_end" name="no_management_date_end" value="{{ ($management->end != '0000-00-00' ? date('d-m-Y', strtotime($management->end)) : '') }}" {{ $disable? "readonly" : ""}}/>
+                                    <input type="text" class="form-control datepicker" placeholder="{{ trans('app.forms.date_formed') }}" id="no_management_date_end" name="no_management_date_end" value="{{ ($management->end != '0000-00-00' ? date('d-m-Y', strtotime($management->end)) : '') }}" {{ $disable? "readonly" : ""}}/>
                                     <span class="input-group-addon">
                                         <i class="icmn-calendar"></i>
                                     </span>
@@ -1449,11 +1705,55 @@
         </div>
     </div>
     @endif
+    
+    <hr/>
+    
+    @if (! $management->bankruptcy)
+    <div class="row">
+        <div class="col-lg-12">
+            <input type="checkbox" name="bankruptcy" id="bankruptcy" {{ $disable? "disabled" : ""}}/>
+            <label><h4> {{ trans('app.forms.bankruptcy') }}</h4></label>
+            <!-- bankruptcy Form -->
+            <div id="bankruptcy_form_container" style="display:none">
+                <div id="bankruptcy_form">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.remarks') }}</label>
+                                <textarea class="form-control" rows="3" id="bankruptcy_remarks" name="bankruptcy_remarks" {{ $disable? "readonly" : ""}}>{{$management->bankruptcy_remarks}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
+    <div class="row">
+        <div class="col-lg-12">
+            <input type="checkbox" name="bankruptcy" id="bankruptcy" {{($management->bankruptcy ? " checked" : "")}} {{ $disable? "disabled" : ""}}/>
+            <label><h4> {{ trans('app.forms.bankruptcy') }}</h4></label>
+            <!-- bankruptcy Form -->
+            <div id="bankruptcy_form_container">
+                <div id="bankruptcy_form">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>{{ trans('app.forms.remarks') }}</label>
+                                <textarea class="form-control" rows="3" id="bankruptcy_remarks" name="bankruptcy_remarks" {{ $disable? "readonly" : ""}}>{{$management->bankruptcy_remarks}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
     <div class="form-actions">
         <?php if ($update_permission == 1) { ?>
-            <input type="hidden" id="file_id" name="file_id" value="{{ $file->id }}"/>
+            <input type="hidden" id="file_id" name="file_id" value="{{ \Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $file->id) }}"/>
             <input type="hidden" id="reference_id" name="reference_id" value="{{ ($management->reference_id ? $management->reference_id : $management->id) }}"/>
-            <button type="submit" class="btn btn-own" id="submit_button"{{ $disable? "readonly" : ""}}>{{ trans('app.forms.submit') }}</button>
+            <button type="submit" class="btn btn-own" id="submit_button" {{ $disable? "disabled" : ""}}>{{ trans('app.forms.submit') }}</button>
         <?php } ?>
 
         @if ($file->is_active != 2)
@@ -1466,14 +1766,20 @@
 <script>
     $(function() {
         containerChecking('is_developer');
+        containerChecking('liquidator');
         containerChecking('is_jmb');
         containerChecking('is_mc');
         containerChecking('is_agent');
         containerChecking('is_others');
         containerChecking('no_management');
+        containerChecking('under_10_units');
+        containerChecking('bankruptcy');
 
         $('#is_developer').click(function () {
             containerChecking('is_developer');
+        });
+        $('#liquidator').click(function () {
+            containerChecking('liquidator');
         });
         $('#is_jmb').click(function () {
             containerChecking('is_jmb');
@@ -1490,6 +1796,12 @@
         $('#no_management').click(function () {
             containerChecking('no_management');
         });
+        $('#under_10_units').click(function () {
+            containerChecking('under_10_units');
+        });
+        $('#bankruptcy').click(function () {
+            containerChecking('bankruptcy');
+        });
     });
 
     function containerChecking(id) {
@@ -1499,10 +1811,13 @@
             if(id != 'no_management' && $('#no_management').is(':checked')) {
                 $('#no_management').prop('checked', false);
                 $("#no_management_form_container").fadeOut(0);
-            } else if(id == 'no_management' && $('#no_management').is(':checked')) {
+            } else if((id == 'no_management' && $('#no_management').is(':checked'))) {
                 $('#is_developer').prop('checked', false);
                 $("#developer_form_container").fadeOut(0);
                 $('#developer_add_more_row').fadeOut(0);
+                $('#liquidator').prop('checked', false);
+                $("#liquidator_form_container").fadeOut(0);
+                $('#liquidator_add_more_row').fadeOut(0);
                 $('#is_jmb').prop('checked', false);
                 $("#jmb_form_container").fadeOut(0);
                 $('#jmb_add_more_row').fadeOut(0);
@@ -1515,11 +1830,17 @@
                 $('#is_others').prop('checked', false);
                 $("#others_form_container").fadeOut(0);
                 $('#others_add_more_row').fadeOut(0);
+                $('#under_10_units').prop('checked', false);
+                $("#under_10_units_form_container").fadeOut(0);
+                $('#bankruptcy').prop('checked', false);
+                $("#bankruptcy_form_container").fadeOut(0);
             }
         } else {
             $("#" + id.replace('is_', '') + "_form_container").fadeOut(0);
             $("#" + id.replace('is_', '') + '_add_more_row').fadeOut(0);
-            if(id != 'no_management' && (!$('#is_developer').is(':checked') && !$('#is_jmb').is(':checked') && !$('#is_mc').is(':checked') && !$('#is_agent').is(':checked') && !$('#is_others').is(':checked') && !$('#no_management').is(':checked'))) {
+            if(id != 'no_management' && (!$('#is_developer').is(':checked') && !$('#is_jmb').is(':checked') && !$('#is_mc').is(':checked')
+            && !$('#is_agent').is(':checked') && !$('#is_others').is(':checked') && !$('#no_management').is(':checked') 
+            && !$('#under_10_units').is(':checked') && !$('#bankruptcy').is(':checked'))) {
                 $('#no_management').prop('checked', true);
                 $("#no_management_form_container").fadeIn(500);
             }

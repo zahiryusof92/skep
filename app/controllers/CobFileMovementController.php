@@ -21,10 +21,12 @@ class CobFileMovementController extends \BaseController
 	 */
 	public function index($file_id)
 	{
+		$this->checkAvailableAccess();
+
 		if (Request::ajax()) {
 			$model = FileMovement::with(['file', 'user'])
 				->self()
-				->where('files.id', Helper::decode($file_id, $this->module['cob']['file']['name']));
+				->where('files.id', Helper::decode($file_id));
 
 			return Datatables::of($model)
 				->editColumn('file_id', function ($model) {
@@ -40,18 +42,22 @@ class CobFileMovementController extends \BaseController
 					return $content;
 				})
 				->addColumn('action', function ($model) use ($file_id) {
-					$btn = '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;'
-						. '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
+					$btn = '';
+
+					if (AccessGroup::hasUpdateModule('File Movement')) {
+					$btn = '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+					$btn = '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
 						. '<input type="hidden" name="_method" value="DELETE">'
 						. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
 						. '</form>';
+					}
 
 					return $btn;
 				})
 				->make(true);
 		}
 
-		$file = Files::find(Helper::decode($file_id, $this->module['cob']['file']['name']));
+		$file = Files::find(Helper::decode($file_id));
 
 		$viewData = array(
 			'title' => trans('app.menus.cob.update_cob_file'),
@@ -72,7 +78,9 @@ class CobFileMovementController extends \BaseController
 	 */
 	public function create($file_id)
 	{
-		$file = Files::find(Helper::decode($file_id, $this->module['cob']['file']['name']));
+		$this->checkAvailableAccess();
+
+		$file = Files::find(Helper::decode($file_id));
 		$userList = User::self()->whereNotIn('role', [1, 2, 24])->get();
 
 		$viewData = array(
@@ -156,7 +164,6 @@ class CobFileMovementController extends \BaseController
 		]);
 	}
 
-
 	/**
 	 * Display the specified resource.
 	 *
@@ -177,9 +184,11 @@ class CobFileMovementController extends \BaseController
 	 */
 	public function edit($id, $file_id)
 	{
+		$this->checkAvailableAccess();
+
 		$model = FileMovement::find(Helper::decode($id, $this->module['file_movement']['name']));
 		if ($model) {
-			$file = Files::find(Helper::decode($file_id, $this->module['cob']['file']['name']));
+			$file = Files::find(Helper::decode($file_id));
 			$userList = User::self()->whereNotIn('role', [1, 2, 24])->get();
 
 			$viewData = array(
@@ -196,7 +205,7 @@ class CobFileMovementController extends \BaseController
 			return View::make('page_en.cob.file-movement.edit', $viewData);
 		}
 
-		return Redirect::route('cob.file-movement.index', [Helper::encode($this->module['cob']['file']['name'], $file_id)])->with('error', trans('app.errors.occurred'));
+		return Redirect::route('cob.file-movement.index', [Helper::encode($file_id)])->with('error', trans('app.errors.occurred'));
 	}
 
 
@@ -326,10 +335,16 @@ class CobFileMovementController extends \BaseController
 				$remarks = 'File Movement : ' . $model->id . $this->module['audit']['text']['data_deleted'];
 				$this->addAudit($model->file_id, "COB File", $remarks);
 
-				return Redirect::route('cob.file-movement.index', [Helper::encode($this->module['cob']['file']['name'], $model->file_id)])->with('success', trans('app.successes.deleted_successfully'));
+				return Redirect::route('cob.file-movement.index', [Helper::encode($model->file_id)])->with('success', trans('app.successes.deleted_successfully'));
 			}
 		}
 
 		return Redirect::back()->with('error', trans('app.errors.occurred'));
 	}
+
+	private function checkAvailableAccess() {
+        if(!AccessGroup::hasAccessModule('File Movement')) {
+            App::abort(404);
+        }
+    }
 }
