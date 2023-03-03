@@ -39,28 +39,26 @@ foreach ($user_permission as $permissions) {
                     <div class="col-lg-12 text-center">
                         <form>
                             <div class="row">
-                                @if ($files)
+                                @if ($filename)
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.file_no') }}</label>
                                         <select id="file_no" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($files as $files_no)
-                                            <option value="{{ $files_no->file_no }}">{{ $files_no->file_no }}</option>
+                                            @foreach ($filename as $file)
+                                            <option value="{{ $file->file_no }}">{{ $file->file_no }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                @endif
-                                
-                                @if ($filename)
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.file_name') }}</label>
                                         <select id="file_name" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($filename as $name)
-                                            <option value="{{ $name->name }}">{{ $name->name }}</option>
+                                            @foreach ($filename as $file)
+                                            <option value="{{ $file->name }}">{{ $file->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

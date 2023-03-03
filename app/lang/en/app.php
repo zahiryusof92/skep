@@ -682,8 +682,6 @@ return array(
         'assigned_to' => 'Assigned To',
         "under_ten_units" => "Under 10 Units",
         "no_management" => "No Management",
-        "under_ten_units" => "Under 10 Units",
-        "no_management" => "No Management",
         "actual_purchase_price" => "Actual Purchase Price",
         "submission_date" => "Submission Date",
         "role" => "Role",
@@ -851,6 +849,7 @@ return array(
         "collection_result" => "Collection Result",
         "deficit" => "Deficit",
         "surplus" => "Surplus",
+        'upcoming_agm_date' => 'Upcoming AGM Date',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

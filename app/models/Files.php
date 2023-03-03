@@ -87,6 +87,11 @@ class Files extends Eloquent
         return $this->hasOne('MeetingDocument', 'file_id')->latest();
     }
 
+    public function latestAgmDate()
+    {
+        return $this->hasOne('MeetingDocument', 'file_id')->orderBy('agm_date', 'desc');
+    }
+
     public function insurance()
     {
         return $this->hasMany('Insurance', 'file_id');

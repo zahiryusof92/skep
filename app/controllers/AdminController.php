@@ -9072,20 +9072,6 @@ class AdminController extends BaseController {
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
 
         if ($id == 'All') {
-            if (!Auth::user()->getAdmin()) {
-                if (!empty(Auth::user()->file_id)) {
-                    $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                } else {
-                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                }
-            } else {
-                if (empty(Session::get('admin_cob'))) {
-                    $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                } else {
-                    $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                }
-            }
-
             $filename = Files::getFileName();
             $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(46));
                 
@@ -9106,7 +9092,6 @@ class AdminController extends BaseController {
                 'main_nav_active' => '',
                 'sub_nav_active' => 'insurance_list',
                 'user_permission' => $user_permission,
-                'files' => $files,
                 'filename' => $filename,
                 'insuranceProvider' => $insuranceProvider,
                 'image' => ""
