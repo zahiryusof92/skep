@@ -27,6 +27,11 @@ $prefix = 'sum_';
                         @endforeach
                         <tr>
                             <td>&nbsp;</td>
+                            <th class="padding-table">JUMLAH PENDAPATAN</th>
+                            <th><input type="text" class="form-control form-control-sm text-right" id="{{ $prefix }}jumlah_pendapatan" value="0" readonly=""></th>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
                             <th class="padding-table">JUMLAH PERBELANJAAN</th>
                             <th><input type="text" class="form-control form-control-sm text-right" id="{{ $prefix }}jumlah_pembelanjaan" value="{{ $total_all }}" readonly=""></th>
                         </tr>
@@ -127,6 +132,7 @@ $prefix = 'sum_';
         for (var i = 0; i < summary_total.length; i++) {
             sum_total_summary += Number(summary_total[i].value);
         }
+        $('#{{ $prefix }}jumlah_pendapatan').val(parseFloat(sum_total_summary).toFixed(2));
         $('#{{ $prefix }}jumlah_pembelanjaan').val(parseFloat(sum_total_summary).toFixed(2));
     }
 

@@ -36,9 +36,23 @@ class HomeController extends BaseController
         
         $year = Files::getVPYear();
         $data = Files::getDashboardData();
-        $activeMemo = self::getActiveMemoHome();
 
-        // return '<pre>' . print_r($data['never'], true) . '</pre>';
+        $activeMemo = '';
+        if (!Auth::user()->isLPHS()) {
+            $activeMemo = self::getActiveMemoHome();
+        }
+
+        $ageing = '';
+        if (Auth::user()->isJMB()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::find(Auth::user()->file_id);
+                if ($file) {
+                    $ageing = $file->financeAgeing();
+                }
+            }
+        }
+
+        // return '<pre>' . print_r($ageing, true) . '</pre>';
 
         if (Auth::user()->isLawyer()) {
             $viewData = array(
@@ -62,6 +76,7 @@ class HomeController extends BaseController
             'cob' => $cob,
             'year' => $year,
             'activeMemo' => $activeMemo,
+            'ageing' => $ageing,
             'image' => ""
         );
 

@@ -203,6 +203,89 @@ foreach ($user_permission as $permission) {
 
             <hr />
 
+            @if (!empty($ageing))
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h4>{{ trans('app.forms.collection') }}</h4>
+                        <section class="panel panel-pad">
+                            <div class="tab-content padding-vertical-20">
+                                <table class="table table-hover table-own table-striped" id="ageing_table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('TAHUN') }}
+                                            </th>
+                                            <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('BULAN') }}
+                                            </th>
+                                            <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('PERATUSAN KUTIPAN BULANAN') }} (%)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($ageing['data']))
+                                        @foreach ($ageing['data'] as $ageing_data)
+                                        <tr>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $ageing_data['year'] }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ Str::upper($ageing_data['month_name']) }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $ageing_data['percentage'] }}
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+
+                                @if (!empty($ageing['graph']))
+                                    <div class="margin-top-25 chart-custom">
+                                        <div id="ageing_chart"></div>
+                                    </div>
+
+                                    <script>
+                                        Highcharts.chart('ageing_chart', {
+                                            chart: {
+                                                type: 'line'
+                                            },
+                                            title: {
+                                                text: '{{ trans("Peratusan Kutipan Bulanan") }}'
+                                            },
+                                            xAxis: {
+                                                categories : <?php echo json_encode($ageing['graph']['months']); ?>
+                                            },
+                                            yAxis: {
+                                                title: {
+                                                    text: 'Peratus (%)'
+                                                }
+                                            },
+                                            plotOptions: {
+                                                line: {
+                                                    dataLabels: {
+                                                        enabled: true
+                                                    },
+                                                }
+                                            },
+                                            series: [{
+                                                name: 'Peratusan Kutipan',
+                                                data: <?php echo json_encode($ageing['graph']['percentages']); ?>
+                                            }]
+                                        });
+                                    </script>
+                                @endif
+
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            @endif
+
+            <hr />
+
             <div class="row">
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.memo') }}</h4>
@@ -229,8 +312,6 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-6">
                     <div class="margin-bottom-50 chart-custom">
-                        <!--<h4 class="text-center">Star Rating of Development Area</h4>-->
-                        <!--<div class="chart-pie-chart"></div>-->
                         <div id="rating_star"></div>
                     </div>
                 </div>
@@ -556,7 +637,7 @@ foreach ($user_permission as $permission) {
     </div>
 </div>
 
-@if ($activeMemo->count() > 0)
+@if (!empty($activeMemo) && $activeMemo->count() > 0)
 @foreach ($activeMemo as $alertMemo)
 <script type="text/javascript">
     $(document).ready(function () {
