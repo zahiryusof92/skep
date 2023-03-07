@@ -108,14 +108,17 @@
                         <table border="1" id="support_table" width="100%">
                             <thead>
                                 <tr>
-                                    <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                    <th style="width:15%; text-align: center !important; vertical-align:middle !important;">
                                         {{ trans('TAHUN') }}
                                     </th>
-                                    <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                    <th style="width:25%; text-align: center !important; vertical-align:middle !important;">
                                         {{ trans('BULAN') }}
                                     </th>
                                     <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
                                         {{ trans('PERATUSAN KUTIPAN BULANAN') }} (%)
+                                    </th>
+                                    <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
+                                        {{ trans('JUMLAH PENDAPATAN BERSIH') }} (RM)
                                     </th>
                                 </tr>
                             </thead>
@@ -126,10 +129,13 @@
                                         {{ $ageing['year'] }}
                                     </td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">
-                                        {{ Str::upper($ageing['month_name']) }}
+                                        {{ $ageing['month_name'] }}
                                     </td>
                                     <td style="text-align: center !important; vertical-align:middle !important;">
                                         {{ $ageing['percentage'] }}
+                                    </td>
+                                    <td style="text-align: center !important; vertical-align:middle !important;">
+                                        {{ $ageing['nett_income'] }}
                                     </td>
                                 </tr>
                                 @endforeach

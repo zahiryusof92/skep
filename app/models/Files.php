@@ -2833,18 +2833,20 @@ class Files extends Eloquent
         $graph_month = [];
         $graph_percentage = [];
 
-        $start = Carbon::today()->format('m');
+        $start = Carbon::today()->subMonth()->subYear();
 
-        for ($i = $start; $i >= 0; $i--) {
+        for ($i = 0; $i < 12; $i++) {
             $percentage = 0;
+            $total_income = 0;
+            $total_expense = 0;
+            $nett_income = 0;
 
-            $year = Carbon::today()->startOfMonth()->subMonth($i);
-            $month = Carbon::today()->startOfMonth()->subMonth($i);
+            $date = $start->addMonth();
 
-            $month_finance = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
+            $month_finance = Finance::with(['financeIncome', 'financeSummary', 'financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
                 ->where('finance_file.file_id', $this->id)
-                ->where('finance_file.year', $year->format('Y'))
-                ->where('finance_file.month', $month->format('m'))
+                ->where('finance_file.year', $date->format('Y'))
+                ->where('finance_file.month', $date->format('m'))
                 ->where('finance_file.is_active', 1)
                 ->where('finance_file.is_deleted', 0)
                 ->first();
@@ -2864,17 +2866,31 @@ class Files extends Eloquent
                 $total_berjaya_dikutip = $mf_income + $sf_income;
 
                 if ($total_berjaya_dikutip > 0 && $total_sepatut_dikutip > 0) {
-                    $percentage = round(($total_berjaya_dikutip / $total_sepatut_dikutip) * 100, 2);
+                    $percentage = ($total_berjaya_dikutip / $total_sepatut_dikutip) * 100;
+                }
+
+                $total_income_tuggakan = $month_finance->financeIncome->sum('tuggakan');
+                $total_income_semasa = $month_finance->financeIncome->sum('semasa');
+                $total_income_hadapan = $month_finance->financeIncome->sum('hadapan');
+                $total_income = $total_income_tuggakan + $total_income_semasa + $total_income_hadapan;
+
+                $total_expense = $month_finance->financeSummary->sum('amount');
+
+                if ($total_income > 0 && $total_expense > 0) {
+                    $nett_income = $total_income - $total_expense;
                 }
             }
 
-            array_push($graph_month, $month->format('F') . '<br />' . $month->format('Y'));
+            array_push($graph_month, $date->format('F') . '<br />' . $date->format('Y'));
             array_push($graph_percentage, $percentage);
             array_push($data, [
-                'year' => $year->format('Y'),
-                'month' => $month->format('m'),
-                'month_name' => $month->format('F'),
-                'percentage' => $percentage,
+                'year' => $date->format('Y'),
+                'month' => $date->format('m'),
+                'month_name' => $date->format('F'),
+                'percentage' => number_format($percentage),
+                'total_income' => $total_income,
+                'total_expense' => $total_expense,
+                'nett_income' => number_format($nett_income, 2),
             ]);            
         }
 

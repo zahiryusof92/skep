@@ -206,20 +206,26 @@ foreach ($user_permission as $permission) {
             @if (!empty($ageing))
                 <div class="row">
                     <div class="col-lg-12">
-                        <h4>{{ trans('app.forms.collection') }}</h4>
+
+                        <pre>{{ print_r($ageing, true) }}</pre>
+
+                        <h4>{{ trans('app.menus.reporting.strata_profile') }}</h4>
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-20">
-                                <table class="table table-hover table-own table-striped" id="ageing_table" width="100%">
+                                <table class="table table-sm table-hover table-own table-striped" id="ageing_table" width="100%">
                                     <thead>
                                         <tr>
-                                            <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">
                                                 {{ trans('TAHUN') }}
                                             </th>
-                                            <th style="width:35%; text-align: center !important; vertical-align:middle !important;">
+                                            <th style="width:25%; text-align: center !important; vertical-align:middle !important;">
                                                 {{ trans('BULAN') }}
                                             </th>
                                             <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
                                                 {{ trans('PERATUSAN KUTIPAN BULANAN') }} (%)
+                                            </th>
+                                            <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('JUMLAH PENDAPATAN BERSIH') }} (RM)
                                             </th>
                                         </tr>
                                     </thead>
@@ -235,6 +241,9 @@ foreach ($user_permission as $permission) {
                                             </td>
                                             <td style="text-align: center !important; vertical-align:middle !important;">
                                                 {{ $ageing_data['percentage'] }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $ageing_data['nett_income'] }}
                                             </td>
                                         </tr>
                                         @endforeach
