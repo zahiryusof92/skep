@@ -206,9 +206,6 @@ foreach ($user_permission as $permission) {
             @if (!empty($ageing))
                 <div class="row">
                     <div class="col-lg-12">
-
-                        <pre>{{ print_r($ageing, true) }}</pre>
-
                         <h4>{{ trans('app.menus.reporting.strata_profile') }}</h4>
                         <section class="panel panel-pad">
                             <div class="tab-content padding-vertical-20">

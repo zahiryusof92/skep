@@ -6652,12 +6652,22 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
 
+        if (empty(Session::get('admin_cob'))) {
+            $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+            $cob = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+            $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+        }
+
         $viewData = array(
             'title' => trans('app.menus.administration.user_management'),
             'panel_nav_active' => 'admin_panel',
             'main_nav_active' => 'admin_main',
             'sub_nav_active' => 'user_list',
             'user_permission' => $user_permission,
+            'role' => $role,
+            'cob' => $cob,
             'image' => ""
         );
 
@@ -6820,69 +6830,63 @@ class AdminController extends BaseController {
 
     public function getUser() {
         if (!Auth::user()->getAdmin()) {
-            $user = User::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            $users = User::leftJoin('role', 'users.role', '=', 'role.id')
+                ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
+                ->where('company.id', Auth::user()->company_id)
+                ->where('users.is_deleted', 0);
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $user = User::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $users = User::join('role', 'users.role', '=', 'role.id')
+                    ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                    ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                    ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
+                    ->where('users.is_deleted', 0);
             } else {
-                $user = User::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $users = User::leftJoin('role', 'users.role', '=', 'role.id')
+                    ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                    ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                    ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
+                    ->where('company.id', Session::get('admin_cob'))
+                    ->where('users.is_deleted', 0);
             }
         }
 
-        if (count($user) > 0) {
-            $data = Array();
-            foreach ($user as $users) {
-                $role = Role::find($users->role);
-
-                $button = "";
-                if ($users->is_active == 1) {
-                    $is_active = trans('app.forms.yes');
-                    if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . Helper::encode($users->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+        if ($users) {
+            return Datatables::of($users)
+                ->editColumn('is_active', function ($model) {
+                    if ($model->is_active) {
+                        return trans('app.forms.yes');
                     }
-                } else {
-                    $is_active = trans('app.forms.no');
-                    if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . Helper::encode($users->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+
+                    return trans('app.forms.no');
+
+                })
+                ->editColumn('status', function ($model) {
+                    if ($model->status == 0) {
+                        return trans('app.forms.pending');
+                    } else if ($model->status == 1) {
+                        return trans('app.forms.approved');
                     }
-                }
 
-                if ($users->status == 0) {
-                    $status = trans('app.forms.pending');
-                } else if ($users->status == 1) {
-                    $status = trans('app.forms.approved');
-                } else {
-                    $status = trans('app.forms.rejected');
-                }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', Helper::encode($users->id)) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', Helper::encode($users->id)) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . Helper::encode($users->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                    return trans('app.forms.rejected');
 
-                $data_raw = array(
-                    $users->username,
-                    $users->full_name,
-                    $users->email,
-                    $role->name,
-                    $is_active,
-                    $status,
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
+                })
+                ->addColumn('action', function ($model) {
+                    $button = '';
+                    if ($model->is_active) {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    } else {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    }
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', Helper::encode($model->id)) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', Helper::encode($model->id)) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                    
+                    return $button;
+                })
+                ->make(true);
         }
     }
 

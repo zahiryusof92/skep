@@ -65,6 +65,32 @@ $prefix = 'sum_';
     });
 
     function calculateSummaryTotal() {
+        // summary utility
+        let others_a = Number($('#util_total_all').val()) - (Number($('#util_total_income_1').val()) + Number($('#util_total_income_2').val()));
+        let others_b = Number($('#utilb_total_all').val()) - (Number($('#utilb_total_income_1').val()) + Number($('#utilb_total_income_2').val()));
+        let utility_total = Number(others_a + others_b);
+        $('#sum_utility').val(parseFloat(utility_total).toFixed(2));
+
+        // summary contract
+        let contract_total = Number($('#contract_total_all').val());
+        $('#sum_contract').val(parseFloat(contract_total).toFixed(2));
+
+        // summary repair
+        let repair_total = Number($('#repair_maintenancefee_total_all').val()) + Number($('#repair_singkingfund_total_all').val());
+        $('#sum_repair').val(parseFloat(repair_total).toFixed(2));
+
+        // summary vandalisme
+        let vandalisme_total = Number($('#maintenancefee_total_all').val()) + Number($('#singkingfund_total_all').val());
+        $('#sum_vandalisme').val(parseFloat(vandalisme_total).toFixed(2));
+
+        // summary staff
+        let staff_total = Number($('#staff_total_all').val());
+        $('#sum_staff').val(parseFloat(staff_total).toFixed(2));
+
+        // summary admin
+        let admin_total = Number($('#admin_total_all').val());
+        $('#sum_admin').val(parseFloat(admin_total).toFixed(2));
+        
         var bill_air_pukal = $("#updateFinanceFile [id=util_total_income_1]").val();
         var bill_air_pemilik = $("#updateFinanceFile [id=utilb_total_income_1]").val();
         var bill_air = Number(bill_air_pukal) + Number(bill_air_pemilik);

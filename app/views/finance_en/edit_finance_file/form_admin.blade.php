@@ -96,10 +96,6 @@ $prefix = 'admin_';
 <script type="text/javascript">
     $(document).ready(function () {
         calculateAdminTotal();
-        
-        // summary admin
-        $('#sum_admin').val($('#admin_total_all').val());
-        calculateSummaryTotal();
     });
 
     function calculateAdmin(id) {
@@ -159,6 +155,8 @@ $prefix = 'admin_';
 
         var admin_sum_total_all = Number(admin_sum_total_tunggakan) + Number(admin_sum_total_semasa) + Number(admin_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#admin_total_all').val(parseFloat(admin_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
     }
 
     function addRowAdmin() {

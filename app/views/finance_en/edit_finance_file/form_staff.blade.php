@@ -108,10 +108,6 @@ $prefix = 'staff_';
 <script type="text/javascript">
     $(document).ready(function () {
         calculateStaffTotal();
-        
-        // summary staff
-        $('#sum_staff').val($('#staff_total_all').val());
-        calculateSummaryTotal();
     });
 
     function calculateStaff(id) {
@@ -145,7 +141,6 @@ $prefix = 'staff_';
         $('#staff_total_income_' + id).val(parseFloat(staff_sum_total_income).toFixed(2)); // UPDATE JUMLAH A + B + C
 
         calculateStaffTotal();
-        calculateSummaryTotal();
     }
 
     function calculateStaffTotal() {
@@ -192,6 +187,8 @@ $prefix = 'staff_';
 
         var staff_sum_total_all = Number(staff_sum_total_tunggakan) + Number(staff_sum_total_semasa) + Number(staff_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#staff_total_all').val(parseFloat(staff_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
     }
 
     function addRowStaff() {
