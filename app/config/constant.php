@@ -1163,6 +1163,9 @@ return [
         'file_movement' => [
             'name' => 'file_movement'
         ],
+        'auditAccount' => [
+            'name' => 'auditAccount'
+        ],
     ],
     'third_party' => [
         'eagm' => [

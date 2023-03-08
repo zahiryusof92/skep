@@ -1296,6 +1296,22 @@
                                         <div id="endorsed_email_error" style="display:none;"></div>
                                     </div>
                                 </div>
+
+                                @if ($meeting_doc->meetingDocumentStatus && !empty($meeting_doc->meetingDocumentStatus->created_at))
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            <span style="color: red; font-style: italic;">*</span>
+                                            {{ trans('app.forms.endorsed_date') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="email" class="form-control" id="endorsed_date"
+                                            name="endorsed_date" placeholder="{{ trans('app.forms.endorsed_date') }}"
+                                            value="{{ date('Y-m-d H:i:s', strtotime($meeting_doc->meetingDocumentStatus->created_at)) }}" />
+                                    </div>
+                                </div>
+                                @endif
                             @else
                                 <div class="form-group row">
                                     <div class="col-md-6">

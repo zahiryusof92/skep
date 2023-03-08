@@ -16,6 +16,12 @@ class SubModuleTableSeeder extends Seeder
                 'name_my' => 'Pergerakan Fail',
                 'sort_no' => 10
             ]);
+            SubModule::firstOrCreate([
+                'module_id' => $cob_module->id,
+                'name_en' => 'Audit Account',
+                'name_my' => 'Akaun Audit',
+                'sort_no' => 11
+            ]);
         }
 
         $master_module = Module::where('name_en', 'Master Setup')->first();

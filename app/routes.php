@@ -1069,6 +1069,15 @@ Route::group(array('before' => 'authMember'), function() {
     Route::put('update/submitUpdateFileMovement/{id}', array('as' => 'cob.file-movement.update', 'uses' => 'CobFileMovementController@update'));
     Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
 
+     /** COB Audit Account */
+     Route::get('update/auditAccount/{file_id}', array('as' => 'cob.audit-account.index', 'uses' => 'CobAuditAccountController@index'));
+     Route::get('update/addAuditAccount/{file_id}', array('as' => 'cob.audit-account.create', 'uses' => 'CobAuditAccountController@create'));
+     Route::post('update/submitAddAuditAccount', array('as' => 'cob.audit-account.store', 'uses' => 'CobAuditAccountController@store'));
+     Route::get('update/updateAuditAccount/{id}/{file_id}', array('as' => 'cob.audit-account.edit', 'uses' => 'CobAuditAccountController@edit'));
+     Route::put('update/submitUpdateAuditAccount/{id}', array('as' => 'cob.audit-account.update', 'uses' => 'CobAuditAccountController@update'));
+     Route::delete('update/deleteAuditAccount/{id}', array('as' => 'cob.audit-account.destroy', 'uses' => 'CobAuditAccountController@destroy'));
+     Route::post('auditAccount/fileUpload',  array('as' => 'cob.audit-account.fileUpload', 'uses' => 'CobAuditAccountController@fileUpload'));
+     
     /**
      * COB Draft Reject
      */

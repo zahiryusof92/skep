@@ -2095,7 +2095,7 @@ class AdminController extends BaseController {
             //                         json_encode($data))));
             // if(empty($response->status) == false && $response->status == 200) {
 
-            $files = Files::findOrFail(Helper::decode($data['file_id']));
+            $files = Files::findOrFail(Helper::decode($data['file_id'], $this->module['cob']['file']['name']));
             if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $management = ManagementDraft::firstOrNew(array('file_id' => $files->id));
                 $management->reference_id = $data['reference_id'];
@@ -2122,376 +2122,679 @@ class AdminController extends BaseController {
                 (new NotificationService())->store($notify_data);
             } else {
                 $management = Management::firstOrNew(array('file_id' => $files->id));
-                $developer = ManagementDeveloper::firstOrNew(array('file_id' => $files->id));
-                $jmb = ManagementJMB::firstOrNew(array('file_id' => $files->id));
-                $mc = ManagementMC::firstOrNew(array('file_id' => $files->id));
-                $agent = ManagementAgent::firstOrNew(array('file_id' => $files->id));
-                $others = ManagementOthers::firstOrNew(array('file_id' => $files->id));
+                $current_developer = ManagementDeveloper::where('file_id', $files->id)->get();
+                $current_liquidator = ManagementLiquidator::where('file_id', $files->id)->get();
+                $current_jmb = ManagementJMB::where('file_id', $files->id)->get();
+                $current_mc = ManagementMC::where('file_id', $files->id)->get();
+                $current_agent = ManagementAgent::where('file_id', $files->id)->get();
+                $current_others = ManagementOthers::where('file_id', $files->id)->get();
             }
 
-            //developer
-            $is_developer = $data['is_developer'];
-            $developer_name = $data['developer_name'];
-            $developer_address1 = $data['developer_address1'];
-            $developer_address2 = $data['developer_address2'];
-            $developer_address3 = $data['developer_address3'];
-            $developer_address4 = $data['developer_address4'];
-            $developer_city = $data['developer_city'];
-            $developer_poscode = $data['developer_poscode'];
-            $developer_state = $data['developer_state'];
-            $developer_country = $data['developer_country'];
-            $developer_phone_no = $data['developer_phone_no'];
-            $developer_fax_no = $data['developer_fax_no'];
-            $developer_remarks = $data['developer_remarks'];
-
-            //jmb
-            $is_jmb = $data['is_jmb'];
-            $jmb_date_formed = $data['jmb_date_formed'];
-            $jmb_certificate_no = $data['jmb_certificate_no'];
-            $jmb_name = $data['jmb_name'];
-            $jmb_address1 = $data['jmb_address1'];
-            $jmb_address2 = $data['jmb_address2'];
-            $jmb_address3 = $data['jmb_address3'];
-            $jmb_city = $data['jmb_city'];
-            $jmb_poscode = $data['jmb_poscode'];
-            $jmb_state = $data['jmb_state'];
-            $jmb_country = $data['jmb_country'];
-            $jmb_phone_no = $data['jmb_phone_no'];
-            $jmb_fax_no = $data['jmb_fax_no'];
-            $jmb_email = $data['jmb_email'];
-
-            //mc
-            $is_mc = $data['is_mc'];
-            $mc_date_formed = $data['mc_date_formed'];
-            $mc_certificate_no = $data['mc_certificate_no'];
-            $mc_first_agm = $data['mc_first_agm'];
-            $mc_name = $data['mc_name'];
-            $mc_address1 = $data['mc_address1'];
-            $mc_address2 = $data['mc_address2'];
-            $mc_address3 = $data['mc_address3'];
-            $mc_city = $data['mc_city'];
-            $mc_poscode = $data['mc_poscode'];
-            $mc_state = $data['mc_state'];
-            $mc_country = $data['mc_country'];
-            $mc_phone_no = $data['mc_phone_no'];
-            $mc_fax_no = $data['mc_fax_no'];
-            $mc_email = $data['mc_email'];
-
-            //agent
-            $is_agent = $data['is_agent'];
-            $agent_selected_by = $data['agent_selected_by'];
-            $agent_name = $data['agent_name'];
-            $agent_address1 = $data['agent_address1'];
-            $agent_address2 = $data['agent_address2'];
-            $agent_address3 = $data['agent_address3'];
-            $agent_city = $data['agent_city'];
-            $agent_poscode = $data['agent_poscode'];
-            $agent_state = $data['agent_state'];
-            $agent_country = $data['agent_country'];
-            $agent_phone_no = $data['agent_phone_no'];
-            $agent_fax_no = $data['agent_fax_no'];
-            $agent_email = $data['agent_email'];
-
-            //others
-            $is_others = $data['is_others'];
-            $others_name = $data['others_name'];
-            $others_address1 = $data['others_address1'];
-            $others_address2 = $data['others_address2'];
-            $others_address3 = $data['others_address3'];
-            $others_city = $data['others_city'];
-            $others_poscode = $data['others_poscode'];
-            $others_state = $data['others_state'];
-            $others_country = $data['others_country'];
-            $others_phone_no = $data['others_phone_no'];
-            $others_fax_no = $data['others_fax_no'];
-            $others_email = $data['others_email'];
-
-            
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
-            $is_developer_field = $management->is_developer == $is_developer? "": "management developer";
-            $is_jmb_field = $management->is_jmb == $is_jmb? "": "management jmb";
-            $is_mc_field = $management->is_mc == $is_mc? "": "management mc";
-            $is_agent_field = $management->is_agent == $is_agent? "": "management agent";
-            $is_others_field = $management->is_others == $is_others? "": "management others";
+            if (!Auth::user()->isJMB()) {
+                $is_developer_field = ((!empty($data['is_developer']) && !$management->is_developer) || (empty($data['is_developer']) && $management->is_developer))? "management developer": "";
+                $liquidator_field = ((!empty($data['liquidator']) && !$management->liquidator) || (empty($data['liquidator']) && $management->liquidator))? "management liquidator": "";
+                $is_jmb_field = ((!empty($data['is_jmb']) && !$management->is_jmb) || (empty($data['is_jmb']) && $management->is_jmb))? "management jmb": "";
+                $is_mc_field = ((!empty($data['is_mc']) && !$management->is_mc) || (empty($data['is_mc']) && $management->is_mc))? "management mc": "";
+                $is_agent_field = ((!empty($data['is_agent']) && !$management->is_agent) || (empty($data['is_agent']) && $management->is_agent))? "management agent": "";
+                $is_others_field = ((!empty($data['is_others']) && !$management->is_others) || (empty($data['is_others']) && $management->is_others))? "management others": "";
+                $is_no_management_field = ((!empty($data['no_management']) && !$management->no_management) || (empty($data['no_management']) && $management->no_management))? "management no management": "";
+                $under_10_units_field = ((!empty($data['under_10_units']) && !$management->under_10_units) || (empty($data['under_10_units']) && $management->under_10_units))? "management under 10 units": "";
+                $bankruptcy_field = ((!empty($data['bankruptcy']) && !$management->bankruptcy) || (empty($data['bankruptcy']) && $management->bankruptcy))? "management bankruptcy": "";
 
-            if(!empty($is_developer_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field)) {
-                $audit_fields_changed .= "<br><ul>";
-            }
-            /** Developer */
-            if(!empty($is_developer_field)) {
-                if($is_developer) {
-                    $audit_fields_changed .= "<li> Developer : new data inserted </li>";
-                } else {
-                    $audit_fields_changed .= "<li> Developer : data removed </li>";
+                if(!empty($is_developer_field) || !empty($liquidator_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field)
+                || !empty($is_no_management_field)|| !empty($under_10_units_field)|| !empty($bankruptcy_field)) {
+                    $audit_fields_changed .= "<br><ul>";
                 }
-            } else {
-                if($management->is_developer) {
-                    /** Data Updated */
-                    $new_line = '';
-                    $new_line .= $developer->name != $developer_name? "name, " : "";
-                    $new_line .= $developer->address_1 != $developer_address1? "address 1, " : "";
-                    $new_line .= $developer->address_2 != $developer_address2? "address 2, " : "";
-                    $new_line .= $developer->address_3 != $developer_address3? "address 3, " : "";
-                    $new_line .= $developer->address_4 != $developer_address4? "address 4, " : "";
-                    $new_line .= $developer->city != $developer_city? "city, " : "";
-                    $new_line .= $developer->poscode != $developer_poscode? "poscode, " : "";
-                    $new_line .= $developer->state != $developer_state? "state, " : "";
-                    $new_line .= $developer->country != $developer_country? "country, " : "";
-                    $new_line .= $developer->phone_no != $developer_phone_no? "phone no, " : "";
-                    $new_line .= $developer->fax_no != $developer_fax_no? "fax no, " : "";
-                    $new_line .= $developer->remarks != $developer_remarks? "remarks, " : "";
-                    if(!empty($new_line)) {
-                        $audit_fields_changed .= "<li> Developer : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                /** No Management */
+                if(!empty($is_no_management_field)) {
+                    if(!empty($data['no_management'])) {
+                        $audit_fields_changed .= "<li> No Management : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> No Management : data removed </li>";
+                    }
+                } else {
+                    if($management->no_management) {
+                        /** Data Updated */
+                        $start_date = !empty($data['no_management_date_start'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_start'])->format('Y-m-d') : "";
+                        $end_date = !empty($data['no_management_date_end'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_end'])->format('Y-m-d') : "";
+                        $new_line = '';
+                        if(!empty($start_date)) {
+                            $new_line .= $management->start != $start_date? "start date, " : "";
+                        }
+                        if(!empty($end_date)) {
+                            $new_line .= $management->end != $end_date? "end date, " : "";
+                        }
+                        if(!empty($new_line)) {
+                            $audit_fields_changed .= "<li> No Management : (";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
                     }
                 }
-            }
-            /** JMB */
-            if(!empty($is_jmb_field)) {
-                if($is_jmb) {
-                    $audit_fields_changed .= "<li> JMB : new data inserted </li>";
+                /** Strata Under 10 unit */
+                if(!empty($under_10_units_field)) {
+                    if(!empty($data['under_10_units'])) {
+                        $audit_fields_changed .= "<li> Strata Under 10 unit : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> Strata Under 10 unit : data removed </li>";
+                    }
                 } else {
-                    $audit_fields_changed .= "<li> JMB : data removed </li>";
-                }
-            } else {
-                if($management->is_jmb) {
-                    /** Data Updated */
-                    $new_line = '';
-                    $new_line .= $jmb->date_formed != $jmb_date_formed? "date formed, " : "";
-                    $new_line .= $jmb->certificate_no != $jmb_certificate_no? "certificate no, " : "";
-                    $new_line .= $jmb->name != $jmb_name? "name, " : "";
-                    $new_line .= $jmb->address_1 != $jmb_address1? "address 1, " : "";
-                    $new_line .= $jmb->address_2 != $jmb_address2? "address 2, " : "";
-                    $new_line .= $jmb->address_3 != $jmb_address3? "address 3, " : "";
-                    $new_line .= $jmb->city != $jmb_city? "city, " : "";
-                    $new_line .= $jmb->poscode != $jmb_poscode? "poscode, " : "";
-                    $new_line .= $jmb->state != $jmb_state? "state, " : "";
-                    $new_line .= $jmb->country != $jmb_country? "country, " : "";
-                    $new_line .= $jmb->phone_no != $jmb_phone_no? "phone no, " : "";
-                    $new_line .= $jmb->fax_no != $jmb_fax_no? "fax no, " : "";
-                    $new_line .= $jmb->email != $jmb_email? "email, " : "";
-                    if(!empty($new_line)) {
-                        $audit_fields_changed .= "<li> JMB : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    if($management->no_management) {
+                        /** Data Updated */
+                        $under_10_units_remarks_field = ((!empty($data['under_10_units_remarks']) && !$management->under_10_units_remarks) || (empty($data['under_10_units_remarks']) && $management->under_10_units_remarks))? "management strata under 10 units remarks": "";
+                        $new_line = '';
+                        if(!empty($under_10_units_remarks_field)) {
+                            $new_line .= $management->start != $start_date? "start date, " : "";
+                        }
+                        if(!empty($new_line)) {
+                            $audit_fields_changed .= "<li> Strata Under 10 unit : (";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
                     }
                 }
-            }
-            /** MC */
-            if(!empty($is_mc_field)) {
-                if($is_mc) {
-                    $audit_fields_changed .= "<li> MC : new data inserted </li>";
+                /** Bankruptcy */
+                if(!empty($bankruptcy_field)) {
+                    if(!empty($data['bankruptcy'])) {
+                        $audit_fields_changed .= "<li> Bankruptcy : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> Bankruptcy : data removed </li>";
+                    }
                 } else {
-                    $audit_fields_changed .= "<li> MC : data removed </li>";
-                }
-            } else {
-                if($management->is_mc) {
-                    /** Data Updated */
-                    $new_line = '';
-                    $new_line .= $mc->date_formed != $mc_date_formed? "date formed, " : "";
-                    $new_line .= $mc->certificate_no != $mc_certificate_no? "certificate no, " : "";
-                    $new_line .= $mc->first_agm != $mc_first_agm? "first agm, " : "";
-                    $new_line .= $mc->name != $mc_name? "name, " : "";
-                    $new_line .= $mc->address_1 != $mc_address1? "address 1, " : "";
-                    $new_line .= $mc->address_2 != $mc_address2? "address 2, " : "";
-                    $new_line .= $mc->address_3 != $mc_address3? "address 3, " : "";
-                    $new_line .= $mc->city != $mc_city? "city, " : "";
-                    $new_line .= $mc->poscode != $mc_poscode? "poscode, " : "";
-                    $new_line .= $mc->state != $mc_state? "state, " : "";
-                    $new_line .= $mc->country != $mc_country? "country, " : "";
-                    $new_line .= $mc->phone_no != $mc_phone_no? "phone no, " : "";
-                    $new_line .= $mc->fax_no != $mc_fax_no? "fax no, " : "";
-                    $new_line .= $mc->email != $mc_email? "email, " : "";
-                    if(!empty($new_line)) {
-                        $audit_fields_changed .= "<li> MC : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    if($management->no_management) {
+                        /** Data Updated */
+                        $bankruptcy_remarks_field = ((!empty($data['bankruptcy_remarks']) && !$management->bankruptcy_remarks) || (empty($data['bankruptcy_remarks']) && $management->bankruptcy_remarks))? "management bankruptcys remarks": "";
+                        $new_line = '';
+                        if(!empty($bankruptcy_remarks_field)) {
+                            $new_line .= $management->start != $start_date? "start date, " : "";
+                        }
+                        if(!empty($new_line)) {
+                            $audit_fields_changed .= "<li> Bankruptcy : (";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
                     }
                 }
-            }
-            /** Agent */
-            if(!empty($is_agent_field)) {
-                if($is_agent) {
-                    $audit_fields_changed .= "<li> Agent : new data inserted </li>";
+                /** Developer */
+                if(!empty($is_developer_field)) {
+                    if(!empty($data['is_developer'])) {
+                        $audit_fields_changed .= "<li> Developer : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> Developer : data removed </li>";
+                    }
                 } else {
-                    $audit_fields_changed .= "<li> Agent : data removed </li>";
-                }
-            } else {
-                if($management->is_agent) {
-                    /** Data Updated */
-                    $new_line = '';
-                    $new_line .= $agent->selected_by != $agent_selected_by? "appointed by, " : "";
-                    $new_line .= $agent->agent != $agent_name? "name, " : "";
-                    $new_line .= $agent->address_1 != $agent_address1? "address 1, " : "";
-                    $new_line .= $agent->address_2 != $agent_address2? "address 2, " : "";
-                    $new_line .= $agent->address_3 != $agent_address3? "address 3, " : "";
-                    $new_line .= $agent->city != $agent_city? "city, " : "";
-                    $new_line .= $agent->poscode != $agent_poscode? "poscode, " : "";
-                    $new_line .= $agent->state != $agent_state? "state, " : "";
-                    $new_line .= $agent->country != $agent_country? "country, " : "";
-                    $new_line .= $agent->phone_no != $agent_phone_no? "phone no, " : "";
-                    $new_line .= $agent->fax_no != $agent_fax_no? "fax no, " : "";
-                    $new_line .= $agent->email != $agent_email? "email, " : "";
-                    if(!empty($new_line)) {
-                        $audit_fields_changed .= "<li> Agent : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    if($management->is_developer) {
+                        for($i = 0; $i < count($data['developer_name']); $i++) {
+                            $data['developer'][$i]['name'] = $data['developer_name'][$i];
+                            $data['developer'][$i]['address_1'] = $data['developer_address1'][$i];
+                            $data['developer'][$i]['address_2'] = $data['developer_address2'][$i];
+                            $data['developer'][$i]['address_3'] = $data['developer_address3'][$i];
+                            $data['developer'][$i]['address_4'] = $data['developer_address4'][$i];
+                            $data['developer'][$i]['city'] = $data['developer_city'][$i];
+                            $data['developer'][$i]['poscode'] = $data['developer_poscode'][$i];
+                            $data['developer'][$i]['state'] = $data['developer_state'][$i];
+                            $data['developer'][$i]['country'] = $data['developer_country'][$i];
+                            $data['developer'][$i]['phone_no'] = $data['developer_phone_no'][$i];
+                            $data['developer'][$i]['fax_no'] = $data['developer_fax_no'][$i];
+                            $data['developer'][$i]['remarks'] = $data['developer_remarks'][$i];
+                        }
+                        $management_developer_differents = Helper::check_diff_multi($current_developer->toArray(),$data['developer']);
+                        /** Data Updated */
+                        if(count($management_developer_differents)) {
+                            $audit_fields_changed .= "<li>Developer : (";
+                            $new_line = '';
+                            foreach($management_developer_differents as $mdd_key => $mdd) {
+                                if(is_array($mdd) && count($mdd)) {
+                                    foreach($mdd as $mdd_data_key => $mdd_data) {
+                                        if(!in_array($mdd_data_key, ['id', 'file_id', 'management_id'])) {
+                                            $name = str_replace("_", " ", $mdd_data_key);
+                                            $new_line .= $name . '=' . $mdd_data . ', ';
+                                        }
+                                    }
+                                } else {
+                                    if(!empty($mdd)) {
+                                        $name = str_replace("_", " ", $mdd_key);
+                                        $new_line .= $name . '=' . $mdd . ', ';
+                                    }
+                                }
+                            }
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
                     }
                 }
-            }
-            /** Others */
-            if(!empty($is_others_field)) {
-                if($is_others) {
-                    $audit_fields_changed .= "<li> Others : new data inserted </li>";
+                /** Liquidator */
+                if(!empty($liquidator_field)) {
+                    if(!empty($data['liquidator'])) {
+                        $audit_fields_changed .= "<li> Liquidator : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> Liquidator : data removed </li>";
+                    }
                 } else {
-                    $audit_fields_changed .= "<li> Others : data removed </li>";
-                }
-            } else {
-                if($management->is_others) {
-                    /** Data Updated */
-                    $new_line = '';
-                    $new_line .= $others->agent != $others_name? "name, " : "";
-                    $new_line .= $others->address_1 != $others_address1? "address 1, " : "";
-                    $new_line .= $others->address_2 != $others_address2? "address 2, " : "";
-                    $new_line .= $others->address_3 != $others_address3? "address 3, " : "";
-                    $new_line .= $others->city != $others_city? "city, " : "";
-                    $new_line .= $others->poscode != $others_poscode? "poscode, " : "";
-                    $new_line .= $others->state != $others_state? "state, " : "";
-                    $new_line .= $others->country != $others_country? "country, " : "";
-                    $new_line .= $others->phone_no != $others_phone_no? "phone no, " : "";
-                    $new_line .= $others->fax_no != $others_fax_no? "fax no, " : "";
-                    $new_line .= $others->email != $others_email? "email, " : "";
-                    if(!empty($new_line)) {
-                        $audit_fields_changed .= "<li> Others : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    if($management->liquidator) {
+                        for($i = 0; $i < count($data['liquidator_name']); $i++) {
+                            $data['data_liquidator'][$i]['name'] = $data['liquidator_name'][$i];
+                            $data['data_liquidator'][$i]['address_1'] = $data['liquidator_address1'][$i];
+                            $data['data_liquidator'][$i]['address_2'] = $data['liquidator_address2'][$i];
+                            $data['data_liquidator'][$i]['address_3'] = $data['liquidator_address3'][$i];
+                            $data['data_liquidator'][$i]['address_4'] = $data['liquidator_address4'][$i];
+                            $data['data_liquidator'][$i]['city'] = $data['liquidator_city'][$i];
+                            $data['data_liquidator'][$i]['poscode'] = $data['liquidator_poscode'][$i];
+                            $data['data_liquidator'][$i]['state'] = $data['liquidator_state'][$i];
+                            $data['data_liquidator'][$i]['country'] = $data['liquidator_country'][$i];
+                            $data['data_liquidator'][$i]['phone_no'] = $data['liquidator_phone_no'][$i];
+                            $data['data_liquidator'][$i]['fax_no'] = $data['liquidator_fax_no'][$i];
+                            $data['data_liquidator'][$i]['remarks'] = $data['liquidator_remarks'][$i];
+                        }
+                        $management_liquidator_differents = Helper::check_diff_multi($current_liquidator->toArray(),$data['data_liquidator']);
+                        /** Data Updated */
+                        if(count($management_liquidator_differents)) {
+                            $audit_fields_changed .= "<li>Liquidator : (";
+                            $new_line = '';
+                            foreach($management_liquidator_differents as $mdl_key => $mdl) {
+                                if(is_array($mdl) && count($mdl)) {
+                                    foreach($mdl as $mdl_data_key => $mdl_data) {
+                                        if(!in_array($mdl_data_key, ['id', 'file_id', 'management_id'])) {
+                                            $name = str_replace("_", " ", $mdl_data_key);
+                                            $new_line .= $name . '=' . $mdl_data . ', ';
+                                        }
+                                    }
+                                } else {
+                                    if(!empty($mdl)) {
+                                        $name = str_replace("_", " ", $mdl_key);
+                                        $new_line .= $name . '=' . $mdl . ', ';
+                                    }
+                                }
+                            }
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
                     }
                 }
-            }
-            if(!empty($is_developer_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field)) {
-                $audit_fields_changed .= "</ul>";
+                /** JMB */
+                if(!empty($is_jmb_field)) {
+                    if(!empty($data['is_jmb'])) {
+                        $audit_fields_changed .= "<li> JMB : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> JMB : data removed </li>";
+                    }
+                } else {
+                    if($management->is_jmb) {
+                        for($i = 0; $i < count($data['jmb_name']); $i++) {
+                            $data['jmb'][$i]['date_formed'] = !empty($data['jmb_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
+                            $data['jmb'][$i]['certificate_no'] = $data['jmb_certificate_no'][$i];
+                            $data['jmb'][$i]['name'] = $data['jmb_name'][$i];
+                            $data['jmb'][$i]['address_1'] = $data['jmb_address1'][$i];
+                            $data['jmb'][$i]['address_2'] = $data['jmb_address2'][$i];
+                            $data['jmb'][$i]['address_3'] = $data['jmb_address3'][$i];
+                            $data['jmb'][$i]['city'] = $data['jmb_city'][$i];
+                            $data['jmb'][$i]['poscode'] = $data['jmb_poscode'][$i];
+                            $data['jmb'][$i]['state'] = $data['jmb_state'][$i];
+                            $data['jmb'][$i]['country'] = $data['jmb_country'][$i];
+                            $data['jmb'][$i]['phone_no'] = $data['jmb_phone_no'][$i];
+                            $data['jmb'][$i]['fax_no'] = $data['jmb_fax_no'][$i];
+                            $data['jmb'][$i]['email'] = $data['jmb_email'][$i];
+                        }
+                        $management_jmb_differents = Helper::check_diff_multi($current_jmb->toArray(),$data['jmb']);
+                        /** Data Updated */
+                        if(count($management_jmb_differents)) {
+                            $audit_fields_changed .= "<li>JMB : (";
+                            $new_line = '';
+                            foreach($management_jmb_differents as $mjd_key => $mjd) {
+                                if(is_array($mjd) && count($mjd)) {
+                                    foreach($mjd as $mjd_data_key => $mjd_data) {
+                                        if(!in_array($mjd_data_key, ['id', 'file_id', 'management_id'])) {
+                                            $name = str_replace("_", " ", $mjd_data_key);
+                                            $new_line .= $name . '=' . $mjd_data . ', ';
+                                        }
+                                    }
+                                } else {
+                                    if(!empty($mjd)) {
+                                        $name = str_replace("_", " ", $mjd_key);
+                                        $new_line .= $name . '=' . $mjd . ', ';
+                                    }
+                                }
+                            }
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
+                    }
+                }
+                /** MC */
+                if(!empty($is_mc_field)) {
+                    if(!empty($data['is_mc'])) {
+                        $audit_fields_changed .= "<li> MC : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> MC : data removed </li>";
+                    }
+                } else {
+                    if($management->is_mc) {
+                        for($i = 0; $i < count($data['mc_name']); $i++) {
+                            $data['mc'][$i]['date_formed'] = !empty($data['mc_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
+                            $data['mc'][$i]['certificate_no'] = $data['mc_certificate_no'][$i];
+                            $data['mc'][$i]['first_agm'] = !empty($data['mc_first_agm'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
+                            $data['mc'][$i]['name'] = $data['mc_name'][$i];
+                            $data['mc'][$i]['address_1'] = $data['mc_address1'][$i];
+                            $data['mc'][$i]['address_2'] = $data['mc_address2'][$i];
+                            $data['mc'][$i]['address_3'] = $data['mc_address3'][$i];
+                            $data['mc'][$i]['city'] = $data['mc_city'][$i];
+                            $data['mc'][$i]['poscode'] = $data['mc_poscode'][$i];
+                            $data['mc'][$i]['state'] = $data['mc_state'][$i];
+                            $data['mc'][$i]['country'] = $data['mc_country'][$i];
+                            $data['mc'][$i]['phone_no'] = $data['mc_phone_no'][$i];
+                            $data['mc'][$i]['fax_no'] = $data['mc_fax_no'][$i];
+                            $data['mc'][$i]['email'] = $data['mc_email'][$i];
+                        }
+                        $management_mc_differents = Helper::check_diff_multi($current_mc->toArray(),$data['mc']);
+                        /** Data Updated */
+                        if(count($management_mc_differents)) {
+                            $audit_fields_changed .= "<li>MC : (";
+                            $new_line = '';
+                            foreach($management_mc_differents as $mcd_key => $mcd) {
+                                if(is_array($mcd) && count($mcd)) {
+                                    foreach($mcd as $mcd_data_key => $mcd_data) {
+                                        if(!in_array($mcd_data_key, ['id', 'file_id', 'management_id'])) {
+                                            $name = str_replace("_", " ", $mcd_data_key);
+                                            $new_line .= $name . '=' . $mcd_data . ', ';
+                                        }
+                                    }
+                                } else {
+                                    if(!empty($mcd)) {
+                                        $name = str_replace("_", " ", $mcd_key);
+                                        $new_line .= $name . '=' . $mcd . ', ';
+                                    }
+                                }
+                            }
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
+                    }
+                }
+                /** Agent */
+                if(!empty($is_agent_field)) {
+                    if(!empty($data['is_agent'])) {
+                        $audit_fields_changed .= "<li> Agent : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> Agent : data removed </li>";
+                    }
+                } else {
+                    if($management->is_agent) {
+                        for($i = 0; $i < count($data['agent_name']); $i++) {
+                            $data['agent'][$i]['selected_by'] = $data['agent_selected_by'][$i];
+                            $data['agent'][$i]['name'] = $data['agent_name'][$i];
+                            $data['agent'][$i]['address_1'] = $data['agent_address1'][$i];
+                            $data['agent'][$i]['address_2'] = $data['agent_address2'][$i];
+                            $data['agent'][$i]['address_3'] = $data['agent_address3'][$i];
+                            $data['agent'][$i]['city'] = $data['agent_city'][$i];
+                            $data['agent'][$i]['poscode'] = $data['agent_poscode'][$i];
+                            $data['agent'][$i]['state'] = $data['agent_state'][$i];
+                            $data['agent'][$i]['country'] = $data['agent_country'][$i];
+                            $data['agent'][$i]['phone_no'] = $data['agent_phone_no'][$i];
+                            $data['agent'][$i]['fax_no'] = $data['agent_fax_no'][$i];
+                            $data['agent'][$i]['email'] = $data['agent_email'][$i];
+                        }
+                        $management_agent_differents = Helper::check_diff_multi($current_agent->toArray(),$data['agent']);
+                        /** Data Updated */
+                        if(count($management_agent_differents)) {
+                            $audit_fields_changed .= "<li>Agent : (";
+                            $new_line = '';
+                            foreach($management_agent_differents as $mad_key => $mad) {
+                                if(is_array($mad) && count($mad)) {
+                                    foreach($mad as $mad_data_key => $mad_data) {
+                                        if(!in_array($mad_data_key, ['id', 'file_id', 'management_id'])) {
+                                            $name = str_replace("_", " ", $mad_data_key);
+                                            $new_line .= $name . '=' . $mad_data . ', ';
+                                        }
+                                    }
+                                } else {
+                                    if(!empty($mad)) {
+                                        $name = str_replace("_", " ", $mad_key);
+                                        $new_line .= $name . '=' . $mad . ', ';
+                                    }
+                                }
+                            }
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
+                    }
+                }
+                /** Others */
+                if(!empty($is_others_field)) {
+                    if(!empty($data['is_others'])) {
+                        $audit_fields_changed .= "<li> Others : new data inserted </li>";
+                    } else {
+                        $audit_fields_changed .= "<li> Others : data removed </li>";
+                    }
+                } else {
+                    if($management->is_others) {
+                        for($i = 0; $i < count($data['others_name']); $i++) {
+                            $data['others'][$i]['name'] = $data['others_name'][$i];
+                            $data['others'][$i]['address_1'] = $data['others_address1'][$i];
+                            $data['others'][$i]['address_2'] = $data['others_address2'][$i];
+                            $data['others'][$i]['address_3'] = $data['others_address3'][$i];
+                            $data['others'][$i]['city'] = $data['others_city'][$i];
+                            $data['others'][$i]['poscode'] = $data['others_poscode'][$i];
+                            $data['others'][$i]['state'] = $data['others_state'][$i];
+                            $data['others'][$i]['country'] = $data['others_country'][$i];
+                            $data['others'][$i]['phone_no'] = $data['others_phone_no'][$i];
+                            $data['others'][$i]['fax_no'] = $data['others_fax_no'][$i];
+                            $data['others'][$i]['email'] = $data['others_email'][$i];
+                        }
+                        $management_other_differents = Helper::check_diff_multi($current_others->toArray(),$data['others']);
+                        /** Data Updated */
+                        if(count($management_other_differents)) {
+                            $audit_fields_changed .= "<li>Others : (";
+                            $new_line = '';
+                            foreach($management_other_differents as $mod_key => $mod) {
+                                if(is_array($mod) && count($mod)) {
+                                    foreach($mod as $mod_data_key => $mod_data) {
+                                        if(!in_array($mod_data_key, ['id', 'file_id', 'management_id'])) {
+                                            $name = str_replace("_", " ", $mod_data_key);
+                                            $new_line .= $name . '=' . $mod_data . ', ';
+                                        }
+                                    }
+                                } else {
+                                    if(!empty($mod)) {
+                                        $name = str_replace("_", " ", $mod_key);
+                                        $new_line .= $name . '=' . $mod . ', ';
+                                    }
+                                }
+                            }
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        }
+                    }
+                }
+                if(!empty($is_developer_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field) || !empty($is_no_management_field)) {
+                    $audit_fields_changed .= "</ul>";
+                }
             }
             /** End Arrange audit fields changes */
-            
+
             // management
-            $management->is_developer = $is_developer;
-            $management->is_jmb = $is_jmb;
-            $management->is_mc = $is_mc;
-            $management->is_agent = $is_agent;
-            $management->is_others = $is_others;
+            $management->is_developer = !empty($data['is_developer'])? true : false;
+            $management->liquidator = !empty($data['liquidator'])? true : false;
+            $management->is_jmb = !empty($data['is_jmb'])? true : false;
+            $management->is_mc = !empty($data['is_mc'])? true : false;
+            $management->is_agent = !empty($data['is_agent'])? true : false;
+            $management->is_others = !empty($data['is_others'])? true : false;
+            $management->no_management = !empty($data['no_management'])? true : false;
+            $management->under_10_units = !empty($data['under_10_units'])? true : false;
+            $management->bankruptcy = !empty($data['bankruptcy'])? true : false;
             $management->save();
 
-            if ($management->is_developer) {
-                $developer->management_id = $management->id;
-                $developer->name = $developer_name;
-                $developer->address_1 = $developer_address1;
-                $developer->address_2 = $developer_address2;
-                $developer->address_3 = $developer_address3;
-                $developer->address_4 = $developer_address4;
-                $developer->city = $developer_city;
-                $developer->poscode = $developer_poscode;
-                $developer->state = $developer_state;
-                $developer->country = $developer_country;
-                $developer->phone_no = $developer_phone_no;
-                $developer->fax_no = $developer_fax_no;
-                $developer->remarks = $developer_remarks;
-                $developer->save();
+            /** No Management */
+            if($management->no_management) {
+                $management->start = !empty($data['no_management_date_start'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_start'])->format('Y-m-d') : "";
+                $management->end = !empty($data['no_management_date_end'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_end'])->format('Y-m-d') : "";
+                $management->save();
+            }
+
+            /** Strata under 10 units */
+            if($management->under_10_units) {
+                $management->under_10_units_remarks = !empty($data['under_10_units_remarks'])? $data['under_10_units_remarks'] : "";
+                $management->save();
+            }
+            
+            /** Bankruptcy */
+            if($management->bankruptcy) {
+                $management->bankruptcy_remarks = !empty($data['bankruptcy_remarks'])? $data['bankruptcy_remarks'] : "";
+                $management->save();
+            }
+
+            // developer
+            if (Auth::user()->isJMB()) {
+                ManagementDeveloperDraft::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['developer_name']); $i++) {
+                    $developer = new ManagementDeveloperDraft;
+                    $developer->file_id = $files->id;
+                    $developer->management_id = $management->id;
+                    $developer->name = $data['developer_name'][$i];
+                    $developer->address_1 = $data['developer_address1'][$i];
+                    $developer->address_2 = $data['developer_address2'][$i];
+                    $developer->address_3 = $data['developer_address3'][$i];
+                    $developer->address_4 = $data['developer_address4'][$i];
+                    $developer->city = $data['developer_city'][$i];
+                    $developer->poscode = $data['developer_poscode'][$i];
+                    $developer->state = $data['developer_state'][$i];
+                    $developer->country = $data['developer_country'][$i];
+                    $developer->phone_no = $data['developer_phone_no'][$i];
+                    $developer->fax_no = $data['developer_fax_no'][$i];
+                    $developer->remarks = $data['developer_remarks'][$i];
+                    $developer->save();
+                }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
-                    ManagementDeveloperDraft::where('file_id', $files->id)->delete();
-                } else {
-                    ManagementDeveloper::where('file_id', $files->id)->delete();
+                ManagementDeveloper::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['developer_name']); $i++) {
+                    $developer = new ManagementDeveloper;
+                    $developer->file_id = $files->id;
+                    $developer->management_id = $management->id;
+                    $developer->name = $data['developer_name'][$i];
+                    $developer->address_1 = $data['developer_address1'][$i];
+                    $developer->address_2 = $data['developer_address2'][$i];
+                    $developer->address_3 = $data['developer_address3'][$i];
+                    $developer->address_4 = $data['developer_address4'][$i];
+                    $developer->city = $data['developer_city'][$i];
+                    $developer->poscode = $data['developer_poscode'][$i];
+                    $developer->state = $data['developer_state'][$i];
+                    $developer->country = $data['developer_country'][$i];
+                    $developer->phone_no = $data['developer_phone_no'][$i];
+                    $developer->fax_no = $data['developer_fax_no'][$i];
+                    $developer->remarks = $data['developer_remarks'][$i];
+                    $developer->save();
                 }
             }
 
-            if ($management->is_jmb) {
-                $jmb->management_id = $management->id;
-                $jmb->date_formed = $jmb_date_formed;
-                $jmb->certificate_no = $jmb_certificate_no;
-                $jmb->name = $jmb_name;
-                $jmb->address1 = $jmb_address1;
-                $jmb->address2 = $jmb_address2;
-                $jmb->address3 = $jmb_address3;
-                $jmb->city = $jmb_city;
-                $jmb->poscode = $jmb_poscode;
-                $jmb->state = $jmb_state;
-                $jmb->country = $jmb_country;
-                $jmb->phone_no = $jmb_phone_no;
-                $jmb->fax_no = $jmb_fax_no;
-                $jmb->email = $jmb_email;
-                $jmb->save();
+            // liquidator
+            if (Auth::user()->isJMB()) {
+                ManagementLiquidatorDraft::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['liquidator_name']); $i++) {
+                    $liquidator = new ManagementLiquidatorDraft;
+                    $liquidator->file_id = $files->id;
+                    $liquidator->management_id = $management->id;
+                    $liquidator->name = $data['liquidator_name'][$i];
+                    $liquidator->address_1 = $data['liquidator_address1'][$i];
+                    $liquidator->address_2 = $data['liquidator_address2'][$i];
+                    $liquidator->address_3 = $data['liquidator_address3'][$i];
+                    $liquidator->address_4 = $data['liquidator_address4'][$i];
+                    $liquidator->city = $data['liquidator_city'][$i];
+                    $liquidator->poscode = $data['liquidator_poscode'][$i];
+                    $liquidator->state = $data['liquidator_state'][$i];
+                    $liquidator->country = $data['liquidator_country'][$i];
+                    $liquidator->phone_no = $data['liquidator_phone_no'][$i];
+                    $liquidator->fax_no = $data['liquidator_fax_no'][$i];
+                    $liquidator->remarks = $data['liquidator_remarks'][$i];
+                    $liquidator->save();
+                }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
-                    ManagementJMBDraft::where('file_id', $files->id)->delete();
-                } else {
-                    ManagementJMB::where('file_id', $files->id)->delete();
+                ManagementLiquidator::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['liquidator_name']); $i++) {
+                    $liquidator = new ManagementLiquidator;
+                    $liquidator->file_id = $files->id;
+                    $liquidator->management_id = $management->id;
+                    $liquidator->name = $data['liquidator_name'][$i];
+                    $liquidator->address_1 = $data['liquidator_address1'][$i];
+                    $liquidator->address_2 = $data['liquidator_address2'][$i];
+                    $liquidator->address_3 = $data['liquidator_address3'][$i];
+                    $liquidator->address_4 = $data['liquidator_address4'][$i];
+                    $liquidator->city = $data['liquidator_city'][$i];
+                    $liquidator->poscode = $data['liquidator_poscode'][$i];
+                    $liquidator->state = $data['liquidator_state'][$i];
+                    $liquidator->country = $data['liquidator_country'][$i];
+                    $liquidator->phone_no = $data['liquidator_phone_no'][$i];
+                    $liquidator->fax_no = $data['liquidator_fax_no'][$i];
+                    $liquidator->remarks = $data['liquidator_remarks'][$i];
+                    $liquidator->save();
                 }
             }
-
-            if ($management->is_mc) {
-                $mc->management_id = $management->id;
-                $mc->date_formed = $mc_date_formed;
-                $mc->certificate_no = $mc_certificate_no;
-                $mc->first_agm = $mc_first_agm;
-                $mc->name = $mc_name;
-                $mc->address1 = $mc_address1;
-                $mc->address2 = $mc_address2;
-                $mc->address3 = $mc_address3;
-                $mc->city = $mc_city;
-                $mc->poscode = $mc_poscode;
-                $mc->state = $mc_state;
-                $mc->country = $mc_country;
-                $mc->phone_no = $mc_phone_no;
-                $mc->fax_no = $mc_fax_no;
-                $mc->email = $mc_email;
-                $mc->save();
+            
+            // jmb
+            if (Auth::user()->isJMB()) {
+                ManagementJMBDraft::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['jmb_name']); $i++) {
+                    $jmb = new ManagementJMBDraft;
+                    $jmb->file_id = $files->id;
+                    $jmb->management_id = $management->id;
+                    $jmb->date_formed = !empty($data['jmb_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
+                    $jmb->certificate_no = $data['jmb_certificate_no'][$i];
+                    $jmb->name = $data['jmb_name'][$i];
+                    $jmb->address1 = $data['jmb_address1'][$i];
+                    $jmb->address2 = $data['jmb_address2'][$i];
+                    $jmb->address3 = $data['jmb_address3'][$i];
+                    $jmb->city = $data['jmb_city'][$i];
+                    $jmb->poscode = $data['jmb_poscode'][$i];
+                    $jmb->state = $data['jmb_state'][$i];
+                    $jmb->country = $data['jmb_country'][$i];
+                    $jmb->phone_no = $data['jmb_phone_no'][$i];
+                    $jmb->fax_no = $data['jmb_fax_no'][$i];
+                    $jmb->email = $data['jmb_email'][$i];
+                    $jmb->save();
+                }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
-                    ManagementMCDraft::where('file_id', $files->id)->delete();
-                } else {
-                    ManagementMC::where('file_id', $files->id)->delete();
+                ManagementJMB::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['jmb_name']); $i++) {
+                    $jmb = new ManagementJMB;
+                    $jmb->file_id = $files->id;
+                    $jmb->management_id = $management->id;
+                    $jmb->date_formed = !empty($data['jmb_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
+                    $jmb->certificate_no = $data['jmb_certificate_no'][$i];
+                    $jmb->name = $data['jmb_name'][$i];
+                    $jmb->address1 = $data['jmb_address1'][$i];
+                    $jmb->address2 = $data['jmb_address2'][$i];
+                    $jmb->address3 = $data['jmb_address3'][$i];
+                    $jmb->city = $data['jmb_city'][$i];
+                    $jmb->poscode = $data['jmb_poscode'][$i];
+                    $jmb->state = $data['jmb_state'][$i];
+                    $jmb->country = $data['jmb_country'][$i];
+                    $jmb->phone_no = $data['jmb_phone_no'][$i];
+                    $jmb->fax_no = $data['jmb_fax_no'][$i];
+                    $jmb->email = $data['jmb_email'][$i];
+                    $jmb->save();
                 }
             }
-
-            if ($management->is_agent) {
-                $agent->management_id = $management->id;
-                $agent->selected_by = $agent_selected_by;
-                $agent->agent = $agent_name;
-                $agent->address1 = $agent_address1;
-                $agent->address2 = $agent_address2;
-                $agent->address3 = $agent_address3;
-                $agent->city = $agent_city;
-                $agent->poscode = $agent_poscode;
-                $agent->state = $agent_state;
-                $agent->country = $agent_country;
-                $agent->phone_no = $agent_phone_no;
-                $agent->fax_no = $agent_fax_no;
-                $agent->email = $agent_email;
-                $agent->save();
+            
+            // mc
+            if (Auth::user()->isJMB()) {
+                ManagementMCDraft::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['mc_name']); $i++) {
+                    $mc = new ManagementMCDraft;
+                    $mc->file_id = $files->id;
+                    $mc->management_id = $management->id;
+                    $mc->date_formed = !empty($data['mc_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
+                    $mc->certificate_no = $data['mc_certificate_no'][$i];
+                    $mc->first_agm = !empty($data['mc_first_agm'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
+                    $mc->name = $data['mc_name'][$i];
+                    $mc->address1 = $data['mc_address1'][$i];
+                    $mc->address2 = $data['mc_address2'][$i];
+                    $mc->address3 = $data['mc_address3'][$i];
+                    $mc->city = $data['mc_city'][$i];
+                    $mc->poscode = $data['mc_poscode'][$i];
+                    $mc->state = $data['mc_state'][$i];
+                    $mc->country = $data['mc_country'][$i];
+                    $mc->phone_no = $data['mc_phone_no'][$i];
+                    $mc->fax_no = $data['mc_fax_no'][$i];
+                    $mc->email = $data['mc_email'][$i];
+                    $mc->save();
+                }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
-                    ManagementAgentDraft::where('file_id', $files->id)->delete();
-                } else {
-                    ManagementAgent::where('file_id', $files->id)->delete();
+                ManagementMC::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['mc_name']); $i++) {
+                    $mc = new ManagementMC;
+                    $mc->file_id = $files->id;
+                    $mc->management_id = $management->id;
+                    $mc->date_formed = !empty($data['mc_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
+                    $mc->certificate_no = $data['mc_certificate_no'][$i];
+                    $mc->first_agm = !empty($data['mc_first_agm'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
+                    $mc->name = $data['mc_name'][$i];
+                    $mc->address1 = $data['mc_address1'][$i];
+                    $mc->address2 = $data['mc_address2'][$i];
+                    $mc->address3 = $data['mc_address3'][$i];
+                    $mc->city = $data['mc_city'][$i];
+                    $mc->poscode = $data['mc_poscode'][$i];
+                    $mc->state = $data['mc_state'][$i];
+                    $mc->country = $data['mc_country'][$i];
+                    $mc->phone_no = $data['mc_phone_no'][$i];
+                    $mc->fax_no = $data['mc_fax_no'][$i];
+                    $mc->email = $data['mc_email'][$i];
+                    $mc->save();
                 }
             }
-
-            if ($management->is_others) {
-                $others->management_id = $management->id;
-                $others->name = $others_name;
-                $others->address1 = $others_address1;
-                $others->address2 = $others_address2;
-                $others->address3 = $others_address3;
-                $others->city = $others_city;
-                $others->poscode = $others_poscode;
-                $others->state = $others_state;
-                $others->country = $others_country;
-                $others->phone_no = $others_phone_no;
-                $others->fax_no = $others_fax_no;
-                $others->email = $others_email;
-                $others->save();
+            
+            // agent
+            if (Auth::user()->isJMB()) {
+                ManagementAgentDraft::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['agent_name']); $i++) {
+                    $agent = new ManagementAgentDraft;
+                    $agent->file_id = $files->id;
+                    $agent->management_id = $management->id;
+                    $agent->selected_by = $data['agent_selected_by'][$i];
+                    $agent->agent = $data['agent_name'][$i];
+                    $agent->address1 = $data['agent_address1'][$i];
+                    $agent->address2 = $data['agent_address2'][$i];
+                    $agent->address3 = $data['agent_address3'][$i];
+                    $agent->city = $data['agent_city'][$i];
+                    $agent->poscode = $data['agent_poscode'][$i];
+                    $agent->state = $data['agent_state'][$i];
+                    $agent->country = $data['agent_country'][$i];
+                    $agent->phone_no = $data['agent_phone_no'][$i];
+                    $agent->fax_no = $data['agent_fax_no'][$i];
+                    $agent->email = $data['agent_email'][$i];
+                    $agent->save();
+                    
+                }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
-                    ManagementOthersDraft::where('file_id', $files->id)->delete();
-                } else {
-                    ManagementOthers::where('file_id', $files->id)->delete();
+                ManagementAgent::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['agent_name']); $i++) {
+                    $agent = new ManagementAgent;
+                    $agent->file_id = $files->id;
+                    $agent->management_id = $management->id;
+                    $agent->selected_by = $data['agent_selected_by'][$i];
+                    $agent->agent = $data['agent_name'][$i];
+                    $agent->address1 = $data['agent_address1'][$i];
+                    $agent->address2 = $data['agent_address2'][$i];
+                    $agent->address3 = $data['agent_address3'][$i];
+                    $agent->city = $data['agent_city'][$i];
+                    $agent->poscode = $data['agent_poscode'][$i];
+                    $agent->state = $data['agent_state'][$i];
+                    $agent->country = $data['agent_country'][$i];
+                    $agent->phone_no = $data['agent_phone_no'][$i];
+                    $agent->fax_no = $data['agent_fax_no'][$i];
+                    $agent->email = $data['agent_email'][$i];
+                    $agent->save();
+                }
+            }
+            
+            // others
+            if (Auth::user()->isJMB()) {
+                ManagementOthersDraft::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['others_name']); $i++) {
+                    $others = new ManagementOthersDraft;
+                    $others->file_id = $files->id;
+                    $others->management_id = $management->id;
+                    $others->name = $data['others_name'][$i];
+                    $others->address1 = $data['others_address1'][$i];
+                    $others->address2 = $data['others_address2'][$i];
+                    $others->address3 = $data['others_address3'][$i];
+                    $others->city = $data['others_city'][$i];
+                    $others->poscode = $data['others_poscode'][$i];
+                    $others->state = $data['others_state'][$i];
+                    $others->country = $data['others_country'][$i];
+                    $others->phone_no = $data['others_phone_no'][$i];
+                    $others->fax_no = $data['others_fax_no'][$i];
+                    $others->email = $data['others_email'][$i];
+                    $others->save();
+                }
+            } else {
+                ManagementOthers::where('file_id', $files->id)->delete();
+                for($i = 0; $i < count($data['others_name']); $i++) {
+                    $others = new ManagementOthers;
+                    $others->file_id = $files->id;
+                    $others->management_id = $management->id;
+                    $others->name = $data['others_name'][$i];
+                    $others->address1 = $data['others_address1'][$i];
+                    $others->address2 = $data['others_address2'][$i];
+                    $others->address3 = $data['others_address3'][$i];
+                    $others->city = $data['others_city'][$i];
+                    $others->poscode = $data['others_poscode'][$i];
+                    $others->state = $data['others_state'][$i];
+                    $others->country = $data['others_country'][$i];
+                    $others->phone_no = $data['others_phone_no'][$i];
+                    $others->fax_no = $data['others_fax_no'][$i];
+                    $others->email = $data['others_email'][$i];
+                    $others->save();
                 }
             }
 
@@ -6349,12 +6652,22 @@ class AdminController extends BaseController {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
 
+        if (empty(Session::get('admin_cob'))) {
+            $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+            $cob = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+        } else {
+            $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
+            $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+        }
+
         $viewData = array(
             'title' => trans('app.menus.administration.user_management'),
             'panel_nav_active' => 'admin_panel',
             'main_nav_active' => 'admin_main',
             'sub_nav_active' => 'user_list',
             'user_permission' => $user_permission,
+            'role' => $role,
+            'cob' => $cob,
             'image' => ""
         );
 
@@ -6517,69 +6830,63 @@ class AdminController extends BaseController {
 
     public function getUser() {
         if (!Auth::user()->getAdmin()) {
-            $user = User::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            $users = User::leftJoin('role', 'users.role', '=', 'role.id')
+                ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
+                ->where('company.id', Auth::user()->company_id)
+                ->where('users.is_deleted', 0);
         } else {
             if (empty(Session::get('admin_cob'))) {
-                $user = User::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $users = User::join('role', 'users.role', '=', 'role.id')
+                    ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                    ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                    ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
+                    ->where('users.is_deleted', 0);
             } else {
-                $user = User::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $users = User::leftJoin('role', 'users.role', '=', 'role.id')
+                    ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                    ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                    ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
+                    ->where('company.id', Session::get('admin_cob'))
+                    ->where('users.is_deleted', 0);
             }
         }
 
-        if (count($user) > 0) {
-            $data = Array();
-            foreach ($user as $users) {
-                $role = Role::find($users->role);
-
-                $button = "";
-                if ($users->is_active == 1) {
-                    $is_active = trans('app.forms.yes');
-                    if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . Helper::encode($users->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+        if ($users) {
+            return Datatables::of($users)
+                ->editColumn('is_active', function ($model) {
+                    if ($model->is_active) {
+                        return trans('app.forms.yes');
                     }
-                } else {
-                    $is_active = trans('app.forms.no');
-                    if ($users->status == 1) {
-                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . Helper::encode($users->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+
+                    return trans('app.forms.no');
+
+                })
+                ->editColumn('status', function ($model) {
+                    if ($model->status == 0) {
+                        return trans('app.forms.pending');
+                    } else if ($model->status == 1) {
+                        return trans('app.forms.approved');
                     }
-                }
 
-                if ($users->status == 0) {
-                    $status = trans('app.forms.pending');
-                } else if ($users->status == 1) {
-                    $status = trans('app.forms.approved');
-                } else {
-                    $status = trans('app.forms.rejected');
-                }
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', Helper::encode($users->id)) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', Helper::encode($users->id)) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . Helper::encode($users->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                    return trans('app.forms.rejected');
 
-                $data_raw = array(
-                    $users->username,
-                    $users->full_name,
-                    $users->email,
-                    $role->name,
-                    $is_active,
-                    $status,
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
+                })
+                ->addColumn('action', function ($model) {
+                    $button = '';
+                    if ($model->is_active) {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveUser(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    } else {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeUser(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    }
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', Helper::encode($model->id)) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', Helper::encode($model->id)) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                    
+                    return $button;
+                })
+                ->make(true);
         }
     }
 
@@ -8769,20 +9076,6 @@ class AdminController extends BaseController {
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
 
         if ($id == 'All') {
-            if (!Auth::user()->getAdmin()) {
-                if (!empty(Auth::user()->file_id)) {
-                    $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                } else {
-                    $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                }
-            } else {
-                if (empty(Session::get('admin_cob'))) {
-                    $files = Files::where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                } else {
-                    $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('year', 'asc')->get();
-                }
-            }
-
             $filename = Files::getFileName();
             $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(46));
                 
@@ -8803,7 +9096,6 @@ class AdminController extends BaseController {
                 'main_nav_active' => '',
                 'sub_nav_active' => 'insurance_list',
                 'user_permission' => $user_permission,
-                'files' => $files,
                 'filename' => $filename,
                 'insuranceProvider' => $insuranceProvider,
                 'image' => ""

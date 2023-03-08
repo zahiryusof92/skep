@@ -229,6 +229,14 @@ foreach ($user_permission as $permission) {
                                     <section class="panel panel-pad">
                                         <div class="form-group row padding-vertical-20">
                                             <div class="col-md-3">
+                                                <label class="form-control-label">{{ trans('app.forms.upcoming_agm_date') }}</label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="text" class="form-control" value="{{ ($file->latestAgmDate ? (!empty($file->latestAgmDate->agm_date) && $file->latestAgmDate->agm_date != '0000-00-00' ? date('Y-m-d', strtotime($file->latestAgmDate->agm_date . ' + 1 year')) : '') : '') }}" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-3">
                                                 <label class="form-control-label">{{ trans('app.forms.remarks') }}</label>
                                             </div>
                                             <div class="col-md-4">

@@ -89,6 +89,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function isLPHS() {
+        if (stripos($this->getRole->name, Role::LPHS) !== FALSE) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function isCOB() {
         if (stripos($this->getRole->name, Role::COB) !== FALSE) {
             return true;
