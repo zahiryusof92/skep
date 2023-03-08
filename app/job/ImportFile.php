@@ -43,13 +43,14 @@ class ImportFile
         $company_id = $data['company_id'];
         $status = $data['status'];
         $file_no = $row['1'];
+        $user_id = $data['user_id'];
         $audit_message = ' has been imported.';
 
         $files = Files::where('company_id', $company_id)->where('file_no', $file_no)->where('is_deleted', 0)->first();
         if(!$files) {
             $files = new Files();
             if ($status == 1 || $status == '1') {
-                $files->approved_by = Auth::user()->id;
+                $files->approved_by = $user_id;
                 $files->approved_at = date('Y-m-d H:i:s');
             }
             $audit_message = ' has been updated.';
@@ -76,7 +77,7 @@ class ImportFile
         $files->year = $year;
         $files->is_active = $is_active;
         $files->status = $status;
-        $files->created_by = Auth::user()->id;
+        $files->created_by = $user_id;
         $create_or_update_file = $files->save();
 
 
@@ -1807,7 +1808,7 @@ class ImportFile
         $auditTrail = new AuditTrail();
         $auditTrail->module = "COB File";
         $auditTrail->remarks = $remarks;
-        $auditTrail->audit_by = Auth::user()->id;
+        $auditTrail->audit_by = $user_id;
         $auditTrail->save();
 
         return;
