@@ -959,7 +959,7 @@ $('body').delegate('#attendance_ocr', 'change', function () {
         },
         success: function (result) {
             if (result.success) {
-                $("#attendance_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingOcr()'><i class='fa fa-times'></i> </button>").show();
+                $("#attendance_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAttendanceOcr()'><i class='fa fa-times'></i> </button>").show();
                 $("#attendance_ocr_clear").show();
                 $("#attendance_ocr").css("color", "green");
                 $("#attendance_ocr_url").val(result.file);
@@ -993,7 +993,7 @@ $('body').delegate('#audited_financial_ocr', 'change', function () {
         },
         success: function (result) {
             if (result.success) {
-                $("#audited_financial_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingOcr()'><i class='fa fa-times'></i> </button>").show();
+                $("#audited_financial_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAuditedFinancialOcr()'><i class='fa fa-times'></i> </button>").show();
                 $("#audited_financial_ocr_clear").show();
                 $("#audited_financial_ocr").css("color", "green");
                 $("#audited_financial_ocr_url").val(result.file);
@@ -1027,7 +1027,7 @@ $('body').delegate('#eligible_vote_ocr', 'change', function () {
         },
         success: function (result) {
             if (result.success) {
-                $("#eligible_vote_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingOcr()'><i class='fa fa-times'></i> </button>").show();
+                $("#eligible_vote_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearEligibleVoteOcr()'><i class='fa fa-times'></i> </button>").show();
                 $("#eligible_vote_ocr_clear").show();
                 $("#eligible_vote_ocr").css("color", "green");
                 $("#eligible_vote_ocr_url").val(result.file);
@@ -1061,7 +1061,7 @@ $('body').delegate('#house_rules_ocr', 'change', function () {
         },
         success: function (result) {
             if (result.success) {
-                $("#house_rules_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingOcr()'><i class='fa fa-times'></i> </button>").show();
+                $("#house_rules_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearHouseRulesOcr()'><i class='fa fa-times'></i> </button>").show();
                 $("#house_rules_ocr_clear").show();
                 $("#house_rules_ocr").css("color", "green");
                 $("#house_rules_ocr_url").val(result.file);

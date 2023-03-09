@@ -104,6 +104,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <form id="upload_agm_file" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadAGMFile') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -134,6 +135,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <form id="upload_egm_file" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadEGMFile') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -268,6 +270,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <form id="upload_ic_file" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadICFile') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -298,6 +301,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <form id="upload_attendance_file" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadAttendanceFile') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -349,6 +353,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <form id="upload_audited_financial_file" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadAuditedFinancialFile') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -398,6 +403,7 @@
                                     </div>
                                 </div>
                             </form>
+
                             <form id="upload_audit_report_file" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadAuditReportFile') }}" autocomplete="off">
                                 <div class="form-group row">
