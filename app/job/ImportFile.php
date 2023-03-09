@@ -14,8 +14,6 @@ use Dun;
 use Facility;
 use Files;
 use HouseScheme;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use LandTitle;
 use Management;
 use ManagementAgent;
@@ -1791,7 +1789,6 @@ class ImportFile
             $others_details->save();
         }
 
-
         // 157. New File No
         $new_file_no = '';
         if (isset($row['157']) && !empty($row['157'])) {
@@ -1811,6 +1808,6 @@ class ImportFile
         $auditTrail->audit_by = $user_id;
         $auditTrail->save();
 
-        return;
+        $job->delete();
     }
 }
