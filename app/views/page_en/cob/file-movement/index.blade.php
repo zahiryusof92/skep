@@ -20,9 +20,9 @@
                                 <section class="panel panel-pad">
                                     <div class="row padding-vertical-20">
                                         <div class="col-lg-12">
-                                            @if (AccessGroup::hasInsert(63))
+                                            @if (AccessGroup::hasInsertModule('File Movement'))
                                             <div class="margin-bottom-30">
-                                                <a href="{{ route('cob.file-movement.create', [\Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)]) }}"
+                                                <a href="{{ route('cob.file-movement.create', [\Helper\Helper::encode($files->id)]) }}"
                                                     class="btn btn-own">
                                                     {{ trans('app.buttons.add_file_movement') }}
                                                 </a>
@@ -60,7 +60,7 @@
         $('#file_movement_table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('cob.file-movement.index', [\Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)]) }}",
+            ajax: "{{ route('cob.file-movement.index', [\Helper\Helper::encode($files->id)]) }}",
             lengthMenu: [[5, 10, 50, -1], [5, 10, 50, "All"]],
             pageLength: 10,
             order: [[0, "asc"]],

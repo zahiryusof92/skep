@@ -37,7 +37,6 @@ $company = Company::find(Auth::user()->company_id);
                                     <input type="hidden" name="print_role" id="print_role">
                                     <input type="hidden" name="print_module" id="print_module" value="System Authentication">
                                     <input type="hidden" name="print_file_id" id="print_file_id">
-                                    {{-- <button type="submit" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button> --}}
                                 </td>
                             </tr>
                         </table>
@@ -69,14 +68,6 @@ $company = Company::find(Auth::user()->company_id);
                                     </select>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>{{ trans('app.forms.strata') }}</label>
-                                    <select id="strata" name="strata" class="form-control">
-                                        <option value="">{{ trans('app.forms.please_select') }}</option>
-                                    </select>
-                                </div>
-                            </div> --}}
                             <div class="col-lg-12">
                                 <span style="font-size: 12px;"><b>{{ trans('app.forms.date_audited') }}: </b></span>&nbsp;
                                 <input style="font-size: 12px;" id="date_from" data-column="0" type="text" class="form-control width-150 display-inline-block datetimepicker" placeholder="From"/>

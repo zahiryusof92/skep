@@ -168,6 +168,11 @@
                             </table>
                         </div>
                     </div>
+                    @else
+                    <?php
+                        $cobData  = '';
+                        $chartData = '';
+                    ?>
                     @endif
                 </section>
 

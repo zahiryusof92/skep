@@ -168,11 +168,6 @@ $prefix2 = 'repair_singkingfund_';
     $(document).ready(function () {
         calculateRepairATotal();
         calculateRepairBTotal();
-        
-        // summary repair
-        let repair_amount = Number($('#{{ $prefix }}total_all').val()) + Number($('#{{ $prefix2 }}total_all').val());
-        $('#sum_repair').val(parseFloat(repair_amount).toFixed(2));
-        calculateSummaryTotal();
     });
 
     function calculateRepairA(id) {
@@ -232,6 +227,8 @@ $prefix2 = 'repair_singkingfund_';
 
         var repaira_sum_total_all = Number(repaira_sum_total_tunggakan) + Number(repaira_sum_total_semasa) + Number(repaira_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#{{ $prefix }}total_all').val(parseFloat(repaira_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
     }
 
     function calculateRepairB(id) {
@@ -292,6 +289,8 @@ $prefix2 = 'repair_singkingfund_';
         var repairb_sum_total_all = Number(repairb_sum_total_tunggakan) + Number(repairb_sum_total_semasa) + Number(repairb_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         
         $('#{{ $prefix2 }}total_all').val(parseFloat(repairb_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
         calculateSFR(); // Recalculate SF Report
     }
 

@@ -26,17 +26,33 @@ class HomeController extends BaseController
         if (Auth::user()->isMPS()) {
             return Redirect::to('/fileList');
         }
+
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
             $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
         } else {
             $cob = Company::where('id', Session::get('admin_cob'))->get();
         }
+        
         $year = Files::getVPYear();
         $data = Files::getDashboardData();
-        $activeMemo = self::getActiveMemoHome();
 
-        // return '<pre>' . print_r($data['never'], true) . '</pre>';
+        $activeMemo = '';
+        if (!Auth::user()->isLPHS()) {
+            $activeMemo = self::getActiveMemoHome();
+        }
+
+        $ageing = '';
+        if (Auth::user()->isJMB()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Files::find(Auth::user()->file_id);
+                if ($file) {
+                    $ageing = $file->financeAgeing();
+                }
+            }
+        }
+
+        // return '<pre>' . print_r($ageing, true) . '</pre>';
 
         if (Auth::user()->isLawyer()) {
             $viewData = array(
@@ -60,6 +76,7 @@ class HomeController extends BaseController
             'cob' => $cob,
             'year' => $year,
             'activeMemo' => $activeMemo,
+            'ageing' => $ageing,
             'image' => ""
         );
 

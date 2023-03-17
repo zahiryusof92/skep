@@ -166,14 +166,6 @@ $prefix3 = 'utilab_';
     $(document).ready(function () {
         calculateUtilityATotal();
         calculateUtilityBTotal();
-        calculateUtilityABTotal();
-        
-        // summary utility
-        let others_a = Number($('#util_total_all').val()) - (Number($('#util_total_income_1').val()) + Number($('#util_total_income_2').val()));
-        let others_b = Number($('#utilb_total_all').val()) - (Number($('#utilb_total_income_1').val()) + Number($('#utilb_total_income_2').val()));
-        let utility_amount = Number(others_a + others_b);
-        $('#sum_utility').val(parseFloat(utility_amount).toFixed(2));
-        calculateSummaryTotal();
     });
 
     function calculateUtilityA(id) {
@@ -195,8 +187,6 @@ $prefix3 = 'utilab_';
         $('#{{ $prefix }}total_income_' + id).val(parseFloat(util_sum_total_income).toFixed(2)); // UPDATE JUMLAH A + B + C
 
         calculateUtilityATotal();
-        calculateUtilityABTotal();
-        calculateSummaryTotal();
     }
 
     function calculateUtilityB(id) {
@@ -218,9 +208,6 @@ $prefix3 = 'utilab_';
         $('#{{ $prefix2 }}total_income_' + id).val(parseFloat(utilb_sum_total_income).toFixed(2)); // UPDATE JUMLAH A + B + C
 
         calculateUtilityBTotal();
-        calculateUtilityABTotal();
-        calculateSummaryTotal();
-        
     }
 
     function calculateUtilityATotal() {
@@ -328,6 +315,7 @@ $prefix3 = 'utilab_';
         utilab_sum_total_tertunggak += Number(util_total_tertunggak.value) + Number(utilb_total_tertunggak.value);
         $('#{{ $prefix3 }}total_tertunggak').val(parseFloat(utilab_sum_total_tertunggak).toFixed(2)); // UPDATE JUMLAH SEMUA TERTUNGGAK
         
+        calculateSummaryTotal();
     }
 
     function addRowUtility(prefix, id) {

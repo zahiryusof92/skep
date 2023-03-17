@@ -12,7 +12,7 @@ class MPSSyncController extends \BaseController
 	 */
 	public function index()
 	{
-		if ((URL::to('/') == 'https://skep.lphs.gov.my' || URL::to('/') == 'https://selangor.ecob.my') || (URL::to('/') == 'https://test.odesi.tech' || URL::to('/') == 'https://skep.app')) {
+		if ((URL::to('/') == 'https://skep.lphs.gov.my' || URL::to('/') == 'https://selangor.ecob.my') || (URL::to('/') == 'https://test.odesi.tech')) {
 			if (Auth::user()->getAdmin()) {
 				$viewData = array(
 					'title' => 'MPS Sync',

@@ -3,6 +3,14 @@
 class Liquidator extends Eloquent {
     protected $table = 'liquidators';
 
+    public function state() {
+        return $this->belongsTo('State', 'state');
+    }
+
+    public function country() {
+        return $this->belongsTo('Country', 'country');
+    }
+
     public static function getData() {
         $query = self::where('is_deleted', 0)
                      ->where('is_active', 1);

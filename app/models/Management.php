@@ -10,7 +10,20 @@ class Management extends Eloquent {
      * @var array
      */
     protected $fillable = [
-        'file_id', 
+        'file_id',
+        'is_jmb',
+        'is_mc',
+        'is_agent',
+        'is_others',
+        'is_developer',
+        'no_management',
+        'start',
+        'end',
+        'liquidator',
+        'under_10_units',
+        'under_10_units_remarks',
+        'bankruptcy',
+        'bankruptcy_remarks',
     ];
 
     public function developer() {
@@ -87,6 +100,30 @@ class Management extends Eloquent {
         );
         
         return $result;
+    }
+
+    public function developers() {
+        return $this->hasMany('ManagementDeveloper', 'management_id');
+    }
+
+    public function jmbs() {
+        return $this->hasMany('ManagementJMB', 'management_id');
+    }
+
+    public function mcs() {
+        return $this->hasMany('ManagementMC', 'management_id');
+    }
+    
+    public function agents() {
+        return $this->hasMany('ManagementAgent', 'management_id');
+    }
+
+    public function otherses() {
+        return $this->hasMany('ManagementOthers', 'management_id');
+    }
+
+    public function liquidators() {
+        return $this->hasMany('ManagementLiquidator', 'management_id');
     }
 
 }

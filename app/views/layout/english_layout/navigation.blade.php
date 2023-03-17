@@ -105,13 +105,18 @@ if (!Auth::user()->getAdmin()) {
                             COB Sync
                         </a>
                     </li>
-                    @if ((URL::to('/') == 'https://skep.lphs.gov.my' || URL::to('/') == 'https://selangor.ecob.my') || (URL::to('/') == 'https://test.odesi.tech' || URL::to('/') == 'https://skep.app'))
+                    @if ((URL::to('/') == 'https://skep.lphs.gov.my' || URL::to('/') == 'https://selangor.ecob.my') || (URL::to('/') == 'https://test.odesi.tech'))
                     <li id="mps_sync">
                         <a class="left-menu-link" href="{{URL::action('MPSSyncController@index')}}">
                             MPS Sync
                         </a>
                     </li>
                     @endif
+                    <li id="export_file">
+                        <a class="left-menu-link" href="{{URL::action('ExportController@exportCOBFile')}}">
+                            Export COB Files
+                        </a>
+                    </li>
                     @endif
 
                 </ul>

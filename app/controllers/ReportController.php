@@ -595,6 +595,8 @@ class ReportController extends BaseController
 
     public function strataProfile()
     {
+        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
@@ -609,7 +611,6 @@ class ReportController extends BaseController
         }
 
         $data = Files::getStrataProfileAnalytic();
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(29));
 
         $viewData = array(
             'title' => trans('app.menus.reporting.strata_profile'),
@@ -715,7 +716,8 @@ class ReportController extends BaseController
             ->where('finance_file.is_active', true)
             ->where('finance_file.is_deleted', false)
             ->selectRaw('finance_file.*, files.file_no')
-            ->orderBy('finance_file.id', 'desc');
+            ->orderBy('finance_file.year', 'desc')
+            ->orderBy('finance_file.month', 'desc');
 
         return Datatables::of($finance)
             ->addColumn('zone', function ($model) {
@@ -790,6 +792,8 @@ class ReportController extends BaseController
                 $lif = 'TIADA';
                 $lif_unit = 0;
                 $type_meter = '';
+                $zone = 'KELABU';
+                $ageing = [];
 
                 if ($files) {
                     $pbt = $files->company->short_name;
@@ -860,9 +864,50 @@ class ReportController extends BaseController
                     } else {
                         $zone = "KELABU";
                     }
-                } else {
-                    $zone = "KELABU";
                 }
+
+                // $finances = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
+                //     ->where('finance_file.file_id', $files->id)
+                //     ->where('finance_file.is_active', 1)
+                //     ->where('finance_file.is_deleted', 0)
+                //     ->orderBy('finance_file.year', 'desc')
+                //     ->orderBy('finance_file.month', 'desc')
+                //     ->get();
+
+                // if ($finances->count() > 0) {
+                //     foreach ($finances as $finance) {
+                //         $mf_fee_semasa = $finance->financeReportMF->sum('fee_semasa');
+                //         $sf_fee_semasa = $finance->financeReportSF->sum('fee_semasa');
+                //         $fee_semasa = $mf_fee_semasa + $sf_fee_semasa;
+
+                //         $mf_fee_semasa_extra = $finance->financeReportMFExtra->sum('fee_semasa');
+                //         $sf_fee_semasa_extra = $finance->financeReportSFExtra->sum('fee_semasa');
+                //         $fee_semasa_extra = $mf_fee_semasa_extra + $sf_fee_semasa_extra;
+
+                //         $total_sepatut_dikutip = $fee_semasa + $fee_semasa_extra;
+
+                //         $mf_income = $finance->financeIncomeMF->sum('semasa');
+                //         $sf_income = $finance->financeIncomeSF->sum('semasa');
+                //         $total_berjaya_dikutip = $mf_income + $sf_income;
+
+                //         $percentage = 0;
+                //         if ($total_berjaya_dikutip > 0 && $total_sepatut_dikutip > 0) {
+                //             $percentage = round(($total_berjaya_dikutip / $total_sepatut_dikutip) * 100, 2);
+                //         }
+
+                //         $ageing[$finance->year][$finance->monthName()] = [
+                //             'fee_semasa' => $fee_semasa,
+                //             'fee_semasa_extra' => $fee_semasa_extra,
+                //             'sepatut_dikutip' => $total_sepatut_dikutip,
+                //             'berjaya_dikutip' => $total_berjaya_dikutip,
+                //             'percentage' => $percentage,
+                //         ];
+                //     }
+                // }
+
+                $ageing = $files->financeAgeing();
+
+                // return '<pre>' . print_r($ageing, true) . '</pre>';
             }
 
             $result = array(
@@ -878,8 +923,12 @@ class ReportController extends BaseController
                 'lif_unit' => $lif_unit,
                 'type_meter' => $type_meter,
                 'tnb' => $tnb,
-                'purata_dikutip' => $purata_dikutip
+                'purata_dikutip' => $purata_dikutip,
+                'ageing' => $ageing['data'],
+                'ageing_graph' => $ageing['graph'],
             );
+
+            // return '<pre>' . print_r($result, true) . '</pre>';
 
             $viewData = array(
                 'title' => trans('app.menus.reporting.strata_profile'),
@@ -2309,7 +2358,10 @@ class ReportController extends BaseController
                     "developer.name as developer_name, strata.name as strata_name, strata.area as area, strata.dun as dun," .
                     "city.description as city_name, category.description as category_name," .
                     "files.is_active as is_active, management.is_jmb as is_jmb, management.is_mc as is_mc," .
-                    "management.is_agent as is_agent, management.is_developer as is_developer, management.is_others as is_others")
+                    "management.is_agent as is_agent, management.is_developer as is_developer," . 
+                    "management.liquidator as liquidator, management.under_10_units as under_10_units," .
+                    "management.is_others as is_others, management.bankruptcy as bankruptcy," .
+                    "management.no_management as no_management")
                 ->where(function ($query) use ($request) {
                     if (!empty($request['file_id'])) {
                         $query->whereIn('files.id', $request['file_id']);
@@ -2333,7 +2385,7 @@ class ReportController extends BaseController
 
             return Datatables::of($model)
                 ->editColumn('file_no', function ($model) {
-                    return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($this->module['cob']['file']['name'], $model->id)) . "'>" . $model->file_no . "</a>";
+                    return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
                 })
                 ->editColumn('strata_name', function ($model) {
                     return $model->strata_name ? ucfirst($model->strata_name) : "-";
@@ -2381,11 +2433,23 @@ class ReportController extends BaseController
                     if ($model->is_others && !$model->is_mc) {
                         $content .= trans('Others') . ',';
                     }
-                    if ((!$model->is_jmb && !$model->is_mc && !$model->is_agent && !$model->is_agent && !$model->is_others && !$model->under_10_units && !$model->bankruptcy) || $model->no_management) {
-                        $content .= trans('Non-Set');
-                    }
+                    if ($model->liquidator) {
+                        $content .= trans('app.forms.liquidator'). ',';;
+                    } 
                     if ($model->is_developer) {
-                        $content = trans('app.forms.developer');
+                        $content .= trans('app.forms.developer'). ',';;
+                    }
+                    if ($model->under_10_units) {
+                        $content .= trans('app.forms.under_10_units'). ',';;
+                    } 
+                    if ($model->bankruptcy) {
+                        $content .= trans('app.forms.bankruptcy'). ',';;
+                    }
+                    if ($model->no_management) {
+                        $content .= trans('app.forms.no_management');
+                    }
+                    if (!$model->is_jmb && !$model->is_mc && !$model->is_agent && !$model->is_agent && !$model->is_others && !$model->under_10_units && !$model->bankruptcy && !$model->no_management) {
+                        $content .= trans('Non-Set');
                     }
                     return rtrim($content, ",");
                 })
@@ -2405,58 +2469,64 @@ class ReportController extends BaseController
                     return $model->management->is_mc ? $model->managementMCLatest->date_formed : '-';
                 })
                 ->filter(function ($query) use ($request) {
-                    if (!empty($request['management'])) {
-                        if (in_array('jmb', $request['management']) && in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1)
-                                ->orWhere('is_mc', 1)
-                                ->orWhere('is_jmb', 1);
-                        } else if (in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1)
-                                ->orWhere('is_jmb', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_mc', 1)
-                                ->orWhere('is_jmb', 1);
-                        } else if (in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1);
-                        } else if (in_array('others', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_others', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->orWhere('is_others', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('agent', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->orWhere('is_agent', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('others', $request['management'])) {
-                            $query->where('is_others', 1)
-                                ->where('is_mc', 0);
-                        } else if (in_array('agent', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->where('is_mc', 0);
-                        } else if (in_array('mc', $request['management'])) {
-                            $query->where('is_mc', 1);
-                        } else if (in_array('jmb', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->where('is_mc', 0)
-                                ->where('is_agent', false);
-                        } else if (in_array('non', $request['management'])) {
-                            $query->where('no_management', true);
-                        } else if (in_array('is_developer', $request['management'])) {
-                            $query->where('is_developer', true);
+                    if(!empty($request['management'])) {
+                        if(in_array('jmb', $request['management']) && in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->orWhere('management.is_others', 1)
+                                  ->orWhere('management.is_mc', 1)
+                                  ->orWhere('management.is_jmb', 1);
+                        } else if(in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->orWhere('management.is_others', 1)
+                                  ->orWhere('management.is_mc', 1);
+                        } else if(in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->orWhere('management.is_others', 1)
+                                  ->orWhere('management.is_jmb', 1);
+                        } else if(in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->orWhere('management.is_mc', 1)
+                                  ->orWhere('management.is_jmb', 1);
+                        } else if(in_array('agent', $request['management']) && in_array('others', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->orWhere('management.is_others', 1);
+                        } else if(in_array('others', $request['management']) && in_array('mc', $request['management'])) {
+                            $query->where('management.is_others', 1)
+                                  ->orWhere('management.is_mc', 1);
+                        } else if(in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->orWhere('management.is_mc', 1);
+                        } else if(in_array('jmb', $request['management']) && in_array('others', $request['management'])) {
+                            $query->where('management.is_jmb', 1)
+                                  ->orWhere('management.is_others', 1);
+                        } else if(in_array('jmb', $request['management']) && in_array('agent', $request['management'])) {
+                            $query->where('management.is_jmb', 1)
+                                  ->orWhere('management.is_agent', 1);
+                        } else if(in_array('jmb', $request['management']) && in_array('mc', $request['management'])) {
+                            $query->where('management.is_jmb', 1)
+                                  ->orWhere('management.is_mc', 1);
+                        } else if(in_array('others', $request['management'])) {
+                            $query->where('management.is_others', 1)
+                                  ->where('management.is_mc', 0);
+                        } else if(in_array('agent', $request['management'])) {
+                            $query->where('management.is_agent', 1)
+                                  ->where('management.is_mc', 0);
+                        } else if(in_array('mc', $request['management'])) {
+                            $query->where('management.is_mc', 1);
+                        } else if(in_array('jmb', $request['management'])) {
+                            $query->where('management.is_jmb', 1)
+                                  ->where('management.is_mc', 0)
+                                  ->where('management.is_agent', false);
+                        } else if(in_array('non', $request['management'])) {
+                            $query->where('management.no_management', true);
+                        } else if(in_array('is_developer', $request['management'])) {
+                            $query->where('management.is_developer', true);
+                        } else if(in_array('liquidator', $request['management'])) {
+                            $query->where('management.liquidator', true);
+                        } else if(in_array('under_10_units', $request['management'])) {
+                            $query->where('management.under_10_units', true);
+                        } else if(in_array('bankruptcy', $request['management'])) {
+                            $query->where('management.bankruptcy', true);
                         }
                     }
                 })
@@ -2496,125 +2566,6 @@ class ReportController extends BaseController
         );
 
         return View::make('report_en.generate_selected', $viewData);
-    }
-
-    public function generateBak()
-    {
-        $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(65));
-
-        if (Request::ajax()) {
-            $request = Request::all();
-            $model = Files::file()
-                ->join('strata', 'files.id', '=', 'strata.file_id')
-                ->join('management', 'files.id', '=', 'management.file_id')
-                ->selectRaw("files.id as id, files.file_no as file_no, strata.name as strata_name," .
-                    "files.is_active as is_active, management.is_jmb as is_jmb, management.is_mc as is_mc," .
-                    "management.is_agent as is_agent, management.is_others as is_others")
-                ->where(function ($query) use ($request) {
-                    if (!empty($request['file_id'])) {
-                        $query->where('files.id', $request['file_id']);
-                    }
-                });
-            return Datatables::of($model)
-                ->editColumn('file_no', function ($model) {
-                    return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
-                })
-                ->editColumn('developer', function ($model) {
-                    return ucfirst($model->developer_name);
-                })
-                ->editColumn('city', function ($model) {
-                    return ucfirst($model->city_name);
-                })
-                ->editColumn('category', function ($model) {
-                    return ucfirst($model->category_name);
-                })
-                ->addColumn('management', function ($model) {
-                    $content = '';
-                    if ($model->is_jmb && !$model->is_mc) {
-                        $content .= trans('JMB') . ',';
-                    }
-                    if ($model->is_mc) {
-                        $content .= trans('MC') . ',';
-                    }
-                    if ($model->is_agent && !$model->is_mc) {
-                        $content .= trans('Agent') . ',';
-                    }
-                    if ($model->is_others && !$model->is_mc) {
-                        $content .= trans('Others') . ',';
-                    }
-                    if (!$model->is_jmb && !$model->is_mc && !$model->is_agent && !$model->is_agent && !$model->is_others) {
-                        $content .= trans('Non-Set');
-                    }
-                    return rtrim($content, ",");
-                })
-                ->addColumn('status', function ($model) {
-                    return $model->is_active ? trans('app.forms.yes') : trans('app.forms.no');
-                })
-                ->filter(function ($query) use ($request) {
-                    if (!empty($request['management'])) {
-                        if (in_array('jmb', $request['management']) && in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1)
-                                ->orWhere('is_mc', 1)
-                                ->orWhere('is_jmb', 1);
-                        } else if (in_array('mc', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1)
-                                ->orWhere('is_jmb', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_mc', 1)
-                                ->orWhere('is_jmb', 1);
-                        } else if (in_array('agent', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_others', 1);
-                        } else if (in_array('others', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_others', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('agent', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('others', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->orWhere('is_others', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('agent', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->orWhere('is_agent', 1);
-                        } else if (in_array('jmb', $request['management']) && in_array('mc', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->orWhere('is_mc', 1);
-                        } else if (in_array('others', $request['management'])) {
-                            $query->where('is_others', 1)
-                                ->where('is_mc', 0);
-                        } else if (in_array('agent', $request['management'])) {
-                            $query->where('is_agent', 1)
-                                ->where('is_mc', 0);
-                        } else if (in_array('mc', $request['management'])) {
-                            $query->where('is_mc', 1);
-                        } else if (in_array('jmb', $request['management'])) {
-                            $query->where('is_jmb', 1)
-                                ->where('is_mc', 0);
-                        }
-                    }
-                })
-                ->make(true);
-        }
-        $management = Request::get('management') ? Request::get('management') : '';
-
-        $viewData = array(
-            'title' => trans('app.menus.reporting.generate'),
-            'panel_nav_active' => 'reporting_panel',
-            'main_nav_active' => 'reporting_main',
-            'sub_nav_active' => 'generate_report_list',
-            'management' => $management,
-            'image' => ''
-        );
-
-        return View::make('report_en.generate', $viewData);
     }
 
     public function statistic()
