@@ -9422,6 +9422,7 @@ class AdminController extends BaseController {
             $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
             $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
             $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
+            $insurance->attachment = ($data['attachment'] ? $data['attachment'] : null);
             $insurance->remarks = $data['remarks'];
             $success = $insurance->save();
 
@@ -9573,6 +9574,7 @@ class AdminController extends BaseController {
                 $new_line .= $data['fic_premium_per_year'] != $insurance->fic_premium_per_year? "fic premium per year, " : "";
                 $new_line .= $data['fic_validity_from'] != $insurance->fic_validity_from? "fic validity from, " : "";
                 $new_line .= $data['fic_validity_to'] != $insurance->fic_validity_to? "fic validity to, " : "";
+                $new_line .= $data['attachment'] != $insurance->attachment? "attachment, " : "";
                 $new_line .= $data['remarks'] != $insurance->remarks? "remarks, " : "";
                 if(!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Insurance : (";
@@ -9590,6 +9592,7 @@ class AdminController extends BaseController {
                 $insurance->fic_premium_per_year = $data['fic_premium_per_year'];
                 $insurance->fic_validity_from = ($data['fic_validity_from'] ? $data['fic_validity_from'] : null);
                 $insurance->fic_validity_to = ($data['fic_validity_to'] ? $data['fic_validity_to'] : null);
+                $insurance->attachment = ($data['attachment'] ? $data['attachment'] : null);
                 $insurance->remarks = $data['remarks'];
                 $success = $insurance->save();
 
@@ -9628,6 +9631,31 @@ class AdminController extends BaseController {
             // }
         } else {
             return "false";
+        }
+    }
+
+    public function deleteInsuranceAttachment() {
+        $data = Input::all();
+        if (Request::ajax()) {
+            $id = Helper::decode($data['id']);
+
+            $insurance = Insurance::findOrFail($id);
+            if ($insurance) {
+                $insurance->attachment = null;
+                $deleted = $insurance->save();
+
+                if ($deleted) {
+                    # Audit Trail
+                    $remarks = 'Insurance Attachment (' . $insurance->id . ')' . $this->module['audit']['text']['data_deleted'];
+                    $this->addAudit($insurance->file_id, "COB File", $remarks);
+
+                    return "true";
+                } else {
+                    return "false";
+                }
+            } else {
+                return "false";
+            }
         }
     }
 

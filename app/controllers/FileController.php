@@ -52,6 +52,32 @@ class FileController extends BaseController {
         
         // }
     }
+
+    public function uploadInsuranceAttachment()
+    {
+        $file = Input::file('attachment');
+
+        $allowedFile = ['pdf'];
+        $allowedSize = '10000000';
+
+        if ($file) {
+            if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
+                if ($file->getClientSize() <= $allowedSize) {
+                    $destinationPath = 'uploads/insurance_attachment';
+                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $upload = $file->move($destinationPath, $filename);
+
+                    if ($upload) {
+                        return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                    }
+                } else {
+                    return Response::json(['success' => false, 'errors' => ['File size exceeds the maximum limit!']]);
+                }
+            } else {
+                return Response::json(['success' => false, 'errors' => ['Please upload only PDF file!']]);
+            }
+        }
+    }
     
     public function uploadDefectAttachment() {
         $file = Input::file('defect_attachment');
