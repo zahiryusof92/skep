@@ -43,7 +43,7 @@ class HomeController extends BaseController
         }
 
         $ageing = '';
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::find(Auth::user()->file_id);
                 if ($file) {
@@ -51,8 +51,6 @@ class HomeController extends BaseController
                 }
             }
         }
-
-        // return '<pre>' . print_r($ageing, true) . '</pre>';
 
         if (Auth::user()->isLawyer()) {
             $viewData = array(
