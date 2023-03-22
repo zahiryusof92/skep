@@ -87,6 +87,11 @@ class Files extends Eloquent
         return $this->hasOne('MeetingDocument', 'file_id')->latest();
     }
 
+    public function latestAgmDate()
+    {
+        return $this->hasOne('MeetingDocument', 'file_id')->orderBy('agm_date', 'desc');
+    }
+
     public function insurance()
     {
         return $this->hasMany('Insurance', 'file_id');
@@ -1274,6 +1279,53 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
 
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+                
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('management.no_management', true)
+                    ->where($active)
+                    ->count();
+
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1399,6 +1451,48 @@ class Files extends Eloquent
                     ->join('files', 'strata.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->count();
+
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('management.no_management', true)
                     ->where($active)
                     ->count();
 
@@ -1515,6 +1609,43 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
 
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('management.no_management', true)
+                    ->where($active)
+                    ->count();
+
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1637,6 +1768,48 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
 
+                $total_active_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_active', true)
+                    ->where($active)
+                    ->count();
+
+                $total_inactive_strata = DB::table('strata')
+                    ->join('files', 'strata.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_active', '!=', true)
+                    ->where($active)
+                    ->count();
+
+                $count_residential_less10 = DB::table('residential_block')
+                    ->join('files', 'residential_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where($active)
+                    ->where('residential_block.unit_no', '<=', 10)
+                    ->count();
+
+                $count_commercial_less10 = DB::table('commercial_block')
+                    ->join('files', 'commercial_block.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where($active)
+                    ->where('commercial_block.unit_no', '<=', 10)
+                    ->count();
+
+                $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('management.no_management', true)
+                    ->where($active)
+                    ->count();
+
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1709,6 +1882,10 @@ class Files extends Eloquent
             'total_developer' => $total_developer,
             'total_liquidator' => $total_liquidator,
             'total_strata' => $total_strata,
+            'total_active_strata' => $total_active_strata,
+            'total_inactive_strata' => $total_inactive_strata,
+            'total_less_10_units' => $total_less_10_units,
+            'total_no_management' => $total_no_management,
             'total_jmb' => $total_jmb,
             'total_mc' => $total_mc,
             'total_owner' => $total_owner,
@@ -2119,6 +2296,7 @@ class Files extends Eloquent
         $mc = 0;
         $agent = 0;
         $others = 0;
+        $no_management = 0;
         $residential = 0;
         $commercial = 0;
         $count_less3 = 0;
@@ -2207,6 +2385,13 @@ class Files extends Eloquent
                     ->join('files', 'management_others.file_id', '=', 'files.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
+                    ->count();
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->where('files.company_id', $cob->id)
+                    ->where('files.is_deleted', 0)
+                    ->where('management.no_management', true)
                     ->count();
 
                 $count_residential = DB::table('residential_block')
@@ -2351,6 +2536,7 @@ class Files extends Eloquent
                 $mc = $mc + $total_mc;
                 $agent = $agent + $total_agent;
                 $others = $others + $total_others;
+                $no_management = $no_management + $total_no_management;
                 $residential = $residential + $sum_residential;
                 $commercial = $commercial + $sum_commercial;
                 $count_less3 = $count_less3 + ($count_residential_less3 + $count_commercial_less3);
@@ -2374,6 +2560,7 @@ class Files extends Eloquent
             'mc' => $mc,
             'agent' => $agent,
             'others' => $others,
+            'no_management' => $no_management,
             'residential' => $residential,
             'commercial' => $commercial,
             'count_less3' => $count_less3,
@@ -2646,18 +2833,20 @@ class Files extends Eloquent
         $graph_month = [];
         $graph_percentage = [];
 
-        $start = Carbon::today()->format('m');
+        $start = Carbon::today()->subMonth()->subYear();
 
-        for ($i = $start; $i >= 0; $i--) {
+        for ($i = 0; $i < 12; $i++) {
             $percentage = 0;
+            $total_income = 0;
+            $total_expense = 0;
+            $nett_income = 0;
 
-            $year = Carbon::today()->startOfMonth()->subMonth($i);
-            $month = Carbon::today()->startOfMonth()->subMonth($i);
+            $date = $start->addMonth();
 
-            $month_finance = Finance::with(['financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
+            $month_finance = Finance::with(['financeIncome', 'financeSummary', 'financeReportMF', 'financeReportSF', 'financeReportMFExtra', 'financeReportSFExtra', 'financeIncomeMF', 'financeIncomeSF'])
                 ->where('finance_file.file_id', $this->id)
-                ->where('finance_file.year', $year->format('Y'))
-                ->where('finance_file.month', $month->format('m'))
+                ->where('finance_file.year', $date->format('Y'))
+                ->where('finance_file.month', $date->format('m'))
                 ->where('finance_file.is_active', 1)
                 ->where('finance_file.is_deleted', 0)
                 ->first();
@@ -2677,17 +2866,31 @@ class Files extends Eloquent
                 $total_berjaya_dikutip = $mf_income + $sf_income;
 
                 if ($total_berjaya_dikutip > 0 && $total_sepatut_dikutip > 0) {
-                    $percentage = round(($total_berjaya_dikutip / $total_sepatut_dikutip) * 100, 2);
+                    $percentage = ($total_berjaya_dikutip / $total_sepatut_dikutip) * 100;
+                }
+
+                $total_income_tuggakan = $month_finance->financeIncome->sum('tuggakan');
+                $total_income_semasa = $month_finance->financeIncome->sum('semasa');
+                $total_income_hadapan = $month_finance->financeIncome->sum('hadapan');
+                $total_income = $total_income_tuggakan + $total_income_semasa + $total_income_hadapan;
+
+                $total_expense = $month_finance->financeSummary->sum('amount');
+
+                if ($total_income > 0 && $total_expense > 0) {
+                    $nett_income = $total_income - $total_expense;
                 }
             }
 
-            array_push($graph_month, $month->format('F') . '<br />' . $month->format('Y'));
+            array_push($graph_month, $date->format('F') . '<br />' . $date->format('Y'));
             array_push($graph_percentage, $percentage);
             array_push($data, [
-                'year' => $year->format('Y'),
-                'month' => $month->format('m'),
-                'month_name' => $month->format('F'),
-                'percentage' => $percentage,
+                'year' => $date->format('Y'),
+                'month' => $date->format('m'),
+                'month_name' => $date->format('F'),
+                'percentage' => number_format($percentage),
+                'total_income' => $total_income,
+                'total_expense' => $total_expense,
+                'nett_income' => number_format($nett_income, 2),
             ]);            
         }
 

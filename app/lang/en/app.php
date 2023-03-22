@@ -299,7 +299,8 @@ return array(
         'epks_statement' => [
             'name' => 'Statement',
             'create' => 'Create Statement',
-        ]
+        ],
+        'search' => 'Search',
     ),
     "forms" => array(
         "mandatory_fields" => "Mandatory Fields",
@@ -681,8 +682,6 @@ return array(
         'assigned_to' => 'Assigned To',
         "under_ten_units" => "Under 10 Units",
         "no_management" => "No Management",
-        "under_ten_units" => "Under 10 Units",
-        "no_management" => "No Management",
         "actual_purchase_price" => "Actual Purchase Price",
         "submission_date" => "Submission Date",
         "role" => "Role",
@@ -744,6 +743,7 @@ return array(
         'reason' => 'Reason',
         'endorsed_by' => 'Endorsed By',
         'endorsed_email' => 'Endorsed E-mail',
+        'endorsed_date' => 'Endorsed Date',
         'original_price' => 'Original Price',
         'api_client' => 'API Client',
         'api_building' => 'API Building',
@@ -841,6 +841,17 @@ return array(
         'prepared_by' => 'Prepared By',
         'prepared_date' => 'Prepared Date',
         'price' => 'Price',
+        'under_10_units' => 'Strata under 10 units',
+        'bankruptcy' => 'Bankruptcy',
+        'audit_account' => 'Audited Account',
+        "closing_date" => "Closing Date",
+        "income_collection" => "Income Collection",
+        "expense_collection" => "Expenses Collection",
+        "collection_result" => "Collection Result",
+        "deficit" => "Deficit",
+        "surplus" => "Surplus",
+        'upcoming_agm_date' => 'Upcoming AGM Date',
+        'upload_insurance_attachment' => 'Upload Cover Note / Supportive Document',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1101,6 +1112,12 @@ return array(
             "destroy" => "File Movement deleted successfully!",
             "submit" => "File Movement submitted successfully!",
         ),
+        "audit_account" => array(
+            "store" => "Audited Account added successfully!",
+            "update" => "Audited Account updated successfully!",
+            "destroy" => "Audited Account deleted successfully!",
+            "submit" => "Audited Account submitted successfully!",
+        ),
         'payment_successfully' => 'Payment Success',
         "epks" => array(
             "store" => "Application added successfully!",
@@ -1183,6 +1200,7 @@ return array(
         'postpone_agm_reason' => 'Status AGM Reason',
         'add_deposit' => 'Add Deposit',
         'add_epks_statement' => 'Add New Statement',
+        "add_audit_account" => "Add Audited Account",
     ),
     'directory' => [
         'title' => 'Directory',

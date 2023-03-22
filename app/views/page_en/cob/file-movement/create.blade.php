@@ -104,7 +104,7 @@
                                                         trans('app.forms.save') }}</button>
                                                     @endif
                                                     <button type="button" class="btn btn-default" id="cancel_button"
-                                                        onclick="window.location ='{{ route('cob.file-movement.index', [\Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)]) }}'">{{
+                                                        onclick="window.location ='{{ route('cob.file-movement.index', [\Helper\Helper::encode($files->id)]) }}'">{{
                                                         trans('app.forms.cancel') }}</button>
                                                 </div>
                                             </form>
@@ -160,7 +160,7 @@
                 success: function (res) {
                     if (res.success == true) {
                         bootbox.alert("<span style='color:green;'>{{ trans('app.successes.file_movement.store') }}</span>", function () {
-                            window.location = "{{ route('cob.file-movement.index', [\Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)]) }}";
+                            window.location = "{{ route('cob.file-movement.index', [\Helper\Helper::encode($files->id)]) }}";
                         });
                     } else {
                         if(res.errors !== undefined) {

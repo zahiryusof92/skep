@@ -95,10 +95,6 @@ $prefix = 'contract_';
 <script type="text/javascript">
     $(document).ready(function () {
         calculateContractTotal();
-        
-        // summary contract
-        $('#sum_contract').val( $('#{{ $prefix }}total_all').val());
-        calculateSummaryTotal();
     });
 
     function calculateContract(id) {
@@ -158,6 +154,8 @@ $prefix = 'contract_';
 
         var contract_sum_total_all = Number(contract_sum_total_tunggakan) + Number(contract_sum_total_semasa) + Number(contract_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#{{ $prefix }}total_all').val(parseFloat(contract_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
     }
 
     function addRowContract() {

@@ -58,8 +58,9 @@ $company = Company::find(Auth::user()->company_id);
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LIQUIDATOR</th>
                                         <th style="width:5%; text-align: center !important; vertical-align:middle !important;">JMB</th>
                                         <th style="width:5%; text-align: center !important; vertical-align:middle !important;">MC</th>
-                                        <th style="width:10%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
+                                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">EJEN</th>
                                         <th style="width:10%; text-align: center !important; vertical-align:middle !important;">LAIN-LAIN</th>
+                                        <th style="width:5%; text-align: center !important; vertical-align:middle !important;">TIADA</th>
                                     </tr>
                                 </thead>
 
@@ -76,7 +77,8 @@ $company = Company::find(Auth::user()->company_id);
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['jmb'] }}</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['mc'] }}</td>
                                         <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['agent'] }}</td>
-                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['others'] }}</td>                                    
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['others'] }}</td>
+                                        <td style="text-align: center !important; vertical-align:middle !important;">{{ $data['no_management'] }}</td>                                    
                                     </tr>
                                     @endif
                                 </tbody>
@@ -135,7 +137,8 @@ $company = Company::find(Auth::user()->company_id);
                     {name: 'JMB', y: <?php echo $data['jmb']; ?>},
                     {name: 'MC', y: <?php echo $data['mc']; ?>},
                     {name: 'Ejen', y: <?php echo $data['agent']; ?>},
-                    {name: 'Lain-lain', y: <?php echo $data['others']; ?>}
+                    {name: 'Lain-lain', y: <?php echo $data['others']; ?>},
+                    {name: 'Tiada', y: <?php echo $data['no_management']; ?>}
                 ]
             }]
     });

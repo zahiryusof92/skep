@@ -32,6 +32,12 @@ Route::get('/systemDown', function() {
  */
 Route::get('/test/testMail', 'TestController@testMail');
 
+
+/**
+ * Route for search
+ */
+Route::post('search', array('as' => 'search.index', 'uses' => 'SearchController@index'));
+
 /*
  * LPHS REPORT START
  */
@@ -241,6 +247,11 @@ Route::post('/uploadICFile', 'FileController@uploadICFile');
 Route::post('/uploadAttendanceFile', 'FileController@uploadAttendanceFile');
 Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancialFile');
 
+/**
+ * OCR
+ */
+Route::post('/uploadOcr', 'FileController@uploadOcr');
+
 // Sept 2020
 Route::post('/uploadNoticeAgmEgm', 'FileController@uploadNoticeAgmEgm');
 Route::post('/deleteNoticeAgmEgm/{id}', 'AdminController@deleteNoticeAgmEgm')->before('authMember');
@@ -337,6 +348,8 @@ Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before
 Route::get('/updateInsurance/{id}/{file_id}', array('as' => 'cob.file.insurance.edit', 'uses' => 'AdminController@updateInsurance'))->before('authMember');
 Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
 Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
+Route::post('/uploadInsuranceAttachment', 'FileController@uploadInsuranceAttachment')->before('authMember');
+Route::post('/deleteInsuranceAttachment/{id}', 'AdminController@deleteInsuranceAttachment')->before('authMember');
 
 //finance_support
 Route::get('/financeSupport/{id}', array('as' => 'cob.file.finance_support.index', 'uses' => 'AdminController@financeSupport'))->before('authMember');
@@ -1058,6 +1071,15 @@ Route::group(array('before' => 'authMember'), function() {
     Route::put('update/submitUpdateFileMovement/{id}', array('as' => 'cob.file-movement.update', 'uses' => 'CobFileMovementController@update'));
     Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
 
+     /** COB Audit Account */
+     Route::get('update/auditAccount/{file_id}', array('as' => 'cob.audit-account.index', 'uses' => 'CobAuditAccountController@index'));
+     Route::get('update/addAuditAccount/{file_id}', array('as' => 'cob.audit-account.create', 'uses' => 'CobAuditAccountController@create'));
+     Route::post('update/submitAddAuditAccount', array('as' => 'cob.audit-account.store', 'uses' => 'CobAuditAccountController@store'));
+     Route::get('update/updateAuditAccount/{id}/{file_id}', array('as' => 'cob.audit-account.edit', 'uses' => 'CobAuditAccountController@edit'));
+     Route::put('update/submitUpdateAuditAccount/{id}', array('as' => 'cob.audit-account.update', 'uses' => 'CobAuditAccountController@update'));
+     Route::delete('update/deleteAuditAccount/{id}', array('as' => 'cob.audit-account.destroy', 'uses' => 'CobAuditAccountController@destroy'));
+     Route::post('auditAccount/fileUpload',  array('as' => 'cob.audit-account.fileUpload', 'uses' => 'CobAuditAccountController@fileUpload'));
+     
     /**
      * COB Draft Reject
      */

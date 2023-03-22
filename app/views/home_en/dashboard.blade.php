@@ -23,24 +23,69 @@ foreach ($user_permission as $permission) {
 
             <div class="widget widget-four background-transparent">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <a href="{{ route('cob.file.index') }}">
+
+                    @if (!Auth::user()->isJMB() && !Auth::user()->isMC())
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <a href="{{ route('cob.file.index') }}">
+                                <div class="step-block">
+                                    <span class="step-digit">
+                                        <img src="{{asset('assets/common/img/icon/strata.png')}}" />
+                                    </span>
+                                    <div class="step-desc">
+                                        <span class="step-title">Strata</span>
+                                        <p>{{ $data['total_strata'] }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <a href="{{ route('cob.file.index') }}">
+                                <div class="step-block">
+                                    <span class="step-digit">
+                                        <i class="fa fa-thumbs-up"></i>
+                                    </span>
+                                    <div class="step-desc">
+                                        <span class="step-title">{{ trans('Active Strata') }}</span>
+                                        <p>
+                                            {{ $data['total_active_strata'] }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <a href="{{ route('cob.file.index') }}">
+                                <div class="step-block">
+                                    <span class="step-digit">
+                                        <i class="fa fa-thumbs-down"></i>
+                                    </span>
+                                    <div class="step-desc">
+                                        <span class="step-title">{{ trans('Inactive Strata') }}</span>
+                                        <p>
+                                            {{ $data['total_inactive_strata'] }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="step-block">
                                 <span class="step-digit">
-                                    <img src="{{asset('assets/common/img/icon/strata.png')}}" />
+                                    <i class="fa fa-cubes"></i>
                                 </span>
                                 <div class="step-desc">
-                                    <span class="step-title">Strata</span>
-                                    <p>{{ $data['total_strata'] }}</p>
+                                    <span class="step-title">{{ trans('Strata <10 Units') }}</span>
+                                    <p>
+                                        {{ $data['total_less_10_units'] }}
+                                    </p>
                                 </div>
                             </div>
-                        </a>
-                    </div>
+                        </div>
 
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
-                        <a href="{{ route('report.generate.index',['management' => 'jmb']) }}">
-                            @endif
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="step-block">
                                 <span class="step-digit">
                                     <img src="{{asset('assets/common/img/icon/hirechy.png')}}" />
@@ -52,14 +97,9 @@ foreach ($user_permission as $permission) {
                                     </p>
                                 </div>
                             </div>
-                            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
-                        </a>
-                        @endif
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
-                        <a href="{{ route('report.generate.index',['management' => 'mc']) }}">
-                            @endif
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="step-block">
                                 <span class="step-digit">
                                     <img src="{{asset('assets/common/img/icon/profile.png')}}" />
@@ -71,10 +111,65 @@ foreach ($user_permission as $permission) {
                                     </p>
                                 </div>
                             </div>
-                            @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
-                        </a>
-                        @endif
-                    </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <i class="fa fa-user-secret"></i>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">{{ trans('Developer') }}</span>
+                                    <p>
+                                        {{ $data['total_developer'] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <i class="fa fa-users"></i>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">{{ trans('Liquidator') }}</span>
+                                    <p>
+                                        {{ $data['total_liquidator'] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">{{ trans('Agent') }}</span>
+                                    <p>
+                                        {{ $data['total_agent'] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <div class="step-block">
+                                <span class="step-digit">
+                                    <i class="fa fa-ban"></i>
+                                </span>
+                                <div class="step-desc">
+                                    <span class="step-title">{{ trans('No Management') }}</span>
+                                    <p>
+                                        {{ $data['total_no_management'] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         <div class="step-block">
                             <span class="step-digit">
@@ -88,6 +183,7 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
+
                     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                         <div class="step-block">
                             <span class="step-digit">
@@ -101,47 +197,98 @@ foreach ($user_permission as $permission) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="step-block">
-                            <span class="step-digit">
-                                <i class="fa fa-user-secret"></i>
-                            </span>
-                            <div class="step-desc">
-                                <span class="step-title">{{ trans('Developer') }}</span>
-                                <p>
-                                    {{ $data['total_developer'] }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="step-block">
-                            <span class="step-digit">
-                                <i class="fa fa-users"></i>
-                            </span>
-                            <div class="step-desc">
-                                <span class="step-title">{{ trans('Liquidator') }}</span>
-                                <p>
-                                    {{ $data['total_liquidator'] }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="step-block">
-                            <span class="step-digit">
-                                <i class="fa fa-user"></i>
-                            </span>
-                            <div class="step-desc">
-                                <span class="step-title">{{ trans('Agent') }}</span>
-                                <p>
-                                    {{ $data['total_agent'] }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
+
+            <hr />
+
+            @if (!empty($ageing))
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h4>{{ trans('app.menus.reporting.strata_profile') }}</h4>
+                        <section class="panel panel-pad">
+                            <div class="tab-content padding-vertical-20">
+                                <table class="table table-sm table-hover table-own table-striped" id="ageing_table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:15%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('TAHUN') }}
+                                            </th>
+                                            <th style="width:25%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('BULAN') }}
+                                            </th>
+                                            <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('PERATUSAN KUTIPAN BULANAN') }} (%)
+                                            </th>
+                                            <th style="width:30%; text-align: center !important; vertical-align:middle !important;">
+                                                {{ trans('JUMLAH PENDAPATAN BERSIH') }} (RM)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($ageing['data']))
+                                        @foreach ($ageing['data'] as $ageing_data)
+                                        <tr>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $ageing_data['year'] }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ Str::upper($ageing_data['month_name']) }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $ageing_data['percentage'] }}
+                                            </td>
+                                            <td style="text-align: center !important; vertical-align:middle !important;">
+                                                {{ $ageing_data['nett_income'] }}
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+
+                                @if (!empty($ageing['graph']))
+                                    <div class="margin-top-25 chart-custom">
+                                        <div id="ageing_chart"></div>
+                                    </div>
+
+                                    <script>
+                                        Highcharts.chart('ageing_chart', {
+                                            chart: {
+                                                type: 'line'
+                                            },
+                                            title: {
+                                                text: '{{ trans("Peratusan Kutipan Bulanan") }}'
+                                            },
+                                            xAxis: {
+                                                categories : <?php echo json_encode($ageing['graph']['months']); ?>
+                                            },
+                                            yAxis: {
+                                                title: {
+                                                    text: 'Peratus (%)'
+                                                }
+                                            },
+                                            plotOptions: {
+                                                line: {
+                                                    dataLabels: {
+                                                        enabled: true
+                                                    },
+                                                }
+                                            },
+                                            series: [{
+                                                name: 'Peratusan Kutipan',
+                                                data: <?php echo json_encode($ageing['graph']['percentages']); ?>
+                                            }]
+                                        });
+                                    </script>
+                                @endif
+
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            @endif
 
             <hr />
 
@@ -171,8 +318,6 @@ foreach ($user_permission as $permission) {
             <div class="row">
                 <div class="col-lg-6">
                     <div class="margin-bottom-50 chart-custom">
-                        <!--<h4 class="text-center">Star Rating of Development Area</h4>-->
-                        <!--<div class="chart-pie-chart"></div>-->
                         <div id="rating_star"></div>
                     </div>
                 </div>
@@ -183,6 +328,7 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
+            @if (!Auth::user()->isJMB() && !Auth::user()->isMC())
             <div class="row">
                 <div class="col-lg-12">
                     <div class="margin-bottom-50 chart-custom">
@@ -190,6 +336,7 @@ foreach ($user_permission as $permission) {
                     </div>
                 </div>
             </div>
+            @endif
 
             <div class="row" id="tbl_custom_never_has_agm" style="display: none;">
                 <div class="col-lg-12">
@@ -496,7 +643,7 @@ foreach ($user_permission as $permission) {
     </div>
 </div>
 
-@if ($activeMemo->count() > 0)
+@if (!empty($activeMemo) && $activeMemo->count() > 0)
 @foreach ($activeMemo as $alertMemo)
 <script type="text/javascript">
     $(document).ready(function () {

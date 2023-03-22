@@ -182,7 +182,6 @@ $prefix = 'mfr_';
 </div>
 
 <script type="text/javascript">
-
     var rowMFFeesNo = ("{{count($mfreportExtra)}}" > 0)? (Number("{{count($mfreportExtra)}}") + Number(1)) : 1;
     $(document).ready(function () {
         calculateMFR();

@@ -59,11 +59,20 @@
             {{ trans('app.forms.finance_support') }}
         </a>
     </li>
+    @if (AccessGroup::hasAccessModule('File Movement'))
     <li class="nav-item">
-        <a class="nav-link @if(Request::is('*fileMovement/*') || Request::is('*FileMovement/*')) active @endif custom-tab" @if(!Request::is('*fileMovement/*') || !Request::is('*FileMovement/*')) href="{{ route('cob.file-movement.index', \Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $files->id)) }}" @endif>
+        <a class="nav-link @if(Request::is('*fileMovement/*') || Request::is('*FileMovement/*')) active @endif custom-tab" @if(!Request::is('*fileMovement/*') || !Request::is('*FileMovement/*')) href="{{ route('cob.file-movement.index', \Helper\Helper::encode($files->id)) }}" @endif>
             {{ trans('app.forms.file_movement') }}
         </a>
     </li>
+    @endif
+    @if (AccessGroup::hasAccessModule('Audit Account'))
+    <li class="nav-item">
+        <a class="nav-link @if(Request::is('*auditAccount/*') || Request::is('*AuditAccount/*')) active @endif custom-tab" @if(!Request::is('*auditAccount/*') || !Request::is('*AuditAccount/*')) href="{{ route('cob.audit-account.index', \Helper\Helper::encode($files->id)) }}" @endif>
+            {{ trans('app.forms.audit_account') }}
+        </a>
+    </li>
+    @endif
     @endif
 
     {{-- <li class="nav-item">

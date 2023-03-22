@@ -168,11 +168,6 @@ $prefix2 = 'singkingfund_';
     $(document).ready(function () {
         calculateVandalismeATotal();
         calculateVandalismeBTotal();
-        
-        // summary vandalisme
-        let vandalisme_amount = Number($('#{{ $prefix }}total_all').val()) + Number($('#{{ $prefix2 }}total_all').val());
-        $('#sum_vandalisme').val(parseFloat(vandalisme_amount).toFixed(2));
-        calculateSummaryTotal();
     });
 
     function calculateVandalismeA(id) {
@@ -232,6 +227,8 @@ $prefix2 = 'singkingfund_';
 
         var vandala_sum_total_all = Number(vandala_sum_total_tunggakan) + Number(vandala_sum_total_semasa) + Number(vandala_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#{{ $prefix }}total_all').val(parseFloat(vandala_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
     }
 
     function calculateVandalismeB(id) {
@@ -291,6 +288,8 @@ $prefix2 = 'singkingfund_';
 
         var vandalb_sum_total_all = Number(vandalb_sum_total_tunggakan) + Number(vandalb_sum_total_semasa) + Number(vandalb_sum_total_hadapan); // JUMLAH SEMUA A + B + C
         $('#{{ $prefix2 }}total_all').val(parseFloat(vandalb_sum_total_all).toFixed(2)); // UPDATE JUMLAH SEMUA A + B + C
+
+        calculateSummaryTotal();
     }
 
     function addRowVandalA() {

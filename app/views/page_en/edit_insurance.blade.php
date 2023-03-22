@@ -134,7 +134,33 @@ foreach ($user_permission as $permission) {
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </form>
 
+                                            <form id="upload_attachment" enctype="multipart/form-data" method="post" action="{{ url('uploadInsuranceAttachment') }}" autocomplete="off">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="form-label">{{ trans('app.forms.upload_insurance_attachment') }}</label>
+                                                            <br/>
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                            <button type="button" id="clear_attachment" class="btn btn-xs btn-danger" onclick="clearAttachment()" style="display: none;"><i class="fa fa-times"></i></button>
+                                                            &nbsp;<input type="file" name="attachment" id="attachment" accept="application/pdf" />
+                                                            <div>
+                                                                <small>* Accept PDF only. Maximum size: 10MB.</small>
+                                                            </div>
+                                                            <div id="validation-errors_attachment"></div>
+                                                            @if (!empty($insurance->attachment))
+                                                            <a href="{{ asset($insurance->attachment) }}" target="_blank"><button button type="button" class="btn btn-xs btn-own" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> {{ trans("app.forms.download") }}</button></a>
+                                                            <?php if ($update_permission == 1) { ?>
+                                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAttachment('{{ \Helper\Helper::encode($insurance->id) }}')"><i class="fa fa-times"></i></button>
+                                                            <?php } ?>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <form>
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <div class="form-group">
@@ -148,6 +174,7 @@ foreach ($user_permission as $permission) {
                                                 <div class="form-actions">
                                                     <?php if ($update_permission) { ?>
                                                         <input type="hidden" id="file_id" name="file_id" value="{{ \Helper\Helper::encode($insurance->file->id) }}"/>
+                                                        <input type="hidden" id="attachment_url" value="{{ $insurance->attachment }}"/>
                                                         <button type="button" class="btn btn-own" id="submit_button" onclick="submitEditInsurance()">{{ trans('app.forms.submit') }}</button>
                                                     <?php } ?>
                                                     <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ URL::action('AdminController@insurance', \Helper\Helper::encode($insurance->file->id)) }}'">{{ trans('app.forms.cancel') }}</button>
@@ -254,6 +281,86 @@ foreach ($user_permission as $permission) {
         });
     });
 
+    $(document).ready(function () {
+        //upload
+        var options = {
+            beforeSubmit: showRequest,
+            success: showResponse,
+            dataType: 'json'
+        };
+
+        $('body').delegate('#attachment', 'change', function () {
+            $('#upload_attachment').ajaxForm(options).submit();
+        });
+    });
+
+    //upload document file
+    function showRequest(formData, jqForm, options) {
+        $("#validation-errors_attachment").hide().empty();
+        return true;
+    }
+    function showResponse(response, statusText, xhr, $form) {
+        if (response.success == false) {
+            var arr = response.errors;
+            $.each(arr, function (index, value) {
+                if (value.length != 0) {
+                    $("#validation-errors_attachment").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                }
+            });
+            $("#validation-errors_attachment").show();
+            $("#attachment").css("color", "red");
+        } else {
+            $("#clear_attachment").show();
+            $("#validation-errors_attachment").html("<i class='fa fa-check' id='check_attachment' style='color:green;'></i>");
+            $("#validation-errors_attachment").show();
+            $("#attachment").css("color", "green");
+            $("#attachment_url").val(response.file);
+        }
+    }
+
+    function clearAttachment() {
+        $("#attachment").val("");
+        $("#attachment_url").val("");
+        $("#clear_attachment").hide();
+        $("#attachment").css("color", "grey");
+        $("#check_attachment").hide();
+    }
+
+    function deleteAttachment(id) {
+        swal({
+            title: "{{ trans('app.confirmation.are_you_sure') }}",
+            text: "{{ trans('app.confirmation.no_recover_file') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-warning",
+            cancelButtonClass: "btn-default",
+            confirmButtonText: "Delete",
+            closeOnConfirm: true
+        }, function () {
+            $.ajax({
+                url: "{{ URL::action('AdminController@deleteInsuranceAttachment') }}",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.trim() == "true") {
+                        swal({
+                            title: "{{ trans('app.successes.deleted_title') }}",
+                            text: "{{ trans('app.successes.deleted_text_file') }}",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            closeOnConfirm: false
+                        });
+                        location.reload();
+                    } else {
+                        bootbox.alert("<span style='color:red;'>{{ trans('app.errors.occurred') }}</span>");
+                    }
+                }
+            });
+        });
+    }
+
     function submitEditInsurance() {
         changes = false;
         $("#loading").css("display", "inline-block");
@@ -270,6 +377,7 @@ foreach ($user_permission as $permission) {
                 fic_premium_per_year = $("#fic_premium_per_year").val(),
                 fic_validity_from = $("#fic_validity_from").val(),
                 fic_validity_to = $("#fic_validity_to").val(),
+                attachment = $("#attachment_url").val(),
                 remarks = $("#remarks").val();
 
         var error = 0;
@@ -295,6 +403,7 @@ foreach ($user_permission as $permission) {
                     fic_premium_per_year: fic_premium_per_year,
                     fic_validity_from: fic_validity_from,
                     fic_validity_to: fic_validity_to,
+                    attachment: attachment,
                     remarks: remarks,
                     id: "{{ \Helper\Helper::encode($insurance->id) }}"
                 },
@@ -319,5 +428,4 @@ foreach ($user_permission as $permission) {
     }
 </script>
 <!-- End Page Scripts-->
-
-@stop
+@endsection

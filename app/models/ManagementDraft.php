@@ -11,7 +11,15 @@ class ManagementDraft extends Eloquent {
      */
     protected $fillable = [
         'file_id',
-        'reference_id', 
+        'reference_id',
+        'no_management',
+        'start',
+        'end',
+        'liquidator',
+        'under_10_units',
+        'under_10_units_remarks',
+        'bankruptcy',
+        'bankruptcy_remarks',
     ];
     
     public function developer() {
@@ -32,6 +40,10 @@ class ManagementDraft extends Eloquent {
 
     public function others() {
         return $this->hasOne('ManagementOthersDraft', 'management_id');
+    }
+
+    public function liquidators() {
+        return $this->hasMany('ManagementLiquidatorDraft', 'management_id');
     }
 
 }
