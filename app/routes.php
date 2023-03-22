@@ -348,6 +348,8 @@ Route::post('/submitAddInsurance', 'AdminController@submitAddInsurance')->before
 Route::get('/updateInsurance/{id}/{file_id}', array('as' => 'cob.file.insurance.edit', 'uses' => 'AdminController@updateInsurance'))->before('authMember');
 Route::post('/submitUpdateInsurance', 'AdminController@submitUpdateInsurance')->before('authMember');
 Route::post('/deleteInsurance/{id}', 'AdminController@deleteInsurance')->before('authMember');
+Route::post('/uploadInsuranceAttachment', 'FileController@uploadInsuranceAttachment')->before('authMember');
+Route::post('/deleteInsuranceAttachment/{id}', 'AdminController@deleteInsuranceAttachment')->before('authMember');
 
 //finance_support
 Route::get('/financeSupport/{id}', array('as' => 'cob.file.finance_support.index', 'uses' => 'AdminController@financeSupport'))->before('authMember');
