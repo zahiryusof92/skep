@@ -851,6 +851,7 @@ return array(
         "deficit" => "Deficit",
         "surplus" => "Surplus",
         'upcoming_agm_date' => 'Upcoming AGM Date',
+        'upload_insurance_attachment' => 'Upload Cover Note / Supportive Document',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

@@ -179,6 +179,7 @@ foreach ($user_permission as $permission) {
 
     function clearDocumentFile() {
         $("#document_file").val("");
+        $("#document_file_url").val("");
         $("#clear_document_file").hide();
         $("#document_file").css("color", "grey");
         $("#check_document_file").hide();
