@@ -33,24 +33,27 @@ class CobFileMovementController extends \BaseController
 					return $model->file->file_no;
 				})
 				->editColumn('assigned_to', function ($model) {
-					$content = '<ul>';
+					$content = '<div class="row"><ul>';
 					foreach (unserialize($model->assigned_to) as $assigned) {
 						$user = User::find($assigned['value']);
-						$content .= "<li>" . $user->full_name . " (" . $assigned['created_at'] . ")</li>";
+						if ($user) {
+							$content .= "<li>" . $user->full_name . " (" . $assigned['created_at'] . ")</li>";
+						}
 					}
-					$content .= "</ul>";
+					$content .= '</ul></div>';
+
 					return $content;
 				})
 				->addColumn('action', function ($model) use ($file_id) {
 					$btn = '';
 
-					if (AccessGroup::hasUpdateModule('File Movement')) {
-					$btn = '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-					$btn = '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
-						. '<input type="hidden" name="_method" value="DELETE">'
-						. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
-						. '</form>';
-					}
+					// if (AccessGroup::hasUpdateModule('File Movement')) {
+					// $btn .= '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+					// $btn .= '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
+					// 	. '<input type="hidden" name="_method" value="DELETE">'
+					// 	. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
+					// 	. '</form>';
+					// }
 
 					return $btn;
 				})
@@ -81,7 +84,14 @@ class CobFileMovementController extends \BaseController
 		$this->checkAvailableAccess();
 
 		$file = Files::find(Helper::decode($file_id));
-		$userList = User::self()->whereNotIn('role', [1, 2, 24])->get();
+		$userList = User::leftJoin('role', 'users.role', '=', 'role.id')
+                ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                ->select(['users.*', 'role.name as role'])
+                ->where('company.id', $file->company_id)
+				->whereIn('role.name', [Role::COB, Role::COB_BASIC, Role::COB_BASIC_ADMIN, Role::COB_MANAGER, Role::COB_PREMIUM, Role::COB_PREMIUM_ADMIN])
+                ->where('users.is_active', 1)
+				->where('users.is_deleted', 0)
+				->get();
 
 		$viewData = array(
 			'title' => trans('app.menus.cob.update_cob_file'),
@@ -106,7 +116,9 @@ class CobFileMovementController extends \BaseController
 	{
 		$data = Input::all();
 		$data['file'] = Helper::decode($data['file'], $this->module['cob']['file']['name']);
+
 		$validator = Validator::make($data, array(
+			'title' => 'required|string|max:255',
 			'file' => 'required|exists:files,id,is_deleted,' . false,
 			'remarks' => 'required'
 		));
@@ -140,6 +152,7 @@ class CobFileMovementController extends \BaseController
 				'file_id' => Helper::decode($data['file'], $this->module['cob']['file']['name']),
 				'strata' => $data['strata'],
 				'assigned_to' => serialize($assigned_arr),
+				'title' => $data['title'],
 				'remarks' => $data['remarks'],
 				'company_id' => Auth::user()->company_id
 			]);
@@ -189,7 +202,14 @@ class CobFileMovementController extends \BaseController
 		$model = FileMovement::find(Helper::decode($id, $this->module['file_movement']['name']));
 		if ($model) {
 			$file = Files::find(Helper::decode($file_id));
-			$userList = User::self()->whereNotIn('role', [1, 2, 24])->get();
+			$userList = User::leftJoin('role', 'users.role', '=', 'role.id')
+                ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                ->select(['users.*', 'role.name as role'])
+                ->where('company.id', $file->company_id)
+				->whereIn('role.name', [Role::COB, Role::COB_BASIC, Role::COB_BASIC_ADMIN, Role::COB_MANAGER, Role::COB_PREMIUM, Role::COB_PREMIUM_ADMIN])
+                ->where('users.is_active', 1)
+				->where('users.is_deleted', 0)
+				->get();
 
 			$viewData = array(
 				'title' => trans('app.menus.cob.update_cob_file'),
@@ -221,6 +241,7 @@ class CobFileMovementController extends \BaseController
 		$data['file'] = Helper::decode($data['file'], $this->module['cob']['file']['name']);
 
 		$validator = Validator::make($data, array(
+			'title' => 'required|string|max:255',
 			'file' => 'required|exists:files,id,is_deleted,' . false,
 			'remarks' => 'required'
 		));
@@ -239,16 +260,7 @@ class CobFileMovementController extends \BaseController
 				if ($val == '') {
 					$error_assigned['assigned_to_' . $key] = trans('This field is required');
 				}
-				// $collection = new ArrayCollection(unserialize($model->assigned_to));
-				// $filter = $collection->filter(function($element) use($val){
-				//     return $val == $element['value'];
-				// });
-				// if(!$filter->isEmpty()) {
-				//     $item = $filter->first();
-				//     $assigned_arr[$key] = [
-				//         'value' => $item['value'],
-				//         'created_at' => $item['created_at'],
-				//     ];
+
 				$collection = unserialize($model->assigned_to);
 				if (!empty($collection[$key]) && $val == $collection[$key]['value']) {
 					$assigned_arr[$key] = [
@@ -275,6 +287,7 @@ class CobFileMovementController extends \BaseController
 				$new_line = '';
 				$new_line .= Helper::decode($data['file'], $this->module['cob']['file']['name']) != $model->file_id ? "file id, " : "";
 				$new_line .= $data['strata'] != $model->strata ? "strata, " : "";
+				$new_line .= $data['title'] != $model->title ? "title, " : "";
 				$new_line .= serialize($assigned_arr) != $model->assigned_to ? "assigned to, " : "";
 				$new_line .= $data['remarks'] != $model->remarks ? "remarks, " : "";
 				if (!empty($new_line)) {
@@ -287,6 +300,7 @@ class CobFileMovementController extends \BaseController
 					'file_id' => Helper::decode($data['file'], $this->module['cob']['file']['name']),
 					'strata' => $data['strata'],
 					'assigned_to' => serialize($assigned_arr),
+					'title' => $data['title'],
 					'remarks' => $data['remarks']
 				]);
 

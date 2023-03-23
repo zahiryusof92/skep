@@ -1070,6 +1070,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('update/updateFileMovement/{id}/{file_id}', array('as' => 'cob.file-movement.edit', 'uses' => 'CobFileMovementController@edit'));
     Route::put('update/submitUpdateFileMovement/{id}', array('as' => 'cob.file-movement.update', 'uses' => 'CobFileMovementController@update'));
     Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
+    Route::get('update/printFileMovement/{id}', array('as' => 'cob.file-movement.print', 'uses' => 'PrintController@printFileMovement'));
 
      /** COB Audit Account */
      Route::get('update/auditAccount/{file_id}', array('as' => 'cob.audit-account.index', 'uses' => 'CobAuditAccountController@index'));

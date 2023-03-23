@@ -12,6 +12,7 @@ class FileMovement extends Eloquent
         'company_id',
         'strata',
         'assigned_to',
+        'title',
         'remarks',
         'is_deleted'
     ];
