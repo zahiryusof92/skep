@@ -62,20 +62,19 @@
                                                         </div>
                                                     </div>
 
-                                                    @if (count(unserialize($model->assigned_to)) > 0)
+                                                    @if ($model->fileMovementUsers->count() > 0)
                                                         <div id="main-container">
-                                                            @foreach (unserialize($model->assigned_to) as $key => $val)
+                                                            @foreach ($model->fileMovementUsers as $fileMovementUser)
                                                                 <div class="container-item">
                                                                     <div class="row">
                                                                         <div class="col-lg-6">
                                                                             <div
-                                                                                class="form-group {{ $errors->has("assigned_to_$key") ? 'has-danger' : '' }}">
+                                                                                class="form-group {{ $errors->has("assigned_to_$fileMovementUser->id") ? 'has-danger' : '' }}">
                                                                                 <label class="form-control-label">
                                                                                     <span style="color: red;">*</span>
                                                                                     {{ trans('app.forms.assigned_to') }}
-                                                                                    <span
-                                                                                        id="lbl_date_{{ $key }}">
-                                                                                        ({{ !empty($val['value']) ? $val['created_at'] : '' }})
+                                                                                    <span id="lbl_date_{{ $fileMovementUser->id }}">
+                                                                                        ({{ ($fileMovementUser->user ? $fileMovementUser->user->full_name : '') }})
                                                                                     </span>
                                                                                 </label>
                                                                                 <button
@@ -83,7 +82,7 @@
                                                                                     {{ trans('Remove') }}
                                                                                 </button>
                                                                                 <select
-                                                                                    id="assigned_to_{{ $key }}"
+                                                                                    id="assigned_to_{{ $fileMovementUser->id }}"
                                                                                     name="assigned_to[]"
                                                                                     class="form-control select2">
                                                                                     <option value="">
@@ -91,7 +90,7 @@
                                                                                     </option>
                                                                                     @foreach ($userList as $user)
                                                                                         <option value="{{ $user->id }}"
-                                                                                            {{ $val['value'] == $user->id ? 'selected' : '' }}>
+                                                                                            {{ ($fileMovementUser->user ? $fileMovementUser->user->id : 0) == $user->id ? 'selected' : '' }}>
                                                                                             {{ ucfirst($user->full_name) }}
                                                                                         </option>
                                                                                     @endforeach
@@ -99,19 +98,10 @@
                                                                                 @include(
                                                                                     'alert.feedback-ajax',
                                                                                     [
-                                                                                        'field' => "assigned_to_$key",
+                                                                                        'field' => "assigned_to_$fileMovementUser->id",
                                                                                     ]
                                                                                 )
                                                                             </div>
-                                                                            <input id="created_at_{{ $key }}"
-                                                                                name="created_at[]"
-                                                                                value="{{ $val['created_at'] }}" hidden>
-                                                                            @include(
-                                                                                'alert.feedback-ajax',
-                                                                                [
-                                                                                    'field' => "created_at_$key",
-                                                                                ]
-                                                                            )
                                                                         </div>
                                                                     </div>
                                                                 </div>

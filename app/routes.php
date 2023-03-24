@@ -1053,6 +1053,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('reporting/generate/selected',  array('as' => 'report.generateSelected.index', 'uses' => 'ReportController@generateSelected'));
     Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
     Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
+    Route::get('reporting/fileMovement',  array('as' => 'report.fileMovement.index', 'uses' => 'ReportController@fileMovement'));
     
     /**
      * Data Sync

@@ -191,6 +191,7 @@ return array(
             'email_log' => "Email Log",
             'audit_logon' => "Audit Logon",
             'audit_logon_report' => "Audit Logon Report",
+            'file_movement' => 'File Movement',
         ),
         "agm" => array(
             "submission" => "AGM Submission",

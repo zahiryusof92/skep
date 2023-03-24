@@ -11,7 +11,6 @@ class FileMovement extends Eloquent
         'file_id',
         'company_id',
         'strata',
-        'assigned_to',
         'title',
         'remarks',
         'is_deleted'
@@ -47,8 +46,8 @@ class FileMovement extends Eloquent
         return $this->belongsTo('Files', 'file_id');
     }
 
-    public function users()
+    public function fileMovementUsers()
     {
-        return $this->hasMany('FileMovementUser', 'user_id');
+        return $this->hasMany('FileMovementUser', 'file_movement_id');
     }
 }

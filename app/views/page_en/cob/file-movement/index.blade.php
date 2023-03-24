@@ -92,8 +92,8 @@
                         name: 'file_movements.title'
                     },
                     {
-                        data: 'assigned_to',
-                        name: 'file_movements.assigned_to',
+                        data: 'file_movement_users',
+                        searchable: false,
                         orderable: false
                     },
                     {
