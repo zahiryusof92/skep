@@ -191,6 +191,7 @@ return array(
             'email_log' => "Email Log",
             'audit_logon' => "Audit Logon",
             'audit_logon_report' => "Audit Logon Report",
+            'file_movement' => 'File Movement',
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -852,6 +853,7 @@ return array(
         "surplus" => "Surplus",
         'upcoming_agm_date' => 'Upcoming AGM Date',
         'upload_insurance_attachment' => 'Upload Cover Note / Supportive Document',
+        'title' => 'Title',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",

@@ -1538,4 +1538,19 @@ class PrintController extends BaseController
 
         return View::make('print_en.statistic', $viewData);
     }
+
+    public function printFileMovement($file_id) {
+        $files = Files::with(['strata', 'file_movements'])->find(Helper::decode($file_id));
+        if ($files) {
+            $viewData = array(
+                'title' => 'Print File Movement',
+                'panel_nav_active' => '',
+                'main_nav_active' => '',
+                'sub_nav_active' => '',
+                'files' => $files,
+            );
+
+            return View::make('print_en.file_movement', $viewData);
+        }
+	}
 }

@@ -1053,6 +1053,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('reporting/generate/selected',  array('as' => 'report.generateSelected.index', 'uses' => 'ReportController@generateSelected'));
     Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
     Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
+    Route::get('reporting/fileMovement',  array('as' => 'report.fileMovement.index', 'uses' => 'ReportController@fileMovement'));
     
     /**
      * Data Sync
@@ -1070,6 +1071,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('update/updateFileMovement/{id}/{file_id}', array('as' => 'cob.file-movement.edit', 'uses' => 'CobFileMovementController@edit'));
     Route::put('update/submitUpdateFileMovement/{id}', array('as' => 'cob.file-movement.update', 'uses' => 'CobFileMovementController@update'));
     Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
+    Route::get('update/printFileMovement/{id}', array('as' => 'cob.file-movement.print', 'uses' => 'PrintController@printFileMovement'));
 
      /** COB Audit Account */
      Route::get('update/auditAccount/{file_id}', array('as' => 'cob.audit-account.index', 'uses' => 'CobAuditAccountController@index'));

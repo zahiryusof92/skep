@@ -2596,4 +2596,16 @@ class ReportController extends BaseController
 
         return View::make('report_en.statistic', $viewData);
     }
+
+    public function fileMovement() {
+        $viewData = array(
+            'title' => trans('app.menus.reporting.file_movement'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'file_movement_report_list',
+            'image' => ''
+        );
+
+        return View::make('report_en.file_movement', $viewData);
+    }
 }
