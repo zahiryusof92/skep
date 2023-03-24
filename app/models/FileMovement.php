@@ -47,8 +47,8 @@ class FileMovement extends Eloquent
         return $this->belongsTo('Files', 'file_id');
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo('User', 'assigned_to');
+        return $this->hasMany('FileMovementUser', 'user_id');
     }
 }
