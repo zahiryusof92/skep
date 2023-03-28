@@ -1048,4 +1048,79 @@ class ExportController extends BaseController
 
         // return '<pre>' . print_r($output, true) . '</pre>';
     }
+
+    public function fileMovement()
+    {
+        $data = [];
+        $request = Request::all();
+
+        $models = FileMovementUser::leftJoin('file_movements', 'file_movement_users.file_movement_id', '=', 'file_movements.id')
+            ->leftJoin('files', 'file_movements.file_id', '=', 'files.id')
+            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+            ->leftJoin('users', 'file_movement_users.user_id', '=', 'users.id')
+            ->select('file_movements.*', 'files.file_no as file_no', 'strata.name as strata_name', 'file_movement_users.created_at as movement_date', 'users.full_name as appointed_name')
+            ->where('file_movements.is_deleted', 0)
+            ->where(function ($query) use ($request) {
+                if (!empty($request['export_date_from']) && empty($request['export_date_to'])) {
+                    $date_from = date('Y-m-d H:i:s', strtotime($request['export_date_from']));
+                    $query->where('file_movement_users.created_at', '>=', $date_from);
+                }
+                if (!empty($request['export_date_to']) && empty($request['export_date_from'])) {
+                    $date_to = date('Y-m-d', strtotime($request['export_date_to']));
+                    $query->where('file_movement_users.created_at', '<=', $date_to . " 23:59:59");
+                }
+                if (!empty($request['export_date_from']) && !empty($request['export_date_to'])) {
+                    $date_from = date('Y-m-d H:i:s', strtotime($request['export_date_from']));
+                    $date_to = date('Y-m-d', strtotime($request['export_date_to']));
+                    $query->whereBetween('file_movement_users.created_at', [$date_from, $date_to . ' 23:59:59']);
+                }
+            })
+            ->get();
+
+        if ($models->count() > 0) {
+            foreach ($models as $key => $log) {
+                if (!empty($log->movement_date)) {
+                    $raw_data[$key][trans('app.forms.date')] = date('d-m-Y H:i A', strtotime($log->movement_date));
+                } else {
+                    $raw_data[$key][trans('app.forms.date')] = '';
+                }
+
+                if (!empty($log->file_no)) {
+                    $raw_data[$key][trans('app.forms.file_no')] = $log->file_no;
+                } else {
+                    $raw_data[$key][trans('app.forms.file_no')] = '';
+                }
+
+                if (!empty($log->strata_name)) {
+                    $raw_data[$key][trans('app.forms.name')] = $log->strata_name;
+                } else {
+                    $raw_data[$key][trans('app.forms.name')] = '';
+                }
+
+                if (!empty($log->appointed_name)) {
+                    $raw_data[$key][trans('app.forms.assigned_to')] = $log->appointed_name;
+                } else {
+                    $raw_data[$key][trans('app.forms.assigned_to')] = '';
+                }
+            }
+
+            $output = array_merge($data, $raw_data);
+        } else {
+            $output = [
+                trans('app.forms.date'),
+                trans('app.forms.file_no'),
+                trans('app.forms.name'),
+                trans('app.forms.assigned_to'),
+            ];
+        }
+
+        // return '<pre>' . print_r($output, true) . '</pre>';
+
+        return Excel::create('file-movement-' . date('YmdHis'), function ($excel) use ($output) {
+            $excel->sheet('mySheet', function ($sheet) use ($output) {
+                $sheet->fromArray($output);
+            });
+        })->download();
+    }
+
 }

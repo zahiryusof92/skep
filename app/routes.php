@@ -1054,6 +1054,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('print/statistic',  array('as' => 'print.statistic.index', 'uses' => 'PrintController@statistic'));
     Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
     Route::get('reporting/fileMovement',  array('as' => 'report.fileMovement.index', 'uses' => 'ReportController@fileMovement'));
+    Route::post('export/fileMovement', array('as' => 'export.fileMovement', 'uses' => 'ExportController@fileMovement'))->before('authMember');
     
     /**
      * Data Sync
