@@ -37,7 +37,7 @@
 
                     <section class="panel panel-pad">
                         <div class="row margin-top-30 margin-bottom-30">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <span style="font-size: 12px;">
                                     <b>
                                         {{ trans('app.forms.date') }}:
@@ -45,10 +45,40 @@
                                 </span>
                                 &nbsp;
                                 <input style="font-size: 12px;" id="date_from" data-column="0" type="text"
-                                    class="form-control width-150 display-inline-block datetimepicker" placeholder="From" />
-                                <span style="font-size: 12px;" class="margin-right-10">&nbsp; —</span>
+                                    class="form-control width-250 display-inline-block datetimepicker" placeholder="From" />
+                                <span style="font-size: 12px;">&nbsp; &dash; &nbsp;</span>
                                 <input style="font-size: 12px;" id="date_to" data-column="0" type="text"
-                                    class="form-control width-150 display-inline-block datetimepicker" placeholder="To" />
+                                    class="form-control width-250 display-inline-block datetimepicker" placeholder="To" />
+                            </div>
+                            <div class="col-lg-6">
+                                <form target="_blank" action="{{ route('export.fileMovement') }}" method="POST">
+                                    <div class="text-right">
+                                        <input type="hidden" name="export_date_from" id="export_date_from">
+                                        <input type="hidden" name="export_date_to" id="export_date_to">
+                                        <button type="submit" class="btn btn-own" data-toggle="tooltip"
+                                            data-placement="top" title="Export">
+                                            <i class="fa fa-file-excel-o"></i>&nbsp; {{ trans('Export') }}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-own table-striped" id="file_movement_table"
+                                    width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:15%;">{{ trans('app.forms.date') }}</th>
+                                            <th style="width:25%;">{{ trans('app.forms.file_no') }}</th>
+                                            <th style="width:25%;">{{ trans('app.forms.name') }}</th>
+                                            <th style="width:35%;">{{ trans('app.forms.assigned_to') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </section>
@@ -60,11 +90,11 @@
 
     <script>
         $(document).ready(function() {
-            oTable = $('#audit_trail').DataTable({
+            oTable = $('#file_movement_table').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('reporting.log.index') }}",
+                    "url": "{{ route('report.fileMovement.index') }}",
                     'data': function(data) {
                         var date_from = $('#date_from').val();
                         var date_to = $('#date_to').val();
@@ -77,9 +107,8 @@
                         data.date_to = date_to;
                     }
                 },
-                "dom": '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
                 "order": [
-                    [6, "desc"]
+                    [0, "desc"]
                 ],
                 "lengthMenu": [
                     [10, 25, 50],
@@ -89,38 +118,61 @@
                 "scrollX": true,
                 "responsive": false,
                 "columns": [{
-                        data: 'company_id',
-                        name: 'company.name'
+                        data: 'movement_date',
+                        name: 'file_movement_users.created_at',
                     },
                     {
-                        data: 'file_id',
-                        name: 'files.file_no'
+                        data: 'file_no',
+                        name: 'files.file_no',
                     },
                     {
-                        data: 'module',
-                        name: 'audit_trail.module'
+                        data: 'strata_name',
+                        name: 'strata.name',
                     },
                     {
-                        data: 'remarks',
-                        name: 'audit_trail.remarks'
-                    },
-                    {
-                        data: 'role_name',
-                        searchable: false
-                    },
-                    {
-                        data: 'audit_by',
-                        name: 'users.full_name'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'audit_trail.created_at'
+                        data: 'appointed_name',
+                        name: 'users.full_name',
                     },
                 ],
                 "fnDrawCallback": function(oSettings) {
                     $.unblockUI();
                 }
             });
+
+            $('.datetimepicker').datetimepicker({
+                widgetPositioning: {
+                    horizontal: 'left'
+                },
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-chevron-left",
+                    next: "fa fa-chevron-right",
+                },
+                format: 'DD-MM-YYYY'
+            }).on('dp.change', function() {
+                getData();
+            });
         });
+
+        function getData() {
+            $.blockUI({
+                message: '{{ trans('app.confirmation.please_wait') }}'
+            });
+            $.ajax({
+                url: "{{ route('report.fileMovement.index') }}",
+                type: "GET",
+                data: {
+                    date_from: $('#date_from').val(),
+                    date_to: $('#date_to').val(),
+                    filter: true,
+                },
+                success: function(res) {
+                    oTable.draw();
+                }
+            });
+        }
     </script>
 @endsection
