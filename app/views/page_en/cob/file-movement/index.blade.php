@@ -47,8 +47,11 @@
                                                         <tr>
                                                             <th style="width:20%;">{{ trans('app.forms.name') }}</th>
                                                             <th style="width:20%;">{{ trans('app.forms.title') }}</th>
-                                                            <th style="width:30%;">{{ trans('app.forms.assigned_to') }}</th>
+                                                            <th style="width:25%;">{{ trans('app.forms.assigned_to') }}</th>
                                                             <th style="width:30%;">{{ trans('app.forms.remarks') }}</th>
+                                                            @if (AccessGroup::hasUpdateModule('File Movement'))
+                                                            <th style="width:5%;">{{ trans('app.forms.action') }}</th>
+                                                            @endif
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -68,6 +71,71 @@
     </div>
 
     <!-- Page Scripts -->
+    @if (AccessGroup::hasUpdateModule('File Movement'))
+    <script>
+        $(document).ready(function() {
+            $('#file_movement_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('cob.file-movement.index', [\Helper\Helper::encode($files->id)]) }}",
+                lengthMenu: [
+                    [5, 10, 50, -1],
+                    [5, 10, 50, "All"]
+                ],
+                pageLength: 10,
+                order: [
+                    [0, "asc"]
+                ],
+                responsive: true,
+                columns: [{
+                        data: 'strata',
+                        name: 'strata'
+                    },
+                    {
+                        data: 'title',
+                        name: 'file_movements.title'
+                    },
+                    {
+                        data: 'file_movement_users',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
+                        data: 'remarks',
+                        name: 'file_movements.remarks'
+                    },
+                    {
+                        data: 'action',
+                        searchable: false,
+                        orderable: false
+                    },
+                ],
+                columnDefs: [{
+                        "targets": -1,
+                        "className": "text-center"
+                    }
+                ],
+            });
+        });
+
+        $('body').on('click', '.confirm-delete', function(e) {
+            e.preventDefault();
+            let formId = $(this).data('id');
+            swal({
+                title: "{{ trans('app.confirmation.are_you_sure') }}",
+                text: "{{ trans('app.confirmation.no_recover_file') }}",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                cancelButtonClass: "btn-default",
+                confirmButtonText: "Delete",
+                closeOnConfirm: true
+            }, function() {
+                $('#' + formId).submit();
+            });
+        });
+    </script>
+    @else
     <script>
         $(document).ready(function() {
             $('#file_movement_table').DataTable({
@@ -103,21 +171,6 @@
                 ],
             });
         });
-        $('body').on('click', '.confirm-delete', function(e) {
-            e.preventDefault();
-            let formId = $(this).data('id');
-            swal({
-                title: "{{ trans('app.confirmation.are_you_sure') }}",
-                text: "{{ trans('app.confirmation.no_recover_file') }}",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-warning",
-                cancelButtonClass: "btn-default",
-                confirmButtonText: "Delete",
-                closeOnConfirm: true
-            }, function() {
-                $('#' + formId).submit();
-            });
-        });
     </script>
+    @endif
 @endsection
