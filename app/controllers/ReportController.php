@@ -2639,7 +2639,7 @@ class ReportController extends BaseController
             } else {
                 return Datatables::of($models)
                     ->editColumn('movement_date', function ($model) {
-                        return date('d-m-Y H:i A', strtotime($model->movement_date));
+                        return date('d-m-Y', strtotime($model->movement_date));
                     })
                     ->editColumn('file_no', function ($model) {
                         return "<a style='text-decoration:underline;' href='" . URL::action('CobFileMovementController@index', Helper::encode($model->file_id)) . "'>" . $model->file_no . "</a>";

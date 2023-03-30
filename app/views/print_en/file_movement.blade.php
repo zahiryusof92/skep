@@ -68,20 +68,13 @@
                                         {{ $model->title }}
                                     </td>
                                     <td>
-                                        @if (!empty($model->assigned_to))
+                                        @if ($model->fileMovementUsers->count() > 0)
                                             <div class="row">
                                                 <ul>
-                                                    @foreach (unserialize($model->assigned_to) as $assigned)
-                                                        <?php $user = User::find($assigned['value']); ?>
-                                                        @if ($user)
-                                                            <li>
-                                                                {{ $user->full_name }} ({{ $assigned['created_at'] }})
-                                                            </li>
-                                                        @else
-                                                            <li>
-                                                                -
-                                                            </li>
-                                                        @endif
+                                                    @foreach ($model->fileMovementUsers as $fileMovementUser)
+                                                        <li>
+                                                            {{ $fileMovementUser->user ? $fileMovementUser->user->full_name . ' (' . $fileMovementUser->created_at->format('d-m-Y') . ')' : '' }}
+                                                        </li>
                                                     @endforeach
                                                 </ul>
                                             </div>

@@ -38,7 +38,7 @@ class CobFileMovementController extends \BaseController
 					if ($model->fileMovementUsers->count() > 0) {
 						$content .= '<div class="row"><ul>';
 						foreach ($model->fileMovementUsers as $fileMovementUser) {
-							$content .= '<li>' . ($fileMovementUser->user ? $fileMovementUser->user->full_name . ' (' . $fileMovementUser->created_at->format('Y-m-d') .')' : '') . '</li>';
+							$content .= '<li>' . ($fileMovementUser->user ? $fileMovementUser->user->full_name . ' (' . $fileMovementUser->created_at->format('d-m-Y') .')' : '') . '</li>';
 						}
 						$content .= '</ul></div>';
 					}

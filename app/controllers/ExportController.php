@@ -1080,7 +1080,7 @@ class ExportController extends BaseController
         if ($models->count() > 0) {
             foreach ($models as $key => $log) {
                 if (!empty($log->movement_date)) {
-                    $raw_data[$key][trans('app.forms.date')] = date('d-m-Y H:i A', strtotime($log->movement_date));
+                    $raw_data[$key][trans('app.forms.date')] = date('d-m-Y', strtotime($log->movement_date));
                 } else {
                     $raw_data[$key][trans('app.forms.date')] = '';
                 }
