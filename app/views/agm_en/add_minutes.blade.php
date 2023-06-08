@@ -682,87 +682,90 @@
                                 </div>
                             </form>
 
-                            <?php if (Auth::user()->isJMB()) { ?>
-                            <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_purchase_aggrement') }}
-                                        </label>
+                            <?php if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isLPHS()) { ?>
+                                <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">
+                                                {{ trans('app.forms.upload_purchase_aggrement') }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" id="clear_purchase_aggrement"
+                                                class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
+                                                style="display: none;">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            &nbsp;
+                                            <input type="file" name="purchase_aggrement" id="purchase_aggrement">
+                                            <div id="validation-purchase_aggrement"></div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_purchase_aggrement"
-                                            class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
-                                            style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="purchase_aggrement" id="purchase_aggrement">
-                                        <div id="validation-purchase_aggrement"></div>
+                                </form>
+
+                                <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">
+                                                {{ trans('app.forms.upload_strata_title') }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
+                                                onclick="clearStrataTitle()" style="display: none;">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            &nbsp;
+                                            <input type="file" name="strata_title" id="strata_title">
+                                            <div id="validation-strata_title"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                            <?php } else if (Auth::user()->isMC()) { ?>
-                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_strata_title') }}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
-                                            onclick="clearStrataTitle()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="strata_title" id="strata_title">
-                                        <div id="validation-strata_title"></div>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
                             <?php } else { ?>
-                            <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_purchase_aggrement') }}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_purchase_aggrement"
-                                            class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
-                                            style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="purchase_aggrement" id="purchase_aggrement">
-                                        <div id="validation-purchase_aggrement"></div>
-                                    </div>
-                                </div>
-                            </form>
-                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_strata_title') }}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
-                                            onclick="clearStrataTitle()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="strata_title" id="strata_title">
-                                        <div id="validation-strata_title"></div>
-                                    </div>
-                                </div>
-                            </form>
+                                <?php if (Auth::user()->isJMB()) { ?>
+                                    <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
+                                        action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.upload_purchase_aggrement') }}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button type="button" id="clear_purchase_aggrement"
+                                                    class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
+                                                    style="display: none;">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                                &nbsp;
+                                                <input type="file" name="purchase_aggrement" id="purchase_aggrement">
+                                                <div id="validation-purchase_aggrement"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                <?php } else if (Auth::user()->isMC()) { ?>
+                                    <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                        action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.upload_strata_title') }}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
+                                                    onclick="clearStrataTitle()" style="display: none;">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                                &nbsp;
+                                                <input type="file" name="strata_title" id="strata_title">
+                                                <div id="validation-strata_title"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                <?php } ?>
                             <?php } ?>
 
                             <form id="upload_maintenance_statement" enctype="multipart/form-data" method="post"

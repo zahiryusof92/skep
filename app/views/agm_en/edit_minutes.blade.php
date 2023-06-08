@@ -984,74 +984,142 @@
                                 </div>
                             </form>
 
-                            <?php if ($meeting_doc->type == 'JMB') { ?>
-                            <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_purchase_aggrement') }}
-                                        </label>
+                            <?php if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isLPHS()) { ?>
+                                <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">
+                                                {{ trans('app.forms.upload_purchase_aggrement') }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" id="clear_purchase_aggrement"
+                                                class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
+                                                style="display: none;">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            &nbsp;
+                                            <input type="file" name="purchase_aggrement" id="purchase_aggrement">
+                                            @if ($meeting_doc->purchase_aggrement_url != '')
+                                                <div>
+                                                    <a href="{{ asset($meeting_doc->purchase_aggrement_url) }}" target="_blank">
+                                                        <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip"
+                                                            data-placement="bottom" title="Download File">
+                                                            <i class="icmn-file-download2"></i>
+                                                            {{ trans('app.forms.download') }}
+                                                        </button>
+                                                    </a>
+                                                    &nbsp;
+                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                                </div>
+                                            @endif
+                                            <div id="validation-purchase_aggrement"></div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_purchase_aggrement" class="btn btn-xs btn-danger"
-                                            onclick="clearPurchaseAggrement()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="purchase_aggrement" id="purchase_aggrement">
-                                        @if ($meeting_doc->purchase_aggrement_url != '')
-                                            <div>
-                                                <a href="{{ asset($meeting_doc->purchase_aggrement_url) }}" target="_blank">
-                                                    <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip"
-                                                        data-placement="bottom" title="Download File">
-                                                        <i class="icmn-file-download2"></i>
-                                                        {{ trans('app.forms.download') }}
-                                                    </button>
-                                                </a>
-                                                &nbsp;
-                                                {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                            </div>
-                                        @endif
-                                        <div id="validation-purchase_aggrement"></div>
-                                    </div>
-                                </div>
-                            </form>
-                            <?php } ?>
+                                </form>
 
-                            <?php if ($meeting_doc->type == 'MC') { ?>
-                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_strata_title') }}
-                                        </label>
+                                <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">
+                                                {{ trans('app.forms.upload_strata_title') }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
+                                                onclick="clearStrataTitle()" style="display: none;">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            &nbsp;
+                                            <input type="file" name="strata_title" id="strata_title">
+                                            @if ($meeting_doc->strata_title_url != '')
+                                                <div>
+                                                    <a href="{{ asset($meeting_doc->strata_title_url) }}" target="_blank">
+                                                        <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip"
+                                                            data-placement="bottom" title="Download File">
+                                                            <i class="icmn-file-download2"></i>
+                                                            {{ trans('app.forms.download') }}
+                                                        </button>
+                                                    </a>
+                                                    &nbsp;
+                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataTitle('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                                </div>
+                                            @endif
+                                            <div id="validation-strata_title"></div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
-                                            onclick="clearStrataTitle()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="strata_title" id="strata_title">
-                                        @if ($meeting_doc->strata_title_url != '')
-                                            <div>
-                                                <a href="{{ asset($meeting_doc->strata_title_url) }}" target="_blank">
-                                                    <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip"
-                                                        data-placement="bottom" title="Download File">
-                                                        <i class="icmn-file-download2"></i>
-                                                        {{ trans('app.forms.download') }}
-                                                    </button>
-                                                </a>
-                                                &nbsp;
-                                                {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataTitle('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                </form>
+                            <?php } else { ?>
+                                <?php if ($meeting_doc->type == 'jmb') { ?>
+                                    <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
+                                        action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.upload_purchase_aggrement') }}
+                                                </label>
                                             </div>
-                                        @endif
-                                        <div id="validation-strata_title"></div>
-                                    </div>
-                                </div>
-                            </form>
+                                            <div class="col-md-6">
+                                                <button type="button" id="clear_purchase_aggrement"
+                                                    class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
+                                                    style="display: none;">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                                &nbsp;
+                                                <input type="file" name="purchase_aggrement" id="purchase_aggrement">
+                                                @if ($meeting_doc->purchase_aggrement_url != '')
+                                                    <div>
+                                                        <a href="{{ asset($meeting_doc->purchase_aggrement_url) }}" target="_blank">
+                                                            <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip"
+                                                                data-placement="bottom" title="Download File">
+                                                                <i class="icmn-file-download2"></i>
+                                                                {{ trans('app.forms.download') }}
+                                                            </button>
+                                                        </a>
+                                                        &nbsp;
+                                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deletePurchaseAggrement('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                                    </div>
+                                                @endif
+                                                <div id="validation-purchase_aggrement"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                <?php } else if ($meeting_doc->type == 'mc') { ?>
+                                    <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                        action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.upload_strata_title') }}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
+                                                    onclick="clearStrataTitle()" style="display: none;">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                                &nbsp;
+                                                <input type="file" name="strata_title" id="strata_title">
+                                                @if ($meeting_doc->strata_title_url != '')
+                                                    <div>
+                                                        <a href="{{ asset($meeting_doc->strata_title_url) }}" target="_blank">
+                                                            <button type="button" class="btn btn-xs btn-own" data-toggle="tooltip"
+                                                                data-placement="bottom" title="Download File">
+                                                                <i class="icmn-file-download2"></i>
+                                                                {{ trans('app.forms.download') }}
+                                                            </button>
+                                                        </a>
+                                                        &nbsp;
+                                                        {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataTitle('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                                    </div>
+                                                @endif
+                                                <div id="validation-strata_title"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                <?php } ?>
                             <?php } ?>
 
                             <form id="upload_maintenance_statement" enctype="multipart/form-data" method="post"
@@ -1063,8 +1131,9 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_maintenance_statement" class="btn btn-xs btn-danger"
-                                            onclick="clearMaintenanceStatement()" style="display: none;">
+                                        <button type="button" id="clear_maintenance_statement"
+                                            class="btn btn-xs btn-danger" onclick="clearMaintenanceStatement()"
+                                            style="display: none;">
                                             <i class="fa fa-times"></i>
                                         </button>
                                         &nbsp;
@@ -1136,7 +1205,8 @@
                                             <i class="fa fa-times"></i>
                                         </button>
                                         &nbsp;
-                                        <input type="file" name="report_audited_financial" id="report_audited_financial">
+                                        <input type="file" name="report_audited_financial"
+                                            id="report_audited_financial">
                                         @if ($meeting_doc->report_audited_financial_url != '')
                                             <div>
                                                 <a href="{{ asset($meeting_doc->report_audited_financial_url) }}"
@@ -1227,7 +1297,9 @@
                             <form>
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label class="form-control-label">{{ trans('app.forms.remarks') }}</label>
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.remarks') }}
+                                        </label>
                                     </div>
                                     <div class="col-md-6">
                                         <textarea class="form-control" placeholder="{{ trans('app.forms.remarks') }}" id="remarks" rows="5">{{ $meeting_doc->remarks }}</textarea>
