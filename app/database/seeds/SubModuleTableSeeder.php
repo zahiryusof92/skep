@@ -82,6 +82,12 @@ class SubModuleTableSeeder extends Seeder
                 'name_my' => 'Notifikasi',
                 'sort_no' => 22
             ]);
+            SubModule::firstOrCreate([
+                'module_id' => $report->id,
+                'name_en' => 'Movement of File',
+                'name_my' => 'Pergerakan Fail',
+                'sort_no' => 23
+            ]);
         }
 
         $cob_letter = Module::where('name_en', 'COB Letter')->first();

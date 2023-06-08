@@ -754,6 +754,14 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
+                    @if (AccessGroup::hasAccessModule("Movement of File"))
+                    <li id="file_movement_report_list">
+                        <a class="left-menu-link" href="{{ route('report.fileMovement.index') }}">
+                            {{ trans('app.menus.reporting.file_movement') }}
+                        </a>
+                    </li>
+                    @endif
+
                 </ul>
             </li>
             @endif
