@@ -2881,7 +2881,7 @@ class Files extends Eloquent
                     $percentage = ($total_berjaya_dikutip / $total_sepatut_dikutip) * 100;
                 }
 
-                $total_income_tuggakan = $month_finance->financeIncome->sum('tuggakan');
+                $total_income_tuggakan = $month_finance->financeIncome->sum('tunggakan');
                 $total_income_semasa = $month_finance->financeIncome->sum('semasa');
                 $total_income_hadapan = $month_finance->financeIncome->sum('hadapan');
                 $total_income = $total_income_tuggakan + $total_income_semasa + $total_income_hadapan;
@@ -2894,14 +2894,14 @@ class Files extends Eloquent
             }
 
             array_push($graph_month, $date->format('F') . '<br />' . $date->format('Y'));
-            array_push($graph_percentage, $percentage);
+            array_push($graph_percentage, round($percentage));
             array_push($data, [
                 'year' => $date->format('Y'),
                 'month' => $date->format('m'),
                 'month_name' => $date->format('F'),
-                'percentage' => number_format($percentage),
-                'total_income' => $total_income,
-                'total_expense' => $total_expense,
+                'percentage' => round($percentage),
+                'total_income' => number_format($total_income, 2),
+                'total_expense' => number_format($total_expense, 2),
                 'nett_income' => number_format($nett_income, 2),
             ]);            
         }
