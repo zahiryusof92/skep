@@ -67,7 +67,19 @@
                                     {{ trans('app.forms.payment_method') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $order->transaction->payment_method }}
+                                    @if ($order->transaction)
+                                    @if (!empty($transaction->payment_method))
+                                    @if ($order->transaction->payment_method == 'cc')
+                                    {{ trans('Credit Card') }}
+                                    @else
+                                    {{ strtoupper($order->transaction->payment_method) }}
+                                    @endif
+                                    @else
+                                    {{ trans('-') }}
+                                    @endif
+                                    @else
+                                    {{ trans('-') }}
+                                    @endif
                                 </dd>
 
                                 <dt class="col-sm-4">

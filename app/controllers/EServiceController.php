@@ -1,11 +1,14 @@
 <?php
 
 use Carbon\Carbon;
+use Helper\Epay;
 use Helper\Helper;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -16,7 +19,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use yajra\Datatables\Facades\Datatables;
 
-class EServiceController extends \BaseController
+class EServiceController extends BaseController
 {
 	/**
 	 * Display a listing of the resource.
@@ -490,6 +493,11 @@ class EServiceController extends \BaseController
 							unset($request['cob']);
 							unset($request['type']);
 
+							$prefix = '';
+							if ($cob->short_name == 'MBPJ') {
+								$prefix = 'MBPJ-eCOB-';
+							}
+
 							$order_no = Auth::user()->id . date('YmdHis');
 
 							$order = EServiceOrder::create([
@@ -498,7 +506,7 @@ class EServiceController extends \BaseController
 								'strata_id' => $strata->id,
 								'category_id' => $strata->categories->id,
 								'user_id' => Auth::user()->id,
-								'order_no' => $order_no,
+								'order_no' => $prefix . $order_no,
 								'type' => $type,
 								'value' => json_encode($request),
 								'price' => $pricing->price,
@@ -741,22 +749,20 @@ class EServiceController extends \BaseController
 		$this->checkAvailableAccess();
 
 		$order = EServiceOrder::find($this->decodeID($id));
-		if ($order) {
-			if ($order->status == EServiceOrder::DRAFT) {
-				$total_amount = $order->price;
+		if ($order && $order->status == EServiceOrder::DRAFT) {
+			$total_amount = $order->price;
 
-				$viewData = array(
-					'title' => trans('app.menus.eservice.payment'),
-					'panel_nav_active' => 'eservice_panel',
-					'main_nav_active' => 'eservice_main',
-					'sub_nav_active' => 'eservice_create',
-					'order' => $order,
-					'total_amount' => $total_amount,
-					'image' => ""
-				);
+			$viewData = array(
+				'title' => trans('app.menus.eservice.payment'),
+				'panel_nav_active' => 'eservice_panel',
+				'main_nav_active' => 'eservice_main',
+				'sub_nav_active' => 'eservice_create',
+				'order' => $order,
+				'total_amount' => $total_amount,
+				'image' => ""
+			);
 
-				return View::make('eservice.payment', $viewData);
-			}
+			return View::make('eservice.payment', $viewData);
 		}
 
 		App::abort(404);
@@ -765,12 +771,12 @@ class EServiceController extends \BaseController
 	public function submitPayment()
 	{
 		$request = Input::all();
+		$proceed = false;
 
-		$order = EServiceOrder::with(['user'])->find($this->decodeID($request['order_id']));
+		$order = EServiceOrder::with(['user', 'company'])->find($this->decodeID($request['order_id']));
 		if ($order) {
 			$rules = array(
 				'amount' => 'required',
-				'payment_method' => 'required',
 				'terms' => 'required'
 			);
 
@@ -778,58 +784,153 @@ class EServiceController extends \BaseController
 			if ($validator->fails()) {
 				return Redirect::back()->withErrors($validator)->withInput();
 			} else {
-				$amount = $request['amount'];
+				if (!empty($order->price)) {
+					if ($order->company && $order->company->short_name = 'MBPJ') {
+						if (!empty($order->jana_bil_no_akaun)) {
+							$proceed = true;
+						} else {
+							$content = (!empty($order->value) ? json_decode($order->value, true) : []);
+							if (!empty($content)) {
+								$cob = strtolower($order->company->short_name);
 
-				if (!empty($amount)) {
-					$order->status = EServiceOrder::INPROGRESS;
-					$success = $order->save();
+								$kodjabatan = Config::get('payment.' . $cob . '.kod_jabatan');
+								$perkara = $order->type;
+								$amaun = number_format($order->price, 2);
+								$kodhasil = Config::get('payment.' . $cob . '.kod_hasil');
+								$namapelanggan = Arr::get($content, 'management_name');
+								$alamat1 = Arr::get($content, 'management_address1');
+								$alamat2 = Arr::get($content, 'management_address2');
+								$alamat3 = Arr::get($content, 'management_address3');
+								$nokp = Config::get('payment.' . $cob . '.no_kp');
+								$pengguna = Config::get('payment.' . $cob . '.pengguna');
+								$sumber = Config::get('payment.' . $cob . '.sumber');
 
-					if ($success) {
-						$transaction = EServiceOrderTransaction::create([
-							'eservice_order_id' => $order->id,
-							'payment_method' => $request['payment_method'],
-							'total_price' => $amount,
-							'status' => EServiceOrderTransaction::APPROVED,
+								$params = [
+									'kodjabatan' => $kodjabatan,
+									'perkara' => $perkara,
+									'amaun' => $amaun,
+									'kodhasil' => $kodhasil,
+									'namapelanggan' => $namapelanggan,
+									'alamat1' => $alamat1,
+									'alamat2' => $alamat2,
+									'alamat3' => $alamat3,
+									'nokp' => $nokp,
+									'pengguna' => $pengguna,
+									'sumber' => $sumber
+								];
 
-						]);
+								$res_janabil = (new Epay())->generateBil($params);
+								if (isset($res_janabil->status) && $res_janabil->status == 1) {
+									if (!empty($res_janabil->noakaun)) {
+										$update = $order->update([
+											'jana_bil_no_akaun' => $res_janabil->noakaun,
+											'jana_bil_response' => json_encode($res_janabil),
+											'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
+										]);
 
-						if ($transaction) {
-							/**
-							 * Send an email to JMB / MC and copy to COB
-							 */
-							if (Config::get('mail.driver') != '') {
-								$delay = 0;
-								$incrementDelay = 2;
-
-								if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
-									Mail::later(Carbon::now()->addSeconds($delay), 'emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
-										$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
-									});
-								}
-
-								if ($order->user->isJMB() || $order->user->isMC()) {
-									Mail::later(Carbon::now()->addSeconds($delay), 'emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
-										$message->to('cob@mbpj.gov.my', 'COB')->subject('New Application for e-Perkhidmatan');
-									});
+										if ($update) {
+											$proceed = true;
+										}
+									}
+								} else {
+									return Redirect::back()->with('error', 'Fail! ' . $res_janabil->message);
 								}
 							}
+						}
 
-							/**
-							 * add audit trail
-							 */
-							$module = Str::upper($this->getModule()['name']);
-							$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
-							$remarks = $module . ': ' . $order->email . " has submitted a new application";
-							$this->addAudit($order->file_id, $module, $remarks);
-
-							return Redirect::route('eservice.index')->with('success', trans('app.successes.payment_successfully'));
+						/** proceed payment */
+						if ($proceed) {
+							$payment = (new Epay())->paymentOnline($order->jana_bil_no_akaun, $this->encodeID($order->id));
+							if (!empty($payment)) {
+								return Redirect::to($payment);
+							}
 						}
 					}
+				} else {
+					return Redirect::back()->with('error', trans('Amount must be more than 0'));
 				}
 			}
 		}
 
-		return Redirect::back()->with('error', trans('app.errors.occurred'))->withInput();
+		return Redirect::back()->with('error', trans('app.errors.occurred'));
+	}
+
+	public function callbackPayment($id)
+	{
+		$request = Request::all();
+
+		$message = '';
+
+		if (!empty($id)) {
+			$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
+			if ($order) {
+				if ($order->company && $order->company->short_name = 'MBPJ') {
+					if (!empty($request)) {
+						$status = EServiceOrderTransaction::PENDING;
+						if (Arr::get($request, 'pg_status') == 1) {
+							$status = EServiceOrderTransaction::APPROVED;
+						} else if (Arr::get($request, 'pg_status') == 2) {
+							$status = EServiceOrderTransaction::FAILED;
+						} else if (Arr::get($request, 'pg_status') == 3) {
+							$status = EServiceOrderTransaction::REJECTED;
+						}
+
+						if (Arr::get($request, 'pg_desc')) {
+							$message = $request['pg_desc'];
+						}
+
+						$transaction = EServiceOrderTransaction::create([
+							'eservice_order_id' => $order->id,
+							'payment_method' => Arr::get($request, 'pg_payment_type'),
+							'payment_amount' => Arr::get($request, 'pg_amount'),
+							'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
+							'payment_response' => json_encode($request),
+							'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
+							'status' => $status,
+						]);
+
+						if ($transaction->status == EServiceOrderTransaction::APPROVED) {
+							$update = $order->update([
+								'status' => EServiceOrder::INPROGRESS,
+							]);
+
+							if ($update) {
+								/**
+								 * Send an email to JMB / MC and copy to COB
+								 */
+								if (Config::get('mail.driver') != '') {
+									if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+										Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+											$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
+										});
+									}
+
+									if ($order->user->isJMB() || $order->user->isMC()) {
+										if (!empty(Config::get('payment.mbpj.email_cob'))) {
+											Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+												$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+											});
+										}
+									}
+								}
+
+								/**
+								 * add audit trail
+								 */
+								$module = Str::upper($this->getModule()['name']);
+								$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
+								$remarks = $module . ': ' . $order->email . " has submitted a new application";
+								$this->addAudit($order->file_id, $module, $remarks);
+
+								return Redirect::route('eservice.paymentHistory')->with('success', trans('app.successes.payment_successfully'));
+							}
+						}
+					}
+				}
+			}
+
+			return Redirect::route('eservice.paymentHistory')->with('error', (!empty($message) ? 'Fail! ' . $message : trans('app.errors.occurred')));
+		}
 	}
 
 	public function review()
@@ -1329,6 +1430,100 @@ class EServiceController extends \BaseController
 				}
 			}
 		}
+	}
+
+	public function paymentHistory()
+	{
+		$this->checkAvailableAccess();
+
+		if (Request::ajax()) {
+			$model = EServiceOrderTransaction::self();
+
+			if (!empty(Input::get('company'))) {
+				$cob = Company::where('company.short_name', Str::lower(Input::get('company')))->first();
+				if ($cob) {
+					$model = $model->where('eservices_order_transactions.company_id', $cob->id);
+				}
+			}
+
+			if (!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
+				$start_date = !empty(Input::get('start_date')) ? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0);
+				$end_date = !empty(Input::get('end_date')) ? Carbon::parse(Input::get('end_date'))->addDay() : Carbon::now();
+
+				$model = $model->whereBetween('eservices_order_transactions.payment_created_at', [$start_date, $end_date]);
+			}
+
+			return Datatables::of($model)
+				->editColumn('payment_created_at', function ($model) {
+					$payment_created_at =  (!empty($model->payment_created_at) ? date('d-M-Y h:i A', strtotime($model->payment_created_at)) : '-');
+
+					return $payment_created_at;
+				})
+				->editColumn('order_no', function ($model) {
+					$order_no =  $model->order_no ? "<a style='text-decoration:underline;' href='" . route('eservice.show', $this->encodeID($model->eservice_order_id)) . "'>" . $model->order_no . "</a>" : "-";
+
+					return $order_no;
+				})
+				->editColumn('payment_method', function ($model) {
+					if ($model->payment_method == 'cc') {
+						$payment_method = trans('Credit Card');
+					} else {
+						$payment_method = strtoupper($model->payment_method);
+					}
+
+					return $payment_method;
+				})
+				->editColumn('payment_amount', function ($model) {
+					return number_format($model->payment_amount, 2);
+				})
+				->editColumn('status', function ($model) {
+					return $model->getStatusBadge();
+				})
+				->addColumn('action', function ($model) {
+					$btn = '';
+					$btn .= '<a href="' . route('eservice.showPaymentHistory', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Show"><i class="fa fa-eye"></i></a>';
+
+					return $btn;
+				})
+				->make(true);
+		}
+
+		if (empty(Session::get('admin_cob'))) {
+			$company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+		} else {
+			$company = Company::where('id', Session::get('admin_cob'))->get();
+		}
+
+		$viewData = array(
+			'title' => trans('app.menus.eservice.payment_history'),
+			'panel_nav_active' => 'eservice_panel',
+			'main_nav_active' => 'eservice_main',
+			'sub_nav_active' => 'eservice_payment_history',
+			'company' => $company,
+			'image' => ''
+		);
+
+		return View::make('eservice.payment_history', $viewData);
+	}
+
+	public function showPaymentHistory($id)
+	{
+		$transaction = EServiceOrderTransaction::with(['order'])->find($this->decodeID($id));
+
+		if ($transaction) {
+			$viewData = array(
+				'title' => trans('app.menus.eservice.payment_history'),
+				'panel_nav_active' => 'eservice_panel',
+				'main_nav_active' => 'eservice_main',
+				'sub_nav_active' => 'eservice_payment_history',
+				'image' => '',
+				'transaction' => $transaction
+			);
+
+			return View::make('eservice.show_payment_history', $viewData);
+		}
+
+		App::abort(404);
 	}
 
 	private function getModule()

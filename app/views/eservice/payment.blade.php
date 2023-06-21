@@ -59,35 +59,7 @@
                                     <div class="row">
                                         <div class="col-lg-5">
                                             <input type="text" class="form-control" name="amount" id="amount"
-                                                value="{{ $total_amount }}" readonly="" />
-                                        </div>
-                                    </div>
-                                </dd>
-
-                                <dt class="col-sm-3">
-                                    <span style="color: red;">* </span>
-                                    {{ trans('app.forms.payment_method') }}
-                                </dt>
-                                <dd class="col-sm-9">
-                                    <div class="row">
-                                        <div class="col-lg-5">
-                                            <div class="{{ $errors->has('payment_method') ? 'has-danger' : '' }}">
-                                                <select id="payment_method" name="payment_method"
-                                                    class="form-control select2">
-                                                    <option value="">{{ trans('app.forms.please_select') }}</option>
-                                                    <option value="{{ EServiceOrder::FPX }}" {{
-                                                        Input::old('payment_method')==EServiceOrder::FPX ? 'selected'
-                                                        : '' }}>
-                                                        {{ ucwords(EServiceOrder::FPX) }}
-                                                    </option>
-                                                    <option value="{{ EServiceOrder::CARD }}" {{
-                                                        Input::old('payment_method')==EServiceOrder::CARD ? 'selected'
-                                                        : '' }}>
-                                                        {{ ucwords(EServiceOrder::CARD) }}
-                                                    </option>
-                                                </select>
-                                                @include('alert.feedback', ['field' => 'payment_method'])
-                                            </div>
+                                                value="{{ number_format($total_amount, 2) }}" readonly="" />
                                         </div>
                                     </div>
                                 </dd>
@@ -104,9 +76,7 @@
                                                     <label>
                                                         <input type="checkbox" value="1" name="terms" id="terms">
                                                         Agree with the <a href="https://odesi.tech"
-                                                            target="_blank">terms
-                                                            and
-                                                            conditions</a>
+                                                            target="_blank">terms and conditions</a>
                                                     </label>
                                                 </div>
                                                 <br />
