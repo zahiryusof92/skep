@@ -318,7 +318,7 @@ class CobAuditAccountController extends BaseController {
     
                 }
             }
-            return Redirect::route('cob.audit-account.index', [Helper::encode($this->module['cob']['file']['name'], $file_id)])->with('success', trans('app.successes.deleted_successfully'));
+            return Redirect::route('cob.audit-account.index', [Helper::encode($file_id)])->with('success', trans('app.successes.deleted_successfully'));
         }
 
         return Redirect::back()->with('error', trans('app.errors.occurred'));
