@@ -1516,6 +1516,7 @@ return [
         'postponed_agm_approval' => 'uploads/postponed_agm_approval',
         'dlp_deposit' => 'uploads/dlp_deposit',
         'dlp_deposit_usage' => 'uploads/dlp_deposit_usage',
+        'audit_accounts' => 'uploads/audit_accounts',
     ],
     'dlp_checklist' => [
         1 => 'Surat Rasmi Serahan Cek',
