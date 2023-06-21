@@ -220,7 +220,7 @@
                                                                 <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label class="form-control-label">{{ trans('app.forms.file') }}</label>
-                                                                        <input type="file" class="form-control" name="audit_account[]" id="audit_account_0" onChange="onUpload(this)">
+                                                                        <input type="file" class="form-control-file" name="audit_account[]" id="audit_account_0" onChange="onUpload(this)">
                                                                         @include('alert.feedback-ajax', ['field' => "audit_account_0_url"])
                                                                     </div>
                                                                     <input hidden id="audit_account_0_url" name="audit_account_url[]">
@@ -277,7 +277,7 @@
             afterRender:function(e) {
                 let current_length = $('#main-container').find('.container-item').length;
                 console.log(current_length);
-                $("#audit_account_" + (current_length-1) + "_download").html('<input type="file" class="form-control" name="audit_account_' + (current_length-1) + '" id="audit_account_' + (current_length-1) + '" onChange="onUpload(this)">');
+                $("#audit_account_" + (current_length-1) + "_download").html('<input type="file" class="form-control-file" name="audit_account_' + (current_length-1) + '" id="audit_account_' + (current_length-1) + '" onChange="onUpload(this)">');
                 $('.datepicker-only-init').datetimepicker({
                     widgetPositioning: {
                         horizontal: 'left'
