@@ -41,10 +41,10 @@ class ReportController extends BaseController
                         return Str::upper($model->user->getCOB->short_name);
                     })
                     ->editColumn('file_id', function ($model) {
-                        if ($model->file_id > 0) {
+                        if ($model->file) {
                             return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
                         }
-                        if ($model->user->isJMB()) {
+                        if ($model->user && $model->user->isJMB()) {
                             if (empty($model->user->getFile)) {
                                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
                             }

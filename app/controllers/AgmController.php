@@ -2403,7 +2403,7 @@ class AgmController extends BaseController {
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . Helper::encode($documents->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
-                    (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
+                    ($documents->file ? $documents->file->file_no : '<i>(not set)</i>'),
                     $documents->type->name,
                     $documents->name,
                     $documents->getStatusText(),
@@ -2636,7 +2636,7 @@ class AgmController extends BaseController {
             }
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow($document->file_id, $document->file->company_id, !AccessGroup::hasUpdate(33));
+        $disallow = Helper::isAllow(($document->file ? $document->file->id : 0), ($document->file ? $document->file->company_id : 0), !AccessGroup::hasUpdate(33));
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_document'),
