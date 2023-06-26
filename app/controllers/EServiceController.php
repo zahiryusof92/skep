@@ -794,7 +794,7 @@ class EServiceController extends BaseController
 								$cob = strtolower($order->company->short_name);
 
 								$kodjabatan = Config::get('payment.' . $cob . '.kod_jabatan');
-								$perkara = $order->type;
+								$perkara = $order->order_no . ' - ' . str_replace('_', ' ', $order->type);
 								$amaun = number_format($order->price, 2);
 								$kodhasil = Config::get('payment.' . $cob . '.kod_hasil');
 								$namapelanggan = Arr::get($content, 'management_name');
@@ -807,13 +807,13 @@ class EServiceController extends BaseController
 
 								$params = [
 									'kodjabatan' => $kodjabatan,
-									'perkara' => $perkara,
+									'perkara' => strtoupper($perkara),
 									'amaun' => $amaun,
 									'kodhasil' => $kodhasil,
 									'namapelanggan' => $namapelanggan,
-									'alamat1' => $alamat1,
-									'alamat2' => $alamat2,
-									'alamat3' => $alamat3,
+									'alamat1' => strtoupper($alamat1),
+									'alamat2' => strtoupper($alamat2),
+									'alamat3' => strtoupper($alamat3),
 									'nokp' => $nokp,
 									'pengguna' => $pengguna,
 									'sumber' => $sumber
