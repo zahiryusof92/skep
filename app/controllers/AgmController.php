@@ -2375,7 +2375,7 @@ class AgmController extends BaseController {
             foreach ($document as $documents) {
                 $button = "";
 
-                if (!empty($documents->file_id)) {
+                if ($documents->file) {
                     if (!Auth::user()->getAdmin()) {
                         if (!empty(Auth::user()->company_id)) {
                             if ($documents->file->company_id != Auth::user()->company_id) {
