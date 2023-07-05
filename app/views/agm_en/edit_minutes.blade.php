@@ -203,7 +203,7 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
+                            @if (Auth::user()->hasAccessOCR())
                                 <!-- OCR -->
                                 <form id="upload_minutes_meeting_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
@@ -285,7 +285,7 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
+                            @if (Auth::user()->hasAccessOCR())
                                 <!-- OCR -->
                                 <form id="upload_copy_of_spa_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
@@ -412,7 +412,7 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
+                            @if (Auth::user()->hasAccessOCR())
                                 <!-- OCR -->
                                 <form id="upload_attendance_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
@@ -494,7 +494,7 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
+                            @if (Auth::user()->hasAccessOCR())
                                 <!-- OCR -->
                                 <form id="upload_audited_financial_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
@@ -816,7 +816,7 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
+                            @if (Auth::user()->hasAccessOCR())
                                 <!-- OCR -->
                                 <form id="upload_eligible_vote_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
@@ -1259,7 +1259,7 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
+                            @if (Auth::user()->hasAccessOCR())
                                 <!-- OCR -->
                                 <form id="upload_house_rules_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
