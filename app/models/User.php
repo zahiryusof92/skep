@@ -266,7 +266,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         if (Auth::user()->getAdmin()) {
             return true;
         } else {
-            if (Auth::user()->isJMB() || Auth::user()->isMC()) {
+            if (Auth::user()->isCOB() || (Auth::user()->isJMB() || Auth::user()->isMC())) {
                 if (Auth::user()->getCOB) {
                     if (Auth::user()->getCOB->short_name == 'MBPJ') {
                         return true;

@@ -1053,20 +1053,21 @@ class FileController extends BaseController {
         // }
     }
 
-    public function uploadOcr() {
+    public function uploadOcr()
+    {
         $files = Input::file();
 
         $allowedFile = ['txt'];
         $allowedSize = '10000000';
-        
-        if (isset($files['minutes_meeting_ocr'])) {
-            $file = $files['minutes_meeting_ocr'];
+
+        if (isset($files['notice_agm_egm_ocr'])) {
+            $file = $files['notice_agm_egm_ocr'];
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
                     $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
                     $upload = $file->move($destinationPath, $filename);
-        
+
                     if ($upload) {
                         return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
                     }
@@ -1076,14 +1077,14 @@ class FileController extends BaseController {
             } else {
                 return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
             }
-        } else if (isset($files['copy_of_spa_ocr'])) {
-            $file = $files['copy_of_spa_ocr'];
+        } else if (isset($files['minutes_agm_egm_ocr'])) {
+            $file = $files['minutes_agm_egm_ocr'];
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
                     $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
                     $upload = $file->move($destinationPath, $filename);
-        
+
                     if ($upload) {
                         return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
                     }
@@ -1093,14 +1094,14 @@ class FileController extends BaseController {
             } else {
                 return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
             }
-        } else if (isset($files['attendance_ocr'])) {
-            $file = $files['attendance_ocr'];
+        } else if (isset($files['minutes_ajk_ocr'])) {
+            $file = $files['minutes_ajk_ocr'];
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
                     $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
                     $upload = $file->move($destinationPath, $filename);
-        
+
                     if ($upload) {
                         return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
                     }
@@ -1110,14 +1111,14 @@ class FileController extends BaseController {
             } else {
                 return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
             }
-        } else if (isset($files['audited_financial_ocr'])) {
-            $file = $files['audited_financial_ocr'];
+        } else if (isset($files['ajk_info_ocr'])) {
+            $file = $files['ajk_info_ocr'];
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
                     $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
                     $upload = $file->move($destinationPath, $filename);
-        
+
                     if ($upload) {
                         return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
                     }
@@ -1127,14 +1128,14 @@ class FileController extends BaseController {
             } else {
                 return Response::json(['success' => false, 'errors' => ['Please upload only TXT file!']]);
             }
-        } else if (isset($files['eligible_vote_ocr'])) {
-            $file = $files['eligible_vote_ocr'];
+        } else if (isset($files['report_audited_financial_ocr'])) {
+            $file = $files['report_audited_financial_ocr'];
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
                     $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
                     $upload = $file->move($destinationPath, $filename);
-        
+
                     if ($upload) {
                         return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
                     }
@@ -1151,7 +1152,7 @@ class FileController extends BaseController {
                     $destinationPath = 'uploads/ocr_files';
                     $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
                     $upload = $file->move($destinationPath, $filename);
-        
+
                     if ($upload) {
                         return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
                     }
