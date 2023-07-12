@@ -58,18 +58,15 @@ Route::get('/lphs/removeJMB/{council}', 'LPHSController@removeJMB');
 Route::get('/lphs/updateJMBExpiration/{council}/{date}', 'LPHSController@updateJMBExpiration');
 Route::get('/lphs/update/rating', 'LPHSController@updateRatingSummary');
 Route::get('/lphs/odesiLife/{council}', 'LPHSController@odesiLife');
-
 Route::get('/lphs/JMBMCSignIn/{council}', 'LPHSController@JMBMCSignIn');
 Route::get('/lphs/updateByUser/{council}', 'LPHSController@updateByUser');
-
 Route::get('/lphs/neverHasAGM/{council}', 'LPHSController@neverHasAGM');
 Route::get('/lphs/due12MonthsAGM/{council}', 'LPHSController@due12MonthsAGM');
 Route::get('/lphs/due15MonthsAGM/{council}', 'LPHSController@due15MonthsAGM');
 Route::get('/lphs/insurance/{council}', 'LPHSController@insurance');
-
 Route::get('/lphs/financeOutstanding/{council}', 'LPHSController@financeOutstanding');
-
 Route::get('/lphs/strataByCategory/{council}', 'LPHSController@strataByCategory');
+Route::get('/lphs/electricity/{council}', 'LPHSController@electricity');
 
 /*
  * LPHS REPORT END

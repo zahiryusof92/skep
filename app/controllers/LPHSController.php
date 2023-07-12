@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class LPHSController extends BaseController
 {
@@ -33,7 +34,7 @@ class LPHSController extends BaseController
     public function council($cob)
     {
         if (!empty($cob) && $cob != 'all') {
-            $councils = Company::where('short_name', $cob)->where('is_main', 0)->where('is_deleted', 0)->orderBy('short_name')->get();
+            $councils = Company::where('short_name', strtoupper($cob))->where('is_main', 0)->where('is_deleted', 0)->orderBy('short_name')->get();
         } else {
             $councils = Company::where('is_main', 0)->where('is_deleted', 0)->orderBy('short_name')->get();
         }
@@ -2406,5 +2407,58 @@ class LPHSController extends BaseController
         }
 
         return $this->result($result, $filename = 'Strata_By_Category_' . strtoupper($cob));
+    }
+
+    public function electricity($cob = null)
+    {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+                        $result[$file->id] = [];
+
+                        Arr::set($result[$file->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
+                        Arr::set($result[$file->id], 'File No', $file->file_no);
+                        Arr::set($result[$file->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
+
+                        $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                        if ($designations) {
+                            foreach ($designations as $designation) {
+                                $ajk_detail = AJKDetails::where('file_id', $file->id)
+                                    ->where('designation', $designation->id)
+                                    ->where('is_deleted', 0)
+                                    ->orderBy('start_year', 'desc')
+                                    ->orderBy('month', 'desc')
+                                    ->orderBy('created_at', 'desc')
+                                    ->first();
+
+                                Arr::set($result[$file->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                                Arr::set($result[$file->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
+                                Arr::set($result[$file->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                            }
+                        }
+
+                        $tnb_bill = 0;
+                        if ($finance = $file->financeLatest) {
+                            $summary = FinanceSummary::where('finance_file_id', $finance->id)
+                                ->where('summary_key', 'bill_elektrik')
+                                ->first();
+
+                            if ($summary) {
+                                $tnb_bill = $summary->amount;
+                            }
+                        }
+
+                        Arr::set($result[$file->id], 'TNB Bill (RM)', number_format($tnb_bill, 2));
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Electricity_' . strtoupper($cob));
     }
 }
