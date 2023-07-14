@@ -2485,8 +2485,32 @@ class LPHSController extends BaseController
                                     Arr::set($result[$meeting->id], 'AGM Date', ($meeting->agm_date && $meeting->agm_date != '0000-00-00' ? $meeting->agm_date : ''));
 
                                     foreach ($ocrs as $ocr) {
-                                        Arr::set($result[$meeting->id], ucwords(str_replace('_', ' ', $ocr->type)) . ' OCR', ($ocr->url ? 'Uploaded' : ''));
+                                        if ($ocr->type == 'notice_agm_egm' && !empty($ocr->url)) {
+                                            $notice_agm_egm = 'Uploaded';
+                                        }
+                                        if ($ocr->type == 'minutes_agm_egm' && !empty($ocr->url)) {
+                                            $minutes_agm_egm = 'Uploaded';
+                                        }
+                                        if ($ocr->type == 'minutes_ajk' && !empty($ocr->url)) {
+                                            $minutes_ajk = 'Uploaded';
+                                        }
+                                        if ($ocr->type == 'ajk_info' && !empty($ocr->url)) {
+                                            $ajk_info = 'Uploaded';
+                                        }
+                                        if ($ocr->type == 'report_audited_financial' && !empty($ocr->url)) {
+                                            $report_audited_financial = 'Uploaded';
+                                        }
+                                        if ($ocr->type == 'house_rules' && !empty($ocr->url)) {
+                                            $house_rules = 'Uploaded';
+                                        }
                                     }
+
+                                    Arr::set($result[$meeting->id], 'Salinan notis AGM/EGM OCR', $notice_agm_egm);
+                                    Arr::set($result[$meeting->id], 'Salinan minit AGM/EGM OCR', $minutes_agm_egm);
+                                    Arr::set($result[$meeting->id], 'Salinan minit mesyuarat 1st JMC OCR', $minutes_ajk);
+                                    Arr::set($result[$meeting->id], 'Maklumat Anggota Jawatankuasa (Lampiran A) OCR', $ajk_info);
+                                    Arr::set($result[$meeting->id], 'Laporan Akaun Teraudit OCR', $report_audited_financial);
+                                    Arr::set($result[$meeting->id], 'Salinan kaedah-kaedah dalam yang diluluskan (House Rules) OCR', $house_rules);
                                 }
                             }
                         }
