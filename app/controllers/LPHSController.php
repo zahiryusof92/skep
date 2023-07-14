@@ -2461,4 +2461,40 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Electricity_' . strtoupper($cob));
     }
+
+    public function uploadOCR($cob = null)
+    {
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+                        $meetings = $file->meetingDocument;
+                        if ($meetings->count() > 0) {
+                            foreach ($meetings as $meeting) {
+                                $ocrs = $meeting->ocrs;
+                                if ($ocrs->count() > 0) {
+                                    $result[$meeting->id] = [];
+
+                                    Arr::set($result[$meeting->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
+                                    Arr::set($result[$meeting->id], 'File No', $file->file_no);
+                                    Arr::set($result[$meeting->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
+                                    Arr::set($result[$meeting->id], 'AGM Date', ($meeting->agm_date && $meeting->agm_date != '0000-00-00' ? $meeting->agm_date : ''));
+
+                                    foreach ($ocrs as $ocr) {
+                                        Arr::set($result[$meeting->id], ucwords(str_replace('_', ' ', $ocr->type)) . ' OCR', ($ocr->url ? 'Uploaded' : ''));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Upload_OCR_' . strtoupper($cob));
+    }
 }
