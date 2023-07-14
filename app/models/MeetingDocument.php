@@ -52,4 +52,8 @@ class MeetingDocument extends Eloquent
     public function houseRulesOcr() {
         return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'house_rules')->latest();
     }
+
+    public function ocrs() {
+        return $this->hasMany('Ocr', 'meeting_document_id');
+    }
 }
