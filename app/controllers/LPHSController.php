@@ -2484,6 +2484,13 @@ class LPHSController extends BaseController
                                     Arr::set($result[$meeting->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
                                     Arr::set($result[$meeting->id], 'AGM Date', ($meeting->agm_date && $meeting->agm_date != '0000-00-00' ? $meeting->agm_date : ''));
 
+                                    $notice_agm_egm = '';
+                                    $minutes_agm_egm = '';
+                                    $minutes_ajk = '';
+                                    $ajk_info = '';
+                                    $report_audited_financial = '';
+                                    $house_rules = '';
+
                                     foreach ($ocrs as $ocr) {
                                         if ($ocr->type == 'notice_agm_egm' && !empty($ocr->url)) {
                                             $notice_agm_egm = 'Uploaded';
