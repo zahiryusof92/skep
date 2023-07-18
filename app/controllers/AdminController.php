@@ -6,9 +6,11 @@ use Helper\KCurl;
 use Illuminate\Support\Facades\Auth;
 use Services\NotificationService;
 
-class AdminController extends BaseController {
+class AdminController extends BaseController
+{
 
-    public function showView($name) {
+    public function showView($name)
+    {
         if (View::exists($name)) {
             return View::make($name);
         } else {
@@ -23,9 +25,10 @@ class AdminController extends BaseController {
         }
     }
 
-// --- COB Maintenance --- //
+    // --- COB Maintenance --- //
     //file prefix
-    public function filePrefix() {
+    public function filePrefix()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
@@ -41,7 +44,8 @@ class AdminController extends BaseController {
         return View::make('cob_en.fileprefix', $viewData);
     }
 
-    public function addFilePrefix() {
+    public function addFilePrefix()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
@@ -67,7 +71,8 @@ class AdminController extends BaseController {
         return View::make('cob_en.add_fileprefix', $viewData);
     }
 
-    public function submitFilePrefix() {
+    public function submitFilePrefix()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -105,7 +110,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getFilePrefix() {
+    public function getFilePrefix()
+    {
         if (!Auth::user()->getAdmin()) {
             $prefix = FilePrefix::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         } else {
@@ -117,7 +123,7 @@ class AdminController extends BaseController {
         }
 
         if (count($prefix) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($prefix as $fileprefixs) {
                 $button = "";
                 if ($fileprefixs->is_active == 1) {
@@ -154,7 +160,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function inactiveFilePrefix() {
+    public function inactiveFilePrefix()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -185,7 +192,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeFilePrefix() {
+    public function activeFilePrefix()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -216,7 +224,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteFilePrefix() {
+    public function deleteFilePrefix()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -247,11 +256,12 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateFilePrefix($id) {
+    public function updateFilePrefix($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $prefix = FilePrefix::findOrFail(Helper::decode($id));
- 
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file_prefix'),
             'panel_nav_active' => 'cob_panel',
@@ -265,7 +275,8 @@ class AdminController extends BaseController {
         return View::make('cob_en.update_fileprefix', $viewData);
     }
 
-    public function submitUpdateFilePrefix() {
+    public function submitUpdateFilePrefix()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -282,18 +293,18 @@ class AdminController extends BaseController {
             $sort_no = $data['sort_no'];
 
             $fileprefix = FilePrefix::findOrFail($id);
-            
+
             /** Arrange audit fields changes */
-            $description_field = $data['description'] == $fileprefix->description? "": "description";
-            $is_active_field = $data['is_active'] == $fileprefix->is_active? "": "status";
-            $sort_no_field = $data['sort_no'] == $fileprefix->sort_no? "": "sort_no";
+            $description_field = $data['description'] == $fileprefix->description ? "" : "description";
+            $is_active_field = $data['is_active'] == $fileprefix->is_active ? "" : "status";
+            $sort_no_field = $data['sort_no'] == $fileprefix->sort_no ? "" : "sort_no";
 
             $audit_fields_changed = "";
-            if(!empty($description_field) || !empty($is_active_field) || !empty($sort_no_field)) {
+            if (!empty($description_field) || !empty($is_active_field) || !empty($sort_no_field)) {
                 $audit_fields_changed .= "<br><ul>";
-                $audit_fields_changed .= !empty($description_field)? "<li>$description_field</li>" : "";
-                $audit_fields_changed .= !empty($is_active_field)? "<li>$is_active_field</li>" : "";
-                $audit_fields_changed .= !empty($sort_no_field)? "<li>$sort_no_field</li>" : "";
+                $audit_fields_changed .= !empty($description_field) ? "<li>$description_field</li>" : "";
+                $audit_fields_changed .= !empty($is_active_field) ? "<li>$is_active_field</li>" : "";
+                $audit_fields_changed .= !empty($sort_no_field) ? "<li>$sort_no_field</li>" : "";
                 $audit_fields_changed .= "</ul>";
             }
             /** End Arrange audit fields changes */
@@ -305,7 +316,7 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = 'COB File Prefix: ' . $fileprefix->description . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit(0, "Master Setup", $remarks);
                 }
@@ -321,7 +332,8 @@ class AdminController extends BaseController {
     }
 
     // add file
-    public function addFile() {
+    public function addFile()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
@@ -352,27 +364,28 @@ class AdminController extends BaseController {
         return View::make('page_en.add_file', $viewData);
     }
 
-    public function getLatestFile() {
+    public function getLatestFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
-            if(!empty($data['city']) || !empty($data['file_id'])) {
+            if (!empty($data['city']) || !empty($data['file_id'])) {
                 $file = Files::file()
-                            ->join('strata', 'strata.file_id', '=', 'files.id')
-                            // ->where('strata.town', $data['city'])
-                            ->where(function($query) use($data){
-                                if(!empty($data['city'])) {
-                                    $query->where('strata.town', $data['city']);
-                                }
-                                if(!empty($data['file_id'])) {
-                                    $query->where('files.id', Helper::decode($data['file_id'], $this->module['cob']['file']['name']));
-                                }
-                            })
-                            ->select(['files.*', 'strata.name as strata_name'])
-                            ->orderBy('id', 'desc')
-                            ->first();
-                if($file) {
+                    ->join('strata', 'strata.file_id', '=', 'files.id')
+                    // ->where('strata.town', $data['city'])
+                    ->where(function ($query) use ($data) {
+                        if (!empty($data['city'])) {
+                            $query->where('strata.town', $data['city']);
+                        }
+                        if (!empty($data['file_id'])) {
+                            $query->where('files.id', Helper::decode($data['file_id'], $this->module['cob']['file']['name']));
+                        }
+                    })
+                    ->select(['files.*', 'strata.name as strata_name'])
+                    ->orderBy('id', 'desc')
+                    ->first();
+                if ($file) {
                     $latest_file = Files::orderBy('created_at', 'desc')
-                                    ->first();
+                        ->first();
                     return [
                         'status' => true,
                         'strata_name' => $file->strata_name,
@@ -385,7 +398,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function submitFile() {
+    public function submitFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -469,7 +483,8 @@ class AdminController extends BaseController {
     }
 
     // file list
-    public function fileList() {
+    public function fileList()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -500,107 +515,108 @@ class AdminController extends BaseController {
         return View::make('page_en.file_list', $viewData);
     }
 
-    public function getFileList() {
+    public function getFileList()
+    {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', '!=', 2)
-                        ->where('files.is_deleted', 0);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', '!=', 2)
+                    ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', '!=', 2)
-                        ->where('files.is_deleted', 0);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', '!=', 2)
+                    ->where('files.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
-                        ->where('files.is_active', '!=', 2)
-                        ->where('files.is_deleted', 0)
-                        ->where('company.is_hidden', false);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
+                    ->where('files.is_active', '!=', 2)
+                    ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('files.is_active', '!=', 2)
-                        ->where('files.is_deleted', 0);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_active', '!=', 2)
+                    ->where('files.is_deleted', 0);
             }
         }
 
-        if(!empty(Input::get('company'))) {
+        if (!empty(Input::get('company'))) {
             $file = $file->where('company.short_name', Input::get('company'));
         }
 
         return Datatables::of($file)
-                        ->addColumn('cob', function ($model) {
-                            return ($model->company_id ? $model->company->short_name : '-');
-                        })
-                        ->editColumn('file_no', function ($model) {
-                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
-                        })
-                        ->addColumn('strata', function ($model) {
-                            return ($model->strata_id ? $model->strata->name : '-');
-                        })
-                        ->addColumn('year', function ($model) {
-                            return ($model->strata->year != '0' ? $model->strata->year : '');
-                        })
-                        ->addColumn('park', function ($model) {
-                            return ($model->strata->park > '0' ? $model->strata->parks->description : '');
-                        })
-                        ->addColumn('category', function ($model) {
-                            return ($model->strata->category > '0' ? $model->strata->categories->description : '');
-                        })
-                        ->addColumn('active', function ($model) {
-                            if ($model->is_active == 1) {
-                                $is_active = trans('app.forms.yes');
-                            } else {
-                                $is_active = trans('app.forms.no');
-                            }
+            ->addColumn('cob', function ($model) {
+                return ($model->company_id ? $model->company->short_name : '-');
+            })
+            ->editColumn('file_no', function ($model) {
+                return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
+            })
+            ->addColumn('strata', function ($model) {
+                return ($model->strata_id ? $model->strata->name : '-');
+            })
+            ->addColumn('year', function ($model) {
+                return ($model->strata->year != '0' ? $model->strata->year : '');
+            })
+            ->addColumn('park', function ($model) {
+                return ($model->strata->park > '0' ? $model->strata->parks->description : '');
+            })
+            ->addColumn('category', function ($model) {
+                return ($model->strata->category > '0' ? $model->strata->categories->description : '');
+            })
+            ->addColumn('active', function ($model) {
+                if ($model->is_active == 1) {
+                    $is_active = trans('app.forms.yes');
+                } else {
+                    $is_active = trans('app.forms.no');
+                }
 
-                            return $is_active;
-                        })
-                        ->addColumn('action', function ($model) {
-                            $button = '';
-                            if (AccessGroup::hasUpdate(9)) {
-                                if ($model->is_active == 1) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                                    // $button .= '<a href="#" class="" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
-                                } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                                    // $button .= '<a href="#" class="" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
-                                }
-                                if (Auth::user()->role == 1) {
-                                    // $button .= '<a class="modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '"><img src='. asset("assets/common/img/icon/edit.png") .' width="20px"></a>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                                }
-                                // $button .= '<a class="" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>';
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
-                            }
+                return $is_active;
+            })
+            ->addColumn('action', function ($model) {
+                $button = '';
+                if (AccessGroup::hasUpdate(9)) {
+                    if ($model->is_active == 1) {
+                        $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                        // $button .= '<a href="#" class="" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')"><img src='. asset("assets/common/img/icon/disable-eye.png") .' width="20px"></a>&nbsp;';
+                    } else {
+                        $button .= '<button type="button" class="btn btn-xs btn-default" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                        // $button .= '<a href="#" class="" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')"><img src='. asset("assets/common/img/icon/eye.png") .' width="28px"></a>&nbsp;';
+                    }
+                    if (Auth::user()->role == 1) {
+                        // $button .= '<a class="modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '"><img src='. asset("assets/common/img/icon/edit.png") .' width="20px"></a>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                    }
+                    // $button .= '<a class="" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><img src='. asset("assets/common/img/icon/trash.png") .' width="20px"></a>';
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                }
 
-                            return $button;
-                        })
-                        ->make(true);
+                return $button;
+            })
+            ->make(true);
     }
 
     // file list
-    public function fileListBeforeVP() {
+    public function fileListBeforeVP()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -631,98 +647,100 @@ class AdminController extends BaseController {
         return View::make('page_en.file_list_before_vp', $viewData);
     }
 
-    public function getFileListBeforeVP() {
+    public function getFileListBeforeVP()
+    {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', 2)
-                        ->where('files.is_deleted', 0);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id'])
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', 2)
+                    ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('files.is_active', 2)
-                        ->where('files.is_deleted', 0);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id'])
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_active', 2)
+                    ->where('files.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.is_active', 2)
-                        ->where('files.is_deleted', 0)
-                        ->where('company.is_hidden', false);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id'])
+                    ->where('files.is_active', 2)
+                    ->where('files.is_deleted', 0)
+                    ->where('company.is_hidden', false);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->leftJoin('park', 'strata.park', '=', 'park.id')
-                        ->leftJoin('category', 'strata.category', '=', 'category.id')
-                        ->select(['files.*', 'strata.id as strata_id'])
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('files.is_active', 2)
-                        ->where('files.is_deleted', 0);
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('park', 'strata.park', '=', 'park.id')
+                    ->leftJoin('category', 'strata.category', '=', 'category.id')
+                    ->select(['files.*', 'strata.id as strata_id'])
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_active', 2)
+                    ->where('files.is_deleted', 0);
             }
         }
 
         return Datatables::of($file)
-                        ->addColumn('cob', function ($model) {
-                            return ($model->company_id ? $model->company->short_name : '-');
-                        })
-                        ->editColumn('file_no', function ($model) {
-                            return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
-                        })
-                        ->addColumn('strata', function ($model) {
-                            return ($model->strata_id ? $model->strata->name : '-');
-                        })
-                        ->addColumn('year', function ($model) {
-                            return ($model->strata->year != '0' ? $model->strata->year : '');
-                        })
-                        ->addColumn('park', function ($model) {
-                            return ($model->strata->parks > '0' ? $model->strata->parks->description : '');
-                        })
-                        ->addColumn('category', function ($model) {
-                            return ($model->strata->category > '0' ? $model->strata->categories->description : '');
-                        })
-                        ->addColumn('active', function ($model) {
-                            if ($model->is_active == 1) {
-                                $is_active = trans('app.forms.yes');
-                            } else {
-                                $is_active = trans('app.forms.no');
-                            }
+            ->addColumn('cob', function ($model) {
+                return ($model->company_id ? $model->company->short_name : '-');
+            })
+            ->editColumn('file_no', function ($model) {
+                return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
+            })
+            ->addColumn('strata', function ($model) {
+                return ($model->strata_id ? $model->strata->name : '-');
+            })
+            ->addColumn('year', function ($model) {
+                return ($model->strata->year != '0' ? $model->strata->year : '');
+            })
+            ->addColumn('park', function ($model) {
+                return ($model->strata->parks > '0' ? $model->strata->parks->description : '');
+            })
+            ->addColumn('category', function ($model) {
+                return ($model->strata->category > '0' ? $model->strata->categories->description : '');
+            })
+            ->addColumn('active', function ($model) {
+                if ($model->is_active == 1) {
+                    $is_active = trans('app.forms.yes');
+                } else {
+                    $is_active = trans('app.forms.no');
+                }
 
-                            return $is_active;
-                        })
-                        ->addColumn('action', function ($model) {
-                            $button = '';
-                            if (AccessGroup::hasUpdate(9)) {
-                                if ($model->is_active == 1) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                                } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                                }
-                                if (Auth::user()->role == 1) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
-                                }
-                                $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
-                            }
+                return $is_active;
+            })
+            ->addColumn('action', function ($model) {
+                $button = '';
+                if (AccessGroup::hasUpdate(9)) {
+                    if ($model->is_active == 1) {
+                        $button .= '<button type="button" class="btn btn-xs btn-default" onclick="inactiveFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    } else {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeFileList(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    }
+                    if (Auth::user()->role == 1) {
+                        $button .= '<button type="button" class="btn btn-xs btn-warning modal-update-file-no" data-toggle="modal" data-target="#updateFileNoForm" data-id="' . Helper::encode($model->id) . '" data-file_no="' . $model->file_no . '">' . trans('app.forms.update_file_no') . '</button>&nbsp;';
+                    }
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" onclick="deleteFileList(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
+                }
 
-                            return $button;
-                        })
-                        ->make(true);
+                return $button;
+            })
+            ->make(true);
     }
 
-    public function inactiveFileList() {
+    public function inactiveFileList()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -752,7 +770,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeFileList() {
+    public function activeFileList()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -783,7 +802,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteFileList() {
+    public function deleteFileList()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -849,7 +869,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateFileNo() {
+    public function updateFileNo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -868,12 +889,12 @@ class AdminController extends BaseController {
                 $files = Files::findOrFail($id);
                 if ($files) {
                     /** Arrange audit fields changes */
-                    $file_no_field = $data['file_no'] == $files->file_no? "": "file_no";
-        
+                    $file_no_field = $data['file_no'] == $files->file_no ? "" : "file_no";
+
                     $audit_fields_changed = "";
-                    if(!empty($file_no_field)) {
+                    if (!empty($file_no_field)) {
                         $audit_fields_changed .= "<br><ul>";
-                        $audit_fields_changed .= !empty($file_no_field)? "<li>$file_no_field</li>" : "";
+                        $audit_fields_changed .= !empty($file_no_field) ? "<li>$file_no_field</li>" : "";
                         $audit_fields_changed .= "</ul>";
                     }
                     /** End Arrange audit fields changes */
@@ -882,7 +903,7 @@ class AdminController extends BaseController {
                     $updated = $files->save();
                     if ($updated) {
                         # Audit Trail
-                        if(!empty($audit_fields_changed)) {
+                        if (!empty($audit_fields_changed)) {
                             $remarks = $files->file_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
@@ -903,7 +924,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function viewHouse($id) {
+    public function viewHouse($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::findOrFail(Helper::decode($id));
@@ -916,7 +938,7 @@ class AdminController extends BaseController {
         $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -936,9 +958,10 @@ class AdminController extends BaseController {
         return View::make('page_en.view_house_scheme', $viewData);
     }
 
-    public function house($id) {
+    public function house($id)
+    {
         //get user permission
-        if(Auth::user()->isMPS()) {
+        if (Auth::user()->isMPS()) {
             return Redirect::to('update/strata/' . $id);
         }
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -965,7 +988,7 @@ class AdminController extends BaseController {
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $users = User::where('company_id', $files->company_id)->where('is_active', 1)->where('status', 1)->where('is_deleted', 0)->orderBy('full_name', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -986,10 +1009,11 @@ class AdminController extends BaseController {
         return View::make('page_en.update_house_scheme', $viewData);
     }
 
-    public function submitUpdateHouseScheme() {
+    public function submitUpdateHouseScheme()
+    {
         $data = Input::all();
         if (Request::ajax()) {
-            
+
             ## EAI Call
             // $url = $this->eai_domain . $this->eai_route['file']['cob']['house']['update'];
             // $response = json_decode((string) ((new KCurl())->requestPost(null, 
@@ -1012,10 +1036,10 @@ class AdminController extends BaseController {
                 $notify_data['route'] = route('cob.file.house.edit', Request::get('file_id'));
                 $notify_data['cob_route'] = route('cob.file.draft.house.edit', Request::get('file_id'));
                 $notify_data['strata'] = "You";
-                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['strata_name'] = $strata->name != "" ? $strata->name : $files->file_no;
                 $notify_data['title'] = "COB File House Scheme";
                 $notify_data['module'] = "House Scheme";
-                
+
                 (new NotificationService())->store($notify_data);
             } else {
                 $house_scheme = HouseScheme::firstOrNew(array('file_id' => $files->id));
@@ -1050,92 +1074,98 @@ class AdminController extends BaseController {
             $liquidator_fax_no = $data['liquidator_fax_no'];
             $liquidator_remarks = $data['liquidator_remarks'];
             $liquidator_is_active = $data['liquidator_is_active'];
-            $is_liquidator = ($data['is_liquidator'] == 'yes')? 1 : 0;
+            $is_liquidator = ($data['is_liquidator'] == 'yes') ? 1 : 0;
 
             /** Arrange audit fields changes */
-            $file_status_field = $data['is_active'] == $files->is_active? "": "status";
-            $developer_name_field = $data['name'] == $house_scheme->name? "": "name";
-            $developer_company_field = $data['developer'] == $house_scheme->developer? "": "developer company";
-            $developer_address1_field = $data['address1'] == $house_scheme->address1? "": "developer address1";
-            $developer_address2_field = $data['address2'] == $house_scheme->address2? "": "developer address2";
-            $developer_address3_field = $data['address3'] == $house_scheme->address3? "": "developer address3";
-            $developer_address4_field = $data['address4'] == $house_scheme->address4? "": "developer address4";
-            $developer_city_field = $data['city'] == $house_scheme->city? "": "developer city";
-            $developer_poscode_field = $data['poscode'] == $house_scheme->poscode? "": "developer poscode";
-            $developer_state_field = $data['state'] == $house_scheme->state? "": "developer state";
-            $developer_country_field = $data['country'] == $house_scheme->country? "": "developer country";
-            $developer_phone_no_field = $data['phone_no'] == $house_scheme->phone_no? "": "developer phon no";
-            $developer_fax_no_field = $data['fax_no'] == $house_scheme->fax_no? "": "developer fax no";
-            $developer_remarks_field = $data['remarks'] == $house_scheme->remarks? "": "developer remarks";
-            $developer_is_active_field = $data['is_active'] == $house_scheme->is_active? "": "developer status";
+            $file_status_field = $data['is_active'] == $files->is_active ? "" : "status";
+            $developer_name_field = $data['name'] == $house_scheme->name ? "" : "name";
+            $developer_company_field = $data['developer'] == $house_scheme->developer ? "" : "developer company";
+            $developer_address1_field = $data['address1'] == $house_scheme->address1 ? "" : "developer address1";
+            $developer_address2_field = $data['address2'] == $house_scheme->address2 ? "" : "developer address2";
+            $developer_address3_field = $data['address3'] == $house_scheme->address3 ? "" : "developer address3";
+            $developer_address4_field = $data['address4'] == $house_scheme->address4 ? "" : "developer address4";
+            $developer_city_field = $data['city'] == $house_scheme->city ? "" : "developer city";
+            $developer_poscode_field = $data['poscode'] == $house_scheme->poscode ? "" : "developer poscode";
+            $developer_state_field = $data['state'] == $house_scheme->state ? "" : "developer state";
+            $developer_country_field = $data['country'] == $house_scheme->country ? "" : "developer country";
+            $developer_phone_no_field = $data['phone_no'] == $house_scheme->phone_no ? "" : "developer phon no";
+            $developer_fax_no_field = $data['fax_no'] == $house_scheme->fax_no ? "" : "developer fax no";
+            $developer_remarks_field = $data['remarks'] == $house_scheme->remarks ? "" : "developer remarks";
+            $developer_is_active_field = $data['is_active'] == $house_scheme->is_active ? "" : "developer status";
 
-            $liquidator_name_field = $data['liquidator_name'] == $house_scheme->liquidator_name? "": "liquidator name";
-            $liquidator_company_field = $data['liquidator'] == $house_scheme->liquidator? "": "liquidator company";
-            $liquidator_address1_field = $data['liquidator_address1'] == $house_scheme->liquidator_address1? "": "liquidator address1";
-            $liquidator_address2_field = $data['liquidator_address2'] == $house_scheme->liquidator_address2? "": "liquidator address2";
-            $liquidator_address3_field = $data['liquidator_address3'] == $house_scheme->liquidator_address3? "": "liquidator address3";
-            $liquidator_address4_field = $data['liquidator_address4'] == $house_scheme->liquidator_address4? "": "liquidator address4";
-            $liquidator_city_field = $data['liquidator_city'] == $house_scheme->liquidator_city? "": "liquidator city";
-            $liquidator_state_field = $data['liquidator_state'] == $house_scheme->liquidator_state? "": "liquidator state";
-            $liquidator_country_field = $data['liquidator_country'] == $house_scheme->liquidator_country? "": "liquidator country";
-            $liquidator_phone_no_field = $data['liquidator_phone_no'] == $house_scheme->liquidator_phone_no? "": "liquidator phone_no";
-            $liquidator_fax_no_field = $data['liquidator_fax_no'] == $house_scheme->liquidator_fax_no? "": "liquidator fax_no";
-            $liquidator_remarks_field = $data['liquidator_remarks'] == $house_scheme->liquidator_remarks? "": "liquidator remarks";
-            $liquidator_is_active_field = $data['liquidator_is_active'] == $house_scheme->liquidator_is_active? "": "liquidator is_active";
-            $is_liquidator_field = $data['is_liquidator'] == $house_scheme->is_liquidator? "": "is_liquidator";
+            $liquidator_name_field = $data['liquidator_name'] == $house_scheme->liquidator_name ? "" : "liquidator name";
+            $liquidator_company_field = $data['liquidator'] == $house_scheme->liquidator ? "" : "liquidator company";
+            $liquidator_address1_field = $data['liquidator_address1'] == $house_scheme->liquidator_address1 ? "" : "liquidator address1";
+            $liquidator_address2_field = $data['liquidator_address2'] == $house_scheme->liquidator_address2 ? "" : "liquidator address2";
+            $liquidator_address3_field = $data['liquidator_address3'] == $house_scheme->liquidator_address3 ? "" : "liquidator address3";
+            $liquidator_address4_field = $data['liquidator_address4'] == $house_scheme->liquidator_address4 ? "" : "liquidator address4";
+            $liquidator_city_field = $data['liquidator_city'] == $house_scheme->liquidator_city ? "" : "liquidator city";
+            $liquidator_state_field = $data['liquidator_state'] == $house_scheme->liquidator_state ? "" : "liquidator state";
+            $liquidator_country_field = $data['liquidator_country'] == $house_scheme->liquidator_country ? "" : "liquidator country";
+            $liquidator_phone_no_field = $data['liquidator_phone_no'] == $house_scheme->liquidator_phone_no ? "" : "liquidator phone_no";
+            $liquidator_fax_no_field = $data['liquidator_fax_no'] == $house_scheme->liquidator_fax_no ? "" : "liquidator fax_no";
+            $liquidator_remarks_field = $data['liquidator_remarks'] == $house_scheme->liquidator_remarks ? "" : "liquidator remarks";
+            $liquidator_is_active_field = $data['liquidator_is_active'] == $house_scheme->liquidator_is_active ? "" : "liquidator is_active";
+            $is_liquidator_field = $data['is_liquidator'] == $house_scheme->is_liquidator ? "" : "is_liquidator";
 
             $audit_fields_changed = "";
-            if(!empty($file_status_field) || !empty($developer_name_field) || !empty($developer_company_field) || !empty($developer_address1_field)
-            || !empty($developer_address2_field) || !empty($developer_address3_field) || !empty($developer_address4_field) || !empty($developer_city_field)
-            || !empty($developer_poscode_field) || !empty($developer_state_field) || !empty($developer_country_field) || !empty($developer_phone_no_field)
-            || !empty($developer_fax_no_field) || !empty($developer_remarks_field) || !empty($developer_is_active_field) || !empty($liquidator_name_field)
-            || !empty($liquidator_company_field) || !empty($liquidator_address1_field) || !empty($liquidator_address2_field) || !empty($liquidator_address3_field)
-            || !empty($liquidator_address4_field) || !empty($liquidator_city_field) || !empty($liquidator_state_field) || !empty($liquidator_country_field)
-            || !empty($liquidator_phone_no_field) || !empty($liquidator_fax_no_field) || !empty($liquidator_remarks_field) || !empty($liquidator_is_active_field)
-            || !empty($is_liquidator_field)) {
+            if (
+                !empty($file_status_field) || !empty($developer_name_field) || !empty($developer_company_field) || !empty($developer_address1_field)
+                || !empty($developer_address2_field) || !empty($developer_address3_field) || !empty($developer_address4_field) || !empty($developer_city_field)
+                || !empty($developer_poscode_field) || !empty($developer_state_field) || !empty($developer_country_field) || !empty($developer_phone_no_field)
+                || !empty($developer_fax_no_field) || !empty($developer_remarks_field) || !empty($developer_is_active_field) || !empty($liquidator_name_field)
+                || !empty($liquidator_company_field) || !empty($liquidator_address1_field) || !empty($liquidator_address2_field) || !empty($liquidator_address3_field)
+                || !empty($liquidator_address4_field) || !empty($liquidator_city_field) || !empty($liquidator_state_field) || !empty($liquidator_country_field)
+                || !empty($liquidator_phone_no_field) || !empty($liquidator_fax_no_field) || !empty($liquidator_remarks_field) || !empty($liquidator_is_active_field)
+                || !empty($is_liquidator_field)
+            ) {
                 $audit_fields_changed .= "<br><ul>";
-                $audit_fields_changed .= !empty($file_status_field)? "<li> file: $file_status_field</li>" : "";
-                if(!empty($developer_name_field) || !empty($developer_company_field) || !empty($developer_address1_field) || !empty($developer_address2_field) 
-                || !empty($developer_address3_field) || !empty($developer_address4_field) || !empty($developer_city_field) || !empty($developer_poscode_field)
-                || !empty($developer_state_field) || !empty($developer_country_field) || !empty($developer_phone_no_field)
-                || !empty($developer_fax_no_field) || !empty($developer_remarks_field) || !empty($developer_is_active_field)) {
+                $audit_fields_changed .= !empty($file_status_field) ? "<li> file: $file_status_field</li>" : "";
+                if (
+                    !empty($developer_name_field) || !empty($developer_company_field) || !empty($developer_address1_field) || !empty($developer_address2_field)
+                    || !empty($developer_address3_field) || !empty($developer_address4_field) || !empty($developer_city_field) || !empty($developer_poscode_field)
+                    || !empty($developer_state_field) || !empty($developer_country_field) || !empty($developer_phone_no_field)
+                    || !empty($developer_fax_no_field) || !empty($developer_remarks_field) || !empty($developer_is_active_field)
+                ) {
                     $audit_fields_changed .= "<li> developer: (";
-                    $audit_fields_changed .= !empty($developer_name_field)? "$developer_name_field, " : "";
-                    $audit_fields_changed .= !empty($developer_company_field)? "$developer_company_field, " : "";
-                    $audit_fields_changed .= !empty($developer_address1_field)? "$developer_address1_field, " : "";
-                    $audit_fields_changed .= !empty($developer_address2_field)? "$developer_address2_field, " : "";
-                    $audit_fields_changed .= !empty($developer_address3_field)? "$developer_address3_field, " : "";
-                    $audit_fields_changed .= !empty($developer_address4_field)? "$developer_address4_field, " : "";
-                    $audit_fields_changed .= !empty($developer_city_field)? "$developer_city_field, " : "";
-                    $audit_fields_changed .= !empty($developer_poscode_field)? "$developer_poscode_field, " : "";
-                    $audit_fields_changed .= !empty($developer_state_field)? "$developer_state_field, " : "";
-                    $audit_fields_changed .= !empty($developer_country_field)? "$developer_country_field, " : "";
-                    $audit_fields_changed .= !empty($developer_phone_no_field)? "$developer_phone_no_field, " : "";
-                    $audit_fields_changed .= !empty($developer_fax_no_field)? "$developer_fax_no_field, " : "";
-                    $audit_fields_changed .= !empty($developer_remarks_field)? "$developer_remarks_field, " : "";
-                    $audit_fields_changed .= !empty($developer_is_active_field)? "$developer_is_active_field" : "";
+                    $audit_fields_changed .= !empty($developer_name_field) ? "$developer_name_field, " : "";
+                    $audit_fields_changed .= !empty($developer_company_field) ? "$developer_company_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address1_field) ? "$developer_address1_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address2_field) ? "$developer_address2_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address3_field) ? "$developer_address3_field, " : "";
+                    $audit_fields_changed .= !empty($developer_address4_field) ? "$developer_address4_field, " : "";
+                    $audit_fields_changed .= !empty($developer_city_field) ? "$developer_city_field, " : "";
+                    $audit_fields_changed .= !empty($developer_poscode_field) ? "$developer_poscode_field, " : "";
+                    $audit_fields_changed .= !empty($developer_state_field) ? "$developer_state_field, " : "";
+                    $audit_fields_changed .= !empty($developer_country_field) ? "$developer_country_field, " : "";
+                    $audit_fields_changed .= !empty($developer_phone_no_field) ? "$developer_phone_no_field, " : "";
+                    $audit_fields_changed .= !empty($developer_fax_no_field) ? "$developer_fax_no_field, " : "";
+                    $audit_fields_changed .= !empty($developer_remarks_field) ? "$developer_remarks_field, " : "";
+                    $audit_fields_changed .= !empty($developer_is_active_field) ? "$developer_is_active_field" : "";
                     $audit_fields_changed .= ")</li>";
                 }
-                if( !empty($liquidator_name_field) || !empty($liquidator_company_field) || !empty($liquidator_address1_field) || !empty($liquidator_address2_field) 
-                || !empty($liquidator_address3_field) || !empty($liquidator_address4_field) || !empty($liquidator_city_field) || !empty($liquidator_state_field) 
-                || !empty($liquidator_country_field) || !empty($liquidator_phone_no_field) || !empty($liquidator_fax_no_field) || !empty($liquidator_remarks_field) 
-                || !empty($liquidator_is_active_field) || !empty($is_liquidator_field)) {
+                if (
+                    !empty($liquidator_name_field) || !empty($liquidator_company_field) || !empty($liquidator_address1_field) || !empty($liquidator_address2_field)
+                    || !empty($liquidator_address3_field) || !empty($liquidator_address4_field) || !empty($liquidator_city_field) || !empty($liquidator_state_field)
+                    || !empty($liquidator_country_field) || !empty($liquidator_phone_no_field) || !empty($liquidator_fax_no_field) || !empty($liquidator_remarks_field)
+                    || !empty($liquidator_is_active_field) || !empty($is_liquidator_field)
+                ) {
                     $audit_fields_changed .= "<li> liquidator: (";
-                    $audit_fields_changed .= !empty($liquidator_name_field)? "$liquidator_name_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_company_field)? "$liquidator_company_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_address1_field)? "$liquidator_address1_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_address2_field)? "$liquidator_address2_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_address3_field)? "$liquidator_address3_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_address4_field)? "$liquidator_address4_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_city_field)? "$liquidator_city_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_state_field)? "$liquidator_state_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_country_field)? "$liquidator_country_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_phone_no_field)? "$liquidator_phone_no_field, " : "";
-                    $audit_fields_changed .= !empty($developer_phone_no_field)? "$developer_phone_no_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_fax_no_field)? "$liquidator_fax_no_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_remarks_field)? "$liquidator_remarks_field, " : "";
-                    $audit_fields_changed .= !empty($liquidator_is_active_field)? "$liquidator_is_active_field" : "";
-                    $audit_fields_changed .= !empty($is_liquidator_field)? "$is_liquidator_field" : "";
+                    $audit_fields_changed .= !empty($liquidator_name_field) ? "$liquidator_name_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_company_field) ? "$liquidator_company_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address1_field) ? "$liquidator_address1_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address2_field) ? "$liquidator_address2_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address3_field) ? "$liquidator_address3_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_address4_field) ? "$liquidator_address4_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_city_field) ? "$liquidator_city_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_state_field) ? "$liquidator_state_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_country_field) ? "$liquidator_country_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_phone_no_field) ? "$liquidator_phone_no_field, " : "";
+                    $audit_fields_changed .= !empty($developer_phone_no_field) ? "$developer_phone_no_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_fax_no_field) ? "$liquidator_fax_no_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_remarks_field) ? "$liquidator_remarks_field, " : "";
+                    $audit_fields_changed .= !empty($liquidator_is_active_field) ? "$liquidator_is_active_field" : "";
+                    $audit_fields_changed .= !empty($is_liquidator_field) ? "$is_liquidator_field" : "";
                     $audit_fields_changed .= ")</li>";
                 }
                 $audit_fields_changed .= "</ul>";
@@ -1184,12 +1214,11 @@ class AdminController extends BaseController {
             $house_scheme->save();
 
             # Audit Trail
-            if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
-
             } else {
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
@@ -1205,7 +1234,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function viewStrata($id) {
+    public function viewStrata($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::findOrFail(Helper::decode($id));
@@ -1269,11 +1299,12 @@ class AdminController extends BaseController {
         return View::make('page_en.view_strata', $viewData);
     }
 
-    public function strata($id) {
+    public function strata($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
-        
+
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $strata = StrataDraft::where('file_id', $files->id)->first();
             $residential = ResidentialDraft::where('file_id', $files->id)->first();
@@ -1360,7 +1391,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_strata', $viewData);
     }
 
-    public function findDUN() {
+    public function findDUN()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -1380,7 +1412,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function findPark() {
+    public function findPark()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -1399,7 +1432,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function submitUpdateStrata() {
+    public function submitUpdateStrata()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             ## EAI Call
@@ -1429,10 +1463,10 @@ class AdminController extends BaseController {
                 $notify_data['route'] = route('cob.file.strata.edit', Request::get('file_id'));
                 $notify_data['cob_route'] = route('cob.file.draft.strata.edit', Request::get('file_id'));
                 $notify_data['strata'] = "You";
-                $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $files->file_no;
                 $notify_data['title'] = "COB File Strata";
                 $notify_data['module'] = "Strata";
-                
+
                 (new NotificationService())->store($notify_data);
             } else {
                 $strata = Strata::firstOrNew(array('file_id' => $files->id));
@@ -1442,7 +1476,7 @@ class AdminController extends BaseController {
             }
             $residentialExtra = ResidentialExtra::where('file_id', $files->id)->get();
             $commercialExtra = CommercialExtra::where('file_id', $files->id)->get();
-            
+
             // strata
             $name = $data['strata_name'];
             $title = $data['strata_title'];
@@ -1519,42 +1553,42 @@ class AdminController extends BaseController {
             $gated_unit = $data['gated_unit'];
             $others = $data['others'];
 
-            
+
             /** Arrange audit fields changes */
-            if(!Auth::user()->isJMB() && !Auth::user()->isDeveloper()) {
+            if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()) {
                 $audit_fields_changed = "";
-                $strata_title_field = $title == $strata->title? "": "strata title";
-                $strata_name_field = $name == $strata->name? "": "strata name";
-                $strata_parliament_field = $parliament == $strata->parliament? "": "strata parliament";
-                $strata_dun_field = $dun == $strata->dun? "": "strata dun";
-                $strata_park_field = $park == $strata->park? "": "strata park";
-                $strata_address1_field = $address1 == $strata->address1? "": "strata address1";
-                $strata_address2_field = $address2 == $strata->address2? "": "strata address2";
-                $strata_address3_field = $address3 == $strata->address3? "": "strata address3";
-                $strata_address4_field = $address4 == $strata->address4? "": "strata address4";
-                $strata_poscode_field = $poscode == $strata->poscode? "": "strata poscode";
-                $strata_city_field = $city == $strata->city? "": "strata city";
-                $strata_state_field = $state == $strata->state? "": "strata state";
-                $strata_country_field = $country == $strata->country? "": "strata country";
-                $strata_block_no_field = $block_no == $strata->block_no? "": "strata block no";
-                $strata_total_floor_field = $floor == $strata->total_floor? "": "strata total floor";
-                $strata_year_field = $year == $strata->year? "": "strata year";
-                $strata_town_field = $town == $strata->town? "": "strata town";
-                $strata_area_field = $area == $strata->area? "": "strata area";
-                $strata_land_area_field = $land_area == $strata->land_area? "": "strata land area";
-                $strata_total_share_unit_field = $total_share_unit == $strata->total_share_unit? "": "strata total share unit";
-                $strata_land_area_unit_field = $land_area_unit == $strata->land_area_unit? "": "strata land area unit";
-                $strata_lot_no_field = $lot_no == $strata->lot_no? "": "strata lot no";
-                $strata_ownership_no_field = $ownership_no == $strata->ownership_no? "": "strata ownership no";
-                $strata_date_field = $date == $strata->date? "": "strata date";
-                $strata_land_title_field = $land_title == $strata->land_title? "": "strata land title";
-                $strata_category_field = $category == $strata->category? "": "strata category";
-                $strata_perimeter_field = $perimeter == $strata->perimeter? "": "strata perimeter";
-                $strata_ccc_no_field = $ccc_no == $strata->ccc_no? "": "strata ccc_no";
-                $strata_ccc_date_field = $ccc_date == $strata->ccc_date? "": "strata ccc_date";
-                $strata_file_url_field = $stratafile == $strata->file_url? "": "strata file";
-                $strata_is_residential_field = $is_residential == $strata->is_residential? "": "strata is residential";
-                $strata_is_commercial_field = $is_commercial == $strata->is_commercial? "": "strata is commercial";
+                $strata_title_field = $title == $strata->title ? "" : "strata title";
+                $strata_name_field = $name == $strata->name ? "" : "strata name";
+                $strata_parliament_field = $parliament == $strata->parliament ? "" : "strata parliament";
+                $strata_dun_field = $dun == $strata->dun ? "" : "strata dun";
+                $strata_park_field = $park == $strata->park ? "" : "strata park";
+                $strata_address1_field = $address1 == $strata->address1 ? "" : "strata address1";
+                $strata_address2_field = $address2 == $strata->address2 ? "" : "strata address2";
+                $strata_address3_field = $address3 == $strata->address3 ? "" : "strata address3";
+                $strata_address4_field = $address4 == $strata->address4 ? "" : "strata address4";
+                $strata_poscode_field = $poscode == $strata->poscode ? "" : "strata poscode";
+                $strata_city_field = $city == $strata->city ? "" : "strata city";
+                $strata_state_field = $state == $strata->state ? "" : "strata state";
+                $strata_country_field = $country == $strata->country ? "" : "strata country";
+                $strata_block_no_field = $block_no == $strata->block_no ? "" : "strata block no";
+                $strata_total_floor_field = $floor == $strata->total_floor ? "" : "strata total floor";
+                $strata_year_field = $year == $strata->year ? "" : "strata year";
+                $strata_town_field = $town == $strata->town ? "" : "strata town";
+                $strata_area_field = $area == $strata->area ? "" : "strata area";
+                $strata_land_area_field = $land_area == $strata->land_area ? "" : "strata land area";
+                $strata_total_share_unit_field = $total_share_unit == $strata->total_share_unit ? "" : "strata total share unit";
+                $strata_land_area_unit_field = $land_area_unit == $strata->land_area_unit ? "" : "strata land area unit";
+                $strata_lot_no_field = $lot_no == $strata->lot_no ? "" : "strata lot no";
+                $strata_ownership_no_field = $ownership_no == $strata->ownership_no ? "" : "strata ownership no";
+                $strata_date_field = $date == $strata->date ? "" : "strata date";
+                $strata_land_title_field = $land_title == $strata->land_title ? "" : "strata land title";
+                $strata_category_field = $category == $strata->category ? "" : "strata category";
+                $strata_perimeter_field = $perimeter == $strata->perimeter ? "" : "strata perimeter";
+                $strata_ccc_no_field = $ccc_no == $strata->ccc_no ? "" : "strata ccc_no";
+                $strata_ccc_date_field = $ccc_date == $strata->ccc_date ? "" : "strata ccc_date";
+                $strata_file_url_field = $stratafile == $strata->file_url ? "" : "strata file";
+                $strata_is_residential_field = $is_residential == $strata->is_residential ? "" : "strata is residential";
+                $strata_is_commercial_field = $is_commercial == $strata->is_commercial ? "" : "strata is commercial";
                 $residential_text = '';
                 $residential_unit_no_field = '';
                 $residential_maintenance_fee_field = '';
@@ -1567,134 +1601,137 @@ class AdminController extends BaseController {
                 $commercial_maintenance_fee_option_field = '';
                 $commercial_sinking_fund_field = '';
                 $commercial_sinking_fund_option_field = '';
-                if($strata->is_residential && $is_residential) {
-                    $residential_unit_no_field = $residential_unit_no == $residential->unit_no? "": "strata residential unit no";
-                    $residential_maintenance_fee_field = $residential_maintenance_fee == $residential->maintenance_fee? "": "strata residential maintenance fee";
-                    $residential_maintenance_fee_option_field = $residential_maintenance_fee_option == $residential->maintenance_fee_option? "": "strata residential maintenance fee option";
-                    $residential_sinking_fund_field = $residential_sinking_fund == $residential->sinking_fund? "": "strata residential sinking fund";
-                    $residential_sinking_fund_option_field = $residential_sinking_fund_option == $residential->sinking_fund_option? "": "strata residential sinking fund option";
+                if ($strata->is_residential && $is_residential) {
+                    $residential_unit_no_field = $residential_unit_no == $residential->unit_no ? "" : "strata residential unit no";
+                    $residential_maintenance_fee_field = $residential_maintenance_fee == $residential->maintenance_fee ? "" : "strata residential maintenance fee";
+                    $residential_maintenance_fee_option_field = $residential_maintenance_fee_option == $residential->maintenance_fee_option ? "" : "strata residential maintenance fee option";
+                    $residential_sinking_fund_field = $residential_sinking_fund == $residential->sinking_fund ? "" : "strata residential sinking fund";
+                    $residential_sinking_fund_option_field = $residential_sinking_fund_option == $residential->sinking_fund_option ? "" : "strata residential sinking fund option";
                 } else {
-                    if($strata->is_residential != $is_residential) {
-                        if($is_residential) {
+                    if ($strata->is_residential != $is_residential) {
+                        if ($is_residential) {
                             $residential_text = 'new residential data';
                         } else {
                             $residential_text = 'remove residential data';
                         }
                     }
                 }
-                if($strata->is_commercial && $is_commercial) {
-                    $commercial_unit_no_field = $commercial_unit_no == $commercial->unit_no? "": "strata commercial unit no";
-                    $commercial_maintenance_fee_field = $commercial_maintenance_fee == $commercial->maintenance_fee? "": "strata commercial maintenance fee";
-                    $commercial_maintenance_fee_option_field = $commercial_maintenance_fee_option == $commercial->maintenance_fee_option? "": "strata commercial maintenance fee option";
-                    $commercial_sinking_fund_field = $commercial_sinking_fund == $commercial->sinking_fund? "": "strata commercial sinking fund";
-                    $commercial_sinking_fund_option_field = $commercial_sinking_fund_option == $commercial->sinking_fund_option? "": "strata commercial sinking fund option";
+                if ($strata->is_commercial && $is_commercial) {
+                    $commercial_unit_no_field = $commercial_unit_no == $commercial->unit_no ? "" : "strata commercial unit no";
+                    $commercial_maintenance_fee_field = $commercial_maintenance_fee == $commercial->maintenance_fee ? "" : "strata commercial maintenance fee";
+                    $commercial_maintenance_fee_option_field = $commercial_maintenance_fee_option == $commercial->maintenance_fee_option ? "" : "strata commercial maintenance fee option";
+                    $commercial_sinking_fund_field = $commercial_sinking_fund == $commercial->sinking_fund ? "" : "strata commercial sinking fund";
+                    $commercial_sinking_fund_option_field = $commercial_sinking_fund_option == $commercial->sinking_fund_option ? "" : "strata commercial sinking fund option";
                 } else {
-                    if($strata->is_commercial != $is_commercial) {
-                        if($is_commercial) {
+                    if ($strata->is_commercial != $is_commercial) {
+                        if ($is_commercial) {
                             $commercial_text = 'new commercial data';
                         } else {
                             $commercial_text = 'remove commercial data';
                         }
                     }
                 }
-                $facility_management_office_field = $management_office == $facility->management_office? "": "strata facility management office";
-                $facility_management_office_unit_field = $management_office_unit == $facility->management_office_unit? "": "strata facility management office unit";
-                $facility_swimming_pool_field = $swimming_pool == $facility->swimming_pool? "": "strata facility swimming pool";
-                $facility_swimming_pool_unit_field = $swimming_pool_unit == $facility->swimming_pool_unit? "": "strata facility swimming pool unit";
-                $facility_surau_field = $surau == $facility->surau? "": "strata facility surau";
-                $facility_surau_unit_field = $surau_unit == $facility->surau_unit? "": "strata facility surau unit";
-                $facility_multipurpose_hall_field = $multipurpose_hall == $facility->multipurpose_hall? "": "strata facility multipurpose hall";
-                $facility_multipurpose_hall_unit_field = $multipurpose_hall_unit == $facility->multipurpose_hall_unit? "": "strata facility multipurpose hall unit";
-                $facility_gym_field = $gym == $facility->gym? "": "strata facility gym";
-                $facility_gym_unit_field = $gym_unit == $facility->gym_unit? "": "strata facility gym unit";
-                $facility_playground_field = $playground == $facility->playground? "": "strata facility playground";
-                $facility_playground_unit_field = $playground_unit == $facility->playground_unit? "": "strata facility playground unit";
-                $facility_guardhouse_field = $guardhouse == $facility->guardhouse? "": "strata facility guardhouse";
-                $facility_guardhouse_unit_field = $guardhouse_unit == $facility->guardhouse_unit? "": "strata facility guardhouse unit";
-                $facility_kindergarten_field = $kindergarten == $facility->kindergarten? "": "strata facility kindergarten";
-                $facility_kindergarten_unit_field = $kindergarten_unit == $facility->kindergarten_unit? "": "strata facility kindergarten unit";
-                $facility_open_space_field = $open_space == $facility->open_space? "": "strata facility open space";
-                $facility_open_space_unit_field = $open_space_unit == $facility->open_space_unit? "": "strata facility open space unit";
-                $facility_lift_field = $lift == $facility->lift? "": "strata facility lift";
-                $facility_lift_unit_field = $lift_unit == $facility->lift_unit? "": "strata facility lift unit";
-                $facility_rubbish_room_field = $rubbish_room == $facility->rubbish_room? "": "strata facility rubbish room";
-                $facility_rubbish_room_unit_field = $rubbish_room_unit == $facility->rubbish_room_unit? "": "strata facility rubbish room unit";
-                $facility_gated_field = $gated == $facility->gated? "": "strata facility gated";
-                $facility_gated_unit_field = $gated_unit == $facility->gated_unit? "": "strata facility gated unit";
-                $facility_others_field = $others == $facility->others? "": "strata facility others";
+                $facility_management_office_field = $management_office == $facility->management_office ? "" : "strata facility management office";
+                $facility_management_office_unit_field = $management_office_unit == $facility->management_office_unit ? "" : "strata facility management office unit";
+                $facility_swimming_pool_field = $swimming_pool == $facility->swimming_pool ? "" : "strata facility swimming pool";
+                $facility_swimming_pool_unit_field = $swimming_pool_unit == $facility->swimming_pool_unit ? "" : "strata facility swimming pool unit";
+                $facility_surau_field = $surau == $facility->surau ? "" : "strata facility surau";
+                $facility_surau_unit_field = $surau_unit == $facility->surau_unit ? "" : "strata facility surau unit";
+                $facility_multipurpose_hall_field = $multipurpose_hall == $facility->multipurpose_hall ? "" : "strata facility multipurpose hall";
+                $facility_multipurpose_hall_unit_field = $multipurpose_hall_unit == $facility->multipurpose_hall_unit ? "" : "strata facility multipurpose hall unit";
+                $facility_gym_field = $gym == $facility->gym ? "" : "strata facility gym";
+                $facility_gym_unit_field = $gym_unit == $facility->gym_unit ? "" : "strata facility gym unit";
+                $facility_playground_field = $playground == $facility->playground ? "" : "strata facility playground";
+                $facility_playground_unit_field = $playground_unit == $facility->playground_unit ? "" : "strata facility playground unit";
+                $facility_guardhouse_field = $guardhouse == $facility->guardhouse ? "" : "strata facility guardhouse";
+                $facility_guardhouse_unit_field = $guardhouse_unit == $facility->guardhouse_unit ? "" : "strata facility guardhouse unit";
+                $facility_kindergarten_field = $kindergarten == $facility->kindergarten ? "" : "strata facility kindergarten";
+                $facility_kindergarten_unit_field = $kindergarten_unit == $facility->kindergarten_unit ? "" : "strata facility kindergarten unit";
+                $facility_open_space_field = $open_space == $facility->open_space ? "" : "strata facility open space";
+                $facility_open_space_unit_field = $open_space_unit == $facility->open_space_unit ? "" : "strata facility open space unit";
+                $facility_lift_field = $lift == $facility->lift ? "" : "strata facility lift";
+                $facility_lift_unit_field = $lift_unit == $facility->lift_unit ? "" : "strata facility lift unit";
+                $facility_rubbish_room_field = $rubbish_room == $facility->rubbish_room ? "" : "strata facility rubbish room";
+                $facility_rubbish_room_unit_field = $rubbish_room_unit == $facility->rubbish_room_unit ? "" : "strata facility rubbish room unit";
+                $facility_gated_field = $gated == $facility->gated ? "" : "strata facility gated";
+                $facility_gated_unit_field = $gated_unit == $facility->gated_unit ? "" : "strata facility gated unit";
+                $facility_others_field = $others == $facility->others ? "" : "strata facility others";
 
                 $audit_fields_changed .= "<br><ul>";
                 /** Strata */
-                if(!empty($strata_title_field) || !empty($strata_name_field) || !empty($strata_parliament_field) || !empty($strata_dun_field)
-                || !empty($strata_park_field) || !empty($strata_address1_field) || !empty($strata_address2_field) || !empty($strata_address3_field)
-                || !empty($strata_address4_field) || !empty($strata_poscode_field) || !empty($strata_city_field) || !empty($strata_state_field)
-                || !empty($strata_country_field) || !empty($strata_block_no_field) || !empty($strata_total_floor_field) || !empty($strata_year_field)
-                || !empty($strata_town_field) || !empty($strata_area_field) || !empty($strata_land_area_field) || !empty($strata_total_share_unit_field)
-                || !empty($strata_land_area_unit_field) || !empty($strata_lot_no_field) || !empty($strata_ownership_no_field) || !empty($strata_date_field)
-                || !empty($strata_land_title_field) || !empty($strata_category_field) || !empty($strata_perimeter_field) || !empty($strata_ccc_no_field)
-                || !empty($strata_ccc_date_field) || !empty($strata_file_url_field) || !empty($strata_is_residential_field) || !empty($strata_is_commercial_field)
+                if (
+                    !empty($strata_title_field) || !empty($strata_name_field) || !empty($strata_parliament_field) || !empty($strata_dun_field)
+                    || !empty($strata_park_field) || !empty($strata_address1_field) || !empty($strata_address2_field) || !empty($strata_address3_field)
+                    || !empty($strata_address4_field) || !empty($strata_poscode_field) || !empty($strata_city_field) || !empty($strata_state_field)
+                    || !empty($strata_country_field) || !empty($strata_block_no_field) || !empty($strata_total_floor_field) || !empty($strata_year_field)
+                    || !empty($strata_town_field) || !empty($strata_area_field) || !empty($strata_land_area_field) || !empty($strata_total_share_unit_field)
+                    || !empty($strata_land_area_unit_field) || !empty($strata_lot_no_field) || !empty($strata_ownership_no_field) || !empty($strata_date_field)
+                    || !empty($strata_land_title_field) || !empty($strata_category_field) || !empty($strata_perimeter_field) || !empty($strata_ccc_no_field)
+                    || !empty($strata_ccc_date_field) || !empty($strata_file_url_field) || !empty($strata_is_residential_field) || !empty($strata_is_commercial_field)
                 ) {
                     $audit_fields_changed .= "<li> Strata : (";
                     $new_line = '';
-                    $new_line .= !empty($strata_title_field)? "$strata_title_field, " : "";
-                    $new_line .= !empty($strata_name_field)? "$strata_name_field, " : "";
-                    $new_line .= !empty($strata_parliament_field)? "$strata_parliament_field, " : "";
-                    $new_line .= !empty($strata_dun_field)? "$strata_dun_field, " : "";
-                    $new_line .= !empty($strata_park_field)? "$strata_park_field, " : "";
-                    $new_line .= !empty($strata_address1_field)? "$strata_address1_field, " : "";
-                    $new_line .= !empty($strata_address2_field)? "$strata_address2_field, " : "";
-                    $new_line .= !empty($strata_address3_field)? "$strata_address3_field, " : "";
-                    $new_line .= !empty($strata_address4_field)? "$strata_address4_field, " : "";
-                    $new_line .= !empty($strata_poscode_field)? "$strata_poscode_field, " : "";
-                    $new_line .= !empty($strata_city_field)? "$strata_city_field, " : "";
-                    $new_line .= !empty($strata_state_field)? "$strata_state_field, " : "";
-                    $new_line .= !empty($strata_country_field)? "$strata_country_field, " : "";
-                    $new_line .= !empty($strata_block_no_field)? "$strata_block_no_field, " : "";
-                    $new_line .= !empty($strata_total_floor_field)? "$strata_total_floor_field, " : "";
-                    $new_line .= !empty($strata_year_field)? "$strata_year_field, " : "";
-                    $new_line .= !empty($strata_town_field)? "$strata_town_field, " : "";
-                    $new_line .= !empty($strata_area_field)? "$strata_area_field, " : "";
-                    $new_line .= !empty($strata_land_area_field)? "$strata_land_area_field, " : "";
-                    $new_line .= !empty($strata_total_share_unit_field)? "$strata_total_share_unit_field, " : "";
-                    $new_line .= !empty($strata_land_area_unit_field)? "$strata_land_area_unit_field, " : "";
-                    $new_line .= !empty($strata_lot_no_field)? "$strata_lot_no_field, " : "";
-                    $new_line .= !empty($strata_ownership_no_field)? "$strata_ownership_no_field, " : "";
-                    $new_line .= !empty($strata_date_field)? "$strata_date_field, " : "";
-                    $new_line .= !empty($strata_land_title_field)? "$strata_land_title_field, " : "";
-                    $new_line .= !empty($strata_category_field)? "$strata_category_field, " : "";
-                    $new_line .= !empty($strata_perimeter_field)? "$strata_perimeter_field, " : "";
-                    $new_line .= !empty($strata_ccc_no_field)? "$strata_ccc_no_field, " : "";
-                    $new_line .= !empty($strata_ccc_date_field)? "$strata_ccc_date_field, " : "";
-                    $new_line .= !empty($strata_file_url_field)? "$strata_file_url_field, " : "";
-                    $new_line .= !empty($strata_is_residential_field)? "$strata_is_residential_field, " : "";
-                    $new_line .= !empty($strata_is_commercial_field)? "$strata_is_commercial_field, " : "";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $new_line .= !empty($strata_title_field) ? "$strata_title_field, " : "";
+                    $new_line .= !empty($strata_name_field) ? "$strata_name_field, " : "";
+                    $new_line .= !empty($strata_parliament_field) ? "$strata_parliament_field, " : "";
+                    $new_line .= !empty($strata_dun_field) ? "$strata_dun_field, " : "";
+                    $new_line .= !empty($strata_park_field) ? "$strata_park_field, " : "";
+                    $new_line .= !empty($strata_address1_field) ? "$strata_address1_field, " : "";
+                    $new_line .= !empty($strata_address2_field) ? "$strata_address2_field, " : "";
+                    $new_line .= !empty($strata_address3_field) ? "$strata_address3_field, " : "";
+                    $new_line .= !empty($strata_address4_field) ? "$strata_address4_field, " : "";
+                    $new_line .= !empty($strata_poscode_field) ? "$strata_poscode_field, " : "";
+                    $new_line .= !empty($strata_city_field) ? "$strata_city_field, " : "";
+                    $new_line .= !empty($strata_state_field) ? "$strata_state_field, " : "";
+                    $new_line .= !empty($strata_country_field) ? "$strata_country_field, " : "";
+                    $new_line .= !empty($strata_block_no_field) ? "$strata_block_no_field, " : "";
+                    $new_line .= !empty($strata_total_floor_field) ? "$strata_total_floor_field, " : "";
+                    $new_line .= !empty($strata_year_field) ? "$strata_year_field, " : "";
+                    $new_line .= !empty($strata_town_field) ? "$strata_town_field, " : "";
+                    $new_line .= !empty($strata_area_field) ? "$strata_area_field, " : "";
+                    $new_line .= !empty($strata_land_area_field) ? "$strata_land_area_field, " : "";
+                    $new_line .= !empty($strata_total_share_unit_field) ? "$strata_total_share_unit_field, " : "";
+                    $new_line .= !empty($strata_land_area_unit_field) ? "$strata_land_area_unit_field, " : "";
+                    $new_line .= !empty($strata_lot_no_field) ? "$strata_lot_no_field, " : "";
+                    $new_line .= !empty($strata_ownership_no_field) ? "$strata_ownership_no_field, " : "";
+                    $new_line .= !empty($strata_date_field) ? "$strata_date_field, " : "";
+                    $new_line .= !empty($strata_land_title_field) ? "$strata_land_title_field, " : "";
+                    $new_line .= !empty($strata_category_field) ? "$strata_category_field, " : "";
+                    $new_line .= !empty($strata_perimeter_field) ? "$strata_perimeter_field, " : "";
+                    $new_line .= !empty($strata_ccc_no_field) ? "$strata_ccc_no_field, " : "";
+                    $new_line .= !empty($strata_ccc_date_field) ? "$strata_ccc_date_field, " : "";
+                    $new_line .= !empty($strata_file_url_field) ? "$strata_file_url_field, " : "";
+                    $new_line .= !empty($strata_is_residential_field) ? "$strata_is_residential_field, " : "";
+                    $new_line .= !empty($strata_is_commercial_field) ? "$strata_is_commercial_field, " : "";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                 }
                 /** End Strata */
                 /** Residential */
-                if(empty($residential_text)) {
-                    if(!empty($residential_unit_no_field) || !empty($residential_maintenance_fee_field) || !empty($residential_maintenance_fee_option_field) || !empty($residential_sinking_fund_field)
-                    || !empty($residential_sinking_fund_option_field)) {
+                if (empty($residential_text)) {
+                    if (
+                        !empty($residential_unit_no_field) || !empty($residential_maintenance_fee_field) || !empty($residential_maintenance_fee_option_field) || !empty($residential_sinking_fund_field)
+                        || !empty($residential_sinking_fund_option_field)
+                    ) {
                         $audit_fields_changed .= "<li> Residential : (";
                         $new_line = '';
-                        $new_line .= !empty($residential_unit_no_field)? "$residential_unit_no_field, " : "";
-                        $new_line .= !empty($residential_maintenance_fee_field)? "$residential_maintenance_fee_field, " : "";
-                        $new_line .= !empty($residential_maintenance_fee_option_field)? "$residential_maintenance_fee_option_field, " : "";
-                        $new_line .= !empty($residential_sinking_fund_field)? "$residential_sinking_fund_field, " : "";
-                        $new_line .= !empty($residential_sinking_fund_option_field)? "$residential_sinking_fund_option_field, " : "";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        $new_line .= !empty($residential_unit_no_field) ? "$residential_unit_no_field, " : "";
+                        $new_line .= !empty($residential_maintenance_fee_field) ? "$residential_maintenance_fee_field, " : "";
+                        $new_line .= !empty($residential_maintenance_fee_option_field) ? "$residential_maintenance_fee_option_field, " : "";
+                        $new_line .= !empty($residential_sinking_fund_field) ? "$residential_sinking_fund_field, " : "";
+                        $new_line .= !empty($residential_sinking_fund_option_field) ? "$residential_sinking_fund_option_field, " : "";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                     }
                 } else {
-                    $audit_fields_changed .= "<li> Residential : (". $residential_text . ")</li>";
+                    $audit_fields_changed .= "<li> Residential : (" . $residential_text . ")</li>";
                 }
-                if(!empty($data['residential_maintenance_fee_is_custom'])) {
-                    if(($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0) || ($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)
-                    || ($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) == 0)) {
+                if (!empty($data['residential_maintenance_fee_is_custom'])) {
+                    if (($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0) || ($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)
+                        || ($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) == 0)
+                    ) {
                         $audit_fields_changed .= "<li>Residential Extra : (";
-                        if(($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
+                        if (($residentialExtra->count() > 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
                             $audit_fields_changed .= "residential extra data updated";
-
-                        } else if(($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
+                        } else if (($residentialExtra->count() == 0 && count($data['residential_maintenance_fee_is_custom']) > 0)) {
                             $audit_fields_changed .= "new data";
                         } else {
                             $audit_fields_changed .= "removed residential extra data";
@@ -1702,34 +1739,37 @@ class AdminController extends BaseController {
                         $audit_fields_changed .= ")</li>";
                     }
                 } else {
-                    if($residentialExtra->count() > 0) {
+                    if ($residentialExtra->count() > 0) {
                         $audit_fields_changed .= "<li>Residential Extra : (removed residential extra data) </li>";
                     }
                 }
                 /** End Residential */
                 /** Commercial */
-                if(empty($commercial_text)) {
-                    if(!empty($commercial_unit_no_field) || !empty($commercial_maintenance_fee_field) || !empty($commercial_maintenance_fee_option_field)
-                    || !empty($commercial_sinking_fund_field) || !empty($commercial_sinking_fund_option_field)) {
+                if (empty($commercial_text)) {
+                    if (
+                        !empty($commercial_unit_no_field) || !empty($commercial_maintenance_fee_field) || !empty($commercial_maintenance_fee_option_field)
+                        || !empty($commercial_sinking_fund_field) || !empty($commercial_sinking_fund_option_field)
+                    ) {
                         $audit_fields_changed .= "<li> Commercial : (";
                         $new_line = '';
-                        $new_line .= !empty($commercial_unit_no_field)? "$commercial_unit_no_field, " : "";
-                        $new_line .= !empty($commercial_maintenance_fee_field)? "$commercial_maintenance_fee_field, " : "";
-                        $new_line .= !empty($commercial_maintenance_fee_option_field)? "$commercial_maintenance_fee_option_field, " : "";
-                        $new_line .= !empty($commercial_sinking_fund_field)? "$commercial_sinking_fund_field, " : "";
-                        $new_line .= !empty($commercial_sinking_fund_option_field)? "$commercial_sinking_fund_option_field, " : "";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                        $new_line .= !empty($commercial_unit_no_field) ? "$commercial_unit_no_field, " : "";
+                        $new_line .= !empty($commercial_maintenance_fee_field) ? "$commercial_maintenance_fee_field, " : "";
+                        $new_line .= !empty($commercial_maintenance_fee_option_field) ? "$commercial_maintenance_fee_option_field, " : "";
+                        $new_line .= !empty($commercial_sinking_fund_field) ? "$commercial_sinking_fund_field, " : "";
+                        $new_line .= !empty($commercial_sinking_fund_option_field) ? "$commercial_sinking_fund_option_field, " : "";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                     }
                 } else {
-                    $audit_fields_changed .= "<li> Commercial : (". $commercial_text . ")</li>";
+                    $audit_fields_changed .= "<li> Commercial : (" . $commercial_text . ")</li>";
                 }
-                if(!empty($data['commercial_maintenance_fee_is_custom'])) {
-                    if(($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0) || ($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)
-                    || ($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) == 0)) {
+                if (!empty($data['commercial_maintenance_fee_is_custom'])) {
+                    if (($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0) || ($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)
+                        || ($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) == 0)
+                    ) {
                         $audit_fields_changed .= "<li>Commercial Extra : (";
-                        if(($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
+                        if (($commercialExtra->count() > 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
                             $audit_fields_changed .= "commercial extra data updated";
-                        } else if(($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
+                        } else if (($commercialExtra->count() == 0 && count($data['commercial_maintenance_fee_is_custom']) > 0)) {
                             $audit_fields_changed .= "new data";
                         } else {
                             $audit_fields_changed .= "removed commercial extra data";
@@ -1737,50 +1777,51 @@ class AdminController extends BaseController {
                         $audit_fields_changed .= ")</li>";
                     }
                 } else {
-                    if($commercialExtra->count() > 0) {
+                    if ($commercialExtra->count() > 0) {
                         $audit_fields_changed .= "<li>Commercial Extra : (removed commercial extra data) </li>";
                     }
                 }
                 /** End Commercial */
                 /** Facility */
-                if(!empty($facility_management_office_field) || !empty($facility_management_office_unit_field) || !empty($facility_swimming_pool_field)
-                || !empty($facility_swimming_pool_unit_field) || !empty($facility_surau_field) || !empty($facility_surau_unit_field)
-                || !empty($facility_multipurpose_hall_field) || !empty($facility_multipurpose_hall_unit_field)
-                || !empty($facility_gym_field) || !empty($facility_gym_unit_field) || !empty($facility_playground_field)
-                || !empty($facility_playground_unit_field) || !empty($facility_guardhouse_field) || !empty($facility_guardhouse_unit_field)
-                || !empty($facility_kindergarten_field) || !empty($facility_kindergarten_unit_field) || !empty($facility_open_space_field)
-                || !empty($facility_open_space_unit_field) || !empty($facility_lift_field) || !empty($facility_lift_unit_field)
-                || !empty($facility_rubbish_room_field) || !empty($facility_rubbish_room_unit_field) || !empty($facility_gated_field)
-                || !empty($facility_gated_unit_field) || !empty($facility_others_field)
+                if (
+                    !empty($facility_management_office_field) || !empty($facility_management_office_unit_field) || !empty($facility_swimming_pool_field)
+                    || !empty($facility_swimming_pool_unit_field) || !empty($facility_surau_field) || !empty($facility_surau_unit_field)
+                    || !empty($facility_multipurpose_hall_field) || !empty($facility_multipurpose_hall_unit_field)
+                    || !empty($facility_gym_field) || !empty($facility_gym_unit_field) || !empty($facility_playground_field)
+                    || !empty($facility_playground_unit_field) || !empty($facility_guardhouse_field) || !empty($facility_guardhouse_unit_field)
+                    || !empty($facility_kindergarten_field) || !empty($facility_kindergarten_unit_field) || !empty($facility_open_space_field)
+                    || !empty($facility_open_space_unit_field) || !empty($facility_lift_field) || !empty($facility_lift_unit_field)
+                    || !empty($facility_rubbish_room_field) || !empty($facility_rubbish_room_unit_field) || !empty($facility_gated_field)
+                    || !empty($facility_gated_unit_field) || !empty($facility_others_field)
                 ) {
                     $audit_fields_changed .= "<li> Facility : (";
                     $new_line = '';
-                    $new_line .= !empty($facility_management_office_field)? "$facility_management_office_field, " : "";
-                    $new_line .= !empty($facility_management_office_unit_field)? "$facility_management_office_unit_field, " : "";
-                    $new_line .= !empty($facility_swimming_pool_field)? "$facility_swimming_pool_field, " : "";
-                    $new_line .= !empty($facility_swimming_pool_unit_field)? "$facility_swimming_pool_unit_field, " : "";
-                    $new_line .= !empty($facility_surau_field)? "$facility_surau_field, " : "";
-                    $new_line .= !empty($facility_surau_unit_field)? "$facility_surau_unit_field, " : "";
-                    $new_line .= !empty($facility_multipurpose_hall_field)? "$facility_multipurpose_hall_field, " : "";
-                    $new_line .= !empty($facility_multipurpose_hall_unit_field)? "$facility_multipurpose_hall_unit_field, " : "";
-                    $new_line .= !empty($facility_gym_field)? "$facility_gym_field, " : "";
-                    $new_line .= !empty($facility_gym_unit_field)? "$facility_gym_unit_field, " : "";
-                    $new_line .= !empty($facility_playground_field)? "$facility_playground_field, " : "";
-                    $new_line .= !empty($facility_playground_unit_field)? "$facility_playground_unit_field, " : "";
-                    $new_line .= !empty($facility_guardhouse_field)? "$facility_guardhouse_field, " : "";
-                    $new_line .= !empty($facility_guardhouse_unit_field)? "$facility_guardhouse_unit_field, " : "";
-                    $new_line .= !empty($facility_kindergarten_field)? "$facility_kindergarten_field, " : "";
-                    $new_line .= !empty($facility_kindergarten_unit_field)? "$facility_kindergarten_unit_field, " : "";
-                    $new_line .= !empty($facility_open_space_field)? "$facility_open_space_field, " : "";
-                    $new_line .= !empty($facility_open_space_unit_field)? "$facility_open_space_unit_field, " : "";
-                    $new_line .= !empty($facility_lift_field)? "$facility_lift_field, " : "";
-                    $new_line .= !empty($facility_lift_unit_field)? "$facility_lift_unit_field, " : "";
-                    $new_line .= !empty($facility_rubbish_room_field)? "$facility_rubbish_room_field, " : "";
-                    $new_line .= !empty($facility_rubbish_room_unit_field)? "$facility_rubbish_room_unit_field, " : "";
-                    $new_line .= !empty($facility_gated_field)? "$facility_gated_field, " : "";
-                    $new_line .= !empty($facility_gated_unit_field)? "$facility_gated_unit_field, " : "";
-                    $new_line .= !empty($facility_others_field)? "$facility_others_field, " : "";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                    $new_line .= !empty($facility_management_office_field) ? "$facility_management_office_field, " : "";
+                    $new_line .= !empty($facility_management_office_unit_field) ? "$facility_management_office_unit_field, " : "";
+                    $new_line .= !empty($facility_swimming_pool_field) ? "$facility_swimming_pool_field, " : "";
+                    $new_line .= !empty($facility_swimming_pool_unit_field) ? "$facility_swimming_pool_unit_field, " : "";
+                    $new_line .= !empty($facility_surau_field) ? "$facility_surau_field, " : "";
+                    $new_line .= !empty($facility_surau_unit_field) ? "$facility_surau_unit_field, " : "";
+                    $new_line .= !empty($facility_multipurpose_hall_field) ? "$facility_multipurpose_hall_field, " : "";
+                    $new_line .= !empty($facility_multipurpose_hall_unit_field) ? "$facility_multipurpose_hall_unit_field, " : "";
+                    $new_line .= !empty($facility_gym_field) ? "$facility_gym_field, " : "";
+                    $new_line .= !empty($facility_gym_unit_field) ? "$facility_gym_unit_field, " : "";
+                    $new_line .= !empty($facility_playground_field) ? "$facility_playground_field, " : "";
+                    $new_line .= !empty($facility_playground_unit_field) ? "$facility_playground_unit_field, " : "";
+                    $new_line .= !empty($facility_guardhouse_field) ? "$facility_guardhouse_field, " : "";
+                    $new_line .= !empty($facility_guardhouse_unit_field) ? "$facility_guardhouse_unit_field, " : "";
+                    $new_line .= !empty($facility_kindergarten_field) ? "$facility_kindergarten_field, " : "";
+                    $new_line .= !empty($facility_kindergarten_unit_field) ? "$facility_kindergarten_unit_field, " : "";
+                    $new_line .= !empty($facility_open_space_field) ? "$facility_open_space_field, " : "";
+                    $new_line .= !empty($facility_open_space_unit_field) ? "$facility_open_space_unit_field, " : "";
+                    $new_line .= !empty($facility_lift_field) ? "$facility_lift_field, " : "";
+                    $new_line .= !empty($facility_lift_unit_field) ? "$facility_lift_unit_field, " : "";
+                    $new_line .= !empty($facility_rubbish_room_field) ? "$facility_rubbish_room_field, " : "";
+                    $new_line .= !empty($facility_rubbish_room_unit_field) ? "$facility_rubbish_room_unit_field, " : "";
+                    $new_line .= !empty($facility_gated_field) ? "$facility_gated_field, " : "";
+                    $new_line .= !empty($facility_gated_unit_field) ? "$facility_gated_unit_field, " : "";
+                    $new_line .= !empty($facility_others_field) ? "$facility_others_field, " : "";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                 }
                 /** End Facility */
                 $audit_fields_changed .= "</ul>";
@@ -1834,16 +1875,16 @@ class AdminController extends BaseController {
                 $residential->sinking_fund = $residential_sinking_fund;
                 $residential->sinking_fund_option = $residential_sinking_fund_option;
                 $residential->save();
-                
+
                 if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     $delete_old_residential_extra = ResidentialExtraDraft::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
                 } else {
                     $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
                 }
-                if(empty($data['residential_maintenance_fee_is_custom']) == false) {
+                if (empty($data['residential_maintenance_fee_is_custom']) == false) {
                     $total_residential_custom = count($data['residential_maintenance_fee_is_custom']);
-                    if($total_residential_custom > 0) {
-                        for($i = 0; $i < $total_residential_custom; $i++) {
+                    if ($total_residential_custom > 0) {
+                        for ($i = 0; $i < $total_residential_custom; $i++) {
                             $custom_residential =  new ResidentialExtra();
                             if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                                 $custom_residential =  new ResidentialExtraDraft();
@@ -1857,10 +1898,8 @@ class AdminController extends BaseController {
                             $custom_residential->sinking_fund_option = $data['residential_sinking_fund_option_is_custom'][$i];
                             $custom_residential->save();
                         }
-
                     }
                 }
-                
             } else {
                 if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     ResidentialDraft::where('file_id', $files->id)->delete();
@@ -1877,16 +1916,16 @@ class AdminController extends BaseController {
                 $commercial->sinking_fund = $commercial_sinking_fund;
                 $commercial->sinking_fund_option = $commercial_sinking_fund_option;
                 $commercial->save();
-                
+
                 if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     $delete_old_commercial_extra = CommercialExtraDraft::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
                 } else {
                     $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
                 }
-                if(empty($data['commercial_maintenance_fee_is_custom']) == false) {
+                if (empty($data['commercial_maintenance_fee_is_custom']) == false) {
                     $total_commercial_custom = count($data['commercial_maintenance_fee_is_custom']);
-                    if($total_commercial_custom > 0) {
-                        for($i = 0; $i < $total_commercial_custom; $i++) {
+                    if ($total_commercial_custom > 0) {
+                        for ($i = 0; $i < $total_commercial_custom; $i++) {
                             $custom_commercial =  new CommercialExtra();
                             if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                                 $custom_commercial =  new CommercialExtraDraft();
@@ -1900,7 +1939,6 @@ class AdminController extends BaseController {
                             $custom_commercial->sinking_fund_option = $data['commercial_sinking_fund_option_is_custom'][$i];
                             $custom_commercial->save();
                         }
-
                     }
                 }
             } else {
@@ -1940,11 +1978,11 @@ class AdminController extends BaseController {
             $facility->save();
 
             # Audit Trail
-            if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
@@ -1960,7 +1998,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function deleteStrataFile() {
+    public function deleteStrataFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -1993,7 +2032,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function viewManagement($id) {
+    public function viewManagement($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::findOrFail(Helper::decode($id));
@@ -2010,7 +2050,7 @@ class AdminController extends BaseController {
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($file->id, $file->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2034,7 +2074,8 @@ class AdminController extends BaseController {
         return View::make('page_en.view_management', $viewData);
     }
 
-    public function management($id) {
+    public function management($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
@@ -2064,7 +2105,7 @@ class AdminController extends BaseController {
         $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $agent = Agent::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2084,7 +2125,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_management', $viewData);
     }
 
-    public function submitUpdateManagement() {
+    public function submitUpdateManagement()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -2115,10 +2157,10 @@ class AdminController extends BaseController {
                 $notify_data['route'] = route('cob.file.management.edit', Request::get('file_id'));
                 $notify_data['cob_route'] = route('cob.file.draft.management.edit', Request::get('file_id'));
                 $notify_data['strata'] = "You";
-                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['strata_name'] = $strata->name != "" ? $strata->name : $files->file_no;
                 $notify_data['title'] = "COB File Management";
                 $notify_data['module'] = "Management";
-                
+
                 (new NotificationService())->store($notify_data);
             } else {
                 $management = Management::firstOrNew(array('file_id' => $files->id));
@@ -2133,97 +2175,99 @@ class AdminController extends BaseController {
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
             if (!Auth::user()->isJMB()) {
-                $is_developer_field = ((!empty($data['is_developer']) && !$management->is_developer) || (empty($data['is_developer']) && $management->is_developer))? "management developer": "";
-                $liquidator_field = ((!empty($data['liquidator']) && !$management->liquidator) || (empty($data['liquidator']) && $management->liquidator))? "management liquidator": "";
-                $is_jmb_field = ((!empty($data['is_jmb']) && !$management->is_jmb) || (empty($data['is_jmb']) && $management->is_jmb))? "management jmb": "";
-                $is_mc_field = ((!empty($data['is_mc']) && !$management->is_mc) || (empty($data['is_mc']) && $management->is_mc))? "management mc": "";
-                $is_agent_field = ((!empty($data['is_agent']) && !$management->is_agent) || (empty($data['is_agent']) && $management->is_agent))? "management agent": "";
-                $is_others_field = ((!empty($data['is_others']) && !$management->is_others) || (empty($data['is_others']) && $management->is_others))? "management others": "";
-                $is_no_management_field = ((!empty($data['no_management']) && !$management->no_management) || (empty($data['no_management']) && $management->no_management))? "management no management": "";
-                $under_10_units_field = ((!empty($data['under_10_units']) && !$management->under_10_units) || (empty($data['under_10_units']) && $management->under_10_units))? "management under 10 units": "";
-                $bankruptcy_field = ((!empty($data['bankruptcy']) && !$management->bankruptcy) || (empty($data['bankruptcy']) && $management->bankruptcy))? "management bankruptcy": "";
+                $is_developer_field = ((!empty($data['is_developer']) && !$management->is_developer) || (empty($data['is_developer']) && $management->is_developer)) ? "management developer" : "";
+                $liquidator_field = ((!empty($data['liquidator']) && !$management->liquidator) || (empty($data['liquidator']) && $management->liquidator)) ? "management liquidator" : "";
+                $is_jmb_field = ((!empty($data['is_jmb']) && !$management->is_jmb) || (empty($data['is_jmb']) && $management->is_jmb)) ? "management jmb" : "";
+                $is_mc_field = ((!empty($data['is_mc']) && !$management->is_mc) || (empty($data['is_mc']) && $management->is_mc)) ? "management mc" : "";
+                $is_agent_field = ((!empty($data['is_agent']) && !$management->is_agent) || (empty($data['is_agent']) && $management->is_agent)) ? "management agent" : "";
+                $is_others_field = ((!empty($data['is_others']) && !$management->is_others) || (empty($data['is_others']) && $management->is_others)) ? "management others" : "";
+                $is_no_management_field = ((!empty($data['no_management']) && !$management->no_management) || (empty($data['no_management']) && $management->no_management)) ? "management no management" : "";
+                $under_10_units_field = ((!empty($data['under_10_units']) && !$management->under_10_units) || (empty($data['under_10_units']) && $management->under_10_units)) ? "management under 10 units" : "";
+                $bankruptcy_field = ((!empty($data['bankruptcy']) && !$management->bankruptcy) || (empty($data['bankruptcy']) && $management->bankruptcy)) ? "management bankruptcy" : "";
 
-                if(!empty($is_developer_field) || !empty($liquidator_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field)
-                || !empty($is_no_management_field)|| !empty($under_10_units_field)|| !empty($bankruptcy_field)) {
+                if (
+                    !empty($is_developer_field) || !empty($liquidator_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field)
+                    || !empty($is_no_management_field) || !empty($under_10_units_field) || !empty($bankruptcy_field)
+                ) {
                     $audit_fields_changed .= "<br><ul>";
                 }
                 /** No Management */
-                if(!empty($is_no_management_field)) {
-                    if(!empty($data['no_management'])) {
+                if (!empty($is_no_management_field)) {
+                    if (!empty($data['no_management'])) {
                         $audit_fields_changed .= "<li> No Management : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> No Management : data removed </li>";
                     }
                 } else {
-                    if($management->no_management) {
+                    if ($management->no_management) {
                         /** Data Updated */
-                        $start_date = !empty($data['no_management_date_start'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_start'])->format('Y-m-d') : "";
-                        $end_date = !empty($data['no_management_date_end'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_end'])->format('Y-m-d') : "";
+                        $start_date = !empty($data['no_management_date_start']) ? Carbon::createFromFormat('d-m-Y', $data['no_management_date_start'])->format('Y-m-d') : "";
+                        $end_date = !empty($data['no_management_date_end']) ? Carbon::createFromFormat('d-m-Y', $data['no_management_date_end'])->format('Y-m-d') : "";
                         $new_line = '';
-                        if(!empty($start_date)) {
-                            $new_line .= $management->start != $start_date? "start date, " : "";
+                        if (!empty($start_date)) {
+                            $new_line .= $management->start != $start_date ? "start date, " : "";
                         }
-                        if(!empty($end_date)) {
-                            $new_line .= $management->end != $end_date? "end date, " : "";
+                        if (!empty($end_date)) {
+                            $new_line .= $management->end != $end_date ? "end date, " : "";
                         }
-                        if(!empty($new_line)) {
+                        if (!empty($new_line)) {
                             $audit_fields_changed .= "<li> No Management : (";
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** Strata Under 10 unit */
-                if(!empty($under_10_units_field)) {
-                    if(!empty($data['under_10_units'])) {
+                if (!empty($under_10_units_field)) {
+                    if (!empty($data['under_10_units'])) {
                         $audit_fields_changed .= "<li> Strata Under 10 unit : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> Strata Under 10 unit : data removed </li>";
                     }
                 } else {
-                    if($management->no_management) {
+                    if ($management->no_management) {
                         /** Data Updated */
-                        $under_10_units_remarks_field = ((!empty($data['under_10_units_remarks']) && !$management->under_10_units_remarks) || (empty($data['under_10_units_remarks']) && $management->under_10_units_remarks))? "management strata under 10 units remarks": "";
+                        $under_10_units_remarks_field = ((!empty($data['under_10_units_remarks']) && !$management->under_10_units_remarks) || (empty($data['under_10_units_remarks']) && $management->under_10_units_remarks)) ? "management strata under 10 units remarks" : "";
                         $new_line = '';
-                        if(!empty($under_10_units_remarks_field)) {
-                            $new_line .= $management->start != $start_date? "start date, " : "";
+                        if (!empty($under_10_units_remarks_field)) {
+                            $new_line .= $management->start != $start_date ? "start date, " : "";
                         }
-                        if(!empty($new_line)) {
+                        if (!empty($new_line)) {
                             $audit_fields_changed .= "<li> Strata Under 10 unit : (";
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** Bankruptcy */
-                if(!empty($bankruptcy_field)) {
-                    if(!empty($data['bankruptcy'])) {
+                if (!empty($bankruptcy_field)) {
+                    if (!empty($data['bankruptcy'])) {
                         $audit_fields_changed .= "<li> Bankruptcy : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> Bankruptcy : data removed </li>";
                     }
                 } else {
-                    if($management->no_management) {
+                    if ($management->no_management) {
                         /** Data Updated */
-                        $bankruptcy_remarks_field = ((!empty($data['bankruptcy_remarks']) && !$management->bankruptcy_remarks) || (empty($data['bankruptcy_remarks']) && $management->bankruptcy_remarks))? "management bankruptcys remarks": "";
+                        $bankruptcy_remarks_field = ((!empty($data['bankruptcy_remarks']) && !$management->bankruptcy_remarks) || (empty($data['bankruptcy_remarks']) && $management->bankruptcy_remarks)) ? "management bankruptcys remarks" : "";
                         $new_line = '';
-                        if(!empty($bankruptcy_remarks_field)) {
-                            $new_line .= $management->start != $start_date? "start date, " : "";
+                        if (!empty($bankruptcy_remarks_field)) {
+                            $new_line .= $management->start != $start_date ? "start date, " : "";
                         }
-                        if(!empty($new_line)) {
+                        if (!empty($new_line)) {
                             $audit_fields_changed .= "<li> Bankruptcy : (";
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** Developer */
-                if(!empty($is_developer_field)) {
-                    if(!empty($data['is_developer'])) {
+                if (!empty($is_developer_field)) {
+                    if (!empty($data['is_developer'])) {
                         $audit_fields_changed .= "<li> Developer : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> Developer : data removed </li>";
                     }
                 } else {
-                    if($management->is_developer) {
-                        for($i = 0; $i < count($data['developer_name']); $i++) {
+                    if ($management->is_developer) {
+                        for ($i = 0; $i < count($data['developer_name']); $i++) {
                             $data['developer'][$i]['name'] = $data['developer_name'][$i];
                             $data['developer'][$i]['address_1'] = $data['developer_address1'][$i];
                             $data['developer'][$i]['address_2'] = $data['developer_address2'][$i];
@@ -2237,40 +2281,40 @@ class AdminController extends BaseController {
                             $data['developer'][$i]['fax_no'] = $data['developer_fax_no'][$i];
                             $data['developer'][$i]['remarks'] = $data['developer_remarks'][$i];
                         }
-                        $management_developer_differents = Helper::check_diff_multi($current_developer->toArray(),$data['developer']);
+                        $management_developer_differents = Helper::check_diff_multi($current_developer->toArray(), $data['developer']);
                         /** Data Updated */
-                        if(count($management_developer_differents)) {
+                        if (count($management_developer_differents)) {
                             $audit_fields_changed .= "<li>Developer : (";
                             $new_line = '';
-                            foreach($management_developer_differents as $mdd_key => $mdd) {
-                                if(is_array($mdd) && count($mdd)) {
-                                    foreach($mdd as $mdd_data_key => $mdd_data) {
-                                        if(!in_array($mdd_data_key, ['id', 'file_id', 'management_id'])) {
+                            foreach ($management_developer_differents as $mdd_key => $mdd) {
+                                if (is_array($mdd) && count($mdd)) {
+                                    foreach ($mdd as $mdd_data_key => $mdd_data) {
+                                        if (!in_array($mdd_data_key, ['id', 'file_id', 'management_id'])) {
                                             $name = str_replace("_", " ", $mdd_data_key);
                                             $new_line .= $name . '=' . $mdd_data . ', ';
                                         }
                                     }
                                 } else {
-                                    if(!empty($mdd)) {
+                                    if (!empty($mdd)) {
                                         $name = str_replace("_", " ", $mdd_key);
                                         $new_line .= $name . '=' . $mdd . ', ';
                                     }
                                 }
                             }
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** Liquidator */
-                if(!empty($liquidator_field)) {
-                    if(!empty($data['liquidator'])) {
+                if (!empty($liquidator_field)) {
+                    if (!empty($data['liquidator'])) {
                         $audit_fields_changed .= "<li> Liquidator : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> Liquidator : data removed </li>";
                     }
                 } else {
-                    if($management->liquidator) {
-                        for($i = 0; $i < count($data['liquidator_name']); $i++) {
+                    if ($management->liquidator) {
+                        for ($i = 0; $i < count($data['liquidator_name']); $i++) {
                             $data['data_liquidator'][$i]['name'] = $data['liquidator_name'][$i];
                             $data['data_liquidator'][$i]['address_1'] = $data['liquidator_address1'][$i];
                             $data['data_liquidator'][$i]['address_2'] = $data['liquidator_address2'][$i];
@@ -2284,41 +2328,41 @@ class AdminController extends BaseController {
                             $data['data_liquidator'][$i]['fax_no'] = $data['liquidator_fax_no'][$i];
                             $data['data_liquidator'][$i]['remarks'] = $data['liquidator_remarks'][$i];
                         }
-                        $management_liquidator_differents = Helper::check_diff_multi($current_liquidator->toArray(),$data['data_liquidator']);
+                        $management_liquidator_differents = Helper::check_diff_multi($current_liquidator->toArray(), $data['data_liquidator']);
                         /** Data Updated */
-                        if(count($management_liquidator_differents)) {
+                        if (count($management_liquidator_differents)) {
                             $audit_fields_changed .= "<li>Liquidator : (";
                             $new_line = '';
-                            foreach($management_liquidator_differents as $mdl_key => $mdl) {
-                                if(is_array($mdl) && count($mdl)) {
-                                    foreach($mdl as $mdl_data_key => $mdl_data) {
-                                        if(!in_array($mdl_data_key, ['id', 'file_id', 'management_id'])) {
+                            foreach ($management_liquidator_differents as $mdl_key => $mdl) {
+                                if (is_array($mdl) && count($mdl)) {
+                                    foreach ($mdl as $mdl_data_key => $mdl_data) {
+                                        if (!in_array($mdl_data_key, ['id', 'file_id', 'management_id'])) {
                                             $name = str_replace("_", " ", $mdl_data_key);
                                             $new_line .= $name . '=' . $mdl_data . ', ';
                                         }
                                     }
                                 } else {
-                                    if(!empty($mdl)) {
+                                    if (!empty($mdl)) {
                                         $name = str_replace("_", " ", $mdl_key);
                                         $new_line .= $name . '=' . $mdl . ', ';
                                     }
                                 }
                             }
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** JMB */
-                if(!empty($is_jmb_field)) {
-                    if(!empty($data['is_jmb'])) {
+                if (!empty($is_jmb_field)) {
+                    if (!empty($data['is_jmb'])) {
                         $audit_fields_changed .= "<li> JMB : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> JMB : data removed </li>";
                     }
                 } else {
-                    if($management->is_jmb) {
-                        for($i = 0; $i < count($data['jmb_name']); $i++) {
-                            $data['jmb'][$i]['date_formed'] = !empty($data['jmb_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
+                    if ($management->is_jmb) {
+                        for ($i = 0; $i < count($data['jmb_name']); $i++) {
+                            $data['jmb'][$i]['date_formed'] = !empty($data['jmb_date_formed'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
                             $data['jmb'][$i]['certificate_no'] = $data['jmb_certificate_no'][$i];
                             $data['jmb'][$i]['name'] = $data['jmb_name'][$i];
                             $data['jmb'][$i]['address_1'] = $data['jmb_address1'][$i];
@@ -2332,43 +2376,43 @@ class AdminController extends BaseController {
                             $data['jmb'][$i]['fax_no'] = $data['jmb_fax_no'][$i];
                             $data['jmb'][$i]['email'] = $data['jmb_email'][$i];
                         }
-                        $management_jmb_differents = Helper::check_diff_multi($current_jmb->toArray(),$data['jmb']);
+                        $management_jmb_differents = Helper::check_diff_multi($current_jmb->toArray(), $data['jmb']);
                         /** Data Updated */
-                        if(count($management_jmb_differents)) {
+                        if (count($management_jmb_differents)) {
                             $audit_fields_changed .= "<li>JMB : (";
                             $new_line = '';
-                            foreach($management_jmb_differents as $mjd_key => $mjd) {
-                                if(is_array($mjd) && count($mjd)) {
-                                    foreach($mjd as $mjd_data_key => $mjd_data) {
-                                        if(!in_array($mjd_data_key, ['id', 'file_id', 'management_id'])) {
+                            foreach ($management_jmb_differents as $mjd_key => $mjd) {
+                                if (is_array($mjd) && count($mjd)) {
+                                    foreach ($mjd as $mjd_data_key => $mjd_data) {
+                                        if (!in_array($mjd_data_key, ['id', 'file_id', 'management_id'])) {
                                             $name = str_replace("_", " ", $mjd_data_key);
                                             $new_line .= $name . '=' . $mjd_data . ', ';
                                         }
                                     }
                                 } else {
-                                    if(!empty($mjd)) {
+                                    if (!empty($mjd)) {
                                         $name = str_replace("_", " ", $mjd_key);
                                         $new_line .= $name . '=' . $mjd . ', ';
                                     }
                                 }
                             }
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** MC */
-                if(!empty($is_mc_field)) {
-                    if(!empty($data['is_mc'])) {
+                if (!empty($is_mc_field)) {
+                    if (!empty($data['is_mc'])) {
                         $audit_fields_changed .= "<li> MC : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> MC : data removed </li>";
                     }
                 } else {
-                    if($management->is_mc) {
-                        for($i = 0; $i < count($data['mc_name']); $i++) {
-                            $data['mc'][$i]['date_formed'] = !empty($data['mc_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
+                    if ($management->is_mc) {
+                        for ($i = 0; $i < count($data['mc_name']); $i++) {
+                            $data['mc'][$i]['date_formed'] = !empty($data['mc_date_formed'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
                             $data['mc'][$i]['certificate_no'] = $data['mc_certificate_no'][$i];
-                            $data['mc'][$i]['first_agm'] = !empty($data['mc_first_agm'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
+                            $data['mc'][$i]['first_agm'] = !empty($data['mc_first_agm'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
                             $data['mc'][$i]['name'] = $data['mc_name'][$i];
                             $data['mc'][$i]['address_1'] = $data['mc_address1'][$i];
                             $data['mc'][$i]['address_2'] = $data['mc_address2'][$i];
@@ -2381,40 +2425,40 @@ class AdminController extends BaseController {
                             $data['mc'][$i]['fax_no'] = $data['mc_fax_no'][$i];
                             $data['mc'][$i]['email'] = $data['mc_email'][$i];
                         }
-                        $management_mc_differents = Helper::check_diff_multi($current_mc->toArray(),$data['mc']);
+                        $management_mc_differents = Helper::check_diff_multi($current_mc->toArray(), $data['mc']);
                         /** Data Updated */
-                        if(count($management_mc_differents)) {
+                        if (count($management_mc_differents)) {
                             $audit_fields_changed .= "<li>MC : (";
                             $new_line = '';
-                            foreach($management_mc_differents as $mcd_key => $mcd) {
-                                if(is_array($mcd) && count($mcd)) {
-                                    foreach($mcd as $mcd_data_key => $mcd_data) {
-                                        if(!in_array($mcd_data_key, ['id', 'file_id', 'management_id'])) {
+                            foreach ($management_mc_differents as $mcd_key => $mcd) {
+                                if (is_array($mcd) && count($mcd)) {
+                                    foreach ($mcd as $mcd_data_key => $mcd_data) {
+                                        if (!in_array($mcd_data_key, ['id', 'file_id', 'management_id'])) {
                                             $name = str_replace("_", " ", $mcd_data_key);
                                             $new_line .= $name . '=' . $mcd_data . ', ';
                                         }
                                     }
                                 } else {
-                                    if(!empty($mcd)) {
+                                    if (!empty($mcd)) {
                                         $name = str_replace("_", " ", $mcd_key);
                                         $new_line .= $name . '=' . $mcd . ', ';
                                     }
                                 }
                             }
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** Agent */
-                if(!empty($is_agent_field)) {
-                    if(!empty($data['is_agent'])) {
+                if (!empty($is_agent_field)) {
+                    if (!empty($data['is_agent'])) {
                         $audit_fields_changed .= "<li> Agent : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> Agent : data removed </li>";
                     }
                 } else {
-                    if($management->is_agent) {
-                        for($i = 0; $i < count($data['agent_name']); $i++) {
+                    if ($management->is_agent) {
+                        for ($i = 0; $i < count($data['agent_name']); $i++) {
                             $data['agent'][$i]['selected_by'] = $data['agent_selected_by'][$i];
                             $data['agent'][$i]['name'] = $data['agent_name'][$i];
                             $data['agent'][$i]['address_1'] = $data['agent_address1'][$i];
@@ -2428,40 +2472,40 @@ class AdminController extends BaseController {
                             $data['agent'][$i]['fax_no'] = $data['agent_fax_no'][$i];
                             $data['agent'][$i]['email'] = $data['agent_email'][$i];
                         }
-                        $management_agent_differents = Helper::check_diff_multi($current_agent->toArray(),$data['agent']);
+                        $management_agent_differents = Helper::check_diff_multi($current_agent->toArray(), $data['agent']);
                         /** Data Updated */
-                        if(count($management_agent_differents)) {
+                        if (count($management_agent_differents)) {
                             $audit_fields_changed .= "<li>Agent : (";
                             $new_line = '';
-                            foreach($management_agent_differents as $mad_key => $mad) {
-                                if(is_array($mad) && count($mad)) {
-                                    foreach($mad as $mad_data_key => $mad_data) {
-                                        if(!in_array($mad_data_key, ['id', 'file_id', 'management_id'])) {
+                            foreach ($management_agent_differents as $mad_key => $mad) {
+                                if (is_array($mad) && count($mad)) {
+                                    foreach ($mad as $mad_data_key => $mad_data) {
+                                        if (!in_array($mad_data_key, ['id', 'file_id', 'management_id'])) {
                                             $name = str_replace("_", " ", $mad_data_key);
                                             $new_line .= $name . '=' . $mad_data . ', ';
                                         }
                                     }
                                 } else {
-                                    if(!empty($mad)) {
+                                    if (!empty($mad)) {
                                         $name = str_replace("_", " ", $mad_key);
                                         $new_line .= $name . '=' . $mad . ', ';
                                     }
                                 }
                             }
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
                 /** Others */
-                if(!empty($is_others_field)) {
-                    if(!empty($data['is_others'])) {
+                if (!empty($is_others_field)) {
+                    if (!empty($data['is_others'])) {
                         $audit_fields_changed .= "<li> Others : new data inserted </li>";
                     } else {
                         $audit_fields_changed .= "<li> Others : data removed </li>";
                     }
                 } else {
-                    if($management->is_others) {
-                        for($i = 0; $i < count($data['others_name']); $i++) {
+                    if ($management->is_others) {
+                        for ($i = 0; $i < count($data['others_name']); $i++) {
                             $data['others'][$i]['name'] = $data['others_name'][$i];
                             $data['others'][$i]['address_1'] = $data['others_address1'][$i];
                             $data['others'][$i]['address_2'] = $data['others_address2'][$i];
@@ -2474,71 +2518,71 @@ class AdminController extends BaseController {
                             $data['others'][$i]['fax_no'] = $data['others_fax_no'][$i];
                             $data['others'][$i]['email'] = $data['others_email'][$i];
                         }
-                        $management_other_differents = Helper::check_diff_multi($current_others->toArray(),$data['others']);
+                        $management_other_differents = Helper::check_diff_multi($current_others->toArray(), $data['others']);
                         /** Data Updated */
-                        if(count($management_other_differents)) {
+                        if (count($management_other_differents)) {
                             $audit_fields_changed .= "<li>Others : (";
                             $new_line = '';
-                            foreach($management_other_differents as $mod_key => $mod) {
-                                if(is_array($mod) && count($mod)) {
-                                    foreach($mod as $mod_data_key => $mod_data) {
-                                        if(!in_array($mod_data_key, ['id', 'file_id', 'management_id'])) {
+                            foreach ($management_other_differents as $mod_key => $mod) {
+                                if (is_array($mod) && count($mod)) {
+                                    foreach ($mod as $mod_data_key => $mod_data) {
+                                        if (!in_array($mod_data_key, ['id', 'file_id', 'management_id'])) {
                                             $name = str_replace("_", " ", $mod_data_key);
                                             $new_line .= $name . '=' . $mod_data . ', ';
                                         }
                                     }
                                 } else {
-                                    if(!empty($mod)) {
+                                    if (!empty($mod)) {
                                         $name = str_replace("_", " ", $mod_key);
                                         $new_line .= $name . '=' . $mod . ', ';
                                     }
                                 }
                             }
-                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li>";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li>";
                         }
                     }
                 }
-                if(!empty($is_developer_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field) || !empty($is_no_management_field)) {
+                if (!empty($is_developer_field) || !empty($is_jmb_field) || !empty($is_mc_field) || !empty($is_agent_field) || !empty($is_others_field) || !empty($is_no_management_field)) {
                     $audit_fields_changed .= "</ul>";
                 }
             }
             /** End Arrange audit fields changes */
 
             // management
-            $management->is_developer = !empty($data['is_developer'])? true : false;
-            $management->liquidator = !empty($data['liquidator'])? true : false;
-            $management->is_jmb = !empty($data['is_jmb'])? true : false;
-            $management->is_mc = !empty($data['is_mc'])? true : false;
-            $management->is_agent = !empty($data['is_agent'])? true : false;
-            $management->is_others = !empty($data['is_others'])? true : false;
-            $management->no_management = !empty($data['no_management'])? true : false;
-            $management->under_10_units = !empty($data['under_10_units'])? true : false;
-            $management->bankruptcy = !empty($data['bankruptcy'])? true : false;
+            $management->is_developer = !empty($data['is_developer']) ? true : false;
+            $management->liquidator = !empty($data['liquidator']) ? true : false;
+            $management->is_jmb = !empty($data['is_jmb']) ? true : false;
+            $management->is_mc = !empty($data['is_mc']) ? true : false;
+            $management->is_agent = !empty($data['is_agent']) ? true : false;
+            $management->is_others = !empty($data['is_others']) ? true : false;
+            $management->no_management = !empty($data['no_management']) ? true : false;
+            $management->under_10_units = !empty($data['under_10_units']) ? true : false;
+            $management->bankruptcy = !empty($data['bankruptcy']) ? true : false;
             $management->save();
 
             /** No Management */
-            if($management->no_management) {
-                $management->start = !empty($data['no_management_date_start'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_start'])->format('Y-m-d') : "";
-                $management->end = !empty($data['no_management_date_end'])? Carbon::createFromFormat('d-m-Y', $data['no_management_date_end'])->format('Y-m-d') : "";
+            if ($management->no_management) {
+                $management->start = !empty($data['no_management_date_start']) ? Carbon::createFromFormat('d-m-Y', $data['no_management_date_start'])->format('Y-m-d') : "";
+                $management->end = !empty($data['no_management_date_end']) ? Carbon::createFromFormat('d-m-Y', $data['no_management_date_end'])->format('Y-m-d') : "";
                 $management->save();
             }
 
             /** Strata under 10 units */
-            if($management->under_10_units) {
-                $management->under_10_units_remarks = !empty($data['under_10_units_remarks'])? $data['under_10_units_remarks'] : "";
+            if ($management->under_10_units) {
+                $management->under_10_units_remarks = !empty($data['under_10_units_remarks']) ? $data['under_10_units_remarks'] : "";
                 $management->save();
             }
-            
+
             /** Bankruptcy */
-            if($management->bankruptcy) {
-                $management->bankruptcy_remarks = !empty($data['bankruptcy_remarks'])? $data['bankruptcy_remarks'] : "";
+            if ($management->bankruptcy) {
+                $management->bankruptcy_remarks = !empty($data['bankruptcy_remarks']) ? $data['bankruptcy_remarks'] : "";
                 $management->save();
             }
 
             // developer
             if (Auth::user()->isJMB()) {
                 ManagementDeveloperDraft::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['developer_name']); $i++) {
+                for ($i = 0; $i < count($data['developer_name']); $i++) {
                     $developer = new ManagementDeveloperDraft;
                     $developer->file_id = $files->id;
                     $developer->management_id = $management->id;
@@ -2558,7 +2602,7 @@ class AdminController extends BaseController {
                 }
             } else {
                 ManagementDeveloper::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['developer_name']); $i++) {
+                for ($i = 0; $i < count($data['developer_name']); $i++) {
                     $developer = new ManagementDeveloper;
                     $developer->file_id = $files->id;
                     $developer->management_id = $management->id;
@@ -2581,7 +2625,7 @@ class AdminController extends BaseController {
             // liquidator
             if (Auth::user()->isJMB()) {
                 ManagementLiquidatorDraft::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['liquidator_name']); $i++) {
+                for ($i = 0; $i < count($data['liquidator_name']); $i++) {
                     $liquidator = new ManagementLiquidatorDraft;
                     $liquidator->file_id = $files->id;
                     $liquidator->management_id = $management->id;
@@ -2601,7 +2645,7 @@ class AdminController extends BaseController {
                 }
             } else {
                 ManagementLiquidator::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['liquidator_name']); $i++) {
+                for ($i = 0; $i < count($data['liquidator_name']); $i++) {
                     $liquidator = new ManagementLiquidator;
                     $liquidator->file_id = $files->id;
                     $liquidator->management_id = $management->id;
@@ -2620,15 +2664,15 @@ class AdminController extends BaseController {
                     $liquidator->save();
                 }
             }
-            
+
             // jmb
             if (Auth::user()->isJMB()) {
                 ManagementJMBDraft::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['jmb_name']); $i++) {
+                for ($i = 0; $i < count($data['jmb_name']); $i++) {
                     $jmb = new ManagementJMBDraft;
                     $jmb->file_id = $files->id;
                     $jmb->management_id = $management->id;
-                    $jmb->date_formed = !empty($data['jmb_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
+                    $jmb->date_formed = !empty($data['jmb_date_formed'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
                     $jmb->certificate_no = $data['jmb_certificate_no'][$i];
                     $jmb->name = $data['jmb_name'][$i];
                     $jmb->address1 = $data['jmb_address1'][$i];
@@ -2645,11 +2689,11 @@ class AdminController extends BaseController {
                 }
             } else {
                 ManagementJMB::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['jmb_name']); $i++) {
+                for ($i = 0; $i < count($data['jmb_name']); $i++) {
                     $jmb = new ManagementJMB;
                     $jmb->file_id = $files->id;
                     $jmb->management_id = $management->id;
-                    $jmb->date_formed = !empty($data['jmb_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
+                    $jmb->date_formed = !empty($data['jmb_date_formed'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['jmb_date_formed'][$i])->format('Y-m-d') : "";
                     $jmb->certificate_no = $data['jmb_certificate_no'][$i];
                     $jmb->name = $data['jmb_name'][$i];
                     $jmb->address1 = $data['jmb_address1'][$i];
@@ -2665,17 +2709,17 @@ class AdminController extends BaseController {
                     $jmb->save();
                 }
             }
-            
+
             // mc
             if (Auth::user()->isJMB()) {
                 ManagementMCDraft::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['mc_name']); $i++) {
+                for ($i = 0; $i < count($data['mc_name']); $i++) {
                     $mc = new ManagementMCDraft;
                     $mc->file_id = $files->id;
                     $mc->management_id = $management->id;
-                    $mc->date_formed = !empty($data['mc_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
+                    $mc->date_formed = !empty($data['mc_date_formed'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
                     $mc->certificate_no = $data['mc_certificate_no'][$i];
-                    $mc->first_agm = !empty($data['mc_first_agm'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
+                    $mc->first_agm = !empty($data['mc_first_agm'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
                     $mc->name = $data['mc_name'][$i];
                     $mc->address1 = $data['mc_address1'][$i];
                     $mc->address2 = $data['mc_address2'][$i];
@@ -2691,13 +2735,13 @@ class AdminController extends BaseController {
                 }
             } else {
                 ManagementMC::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['mc_name']); $i++) {
+                for ($i = 0; $i < count($data['mc_name']); $i++) {
                     $mc = new ManagementMC;
                     $mc->file_id = $files->id;
                     $mc->management_id = $management->id;
-                    $mc->date_formed = !empty($data['mc_date_formed'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
+                    $mc->date_formed = !empty($data['mc_date_formed'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['mc_date_formed'][$i])->format('Y-m-d') : "";
                     $mc->certificate_no = $data['mc_certificate_no'][$i];
-                    $mc->first_agm = !empty($data['mc_first_agm'][$i])? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
+                    $mc->first_agm = !empty($data['mc_first_agm'][$i]) ? Carbon::createFromFormat('d-m-Y', $data['mc_first_agm'][$i])->format('Y-m-d') : "";
                     $mc->name = $data['mc_name'][$i];
                     $mc->address1 = $data['mc_address1'][$i];
                     $mc->address2 = $data['mc_address2'][$i];
@@ -2712,11 +2756,11 @@ class AdminController extends BaseController {
                     $mc->save();
                 }
             }
-            
+
             // agent
             if (Auth::user()->isJMB()) {
                 ManagementAgentDraft::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['agent_name']); $i++) {
+                for ($i = 0; $i < count($data['agent_name']); $i++) {
                     $agent = new ManagementAgentDraft;
                     $agent->file_id = $files->id;
                     $agent->management_id = $management->id;
@@ -2733,11 +2777,10 @@ class AdminController extends BaseController {
                     $agent->fax_no = $data['agent_fax_no'][$i];
                     $agent->email = $data['agent_email'][$i];
                     $agent->save();
-                    
                 }
             } else {
                 ManagementAgent::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['agent_name']); $i++) {
+                for ($i = 0; $i < count($data['agent_name']); $i++) {
                     $agent = new ManagementAgent;
                     $agent->file_id = $files->id;
                     $agent->management_id = $management->id;
@@ -2756,11 +2799,11 @@ class AdminController extends BaseController {
                     $agent->save();
                 }
             }
-            
+
             // others
             if (Auth::user()->isJMB()) {
                 ManagementOthersDraft::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['others_name']); $i++) {
+                for ($i = 0; $i < count($data['others_name']); $i++) {
                     $others = new ManagementOthersDraft;
                     $others->file_id = $files->id;
                     $others->management_id = $management->id;
@@ -2779,7 +2822,7 @@ class AdminController extends BaseController {
                 }
             } else {
                 ManagementOthers::where('file_id', $files->id)->delete();
-                for($i = 0; $i < count($data['others_name']); $i++) {
+                for ($i = 0; $i < count($data['others_name']); $i++) {
                     $others = new ManagementOthers;
                     $others->file_id = $files->id;
                     $others->management_id = $management->id;
@@ -2799,11 +2842,11 @@ class AdminController extends BaseController {
             }
 
             # Audit Trail
-            if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                 $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
@@ -2819,7 +2862,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function viewMonitoring($id) {
+    public function viewMonitoring($id)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('updateFile/others/' . $id);
         }
@@ -2830,7 +2874,7 @@ class AdminController extends BaseController {
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2846,7 +2890,8 @@ class AdminController extends BaseController {
         return View::make('page_en.view_monitoring', $viewData);
     }
 
-    public function monitoring($id) {
+    public function monitoring($id)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('updateFile/others/' . $id);
         }
@@ -2858,7 +2903,7 @@ class AdminController extends BaseController {
         $image = OtherDetails::where('file_id', $files->id)->first();
         $designation = Designation::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -2874,7 +2919,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_monitoring', $viewData);
     }
 
-    public function submitUpdateMonitoring() {
+    public function submitUpdateMonitoring()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -2894,18 +2940,18 @@ class AdminController extends BaseController {
             $monitoring_remarks = $data['monitoring_remarks'];
 
             /** Arrange audit fields changes */
-            $precalculate_plan = $data['precalculate_plan'] == $monitor->pre_calculate? "": "precalculate plan";
-            $buyer_registration = $data['buyer_registration'] == $monitor->buyer_registration? "": "buyer registration";
-            $certificate_series_no = $data['certificate_series_no'] == $monitor->certificate_no? "": "certificate no";
-            $monitoring_remarks = $data['monitoring_remarks'] == $monitor->remarks? "": "remarks";
+            $precalculate_plan = $data['precalculate_plan'] == $monitor->pre_calculate ? "" : "precalculate plan";
+            $buyer_registration = $data['buyer_registration'] == $monitor->buyer_registration ? "" : "buyer registration";
+            $certificate_series_no = $data['certificate_series_no'] == $monitor->certificate_no ? "" : "certificate no";
+            $monitoring_remarks = $data['monitoring_remarks'] == $monitor->remarks ? "" : "remarks";
 
             $audit_fields_changed = "";
-            if(!empty($precalculate_plan) || !empty($monitoring_remarks) || !empty($buyer_registration) || !empty($certificate_series_no)) {
+            if (!empty($precalculate_plan) || !empty($monitoring_remarks) || !empty($buyer_registration) || !empty($certificate_series_no)) {
                 $audit_fields_changed .= "<br><ul>";
-                $audit_fields_changed .= !empty($precalculate_plan)? "<li>$precalculate_plan</li>" : "";
-                $audit_fields_changed .= !empty($buyer_registration)? "<li>$buyer_registration</li>" : "";
-                $audit_fields_changed .= !empty($monitoring_remarks)? "<li>$monitoring_remarks</li>" : "";
-                $audit_fields_changed .= !empty($certificate_series_no)? "<li>$certificate_series_no</li>" : "";
+                $audit_fields_changed .= !empty($precalculate_plan) ? "<li>$precalculate_plan</li>" : "";
+                $audit_fields_changed .= !empty($buyer_registration) ? "<li>$buyer_registration</li>" : "";
+                $audit_fields_changed .= !empty($monitoring_remarks) ? "<li>$monitoring_remarks</li>" : "";
+                $audit_fields_changed .= !empty($certificate_series_no) ? "<li>$certificate_series_no</li>" : "";
                 $audit_fields_changed .= "</ul>";
             }
             /** End Arrange audit fields changes */
@@ -2917,7 +2963,7 @@ class AdminController extends BaseController {
             $monitor->save();
 
             # Audit Trail
-            if(!empty($audit_fields_changed)) {
+            if (!empty($audit_fields_changed)) {
                 $remarks = 'Monitoring Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                 $this->addAudit($files->id, "COB File", $remarks);
             }
@@ -2932,7 +2978,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function addAGMDetails() {
+    public function addAGMDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -3022,7 +3069,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function editAGMDetails() {
+    public function editAGMDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -3067,37 +3115,37 @@ class AdminController extends BaseController {
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
             $new_line = '';
-            $new_line .= $agm_date != $agm_detail->agm_date? "agm date, " : "";
-            $new_line .= $agm != $agm_detail->agm? "agm, " : "";
-            $new_line .= $egm != $agm_detail->egm? "egm, " : "";
-            $new_line .= $minit_meeting != $agm_detail->minit_meeting? "minit meeting, " : "";
-            $new_line .= $jmc_copy != $agm_detail->jmc_spa? "jmc copy, " : "";
-            $new_line .= $ic_list != $agm_detail->identity_card? "ic, " : "";
-            $new_line .= $attendance_list != $agm_detail->attendance? "attendance, " : "";
-            $new_line .= $audited_financial_report != $agm_detail->financial_report? "audited financial report, " : "";
-            $new_line .= $audit_report != $agm_detail->audit_report? "audit report, " : "";
+            $new_line .= $agm_date != $agm_detail->agm_date ? "agm date, " : "";
+            $new_line .= $agm != $agm_detail->agm ? "agm, " : "";
+            $new_line .= $egm != $agm_detail->egm ? "egm, " : "";
+            $new_line .= $minit_meeting != $agm_detail->minit_meeting ? "minit meeting, " : "";
+            $new_line .= $jmc_copy != $agm_detail->jmc_spa ? "jmc copy, " : "";
+            $new_line .= $ic_list != $agm_detail->identity_card ? "ic, " : "";
+            $new_line .= $attendance_list != $agm_detail->attendance ? "attendance, " : "";
+            $new_line .= $audited_financial_report != $agm_detail->financial_report ? "audited financial report, " : "";
+            $new_line .= $audit_report != $agm_detail->audit_report ? "audit report, " : "";
             $new_line .= !empty($audit_report_file_url) ? "audit report file, " : "";
             $new_line .= !empty($letter_integrity_url) ? "letter integrity, " : "";
             $new_line .= !empty($letter_bankruptcy_url) ? "letter bankruptcy, " : "";
-            $new_line .= $audit_start != $agm_detail->audit_start_date? "audit start, " : "";
-            $new_line .= $audit_end != $agm_detail->audit_end_date? "audit end, " : "";
-            $new_line .= $notice_agm_egm_url != $agm_detail->notice_agm_egm_url? "notice agm egm, " : "";
-            $new_line .= $minutes_agm_egm_url != $agm_detail->minutes_agm_egm_url? "minutes agm egm, " : "";
-            $new_line .= $minutes_ajk_url != $agm_detail->minutes_ajk_url? "minutes ajk, " : "";
-            $new_line .= $eligible_vote_url != $agm_detail->eligible_vote_url? "eligible vote, " : "";
-            $new_line .= $attend_meeting_url != $agm_detail->attend_meeting_url? "attend meeting, " : "";
-            $new_line .= $proksi_url != $agm_detail->proksi_url? "proksi, " : "";
-            $new_line .= $ajk_info_url != $agm_detail->ajk_info_url? "ajk info, " : "";
-            $new_line .= $ic_url != $agm_detail->ic_url? "ic, " : "";
-            $new_line .= $purchase_aggrement_url != $agm_detail->purchase_aggrement_url? "purchase aggrement, " : "";
-            $new_line .= $strata_title_url != $agm_detail->strata_title_url? "strata title, " : "";
-            $new_line .= $maintenance_statement_url != $agm_detail->maintenance_statement_url? "maintenance statement, " : "";
-            $new_line .= $integrity_pledge_url != $agm_detail->integrity_pledge_url? "integrity pledge, " : "";
-            $new_line .= $report_audited_financial_url != $agm_detail->report_audited_financial_url? "report audited financial, " : "";
-            $new_line .= $house_rules_url != $agm_detail->house_rules_url? "house rules, " : "";
-            if(!empty($new_line)) {
+            $new_line .= $audit_start != $agm_detail->audit_start_date ? "audit start, " : "";
+            $new_line .= $audit_end != $agm_detail->audit_end_date ? "audit end, " : "";
+            $new_line .= $notice_agm_egm_url != $agm_detail->notice_agm_egm_url ? "notice agm egm, " : "";
+            $new_line .= $minutes_agm_egm_url != $agm_detail->minutes_agm_egm_url ? "minutes agm egm, " : "";
+            $new_line .= $minutes_ajk_url != $agm_detail->minutes_ajk_url ? "minutes ajk, " : "";
+            $new_line .= $eligible_vote_url != $agm_detail->eligible_vote_url ? "eligible vote, " : "";
+            $new_line .= $attend_meeting_url != $agm_detail->attend_meeting_url ? "attend meeting, " : "";
+            $new_line .= $proksi_url != $agm_detail->proksi_url ? "proksi, " : "";
+            $new_line .= $ajk_info_url != $agm_detail->ajk_info_url ? "ajk info, " : "";
+            $new_line .= $ic_url != $agm_detail->ic_url ? "ic, " : "";
+            $new_line .= $purchase_aggrement_url != $agm_detail->purchase_aggrement_url ? "purchase aggrement, " : "";
+            $new_line .= $strata_title_url != $agm_detail->strata_title_url ? "strata title, " : "";
+            $new_line .= $maintenance_statement_url != $agm_detail->maintenance_statement_url ? "maintenance statement, " : "";
+            $new_line .= $integrity_pledge_url != $agm_detail->integrity_pledge_url ? "integrity pledge, " : "";
+            $new_line .= $report_audited_financial_url != $agm_detail->report_audited_financial_url ? "report audited financial, " : "";
+            $new_line .= $house_rules_url != $agm_detail->house_rules_url ? "house rules, " : "";
+            if (!empty($new_line)) {
                 $audit_fields_changed .= "<br/><ul><li> AGM Detail : (";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
             }
             /** End Arrange audit fields changes */
 
@@ -3133,7 +3181,7 @@ class AdminController extends BaseController {
 
             # Audit Trail
             $file_name = Files::find($agm_detail->file_id);
-            if(!empty($audit_fields_changed)) {
+            if (!empty($audit_fields_changed)) {
                 $remarks = 'AGM Details (' . $file_name->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                 $this->addAudit($file_name->id, "COB File", $remarks);
             }
@@ -3148,7 +3196,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function getAGMDetails() {
+    public function getAGMDetails()
+    {
         $output = [];
         $data = Input::all();
         if (Request::ajax()) {
@@ -3516,11 +3565,12 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getAGM($file_id) {
+    public function getAGM($file_id)
+    {
         $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($agm_detail) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($agm_detail as $agm_details) {
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
@@ -3606,19 +3656,19 @@ class AdminController extends BaseController {
                 $data_raw = array(
                     $date_agm,
                     trans('app.forms.annual_general_meeting') . '<br/>'
-                    . trans('app.forms.extra_general_meeting') . '<br/>'
-                    . trans('app.forms.meeting_minutes') . '<br/>'
-                    . trans('app.forms.pledge_letter_of_integrity') . '<br>'
-                    . trans('app.forms.declaration_letter_of_non_bankruptcy'),
+                        . trans('app.forms.extra_general_meeting') . '<br/>'
+                        . trans('app.forms.meeting_minutes') . '<br/>'
+                        . trans('app.forms.pledge_letter_of_integrity') . '<br>'
+                        . trans('app.forms.declaration_letter_of_non_bankruptcy'),
                     $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
                     trans('app.forms.jmc_spa_copy') . '<br/>'
-                    . trans('app.forms.identity_card_list') . '<br/>'
-                    . trans('app.forms.attendance_list'),
+                        . trans('app.forms.identity_card_list') . '<br/>'
+                        . trans('app.forms.attendance_list'),
                     $status6 . '<br/>' . $status7 . '<br/>' . $status8,
                     trans('app.forms.audited_financial_report') . '<br/>'
-                    . trans('app.forms.financial_audit_start_date') . '<br/>'
-                    . trans('app.forms.financial_audit_end_date') . '<br/>'
-                    . trans('app.forms.financial_audit_report'),
+                        . trans('app.forms.financial_audit_start_date') . '<br/>'
+                        . trans('app.forms.financial_audit_end_date') . '<br/>'
+                        . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
                     date('d-M-Y', strtotime($agm_details->updated_at)),
                     $button
@@ -3642,11 +3692,12 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getAGMByMC($file_id) {
+    public function getAGMByMC($file_id)
+    {
         $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($agm_detail) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($agm_detail as $agm_details) {
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
@@ -3732,19 +3783,19 @@ class AdminController extends BaseController {
                 $data_raw = array(
                     $date_agm,
                     trans('app.forms.annual_general_meeting') . '<br/>'
-                    . trans('app.forms.extra_general_meeting') . '<br/>'
-                    . trans('app.forms.meeting_minutes') . '<br/>'
-                    . trans('app.forms.pledge_letter_of_integrity') . '<br>'
-                    . trans('app.forms.declaration_letter_of_non_bankruptcy'),
+                        . trans('app.forms.extra_general_meeting') . '<br/>'
+                        . trans('app.forms.meeting_minutes') . '<br/>'
+                        . trans('app.forms.pledge_letter_of_integrity') . '<br>'
+                        . trans('app.forms.declaration_letter_of_non_bankruptcy'),
                     $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
                     trans('app.forms.jmc_spa_copy') . '<br/>'
-                    . trans('app.forms.identity_card_list') . '<br/>'
-                    . trans('app.forms.attendance_list'),
+                        . trans('app.forms.identity_card_list') . '<br/>'
+                        . trans('app.forms.attendance_list'),
                     $status6 . '<br/>' . $status7 . '<br/>' . $status8,
                     trans('app.forms.audited_financial_report') . '<br/>'
-                    . trans('app.forms.financial_audit_start_date') . '<br/>'
-                    . trans('app.forms.financial_audit_end_date') . '<br/>'
-                    . trans('app.forms.financial_audit_report'),
+                        . trans('app.forms.financial_audit_start_date') . '<br/>'
+                        . trans('app.forms.financial_audit_end_date') . '<br/>'
+                        . trans('app.forms.financial_audit_report'),
                     $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
                     date('d-M-Y', strtotime($agm_details->updated_at)),
                     $button
@@ -3768,7 +3819,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAGMDetails() {
+    public function deleteAGMDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -3799,7 +3851,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAuditReport() {
+    public function deleteAuditReport()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -3829,7 +3882,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteLetterIntegrity() {
+    public function deleteLetterIntegrity()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -3859,7 +3913,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteLetterBankruptcy() {
+    public function deleteLetterBankruptcy()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -3889,7 +3944,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAGMFile() {
+    public function deleteAGMFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -3908,7 +3964,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteEGMFile() {
+    public function deleteEGMFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -3927,7 +3984,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteMinutesMeetingFile() {
+    public function deleteMinutesMeetingFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -3946,7 +4004,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteJMCFile() {
+    public function deleteJMCFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -3965,7 +4024,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteICFile() {
+    public function deleteICFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -3984,7 +4044,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAttendanceFile() {
+    public function deleteAttendanceFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -4003,7 +4064,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAuditedFinancialFile() {
+    public function deleteAuditedFinancialFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $agm_details = MeetingDocument::findOrFail(Helper::decode($data['id']));
@@ -4022,7 +4084,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addAJKDetails() {
+    public function addAJKDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4066,7 +4129,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function editAJKDetails() {
+    public function editAJKDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4090,15 +4154,15 @@ class AdminController extends BaseController {
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
             $new_line = '';
-            $new_line .= $designation != $ajk_detail->designation? "designation, " : "";
-            $new_line .= $name != $ajk_detail->name? "name, " : "";
-            $new_line .= $email != $ajk_detail->email? "email, " : "";
-            $new_line .= $phone_no != $ajk_detail->phone_no? "phone no, " : "";
-            $new_line .= $start_year != $ajk_detail->start_year? "start year, " : "";
-            $new_line .= $end_year != $ajk_detail->end_year? "end year, " : "";
-            if(!empty($new_line)) {
+            $new_line .= $designation != $ajk_detail->designation ? "designation, " : "";
+            $new_line .= $name != $ajk_detail->name ? "name, " : "";
+            $new_line .= $email != $ajk_detail->email ? "email, " : "";
+            $new_line .= $phone_no != $ajk_detail->phone_no ? "phone no, " : "";
+            $new_line .= $start_year != $ajk_detail->start_year ? "start year, " : "";
+            $new_line .= $end_year != $ajk_detail->end_year ? "end year, " : "";
+            if (!empty($new_line)) {
                 $audit_fields_changed .= "<br/><ul><li> AJK Detail : (";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
             }
             /** End Arrange audit fields changes */
 
@@ -4111,7 +4175,7 @@ class AdminController extends BaseController {
             $ajk_detail->save();
 
             # Audit Trail
-            if(!empty($audit_fields_changed)) {
+            if (!empty($audit_fields_changed)) {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                 $this->addAudit($files->id, "COB File", $remarks);
             }
@@ -4126,11 +4190,12 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function getAJK($file_id) {
+    public function getAJK($file_id)
+    {
         $ajk_detail = AJKDetails::where('file_id', Helper::decode($file_id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($ajk_detail) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($ajk_detail as $ajk_details) {
                 $designation = Designation::find($ajk_details->designation);
 
@@ -4173,7 +4238,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAJKDetails() {
+    public function deleteAJKDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4205,14 +4271,15 @@ class AdminController extends BaseController {
         }
     }
 
-    public function viewOthers($id) {
+    public function viewOthers($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::find(Helper::decode($id));
         $other_details = OtherDetails::where('file_id', $files->id)->first();
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -4227,7 +4294,8 @@ class AdminController extends BaseController {
         return View::make('page_en.view_others', $viewData);
     }
 
-    public function others($id) {
+    public function others($id)
+    {
         if (Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
@@ -4250,8 +4318,8 @@ class AdminController extends BaseController {
         }
         $tnbLists = OtherDetails::tnbLists();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
-        if($disallow) {
+
+        if ($disallow) {
             $viewData = array(
                 'title' => trans('app.errors.page_not_found'),
                 'panel_nav_active' => '',
@@ -4276,7 +4344,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_others', $viewData);
     }
 
-    public function submitUpdateOtherDetails() {
+    public function submitUpdateOtherDetails()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4301,10 +4370,10 @@ class AdminController extends BaseController {
                 $notify_data['route'] = route('cob.file.others.edit', Request::get('file_id'));
                 $notify_data['cob_route'] = route('cob.file.draft.others.edit', Request::get('file_id'));
                 $notify_data['strata'] = "You";
-                $notify_data['strata_name'] = $strata->name != ""? $strata->name : $files->file_no;
+                $notify_data['strata_name'] = $strata->name != "" ? $strata->name : $files->file_no;
                 $notify_data['title'] = "COB File Others";
                 $notify_data['module'] = "Other Details";
-                
+
                 (new NotificationService())->store($notify_data);
             } else {
                 $others = OtherDetails::firstOrNew(array('file_id' => $files->id));
@@ -4335,33 +4404,33 @@ class AdminController extends BaseController {
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
             $new_line = '';
-            $new_line .= $other_details_name != $others->name? "name, " : "";
-            $new_line .= $others_image_url != $others->image_url? "image_url, " : "";
-            $new_line .= $latitude != $others->latitude? "latitude, " : "";
-            $new_line .= $longitude != $others->longitude? "longitude, " : "";
-            $new_line .= $other_details_description != $others->description? "description, " : "";
-            $new_line .= $pms_system != $others->pms_system? "pms system, " : "";
-            $new_line .= $owner_occupied != $others->owner_occupied? "owner occupied, " : "";
-            $new_line .= $rented != $others->rented? "rented, " : "";
-            $new_line .= $bantuan_lphs != $others->bantuan_lphs? "bantuan lphs, " : "";
-            $new_line .= $bantuan_others != $others->bantuan_others? "bantuan others, " : "";
-            $new_line .= $rsku != $others->rsku? "rsku, " : "";
-            $new_line .= $original_price != $others->original_price? "original price, " : "";
-            $new_line .= $water_meter != $others->water_meter? "water meter, " : "";
-            $new_line .= $tnb != $others->tnb? "tnb, " : "";
-            $new_line .= $parking_bay != $others->parking_bay? "parking bay, " : "";
-            $new_line .= $parking_area != $others->parking_area? "parking area, " : "";
-            $new_line .= $malay_composition != $others->malay_composition? "malay composition, " : "";
-            $new_line .= $chinese_composition != $others->chinese_composition? "chinese composition, " : "";
-            $new_line .= $indian_composition != $others->indian_composition? "indian composition, " : "";
-            $new_line .= $others_composition != $others->others_composition? "others composition, " : "";
-            $new_line .= $foreigner_composition != $others->foreigner_composition? "foreigner composition, " : "";
-            if(!empty($new_line)) {
+            $new_line .= $other_details_name != $others->name ? "name, " : "";
+            $new_line .= $others_image_url != $others->image_url ? "image_url, " : "";
+            $new_line .= $latitude != $others->latitude ? "latitude, " : "";
+            $new_line .= $longitude != $others->longitude ? "longitude, " : "";
+            $new_line .= $other_details_description != $others->description ? "description, " : "";
+            $new_line .= $pms_system != $others->pms_system ? "pms system, " : "";
+            $new_line .= $owner_occupied != $others->owner_occupied ? "owner occupied, " : "";
+            $new_line .= $rented != $others->rented ? "rented, " : "";
+            $new_line .= $bantuan_lphs != $others->bantuan_lphs ? "bantuan lphs, " : "";
+            $new_line .= $bantuan_others != $others->bantuan_others ? "bantuan others, " : "";
+            $new_line .= $rsku != $others->rsku ? "rsku, " : "";
+            $new_line .= $original_price != $others->original_price ? "original price, " : "";
+            $new_line .= $water_meter != $others->water_meter ? "water meter, " : "";
+            $new_line .= $tnb != $others->tnb ? "tnb, " : "";
+            $new_line .= $parking_bay != $others->parking_bay ? "parking bay, " : "";
+            $new_line .= $parking_area != $others->parking_area ? "parking area, " : "";
+            $new_line .= $malay_composition != $others->malay_composition ? "malay composition, " : "";
+            $new_line .= $chinese_composition != $others->chinese_composition ? "chinese composition, " : "";
+            $new_line .= $indian_composition != $others->indian_composition ? "indian composition, " : "";
+            $new_line .= $others_composition != $others->others_composition ? "others composition, " : "";
+            $new_line .= $foreigner_composition != $others->foreigner_composition ? "foreigner composition, " : "";
+            if (!empty($new_line)) {
                 $audit_fields_changed .= "<br/><ul><li> Others : (";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
             }
             /** End Arrange audit fields changes */
-            
+
             $others->name = $other_details_name;
             $others->image_url = $others_image_url;
             $others->latitude = $latitude;
@@ -4386,7 +4455,7 @@ class AdminController extends BaseController {
             $others->save();
 
             # Audit Trail
-            if(!empty($audit_fields_changed)) {
+            if (!empty($audit_fields_changed)) {
                 $remarks = 'Others Info (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                 $this->addAudit($files->id, "COB File", $remarks);
             }
@@ -4401,7 +4470,8 @@ class AdminController extends BaseController {
         return "false";
     }
 
-    public function submitAddHousingScheme() {
+    public function submitAddHousingScheme()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4446,11 +4516,12 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getHousingScheme($file_id) {
+    public function getHousingScheme($file_id)
+    {
         $user = HousingSchemeUser::where('file_id', Helper::decode($file_id))->where('is_deleted', 0)->get();
 
         if (count($user) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($user as $users) {
                 $hs_user = User::find($users->user_id);
 
@@ -4484,7 +4555,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteHousingScheme() {
+    public function deleteHousingScheme()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4520,7 +4592,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteImageOthers() {
+    public function deleteImageOthers()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4552,7 +4625,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function viewScoring($id) {
+    public function viewScoring($id)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
@@ -4564,7 +4638,7 @@ class AdminController extends BaseController {
         $files = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $files->id)->first();
         $disallow = Helper::isAllow($files->id, $files->company_id);
-        
+
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
             'panel_nav_active' => 'cob_panel',
@@ -4578,7 +4652,8 @@ class AdminController extends BaseController {
         return View::make('page_en.view_scoring', $viewData);
     }
 
-    public function scoring($id) {
+    public function scoring($id)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
@@ -4591,7 +4666,7 @@ class AdminController extends BaseController {
         $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $disallow = Helper::isAllow($file->id, $file->company_id);
-        
+
 
         $viewData = array(
             'title' => trans('app.menus.cob.update_cob_file'),
@@ -4606,7 +4681,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_scoring', $viewData);
     }
 
-    public function addScoring() {
+    public function addScoring()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4694,7 +4770,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function editScoring() {
+    public function editScoring()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4742,32 +4819,32 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $date != $scoring->date? "date, " : "";
-                $new_line .= $score1 != $scoring->score1? "score1, " : "";
-                $new_line .= $score2 != $scoring->score2? "score2, " : "";
-                $new_line .= $score3 != $scoring->score3? "score3, " : "";
-                $new_line .= $score4 != $scoring->score4? "score4, " : "";
-                $new_line .= $score5 != $scoring->score5? "score5, " : "";
-                $new_line .= $score6 != $scoring->score6? "score6, " : "";
-                $new_line .= $score7 != $scoring->score7? "score7, " : "";
-                $new_line .= $score8 != $scoring->score8? "score8, " : "";
-                $new_line .= $score9 != $scoring->score9? "score9, " : "";
-                $new_line .= $score10 != $scoring->score10? "score10, " : "";
-                $new_line .= $score11 != $scoring->score11? "score11, " : "";
-                $new_line .= $score12 != $scoring->score12? "score12, " : "";
-                $new_line .= $score13 != $scoring->score13? "score13, " : "";
-                $new_line .= $score14 != $scoring->score14? "score14, " : "";
-                $new_line .= $score15 != $scoring->score15? "score15, " : "";
-                $new_line .= $score16 != $scoring->score16? "score16, " : "";
-                $new_line .= $score17 != $scoring->score17? "score17, " : "";
-                $new_line .= $score18 != $scoring->score18? "score18, " : "";
-                $new_line .= $score19 != $scoring->score19? "score19, " : "";
-                $new_line .= $score20 != $scoring->score20? "score20, " : "";
-                $new_line .= $score21 != $scoring->score21? "score21, " : "";
-                $new_line .= $total_score != $scoring->total_score? "total score, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $date != $scoring->date ? "date, " : "";
+                $new_line .= $score1 != $scoring->score1 ? "score1, " : "";
+                $new_line .= $score2 != $scoring->score2 ? "score2, " : "";
+                $new_line .= $score3 != $scoring->score3 ? "score3, " : "";
+                $new_line .= $score4 != $scoring->score4 ? "score4, " : "";
+                $new_line .= $score5 != $scoring->score5 ? "score5, " : "";
+                $new_line .= $score6 != $scoring->score6 ? "score6, " : "";
+                $new_line .= $score7 != $scoring->score7 ? "score7, " : "";
+                $new_line .= $score8 != $scoring->score8 ? "score8, " : "";
+                $new_line .= $score9 != $scoring->score9 ? "score9, " : "";
+                $new_line .= $score10 != $scoring->score10 ? "score10, " : "";
+                $new_line .= $score11 != $scoring->score11 ? "score11, " : "";
+                $new_line .= $score12 != $scoring->score12 ? "score12, " : "";
+                $new_line .= $score13 != $scoring->score13 ? "score13, " : "";
+                $new_line .= $score14 != $scoring->score14 ? "score14, " : "";
+                $new_line .= $score15 != $scoring->score15 ? "score15, " : "";
+                $new_line .= $score16 != $scoring->score16 ? "score16, " : "";
+                $new_line .= $score17 != $scoring->score17 ? "score17, " : "";
+                $new_line .= $score18 != $scoring->score18 ? "score18, " : "";
+                $new_line .= $score19 != $scoring->score19 ? "score19, " : "";
+                $new_line .= $score20 != $scoring->score20 ? "score20, " : "";
+                $new_line .= $score21 != $scoring->score21 ? "score21, " : "";
+                $new_line .= $total_score != $scoring->total_score ? "total score, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Scoring : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -4799,7 +4876,7 @@ class AdminController extends BaseController {
                 if ($success) {
                     # Audit Trail
                     $files = Files::find($scoring->file_id);
-                    if(!empty($audit_fields_changed)) {
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'COB Rating (' . $files->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->created_at)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
                     }
@@ -4817,23 +4894,24 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getScoring($id) {
+    public function getScoring($id)
+    {
         $scoring = Scoring::where('file_id', Helper::decode($id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($scoring) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($scoring as $scorings) {
                 $button = "";
 
                 $button .= '<button type="button" class="btn btn-xs btn-success edit_survey" title="Edit" onclick="editSurveyForm(\'' . $scorings->survey . '\')"'
-                        . 'data-date="' . (!empty($scorings->date) ? $scorings->date : '') . '" data-score1="' . $scorings->score1 . '" data-score2="' . $scorings->score2 . '" data-score3="' . $scorings->score3 . '"'
-                        . 'data-score4="' . $scorings->score4 . '" data-score5="' . $scorings->score5 . '" data-score6="' . $scorings->score6 . '"'
-                        . 'data-score7="' . $scorings->score7 . '" data-score8="' . $scorings->score8 . '" data-score9="' . $scorings->score9 . '"'
-                        . 'data-score10="' . $scorings->score10 . '" data-score11="' . $scorings->score11 . '" data-score12="' . $scorings->score12 . '"'
-                        . 'data-score13="' . $scorings->score13 . '" data-score14="' . $scorings->score14 . '" data-score15="' . $scorings->score15 . '"'
-                        . 'data-score16="' . $scorings->score16 . '" data-score17="' . $scorings->score17 . '" data-score18="' . $scorings->score18 . '"'
-                        . 'data-score19="' . $scorings->score19 . '" data-score20="' . $scorings->score20 . '" data-score21="' . $scorings->score21 . '"'
-                        . 'data-id="' . Helper::encode($scorings->id) . '"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    . 'data-date="' . (!empty($scorings->date) ? $scorings->date : '') . '" data-score1="' . $scorings->score1 . '" data-score2="' . $scorings->score2 . '" data-score3="' . $scorings->score3 . '"'
+                    . 'data-score4="' . $scorings->score4 . '" data-score5="' . $scorings->score5 . '" data-score6="' . $scorings->score6 . '"'
+                    . 'data-score7="' . $scorings->score7 . '" data-score8="' . $scorings->score8 . '" data-score9="' . $scorings->score9 . '"'
+                    . 'data-score10="' . $scorings->score10 . '" data-score11="' . $scorings->score11 . '" data-score12="' . $scorings->score12 . '"'
+                    . 'data-score13="' . $scorings->score13 . '" data-score14="' . $scorings->score14 . '" data-score15="' . $scorings->score15 . '"'
+                    . 'data-score16="' . $scorings->score16 . '" data-score17="' . $scorings->score17 . '" data-score18="' . $scorings->score18 . '"'
+                    . 'data-score19="' . $scorings->score19 . '" data-score20="' . $scorings->score20 . '" data-score21="' . $scorings->score21 . '"'
+                    . 'data-id="' . Helper::encode($scorings->id) . '"><i class="fa fa-pencil"></i></button>&nbsp;';
                 $button .= '<button class="btn btn-xs btn-danger" title="Delete" onclick="deleteScoring(\'' . Helper::encode($scorings->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $scorings_A = ((($scorings->score1 + $scorings->score2 + $scorings->score3 + $scorings->score4 + $scorings->score5) / 25) * 25);
@@ -4844,52 +4922,52 @@ class AdminController extends BaseController {
 
                 if ($scorings->total_score >= 81) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '</span>';
                 } else if ($scorings->total_score >= 61) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else if ($scorings->total_score >= 41) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else if ($scorings->total_score >= 21) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else if ($scorings->total_score >= 1) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 }
 
                 $data_raw = array(
@@ -4922,7 +5000,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteScoring() {
+    public function deleteScoring()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -4954,7 +5033,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function viewBuyer($id) {
+    public function viewBuyer($id)
+    {
         //get user permission
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
@@ -4982,7 +5062,8 @@ class AdminController extends BaseController {
         return View::make('page_en.view_buyer', $viewData);
     }
 
-    public function buyer($id) {
+    public function buyer($id)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
@@ -5011,7 +5092,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_buyer', $viewData);
     }
 
-    public function addBuyer($id) {
+    public function addBuyer($id)
+    {
         $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         $race = Race::where('is_active', 1)->where('is_deleted', 0)->orderBy('sort_no', 'asc')->get();
@@ -5032,7 +5114,8 @@ class AdminController extends BaseController {
         return View::make('page_en.add_buyer', $viewData);
     }
 
-    public function submitBuyer() {
+    public function submitBuyer()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5111,7 +5194,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function editBuyer($id) {
+    public function editBuyer($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $buyer = Buyer::findOrFail(Helper::decode($id));
@@ -5137,7 +5221,8 @@ class AdminController extends BaseController {
         return View::make('page_en.edit_buyer', $viewData);
     }
 
-    public function submitEditBuyer() {
+    public function submitEditBuyer()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5179,29 +5264,29 @@ class AdminController extends BaseController {
                     /** Arrange audit fields changes */
                     $audit_fields_changed = '';
                     $new_line = '';
-                    $new_line .= $unit_no != $buyer->unit_no? "unit no, " : "";
-                    $new_line .= $unit_share != $buyer->unit_share? "unit share, " : "";
-                    $new_line .= $owner_name != $buyer->owner_name? "owner name, " : "";
-                    $new_line .= $ic_company_no != $buyer->ic_company_no? "ic company no, " : "";
-                    $new_line .= $address != $buyer->address? "address, " : "";
-                    $new_line .= $phone_no != $buyer->phone_no? "phone no, " : "";
-                    $new_line .= $email != $buyer->email? "email, " : "";
-                    $new_line .= $race != $buyer->race_id? "race, " : "";
-                    $new_line .= $nationality != $buyer->nationality_id? "nationality, " : "";
-                    $new_line .= $remark != $buyer->remarks? "remark, " : "";
-                    $new_line .= $no_petak != $buyer->no_petak? "no petak, " : "";
-                    $new_line .= $no_petak_aksesori != $buyer->no_petak_aksesori? "no petak aksesori, " : "";
-                    $new_line .= $keluasan_lantai_petak != $buyer->keluasan_lantai_petak? "keluasan lantai petak, " : "";
-                    $new_line .= $keluasan_lantai_petak_aksesori != $buyer->keluasan_lantai_petak_aksesori? "keluasan lantai petak aksesori, " : "";
-                    $new_line .= $jenis_kegunaan != $buyer->jenis_kegunaan? "jenis kegunaan, " : "";
-                    $new_line .= $nama2 != $buyer->nama2? "nama2, " : "";
-                    $new_line .= $ic_no2 != $buyer->ic_no2? "ic no2, " : "";
-                    $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat? "alamat surat menyurat, " : "";
-                    $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan? "caj penyelenggaraan, " : "";
-                    $new_line .= $sinking_fund != $buyer->sinking_fund? "sinking fund, " : "";
-                    if(!empty($new_line)) {
+                    $new_line .= $unit_no != $buyer->unit_no ? "unit no, " : "";
+                    $new_line .= $unit_share != $buyer->unit_share ? "unit share, " : "";
+                    $new_line .= $owner_name != $buyer->owner_name ? "owner name, " : "";
+                    $new_line .= $ic_company_no != $buyer->ic_company_no ? "ic company no, " : "";
+                    $new_line .= $address != $buyer->address ? "address, " : "";
+                    $new_line .= $phone_no != $buyer->phone_no ? "phone no, " : "";
+                    $new_line .= $email != $buyer->email ? "email, " : "";
+                    $new_line .= $race != $buyer->race_id ? "race, " : "";
+                    $new_line .= $nationality != $buyer->nationality_id ? "nationality, " : "";
+                    $new_line .= $remark != $buyer->remarks ? "remark, " : "";
+                    $new_line .= $no_petak != $buyer->no_petak ? "no petak, " : "";
+                    $new_line .= $no_petak_aksesori != $buyer->no_petak_aksesori ? "no petak aksesori, " : "";
+                    $new_line .= $keluasan_lantai_petak != $buyer->keluasan_lantai_petak ? "keluasan lantai petak, " : "";
+                    $new_line .= $keluasan_lantai_petak_aksesori != $buyer->keluasan_lantai_petak_aksesori ? "keluasan lantai petak aksesori, " : "";
+                    $new_line .= $jenis_kegunaan != $buyer->jenis_kegunaan ? "jenis kegunaan, " : "";
+                    $new_line .= $nama2 != $buyer->nama2 ? "nama2, " : "";
+                    $new_line .= $ic_no2 != $buyer->ic_no2 ? "ic no2, " : "";
+                    $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat ? "alamat surat menyurat, " : "";
+                    $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan ? "caj penyelenggaraan, " : "";
+                    $new_line .= $sinking_fund != $buyer->sinking_fund ? "sinking fund, " : "";
+                    if (!empty($new_line)) {
                         $audit_fields_changed .= "<br/><ul><li> Purchaser : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                     }
                     /** End Arrange audit fields changes */
 
@@ -5231,7 +5316,7 @@ class AdminController extends BaseController {
                     if ($success) {
                         # Audit Trail
                         $files = Files::find($buyer->file_id);
-                        if(!empty($audit_fields_changed)) {
+                        if (!empty($audit_fields_changed)) {
                             $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
@@ -5252,11 +5337,12 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getBuyerList($file_id) {
+    public function getBuyerList($file_id)
+    {
         $buyer_list = Buyer::where('file_id', Helper::decode($file_id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($buyer_list) > 0) {
-            $data = Array();
+            $data = array();
             $no = 1;
             foreach ($buyer_list as $buyer_lists) {
                 $button = "";
@@ -5297,7 +5383,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteBuyer() {
+    public function deleteBuyer()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5329,7 +5416,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function importBuyer($id) {
+    public function importBuyer($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $file = Files::find($id);
@@ -5350,7 +5438,8 @@ class AdminController extends BaseController {
         return View::make('page_en.import_buyer', $viewData);
     }
 
-    public function submitUploadBuyer($id) {
+    public function submitUploadBuyer($id)
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5463,7 +5552,8 @@ class AdminController extends BaseController {
     }
 
     //document
-    public function document($id) {
+    public function document($id)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
@@ -5489,15 +5579,16 @@ class AdminController extends BaseController {
         return View::make('page_en.update_document', $viewData);
     }
 
-    public function getDocument($id) {
+    public function getDocument($id)
+    {
         if (Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         $files = Files::findOrFail(Helper::decode($id));
-        
+
         $document = Document::where('file_id', $files->id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         if (count($document) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($document as $documents) {
                 $button = "";
                 $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@editDocument', Helper::encode($documents->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
@@ -5529,7 +5620,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteDocument() {
+    public function deleteDocument()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5563,7 +5655,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteDocumentFile() {
+    public function deleteDocumentFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5599,7 +5692,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addDocument($id) {
+    public function addDocument($id)
+    {
         $file = Files::findOrFail(Helper::decode($id));
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
@@ -5621,7 +5715,8 @@ class AdminController extends BaseController {
         return View::make('page_en.add_document', $viewData);
     }
 
-    public function submitAddDocument() {
+    public function submitAddDocument()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5671,7 +5766,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function editDocument($id) {
+    public function editDocument($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $document = Document::findOrFail(Helper::decode($id));
@@ -5696,7 +5792,8 @@ class AdminController extends BaseController {
         return View::make('page_en.edit_document', $viewData);
     }
 
-    public function submitEditDocument() {
+    public function submitEditDocument()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5714,25 +5811,25 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $data['name'] != $document->name? "name, " : "";
-                $new_line .= $data['document_type'] != $document->document_type? "document type, " : "";
-                $new_line .= $data['remarks'] != $document->remarks? "remarks, " : "";
-                $new_line .= $data['document_url'] != $document->document_url? "document file, " : "";
+                $new_line .= $data['name'] != $document->name ? "name, " : "";
+                $new_line .= $data['document_type'] != $document->document_type ? "document type, " : "";
+                $new_line .= $data['remarks'] != $document->remarks ? "remarks, " : "";
+                $new_line .= $data['document_url'] != $document->document_url ? "document file, " : "";
 
                 if (Auth::user()->getAdmin() || Auth::user()->isCOB()) {
                     if (isset($data['status']) && $document->status != $data['status']) {
-                        $new_line .= $data['status'] != $document->status? "status, " : "";
-                        $new_line .= Auth::user()->id != $document->status? "approval by, " : "";
-                        $new_line .= Carbon::now() != $document->status? "approval date, " : "";
+                        $new_line .= $data['status'] != $document->status ? "status, " : "";
+                        $new_line .= Auth::user()->id != $document->status ? "approval by, " : "";
+                        $new_line .= Carbon::now() != $document->status ? "approval date, " : "";
                     }
                     if (isset($data['approval_remark']) && $document->approval_remark != $data['approval_remark']) {
-                        $new_line .= $data['approval_remark'] != $document->status? "approval remark, " : "";
+                        $new_line .= $data['approval_remark'] != $document->status ? "approval remark, " : "";
                     }
                 }
 
-                if(!empty($new_line)) {
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> COB Document : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -5759,7 +5856,7 @@ class AdminController extends BaseController {
                 if ($success) {
                     # Audit Trail
                     $files = Files::find($document->file_id);
-                    if(!empty($audit_fields_changed)) {
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'COB Document (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($document->file_id, "COB File", $remarks);
                     }
@@ -5779,7 +5876,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function fileApproval($id) {
+    public function fileApproval($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
@@ -5811,7 +5909,8 @@ class AdminController extends BaseController {
         return View::make('page_en.file_approval', $viewData);
     }
 
-    public function submitFileApproval() {
+    public function submitFileApproval()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
@@ -5829,11 +5928,11 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $data['approval_status'] != $files->status? "status, " : "";
-                $new_line .= $data['approval_remarks'] != $files->remarks? "remarks, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $data['approval_status'] != $files->status ? "status, " : "";
+                $new_line .= $data['approval_remarks'] != $files->remarks ? "remarks, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Files : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -5845,7 +5944,7 @@ class AdminController extends BaseController {
                 $success = $files->save();
 
                 # Audit Trail
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = 'File Appproval (' . $files->file_no . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit($files->id, "COB File", $remarks);
                 }
@@ -5864,11 +5963,12 @@ class AdminController extends BaseController {
     }
 
     // --- Administrator --- //
-    public function company() {
+    public function company()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(4));
-      
+
         $viewData = array(
             'title' => trans('app.menus.administration.organization_profile'),
             'panel_nav_active' => 'admin_panel',
@@ -5881,7 +5981,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.company', $viewData);
     }
 
-    public function getCompany() {
+    public function getCompany()
+    {
         if (!Auth::user()->getAdmin()) {
             $company = Company::where('id', Auth::user()->company_id)->where('is_deleted', 0)->get();
         } else {
@@ -5889,7 +5990,7 @@ class AdminController extends BaseController {
         }
 
         if (count($company) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($company as $companies) {
                 $button = "";
                 if ($companies->is_active == 1) {
@@ -5929,7 +6030,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function inactiveCompany() {
+    public function inactiveCompany()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5950,7 +6052,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeCompany() {
+    public function activeCompany()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5971,7 +6074,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteCompany() {
+    public function deleteCompany()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -5992,7 +6096,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addCompany() {
+    public function addCompany()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
@@ -6015,7 +6120,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.add_company', $viewData);
     }
 
-    public function submitAddCompany() {
+    public function submitAddCompany()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $name = $data['name'];
@@ -6066,12 +6172,13 @@ class AdminController extends BaseController {
         }
     }
 
-    public function editCompany($id) {
+    public function editCompany($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $company = Company::findOrFail(Helper::decode($id));
-        
+
         if ($company) {
             $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
             $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
@@ -6095,7 +6202,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function submitEditCompany() {
+    public function submitEditCompany()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -6122,25 +6230,25 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $name != $company->name? "name, " : "";
-                $new_line .= $short_name != $company->short_name? "short name, " : "";
-                $new_line .= $rob_roc_no != $company->rob_roc_no? "rob roc no, " : "";
-                $new_line .= $address1 != $company->address1? "address1, " : "";
-                $new_line .= $address2 != $company->address2? "address2, " : "";
-                $new_line .= $address3 != $company->address3? "address3, " : "";
-                $new_line .= $city != $company->city? "city, " : "";
-                $new_line .= $poscode != $company->poscode? "poscode, " : "";
-                $new_line .= $state != $company->state? "state, " : "";
-                $new_line .= $country != $company->country? "country, " : "";
-                $new_line .= $phone_no != $company->phone_no? "phone no, " : "";
-                $new_line .= $fax_no != $company->fax_no? "fax no, " : "";
-                $new_line .= $email != $company->email? "email, " : "";
-                $new_line .= $image_url != $company->image_url? "image, " : "";
-                $new_line .= $nav_image_url != $company->nav_image_url? "nav image, " : "";
-                $new_line .= $is_hidden != $company->is_hidden? "is hidden, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $name != $company->name ? "name, " : "";
+                $new_line .= $short_name != $company->short_name ? "short name, " : "";
+                $new_line .= $rob_roc_no != $company->rob_roc_no ? "rob roc no, " : "";
+                $new_line .= $address1 != $company->address1 ? "address1, " : "";
+                $new_line .= $address2 != $company->address2 ? "address2, " : "";
+                $new_line .= $address3 != $company->address3 ? "address3, " : "";
+                $new_line .= $city != $company->city ? "city, " : "";
+                $new_line .= $poscode != $company->poscode ? "poscode, " : "";
+                $new_line .= $state != $company->state ? "state, " : "";
+                $new_line .= $country != $company->country ? "country, " : "";
+                $new_line .= $phone_no != $company->phone_no ? "phone no, " : "";
+                $new_line .= $fax_no != $company->fax_no ? "fax no, " : "";
+                $new_line .= $email != $company->email ? "email, " : "";
+                $new_line .= $image_url != $company->image_url ? "image, " : "";
+                $new_line .= $nav_image_url != $company->nav_image_url ? "nav image, " : "";
+                $new_line .= $is_hidden != $company->is_hidden ? "is hidden, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Organization : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -6164,7 +6272,7 @@ class AdminController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    if(!empty($audit_fields_changed)) {
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'Organization Profile :' . $company->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit(0, "System Administration", $remarks);
                     }
@@ -6180,7 +6288,8 @@ class AdminController extends BaseController {
     }
 
     //Access Group
-    public function accessGroups() {
+    public function accessGroups()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(5));
@@ -6197,7 +6306,8 @@ class AdminController extends BaseController {
         return View::make('page_en.accessgroup', $viewData);
     }
 
-    public function addAccessGroup() {
+    public function addAccessGroup()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $module = Module::get();
@@ -6216,7 +6326,8 @@ class AdminController extends BaseController {
         return View::make('page_en.add_accessgroup', $viewData);
     }
 
-    public function submitAccessGroup() {
+    public function submitAccessGroup()
+    {
 
         $data = Input::all();
         if (Request::ajax()) {
@@ -6335,7 +6446,7 @@ class AdminController extends BaseController {
                         # Audit Trail
                         $remarks = 'Access Permission for :' . $role->name . $this->module['audit']['text']['data_inserted'];
                         $this->addAudit(0, "System Administration", $remarks);
-    
+
                         return "true";
                     } else {
                         return "false";
@@ -6347,11 +6458,12 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getAccessGroups() {
+    public function getAccessGroups()
+    {
         $accessgroup = Role::where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
         if (count($accessgroup) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($accessgroup as $accessgroups) {
                 $button = "";
                 $is_paid = trans('app.forms.no');
@@ -6401,7 +6513,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function inactiveAccessGroup() {
+    public function inactiveAccessGroup()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -6426,7 +6539,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeAccessGroup() {
+    public function activeAccessGroup()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -6451,7 +6565,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAccessGroup() {
+    public function deleteAccessGroup()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -6476,7 +6591,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateAccessGroup($id) {
+    public function updateAccessGroup($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $accessgroup = Role::findOrFail(Helper::decode($id));
@@ -6497,7 +6613,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_accessgroup', $viewData);
     }
 
-    public function submitUpdateAccessGroup() {
+    public function submitUpdateAccessGroup()
+    {
         $data = Input::all();
 
         if (Request::ajax()) {
@@ -6513,14 +6630,14 @@ class AdminController extends BaseController {
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
             $new_line = '';
-            $new_line .= $description != $role->name? "description, " : "";
-            $new_line .= $is_paid != $role->is_paid? "is paid, " : "";
-            $new_line .= $is_admin != $role->is_admin? "is admin, " : "";
-            $new_line .= $is_active != $role->is_active? "is active, " : "";
-            $new_line .= $remarks != $role->remarks? "remarks, " : "";
-            if(!empty($new_line)) {
+            $new_line .= $description != $role->name ? "description, " : "";
+            $new_line .= $is_paid != $role->is_paid ? "is paid, " : "";
+            $new_line .= $is_admin != $role->is_admin ? "is admin, " : "";
+            $new_line .= $is_active != $role->is_active ? "is active, " : "";
+            $new_line .= $remarks != $role->remarks ? "remarks, " : "";
+            if (!empty($new_line)) {
                 $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
             }
             /** End Arrange audit fields changes */
 
@@ -6533,7 +6650,7 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = 'Role :' . $role->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit(0, "System Administration", $remarks);
                 }
@@ -6647,7 +6764,8 @@ class AdminController extends BaseController {
     }
 
     //user
-    public function user() {
+    public function user()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
@@ -6674,48 +6792,49 @@ class AdminController extends BaseController {
         return View::make('admin_en.user', $viewData);
     }
 
-    public function addUser() {
+    public function addUser()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(6));
-        
+
         if (!Auth::user()->getAdmin()) {
             if (Auth::user()->isCOB()) {
                 if (Auth::user()->getRole->is_paid) {
                     $role = Role::where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
-                            })
-                            ->orWhere(function ($query) {
-                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
-                            })
-                            ->where('is_admin', 0)
-                            ->where('is_active', 1)
-                            ->where('is_deleted', 0)
-                            ->orderBy('name')
-                            ->lists('name', 'id');
-                } else {
-                    $role = Role::where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
-                            })
-                            ->orWhere(function ($query) {
-                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
-                            })
-                            ->where('is_admin', 0)
-                            ->where('is_active', 1)
-                            ->where('is_deleted', 0)
-                            ->orderBy('name')
-                            ->lists('name', 'id');
-                }
-            } else {
-                $role = Role::where(function ($query) {
-                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                        $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
+                    })
+                        ->orWhere(function ($query) {
+                            $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
                         })
                         ->where('is_admin', 0)
                         ->where('is_active', 1)
                         ->where('is_deleted', 0)
                         ->orderBy('name')
                         ->lists('name', 'id');
+                } else {
+                    $role = Role::where(function ($query) {
+                        $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
+                    })
+                        ->orWhere(function ($query) {
+                            $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
+                        })
+                        ->where('is_admin', 0)
+                        ->where('is_active', 1)
+                        ->where('is_deleted', 0)
+                        ->orderBy('name')
+                        ->lists('name', 'id');
+                }
+            } else {
+                $role = Role::where(function ($query) {
+                    $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                })
+                    ->where('is_admin', 0)
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->orderBy('name')
+                    ->lists('name', 'id');
             }
 
             $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
@@ -6743,7 +6862,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.add_user', $viewData);
     }
 
-    public function submitUser() {
+    public function submitUser()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             ## EAI Call
@@ -6828,7 +6948,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getUser() {
+    public function getUser()
+    {
         if (!Auth::user()->getAdmin()) {
             $users = User::leftJoin('role', 'users.role', '=', 'role.id')
                 ->leftJoin('company', 'users.company_id', '=', 'company.id')
@@ -6861,7 +6982,6 @@ class AdminController extends BaseController {
                     }
 
                     return trans('app.forms.no');
-
                 })
                 ->editColumn('status', function ($model) {
                     if ($model->status == 0) {
@@ -6871,7 +6991,6 @@ class AdminController extends BaseController {
                     }
 
                     return trans('app.forms.rejected');
-
                 })
                 ->addColumn('action', function ($model) {
                     $button = '';
@@ -6883,14 +7002,15 @@ class AdminController extends BaseController {
                     $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateUser', Helper::encode($model->id)) . '\'" title="Edit"><i class="fa fa-pencil"></i></button>&nbsp;';
                     $button .= '<button type="button" class="btn btn-xs btn-warning" onclick="window.location=\'' . URL::action('AdminController@getUserDetails', Helper::encode($model->id)) . '\'" title="View"><i class="fa fa-eye"></i></button>&nbsp;';
                     $button .= '<button class="btn btn-xs btn-danger" onclick="deleteUser(\'' . Helper::encode($model->id) . '\')" title="Delete"><i class="fa fa-trash"></i></button>';
-                    
+
                     return $button;
                 })
                 ->make(true);
         }
     }
 
-    public function getUserDetails($id) {
+    public function getUserDetails($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::findOrFail(Helper::decode($id));
@@ -6911,7 +7031,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.user_details', $viewData);
     }
 
-    public function submitApprovedUser() {
+    public function submitApprovedUser()
+    {
         $data = Input::all();
 
         if (Request::ajax()) {
@@ -6952,7 +7073,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function inactiveUser() {
+    public function inactiveUser()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             ## EAI Call
@@ -6982,7 +7104,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeUser() {
+    public function activeUser()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7013,7 +7136,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteUser() {
+    public function deleteUser()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7045,7 +7169,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function findFile() {
+    public function findFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $cob_id = $data['cob'];
@@ -7077,36 +7202,37 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateUser($id) {
+    public function updateUser($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $user = User::findOrFail(Helper::decode($id));
         $query_role = Role::where('is_active', 1)
-                            ->where('is_deleted', 0);
+            ->where('is_deleted', 0);
         if (!Auth::user()->getAdmin()) {
             if (Auth::user()->isCOB()) {
                 if (Auth::user()->getRole->is_paid) {
                     $query_role = $query_role->where(function ($query) {
-                                    $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
-                                })
-                                ->orWhere(function ($query) {
-                                    $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
-                                })
-                                ->where('is_admin', 0);
+                        $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
+                    })
+                        ->orWhere(function ($query) {
+                            $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 1);
+                        })
+                        ->where('is_admin', 0);
                 } else {
                     $query_role = $query_role->where(function ($query) {
-                                $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
-                            })
-                            ->orWhere(function ($query) {
-                                $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
-                            })
-                            ->where('is_admin', 0);
+                        $query->where('name', 'LIKE', Role::JMB)->orWhere('name', 'LIKE', Role::MC)->orWhere('name', 'LIKE', Role::DEVELOPER);
+                    })
+                        ->orWhere(function ($query) {
+                            $query->where('name', 'LIKE', Role::COB . '%')->where('is_paid', 0);
+                        })
+                        ->where('is_admin', 0);
                 }
             } else {
                 $query_role = $query_role->where(function ($query) {
-                            $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
-                        })
-                        ->where('is_admin', 0);
+                    $query->where('name', '!=', 'LPHS')->where('name', '!=', 'Administrator');
+                })
+                    ->where('is_admin', 0);
             }
 
             // $company = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
@@ -7117,13 +7243,13 @@ class AdminController extends BaseController {
             //     $query_role = $query_role->where('is_admin', 0);
             //     // $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
             // }
-            if(!empty(Session::get('admin_cob'))) {
+            if (!empty(Session::get('admin_cob'))) {
                 $query_role = $query_role->where('is_admin', 0);
             }
         }
 
         $role = $query_role->orderBy('name')
-                        ->lists('name', 'id');
+            ->lists('name', 'id');
         $company = Company::self()->orderBy('name')->get();
         $files = Files::where('company_id', $user->company_id)->where('is_deleted', 0)->orderBy('file_no')->get();
         $disallow = Helper::isAllow(0, $user->company_id, !AccessGroup::hasUpdate(6));
@@ -7144,7 +7270,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.update_user', $viewData);
     }
 
-    public function submitUpdateUser() {
+    public function submitUpdateUser()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             ## EAI Call
@@ -7176,24 +7303,24 @@ class AdminController extends BaseController {
                     /** Arrange audit fields changes */
                     $audit_fields_changed = '';
                     $new_line = '';
-                    $new_line .= $name != $user->full_name? "full name, " : "";
-                    $new_line .= $email != $user->email? "email, " : "";
-                    $new_line .= $phone_no != $user->phone_no? "phone no, " : "";
-                    $new_line .= $is_active != $user->is_active? "is active, " : "";
-                    $new_line .= $getRole->id != $user->role? "role, " : "";
+                    $new_line .= $name != $user->full_name ? "full name, " : "";
+                    $new_line .= $email != $user->email ? "email, " : "";
+                    $new_line .= $phone_no != $user->phone_no ? "phone no, " : "";
+                    $new_line .= $is_active != $user->is_active ? "is active, " : "";
+                    $new_line .= $getRole->id != $user->role ? "role, " : "";
                     if (($getRole->name == Role::JMB || $getRole->name == Role::MC) || $getRole->name == Role::DEVELOPER) {
-                        $new_line .= (!empty($start_date) && ($start_date != $user->start_date))? "start date, " : "";
-                        $new_line .= (!empty($end_date) && ($end_date != $user->end_date))? "end date, " : "";
-                        $new_line .= (!empty($file_id) && ($file_id != $user->file_id))? "file id, " : "";
+                        $new_line .= (!empty($start_date) && ($start_date != $user->start_date)) ? "start date, " : "";
+                        $new_line .= (!empty($end_date) && ($end_date != $user->end_date)) ? "end date, " : "";
+                        $new_line .= (!empty($file_id) && ($file_id != $user->file_id)) ? "file id, " : "";
                     }
-                    $new_line .= !empty($password)? "password, " : "";
-                    $new_line .= $company != $user->company_id? "company, " : "";
-                    $new_line .= $remarks != $user->remarks? "remarks, " : "";
-                    $new_line .= $receive_mail != $user->receive_mail? "receive mail, " : "";
-                    $new_line .= $receive_notify != $user->receive_notify? "receive notify, " : "";
-                    if(!empty($new_line)) {
+                    $new_line .= !empty($password) ? "password, " : "";
+                    $new_line .= $company != $user->company_id ? "company, " : "";
+                    $new_line .= $remarks != $user->remarks ? "remarks, " : "";
+                    $new_line .= $receive_mail != $user->receive_mail ? "receive mail, " : "";
+                    $new_line .= $receive_notify != $user->receive_notify ? "receive notify, " : "";
+                    if (!empty($new_line)) {
                         $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                     }
                     /** End Arrange audit fields changes */
 
@@ -7228,7 +7355,7 @@ class AdminController extends BaseController {
 
                     if ($success) {
                         # Audit Trail
-                        if(!empty($audit_fields_changed)) {
+                        if (!empty($audit_fields_changed)) {
                             $remarks = 'User :' . $user->username . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit(0, "System Administration", $remarks);
                         }
@@ -7251,7 +7378,8 @@ class AdminController extends BaseController {
     }
 
     //memo
-    public function memo() {
+    public function memo()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -7277,7 +7405,8 @@ class AdminController extends BaseController {
         return View::make('page_en.memo', $viewData);
     }
 
-    public function addMemo() {
+    public function addMemo()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -7306,7 +7435,8 @@ class AdminController extends BaseController {
         return View::make('page_en.add_memo', $viewData);
     }
 
-    public function submitMemo() {
+    public function submitMemo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $company = $data['company'];
@@ -7347,78 +7477,80 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getMemo() {
+    public function getMemo()
+    {
         if (!Auth::user()->getAdmin()) {
             $memo = Memo::join('memo_type', 'memo.memo_type_id', '=', 'memo_type.id')
-                    ->select('memo.*')
-                    ->where('memo.company_id', Auth::user()->company_id)
-                    ->where('memo.is_deleted', 0)
-                    ->where('memo_type.is_deleted', 0);
+                ->select('memo.*')
+                ->where('memo.company_id', Auth::user()->company_id)
+                ->where('memo.is_deleted', 0)
+                ->where('memo_type.is_deleted', 0);
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $memo = Memo::join('memo_type', 'memo.memo_type_id', '=', 'memo_type.id')
-                        ->select('memo.*')
-                        ->where('memo.is_deleted', 0)
-                        ->where('memo_type.is_deleted', 0);
+                    ->select('memo.*')
+                    ->where('memo.is_deleted', 0)
+                    ->where('memo_type.is_deleted', 0);
             } else {
                 $memo = Memo::join('memo_type', 'memo.memo_type_id', '=', 'memo_type.id')
-                        ->select('memo.*')
-                        ->where('memo.company_id', Session::get('admin_cob'))
-                        ->where('memo.is_deleted', 0)
-                        ->where('memo_type.is_deleted', 0);
+                    ->select('memo.*')
+                    ->where('memo.company_id', Session::get('admin_cob'))
+                    ->where('memo.is_deleted', 0)
+                    ->where('memo_type.is_deleted', 0);
             }
         }
 
         if ($memo) {
             return Datatables::of($memo)
-                            ->editColumn('description', function ($model) {
-                                return ($model->description ? $model->description : '');
-                            })
-                            ->editColumn('subject', function ($model) {
-                                return ($model->subject ? $model->subject : '');
-                            })
-                            ->editColumn('memo_date', function ($model) {
-                                return ($model->memo_date ? date('d-M-Y', strtotime($model->memo_date)) : '');
-                            })
-                            ->editColumn('publish_date', function ($model) {
-                                return ($model->publish_date ? date('d-M-Y', strtotime($model->publish_date)) : '');
-                            })
-                            ->editColumn('expired_date', function ($model) {
-                                return (($model->expired_date && $model->expired_date != "0000-00-00") ? date('d-M-Y', strtotime($model->expired_date)) : '');
-                            })
-                            ->addColumn('memo_type', function ($model) {
-                                return ($model->memo_type_id ? $model->type->description : '');
-                            })
-                            ->addColumn('company', function ($model) {
-                                return (($model->company_id && $model->company_id != 99) ? $model->company->short_name : trans('app.forms.all'));
-                            })
-                            ->addColumn('file_no', function ($model) {
-                                return ($model->file ? $model->file->file_no : '-');
-                            })
-                            ->editColumn('is_active', function ($model) {
-                                $status = trans('app.forms.inactive');
-                                if ($model->is_active) {
-                                    $status = trans('app.forms.active');
-                                }
-                                return $status;
-                            })
-                            ->addColumn('action', function ($model) {
-                                $button = "";
-                                if ($model->is_active) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemo(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
-                                } else {
-                                    $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemo(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
-                                }
-                                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateMemo', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemo(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>';
+                ->editColumn('description', function ($model) {
+                    return ($model->description ? $model->description : '');
+                })
+                ->editColumn('subject', function ($model) {
+                    return ($model->subject ? $model->subject : '');
+                })
+                ->editColumn('memo_date', function ($model) {
+                    return ($model->memo_date ? date('d-M-Y', strtotime($model->memo_date)) : '');
+                })
+                ->editColumn('publish_date', function ($model) {
+                    return ($model->publish_date ? date('d-M-Y', strtotime($model->publish_date)) : '');
+                })
+                ->editColumn('expired_date', function ($model) {
+                    return (($model->expired_date && $model->expired_date != "0000-00-00") ? date('d-M-Y', strtotime($model->expired_date)) : '');
+                })
+                ->addColumn('memo_type', function ($model) {
+                    return ($model->memo_type_id ? $model->type->description : '');
+                })
+                ->addColumn('company', function ($model) {
+                    return (($model->company_id && $model->company_id != 99) ? $model->company->short_name : trans('app.forms.all'));
+                })
+                ->addColumn('file_no', function ($model) {
+                    return ($model->file ? $model->file->file_no : '-');
+                })
+                ->editColumn('is_active', function ($model) {
+                    $status = trans('app.forms.inactive');
+                    if ($model->is_active) {
+                        $status = trans('app.forms.active');
+                    }
+                    return $status;
+                })
+                ->addColumn('action', function ($model) {
+                    $button = "";
+                    if ($model->is_active) {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="inactiveMemo(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.inactive') . '</button>&nbsp;';
+                    } else {
+                        $button .= '<button type="button" class="btn btn-xs btn-primary" onclick="activeMemo(\'' . Helper::encode($model->id) . '\')">' . trans('app.forms.active') . '</button>&nbsp;';
+                    }
+                    $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AdminController@updateMemo', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                    $button .= '<button class="btn btn-xs btn-danger" onclick="deleteMemo(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>';
 
-                                return $button;
-                            })
-                            ->make(true);
+                    return $button;
+                })
+                ->make(true);
         }
     }
 
-    public function inactiveMemo() {
+    public function inactiveMemo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7439,7 +7571,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeMemo() {
+    public function activeMemo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7460,7 +7593,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteMemo() {
+    public function deleteMemo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7481,7 +7615,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateMemo($id) {
+    public function updateMemo($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (empty(Session::get('admin_cob'))) {
@@ -7511,7 +7646,8 @@ class AdminController extends BaseController {
         return View::make('page_en.update_memo', $viewData);
     }
 
-    public function submitUpdateMemo() {
+    public function submitUpdateMemo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
@@ -7531,23 +7667,23 @@ class AdminController extends BaseController {
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
             $new_line = '';
-            $new_line .= $company != $memo->company_id? "company, " : "";
-            $new_line .= $file_id != $memo->file_id? "file id, " : "";
-            $new_line .= $memo_type != $memo->memo_type_id? "memo type, " : "";
-            $new_line .= $memo_date != $memo->memo_date? "memo date, " : "";
-            $new_line .= $publish_date != $memo->publish_date? "publish date, " : "";
-            $new_line .= (!empty($expired_date) && ($expired_date != $memo->expired_date))? "expired date, " : "";
-            $new_line .= $subject != $memo->subject? "subject, " : "";
-            $new_line .= $description != $memo->description? "description, " : "";
-            $new_line .= $document_file_url != $memo->document_file? "document file, " : "";
-            $new_line .= $remarks != $memo->remarks? "remarks, " : "";
-            $new_line .= $is_active != $memo->is_active? "is active, " : "";
-            if(!empty($new_line)) {
+            $new_line .= $company != $memo->company_id ? "company, " : "";
+            $new_line .= $file_id != $memo->file_id ? "file id, " : "";
+            $new_line .= $memo_type != $memo->memo_type_id ? "memo type, " : "";
+            $new_line .= $memo_date != $memo->memo_date ? "memo date, " : "";
+            $new_line .= $publish_date != $memo->publish_date ? "publish date, " : "";
+            $new_line .= (!empty($expired_date) && ($expired_date != $memo->expired_date)) ? "expired date, " : "";
+            $new_line .= $subject != $memo->subject ? "subject, " : "";
+            $new_line .= $description != $memo->description ? "description, " : "";
+            $new_line .= $document_file_url != $memo->document_file ? "document file, " : "";
+            $new_line .= $remarks != $memo->remarks ? "remarks, " : "";
+            $new_line .= $is_active != $memo->is_active ? "is active, " : "";
+            if (!empty($new_line)) {
                 $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
             }
             /** End Arrange audit fields changes */
-            
+
             $memo->company_id = $company;
             $memo->file_id = (!empty($file_id) ? $file_id : null);
             $memo->memo_type_id = $memo_type;
@@ -7563,7 +7699,7 @@ class AdminController extends BaseController {
 
             if ($success) {
                 # Audit Trail
-                if(!empty($audit_fields_changed)) {
+                if (!empty($audit_fields_changed)) {
                     $remarks = $memo->subject . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                     $this->addAudit(0, "Memo", $remarks);
                 }
@@ -7576,7 +7712,8 @@ class AdminController extends BaseController {
     }
 
     //rating
-    public function rating() {
+    public function rating()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::file()->orderBy('year', 'asc')->get();
@@ -7595,10 +7732,11 @@ class AdminController extends BaseController {
         return View::make('admin_en.rating', $viewData);
     }
 
-    public function getRating() {
+    public function getRating()
+    {
         $rating = Scoring::where('is_deleted', 0)->orderBy('id', 'desc')->get();
         if (count($rating) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($rating as $ratings) {
                 $button = "";
 
@@ -7637,52 +7775,52 @@ class AdminController extends BaseController {
 
                 if ($ratings->total_score >= 81) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '</span>';
                 } else if ($ratings->total_score >= 61) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else if ($ratings->total_score >= 41) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else if ($ratings->total_score >= 21) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else if ($ratings->total_score >= 1) {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 } else {
                     $rating = '<span style="color: orange;">'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '<i class="fa fa-star-o"></i>'
-                            . '</span>';
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '<i class="fa fa-star-o"></i>'
+                        . '</span>';
                 }
 
                 $data_raw = array(
@@ -7718,7 +7856,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addRating() {
+    public function addRating()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
@@ -7749,7 +7888,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.add_rating', $viewData);
     }
 
-    public function submitAddRating() {
+    public function submitAddRating()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $survey = 'strata_management';
@@ -7828,7 +7968,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateRating($id) {
+    public function updateRating($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::file()->orderBy('id', 'asc')->get();
@@ -7850,7 +7991,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function submitUpdateRating() {
+    public function submitUpdateRating()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7891,32 +8033,32 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $date != $scoring->date? "date, " : "";
-                $new_line .= $score1 != $scoring->score1? "score1, " : "";
-                $new_line .= $score2 != $scoring->score2? "score2, " : "";
-                $new_line .= $score3 != $scoring->score3? "score3, " : "";
-                $new_line .= $score4 != $scoring->score4? "score4, " : "";
-                $new_line .= $score5 != $scoring->score5? "score5, " : "";
-                $new_line .= $score6 != $scoring->score6? "score6, " : "";
-                $new_line .= $score7 != $scoring->score7? "score7, " : "";
-                $new_line .= $score8 != $scoring->score8? "score8, " : "";
-                $new_line .= $score9 != $scoring->score9? "score9, " : "";
-                $new_line .= $score10 != $scoring->score10? "score10, " : "";
-                $new_line .= $score11 != $scoring->score11? "score11, " : "";
-                $new_line .= $score12 != $scoring->score12? "score12, " : "";
-                $new_line .= $score13 != $scoring->score13? "score13, " : "";
-                $new_line .= $score14 != $scoring->score14? "score14, " : "";
-                $new_line .= $score15 != $scoring->score15? "score15, " : "";
-                $new_line .= $score16 != $scoring->score16? "score16, " : "";
-                $new_line .= $score17 != $scoring->score17? "score17, " : "";
-                $new_line .= $score18 != $scoring->score18? "score18, " : "";
-                $new_line .= $score19 != $scoring->score19? "score19, " : "";
-                $new_line .= $score20 != $scoring->score20? "score20, " : "";
-                $new_line .= $score21 != $scoring->score21? "score21, " : "";
-                $new_line .= $total_score != $scoring->total_score? "total_score, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $date != $scoring->date ? "date, " : "";
+                $new_line .= $score1 != $scoring->score1 ? "score1, " : "";
+                $new_line .= $score2 != $scoring->score2 ? "score2, " : "";
+                $new_line .= $score3 != $scoring->score3 ? "score3, " : "";
+                $new_line .= $score4 != $scoring->score4 ? "score4, " : "";
+                $new_line .= $score5 != $scoring->score5 ? "score5, " : "";
+                $new_line .= $score6 != $scoring->score6 ? "score6, " : "";
+                $new_line .= $score7 != $scoring->score7 ? "score7, " : "";
+                $new_line .= $score8 != $scoring->score8 ? "score8, " : "";
+                $new_line .= $score9 != $scoring->score9 ? "score9, " : "";
+                $new_line .= $score10 != $scoring->score10 ? "score10, " : "";
+                $new_line .= $score11 != $scoring->score11 ? "score11, " : "";
+                $new_line .= $score12 != $scoring->score12 ? "score12, " : "";
+                $new_line .= $score13 != $scoring->score13 ? "score13, " : "";
+                $new_line .= $score14 != $scoring->score14 ? "score14, " : "";
+                $new_line .= $score15 != $scoring->score15 ? "score15, " : "";
+                $new_line .= $score16 != $scoring->score16 ? "score16, " : "";
+                $new_line .= $score17 != $scoring->score17 ? "score17, " : "";
+                $new_line .= $score18 != $scoring->score18 ? "score18, " : "";
+                $new_line .= $score19 != $scoring->score19 ? "score19, " : "";
+                $new_line .= $score20 != $scoring->score20 ? "score20, " : "";
+                $new_line .= $score21 != $scoring->score21 ? "score21, " : "";
+                $new_line .= $total_score != $scoring->total_score ? "total_score, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -7948,7 +8090,7 @@ class AdminController extends BaseController {
                 if ($success) {
                     # Audit Trail
                     $files = Files::find($scoring->file_id);
-                    if(!empty($audit_fields_changed)) {
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'COB Rating (' . $files->file_no . ') dated ' . date('d/m/Y', strtotime($scoring->date)) . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
                     }
@@ -7965,7 +8107,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteRating() {
+    public function deleteRating()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -7988,7 +8131,8 @@ class AdminController extends BaseController {
     }
 
     //form
-    public function form() {
+    public function form()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
@@ -8007,10 +8151,11 @@ class AdminController extends BaseController {
         return View::make('admin_en.form', $viewData);
     }
 
-    public function getForm() {
+    public function getForm()
+    {
         $form = AdminForm::where('is_deleted', 0)->orderBy('id', 'desc')->get();
         if (count($form) > 0) {
-            $data = Array();
+            $data = array();
 
             foreach ($form as $forms) {
 
@@ -8080,7 +8225,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function inactiveForm() {
+    public function inactiveForm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8101,7 +8247,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function activeForm() {
+    public function activeForm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8122,7 +8269,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteForm() {
+    public function deleteForm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8143,7 +8291,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteFormFile() {
+    public function deleteFormFile()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8165,7 +8314,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addForm() {
+    public function addForm()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $cob = Company::self()->orderBy('name')->get();
@@ -8186,7 +8336,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.add_form', $viewData);
     }
 
-    public function submitAddForm() {
+    public function submitAddForm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8212,7 +8363,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateForm($id) {
+    public function updateForm($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $form = AdminForm::findOrFail(Helper::decode($id));
@@ -8246,7 +8398,8 @@ class AdminController extends BaseController {
         return View::make('admin_en.edit_form', $viewData);
     }
 
-    public function submitUpdateForm() {
+    public function submitUpdateForm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
@@ -8256,16 +8409,16 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $data['company_id'] != $form->company_id? "company, " : "";
-                $new_line .= $data['form_type'] != $form->form_type_id? "form type, " : "";
-                $new_line .= $data['name_en'] != $form->name_en? "name en, " : "";
-                $new_line .= $data['name_my'] != $form->name_my? "name my, " : "";
-                $new_line .= $data['sort_no'] != $form->sort_no? "sort no, " : "";
-                $new_line .= $data['is_active'] != $form->is_active? "status, " : "";
-                $new_line .= $data['form_url'] != $form->file_url? "file, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $data['company_id'] != $form->company_id ? "company, " : "";
+                $new_line .= $data['form_type'] != $form->form_type_id ? "form type, " : "";
+                $new_line .= $data['name_en'] != $form->name_en ? "name en, " : "";
+                $new_line .= $data['name_my'] != $form->name_my ? "name my, " : "";
+                $new_line .= $data['sort_no'] != $form->sort_no ? "sort no, " : "";
+                $new_line .= $data['is_active'] != $form->is_active ? "status, " : "";
+                $new_line .= $data['form_url'] != $form->file_url ? "file, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -8280,8 +8433,8 @@ class AdminController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    if(!empty($audit_fields_changed)) {
-                        $remarks = 'Form id: '. $form->id . ' name: '. $form->name_en . $audit_fields_changed;
+                    if (!empty($audit_fields_changed)) {
+                        $remarks = 'Form id: ' . $form->id . ' name: ' . $form->name_en . $audit_fields_changed;
                         $this->addAudit(0, "Form", $remarks);
                     }
 
@@ -8298,7 +8451,8 @@ class AdminController extends BaseController {
     }
 
     //form download
-    public function formDownload() {
+    public function formDownload()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $formtype = FormType::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
@@ -8317,7 +8471,8 @@ class AdminController extends BaseController {
     }
 
     // Sept 2020
-    public function deleteNoticeAgmEgm() {
+    public function deleteNoticeAgmEgm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8348,7 +8503,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteMinutesAgmEgm() {
+    public function deleteMinutesAgmEgm()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8380,7 +8536,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteMinutesAjk() {
+    public function deleteMinutesAjk()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8412,7 +8569,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteEligibleVote() {
+    public function deleteEligibleVote()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8443,7 +8601,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAttendMeeting() {
+    public function deleteAttendMeeting()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8475,7 +8634,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteProksi() {
+    public function deleteProksi()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8507,7 +8667,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteAjkInfo() {
+    public function deleteAjkInfo()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8539,7 +8700,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteIc() {
+    public function deleteIc()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8571,7 +8733,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deletePurchaseAggrement() {
+    public function deletePurchaseAggrement()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8603,7 +8766,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteStrataTitle() {
+    public function deleteStrataTitle()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8635,7 +8799,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteMaintenanceStatement() {
+    public function deleteMaintenanceStatement()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8667,7 +8832,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteIntegrityPledge() {
+    public function deleteIntegrityPledge()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8699,7 +8865,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteReportAuditedFinancial() {
+    public function deleteReportAuditedFinancial()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8731,7 +8898,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteHouseRules() {
+    public function deleteHouseRules()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8768,7 +8936,8 @@ class AdminController extends BaseController {
      */
 
     //defect
-    public function defect() {
+    public function defect()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
@@ -8786,7 +8955,7 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderby('sort_no', 'asc')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(45));
-      
+
         $viewData = array(
             'title' => trans('app.menus.agm.defect'),
             'panel_nav_active' => '',
@@ -8801,7 +8970,8 @@ class AdminController extends BaseController {
         return View::make('page_en.defect', $viewData);
     }
 
-    public function getDefect() {
+    public function getDefect()
+    {
         if (!empty(Auth::user()->file_id)) {
             $defect = Defect::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         } else {
@@ -8809,7 +8979,7 @@ class AdminController extends BaseController {
         }
 
         if (count($defect) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($defect as $defects) {
                 $button = "";
 
@@ -8873,7 +9043,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteDefect() {
+    public function deleteDefect()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8898,7 +9069,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteDefectAttachment() {
+    public function deleteDefectAttachment()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8924,7 +9096,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addDefect() {
+    public function addDefect()
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
@@ -8942,7 +9115,7 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(45));
-      
+
         $viewData = array(
             'title' => trans('app.menus.agm.add_defect'),
             'panel_nav_active' => '',
@@ -8957,7 +9130,8 @@ class AdminController extends BaseController {
         return View::make('page_en.add_defect', $viewData);
     }
 
-    public function submitAddDefect() {
+    public function submitAddDefect()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -8981,7 +9155,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateDefect($id) {
+    public function updateDefect($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $defect = Defect::findOrFail(Helper::decode($id));
@@ -9000,7 +9175,7 @@ class AdminController extends BaseController {
         }
         $defectCategory = DefectCategory::where('is_active', 1)->where('is_deleted', 0)->get();
         $disallow = Helper::isAllow($defect->file_id, $defect->file->company_id, !AccessGroup::hasUpdate(45));
-      
+
         $viewData = array(
             'title' => trans('app.menus.agm.edit_defect'),
             'panel_nav_active' => '',
@@ -9016,7 +9191,8 @@ class AdminController extends BaseController {
         return View::make('page_en.edit_defect', $viewData);
     }
 
-    public function submitUpdateDefect() {
+    public function submitUpdateDefect()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
@@ -9026,15 +9202,15 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $data['file_id'] != $defect->file_id? "file id, " : "";
-                $new_line .= $data['defect_category'] != $defect->defect_category_id? "defect category, " : "";
-                $new_line .= $data['name'] != $defect->name? "name, " : "";
-                $new_line .= $data['description'] != $defect->description? "description, " : "";
-                $new_line .= $data['defect_attachment'] != $defect->attachment_url? "attachment, " : "";
-                $new_line .= (!empty($data['status']) && ($data['status'] != $defect->status))? "status, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $data['file_id'] != $defect->file_id ? "file id, " : "";
+                $new_line .= $data['defect_category'] != $defect->defect_category_id ? "defect category, " : "";
+                $new_line .= $data['name'] != $defect->name ? "name, " : "";
+                $new_line .= $data['description'] != $defect->description ? "description, " : "";
+                $new_line .= $data['defect_attachment'] != $defect->attachment_url ? "attachment, " : "";
+                $new_line .= (!empty($data['status']) && ($data['status'] != $defect->status)) ? "status, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -9050,7 +9226,7 @@ class AdminController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    if(!empty($audit_fields_changed)) {
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'Defect: ' . $defect->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($defect->file_id, "Defect", $remarks);
                     }
@@ -9068,7 +9244,8 @@ class AdminController extends BaseController {
     }
 
     //insurance
-    public function insurance($id) {
+    public function insurance($id)
+    {
         //$filename = Files::getFileName();
         //return "<pre>" . return_r($filename, true) . "</pre>";
         //get user permission
@@ -9078,8 +9255,8 @@ class AdminController extends BaseController {
         if ($id == 'All') {
             $filename = Files::getFileName();
             $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccess(46));
-                
-            if($disallow) {
+
+            if ($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
                     'panel_nav_active' => '',
@@ -9089,7 +9266,7 @@ class AdminController extends BaseController {
                 );
                 return View::make('404_en', $viewData);
             }
-            
+
             $viewData = array(
                 'title' => trans('app.menus.agm.insurance'),
                 'panel_nav_active' => '',
@@ -9102,7 +9279,6 @@ class AdminController extends BaseController {
             );
 
             return View::make('insurance_en.insurance', $viewData);
-                
         } else {
             $file = Files::findOrFail(Helper::decode($id));
             if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
@@ -9111,8 +9287,8 @@ class AdminController extends BaseController {
             if ($file) {
                 $image = OtherDetails::where('file_id', $file->id)->first();
                 $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasAccess(3));
-                
-                if($disallow) {
+
+                if ($disallow) {
                     $viewData = array(
                         'title' => trans('app.errors.page_not_found'),
                         'panel_nav_active' => '',
@@ -9149,7 +9325,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function getInsurance($id) {
+    public function getInsurance($id)
+    {
         if ($id == 'All') {
             if (!empty(Auth::user()->file_id)) {
                 $insurance = Insurance::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
@@ -9158,7 +9335,7 @@ class AdminController extends BaseController {
             }
 
             if ($insurance) {
-                $data = Array();
+                $data = array();
                 foreach ($insurance as $insurances) {
                     $button = "";
 
@@ -9223,7 +9400,7 @@ class AdminController extends BaseController {
             $insurance = Insurance::where('file_id', Helper::decode($id))->where('is_deleted', 0)->orderBy('id', 'desc')->get();
 
             if ($insurance) {
-                $data = Array();
+                $data = array();
                 foreach ($insurance as $insurances) {
                     $button = "";
 
@@ -9262,7 +9439,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteInsurance() {
+    public function deleteInsurance()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -9283,7 +9461,7 @@ class AdminController extends BaseController {
                     $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9292,10 +9470,10 @@ class AdminController extends BaseController {
                         $notify_data['route'] = route('cob.file.insurance.index', ['id' => 'All']);
                         $notify_data['cob_route'] = route('cob.file.insurance.index', ['id' => 'All']);
                         $notify_data['strata'] = "your";
-                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $insurance->file->file_no;
+                        $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $insurance->file->file_no;
                         $notify_data['title'] = "COB File Insurance";
                         $notify_data['module'] = "Insurance";
-                        
+
                         (new NotificationService())->store($notify_data, 'deleted');
                     }
 
@@ -9312,7 +9490,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addInsurance($id) {
+    public function addInsurance($id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
@@ -9332,7 +9511,7 @@ class AdminController extends BaseController {
                 }
             }
             $disallow = Helper::isAllow(0, 0, !AccessGroup::hasInsert(46));
-            if($disallow) {
+            if ($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
                     'panel_nav_active' => '',
@@ -9342,7 +9521,7 @@ class AdminController extends BaseController {
                 );
                 return View::make('404_en', $viewData);
             }
-            
+
             $viewData = array(
                 'title' => trans('app.menus.agm.add_insurance'),
                 'panel_nav_active' => '',
@@ -9355,7 +9534,6 @@ class AdminController extends BaseController {
             );
 
             return View::make('insurance_en.add_insurance', $viewData);
-                
         } else {
             $file = Files::findOrFail(Helper::decode($id));
             if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
@@ -9364,7 +9542,7 @@ class AdminController extends BaseController {
             if ($file) {
                 $image = OtherDetails::where('file_id', $file->id)->first();
                 $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(3));
-                if($disallow) {
+                if ($disallow) {
                     $viewData = array(
                         'title' => trans('app.errors.page_not_found'),
                         'panel_nav_active' => '',
@@ -9401,7 +9579,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function submitAddInsurance() {
+    public function submitAddInsurance()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -9431,7 +9610,7 @@ class AdminController extends BaseController {
                 $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -9440,10 +9619,10 @@ class AdminController extends BaseController {
                     $notify_data['route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
                     $notify_data['cob_route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
                     $notify_data['strata'] = "You";
-                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $insurance->file->file_no;
+                    $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $insurance->file->file_no;
                     $notify_data['title'] = "COB File Insurance";
                     $notify_data['module'] = "Insurance";
-                    
+
                     (new NotificationService())->store($notify_data);
                 }
                 return "true";
@@ -9456,7 +9635,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateInsurance($id, $file_id) {
+    public function updateInsurance($id, $file_id)
+    {
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $insuranceProvider = InsuranceProvider::where('is_active', 1)->where('is_deleted', 0)->get();
@@ -9477,7 +9657,7 @@ class AdminController extends BaseController {
                 }
             }
             $disallow = Helper::isAllow($insurance->file_id, $insurance->file->company_id, !AccessGroup::hasUpdate(46));
-            if($disallow) {
+            if ($disallow) {
                 $viewData = array(
                     'title' => trans('app.errors.page_not_found'),
                     'panel_nav_active' => '',
@@ -9510,7 +9690,7 @@ class AdminController extends BaseController {
                 $insurance = Insurance::where('file_id', $file->id)->first();
                 $image = OtherDetails::where('file_id', $file->id)->first();
                 $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(3));
-                if($disallow) {
+                if ($disallow) {
                     $viewData = array(
                         'title' => trans('app.errors.page_not_found'),
                         'panel_nav_active' => '',
@@ -9548,7 +9728,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function submitUpdateInsurance() {
+    public function submitUpdateInsurance()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             ## EAI Call
@@ -9565,20 +9746,20 @@ class AdminController extends BaseController {
                 /** Arrange audit fields changes */
                 $audit_fields_changed = '';
                 $new_line = '';
-                $new_line .= $data['insurance_provider'] != $insurance->insurance_provider_id? "insurance provider, " : "";
-                $new_line .= $data['public_liability_coverage'] != $insurance->public_liability_coverage? "public liability coverage, " : "";
-                $new_line .= $data['plc_premium_per_year'] != $insurance->plc_premium_per_year? "plc premium per year, " : "";
-                $new_line .= $data['plc_validity_from'] != $insurance->plc_validity_from? "plc validity from, " : "";
-                $new_line .= $data['plc_validity_to'] != $insurance->plc_validity_to? "plc validity to, " : "";
-                $new_line .= $data['fire_insurance_coverage'] != $insurance->fire_insurance_coverage? "fire insurance coverage, " : "";
-                $new_line .= $data['fic_premium_per_year'] != $insurance->fic_premium_per_year? "fic premium per year, " : "";
-                $new_line .= $data['fic_validity_from'] != $insurance->fic_validity_from? "fic validity from, " : "";
-                $new_line .= $data['fic_validity_to'] != $insurance->fic_validity_to? "fic validity to, " : "";
-                $new_line .= $data['attachment'] != $insurance->attachment? "attachment, " : "";
-                $new_line .= $data['remarks'] != $insurance->remarks? "remarks, " : "";
-                if(!empty($new_line)) {
+                $new_line .= $data['insurance_provider'] != $insurance->insurance_provider_id ? "insurance provider, " : "";
+                $new_line .= $data['public_liability_coverage'] != $insurance->public_liability_coverage ? "public liability coverage, " : "";
+                $new_line .= $data['plc_premium_per_year'] != $insurance->plc_premium_per_year ? "plc premium per year, " : "";
+                $new_line .= $data['plc_validity_from'] != $insurance->plc_validity_from ? "plc validity from, " : "";
+                $new_line .= $data['plc_validity_to'] != $insurance->plc_validity_to ? "plc validity to, " : "";
+                $new_line .= $data['fire_insurance_coverage'] != $insurance->fire_insurance_coverage ? "fire insurance coverage, " : "";
+                $new_line .= $data['fic_premium_per_year'] != $insurance->fic_premium_per_year ? "fic premium per year, " : "";
+                $new_line .= $data['fic_validity_from'] != $insurance->fic_validity_from ? "fic validity from, " : "";
+                $new_line .= $data['fic_validity_to'] != $insurance->fic_validity_to ? "fic validity to, " : "";
+                $new_line .= $data['attachment'] != $insurance->attachment ? "attachment, " : "";
+                $new_line .= $data['remarks'] != $insurance->remarks ? "remarks, " : "";
+                if (!empty($new_line)) {
                     $audit_fields_changed .= "<br/><ul><li> Insurance : (";
-                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                    $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                 }
                 /** End Arrange audit fields changes */
 
@@ -9598,12 +9779,12 @@ class AdminController extends BaseController {
 
                 if ($success) {
                     # Audit Trail
-                    if(!empty($audit_fields_changed)) {
+                    if (!empty($audit_fields_changed)) {
                         $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($insurance->file->id, "Insurance", $remarks);
                     }
 
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9612,10 +9793,10 @@ class AdminController extends BaseController {
                         $notify_data['route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
                         $notify_data['cob_route'] = route('cob.file.insurance.edit', ['id' => 'All', 'file_id' => Helper::encode($insurance->id)]);
                         $notify_data['strata'] = "your";
-                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $insurance->file->file_no;
+                        $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $insurance->file->file_no;
                         $notify_data['title'] = "COB File Insurance";
                         $notify_data['module'] = "Insurance";
-                        
+
                         (new NotificationService())->store($notify_data, 'updated');
                     }
 
@@ -9634,7 +9815,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteInsuranceAttachment() {
+    public function deleteInsuranceAttachment()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $id = Helper::decode($data['id']);
@@ -9660,7 +9842,8 @@ class AdminController extends BaseController {
     }
 
     //finance support
-    public function financeSupport($id) {
+    public function financeSupport($id)
+    {
         if ((Auth::user()->isJMB() || Auth::user()->isDeveloper()) || Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
@@ -9683,14 +9866,15 @@ class AdminController extends BaseController {
         return View::make('page_en.update_finance_support', $viewData);
     }
 
-    public function getFinanceSupport($id) {
+    public function getFinanceSupport($id)
+    {
         $filelist = FinanceSupport::where('file_id', Helper::decode($id))
-                                    ->where('is_deleted', 0)
-                                    ->orderBy('id', 'desc')
-                                    ->get();
+            ->where('is_deleted', 0)
+            ->orderBy('id', 'desc')
+            ->get();
 
         if (count($filelist) > 0) {
-            $data = Array();
+            $data = array();
             foreach ($filelist as $filelists) {
                 $files = Files::where('id', $filelists->file_id)->first();
                 if ($files) {
@@ -9726,7 +9910,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function addFinanceSupport($id) {
+    public function addFinanceSupport($id)
+    {
         $file = Files::findOrFail(Helper::decode($id));
         $image = OtherDetails::where('file_id', $file->id)->first();
         //get user permission
@@ -9746,7 +9931,8 @@ class AdminController extends BaseController {
         return View::make('page_en.add_finance_support', $viewData);
     }
 
-    public function submitAddFinanceSupport() {
+    public function submitAddFinanceSupport()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $file_id = Helper::decode($data['file_id']);
@@ -9770,7 +9956,7 @@ class AdminController extends BaseController {
                     $remarks = 'COB File (' . $files->file_no . ') has a Finance Support with id : ' . $finance->id .  $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB Finance Support", $remarks);
 
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9779,10 +9965,10 @@ class AdminController extends BaseController {
                         $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
                         $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
                         $notify_data['strata'] = "your";
-                        $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                        $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $finance->file->file_no;
                         $notify_data['title'] = "COB File Finance Support";
                         $notify_data['module'] = "Finance Support";
-                        
+
                         (new NotificationService())->store($notify_data);
                     }
 
@@ -9796,7 +9982,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function updateFinanceSupport($id) {
+    public function updateFinanceSupport($id)
+    {
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $item = FinanceSupport::findOrFail(Helper::decode($id));
         $file = Files::find($item->file_id);
@@ -9817,7 +10004,8 @@ class AdminController extends BaseController {
         return View::make('page_en.edit_finance_support', $viewData);
     }
 
-    public function submitUpdateFinanceSupport() {
+    public function submitUpdateFinanceSupport()
+    {
         $data = Input::all();
         if (Request::ajax()) {
             $file_id = Helper::decode($data['file_id']);
@@ -9830,13 +10018,13 @@ class AdminController extends BaseController {
                     /** Arrange audit fields changes */
                     $audit_fields_changed = '';
                     $new_line = '';
-                    $new_line .= $data['date'] != $finance->date? "date, " : "";
-                    $new_line .= $data['name'] != $finance->name? "name, " : "";
-                    $new_line .= $data['amount'] != $finance->amount? "amount, " : "";
-                    $new_line .= $data['remark'] != $finance->remark? "remark, " : "";
-                    if(!empty($new_line)) {
+                    $new_line .= $data['date'] != $finance->date ? "date, " : "";
+                    $new_line .= $data['name'] != $finance->name ? "name, " : "";
+                    $new_line .= $data['amount'] != $finance->amount ? "amount, " : "";
+                    $new_line .= $data['remark'] != $finance->remark ? "remark, " : "";
+                    if (!empty($new_line)) {
                         $audit_fields_changed .= "<br/><ul><li> Finance Support : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
+                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
                     }
                     /** End Arrange audit fields changes */
 
@@ -9852,12 +10040,12 @@ class AdminController extends BaseController {
                     if ($success) {
                         # Audit Trail
                         $files = Files::find($finance->file_id);
-                        if(!empty($audit_fields_changed)) {
+                        if (!empty($audit_fields_changed)) {
                             $remarks = 'COB File (' . $files->file_no . ') has a Finance Support with id : ' . $finance->id .  $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB Finance Support", $remarks);
                         }
-                        
-                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+
+                        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -9866,13 +10054,13 @@ class AdminController extends BaseController {
                             $notify_data['route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
                             $notify_data['cob_route'] = route('finance_support.edit', ['id' => Helper::encode($finance->id)]);
                             $notify_data['strata'] = "You";
-                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $finance->file->file_no;
+                            $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $finance->file->file_no;
                             $notify_data['title'] = "COB File Finance Support";
                             $notify_data['module'] = "Finance Support";
-                            
+
                             (new NotificationService())->store($notify_data);
                         }
-                        
+
                         print "true";
                     } else {
                         print "false";
@@ -9886,7 +10074,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function deleteFinanceSupport() {  
+    public function deleteFinanceSupport()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -9908,7 +10097,8 @@ class AdminController extends BaseController {
         }
     }
 
-    public function createOrUpdateFileDraft($files) {
+    public function createOrUpdateFileDraft($files)
+    {
         if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
             $draft = FileDrafts::firstOrNew(array('file_id' => $files->id));
             $draft->created_by = Auth::user()->id;
@@ -9917,5 +10107,4 @@ class AdminController extends BaseController {
             $draft->save();
         }
     }
-
 }
