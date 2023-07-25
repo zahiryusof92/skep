@@ -1126,6 +1126,9 @@ class Files extends Eloquent
         $active = function ($query) {
             $query->where('files.is_deleted', 0)
                 ->where('files.is_active', '!=', 2);
+            if (Auth::user()->getCOB->short_name == 'MPS') {
+                $query->where('files.company_id', 8);
+            }
         };
 
         $condition5 = function ($query) {
@@ -2781,6 +2784,11 @@ class Files extends Eloquent
                 $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
             }
         }
+        $condition_mps = function ($query) {
+            if (Auth::user()->getCOB->short_name == 'MPS') {
+                $query->where('files.company_id', 8);
+            }
+        };
 
         if ($company) {
             foreach ($company as $cob) {
@@ -2798,6 +2806,7 @@ class Files extends Eloquent
                     ->where('management.no_management', 0)
                     ->where('management.liquidator', 0)
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_jmb = DB::table('management')
@@ -2817,6 +2826,7 @@ class Files extends Eloquent
                     ->where('management.no_management', 0)
                     ->where('management.liquidator', 0)
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_mc = DB::table('management')
@@ -2839,6 +2849,7 @@ class Files extends Eloquent
                     ->where('management.no_management', 0)
                     ->where('management.liquidator', 0)
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_agent = DB::table('management')
@@ -2864,6 +2875,7 @@ class Files extends Eloquent
                     ->where('management.no_management', 0)
                     ->where('management.liquidator', 0)
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_liquidator = DB::table('management')
@@ -2892,6 +2904,7 @@ class Files extends Eloquent
                     ->where('management.no_management', 0)
                     ->where('management.liquidator', 1)
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_others = DB::table('management')
@@ -2923,6 +2936,7 @@ class Files extends Eloquent
                             ->orWhere('management.liquidator', 1);
                     })
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_no_management = DB::table('management')
@@ -2957,6 +2971,7 @@ class Files extends Eloquent
                             ->orWhere('management.liquidator', 1);
                     })
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_no_management_1 = DB::table('management')
@@ -2973,6 +2988,7 @@ class Files extends Eloquent
                     ->where('management.no_management', 0)
                     ->where('management.liquidator', 0)
                     ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_bankruptcy = DB::table('management')
@@ -3010,6 +3026,7 @@ class Files extends Eloquent
                             ->orWhere('management.liquidator', 1);
                     })
                     ->where('management.bankruptcy', 1)
+                    ->where($condition_mps)
                     ->count();
 
                 $count_residential = DB::table('residential_block')
