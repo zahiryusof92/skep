@@ -322,11 +322,7 @@ class ImportController extends BaseController
                             if (!empty($file_no)) {
                                 Queue::later(Carbon::now()->addSeconds($delay), ImportFile::class, array('row' => $row, 'company_id' => $company_id, 'status' => $status, 'user_id' => Auth::user()->id));
                                 $delay += $incrementDelay;
-                            } else {
-                                print 'empty_data';
                             }
-                        } else {
-                            print 'empty_data';
                         }
                     }
 
