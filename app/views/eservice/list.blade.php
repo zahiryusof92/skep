@@ -114,7 +114,7 @@
                                     </div>
                                 </div>
                                 @endif
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.created_at') }} </label><br>
                                         <input id="start_date" name="start_date" data-column="0" type="text"
