@@ -1720,7 +1720,8 @@ class AgmController extends BaseController {
         return View::make('agm_en.add_minutes', $viewData);
     }
 
-    public function submitAddMinutes() {
+    public function submitAddMinutes()
+    {
         $data = Input::all();
         if (Request::ajax()) {
 
@@ -1828,72 +1829,107 @@ class AgmController extends BaseController {
                 /**
                  * OCR
                  */
-                if (isset($data['minutes_meeting_ocr_url']) && !empty($data['minutes_meeting_ocr_url'])) {
+                if (isset($data['notice_agm_egm_ocr_url']) && !empty($data['notice_agm_egm_ocr_url'])) {
                     Ocr::updateOrCreate(
                         [
                             'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
                             'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
                             'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
                             'meeting_document_id' => $agm_detail->id,
-                            'type' =>  'minutes_meeting',
+                            'type' =>  'notice_agm_egm',
                         ],
                         [
-                            'url' => $data['minutes_meeting_ocr_url'],
+                            'url' => $data['notice_agm_egm_ocr_url'],
                             'created_by' => Auth::user()->id,
                         ]
                     );
                 }
 
-                if (isset($data['copy_of_spa_ocr_url']) && !empty($data['copy_of_spa_ocr_url'])) {
+                if (isset($data['minutes_agm_egm_ocr_url']) && !empty($data['minutes_agm_egm_ocr_url'])) {
                     Ocr::updateOrCreate(
                         [
                             'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
                             'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
                             'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
                             'meeting_document_id' => $agm_detail->id,
-                            'type' =>  'copy_of_spa',
+                            'type' =>  'minutes_agm_egm',
                         ],
                         [
-                            'url' => $data['copy_of_spa_ocr_url'],
+                            'url' => $data['minutes_agm_egm_ocr_url'],
                             'created_by' => Auth::user()->id,
                         ]
                     );
                 }
 
-                $file = $agm_detail->files;
+                if (isset($data['minutes_ajk_ocr_url']) && !empty($data['minutes_ajk_ocr_url'])) {
+                    Ocr::updateOrCreate(
+                        [
+                            'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                            'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                            'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                            'meeting_document_id' => $agm_detail->id,
+                            'type' =>  'minutes_ajk',
+                        ],
+                        [
+                            'url' => $data['minutes_ajk_ocr_url'],
+                            'created_by' => Auth::user()->id,
+                        ]
+                    );
+                }
 
-                // if ($file) {
-                //     $company = $file->company;
+                if (isset($data['ajk_info_ocr_url']) && !empty($data['ajk_info_ocr_url'])) {
+                    Ocr::updateOrCreate(
+                        [
+                            'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                            'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                            'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                            'meeting_document_id' => $agm_detail->id,
+                            'type' =>  'ajk_info',
+                        ],
+                        [
+                            'url' => $data['ajk_info_ocr_url'],
+                            'created_by' => Auth::user()->id,
+                        ]
+                    );
+                }
 
-                //     if ($company) {
-                //         $receipants = User::where('company_id', $company->id)
-                //             ->where('is_active', 1)
-                //             ->where('is_deleted', 0)
-                //             ->get();
+                if (isset($data['report_audited_financial_ocr_url']) && !empty($data['report_audited_financial_ocr_url'])) {
+                    Ocr::updateOrCreate(
+                        [
+                            'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                            'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                            'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                            'meeting_document_id' => $agm_detail->id,
+                            'type' =>  'report_audited_financial',
+                        ],
+                        [
+                            'url' => $data['report_audited_financial_ocr_url'],
+                            'created_by' => Auth::user()->id,
+                        ]
+                    );
+                }
 
-                //         if ($receipants) {
-                //             $delay = 0;
-                //             $incrementDelay = 2;
-
-                //             foreach ($receipants as $receipant) {
-                //                 if ($receipant->isCOB() && !empty($receipant->email)) {
-                //                     /** Send E-mail */
-                //                     Mail::later(Carbon::now()->addSeconds($delay), 'emails.minutes_of_meeting.new_submission_cob', array('full_name' => $receipant->full_name, 'file_no' => $file->file_no, 'id' => $agm_detail->id), function ($message) use ($receipant) {
-                //                         $message->to($receipant->email, $receipant->full_name)->subject('New Submission Minutes of Meeting');
-                //                     });
-                //                 }
-
-                //                 $delay += $incrementDelay;
-                //             }
-                //         }
-                //     }
-                // }
+                if (isset($data['house_rules_ocr_url']) && !empty($data['house_rules_ocr_url'])) {
+                    Ocr::updateOrCreate(
+                        [
+                            'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                            'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                            'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                            'meeting_document_id' => $agm_detail->id,
+                            'type' =>  'house_rules',
+                        ],
+                        [
+                            'url' => $data['house_rules_ocr_url'],
+                            'created_by' => Auth::user()->id,
+                        ]
+                    );
+                }
 
                 # Audit Trail
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1902,10 +1938,10 @@ class AgmController extends BaseController {
                     $notify_data['route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
                     $notify_data['cob_route'] = route('minutes.edit', ['id' => Helper::encode($agm_detail->id)]);
                     $notify_data['strata'] = "You";
-                    $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $files->file_no;
+                    $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $files->file_no;
                     $notify_data['title'] = "COB File AGM Minutes";
                     $notify_data['module'] = "AGM Minutes";
-                    
+
                     (new NotificationService())->store($notify_data);
                 }
 
@@ -2120,81 +2156,81 @@ class AgmController extends BaseController {
                     /**
                      * OCR
                      */
-                    if (isset($data['minutes_meeting_ocr_url']) && !empty($data['minutes_meeting_ocr_url'])) {
+                    if (isset($data['notice_agm_egm_ocr_url']) && !empty($data['notice_agm_egm_ocr_url'])) {
                         Ocr::updateOrCreate(
                             [
                                 'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
                                 'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
                                 'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
                                 'meeting_document_id' => $agm_detail->id,
-                                'type' =>  'minutes_meeting',
+                                'type' =>  'notice_agm_egm',
                             ],
                             [
-                                'url' => $data['minutes_meeting_ocr_url'],
+                                'url' => $data['notice_agm_egm_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
+                    if (isset($data['minutes_agm_egm_ocr_url']) && !empty($data['minutes_agm_egm_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'minutes_agm_egm',
+                            ],
+                            [
+                                'url' => $data['minutes_agm_egm_ocr_url'],
+                                'created_by' => Auth::user()->id,
+                            ]
+                        );
+                    }
+
+                    if (isset($data['minutes_ajk_ocr_url']) && !empty($data['minutes_ajk_ocr_url'])) {
+                        Ocr::updateOrCreate(
+                            [
+                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
+                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
+                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
+                                'meeting_document_id' => $agm_detail->id,
+                                'type' =>  'minutes_ajk',
+                            ],
+                            [
+                                'url' => $data['minutes_ajk_ocr_url'],
                                 'created_by' => Auth::user()->id,
                             ]
                         );
                     }
     
-                    if (isset($data['copy_of_spa_ocr_url']) && !empty($data['copy_of_spa_ocr_url'])) {
+                    if (isset($data['ajk_info_ocr_url']) && !empty($data['ajk_info_ocr_url'])) {
                         Ocr::updateOrCreate(
                             [
                                 'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
                                 'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
                                 'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
                                 'meeting_document_id' => $agm_detail->id,
-                                'type' =>  'copy_of_spa',
+                                'type' =>  'ajk_info',
                             ],
                             [
-                                'url' => $data['copy_of_spa_ocr_url'],
+                                'url' => $data['ajk_info_ocr_url'],
                                 'created_by' => Auth::user()->id,
                             ]
                         );
                     }
 
-                    if (isset($data['attendance_ocr_url']) && !empty($data['attendance_ocr_url'])) {
+                    if (isset($data['report_audited_financial_ocr_url']) && !empty($data['report_audited_financial_ocr_url'])) {
                         Ocr::updateOrCreate(
                             [
                                 'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
                                 'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
                                 'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
                                 'meeting_document_id' => $agm_detail->id,
-                                'type' =>  'attendance',
+                                'type' =>  'report_audited_financial',
                             ],
                             [
-                                'url' => $data['attendance_ocr_url'],
-                                'created_by' => Auth::user()->id,
-                            ]
-                        );
-                    }
-
-                    if (isset($data['audited_financial_ocr_url']) && !empty($data['audited_financial_ocr_url'])) {
-                        Ocr::updateOrCreate(
-                            [
-                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
-                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
-                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
-                                'meeting_document_id' => $agm_detail->id,
-                                'type' =>  'audited_financial',
-                            ],
-                            [
-                                'url' => $data['audited_financial_ocr_url'],
-                                'created_by' => Auth::user()->id,
-                            ]
-                        );
-                    }
-
-                    if (isset($data['eligible_vote_ocr_url']) && !empty($data['eligible_vote_ocr_url'])) {
-                        Ocr::updateOrCreate(
-                            [
-                                'company_id' => ($agm_detail->files ? $agm_detail->files->company->id : 0),
-                                'file_id' => ($agm_detail->files ? $agm_detail->files->id : 0),
-                                'strata_id' => ($agm_detail->files ? $agm_detail->files->strata->id : 0),
-                                'meeting_document_id' => $agm_detail->id,
-                                'type' =>  'eligible_vote',
-                            ],
-                            [
-                                'url' => $data['eligible_vote_ocr_url'],
+                                'url' => $data['report_audited_financial_ocr_url'],
                                 'created_by' => Auth::user()->id,
                             ]
                         );
@@ -2375,7 +2411,7 @@ class AgmController extends BaseController {
             foreach ($document as $documents) {
                 $button = "";
 
-                if (!empty($documents->file_id)) {
+                if ($documents->file) {
                     if (!Auth::user()->getAdmin()) {
                         if (!empty(Auth::user()->company_id)) {
                             if ($documents->file->company_id != Auth::user()->company_id) {
@@ -2403,7 +2439,7 @@ class AgmController extends BaseController {
                 $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . Helper::encode($documents->id) . '\')"><i class="fa fa-trash"></i></button>';
 
                 $data_raw = array(
-                    (!empty($documents->file_id) ? $documents->file->file_no : '<i>(not set)</i>'),
+                    ($documents->file ? $documents->file->file_no : '<i>(not set)</i>'),
                     $documents->type->name,
                     $documents->name,
                     $documents->getStatusText(),
@@ -2636,7 +2672,7 @@ class AgmController extends BaseController {
             }
         }
         $documentType = Documenttype::where('is_active', 1)->where('is_deleted', 0)->get();
-        $disallow = Helper::isAllow($document->file_id, $document->file->company_id, !AccessGroup::hasUpdate(33));
+        $disallow = Helper::isAllow(($document->file ? $document->file->id : 0), ($document->file ? $document->file->company_id : 0), !AccessGroup::hasUpdate(33));
 
         $viewData = array(
             'title' => trans('app.menus.agm.edit_document'),

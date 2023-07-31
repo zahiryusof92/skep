@@ -85,6 +85,7 @@ if (isset($cob) && !empty($cob)) {
             <h6 class="text-center padding-top-5">&copy; {{ date('Y') }} ODESI eCOB SDN BHD. All Rights Reserved.</h6>
             @endif
             <p style="text-align: center;"><a href="https://odesi.tech/terms.html" target="_blank">{{ trans('User Terms & Conditions') }}</a></p>
+            <p style="text-align: center;"><a href="https://support.ecob.my/jmbmc/register" target="_blank">{{ trans('Click here for training') }}</a></p>
         </div>     
     </div>
     <!-- End Login Page -->

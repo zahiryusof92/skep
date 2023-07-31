@@ -108,7 +108,7 @@
                                                             <div class="col-lg-6">
                                                                 <div class="form-group">
                                                                     <label class="form-control-label">{{ trans('app.forms.file') }}</label>
-                                                                    <input type="file" class="form-control" name="audit_account[]" id="audit_account_0" onChange="onUpload(this)">
+                                                                    <input type="file" class="form-control-file" name="audit_account[]" id="audit_account_0" onChange="onUpload(this)">
                                                                     @include('alert.feedback-ajax', ['field' => "audit_account_0_url"])
                                                                 </div>
                                                                 <input hidden id="audit_account_0_url" name="audit_account_url[]">
