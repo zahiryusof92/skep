@@ -8,6 +8,8 @@
         <strong>
             “SELANGOR MAJU BERSAMA”
             <br />
+            “MALAYSIA MADANI”
+            <br />
             “BERKHIDMAT UNTUK NEGARA”
         </strong>
     </td>
@@ -31,19 +33,7 @@
 </tr>
 <tr>
     <td colspan="7">
-        <strong>
-            (MUZAFFAR SHAMIL BIN MARZUKI)
-        </strong>
-    </td>
-</tr>
-<tr>
-    <td colspan="7">
-        Pegawai Undang-Undang
-    </td>
-</tr>
-<tr>
-    <td colspan="7">
-        Unit Pesuruhjaya Bangunan
+        Unit Pesuruhjaya Bangunan (COB)
     </td>
 </tr>
 <tr>
@@ -64,7 +54,7 @@
     </td>
     <td colspan="4">
         <small>
-            03-79601646 / 2410
+            03-7960 1646/2410
         </small>
     </td>
 </tr>
@@ -87,9 +77,7 @@
 </tr>
 <tr>
     <td colspan="7" style="font-style: italic;">
-        <small>
-            -nsi-
-        </small>
+        &nbsp;
     </td>
 </tr>
 
@@ -101,7 +89,7 @@
 </tr>
 <tr>
     <td>
-        s.k.
+        s.k:
     </td>
     <td colspan="6">
         <strong>
@@ -210,3 +198,16 @@
     </td>
 </tr>
 @endif
+
+<tr>
+    <td colspan="7">
+        &nbsp; <br />
+        &nbsp; <br />
+        &nbsp; <br />
+    </td>
+</tr>
+<tr>
+    <td colspan="7" style="text-align: center; font-style: italic;">
+        Ini adalah cetakan komputer dan tidak perlu ditandatangani
+    </td>
+</tr>

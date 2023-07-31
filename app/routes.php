@@ -1117,23 +1117,24 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('eservice/draft', ['as' => 'eservice.draft', 'uses' => 'EServiceController@draft']);
     Route::get('eservice/approved', ['as' => 'eservice.approved', 'uses' => 'EServiceController@approved']);
     Route::get('eservice/rejected', ['as' => 'eservice.rejected', 'uses' => 'EServiceController@rejected']);
-
     Route::post('eservice/verify', ['as' => 'eservice.verify', 'uses' => 'EServiceController@verify']);
     Route::get('eservice/report', ['as' => 'eservice.report', 'uses' => 'EServiceController@report']);
-
-    Route::resource('eservice', 'EServiceController');
     Route::get('eservice/getForm', array('as' => 'eservice.getForm', 'uses' => 'EServiceController@getForm'));
-    Route::get('eservice/create/{type}', array('as' => 'eservice.create', 'uses' => 'EServiceController@create'));
     Route::post('eservice/fileUpload', ['as' => 'eservice.fileUpload', 'uses' => 'EServiceController@fileUpload']);
-    Route::get('eservice/payment/{id}', array('as' => 'eservice.payment', 'uses' => 'EServiceController@payment'));
     Route::post('eservice/submitPayment', array('as' => 'eservice.submitPayment', 'uses' => 'EServiceController@submitPayment'));
-    Route::post('eservice/submitByCOB/{id}', ['as' => 'eservice.submitByCOB', 'uses' => 'EServiceController@submitByCOB']);
-    Route::get('eservice/getLetterPDF/{id}', ['as' => 'eservice.getLetterPDF', 'uses' => 'EServiceController@getLetterPDF']);
-    Route::get('eservice/getLetterWord/{id}', ['as' => 'eservice.getLetterWord', 'uses' => 'EServiceController@getLetterWord']);
+    Route::get('eservice/callbackPayment/{orderID}', array('as' => 'eservice.callbackPayment', 'uses' => 'EServiceController@callbackPayment'));
     Route::post('eservice/review', ['as' => 'eservice.review', 'uses' => 'EServiceController@review']);
     Route::post('eservice/submitApprove', ['as' => 'eservice.submitApprove', 'uses' => 'EServiceController@submitApprove']);
     Route::post('eservice/submitReject', ['as' => 'eservice.submitReject', 'uses' => 'EServiceController@submitReject']);
-   
+    Route::get('eservice/paymentHistory', array('as' => 'eservice.paymentHistory', 'uses' => 'EServiceController@paymentHistory'));
+    Route::get('eservice/showPaymentHistory/{id}', array('as' => 'eservice.showPaymentHistory', 'uses' => 'EServiceController@showPaymentHistory'));
+
+    Route::resource('eservice', 'EServiceController');
+    Route::get('eservice/create/{type}', array('as' => 'eservice.create', 'uses' => 'EServiceController@create'));
+    Route::get('eservice/payment/{id}', array('as' => 'eservice.payment', 'uses' => 'EServiceController@payment'));
+    Route::post('eservice/submitByCOB/{id}', ['as' => 'eservice.submitByCOB', 'uses' => 'EServiceController@submitByCOB']);
+    Route::get('eservice/getLetterPDF/{id}', ['as' => 'eservice.getLetterPDF', 'uses' => 'EServiceController@getLetterPDF']);
+    Route::get('eservice/getLetterWord/{id}', ['as' => 'eservice.getLetterWord', 'uses' => 'EServiceController@getLetterWord']);
     /**
      * API Client
      */
