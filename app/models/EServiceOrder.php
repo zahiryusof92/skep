@@ -33,6 +33,7 @@ class EServiceOrder extends Eloquent
         'bill_no',
         'date',
         'price',
+        'reference_id',
         'jana_bil_no_akaun',
         'jana_bil_response',
         'jana_bil_created_at',

@@ -59,7 +59,11 @@
                                     {{ trans('app.forms.amount') }}
                                 </dt>
                                 <dd class="col-sm-8">
+                                    @if (!empty($order->price) && $order->price > 0)
                                     RM {{ $order->price }}
+                                    @else
+                                    {{ trans('Free') }}
+                                    @endif
                                 </dd>
 
                                 @if ($order->transaction)
@@ -68,7 +72,7 @@
                                 </dt>
                                 <dd class="col-sm-8">
                                     @if ($order->transaction)
-                                    @if (!empty($transaction->payment_method))
+                                    @if (!empty($order->transaction->payment_method))
                                     @if ($order->transaction->payment_method == 'cc')
                                     {{ trans('Credit Card') }}
                                     @else
@@ -246,10 +250,17 @@
                                 onclick="window.location = '{{ route('eservice.edit', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
                                 {{ trans('app.forms.edit') }}
                             </button>
+                            @if (!empty($order->price) && $order->price > 0)
                             <button type="button" class="btn btn-own" id="payment_button"
                                 onclick="window.location = '{{ route('eservice.payment', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
                                 {{ trans('app.forms.eservice.proceed_to_pay') }}
                             </button>
+                            @else
+                            <button type="button" class="btn btn-own" id="submit_application_button"
+                                onclick="window.location = '{{ route('eservice.payment', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
+                                {{ trans('app.forms.submit') }}
+                            </button>
+                            @endif
                         </div>
                         @endif
 

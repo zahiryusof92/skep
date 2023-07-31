@@ -519,7 +519,7 @@ class EServiceController extends BaseController
 								 */
 								$module = Str::upper($this->getModule()['name']);
 								$remarks = $module . ': New application #' . $order->order_no . ' has deen drafted.';
-								$this->addAudit($strata->file->id, $module, $remarks);
+								$this->addAudit($order->file->id, $module, $remarks);
 
 								return Response::json([
 									'success' => true,
@@ -744,6 +744,55 @@ class EServiceController extends BaseController
 		return View::make('eservice.report', $viewData);
 	}
 
+	public function submit($id)
+	{
+		$this->checkAvailableAccess();
+
+		$order = EServiceOrder::find($this->decodeID($id));
+		if ($order && $order->status == EServiceOrder::DRAFT) {
+			$total_amount = $order->price;
+
+			if (!empty($order->price) && $order->price > 0) {
+				$update = $order->update([
+					'status' => EServiceOrder::INPROGRESS,
+				]);
+
+				if ($update) {
+					/**
+					 * Send an email to JMB / MC and copy to COB
+					 */
+					if (Config::get('mail.driver') != '') {
+						if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+							Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+								$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
+							});
+						}
+
+						if ($order->user->isJMB() || $order->user->isMC()) {
+							if (!empty(Config::get('payment.mbpj.email_cob'))) {
+								Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+									$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+								});
+							}
+						}
+					}
+
+					/**
+					 * add audit trail
+					 */
+					$module = Str::upper($this->getModule()['name']);
+					$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
+					$remarks = $module . ': ' . $order->email . " has submitted a new application";
+					$this->addAudit($order->file_id, $module, $remarks);
+
+					return Redirect::route('eservice.review')->with('success', trans('app.successes.saved_successfully'));
+				}
+			}
+		}
+
+		App::abort(404);
+	}
+
 	public function payment($id)
 	{
 		$this->checkAvailableAccess();
@@ -784,7 +833,7 @@ class EServiceController extends BaseController
 			if ($validator->fails()) {
 				return Redirect::back()->withErrors($validator)->withInput();
 			} else {
-				if (!empty($order->price)) {
+				if (!empty($order->price) && $order->price > 0) {
 					if ($order->company && $order->company->short_name = 'MBPJ') {
 						if (!empty($order->jana_bil_no_akaun)) {
 							$proceed = true;
@@ -820,21 +869,25 @@ class EServiceController extends BaseController
 								];
 
 								$res_janabil = (new Epay())->generateBil($params);
-								if (isset($res_janabil->status) && $res_janabil->status == 1) {
-									if (!empty($res_janabil->noakaun)) {
-										$update = $order->update([
-											'jana_bil_no_akaun' => $res_janabil->noakaun,
-											'jana_bil_response' => json_encode($res_janabil),
-											'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
-										]);
+								if ($res_janabil) {
+									if (isset($res_janabil->status) && $res_janabil->status == 1) {
+										if (!empty($res_janabil->noakaun)) {
+											$update = $order->update([
+												'jana_bil_no_akaun' => $res_janabil->noakaun,
+												'jana_bil_response' => json_encode($res_janabil),
+												'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
+											]);
 
-										if ($update) {
-											$proceed = true;
+											if ($update) {
+												$proceed = true;
+											}
 										}
+									} else {
+										return Redirect::back()->with('error', 'Fail! ' . isset($res_janabil->message) ? $res_janabil->message : '');
 									}
-								} else {
-									return Redirect::back()->with('error', 'Fail! ' . $res_janabil->message);
 								}
+
+								return Redirect::back()->with('error', 'Fail!');
 							}
 						}
 
@@ -922,7 +975,7 @@ class EServiceController extends BaseController
 								$remarks = $module . ': ' . $order->email . " has submitted a new application";
 								$this->addAudit($order->file_id, $module, $remarks);
 
-								return Redirect::route('eservice.paymentHistory')->with('success', trans('app.successes.payment_successfully'));
+								return Redirect::route('eservice.review')->with('success', trans('app.successes.payment_successfully'));
 							}
 						}
 					}

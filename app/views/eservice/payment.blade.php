@@ -75,7 +75,7 @@
                                                     <span style="color: red;">* </span>
                                                     <label>
                                                         <input type="checkbox" value="1" name="terms" id="terms">
-                                                        Agree with the <a href="https://odesi.tech"
+                                                        Agree with the <a href="https://odesi.tech/terms.html"
                                                             target="_blank">terms and conditions</a>
                                                     </label>
                                                 </div>

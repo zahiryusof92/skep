@@ -91,6 +91,8 @@ class Epay
 
     public function generateBil($params)
     {
+        Log::error(print_r($params));
+
         $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, json_encode($params));
 
         return json_decode($response);
@@ -102,32 +104,40 @@ class Epay
 
         $order = EServiceOrder::find($this->generateDecodeID($orderId));
         if ($order && $order->status == EServiceOrder::DRAFT) {
-            $pg_client = $this->payment_gateway_secret_id;
-            $pg_ref_id = $order->order_no;
-            $pg_amount = number_format($order->price, 2);
-            $pg_account_no = $account_no;
-            $pg_revenue_code = '72617';
-            $pg_dept_code = '171500';
-            $pg_return_url = route('eservice.callbackPayment', $this->generateEncodeID($order->id));
 
-            $params_token = [
-                'secret' => $this->payment_gateway_secret_key,
-                'pg_client' => $pg_client,
-                'pg_ref_id' => $pg_ref_id,
-            ];
-            $token = $this->generateToken($params_token);
+            // update reference_id every time need to do payment
+            $pg_ref_id = $order->order_no . '-' . date('His');
+            $update = $order->update([
+                'reference_id' => $pg_ref_id,
+            ]);
 
-            $param['pg_client'] = $pg_client; // BilPelbagai (client id)
-            $param['pg_ref_id'] = $pg_ref_id; // MBPJ-eCOB-ref_no (client ref id) (max 50 chars) 
-            $param['pg_amount'] = $pg_amount; // (amount to pay in 2 point decimal) 
-            $param['pg_account_no'] = $pg_account_no;
-            $param['pg_revenue_code'] = $pg_revenue_code; // (5 chars) 
-            $param['pg_dept_code'] = $pg_dept_code;
-            $param['pg_return_url'] =  $pg_return_url; // (client url to post response data once payment successful or failed)
-            $param['pg_token'] = $token; // (token to validate data)
+            if ($update) {
+                $pg_client = $this->payment_gateway_secret_id;
+                $pg_amount = number_format($order->price, 2);
+                $pg_account_no = $account_no;
+                $pg_revenue_code = Config::get('payment.mbpj.kod_hasil');
+                $pg_dept_code = Config::get('payment.mbpj.kod_jabatan');
+                $pg_return_url = route('eservice.callbackPayment', $this->generateEncodeID($order->id));
 
-            $post_data = http_build_query($param);
-            $response = $this->payment_gateway_url . '?' . $post_data;
+                $params_token = [
+                    'secret' => $this->payment_gateway_secret_key,
+                    'pg_client' => $pg_client,
+                    'pg_ref_id' => $pg_ref_id,
+                ];
+                $token = $this->generateToken($params_token);
+
+                $param['pg_client'] = $pg_client; // BilPelbagai (client id)
+                $param['pg_ref_id'] = $pg_ref_id; // MBPJ-eCOB-ref_no (client ref id) (max 50 chars) 
+                $param['pg_amount'] = $pg_amount; // (amount to pay in 2 point decimal) 
+                $param['pg_account_no'] = $pg_account_no;
+                $param['pg_revenue_code'] = $pg_revenue_code; // (5 chars) 
+                $param['pg_dept_code'] = $pg_dept_code;
+                $param['pg_return_url'] =  $pg_return_url; // (client url to post response data once payment successful or failed)
+                $param['pg_token'] = $token; // (token to validate data)
+
+                $post_data = http_build_query($param);
+                $response = $this->payment_gateway_url . '?' . $post_data;
+            }
         }
 
         return $response;
