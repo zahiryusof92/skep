@@ -16,16 +16,6 @@
 </tr>
 <tr>
     <td colspan="7">
-        &nbsp;
-    </td>
-</tr>
-<tr>
-    <td colspan="7">
-        Saya yang menjalankan amanah,
-    </td>
-</tr>
-<tr>
-    <td colspan="7">
         &nbsp; <br />
         &nbsp; <br />
         &nbsp; <br />
