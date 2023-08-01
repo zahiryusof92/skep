@@ -91,8 +91,6 @@ class Epay
 
     public function generateBil($params)
     {
-        Log::error(print_r($params));
-
         $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, json_encode($params));
 
         return json_decode($response);
