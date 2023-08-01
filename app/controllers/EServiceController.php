@@ -785,7 +785,7 @@ class EServiceController extends BaseController
 					$remarks = $module . ': ' . $order->email . " has submitted a new application";
 					$this->addAudit($order->file_id, $module, $remarks);
 
-					return Redirect::route('eservice.review')->with('success', trans('app.successes.saved_successfully'));
+					return Redirect::route('eservice.index')->with('success', trans('app.successes.saved_successfully'));
 				}
 			}
 		}
@@ -975,7 +975,7 @@ class EServiceController extends BaseController
 								$remarks = $module . ': ' . $order->email . " has submitted a new application";
 								$this->addAudit($order->file_id, $module, $remarks);
 
-								return Redirect::route('eservice.review')->with('success', trans('app.successes.payment_successfully'));
+								return Redirect::route('eservice.index')->with('success', trans('app.successes.payment_successfully'));
 							}
 						}
 					}
