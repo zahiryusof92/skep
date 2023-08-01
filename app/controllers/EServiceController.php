@@ -859,7 +859,7 @@ class EServiceController extends BaseController
 									'perkara' => strtoupper($perkara),
 									'amaun' => $amaun,
 									'kodhasil' => $kodhasil,
-									'namapelanggan' => $namapelanggan,
+									'namapelanggan' => strtoupper($namapelanggan),
 									'alamat1' => strtoupper($alamat1),
 									'alamat2' => strtoupper($alamat2),
 									'alamat3' => strtoupper($alamat3),
