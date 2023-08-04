@@ -868,26 +868,28 @@ class EServiceController extends BaseController
 									'sumber' => $sumber
 								];
 
-								$res_janabil = (new Epay())->generateBil($params);
-								if ($res_janabil) {
-									if (isset($res_janabil->status) && $res_janabil->status == 1) {
-										if (!empty($res_janabil->noakaun)) {
-											$update = $order->update([
-												'jana_bil_no_akaun' => $res_janabil->noakaun,
-												'jana_bil_response' => json_encode($res_janabil),
-												'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
-											]);
+								try {
+									$res_janabil = (new Epay())->generateBil($params);
+									if ($res_janabil) {
+										if (isset($res_janabil->status) && $res_janabil->status == 1) {
+											if (!empty($res_janabil->noakaun)) {
+												$update = $order->update([
+													'jana_bil_no_akaun' => $res_janabil->noakaun,
+													'jana_bil_response' => json_encode($res_janabil),
+													'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
+												]);
 
-											if ($update) {
-												$proceed = true;
+												if ($update) {
+													$proceed = true;
+												}
 											}
+										} else {
+											return Redirect::back()->with('error', 'Fail! ' . isset($res_janabil->message) ? $res_janabil->message : '');
 										}
-									} else {
-										return Redirect::back()->with('error', 'Fail! ' . isset($res_janabil->message) ? $res_janabil->message : '');
 									}
+								} catch (\Throwable $e) {
+									return Redirect::back()->with('error', $e->getMessage());
 								}
-
-								return Redirect::back()->with('error', 'Fail!');
 							}
 						}
 
