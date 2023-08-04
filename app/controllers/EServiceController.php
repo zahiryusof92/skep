@@ -888,6 +888,8 @@ class EServiceController extends BaseController
 										}
 									}
 								} catch (\Throwable $e) {
+									\Log::error($e->getMessage());
+									
 									return Redirect::back()->with('error', $e->getMessage());
 								}
 							}
