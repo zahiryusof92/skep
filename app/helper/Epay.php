@@ -93,6 +93,8 @@ class Epay
     {
         $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, json_encode($params));
 
+        \Log::debug(json_encode($params));
+
         return json_decode($response);
     }
 

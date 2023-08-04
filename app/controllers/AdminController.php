@@ -9342,8 +9342,10 @@ class AdminController extends BaseController
                     if (!empty($insurances->file_id)) {
                         if (!Auth::user()->getAdmin()) {
                             if (!empty(Auth::user()->company_id)) {
-                                if ($insurances->file->company_id != Auth::user()->company_id) {
-                                    continue;
+                                if ($insurances->file) {
+                                    if ($insurances->file->company_id != Auth::user()->company_id) {
+                                        continue;
+                                    }
                                 }
                             }
                         } else {
