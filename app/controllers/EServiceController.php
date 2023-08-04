@@ -870,7 +870,6 @@ class EServiceController extends BaseController
 
 								try {
 									$res_janabil = (new Epay())->generateBil($params);
-									\Log::debug(print_r($res_janabil, true));
 									if ($res_janabil) {
 										if (isset($res_janabil->status) && $res_janabil->status == 1) {
 											if (!empty($res_janabil->noakaun)) {
@@ -889,7 +888,7 @@ class EServiceController extends BaseController
 										}
 									}
 								} catch (Throwable $e) {
-									\Log::error($e->getMessage());
+									\Log::error($order->order_no . ': ' . $e->getMessage());
 									
 									return Redirect::back()->with('error', $e->getMessage());
 								}
