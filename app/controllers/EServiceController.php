@@ -889,7 +889,7 @@ class EServiceController extends BaseController
 										}
 									}
 								} catch (Throwable $e) {
-									\Log::error($e->getMessage());
+									\Log::error($order->order_no . ': ' . $e->getMessage());
 									
 									return Redirect::back()->with('error', $e->getMessage());
 								}
