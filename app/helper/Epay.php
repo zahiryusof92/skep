@@ -91,9 +91,17 @@ class Epay
 
     public function generateBil($params)
     {
-        $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, $params);
+        try {
+            $data = str_replace("'", '', $params);
 
-        return json_decode($response);
+            $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, json_encode($data));
+
+            return json_decode($response);
+        } catch (\Throwable $e) {
+            \Log::error($e->getMessage());
+
+            return false;
+        }
     }
 
     public function paymentOnline($account_no, $orderId)
