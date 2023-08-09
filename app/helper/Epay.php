@@ -92,9 +92,7 @@ class Epay
     public function generateBil($params)
     {
         try {
-            $data = str_replace("'", '', $params);
-
-            $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, json_encode($data));
+            $response = (new KCurl())->requestPost($this->getAPIHeader($params), $this->endpoint_url, json_encode($params));
 
             return json_decode($response);
         } catch (\Throwable $e) {
