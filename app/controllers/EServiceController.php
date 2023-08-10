@@ -599,10 +599,19 @@ class EServiceController extends BaseController
 	public function edit($id)
 	{
 		$this->checkAvailableAccess();
+		$edit = false;
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order) {
-			if ($order->status == EServiceOrder::DRAFT) {
+			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && $order->status == EServiceOrder::INPROGRESS) {
+				$edit = true;
+				$sub_nav_active = 'eservice_list';
+			} else if ($order->status == EServiceOrder::DRAFT) {
+				$edit = true;
+				$sub_nav_active = 'eservice_create';
+			}
+
+			if ($edit) {
 				$cob = $order->company->short_name;
 				$type = $order->type;
 
@@ -614,7 +623,7 @@ class EServiceController extends BaseController
 						'title' => trans('app.menus.eservice.edit') .  ' - ' . $title,
 						'panel_nav_active' => 'eservice_panel',
 						'main_nav_active' => 'eservice_main',
-						'sub_nav_active' => 'eservice_create',
+						'sub_nav_active' => $sub_nav_active,
 						'type' => $type,
 						'form' => $form,
 						'order' => $order,
@@ -639,12 +648,19 @@ class EServiceController extends BaseController
 	public function update($id)
 	{
 		$this->checkAvailableAccess();
+		$update = false;
 
 		$request = Request::all();
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order) {
-			if ($order->status == EServiceOrder::DRAFT) {
+			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && $order->status == EServiceOrder::INPROGRESS) {
+				$update = true;
+			} else if ($order->status == EServiceOrder::DRAFT) {
+				$update = true;
+			}
+
+			if ($update) {
 				$cob = $order->company->short_name;
 				$type = $order->type;
 
