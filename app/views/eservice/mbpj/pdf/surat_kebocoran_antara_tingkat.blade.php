@@ -13,10 +13,10 @@
         <td style="width: 2%;">
             &nbsp;
         </td>
-        <td style="width: 18%;">
+        <td style="width: 23%;">
             &nbsp;
         </td>
-        <td style="width: 15%;">
+        <td style="width: 10%;">
             &nbsp;
         </td>
         <td style="width: 2%;">
@@ -27,7 +27,10 @@
         </td>
     </tr>
     <tr>
-        <td colspan="5" style="text-align: right; vertical-align: top;">
+        <td colspan="4">
+            &nbsp;
+        </td>
+        <td style="text-align: left; vertical-align: top;">
             Ruj. Kami
         </td>
         <td style="text-align: center; vertical-align: top;">
@@ -38,7 +41,10 @@
         </td>
     </tr>
     <tr>
-        <td colspan="5" style="text-align: right; vertical-align: top;">
+        <td colspan="4">
+            &nbsp;
+        </td>
+        <td style="text-align: left; vertical-align: top;">
             Tarikh
         </td>
         <td style="text-align: center; vertical-align: top;">
