@@ -95,6 +95,7 @@
         {{ (isset($content['management_address1']) ? $content['management_address1'] : '') }}
     </td>
 </tr>
+@if (isset($content['management_address2']) && !empty($content['management_address2']))
 <tr>
     <td>
         &nbsp;
@@ -103,14 +104,17 @@
         {{ (isset($content['management_address2']) ? $content['management_address2'] : '') }}
     </td>
 </tr>
+@endif
+@if (isset($content['management_address3']) && !empty($content['management_address3']))
 <tr>
     <td>
         &nbsp;
     </td>
     <td colspan="6">
-        {{ (isset($content['management_address3']) ? $content['management_address3'] : '') }}
+        {{ $content['management_address3'] }}
     </td>
 </tr>
+@endif
 @if (isset($content['management_phone']) && !empty($content['management_phone']))
 <tr>
     <td>
