@@ -264,16 +264,18 @@
                         </div>
                         @endif
 
-                        @if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS]) &&
+                        @if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS, EServiceOrder::REJECTED]) &&
                         (Auth::user()->getAdmin() || Auth::user()->isCOB()))
                         <div class="form-actions">
                             <button type="button" class="btn btn-success" id="edit_button"
                                 onclick="window.location = '{{ route('eservice.edit', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
                                 {{ trans('app.forms.edit') }}
                             </button>
+                            @if ($order->status != EServiceOrder::REJECTED)
                             <button type="button" class="btn btn-own" id="submit_button">
                                 {{ trans('app.forms.save') }}
                             </button>
+                            @endif
                         </div>
                         @endif
                     </div>
