@@ -603,7 +603,7 @@ class EServiceController extends BaseController
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order) {
-			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && $order->status == EServiceOrder::INPROGRESS) {
+			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::INPROGRESS, EServiceOrder::REJECTED])) {
 				$edit = true;
 				$sub_nav_active = 'eservice_list';
 			} else if ($order->status == EServiceOrder::DRAFT) {
@@ -654,7 +654,7 @@ class EServiceController extends BaseController
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order) {
-			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && $order->status == EServiceOrder::INPROGRESS) {
+			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::INPROGRESS, EServiceOrder::REJECTED])) {
 				$update = true;
 			} else if ($order->status == EServiceOrder::DRAFT) {
 				$update = true;
@@ -686,6 +686,7 @@ class EServiceController extends BaseController
 
 						$success = $order->update([
 							'value' => json_encode($request),
+							'status' => ($order->status == EServiceOrder::REJECTED ? EServiceOrder::INPROGRESS : $order->status),
 						]);
 
 						if ($success) {
