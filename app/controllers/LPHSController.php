@@ -2411,6 +2411,8 @@ class LPHSController extends BaseController
 
     public function electricity($cob = null)
     {
+        ini_set('max_execution_time', -1);
+
         $result = [];
 
         $councils = $this->council($cob);
@@ -2454,6 +2456,45 @@ class LPHSController extends BaseController
                         }
 
                         Arr::set($result[$file->id], 'TNB Bill (RM)', number_format($tnb_bill, 2));
+
+                        // total residential unit
+                        $total_residential_unit = 0;
+                        if ($resident = $file->resident) {
+                            $total_residential_unit = (!empty($resident->unit_no) ? $resident->unit_no : 0);
+                        }
+
+                        $total_residential_unit_extra = 0;
+                        if ($residentExtra = $file->residentExtra) {
+                            $total_residential_unit_extra = (!empty($residentExtra->unit_no) ? $residentExtra->unit_no : 0);
+                        }
+
+                        Arr::set($result[$file->id], 'Total Residential Unit', $total_residential_unit + $total_residential_unit_extra);
+
+                        // total commercial unit
+                        $total_commercial_unit = 0;
+                        if ($commercial = $file->commercial) {
+                            $total_commercial_unit = (!empty($commercial->unit_no) ? $commercial->unit_no : 0);
+                        }
+
+                        $total_commercial_unit_extra = 0;
+                        if ($commercialExtra = $file->commercialExtra) {
+                            $total_commercial_unit_extra = (!empty($commercialExtra->unit_no) ? $commercialExtra->unit_no : 0);
+                        }
+
+                        Arr::set($result[$file->id], 'Total Commercial Unit', $total_commercial_unit + $total_commercial_unit_extra);
+
+                        // total unit
+                        $total_unit = $total_residential_unit + $total_residential_unit_extra + $total_commercial_unit + $total_commercial_unit_extra;
+
+                        Arr::set($result[$file->id], 'Total Unit', $total_unit);
+
+                        // total floor
+                        $total_floor = 0;
+                        if ($strata = $file->strata) {
+                            $total_floor = (!empty($strata->total_floor) ? $strata->total_floor : 0);
+                        }
+
+                        Arr::set($result[$file->id], 'Total Floor', $total_floor);
                     }
                 }
             }
