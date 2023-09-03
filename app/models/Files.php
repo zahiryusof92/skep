@@ -57,9 +57,19 @@ class Files extends Eloquent
         return $this->hasOne('Residential', 'file_id')->latest();
     }
 
+    public function residentExtra()
+    {
+        return $this->hasOne('ResidentialExtra', 'file_id')->latest();
+    }
+
     public function commercial()
     {
         return $this->hasOne('Commercial', 'file_id')->latest();
+    }
+
+    public function commercialExtra()
+    {
+        return $this->hasOne('CommercialExtra', 'file_id')->latest();
     }
 
     public function facility()
