@@ -13,21 +13,24 @@
         <td style="width: 2%;">
             &nbsp;
         </td>
-        <td style="width: 48%;">
+        <td style="width: 23%;">
             &nbsp;
         </td>
-        <td style="width: 15%;">
+        <td style="width: 10%;">
             &nbsp;
         </td>
         <td style="width: 2%;">
             &nbsp;
         </td>
-        <td style="width: 20%;">
+        <td style="width: 50%;">
             &nbsp;
         </td>
     </tr>
     <tr>
-        <td colspan="5" style="text-align: right; vertical-align: top;">
+        <td colspan="4">
+            &nbsp;
+        </td>
+        <td style="text-align: left; vertical-align: top;">
             Ruj. Kami
         </td>
         <td style="text-align: center; vertical-align: top;">
@@ -38,7 +41,10 @@
         </td>
     </tr>
     <tr>
-        <td colspan="5" style="text-align: right; vertical-align: top;">
+        <td colspan="4">
+            &nbsp;
+        </td>
+        <td style="text-align: left; vertical-align: top;">
             Tarikh
         </td>
         <td style="text-align: center; vertical-align: top;">
@@ -139,7 +145,6 @@
             {{ (isset($content['affected_unit']) ? $content['affected_unit'] : '') }}
             yang dipercayai berpunca daripada kebocoran paip/ lantai di
             <strong>{{ (isset($content['unit_no']) ? '(' . $content['unit_no'] . ')' : '') }}</strong>.
-            {{ (isset($content['affected_remark']) ? $content['affected_remark'] : '') }}
         </td>
     </tr>
     <tr>

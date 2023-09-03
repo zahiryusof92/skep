@@ -257,7 +257,14 @@ if (!Auth::user()->getAdmin()) {
                         <a class="left-menu-link" href="{{ route('eservice.rejected') }}">
                             {{ trans('app.menus.eservice.rejected') }}
                         </a>
-                    </li>                   
+                    </li>
+                    @if (Auth::user()->isJMB())
+                    <li class="left-menu-list-link" id="eservice_payment_history">
+                        <a class="left-menu-link" href="{{ route('eservice.paymentHistory') }}">
+                            {{ trans('app.menus.eservice.payment_history') }}
+                        </a>
+                    </li>   
+                    @endif             
                     @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                     <li class="left-menu-list-link" id="eservice_report">
                         <a class="left-menu-link" href="{{ route('eservice.report') }}">
@@ -558,11 +565,13 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
+                    @if (Module::hasAccessModule("e-Service"))
                     <li id="eservice_price_list">
                         <a class="left-menu-link" href="{{ route('eservicePrice.index') }}">
                             {{ trans('app.menus.master.eservice_price') }}
                         </a>
                     </li>
+                    @endif
                     
                     @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
                     <li id="postpone_agm_reason_list">

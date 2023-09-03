@@ -254,11 +254,13 @@ return array(
             'show' => 'View Application',
             "pending" => ":count pending",
             'payment' => 'Payment',
+            'payment_history' => 'Payment History',
         ),
         "eservice_price" => array(
             "name" => "E-Perkhidmatan Pricing",
             "name1" => "-Perkhidmatan Pricing",
             "list" => "e-Perkhidmatan Pricing",
+            "edit" => "Edit e-Perkhidmatan Pricing",
         ),
         "agm_postpone" => array(
             "name" => "Status AGM",
@@ -854,6 +856,7 @@ return array(
         'upcoming_agm_date' => 'Upcoming AGM Date',
         'upload_insurance_attachment' => 'Upload Cover Note / Supportive Document',
         'title' => 'Title',
+        'message' => 'Message',
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -1365,6 +1368,7 @@ return array(
         'draft' => 'Draft',
         'pending' => 'Pending',
         'inprogress' => 'In-progress',
+        'failed' => 'Failed',
         'approved' => 'Approved',
         'rejected' => 'Rejected',
         'email_sent' => 'E-mail Sent'
