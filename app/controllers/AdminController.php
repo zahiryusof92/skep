@@ -5144,9 +5144,18 @@ class AdminController extends BaseController
             $jenis_kegunaan = $data['jenis_kegunaan'];
             $nama2 = $data['nama2'];
             $ic_no2 = $data['ic_no2'];
+            $email2 = $data['email2'];
+            $phone_no2 = $data['phone_no2'];
+            $nama3 = $data['nama3'];
+            $ic_no3 = $data['ic_no3'];
+            $email3 = $data['email3'];
+            $phone_no3 = $data['phone_no3'];
             $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
+            $lawyer_name = $data['lawyer_name'];
+            $lawyer_address = $data['lawyer_address'];
+            $lawyer_fail_ref_no = $data['lawyer_fail_ref_no'];
 
             $checkFile = Files::findOrFail($file_id);
 
@@ -5170,9 +5179,19 @@ class AdminController extends BaseController
                 $buyer->jenis_kegunaan = $jenis_kegunaan;
                 $buyer->nama2 = $nama2;
                 $buyer->ic_no2 = $ic_no2;
+                $buyer->email2 = $email2;
+                $buyer->phone_no2 = $phone_no2;
+                $buyer->nama3 = $nama3;
+                $buyer->ic_no3 = $ic_no3;
+                $buyer->email3 = $email3;
+                $buyer->phone_no3 = $phone_no3;
                 $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
                 $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
                 $buyer->sinking_fund = $sinking_fund;
+                $buyer->lawyer_name = $lawyer_name;
+                $buyer->lawyer_address = $lawyer_address;
+                $buyer->lawyer_fail_ref_no = $lawyer_fail_ref_no;
+                
                 $success = $buyer->save();
 
                 if ($success) {
@@ -5251,9 +5270,18 @@ class AdminController extends BaseController
             $jenis_kegunaan = $data['jenis_kegunaan'];
             $nama2 = $data['nama2'];
             $ic_no2 = $data['ic_no2'];
+            $email2 = $data['email2'];
+            $phone_no2 = $data['phone_no2'];
+            $nama3 = $data['nama3'];
+            $ic_no3 = $data['ic_no3'];
+            $email3 = $data['email3'];
+            $phone_no3 = $data['phone_no3'];
             $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
+            $lawyer_name = $data['lawyer_name'];
+            $lawyer_address = $data['lawyer_address'];
+            $lawyer_fail_ref_no = $data['lawyer_fail_ref_no'];
             $id = $data['id'];
 
             $checkFile = Files::findOrFail($file_id);
@@ -5281,9 +5309,18 @@ class AdminController extends BaseController
                     $new_line .= $jenis_kegunaan != $buyer->jenis_kegunaan ? "jenis kegunaan, " : "";
                     $new_line .= $nama2 != $buyer->nama2 ? "nama2, " : "";
                     $new_line .= $ic_no2 != $buyer->ic_no2 ? "ic no2, " : "";
+                    $new_line .= $email2 != $buyer->email2 ? "email2, " : "";
+                    $new_line .= $phone_no2 != $buyer->phone_no2 ? "phone no2, " : "";
+                    $new_line .= $nama3 != $buyer->nama3 ? "nama3, " : "";
+                    $new_line .= $ic_no3 != $buyer->ic_no3 ? "ic no3, " : "";
+                    $new_line .= $email3 != $buyer->email3 ? "email3, " : "";
+                    $new_line .= $phone_no3 != $buyer->phone_no3 ? "phone_no3, " : "";
                     $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat ? "alamat surat menyurat, " : "";
                     $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan ? "caj penyelenggaraan, " : "";
                     $new_line .= $sinking_fund != $buyer->sinking_fund ? "sinking fund, " : "";
+                    $new_line .= $lawyer_name != $buyer->lawyer_name ? "lawyer name, " : "";
+                    $new_line .= $lawyer_address != $buyer->lawyer_address ? "lawyer address, " : "";
+                    $new_line .= $lawyer_fail_ref_no != $buyer->lawyer_fail_ref_no ? "lawyer fail ref no, " : "";
                     if (!empty($new_line)) {
                         $audit_fields_changed .= "<br/><ul><li> Purchaser : (";
                         $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
@@ -5308,9 +5345,18 @@ class AdminController extends BaseController
                     $buyer->jenis_kegunaan = $jenis_kegunaan;
                     $buyer->nama2 = $nama2;
                     $buyer->ic_no2 = $ic_no2;
+                    $buyer->email2 = $email2;
+                    $buyer->phone_no2 = $phone_no2;
+                    $buyer->nama3 = $nama3;
+                    $buyer->ic_no3 = $ic_no3;
+                    $buyer->email3 = $email3;
+                    $buyer->phone_no3 = $phone_no3;
                     $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
                     $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
                     $buyer->sinking_fund = $sinking_fund;
+                    $buyer->lawyer_name = $lawyer_name;
+                    $buyer->lawyer_address = $lawyer_address;
+                    $buyer->lawyer_fail_ref_no = $lawyer_fail_ref_no;
                     $success = $buyer->save();
 
                     if ($success) {
@@ -5450,10 +5496,10 @@ class AdminController extends BaseController
                 if (!empty($getAllBuyer)) {
                     foreach ($getAllBuyer as $buyerList) {
 
-                        // 1. File No.
+                        // 1. File Number
                         $file_no = '';
-                        if (isset($buyerList[0]) && !empty($buyerList[0])) {
-                            $file_no = trim($buyerList[0]);
+                        if (isset($buyerList[1]) && !empty($buyerList[1])) {
+                            $file_no = trim($buyerList[1]);
                         }
 
                         if (!empty($file_no)) {
@@ -5461,18 +5507,19 @@ class AdminController extends BaseController
                             if ($check_file_id) {
                                 $files_id = $check_file_id->id;
 
-                                // 2. Unit No.
+                                // 2. NO.UNIT
                                 $unit_no = '';
-                                if (isset($buyerList[1]) && !empty($buyerList[1])) {
-                                    $unit_no = trim($buyerList[1]);
+                                if (isset($buyerList[2]) && !empty($buyerList[2])) {
+                                    $unit_no = trim($buyerList[2]);
                                 }
 
                                 if (!empty($unit_no)) {
                                     $check_buyer = Buyer::where('file_id', $files_id)->where('unit_no', $unit_no)->where('is_deleted', 0)->first();
                                     if (!$check_buyer) {
                                         $race = '';
-                                        if (isset($buyerList[8]) && !empty($buyerList[8])) {
-                                            $race_raw = trim($buyerList[8]);
+                                        // 15. BANGSA
+                                        if (isset($buyerList[15]) && !empty($buyerList[15])) {
+                                            $race_raw = trim($buyerList[15]);
 
                                             if (!empty($race_raw)) {
                                                 $race_query = Race::where('name', $race_raw)->where('is_deleted', 0)->first();
@@ -5490,8 +5537,9 @@ class AdminController extends BaseController
                                         }
 
                                         $nationality = '';
-                                        if (isset($buyerList[9]) && !empty($buyerList[9])) {
-                                            $nationality_raw = trim($buyerList[9]);
+                                        // 16. KEWARGANEGARAAN
+                                        if (isset($buyerList[16]) && !empty($buyerList[16])) {
+                                            $nationality_raw = trim($buyerList[16]);
 
                                             if (!empty($nationality_raw)) {
                                                 $nationality_query = Nationality::where('name', $nationality_raw)->where('is_deleted', 0)->first();
@@ -5509,17 +5557,37 @@ class AdminController extends BaseController
                                         }
 
                                         $buyer = new Buyer();
-                                        $buyer->file_id = $files_id;
-                                        $buyer->unit_no = $unit_no;
-                                        $buyer->unit_share = $buyerList[2];
-                                        $buyer->owner_name = $buyerList[3];
-                                        $buyer->ic_company_no = $buyerList[4];
-                                        $buyer->address = $buyerList[5];
-                                        $buyer->phone_no = $buyerList[6];
-                                        $buyer->email = $buyerList[7];
-                                        $buyer->race_id = $race;
-                                        $buyer->nationality_id = $nationality;
-                                        $buyer->remarks = $buyerList[10];
+                                        $buyer->file_id = $files_id; // 1. File Number
+                                        $buyer->unit_no = $unit_no; // 2. NO.UNIT
+                                        $buyer->no_petak = $buyerList[3]; // 3. NO.PETAK
+                                        $buyer->no_petak_aksesori = $buyerList[4]; // 4. NO.PETAK AKSESORI (JIKA ADA)
+                                        $buyer->keluasan_lantai_petak = $buyerList[7]; // 5. KELUASAN LANTAI PETAK (SQ.M)
+                                        $buyer->keluasan_lantai_petak_aksesori = $buyerList[6]; // 6. KELUASAN LANTAI PETAK AKSESORI (SQ.M)
+                                        $buyer->unit_share = $buyerList[7]; // 7. UNIT SHARE
+                                        $buyer->jenis_kegunaan = $buyerList[8]; // 8. JENIS KEGUNAAN
+                                        $buyer->owner_name = $buyerList[9]; // 9. NAMA PEMILIK                                        
+                                        $buyer->ic_company_no = $buyerList[10]; // 10. NO.KAD PENGENALAN
+                                        $buyer->email = $buyerList[11]; // 11. EMEL
+                                        $buyer->phone_no = $buyerList[12]; // 12. NO.TELEFON BIMBIT
+                                        $buyer->address = $buyerList[13]; // 13. ALAMAT
+                                        $buyer->alamat_surat_menyurat = $buyerList[14]; // 14. ALAMAT SURAT MENYURAT
+                                        $buyer->race_id = $race; // 15. BANGSA
+                                        $buyer->nationality_id = $nationality; // 16. KEWARGANEGARAAN
+                                        // 17. STATUS PENGHUNIAN (PEMILIK,PENYEWA,KOSONG)
+                                        $buyer->caj_penyelenggaraan = $buyerList[18]; // 18. CAJ PENYENGGARAAN (RM)
+                                        $buyer->sinking_fund = $buyerList[19]; // 19. SINKING FUND (RM)
+                                        $buyer->remarks = $buyerList[20]; // 20. CATATAN
+                                        $buyer->nama2 = $buyerList[21]; // 21. NAMA PEMILIK 2
+                                        $buyer->ic_no2 = $buyerList[22]; // 22. NO.KAD PENGENALAN PEMILIK 2
+                                        $buyer->email2 = $buyerList[23]; // 23. EMEL PEMILIK 2
+                                        $buyer->phone_no2 = $buyerList[24]; // 24. NO.TELEFON BIMBIT PEMILIK 2
+                                        $buyer->nama3 = $buyerList[25]; // 25. NAMA PEMILIK 3
+                                        $buyer->ic_no3 = $buyerList[26]; // 26. NO.KAD PENGENALAN PEMILIK 3
+                                        $buyer->email3 = $buyerList[27]; // 27. EMEL PEMILIK 3
+                                        $buyer->phone_no3 = $buyerList[28]; // 28. NO.TELEFON BIMBIT PEMILIK 3
+                                        $buyer->lawyer_name = $buyerList[29]; // 29. NAMA PEGUAMCARA
+                                        $buyer->lawyer_address = $buyerList[30]; // 30. ALAMAT PEGUAMCARA
+                                        $buyer->lawyer_fail_ref_no = $buyerList[31]; // 31. NO RUJ FAIL PEGUAMCARA
                                         $success = $buyer->save();
 
                                         if ($success) {

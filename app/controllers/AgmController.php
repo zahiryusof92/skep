@@ -545,9 +545,18 @@ class AgmController extends BaseController {
             $jenis_kegunaan = $data['jenis_kegunaan'];
             $nama2 = $data['nama2'];
             $ic_no2 = $data['ic_no2'];
+            $email2 = $data['email2'];
+            $phone_no2 = $data['phone_no2'];
+            $nama3 = $data['nama3'];
+            $ic_no3 = $data['ic_no3'];
+            $email3 = $data['email3'];
+            $phone_no3 = $data['phone_no3'];
             $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
+            $lawyer_name = $data['lawyer_name'];
+            $lawyer_address = $data['lawyer_address'];
+            $lawyer_fail_ref_no = $data['lawyer_fail_ref_no'];
 
             $checkFile = Files::find($file_id);
 
@@ -571,9 +580,18 @@ class AgmController extends BaseController {
                 $buyer->jenis_kegunaan = $jenis_kegunaan;
                 $buyer->nama2 = $nama2;
                 $buyer->ic_no2 = $ic_no2;
+                $buyer->email2 = $email2;
+                $buyer->phone_no2 = $phone_no2;
+                $buyer->nama3 = $nama3;
+                $buyer->ic_no3 = $ic_no3;
+                $buyer->email3 = $email3;
+                $buyer->phone_no3 = $phone_no3;
                 $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
                 $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
                 $buyer->sinking_fund = $sinking_fund;
+                $buyer->lawyer_name = $lawyer_name;
+                $buyer->lawyer_address = $lawyer_address;
+                $buyer->lawyer_fail_ref_no = $lawyer_fail_ref_no;
                 $success = $buyer->save();
 
                 if ($success) {
@@ -669,9 +687,18 @@ class AgmController extends BaseController {
             $jenis_kegunaan = $data['jenis_kegunaan'];
             $nama2 = $data['nama2'];
             $ic_no2 = $data['ic_no2'];
+            $email2 = $data['email2'];
+            $phone_no2 = $data['phone_no2'];
+            $nama3 = $data['nama3'];
+            $ic_no3 = $data['ic_no3'];
+            $email3 = $data['email3'];
+            $phone_no3 = $data['phone_no3'];
             $alamat_surat_menyurat = $data['alamat_surat_menyurat'];
             $caj_penyelenggaraan = $data['caj_penyelenggaraan'];
             $sinking_fund = $data['sinking_fund'];
+            $lawyer_name = $data['lawyer_name'];
+            $lawyer_address = $data['lawyer_address'];
+            $lawyer_fail_ref_no = $data['lawyer_fail_ref_no'];
             $id = Helper::decode($data['id']);
 
             $checkFile = Files::find($file_id);
@@ -699,9 +726,18 @@ class AgmController extends BaseController {
                     $new_line .= $jenis_kegunaan != $buyer->jenis_kegunaan? "jenis kegunaan, " : "";
                     $new_line .= $nama2 != $buyer->nama2? "nama2, " : "";
                     $new_line .= $ic_no2 != $buyer->ic_no2? "ic no2, " : "";
-                    $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat? "alamat surat menyurat, " : "";
-                    $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan? "caj penyelenggaraan, " : "";
-                    $new_line .= $sinking_fund != $buyer->sinking_fund? "sinking fund, " : "";
+                    $new_line .= $email2 != $buyer->email2 ? "email2, " : "";
+                    $new_line .= $phone_no2 != $buyer->phone_no2 ? "phone no2, " : "";
+                    $new_line .= $nama3 != $buyer->nama3 ? "nama3, " : "";
+                    $new_line .= $ic_no3 != $buyer->ic_no3 ? "ic no3, " : "";
+                    $new_line .= $email3 != $buyer->email3 ? "email3, " : "";
+                    $new_line .= $phone_no3 != $buyer->phone_no3 ? "phone_no3, " : "";
+                    $new_line .= $alamat_surat_menyurat != $buyer->alamat_surat_menyurat ? "alamat surat menyurat, " : "";
+                    $new_line .= $caj_penyelenggaraan != $buyer->caj_penyelenggaraan ? "caj penyelenggaraan, " : "";
+                    $new_line .= $sinking_fund != $buyer->sinking_fund ? "sinking fund, " : "";
+                    $new_line .= $lawyer_name != $buyer->lawyer_name ? "lawyer name, " : "";
+                    $new_line .= $lawyer_address != $buyer->lawyer_address ? "lawyer address, " : "";
+                    $new_line .= $lawyer_fail_ref_no != $buyer->lawyer_fail_ref_no ? "lawyer fail ref no, " : "";
                     if(!empty($new_line)) {
                         $audit_fields_changed .= "<br/><ul><li> Purchaser : (";
                         $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) .")</li></ul>";
@@ -726,9 +762,18 @@ class AgmController extends BaseController {
                     $buyer->jenis_kegunaan = $jenis_kegunaan;
                     $buyer->nama2 = $nama2;
                     $buyer->ic_no2 = $ic_no2;
+                    $buyer->email2 = $email2;
+                    $buyer->phone_no2 = $phone_no2;
+                    $buyer->nama3 = $nama3;
+                    $buyer->ic_no3 = $ic_no3;
+                    $buyer->email3 = $email3;
+                    $buyer->phone_no3 = $phone_no3;
                     $buyer->alamat_surat_menyurat = $alamat_surat_menyurat;
                     $buyer->caj_penyelenggaraan = $caj_penyelenggaraan;
                     $buyer->sinking_fund = $sinking_fund;
+                    $buyer->lawyer_name = $lawyer_name;
+                    $buyer->lawyer_address = $lawyer_address;
+                    $buyer->lawyer_fail_ref_no = $lawyer_fail_ref_no;
                     $success = $buyer->save();
 
                     if ($success) {
