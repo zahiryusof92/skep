@@ -109,20 +109,18 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-8">
+                                                    <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ trans('app.forms.nama2') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.nama2') }}" id="nama2" value="{{$buyer->nama2}}">
-                                                            <div id="nama2_error" style="display:none;"></div>
+                                                            <label>{{ trans('app.forms.email') }}</label>
+                                                            <input type="email" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{$buyer->email}}">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
-                                                            <label>{{ trans('app.forms.ic_no2') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.ic_no2') }}" id="ic_no2" value="{{$buyer->ic_no2}}">
-                                                            <div id="ic_no2_error" style="display:none;"></div>
+                                                            <label>{{ trans('app.forms.phone_number') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{$buyer->phone_no}}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -139,22 +137,6 @@
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.alamat_surat_menyurat') }}</label>
                                                             <textarea class="form-control" placeholder="{{ trans('app.forms.alamat_surat_menyurat') }}" rows="3" id="alamat_surat_menyurat">{{$buyer->alamat_surat_menyurat}}</textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.phone_number') }}</label>
-                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_number') }}" id="phone_no" value="{{$buyer->phone_no}}">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ trans('app.forms.email') }}</label>
-                                                            <input type="email" class="form-control" placeholder="{{ trans('app.forms.email') }}" id="email" value="{{$buyer->email}}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -209,6 +191,105 @@
                                                         <div class="form-group">
                                                             <label>{{ trans('app.forms.remarks') }}</label>
                                                             <textarea class="form-control" placeholder="{{ trans('app.forms.remarks') }}" rows="3" id="remarks">{{$buyer->remarks}}</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.nama2') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.nama2') }}" id="nama2" value="{{$buyer->nama2}}">
+                                                            <div id="nama2_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.ic_no2') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.ic_no2') }}" id="ic_no2" value="{{$buyer->ic_no2}}">
+                                                            <div id="ic_no2_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.email2') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.email2') }}" id="email2" value="{{$buyer->email2}}">
+                                                            <div id="email2_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.phone_no2') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_no2') }}" id="phone_no2" value="{{$buyer->phone_no2}}">
+                                                            <div id="phone_no2_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.nama3') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.nama3') }}" id="nama3" value="{{$buyer->nama3}}">
+                                                            <div id="nama3_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.ic_no3') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.ic_no3') }}" id="ic_no3" value="{{$buyer->ic_no3}}">
+                                                            <div id="ic_no3_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.email3') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.email3') }}" id="email3" value="{{$buyer->email3}}">
+                                                            <div id="email3_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.phone_no3') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.phone_no3') }}" id="phone_no3" value="{{$buyer->phone_no3}}">
+                                                            <div id="phone_no3_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.lawyer_name') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.lawyer_name') }}" id="lawyer_name" value="{{$buyer->lawyer_name}}">
+                                                            <div id="lawyer_name_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.lawyer_address') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.lawyer_address') }}" id="lawyer_address" value="{{$buyer->lawyer_address}}">
+                                                            <div id="lawyer_address_error" style="display:none;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ trans('app.forms.lawyer_fail_ref_no') }}</label>
+                                                            <input type="text" class="form-control" placeholder="{{ trans('app.forms.lawyer_fail_ref_no') }}" id="lawyer_fail_ref_no" value="{{$buyer->lawyer_fail_ref_no}}">
+                                                            <div id="lawyer_fail_ref_no_error" style="display:none;"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -270,9 +351,18 @@
                 jenis_kegunaan = $("#jenis_kegunaan").val(),
                 nama2 = $("#nama2").val(),
                 ic_no2 = $("#ic_no2").val(),
+                email2 = $("#email2").val(),
+                phone_no2 = $("#phone_no2").val(),
+                nama3 = $("#nama3").val(),
+                ic_no3 = $("#ic_no3").val(),
+                email3 = $("#email3").val(),
+                phone_no3 = $("#phone_no3").val(),
                 alamat_surat_menyurat = $("#alamat_surat_menyurat").val(),
                 caj_penyelenggaraan = $("#caj_penyelenggaraan").val(),
-                sinking_fund = $("#sinking_fund").val();
+                sinking_fund = $("#sinking_fund").val(),
+                lawyer_name = $("#lawyer_name").val(),
+                lawyer_address = $("#lawyer_address").val(),
+                lawyer_fail_ref_no = $("#lawyer_fail_ref_no").val();
 
         var error = 0;
 
@@ -319,9 +409,18 @@
                     jenis_kegunaan: jenis_kegunaan,
                     nama2: nama2,
                     ic_no2: ic_no2,
+                    email2: email2,
+                    phone_no2: phone_no2,
+                    nama3: nama3,
+                    ic_no3: ic_no3,
+                    email3: email3,
+                    phone_no3: phone_no3,
                     alamat_surat_menyurat: alamat_surat_menyurat,
                     caj_penyelenggaraan: caj_penyelenggaraan,
                     sinking_fund: sinking_fund,
+                    lawyer_name: lawyer_name,
+                    lawyer_address: lawyer_address,
+                    lawyer_fail_ref_no: lawyer_fail_ref_no,
                     file_id: '{{ \Helper\Helper::encode($files->id) }}',
                     id: '{{$buyer->id}}'
                 },
