@@ -527,6 +527,11 @@ class EServiceController extends BaseController
 									'message' => trans('app.successes.saved_successfully')
 								]);
 							}
+						} else {
+							return Response::json([
+								'error' => true,
+								'message' => trans('Pricing have not been set')
+							]);
 						}
 					}
 				}
