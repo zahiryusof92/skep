@@ -971,6 +971,22 @@ return [
                                 'management_phone',
                             ],
                         ],
+                        'aduan_halangan_di_kawasan_harta_bersama' => [
+                            'name' => 'aduan_halangan_di_kawasan_harta_bersama',
+                            'title' => trans('app.eservice.aduan_halangan_di_kawasan_harta_bersama'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'affected_unit',
+                            ],
+                        ],
                         'aduan_haiwan_liar' => [
                             'name' => 'aduan_haiwan_liar',
                             'title' => trans('app.eservice.aduan_haiwan_liar'),

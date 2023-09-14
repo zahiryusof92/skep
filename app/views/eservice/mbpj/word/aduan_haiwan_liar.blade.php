@@ -1,4 +1,4 @@
-@extends('layout.english_layout.eservice')
+@extends('layout.english_layout.eservice_word')
 
 @section('content')
     <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">

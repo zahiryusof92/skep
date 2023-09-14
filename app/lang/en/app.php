@@ -1376,6 +1376,7 @@ return array(
         'surat_peringatan_tunggakan_caj_jmb' => 'Surat Peringatan Tunggakan Caj (JMB)',
         'surat_peringatan_tunggakan_caj_mc' => 'Surat Peringatan Tunggakan Caj (MC)',
         'aduan_cop_tempat_letak_kereta' => 'Aduan Cop Tempat Letak Kereta',
+        'aduan_halangan_di_kawasan_harta_bersama' => 'Aduan Halangan Di Kawasan Harta Bersama',
         'aduan_haiwan_liar' => 'Aduan Haiwan Liar',
         'draft' => 'Draft',
         'pending' => 'Pending',

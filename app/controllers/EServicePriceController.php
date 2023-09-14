@@ -73,7 +73,7 @@ class EServicePriceController extends \BaseController
 									$price->category_id = $category->id;
 									$price->type = $type['title'];
 									$price->slug = $type['name'];
-									$price->price = 10;
+									$price->price = 20;
 									$price->save();
 								}
 
@@ -82,7 +82,7 @@ class EServicePriceController extends \BaseController
 						}
 
 						if (!empty($validType)) {
-							$delete = EServicePrice::where('company_id', $cob->id)
+							EServicePrice::where('company_id', $cob->id)
 								->where('category_id', $category->id)
 								->whereNotIn('slug', $validType)
 								->delete();
