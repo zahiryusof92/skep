@@ -18,7 +18,8 @@ class EServicePriceController extends \BaseController
 		$this->checkAvailableAccess();
 
 		if (Request::ajax()) {
-			$prices = EServicePrice::join('category', 'eservices_prices.category_id', '=', 'category.id')
+			$prices = EServicePrice::select('eservices_prices.*')
+				->join('category', 'eservices_prices.category_id', '=', 'category.id')
 				->where('category.is_deleted', 0)
 				->orderBy('eservices_prices.company_id')
 				->get();
