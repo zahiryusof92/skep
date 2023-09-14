@@ -56,12 +56,17 @@
                                     {{ trans('app.forms.amount') }} (RM)
                                 </dt>
                                 <dd class="col-sm-9">
+                                    @if (!empty($order->price) && $order->price > 0)
                                     <div class="row">
                                         <div class="col-lg-5">
                                             <input type="text" class="form-control" name="amount" id="amount"
                                                 value="{{ number_format($total_amount, 2) }}" readonly="" />
                                         </div>
                                     </div>
+                                    @else
+                                    {{ trans('Free') }}
+                                    <input type="hidden" class="form-control" name="amount" id="amount" value="{{ number_format($total_amount, 2) }}"/>
+                                    @endif                                    
                                 </dd>
 
                                 <dt class="col-sm-3">

@@ -85,14 +85,6 @@
             Fail JMB/MC
         </td>
     </tr>
-    <tr>
-        <td>
-            &nbsp;
-        </td>
-        <td colspan="6">
-            Pengadu
-        </td>
-    </tr>
 @endif
 
 <tr>
