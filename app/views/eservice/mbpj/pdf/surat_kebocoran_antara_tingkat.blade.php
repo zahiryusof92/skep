@@ -230,7 +230,7 @@
             </td>
         </tr>
 
-        @include('eservice.mbpj.component.signature_tag_2', ['sk' => true])
+        @include('eservice.mbpj.component.signature_tag_3', ['sk' => true])
 
     </table>
 @endsection
