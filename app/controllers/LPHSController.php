@@ -2569,4 +2569,79 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Upload_OCR_' . strtoupper($cob));
     }
+
+    public function commercial($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+                        if ($file->commercial) {
+                            $result[$file->id] = [];
+
+                            Arr::set($result[$file->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
+                            Arr::set($result[$file->id], 'File No', $file->file_no);
+                            Arr::set($result[$file->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
+
+                            $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                            if ($designations) {
+                                foreach ($designations as $designation) {
+                                    $ajk_detail = AJKDetails::where('file_id', $file->id)
+                                        ->where('designation', $designation->id)
+                                        ->where('is_deleted', 0)
+                                        ->orderBy('start_year', 'desc')
+                                        ->orderBy('month', 'desc')
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+
+                                    Arr::set($result[$file->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                                    Arr::set($result[$file->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
+                                    Arr::set($result[$file->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                                }
+                            }
+
+                            // total residential unit
+                            $total_residential_unit = 0;
+                            if ($resident = $file->resident) {
+                                $total_residential_unit = (!empty($resident->unit_no) ? $resident->unit_no : 0);
+                            }
+
+                            $total_residential_unit_extra = 0;
+                            if ($residentExtra = $file->residentExtra) {
+                                $total_residential_unit_extra = (!empty($residentExtra->unit_no) ? $residentExtra->unit_no : 0);
+                            }
+
+                            Arr::set($result[$file->id], 'Total Residential Unit', $total_residential_unit + $total_residential_unit_extra);
+
+                            // total commercial unit
+                            $total_commercial_unit = 0;
+                            if ($commercial = $file->commercial) {
+                                $total_commercial_unit = (!empty($commercial->unit_no) ? $commercial->unit_no : 0);
+                            }
+
+                            $total_commercial_unit_extra = 0;
+                            if ($commercialExtra = $file->commercialExtra) {
+                                $total_commercial_unit_extra = (!empty($commercialExtra->unit_no) ? $commercialExtra->unit_no : 0);
+                            }
+
+                            Arr::set($result[$file->id], 'Total Commercial Unit', $total_commercial_unit + $total_commercial_unit_extra);
+
+                            // total unit
+                            $total_unit = $total_residential_unit + $total_residential_unit_extra + $total_commercial_unit + $total_commercial_unit_extra;
+
+                            Arr::set($result[$file->id], 'Total Unit', $total_unit);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Commercial_' . strtoupper($cob), 'raw');
+    }
 }

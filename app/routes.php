@@ -68,6 +68,7 @@ Route::get('/lphs/financeOutstanding/{council}', 'LPHSController@financeOutstand
 Route::get('/lphs/strataByCategory/{council}', 'LPHSController@strataByCategory');
 Route::get('/lphs/electricity/{council}', 'LPHSController@electricity');
 Route::get('/lphs/uploadOCR/{council}', 'LPHSController@uploadOCR');
+Route::get('/lphs/commercial/{council}', 'LPHSController@commercial');
 
 /*
  * LPHS REPORT END
