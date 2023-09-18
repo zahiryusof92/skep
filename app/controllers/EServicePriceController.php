@@ -18,7 +18,11 @@ class EServicePriceController extends \BaseController
 		$this->checkAvailableAccess();
 
 		if (Request::ajax()) {
-			$prices = EServicePrice::orderBy('company_id')->get();
+			$prices = EServicePrice::select('eservices_prices.*')
+				->join('category', 'eservices_prices.category_id', '=', 'category.id')
+				->where('category.is_deleted', 0)
+				->orderBy('eservices_prices.company_id')
+				->get();
 
 			if (count($prices) > 0) {
 				$data = array();
@@ -57,23 +61,35 @@ class EServicePriceController extends \BaseController
 			$cob = Company::where('short_name', Str::lower($council))->first();
 			if ($cob) {
 				$categories = Category::where('is_deleted', 0)->get();
-				foreach ($categories as $category) {
-					if (isset($this->module['eservice']['cob'][Str::lower($council)]['type'])) {
-						foreach ($this->module['eservice']['cob'][Str::lower($council)]['type'] as $type) {
-							$exist = EServicePrice::where('company_id', $cob->id)
-								->where('category_id', $category->id)
-								->where('slug', $type['name'])
-								->first();
+				if ($categories) {
+					foreach ($categories as $category) {
+						$validType = [];
+						if (isset($this->module['eservice']['cob'][Str::lower($council)]['type'])) {
+							foreach ($this->module['eservice']['cob'][Str::lower($council)]['type'] as $type) {
+								$exist = EServicePrice::where('company_id', $cob->id)
+									->where('category_id', $category->id)
+									->where('slug', $type['name'])
+									->first();
 
-							if (!$exist) {
-								$price = new EServicePrice();
-								$price->company_id = $cob->id;
-								$price->category_id = $category->id;
-								$price->type = $type['title'];
-								$price->slug = $type['name'];
-								$price->price = 10;
-								$price->save();
+								if (!$exist) {
+									$price = new EServicePrice();
+									$price->company_id = $cob->id;
+									$price->category_id = $category->id;
+									$price->type = $type['title'];
+									$price->slug = $type['name'];
+									$price->price = 20;
+									$price->save();
+								}
+
+								$validType[] = $type['name'];
 							}
+						}
+
+						if (!empty($validType)) {
+							EServicePrice::where('company_id', $cob->id)
+								->where('category_id', $category->id)
+								->whereNotIn('slug', $validType)
+								->delete();
 						}
 					}
 				}

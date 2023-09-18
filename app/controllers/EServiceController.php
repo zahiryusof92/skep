@@ -527,6 +527,11 @@ class EServiceController extends BaseController
 									'message' => trans('app.successes.saved_successfully')
 								]);
 							}
+						} else {
+							return Response::json([
+								'error' => true,
+								'message' => trans('Pricing have not been set')
+							]);
 						}
 					}
 				}
@@ -915,7 +920,41 @@ class EServiceController extends BaseController
 						}
 					}
 				} else {
-					return Redirect::back()->with('error', trans('Amount must be more than 0'));
+					// free letter
+					$update = $order->update([
+						'status' => EServiceOrder::INPROGRESS,
+					]);
+
+					if ($update) {
+						/**
+						 * Send an email to JMB / MC and copy to COB
+						 */
+						if (Config::get('mail.driver') != '') {
+							if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+								Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+									$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
+								});
+							}
+
+							if ($order->user->isJMB() || $order->user->isMC()) {
+								if (!empty(Config::get('payment.mbpj.email_cob'))) {
+									Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+										$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+									});
+								}
+							}
+						}
+
+						/**
+						 * add audit trail
+						 */
+						$module = Str::upper($this->getModule()['name']);
+						$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
+						$remarks = $module . ': ' . $order->email . " has submitted a new application";
+						$this->addAudit($order->file_id, $module, $remarks);
+
+						return Redirect::route('eservice.index')->with('success', trans('app.successes.saved_successfully'));
+					}
 				}
 			}
 		}
