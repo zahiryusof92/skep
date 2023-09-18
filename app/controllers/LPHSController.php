@@ -2642,6 +2642,6 @@ class LPHSController extends BaseController
             }
         }
 
-        return $this->result($result, $filename = 'Commercial_' . strtoupper($cob), 'raw');
+        return $this->result($result, $filename = 'Commercial_' . strtoupper($cob));
     }
 }
