@@ -82,9 +82,44 @@
             s.k:
         </td>
         <td colspan="6">
-            <strong>
-                {{ isset($content['management_name']) ? Str::upper($content['management_name']) : '' }}
-            </strong>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td colspan="6">
+            Pengarah
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td colspan="6">
+            Jabatan Kawalan Bangunan
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td colspan="6">
+            Majlis Bandaraya Petaling Jaya.
+        </td>
+    </tr>
+    <tr>
+        <td colspan="7">
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td colspan="6">
+            {{ isset($content['management_name']) ? Str::upper($content['management_name']) : '' }}
         </td>
     </tr>
     <tr>

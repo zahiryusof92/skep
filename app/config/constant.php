@@ -878,7 +878,7 @@ return [
                                 'management_state',
                                 'management_phone',
                                 'unit_no',
-                                'owner_name', 
+                                'owner_name',
                                 'owner_address1',
                                 'owner_address2',
                                 'owner_address3',
@@ -956,9 +956,9 @@ return [
                                 'proof_of_notice',
                             ],
                         ],
-                        'aduan_cop_tempat_letak_kereta' => [
-                            'name' => 'aduan_cop_tempat_letak_kereta',
-                            'title' => trans('app.eservice.aduan_cop_tempat_letak_kereta'),
+                        'peraturan_mengenai_kerja_pengubahsuaian' => [
+                            'name' => 'peraturan_mengenai_kerja_pengubahsuaian',
+                            'title' => trans('app.eservice.peraturan_mengenai_kerja_pengubahsuaian'),
                             'only' => [
                                 'building_name',
                                 'management_name',
@@ -969,6 +969,39 @@ return [
                                 'management_city',
                                 'management_state',
                                 'management_phone',
+                                'management_email',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                            ],
+                        ],
+                        'peraturan_mengenai_petak_parkir' => [
+                            'name' => 'peraturan_mengenai_petak_parkir',
+                            'title' => trans('app.eservice.peraturan_mengenai_petak_parkir'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
                             ],
                         ],
                         'aduan_halangan_di_kawasan_harta_bersama' => [
@@ -987,9 +1020,9 @@ return [
                                 'affected_unit',
                             ],
                         ],
-                        'aduan_haiwan_liar' => [
-                            'name' => 'aduan_haiwan_liar',
-                            'title' => trans('app.eservice.aduan_haiwan_liar'),
+                        'peraturan_pemeliharaan_haiwan_di_skim_strata' => [
+                            'name' => 'peraturan_pemeliharaan_haiwan_di_skim_strata',
+                            'title' => trans('app.eservice.peraturan_pemeliharaan_haiwan_di_skim_strata'),
                             'only' => [
                                 'building_name',
                                 'management_name',
@@ -1000,6 +1033,9 @@ return [
                                 'management_city',
                                 'management_state',
                                 'management_phone',
+                                'management_email',
+                                'affected_unit',
+                                'type_of_animal',                                
                             ],
                         ],
                     ],
@@ -1069,6 +1105,12 @@ return [
                 'management_phone' => [
                     'label' => trans('app.forms.eservice.management_phone'),
                     'name' => 'management_phone',
+                    'type' => 'text',
+                    'required' => false
+                ],
+                'management_email' => [
+                    'label' => trans('app.forms.eservice.management_email'),
+                    'name' => 'management_email',
                     'type' => 'text',
                     'required' => false
                 ],
@@ -1206,6 +1248,12 @@ return [
                     'label' => trans('app.forms.eservice.proof_of_notice'),
                     'name' => 'proof_of_notice',
                     'type' => 'file',
+                    'required' => true
+                ],
+                'type_of_animal' => [
+                    'label' => trans('app.forms.eservice.type_of_animal'),
+                    'name' => 'type_of_animal',
+                    'type' => 'text',
                     'required' => true
                 ],
             ],
@@ -1601,7 +1649,7 @@ return [
         3 => 'Surat Pemakluman Pemilikan Kosong (VP) Dan Tempoh DLP',
         4 => 'Salinan Borang 25',
         5 => 'Salinan Resit Pembayaran Pemfailan Notis Mengenai Niat Pemaju Untuk Serahan Milikan Kosong',
-        6 => 'Salinan Surat Akuan Penyerahan Milikan Kosong (VP) Kepada Pembeli',        
+        6 => 'Salinan Surat Akuan Penyerahan Milikan Kosong (VP) Kepada Pembeli',
     ],
     'dlp_return_checklist' => [
         1 => 'Surat Permohonan daripada Pemaju',

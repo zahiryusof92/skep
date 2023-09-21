@@ -2654,7 +2654,6 @@ class LPHSController extends BaseController
         $councils = $this->council($cob);
 
         if ($councils) {
-
             foreach ($councils as $council) {
                 foreach ($council->files as $file) {
                     $result[$file->id] = [];
@@ -2745,6 +2744,6 @@ class LPHSController extends BaseController
             }
         }
 
-        return $this->result($result, $filename = 'Extract_Data_' . strtoupper($cob), 'raw');
+        return $this->result($result, $filename = 'Extract_Data_' . strtoupper($cob));
     }
 }

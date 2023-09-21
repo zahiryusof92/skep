@@ -39,7 +39,7 @@
         oTable = $('#price').DataTable({
             "sAjaxSource": "{{ URL::action('EServicePriceController@index') }}",
             "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-            "order": [[ 0, "asc" ], [ 1, "asc" ]],
+            "order": [[ 0, "asc" ], [ 1, "asc" ], [2, "desc"]],
             "responsive": true
         });
     });

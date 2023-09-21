@@ -66,20 +66,17 @@ class EServicePriceController extends \BaseController
 						$validType = [];
 						if (isset($this->module['eservice']['cob'][Str::lower($council)]['type'])) {
 							foreach ($this->module['eservice']['cob'][Str::lower($council)]['type'] as $type) {
-								$exist = EServicePrice::where('company_id', $cob->id)
-									->where('category_id', $category->id)
-									->where('slug', $type['name'])
-									->first();
 
-								if (!$exist) {
-									$price = new EServicePrice();
-									$price->company_id = $cob->id;
-									$price->category_id = $category->id;
-									$price->type = $type['title'];
-									$price->slug = $type['name'];
-									$price->price = 20;
-									$price->save();
-								}
+								$price = EServicePrice::updateOrCreate(
+									[
+										'company_id' => $cob->id,
+										'category_id' => $category->id,
+										'slug' => $type['name'],
+									],
+									[
+										'type' => $type['title'],
+									]
+								);
 
 								$validType[] = $type['name'];
 							}
