@@ -2660,6 +2660,7 @@ class LPHSController extends BaseController
 
                     Arr::set($result[$file->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
                     Arr::set($result[$file->id], 'File No', $file->file_no);
+                    Arr::set($result[$file->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
                     Arr::set($result[$file->id], 'Year', $year);
 
                     /**
