@@ -2644,4 +2644,106 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Commercial_' . strtoupper($cob));
     }
+
+    public function extractData($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                foreach ($council->files as $file) {
+                    $result[$file->id] = [];
+
+                    Arr::set($result[$file->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
+                    Arr::set($result[$file->id], 'File No', $file->file_no);
+
+                    for ($year = 2020; $year <= date('Y'); $year++) {
+                        /**
+                         * Finance
+                         */
+                        // $financeList[$year] = [];
+                        for ($month = 1; $month <= 12; $month++) {
+                            $finance = DB::table('finance_file')
+                                ->join('files', 'finance_file.file_id', '=', 'files.id')
+                                ->where('finance_file.month', $month)
+                                ->where('finance_file.year', $year)
+                                ->where('files.company_id', $council->id)
+                                ->where('files.id', $file->id)
+                                ->where('files.is_deleted', 0)
+                                ->where('finance_file.company_id', $council->id)
+                                ->where('finance_file.is_deleted', 0)
+                                ->count();
+
+                            // $financeList[$year][$month] = $finance ? 'Yes' : '';
+
+                            $dateObj = DateTime::createFromFormat('!m', $month);
+                            $monthName = $dateObj->format('F');
+                            Arr::set($result[$file->id], trans('Finance') . ' ' . $monthName . ' ' . $year, $finance ? 'Yes' : '');
+                        }
+
+                        // Arr::set($result[$file->id], trans('Finance Jan') . $year, $financeList[1]);
+                        // Arr::set($result[$file->id], trans('Finance Feb') . $year, $financeList[2]);
+                        // Arr::set($result[$file->id], trans('Finance Mar') . $year, $financeList[3]);
+                        // Arr::set($result[$file->id], trans('Finance Apr') . $year, $financeList[4]);
+                        // Arr::set($result[$file->id], trans('Finance May') . $year, $financeList[5]);
+                        // Arr::set($result[$file->id], trans('Finance Jun') . $year, $financeList[6]);
+                        // Arr::set($result[$file->id], trans('Finance Jul') . $year, $financeList[7]);
+                        // Arr::set($result[$file->id], trans('Finance Aug') . $year, $financeList[8]);
+                        // Arr::set($result[$file->id], trans('Finance Sep') . $year, $financeList[9]);
+                        // Arr::set($result[$file->id], trans('Finance Oct') . $year, $financeList[10]);
+                        // Arr::set($result[$file->id], trans('Finance Nov') . $year, $financeList[11]);
+                        // Arr::set($result[$file->id], trans('Finance Dec') . $year, $financeList[12]);
+
+                        /**
+                         * AGM
+                         */
+                        $agm = DB::table('meeting_document')
+                            ->join('files', 'meeting_document.file_id', '=', 'files.id')
+                            ->where('files.company_id', $council->id)
+                            ->where('files.id', $file->id)
+                            ->where('files.is_deleted', 0)
+                            ->whereYear('meeting_document.agm_date', '=', $year)
+                            ->where('meeting_document.is_deleted', 0)
+                            ->count();
+
+                        Arr::set($result[$file->id], trans('AGM') . ' ' . $year, $agm ? 'Yes' : '');
+
+                        /**
+                         * AJK
+                         */
+                        $ajk = DB::table('ajk_details')
+                            ->join('files', 'ajk_details.file_id', '=', 'files.id')
+                            ->where('files.company_id', $council->id)
+                            ->where('files.id', $file->id)
+                            ->where('files.is_deleted', 0)
+                            ->where('ajk_details.start_year', $year)
+                            ->where('ajk_details.is_deleted', 0)
+                            ->count();
+
+                        Arr::set($result[$file->id], trans('AJK') . ' ' . $year, $ajk ? 'Yes' : '');
+
+                        /**
+                         * Document
+                         */
+                        $document = DB::table('document')
+                            ->join('files', 'document.file_id', '=', 'files.id')
+                            ->where('files.company_id', $council->id)
+                            ->where('files.id', $file->id)
+                            ->where('files.is_deleted', 0)
+                            ->whereYear('document.created_at', '=', $year)
+                            ->where('document.is_deleted', 0)
+                            ->count();
+
+                        Arr::set($result[$file->id], trans('Document') . ' ' . $year, $document ? 'Yes' : '');
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Extract_Data_' . strtoupper($cob));
+    }
 }
