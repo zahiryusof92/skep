@@ -1242,12 +1242,14 @@
                                         <textarea class="form-control" placeholder="{{ trans('app.forms.remarks') }}" id="remarks" rows="5">{{ $meeting_doc->remarks }}</textarea>
                                     </div>
                                 </div>
+                            </form>
 
-                                <hr />
+                            <hr />
 
-                                <h5>{{ trans('Endorsement') }}</h5>
+                            <h5>{{ trans('Endorsement') }}</h5>
 
-                                @if ($endorse)
+                            @if ($endorse)
+                                <form>
                                     <div class="form-group row">
                                         <div class="col-md-6">
                                             <label class="form-control-label">
@@ -1259,7 +1261,7 @@
                                             <select id="status" name="status" class="form-control select2">
                                                 <option value="">{{ trans('app.forms.please_select') }}</option>
                                                 <option value="pending"
-                                                    {{ $meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'pending' ? ' selected' : '' }}>
+                                                    {{ $meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'pending' ? ' selected' : !$meeting_doc->meetingDocumentStatus ? ' selected' : '' }}>
                                                     {{ trans('app.forms.pending') }}</option>
                                                 <option value="approved"
                                                     {{ $meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'approved' ? ' selected' : '' }}>
@@ -1317,19 +1319,51 @@
                                         <div class="form-group row">
                                             <div class="col-md-6">
                                                 <label class="form-control-label">
-                                                    <span style="color: red; font-style: italic;">*</span>
                                                     {{ trans('app.forms.endorsed_date') }}
                                                 </label>
                                             </div>
                                             <div class="col-md-6">
-                                                <input type="email" class="form-control" id="endorsed_date"
+                                                <input type="date" class="form-control" id="endorsed_date"
                                                     name="endorsed_date"
-                                                    placeholder="{{ trans('app.forms.endorsed_date') }}"
-                                                    value="{{ date('Y-m-d H:i:s', strtotime($meeting_doc->meetingDocumentStatus->created_at)) }}" />
+                                                    value="{{ date('Y-m-d', strtotime($meeting_doc->meetingDocumentStatus->created_at)) }}" readonly/>
                                             </div>
                                         </div>
                                     @endif
-                                @else
+                                </form>
+
+                                <form id="upload_endorsement_letter" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadEndorsementLetter') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">
+                                                {{ trans('app.forms.endorsement_letter') }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="file" name="endorsement_letter" id="endorsement_letter" accept="application/pdf"/>
+                                            <div>
+                                                <small>* Accept PDF only. Maximum size: 10MB.</small>
+                                            </div>
+                                            <div id="endorsement_letter_error"></div>
+                                            @if ($meeting_doc->meetingDocumentStatus && !empty($meeting_doc->meetingDocumentStatus->attachment))
+                                                <div>
+                                                    <a href="{{ asset($meeting_doc->meetingDocumentStatus->attachment) }}"
+                                                        target="_blank">
+                                                        <button type="button" class="btn btn-xs btn-own"
+                                                            data-toggle="tooltip" data-placement="bottom"
+                                                            title="Download File">
+                                                            <i class="icmn-file-download2"></i>
+                                                            {{ trans('app.forms.download') }}
+                                                        </button>
+                                                    </a>
+                                                    &nbsp;
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+                            @else
+                                <form>
                                     <div class="form-group row">
                                         <div class="col-md-6">
                                             <label class="form-control-label">
@@ -1342,7 +1376,7 @@
                                                     {{ trans('app.forms.please_select') }}
                                                 </option>
                                                 <option value="pending"
-                                                    {{ $meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'pending' ? ' selected' : '' }}>
+                                                    {{ $meeting_doc->meetingDocumentStatus && $meeting_doc->meetingDocumentStatus->status == 'pending' ? ' selected' : !$meeting_doc->meetingDocumentStatus ? ' selected' : '' }}>
                                                     {{ trans('app.forms.pending') }}
                                                 </option>
                                                 <option value="approved"
@@ -1393,12 +1427,57 @@
                                                 disabled />
                                         </div>
                                     </div>
+
+                                    @if ($meeting_doc->meetingDocumentStatus && !empty($meeting_doc->meetingDocumentStatus->created_at))
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.endorsed_date') }}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="date" class="form-control" id="endorsed_date"
+                                                    name="endorsed_date"
+                                                    placeholder="{{ trans('app.forms.endorsed_date') }}"
+                                                    value="{{ date('Y-m-d', strtotime($meeting_doc->meetingDocumentStatus->created_at)) }}" readonly />
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">
+                                                {{ trans('app.forms.endorsement_letter') }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            @if ($meeting_doc->meetingDocumentStatus && !empty($meeting_doc->meetingDocumentStatus->attachment))
+                                                <div>
+                                                    <a href="{{ asset($meeting_doc->meetingDocumentStatus->attachment) }}"
+                                                        target="_blank">
+                                                        <button type="button" class="btn btn-xs btn-own"
+                                                            data-toggle="tooltip" data-placement="bottom"
+                                                            title="Download File">
+                                                            <i class="icmn-file-download2"></i>
+                                                            {{ trans('app.forms.download') }}
+                                                        </button>
+                                                    </a>
+                                                    &nbsp;
+                                                </div>
+                                            @else
+                                                -
+                                            @endif
+                                        </div>
+                                    </div>
+
                                     <input type="hidden" id="status" value="" />
                                     <input type="hidden" id="reason" value="" />
                                     <input type="hidden" id="endorsed_by" value="" />
                                     <input type="hidden" id="endorsed_email" value="" />
-                                @endif
+                                </form>
+                            @endif
 
+                            <form>
                                 <div class="form-actions">
                                     <?php if ($update_permission == 1) { ?>
                                     <input type="hidden" id="agm_file_url" value="{{ $meeting_doc->agm_file_url }}" />
@@ -1456,6 +1535,9 @@
                                         value="{{ $meeting_doc->reportAuditedFinancialOcr ? $meeting_doc->reportAuditedFinancialOcr->url : '' }}" />
                                     <input type="hidden" id="house_rules_ocr_url"
                                         value="{{ $meeting_doc->houseRulesOcr ? $meeting_doc->houseRulesOcr->url : '' }}" />
+                                    {{-- Endorsement Letter --}}
+                                    <input type="hidden" id="endorsement_letter_url"
+                                        value="{{ $meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->attachment : '' }}" />
 
                                     <button type="button" class="btn btn-own" id="submit_button"
                                         onclick="editMinutes()">
@@ -1470,7 +1552,7 @@
                                         src="{{ asset('assets/common/img/input-spinner.gif') }}" />
                                 </div>
                             </form>
-                            <!-- End Form -->
+
                         </div>
                     </div>
                 </section>
@@ -1533,10 +1615,12 @@
                 ajk_info_ocr_url = $("#ajk_info_ocr_url").val(),
                 report_audited_financial_ocr_url = $("#report_audited_financial_ocr_url").val(),
                 house_rules_ocr_url = $("#house_rules_ocr_url").val(),
+                // Endorsement
                 status = $("#status").val(),
                 reason = $("#reason").val(),
                 endorsed_by = $("#endorsed_by").val(),
                 endorsed_email = $("#endorsed_email").val();
+                endorsement_letter_url = $("#endorsement_letter_url").val();
 
             if (document.getElementById('agm').checked) {
                 agm = 1;
@@ -1658,10 +1742,12 @@
                         ajk_info_ocr_url: ajk_info_ocr_url,
                         report_audited_financial_ocr_url: report_audited_financial_ocr_url,
                         house_rules_ocr_url: house_rules_ocr_url,
+                        // Endorsement
                         status: status,
                         reason: reason,
                         endorsed_by: endorsed_by,
                         endorsed_email: endorsed_email,
+                        endorsement_letter_url: endorsement_letter_url,
                         id: '{{ \Helper\Helper::encode($meeting_doc->id) }}'
                     },
                     beforeSend: function() {

@@ -827,6 +827,33 @@ $(document).ready(function () {
             dataType: 'json'
         }).submit();
     });
+
+    // endorsement_letter
+    $('body').delegate('#endorsement_letter', 'change', function () {
+        $('#upload_endorsement_letter').ajaxForm({
+            beforeSubmit: function () {
+                $("#endorsement_letter_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#endorsement_letter_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearEndorsementLetter()'><i class='fa fa-times'></i> </button>").show();
+                    $("#endorsement_letter").css("color", "green");
+                    $("#endorsement_letter_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#endorsement_letter_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#endorsement_letter_error").show();
+                    $("#endorsement_letter").css("color", "red");
+                }
+            },
+            dataType: 'json'
+        }).submit();
+    });
 });
 
 function clearEGMFile() {
@@ -1031,4 +1058,11 @@ function clearHouseRulesOcr() {
     $("#house_rules_ocr_url").val("");
     $("#house_rules_ocr").css("color", "grey");
     $("#house_rules_ocr_error").hide();
+}
+
+function clearEndorsementLetter() {
+    $("#endorsement_letter").val("");
+    $("#endorsement_letter_url").val("");
+    $("#endorsement_letter").css("color", "grey");
+    $("#endorsement_letter_error").hide();
 }
