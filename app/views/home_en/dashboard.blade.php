@@ -201,9 +201,9 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            <hr />
-
             @if (!empty($ageing))
+                <hr />
+                
                 <div class="row">
                     <div class="col-lg-12">
                         <h4>{{ trans('app.menus.reporting.strata_profile') }}</h4>

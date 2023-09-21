@@ -252,6 +252,11 @@ Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancia
  */
 Route::post('/uploadOcr', 'FileController@uploadOcr');
 
+/**
+ * Endorsement Letter
+ */
+Route::post('/uploadEndorsementLetter', 'FileController@uploadEndorsementLetter');
+
 // Sept 2020
 Route::post('/uploadNoticeAgmEgm', 'FileController@uploadNoticeAgmEgm');
 Route::post('/deleteNoticeAgmEgm/{id}', 'AdminController@deleteNoticeAgmEgm')->before('authMember');

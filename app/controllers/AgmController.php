@@ -2092,6 +2092,7 @@ class AgmController extends BaseController {
             $reason = $data['reason'];
             $endorsed_by = $data['endorsed_by'];
             $endorsed_email = $data['endorsed_email'];
+            $endorsement_letter_url = $data['endorsement_letter_url'];
 
             $agm_detail = MeetingDocument::findOrFail($id);
             if ($agm_detail) {
@@ -2310,6 +2311,7 @@ class AgmController extends BaseController {
                                 'reason' => $reason,
                                 'endorsed_by' => $endorsed_by,
                                 'endorsed_email' => $endorsed_email,
+                                'attachment' => $endorsement_letter_url,
                             ]
                         );
 
