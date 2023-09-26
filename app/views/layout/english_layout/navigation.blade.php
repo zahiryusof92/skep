@@ -565,7 +565,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
-                    @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
+                    @if (AccessGroup::hasAccessModule('e-Service') && AccessGroup::hasAccessModule('e-Service Pricing'))
                     <li id="eservice_price_list">
                         <a class="left-menu-link" href="{{ route('eservicePrice.index') }}">
                             {{ trans('app.menus.master.eservice_price') }}

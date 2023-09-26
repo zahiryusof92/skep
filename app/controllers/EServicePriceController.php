@@ -268,7 +268,7 @@ class EServicePriceController extends \BaseController
 
 	private function checkAvailableAccess($model = '')
 	{
-		if (!AccessGroup::hasAccessModule('e-Service Pricing')) {
+		if (!AccessGroup::hasAccessModule('e-Service') && !AccessGroup::hasAccessModule('e-Service Pricing')) {
 			App::abort(404);
 		}
 	}
