@@ -25,7 +25,7 @@ class FileController extends BaseController {
         
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['file_upload'];
-        $data['document_file'] = curl_file_create($_FILES['document_file']['tmp_name'], $_FILES['document_file']['type'], $_FILES['document_file']['name']);
+        // $data['document_file'] = curl_file_create($_FILES['document_file']['tmp_name'], $_FILES['document_file']['type'], $_FILES['document_file']['name']);
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -97,7 +97,7 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['strata']['file_upload'];
-        $data['strata_file'] = curl_file_create($_FILES['strata_file']['tmp_name'], $_FILES['strata_file']['type'], $_FILES['strata_file']['name']);
+        // $data['strata_file'] = curl_file_create($_FILES['strata_file']['tmp_name'], $_FILES['strata_file']['type'], $_FILES['strata_file']['name']);
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -121,11 +121,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['auditReportFile'];
-        if(!empty(Input::file('audit_report_file'))) {
-            $data['audit_report_file'] = curl_file_create($_FILES['audit_report_file']['tmp_name'], $_FILES['audit_report_file']['type'], $_FILES['audit_report_file']['name']);
-        } else {
-            $data['audit_report_file_edit'] = curl_file_create($_FILES['audit_report_file_edit']['tmp_name'], $_FILES['audit_report_file_edit']['type'], $_FILES['audit_report_file_edit']['name']);
-        }
+        // if(!empty(Input::file('audit_report_file'))) {
+        //     $data['audit_report_file'] = curl_file_create($_FILES['audit_report_file']['tmp_name'], $_FILES['audit_report_file']['type'], $_FILES['audit_report_file']['name']);
+        // } else {
+        //     $data['audit_report_file_edit'] = curl_file_create($_FILES['audit_report_file_edit']['tmp_name'], $_FILES['audit_report_file_edit']['type'], $_FILES['audit_report_file_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -150,11 +150,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['letterIntegrity'];
-        if(!empty(Input::file('letter_integrity'))) {
-            $data['letter_integrity'] = curl_file_create($_FILES['letter_integrity']['tmp_name'], $_FILES['letter_integrity']['type'], $_FILES['letter_integrity']['name']);
-        } else {
-            $data['letter_integrity_edit'] = curl_file_create($_FILES['letter_integrity_edit']['tmp_name'], $_FILES['letter_integrity_edit']['type'], $_FILES['letter_integrity_edit']['name']);
-        }
+        // if(!empty(Input::file('letter_integrity'))) {
+        //     $data['letter_integrity'] = curl_file_create($_FILES['letter_integrity']['tmp_name'], $_FILES['letter_integrity']['type'], $_FILES['letter_integrity']['name']);
+        // } else {
+        //     $data['letter_integrity_edit'] = curl_file_create($_FILES['letter_integrity_edit']['tmp_name'], $_FILES['letter_integrity_edit']['type'], $_FILES['letter_integrity_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -178,11 +178,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['letterBankruptcy'];
-        if(!empty(Input::file('letter_bankruptcy'))) {
-            $data['letter_bankruptcy'] = curl_file_create($_FILES['letter_bankruptcy']['tmp_name'], $_FILES['letter_bankruptcy']['type'], $_FILES['letter_bankruptcy']['name']);
-        } else {
-            $data['letter_bankruptcy_edit'] = curl_file_create($_FILES['letter_bankruptcy_edit']['tmp_name'], $_FILES['letter_bankruptcy_edit']['type'], $_FILES['letter_bankruptcy_edit']['name']);
-        }
+        // if(!empty(Input::file('letter_bankruptcy'))) {
+        //     $data['letter_bankruptcy'] = curl_file_create($_FILES['letter_bankruptcy']['tmp_name'], $_FILES['letter_bankruptcy']['type'], $_FILES['letter_bankruptcy']['name']);
+        // } else {
+        //     $data['letter_bankruptcy_edit'] = curl_file_create($_FILES['letter_bankruptcy_edit']['tmp_name'], $_FILES['letter_bankruptcy_edit']['type'], $_FILES['letter_bankruptcy_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -206,11 +206,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['noticeAgmEgm'];
-        if(!empty(Input::file('notice_agm_egm'))) {
-            $data['notice_agm_egm'] = curl_file_create($_FILES['notice_agm_egm']['tmp_name'], $_FILES['notice_agm_egm']['type'], $_FILES['notice_agm_egm']['name']);
-        } else {
-            $data['notice_agm_egm_edit'] = curl_file_create($_FILES['notice_agm_egm_edit']['tmp_name'], $_FILES['notice_agm_egm_edit']['type'], $_FILES['notice_agm_egm_edit']['name']);
-        }
+        // if(!empty(Input::file('notice_agm_egm'))) {
+        //     $data['notice_agm_egm'] = curl_file_create($_FILES['notice_agm_egm']['tmp_name'], $_FILES['notice_agm_egm']['type'], $_FILES['notice_agm_egm']['name']);
+        // } else {
+        //     $data['notice_agm_egm_edit'] = curl_file_create($_FILES['notice_agm_egm_edit']['tmp_name'], $_FILES['notice_agm_egm_edit']['type'], $_FILES['notice_agm_egm_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -234,11 +234,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['minutesAgmEgm'];
-        if(!empty(Input::file('minutes_agm_egm'))) {
-            $data['minutes_agm_egm'] = curl_file_create($_FILES['minutes_agm_egm']['tmp_name'], $_FILES['minutes_agm_egm']['type'], $_FILES['minutes_agm_egm']['name']);
-        } else {
-            $data['minutes_agm_egm_edit'] = curl_file_create($_FILES['minutes_agm_egm_edit']['tmp_name'], $_FILES['minutes_agm_egm_edit']['type'], $_FILES['minutes_agm_egm_edit']['name']);
-        }
+        // if(!empty(Input::file('minutes_agm_egm'))) {
+        //     $data['minutes_agm_egm'] = curl_file_create($_FILES['minutes_agm_egm']['tmp_name'], $_FILES['minutes_agm_egm']['type'], $_FILES['minutes_agm_egm']['name']);
+        // } else {
+        //     $data['minutes_agm_egm_edit'] = curl_file_create($_FILES['minutes_agm_egm_edit']['tmp_name'], $_FILES['minutes_agm_egm_edit']['type'], $_FILES['minutes_agm_egm_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -262,11 +262,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['minutesAjk'];
-        if(!empty(Input::file('minutes_ajk'))) {
-            $data['minutes_ajk'] = curl_file_create($_FILES['minutes_ajk']['tmp_name'], $_FILES['minutes_ajk']['type'], $_FILES['minutes_ajk']['name']);
-        } else {
-            $data['minutes_ajk_edit'] = curl_file_create($_FILES['minutes_ajk_edit']['tmp_name'], $_FILES['minutes_ajk_edit']['type'], $_FILES['minutes_ajk_edit']['name']);
-        }
+        // if(!empty(Input::file('minutes_ajk'))) {
+        //     $data['minutes_ajk'] = curl_file_create($_FILES['minutes_ajk']['tmp_name'], $_FILES['minutes_ajk']['type'], $_FILES['minutes_ajk']['name']);
+        // } else {
+        //     $data['minutes_ajk_edit'] = curl_file_create($_FILES['minutes_ajk_edit']['tmp_name'], $_FILES['minutes_ajk_edit']['type'], $_FILES['minutes_ajk_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -290,11 +290,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['eligibleVote'];
-        if(!empty(Input::file('eligible_vote'))) {
-            $data['eligible_vote'] = curl_file_create($_FILES['eligible_vote']['tmp_name'], $_FILES['eligible_vote']['type'], $_FILES['eligible_vote']['name']);
-        } else {
-            $data['eligible_vote_edit'] = curl_file_create($_FILES['eligible_vote_edit']['tmp_name'], $_FILES['eligible_vote_edit']['type'], $_FILES['eligible_vote_edit']['name']);
-        }
+        // if(!empty(Input::file('eligible_vote'))) {
+        //     $data['eligible_vote'] = curl_file_create($_FILES['eligible_vote']['tmp_name'], $_FILES['eligible_vote']['type'], $_FILES['eligible_vote']['name']);
+        // } else {
+        //     $data['eligible_vote_edit'] = curl_file_create($_FILES['eligible_vote_edit']['tmp_name'], $_FILES['eligible_vote_edit']['type'], $_FILES['eligible_vote_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -318,11 +318,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['attendMeeting'];
-        if(!empty(Input::file('attend_meeting'))) {
-            $data['attend_meeting'] = curl_file_create($_FILES['attend_meeting']['tmp_name'], $_FILES['attend_meeting']['type'], $_FILES['attend_meeting']['name']);
-        } else {
-            $data['attend_meeting_edit'] = curl_file_create($_FILES['attend_meeting_edit']['tmp_name'], $_FILES['attend_meeting_edit']['type'], $_FILES['attend_meeting_edit']['name']);
-        }
+        // if(!empty(Input::file('attend_meeting'))) {
+        //     $data['attend_meeting'] = curl_file_create($_FILES['attend_meeting']['tmp_name'], $_FILES['attend_meeting']['type'], $_FILES['attend_meeting']['name']);
+        // } else {
+        //     $data['attend_meeting_edit'] = curl_file_create($_FILES['attend_meeting_edit']['tmp_name'], $_FILES['attend_meeting_edit']['type'], $_FILES['attend_meeting_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -346,11 +346,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['proksi'];
-        if(!empty(Input::file('proksi'))) {
-            $data['proksi'] = curl_file_create($_FILES['proksi']['tmp_name'], $_FILES['proksi']['type'], $_FILES['proksi']['name']);
-        } else {
-            $data['proksi_edit'] = curl_file_create($_FILES['proksi_edit']['tmp_name'], $_FILES['proksi_edit']['type'], $_FILES['proksi_edit']['name']);
-        }
+        // if(!empty(Input::file('proksi'))) {
+        //     $data['proksi'] = curl_file_create($_FILES['proksi']['tmp_name'], $_FILES['proksi']['type'], $_FILES['proksi']['name']);
+        // } else {
+        //     $data['proksi_edit'] = curl_file_create($_FILES['proksi_edit']['tmp_name'], $_FILES['proksi_edit']['type'], $_FILES['proksi_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -374,11 +374,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['ajkInfo'];
-        if(!empty(Input::file('ajk_info'))) {
-            $data['ajk_info'] = curl_file_create($_FILES['ajk_info']['tmp_name'], $_FILES['ajk_info']['type'], $_FILES['ajk_info']['name']);
-        } else {
-            $data['ajk_info_edit'] = curl_file_create($_FILES['ajk_info_edit']['tmp_name'], $_FILES['ajk_info_edit']['type'], $_FILES['ajk_info_edit']['name']);
-        }
+        // if(!empty(Input::file('ajk_info'))) {
+        //     $data['ajk_info'] = curl_file_create($_FILES['ajk_info']['tmp_name'], $_FILES['ajk_info']['type'], $_FILES['ajk_info']['name']);
+        // } else {
+        //     $data['ajk_info_edit'] = curl_file_create($_FILES['ajk_info_edit']['tmp_name'], $_FILES['ajk_info_edit']['type'], $_FILES['ajk_info_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -402,11 +402,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['ic'];
-        if(!empty(Input::file('ic'))) {
-            $data['ic'] = curl_file_create($_FILES['ic']['tmp_name'], $_FILES['ic']['type'], $_FILES['ic']['name']);
-        } else {
-            $data['ic_edit'] = curl_file_create($_FILES['ic_edit']['tmp_name'], $_FILES['ic_edit']['type'], $_FILES['ic_edit']['name']);
-        }
+        // if(!empty(Input::file('ic'))) {
+        //     $data['ic'] = curl_file_create($_FILES['ic']['tmp_name'], $_FILES['ic']['type'], $_FILES['ic']['name']);
+        // } else {
+        //     $data['ic_edit'] = curl_file_create($_FILES['ic_edit']['tmp_name'], $_FILES['ic_edit']['type'], $_FILES['ic_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -430,11 +430,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['purchaseAggrement'];
-        if(!empty(Input::file('purchase_aggrement'))) {
-            $data['purchase_aggrement'] = curl_file_create($_FILES['purchase_aggrement']['tmp_name'], $_FILES['purchase_aggrement']['type'], $_FILES['purchase_aggrement']['name']);
-        } else {
-            $data['purchase_aggrement_edit'] = curl_file_create($_FILES['purchase_aggrement_edit']['tmp_name'], $_FILES['purchase_aggrement_edit']['type'], $_FILES['purchase_aggrement_edit']['name']);
-        }
+        // if(!empty(Input::file('purchase_aggrement'))) {
+        //     $data['purchase_aggrement'] = curl_file_create($_FILES['purchase_aggrement']['tmp_name'], $_FILES['purchase_aggrement']['type'], $_FILES['purchase_aggrement']['name']);
+        // } else {
+        //     $data['purchase_aggrement_edit'] = curl_file_create($_FILES['purchase_aggrement_edit']['tmp_name'], $_FILES['purchase_aggrement_edit']['type'], $_FILES['purchase_aggrement_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -458,11 +458,11 @@ class FileController extends BaseController {
         
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['strataTitle'];
-        if(!empty(Input::file('strata_title'))) {
-            $data['strata_title'] = curl_file_create($_FILES['strata_title']['tmp_name'], $_FILES['strata_title']['type'], $_FILES['strata_title']['name']);
-        } else {
-            $data['strata_title_edit'] = curl_file_create($_FILES['strata_title_edit']['tmp_name'], $_FILES['strata_title_edit']['type'], $_FILES['strata_title_edit']['name']);
-        }
+        // if(!empty(Input::file('strata_title'))) {
+        //     $data['strata_title'] = curl_file_create($_FILES['strata_title']['tmp_name'], $_FILES['strata_title']['type'], $_FILES['strata_title']['name']);
+        // } else {
+        //     $data['strata_title_edit'] = curl_file_create($_FILES['strata_title_edit']['tmp_name'], $_FILES['strata_title_edit']['type'], $_FILES['strata_title_edit']['name']);
+        // }
 
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -487,11 +487,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['maintenanceStatement'];
-        if(!empty(Input::file('maintenance_statement'))) {
-            $data['maintenance_statement'] = curl_file_create($_FILES['maintenance_statement']['tmp_name'], $_FILES['maintenance_statement']['type'], $_FILES['maintenance_statement']['name']);
-        } else {
-            $data['maintenance_statement_edit'] = curl_file_create($_FILES['maintenance_statement_edit']['tmp_name'], $_FILES['maintenance_statement_edit']['type'], $_FILES['maintenance_statement_edit']['name']);
-        }
+        // if(!empty(Input::file('maintenance_statement'))) {
+        //     $data['maintenance_statement'] = curl_file_create($_FILES['maintenance_statement']['tmp_name'], $_FILES['maintenance_statement']['type'], $_FILES['maintenance_statement']['name']);
+        // } else {
+        //     $data['maintenance_statement_edit'] = curl_file_create($_FILES['maintenance_statement_edit']['tmp_name'], $_FILES['maintenance_statement_edit']['type'], $_FILES['maintenance_statement_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -515,11 +515,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['integrityPledge'];
-        if(!empty(Input::file('integrity_pledge'))) {
-            $data['integrity_pledge'] = curl_file_create($_FILES['integrity_pledge']['tmp_name'], $_FILES['integrity_pledge']['type'], $_FILES['integrity_pledge']['name']);
-        } else {
-            $data['integrity_pledge_edit'] = curl_file_create($_FILES['integrity_pledge_edit']['tmp_name'], $_FILES['integrity_pledge_edit']['type'], $_FILES['integrity_pledge_edit']['name']);
-        }
+        // if(!empty(Input::file('integrity_pledge'))) {
+        //     $data['integrity_pledge'] = curl_file_create($_FILES['integrity_pledge']['tmp_name'], $_FILES['integrity_pledge']['type'], $_FILES['integrity_pledge']['name']);
+        // } else {
+        //     $data['integrity_pledge_edit'] = curl_file_create($_FILES['integrity_pledge_edit']['tmp_name'], $_FILES['integrity_pledge_edit']['type'], $_FILES['integrity_pledge_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -543,11 +543,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['reportAuditedFinancial'];
-        if(!empty(Input::file('report_audited_financial'))) {
-            $data['report_audited_financial'] = curl_file_create($_FILES['report_audited_financial']['tmp_name'], $_FILES['report_audited_financial']['type'], $_FILES['report_audited_financial']['name']);
-        } else {
-            $data['report_audited_financial_edit'] = curl_file_create($_FILES['report_audited_financial_edit']['tmp_name'], $_FILES['report_audited_financial_edit']['type'], $_FILES['report_audited_financial_edit']['name']);
-        }
+        // if(!empty(Input::file('report_audited_financial'))) {
+        //     $data['report_audited_financial'] = curl_file_create($_FILES['report_audited_financial']['tmp_name'], $_FILES['report_audited_financial']['type'], $_FILES['report_audited_financial']['name']);
+        // } else {
+        //     $data['report_audited_financial_edit'] = curl_file_create($_FILES['report_audited_financial_edit']['tmp_name'], $_FILES['report_audited_financial_edit']['type'], $_FILES['report_audited_financial_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
@@ -571,11 +571,11 @@ class FileController extends BaseController {
 
         ## EAI Call
         // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['houseRules'];
-        if(!empty(Input::file('house_rules'))) {
-            $data['house_rules'] = curl_file_create($_FILES['house_rules']['tmp_name'], $_FILES['house_rules']['type'], $_FILES['house_rules']['name']);
-        } else {
-            $data['house_rules_edit'] = curl_file_create($_FILES['house_rules_edit']['tmp_name'], $_FILES['house_rules_edit']['type'], $_FILES['house_rules_edit']['name']);
-        }
+        // if(!empty(Input::file('house_rules'))) {
+        //     $data['house_rules'] = curl_file_create($_FILES['house_rules']['tmp_name'], $_FILES['house_rules']['type'], $_FILES['house_rules']['name']);
+        // } else {
+        //     $data['house_rules_edit'] = curl_file_create($_FILES['house_rules_edit']['tmp_name'], $_FILES['house_rules_edit']['type'], $_FILES['house_rules_edit']['name']);
+        // }
         
         // $response = json_decode((string) ((new KCurl())->requestPost(null, 
         //                         $url,
