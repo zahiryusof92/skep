@@ -18,6 +18,7 @@ class MeetingDocumentStatus extends Eloquent
         'reason',
         'endorsed_by',
         'endorsed_email',
+        'attachment',
         'is_deleted',
     ];
 

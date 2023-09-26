@@ -69,7 +69,7 @@ Route::get('/lphs/strataByCategory/{council}', 'LPHSController@strataByCategory'
 Route::get('/lphs/electricity/{council}', 'LPHSController@electricity');
 Route::get('/lphs/uploadOCR/{council}', 'LPHSController@uploadOCR');
 Route::get('/lphs/commercial/{council}', 'LPHSController@commercial');
-Route::get('/lphs/extractData/{council}', 'LPHSController@extractData');
+Route::get('/lphs/extractData/{council}/{year}', 'LPHSController@extractData');
 
 /*
  * LPHS REPORT END
@@ -251,6 +251,11 @@ Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancia
  * OCR
  */
 Route::post('/uploadOcr', 'FileController@uploadOcr');
+
+/**
+ * Endorsement Letter
+ */
+Route::post('/uploadEndorsementLetter', 'FileController@uploadEndorsementLetter');
 
 // Sept 2020
 Route::post('/uploadNoticeAgmEgm', 'FileController@uploadNoticeAgmEgm');

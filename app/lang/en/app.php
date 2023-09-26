@@ -756,6 +756,7 @@ return array(
         'endorsed_by' => 'Endorsed By',
         'endorsed_email' => 'Endorsed E-mail',
         'endorsed_date' => 'Endorsed Date',
+        'endorsement_letter' => 'Endorsement Letter',
         'original_price' => 'Original Price',
         'api_client' => 'API Client',
         'api_building' => 'API Building',
