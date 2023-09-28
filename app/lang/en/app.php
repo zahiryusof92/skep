@@ -836,7 +836,6 @@ return array(
             'proof_of_notice' => 'Bukti penyampaian Notis Tuntutan (serahan tangan/Pos berdaftar/Penampalan notis di unit) [Rujuk Seksyen 144, Akta 757]',
             'proceed_to_pay' => 'Proceed to Payment',
             'pay_now' => 'Pay Now',
-            'type_of_animal' => 'Jenis Haiwan',
         ],
         'malay' => 'Malay',
         'chinese' => 'Chinese',

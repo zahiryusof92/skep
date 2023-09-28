@@ -18,11 +18,33 @@ class EServicePriceController extends \BaseController
 		$this->checkAvailableAccess();
 
 		if (Request::ajax()) {
-			$prices = EServicePrice::select('eservices_prices.*')
-				->join('category', 'eservices_prices.category_id', '=', 'category.id')
-				->where('category.is_deleted', 0)
-				->orderBy('eservices_prices.company_id')
-				->get();
+			if (!Auth::user()->getAdmin()) {
+				$prices = EServicePrice::select('eservices_prices.*')
+					->join('category', 'eservices_prices.category_id', '=', 'category.id')
+					->join('company', 'eservices_prices.company_id', '=', 'company.id')
+					->where('category.is_deleted', 0)
+					->where('company.is_active', 1)
+					->where('company.id', Auth::user()->company_id)
+					->orderBy('eservices_prices.company_id')
+					->get();
+			} else {
+				if (empty(Session::get('admin_cob'))) {
+					$prices = EServicePrice::select('eservices_prices.*')
+						->join('category', 'eservices_prices.category_id', '=', 'category.id')
+						->where('category.is_deleted', 0)
+						->orderBy('eservices_prices.company_id')
+						->get();
+				} else {
+					$prices = EServicePrice::select('eservices_prices.*')
+						->join('category', 'eservices_prices.category_id', '=', 'category.id')
+						->join('company', 'eservices_prices.company_id', '=', 'company.id')
+						->where('category.is_deleted', 0)
+						->where('company.is_active', 1)
+						->where('company.id', Session::get('admin_cob'))
+						->orderBy('eservices_prices.company_id')
+						->get();
+				}
+			}
 
 			if (count($prices) > 0) {
 				$data = array();
@@ -246,7 +268,7 @@ class EServicePriceController extends \BaseController
 
 	private function checkAvailableAccess($model = '')
 	{
-		if (!AccessGroup::hasAccessModule('e-Service')) {
+		if (!AccessGroup::hasAccessModule('e-Service') && !AccessGroup::hasAccessModule('e-Service Pricing')) {
 			App::abort(404);
 		}
 	}

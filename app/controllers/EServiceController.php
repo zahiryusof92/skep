@@ -1253,7 +1253,7 @@ class EServiceController extends BaseController
 	public function getLetterPDF($id)
 	{
 		$order = EServiceOrder::find($this->decodeID($id));
-		if ($order) {
+		if ($order && $order->status == EServiceOrder::APPROVED) {
 			$type = $order->type;
 			$filename = $type . "_" . date('YmdHis');
 			$content = json_decode($order->value, true);
@@ -1274,7 +1274,7 @@ class EServiceController extends BaseController
 	public function getLetterWord($id)
 	{
 		$order = EServiceOrder::find($this->decodeID($id));
-		if ($order) {
+		if ($order && $order->status == EServiceOrder::APPROVED) {
 			$type = $order->type;
 			$filename = $type . "_" . date('YmdHis');
 			$content = json_decode($order->value, true);

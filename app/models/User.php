@@ -146,7 +146,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function getAdmin() {
         if ($this->getRole->is_admin == 1) {
             return true;
-        } else if ($this->role == 1 || $this->role == 2) {
+        } else if ($this->isSuperadmin()) {
             return true;
         }
 

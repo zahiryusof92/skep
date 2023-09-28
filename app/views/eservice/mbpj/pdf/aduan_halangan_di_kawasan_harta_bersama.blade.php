@@ -66,13 +66,34 @@
         <tr>
             <td colspan="7">
                 <strong>
-                    PIHAK PENGURUSAN
+                    {{ isset($content['owner_name']) ? $content['owner_name'] : '' }}
                 </strong>
             </td>
         </tr>
         <tr>
             <td colspan="7">
                 {{ isset($content['owner_address1']) ? $content['owner_address1'] : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                {{ isset($content['owner_address2']) ? $content['owner_address2'] : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                {{ isset($content['owner_address3']) ? $content['owner_address3'] : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                {{ isset($content['owner_postcode']) ? $content['owner_postcode'] : '' }}
+                {{ isset($content['owner_city']) ? $content['owner_city'] : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                {{ isset($content['owner_state']) ? $content['owner_state'] : '' }}
             </td>
         </tr>
         <tr>
@@ -93,7 +114,7 @@
         <tr>
             <td colspan="7" style="text-align: justify;">
                 <strong>
-                    ADUAN MENGENAI HALANGAN DI KAWASAN HARTA BERSAMA
+                    LARANGAN MEMBUAT HALANGAN DI KAWASAN HARTA BERSAMA
                 </strong>
             </td>
         </tr>
@@ -114,9 +135,9 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">2.</span>Pentadbiran ini telah menerima aduan daripada pemilik mengenai
-                halangan yang dibuat oleh pemilik/ penghuni petak no.
-                <strong>{{ isset($content['affected_unit']) ? $content['affected_unit'] : '' }}</strong>.
+                <span style="padding-right: 1em;">2.</span>Pentadbiran ini telah menerima aduan daripada pihak pengurusan
+                mengenai halangan yang dibuat oleh pemilik/penghuni petak no.
+                <strong>{{ isset($content['unit_no']) ? $content['unit_no'] : '' }}</strong>.
                 Hal tersebut telah menyukarkan kerja-kerja penyenggaraan dilaksanakan dan menimbulkan ketidakpuasanhati
                 kepada pemilik lain.
             </td>
@@ -168,52 +189,12 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">4.</span>Bagi meningkatkan lagi kawalan ke atas kawasan harta bersama,
-                pihak tuan dinasihatkan supaya membuat undang-undang kecil tambahan bagi mewujudkan suatu peraturan tambahan
-                yang lebih khusus bagi langkah-langkah keselamatan dan perlindungan serta pengenaan denda yang tidak
-                melebihi dua ratus ringgit terhadap mana-mana pemilik, penghuni atau jemputan yang melanggari mana-mana
-                undang-undang kecil tersebut melalui ketetapan khas di dalam mesyuarat agung seperti yang diperuntukan di
-                bawah Seksyen 32(3) (a) dan (i) atau Seksyen 70(3)(a) & (i) yang mana berkenaan. Jumlah denda yang akan
-                dikenakan hendaklah ditentukan oleh mesyuarat agung seperti yang dikehendaki di bawah subperenggan 7(1),
-                Jadual Ketiga Undang-undang Kecil Peraturan-peraturan Pengurusan Strata (Penyenggaraan dan Pengurusan) 2015.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">5.</span>Semua denda yang dikenakan di bawah subperenggan 7(1)
-                Undang-Undang Kecil tersebut hendaklah menjadi suatu hutang yang terakru kepada pihak pengurusan dan atas
-                pembayaran hendaklah didepositkan dalam akaun penyenggaraan.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">6.</span>Sehubungan itu, pihak tuan dinasihatkan supaya mengeluarkan notis
-                kepada pemilik yang terlibat berhubung larangan membuat halangan di kawasan harta bersama. Sebagai
-                alternatif, pihak tuan boleh memohon kepada pentadbiran ini untuk mengeluarkan surat kepada pemilik yang
-                terlibat berhubung larangan membuat halangan di kawasan harta bersama. Permohonan boleh dibuat melalui
-                sistem eCOB.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">7.</span>Pihak tuan juga dinasihatkan supaya menguatkuasakan undang-undang
-                kecil tersebut di atas agar masalah ini dapat dikawal bagi melindungi hak dan kepentingan bersama serta
-                dapat memelihara dan mengekalkan kerharmonian dan kesejahteraan penduduk.
+                <span style="padding-right: 1em;">4.</span>Sehubungan dengan itu, pihak tuan dikehendaki mematuhi
+                undang-undang kecil yang telah ditetapkan untuk sama-sama menjaga, memelihara dan mengekalkan keharmonian
+                dan kesejahteraan penduduk. Sekiranya ingkar, maka pihak pengurusan boleh mengenakan denda tidak lebih dua
+                ratus ringgit mengikut jumlah yang ditentukan oleh mesyuarat agung. Selanjutnya, tindakan mengalih dan
+                melupus tanpa notis terdahulu boleh dilaksanakan seperti yang diperuntukan di bawah subperenggan 20(2) di
+                atas.
             </td>
         </tr>
         <tr>
@@ -223,7 +204,7 @@
         </tr>
         <tr>
             <td colspan="7">
-                Kerjasama daripada pihak tuan amat dihargai.
+                Kerjasama daripada pihak tuan dalam hal ini amatlah dihargai.
             </td>
         </tr>
         <tr>

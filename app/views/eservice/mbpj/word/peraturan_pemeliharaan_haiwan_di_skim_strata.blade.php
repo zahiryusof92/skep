@@ -66,41 +66,34 @@
         <tr>
             <td colspan="7">
                 <strong>
-                    {{ isset($content['building_name']) ? $content['building_name'] : '' }}
+                    {{ isset($content['owner_name']) ? $content['owner_name'] : '' }}
                 </strong>
             </td>
         </tr>
         <tr>
             <td colspan="7">
-                <strong>
-                    {{ isset($content['management_name']) ? $content['management_name'] : '' }}
-                </strong>
+                {{ isset($content['owner_address1']) ? $content['owner_address1'] : '' }}
             </td>
         </tr>
         <tr>
             <td colspan="7">
-                {{ isset($content['management_address1']) ? $content['management_address1'] : '' }}
+                {{ isset($content['owner_address2']) ? $content['owner_address2'] : '' }}
             </td>
         </tr>
         <tr>
             <td colspan="7">
-                {{ isset($content['management_address2']) ? $content['management_address2'] : '' }}
+                {{ isset($content['owner_address3']) ? $content['owner_address3'] : '' }}
             </td>
         </tr>
         <tr>
             <td colspan="7">
-                {{ isset($content['management_address3']) ? $content['management_address3'] : '' }}
+                {{ isset($content['owner_postcode']) ? $content['owner_postcode'] : '' }}
+                {{ isset($content['owner_city']) ? $content['owner_city'] : '' }}
             </td>
         </tr>
         <tr>
             <td colspan="7">
-                {{ isset($content['management_postcode']) ? $content['management_postcode'] : '' }}
-                {{ isset($content['management_city']) ? $content['management_city'] : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                {{ isset($content['management_state']) ? $content['management_state'] : '' }}
+                {{ isset($content['owner_state']) ? $content['owner_state'] : '' }}
             </td>
         </tr>
         <tr>
@@ -121,7 +114,7 @@
         <tr>
             <td colspan="7" style="text-align: justify;">
                 <strong>
-                    ADUAN PEMELIHARAAN HAIWAN PELIHARAAN DI SKIM STRATA
+                    PERATURAN MENGENAI PEMELIHARAAN HAIWAN PELIHARAAN DI SKIM STRATA
                 </strong>
             </td>
         </tr>
@@ -142,23 +135,12 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">2.</span>Pentadbiran ini telah menerima aduan daripada pemilik mengenai
-                pemeliharaan haiwan peliharaan
-                <strong>{{ isset($content['type_of_animal']) ? strtolower($content['type_of_animal']) : '' }}</strong>
-                di petak no. <strong>{{ isset($content['affected_unit']) ? $content['affected_unit'] : '' }}</strong>
-                sehingga menyebabkan kegusaran dan kacau ganggu kepada pemilik lain.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">3.</span>Justeru, pentadbiran ini ingin menarik perhatian pihak tuan
-                mengenai bidang kuasa pihak tuan di bawah Subperenggan 14 (1) dan (2) Undang-undang Kecil Jadual ketiga,
-                Peraturan-peraturan Pengurusan Strata (Penyenggaraan dan Pengurusan) 2015 seperti berikut:
+                <span style="padding-right: 1em;">2.</span>Dimaklumkan bahawa pemilik/penghuni yang tinggal di skim strata
+                adalah dilarang memelihara atau menyimpan apa-apa haiwan di dalam petak atau di kawasan harta bersama yang
+                boleh menyebabkan kegusaran atau kacau ganggu atau yang boleh mendatangkan bahaya kepada keselamatan dan
+                kesihatan kepada pemilik lain atau yang bertentangan dengan mana-mana undang-undang bertulis pihak berkuasa
+                tempatan. Ini seperti yang termaktub di bawah subperenggan 14 (1) & (2), Jadual Ketiga, Undang-undang Kecil,
+                Peraturan-peraturan Pengurusan Strata (Penyenggaraan dan Pengurusan) 2015 yang menyebut:
             </td>
         </tr>
         <tr>
@@ -206,15 +188,11 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">4.</span>Bagi meningkatkan lagi kawalan ke atas aktiviti pemeliharaan
-                haiwan peliharaan di kawasan pemajuan pihak tuan, pihak tuan dinasihatkan supaya membuat undang-undang kecil
-                tambahan bagi mewujudkan suatu peraturan tambahan yang lebih khusus bagi mengawal selia kawalan terhadap
-                pemeliharaan binatang peliharaan serta pengenaan denda yang tidak melebihi dua ratus ringgit terhadap
-                mana-mana pemilik, penghuni atau jemputan yang melanggari mana-mana undang-undang kecil tersebut melalui
-                ketetapan khas dalam mesyuarat agung seperti yang diperuntukan di bawah Seksyen 32(3)(c) dan (i) atau
-                Seksyen 70(3) (c) & (i) yang mana berkenaan. Jumlah denda yang akan dikenakan hendaklah ditentukan oleh
-                mesyuarat agung seperti yang dikehendaki di bawah subperenggan 7(1), Jadual Ketiga Undang-undang Kecil
-                Peraturan-peraturan Pengurusan Strata (Penyenggaraan dan Pengurusan) 2015.
+                <span style="padding-right: 1em;">3.</span>Jika didapati berlaku pelanggaran undang-undang kecil tersebut,
+                maka pihak pengurusan boleh mengambil tindakan seperti yang disebutkan dalam subperenggan 14(2) dan
+                mengenakan denda pada kadar yang ditentukan oleh mesyuarat agung melalui ketetapan khas selaras dengan
+                subperenggan 7(1), Jadual Ketiga, Undang-undang Kecil Peraturan-peraturan Pengurusan Strata (Penyenggaraan
+                dan Pengurusan) 2015.
             </td>
         </tr>
         <tr>
@@ -224,9 +202,10 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">5.</span>Semua belanja yang dibuat untuk mengeluarkan haiwan itu dan denda
-                yang dikenakan di bawah subperenggan 7(1) Undang-Undang Kecil tersebut hendaklah menjadi suatu hutang yang
-                terakru kepada pihak pengurusan dan atas pembayaran hendaklah didepositkan dalam akaun penyenggaraan.
+                <span style="padding-right: 1em;">4.</span>Semua belanja yang dibuat untuk mengeluarkan haiwan itu dan denda
+                yang dikenakan di bawah subperenggan 7(1) undang-undang kecil tersebut akan menjadi suatu hutang yang
+                terakru kepada pihak pengurusan dan atas pembayaran oleh pemilik hendaklah didepositkan dalam akaun
+                penyenggaraan.
             </td>
         </tr>
         <tr>
@@ -236,23 +215,9 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">6.</span>Sehubungan dengan itu, pihak tuan dinasihatkan supaya
-                mengeluarkan notis kepada semua pemilik/ penghuni petak berhubung peraturan pemeliharaan haiwan peliharaan
-                di skim strata. Sebagai alternatif, pihak tuan boleh memohon kepada pentadbiran ini untuk mengeluarkan surat
-                kepada pemilik yang terlibat berhubung peraturan pemeliharaan haiwan di skim strata. Permohonan boleh dibuat
-                melalui sistem eCOB.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: justify;">
-                <span style="padding-right: 1em;">7.</span>Pihak tuan juga dinasihatkan supaya menguatkuasakan undang-undang
-                kecil tersebut di atas agar masalah ini dapat dikawal bagi melindungi hak dan kepentingan bersama serta
-                dapat memelihara dan mengekalkan kerharmonian dan kesejahteraan penduduk.
+                <span style="padding-right: 1em;">5.</span>Sehubungan dengan itu, pihak tuan selaku pemilik/penghuni
+                dikehendaki mematuhi peruntukan undang-undang kecil yang telah ditetapkan untuk sama-sama menjaga,
+                memelihara dan mengekalkan keharmonian dan kesejahteraan penduduk.
             </td>
         </tr>
         <tr>
