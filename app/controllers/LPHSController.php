@@ -2731,4 +2731,59 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Extract_Data_' . $year . '_' . strtoupper($cob));
     }
+
+    public function agmHasBeenApproved($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+
+                        $meetingDocuments = DB::table('files')
+                            ->select(
+                                'meeting_document.*',
+                                'meeting_document_statuses.user_id as approved_by',
+                                'meeting_document_statuses.endorsed_by as endorsed_by',
+                                'meeting_document_statuses.endorsed_email as endorsed_email',
+                                'meeting_document_statuses.created_at as endorsed_date'
+                            )
+                            ->join('meeting_document', 'files.id', '=', 'meeting_document.file_id')
+                            ->join('meeting_document_statuses', 'meeting_document.id', '=', 'meeting_document_statuses.meeting_document_id')
+                            ->where('files.id', $file->id)
+                            ->where('files.is_deleted', false)
+                            ->where('meeting_document.is_deleted', false)
+                            ->where('meeting_document_statuses.status', 'approved')
+                            ->where('meeting_document_statuses.is_deleted', false)
+                            ->orderBy('meeting_document.agm_date')
+                            ->get();
+
+                        if ($meetingDocuments) {
+                            foreach ($meetingDocuments as $meetingDocument) {
+                                $result[$meetingDocument->id] = [];
+
+                                $approver = User::find($meetingDocument->approved_by);
+
+                                Arr::set($result[$meetingDocument->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
+                                Arr::set($result[$meetingDocument->id], 'File No', $file->file_no);
+                                Arr::set($result[$meetingDocument->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
+                                Arr::set($result[$meetingDocument->id], 'AGM Date', (!empty($meetingDocument->agm_date) ? $meetingDocument->agm_date : ''));
+                                Arr::set($result[$meetingDocument->id], 'Endorsed By', (!empty($meetingDocument->endorsed_by) ? $meetingDocument->endorsed_by : ''));
+                                Arr::set($result[$meetingDocument->id], 'Endorsed E-mail', (!empty($meetingDocument->endorsed_email) ? $meetingDocument->endorsed_email : ''));
+                                Arr::set($result[$meetingDocument->id], 'Approved By', ($approver ? $approver->full_name : ''));
+                                Arr::set($result[$meetingDocument->id], 'Approved Date', (!empty($meetingDocument->endorsed_date) ? $meetingDocument->endorsed_date : ''));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'AGM_Has_Been_Approved_' . strtoupper($cob));
+    }
 }

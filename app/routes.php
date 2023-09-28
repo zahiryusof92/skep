@@ -70,6 +70,7 @@ Route::get('/lphs/electricity/{council}', 'LPHSController@electricity');
 Route::get('/lphs/uploadOCR/{council}', 'LPHSController@uploadOCR');
 Route::get('/lphs/commercial/{council}', 'LPHSController@commercial');
 Route::get('/lphs/extractData/{council}/{year}', 'LPHSController@extractData');
+Route::get('/lphs/agmHasBeenApproved/{council}', 'LPHSController@agmHasBeenApproved');
 
 /*
  * LPHS REPORT END
