@@ -6,7 +6,7 @@
 <tr>
     <td colspan="7">
         <strong>
-            “SELANGOR MAJU BERSAMA”
+            “#KITASELANGOR MAJU BERSAMA”
             <br />
             “MALAYSIA MADANI”
             <br />
