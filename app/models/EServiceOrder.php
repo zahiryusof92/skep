@@ -318,6 +318,6 @@ class EServiceOrder extends Eloquent
 
     public function transaction()
     {
-        return $this->hasOne('EServiceOrderTransaction', 'eservice_order_id');
+        return $this->hasOne('EServiceOrderTransaction', 'eservice_order_id')->latest();
     }
 }
