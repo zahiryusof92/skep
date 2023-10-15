@@ -2797,47 +2797,60 @@ class LPHSController extends BaseController
 
         if ($councils) {
             foreach ($councils as $council) {
-                if ($council->files) {
-                    foreach ($council->files as $file) {
-                        if ($file->owner) {
-                            foreach ($file->owner as $owner) {
-                                if (!$owner->is_deleted) {
-                                    Arr::set($result[$owner->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
-                                    Arr::set($result[$owner->id], 'File No', $file->file_no);
-                                    Arr::set($result[$owner->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
-                                    Arr::set($result[$owner->id], 'Category', ($file->strata ? ($file->strata->categories ? $file->strata->categories->description : '') : ''));
-                                    Arr::set($result[$owner->id], 'Unit No', (!empty($owner->unit_no) ? $owner->unit_no : ''));
-                                    Arr::set($result[$owner->id], 'No Petak', (!empty($owner->no_petak) ? $owner->no_petak : ''));
-                                    Arr::set($result[$owner->id], 'No Petak Aksesori ', (!empty($owner->no_petak_aksesori) ? $owner->no_petak_aksesori : ''));
-                                    Arr::set($result[$owner->id], 'Keluasan Lantai Petak', (!empty($owner->keluasan_lantai_petak) ? $owner->keluasan_lantai_petak : ''));
-                                    Arr::set($result[$owner->id], 'Keluasan Lantai Petak Aksesori', (!empty($owner->keluasan_lantai_petak_aksesori) ? $owner->keluasan_lantai_petak_aksesori : ''));
-                                    Arr::set($result[$owner->id], 'Unit Share', (!empty($owner->unit_share) ? $owner->unit_share : ''));
-                                    Arr::set($result[$owner->id], 'Jenis Kegunaan', (!empty($owner->jenis_kegunaan) ? $owner->jenis_kegunaan : ''));
-                                    Arr::set($result[$owner->id], 'Owner Name', (!empty($owner->owner_name) ? $owner->owner_name : ''));
-                                    Arr::set($result[$owner->id], 'Owner IC No', (!empty($owner->ic_company_no) ? $owner->ic_company_no : ''));
-                                    Arr::set($result[$owner->id], 'Owner Phone No', (!empty($owner->phone_no) ? $owner->phone_no : ''));
-                                    Arr::set($result[$owner->id], 'Owner E-mail', (!empty($owner->email) ? $owner->email : ''));
-                                    Arr::set($result[$owner->id], 'Owner Race', ($owner->race ? $owner->race->name_en : ''));
-                                    Arr::set($result[$owner->id], 'Owner Address', (!empty($owner->address) ? $owner->address : ''));
-                                    Arr::set($result[$owner->id], 'Owner Alamat Surat Menyurat', (!empty($owner->alamat_surat_menyurat) ? $owner->alamat_surat_menyurat : ''));
-                                    Arr::set($result[$owner->id], 'Owner Nationality', ($owner->nationality ? $owner->nationality->name : ''));
-                                    Arr::set($result[$owner->id], 'Caj Penyelenggaraan (RM)', (!empty($owner->caj_penyelenggaraan) ? $owner->caj_penyelenggaraan : ''));
-                                    Arr::set($result[$owner->id], 'Sinking Fund (RM)', (!empty($owner->sinking_fund) ? $owner->sinking_fund : ''));
-                                    Arr::set($result[$owner->id], 'Owner 2 Name', (!empty($owner->nama2) ? $owner->nama2 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 2 IC No', (!empty($owner->ic_no2) ? $owner->ic_no2 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 2 Phone No', (!empty($owner->phone_no2) ? $owner->phone_no2 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 2 E-mail', (!empty($owner->email2) ? $owner->email2 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 3 Name', (!empty($owner->nama3) ? $owner->nama3 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 3 IC No', (!empty($owner->ic_no3) ? $owner->ic_no3 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 3 Phone No', (!empty($owner->phone_no3) ? $owner->phone_no3 : ''));
-                                    Arr::set($result[$owner->id], 'Owner 3 E-mail', (!empty($owner->email3) ? $owner->email3 : ''));
-                                    Arr::set($result[$owner->id], 'Lawyer Name', (!empty($owner->lawyer_name) ? $owner->lawyer_name : ''));
-                                    Arr::set($result[$owner->id], 'Lawyer Address', (!empty($owner->lawyer_address) ? $owner->lawyer_address : ''));
-                                    Arr::set($result[$owner->id], 'Lawyer Fail Ref No', (!empty($owner->lawyer_fail_ref_no) ? $owner->lawyer_fail_ref_no : ''));
-                                    Arr::set($result[$owner->id], 'Remarks', (!empty($owner->remarks) ? $owner->remarks : ''));
-                                }
-                            }
-                        }
+                $owners = Buyer::select(
+                        'buyer.*',
+                        'files.file_no as file_no',
+                        'company.short_name as company_name',
+                        'strata.name as strata_name',
+                        'category.description as category_name'
+                    )
+                    ->join('files', 'files.id', '=', 'buyer.file_id')
+                    ->join('company', 'company.id', '=', 'files.company_id')
+                    ->join('strata', 'strata.file_id', '=', 'files.id')
+                    ->join('category', 'category.id', '=', 'strata.category')
+                    ->where('buyer.is_deleted', false)
+                    ->where('files.is_deleted', false)
+                    ->where('company.is_deleted', false)
+                    ->where('category.is_deleted', false)
+                    ->where('company.id', $council->id)
+                    ->orderBy('category.description')
+                    ->get();
+
+                if ($owners) {
+                    foreach ($owners as $owner) {
+                        Arr::set($result[$owner->id], 'Council', (!empty($owner->company_name) ? $owner->company_name : ''));
+                        Arr::set($result[$owner->id], 'File No', (!empty($owner->file_no) ? $owner->file_no : ''));
+                        Arr::set($result[$owner->id], 'Strata Name', (!empty($owner->strata_name) ? $owner->strata_name : ''));
+                        Arr::set($result[$owner->id], 'Category', (!empty($owner->category_name) ? $owner->category_name : ''));
+                        Arr::set($result[$owner->id], 'Unit No', (!empty($owner->unit_no) ? $owner->unit_no : ''));
+                        Arr::set($result[$owner->id], 'No Petak', (!empty($owner->no_petak) ? $owner->no_petak : ''));
+                        Arr::set($result[$owner->id], 'No Petak Aksesori ', (!empty($owner->no_petak_aksesori) ? $owner->no_petak_aksesori : ''));
+                        Arr::set($result[$owner->id], 'Keluasan Lantai Petak', (!empty($owner->keluasan_lantai_petak) ? $owner->keluasan_lantai_petak : ''));
+                        Arr::set($result[$owner->id], 'Keluasan Lantai Petak Aksesori', (!empty($owner->keluasan_lantai_petak_aksesori) ? $owner->keluasan_lantai_petak_aksesori : ''));
+                        Arr::set($result[$owner->id], 'Unit Share', (!empty($owner->unit_share) ? $owner->unit_share : ''));
+                        Arr::set($result[$owner->id], 'Jenis Kegunaan', (!empty($owner->jenis_kegunaan) ? $owner->jenis_kegunaan : ''));
+                        Arr::set($result[$owner->id], 'Owner Name', (!empty($owner->owner_name) ? $owner->owner_name : ''));
+                        Arr::set($result[$owner->id], 'Owner IC No', (!empty($owner->ic_company_no) ? $owner->ic_company_no : ''));
+                        Arr::set($result[$owner->id], 'Owner Phone No', (!empty($owner->phone_no) ? $owner->phone_no : ''));
+                        Arr::set($result[$owner->id], 'Owner E-mail', (!empty($owner->email) ? $owner->email : ''));
+                        Arr::set($result[$owner->id], 'Owner Race', ($owner->race ? $owner->race->name_en : ''));
+                        Arr::set($result[$owner->id], 'Owner Address', (!empty($owner->address) ? $owner->address : ''));
+                        Arr::set($result[$owner->id], 'Owner Alamat Surat Menyurat', (!empty($owner->alamat_surat_menyurat) ? $owner->alamat_surat_menyurat : ''));
+                        Arr::set($result[$owner->id], 'Owner Nationality', ($owner->nationality ? $owner->nationality->name : ''));
+                        Arr::set($result[$owner->id], 'Caj Penyelenggaraan (RM)', (!empty($owner->caj_penyelenggaraan) ? $owner->caj_penyelenggaraan : ''));
+                        Arr::set($result[$owner->id], 'Sinking Fund (RM)', (!empty($owner->sinking_fund) ? $owner->sinking_fund : ''));
+                        Arr::set($result[$owner->id], 'Owner 2 Name', (!empty($owner->nama2) ? $owner->nama2 : ''));
+                        Arr::set($result[$owner->id], 'Owner 2 IC No', (!empty($owner->ic_no2) ? $owner->ic_no2 : ''));
+                        Arr::set($result[$owner->id], 'Owner 2 Phone No', (!empty($owner->phone_no2) ? $owner->phone_no2 : ''));
+                        Arr::set($result[$owner->id], 'Owner 2 E-mail', (!empty($owner->email2) ? $owner->email2 : ''));
+                        Arr::set($result[$owner->id], 'Owner 3 Name', (!empty($owner->nama3) ? $owner->nama3 : ''));
+                        Arr::set($result[$owner->id], 'Owner 3 IC No', (!empty($owner->ic_no3) ? $owner->ic_no3 : ''));
+                        Arr::set($result[$owner->id], 'Owner 3 Phone No', (!empty($owner->phone_no3) ? $owner->phone_no3 : ''));
+                        Arr::set($result[$owner->id], 'Owner 3 E-mail', (!empty($owner->email3) ? $owner->email3 : ''));
+                        Arr::set($result[$owner->id], 'Lawyer Name', (!empty($owner->lawyer_name) ? $owner->lawyer_name : ''));
+                        Arr::set($result[$owner->id], 'Lawyer Address', (!empty($owner->lawyer_address) ? $owner->lawyer_address : ''));
+                        Arr::set($result[$owner->id], 'Lawyer Fail Ref No', (!empty($owner->lawyer_fail_ref_no) ? $owner->lawyer_fail_ref_no : ''));
+                        Arr::set($result[$owner->id], 'Remarks', (!empty($owner->remarks) ? $owner->remarks : ''));
                     }
                 }
             }
