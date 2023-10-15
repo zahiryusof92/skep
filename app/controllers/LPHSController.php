@@ -2787,7 +2787,7 @@ class LPHSController extends BaseController
         return $this->result($result, $filename = 'AGM_Has_Been_Approved_' . strtoupper($cob));
     }
 
-    public function exportOwner($cob = null)
+    public function exportOwner($cob = null, $category = 'all')
     {
         ini_set('max_execution_time', -1);
 
@@ -2797,7 +2797,7 @@ class LPHSController extends BaseController
 
         if ($councils) {
             foreach ($councils as $council) {
-                $owners = Buyer::select(
+                $query = Buyer::select(
                         'buyer.*',
                         'files.file_no as file_no',
                         'company.short_name as company_name',
@@ -2814,8 +2814,13 @@ class LPHSController extends BaseController
                     ->where('category.is_deleted', false)
                     ->where('company.id', $council->id)
                     ->orderBy('category.description')
-                    ->orderBy('files.file_no')
-                    ->get();
+                    ->orderBy('files.file_no');
+
+                if (!empty($category) && $category != 'all') {
+                    $query->where('category.description', $category);
+                }
+
+                $owners = $query->get();
 
                 if ($owners) {
                     foreach ($owners as $owner) {
@@ -2857,6 +2862,6 @@ class LPHSController extends BaseController
             }
         }
 
-        return $this->result($result, $filename = 'Owner_' . strtoupper($cob));
+        return $this->result($result, $filename = 'Owner_' . strtoupper($cob), 'array');
     }
 }
