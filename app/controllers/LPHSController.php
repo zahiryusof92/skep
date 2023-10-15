@@ -2814,6 +2814,7 @@ class LPHSController extends BaseController
                     ->where('category.is_deleted', false)
                     ->where('company.id', $council->id)
                     ->orderBy('category.description')
+                    ->orderBy('files.file_no')
                     ->get();
 
                 if ($owners) {
