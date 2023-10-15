@@ -2862,6 +2862,6 @@ class LPHSController extends BaseController
             }
         }
 
-        return $this->result($result, $filename = 'Owner_' . strtoupper($cob), 'array');
+        return $this->result($result, $filename = 'Owner_' . strtoupper($cob));
     }
 }
