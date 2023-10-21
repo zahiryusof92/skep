@@ -2823,27 +2823,27 @@ class LPHSController extends BaseController
                 if ($page != 'all') {
                     $limit = 3000;
 
-                    if ($page = 1) {
+                    if ($page == 1) {
                         $skip = 0 * $limit;
-                    } else if ($page = 1) {
+                    } else if ($page == 1) {
                         $skip = 1 * $limit;
-                    } else if ($page = 2) {
+                    } else if ($page == 2) {
                         $skip = 2 * $limit;
-                    } else if ($page = 3) {
+                    } else if ($page == 3) {
                         $skip = 3 * $limit;
-                    } else if ($page = 4) {
+                    } else if ($page == 4) {
                         $skip = 4 * $limit;
-                    } else if ($page = 5) {
+                    } else if ($page == 5) {
                         $skip = 5 * $limit;
-                    } else if ($page = 6) {
+                    } else if ($page == 6) {
                         $skip = 6 * $limit;
-                    } else if ($page = 7) {
+                    } else if ($page == 7) {
                         $skip = 7 * $limit;
-                    } else if ($page = 8) {
+                    } else if ($page == 8) {
                         $skip = 8 * $limit;
-                    } else if ($page = 9) {
+                    } else if ($page == 9) {
                         $skip = 9 * $limit;
-                    } else if ($page = 10) {
+                    } else if ($page == 10) {
                         $skip = 10 * $limit;
                     } else {
                         $skip = 0 * $limit;
