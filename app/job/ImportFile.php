@@ -58,10 +58,10 @@ class ImportFile
         if (isset($row['3']) && !empty($row['3'])) {
             $year = trim($row['3']);
         }
-        // 127. Status
+        // 155. Status
         $is_active = 0;
-        if (isset($row['127']) && !empty($row['127'])) {
-            $is_active_raw = trim($row['127']);
+        if (isset($row['155']) && !empty($row['155'])) {
+            $is_active_raw = trim($row['155']);
 
             if (!empty($is_active_raw)) {
                 if (strtolower($is_active_raw) == 'aktif' || strtolower($is_active_raw) == 'active') {
