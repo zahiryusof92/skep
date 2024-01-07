@@ -2896,4 +2896,68 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Owner_' . strtoupper($cob) . '_Page_' . $page);
     }
+
+    public function activeStrata($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->activeFiles) {
+                    foreach ($council->activeFiles as $file) {
+                        $result[$file->id] = [];
+
+                        Arr::set($result[$file->id], 'Council', ($file->company ? $file->company->short_name : $council->short_name));
+                        Arr::set($result[$file->id], 'File No', $file->file_no);
+                        Arr::set($result[$file->id], 'Strata Name', ($file->strata ? $file->strata->name : ''));
+
+                        $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                        if ($designations) {
+                            foreach ($designations as $designation) {
+                                $ajk_detail = AJKDetails::where('file_id', $file->id)
+                                    ->where('designation', $designation->id)
+                                    ->where('is_deleted', 0)
+                                    ->orderBy('start_year', 'desc')
+                                    ->orderBy('month', 'desc')
+                                    ->orderBy('created_at', 'desc')
+                                    ->first();
+
+                                Arr::set($result[$file->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                                Arr::set($result[$file->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
+                                Arr::set($result[$file->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                            }
+                        }
+
+                        $pic_name = '';
+                        $pic_phone_no = '';
+                        $pic_email = '';
+                        
+                        if ($file->personInCharge) {
+                            foreach ($file->personInCharge as $pic) {
+                                if ($pic->user->full_name) {
+                                    $pic_name = $pic->user->full_name;
+                                }
+                                if ($pic->user->phone_no) {
+                                    $pic_phone_no = $pic->user->phone_no;
+                                }
+                                if ($pic->user->email) {
+                                    $pic_email = $pic->user->email;
+                                }
+                            }
+                        }
+
+                        Arr::set($result[$file->id], 'PIC Name', $pic_name);
+                        Arr::set($result[$file->id], 'PIC Phone No', $pic_phone_no);
+                        Arr::set($result[$file->id], 'PIC E-mail', $pic_email);
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Active_Strata_' . strtoupper($cob));
+    }
 }
