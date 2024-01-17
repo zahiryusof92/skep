@@ -479,6 +479,8 @@ class ExportController extends BaseController
 
     public function submitExportCOBFile()
     {
+        ini_set('max_execution_time', -1);
+        
         $data = Input::all();
 
         $rules = [];
