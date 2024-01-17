@@ -2448,8 +2448,8 @@ class LPHSController extends BaseController
                         $tnb_bill = 0;
                         if ($finance = $file->financeLatest) {
                             $summary = FinanceSummary::where('finance_file_id', $finance->id)
-                                ->where('summary_key', 'bill_elektrik')
-                                ->first();
+                            ->where('summary_key', 'bill_elektrik')
+                            ->first();
 
                             if ($summary) {
                                 $tnb_bill = $summary->amount;
@@ -2501,20 +2501,20 @@ class LPHSController extends BaseController
                         $all_mf_fee_extra = '';
                         if ($finance = $file->financeLatest) {
                             $mf_report = FinanceReport::where('finance_file_id', $finance->id)
-                                ->where('type', 'MF')
+                            ->where('type', 'MF')
                                 ->first();
 
                             if ($mf_report) {
-                                $mf_fee = $mf_report->unit . ' unit(s) x RM' . number_format($mf_report->fee_sebulan, 2);
+                                $mf_fee = $mf_report->unit . ' unit(s) x RM' . $mf_report->fee_sebulan;
                             }
 
                             $mf_report_extras = FinanceReportExtra::where('finance_file_id', $finance->id)
-                                ->where('type', 'MF')
+                            ->where('type', 'MF')
                                 ->get();
 
                             if ($mf_report_extras) {
                                 foreach ($mf_report_extras as $mf_report_extra) {
-                                    $mf_fee_extra = $mf_report_extra->unit . ' unit(s) x RM' . number_format($mf_report_extra->fee_sebulan, 2);
+                                    $mf_fee_extra = $mf_report_extra->unit . ' unit(s) x RM' . $mf_report_extra->fee_sebulan;
 
                                     $all_mf_fee_extra = $all_mf_fee_extra . '; ' . $mf_fee_extra;
                                 }
@@ -2527,20 +2527,20 @@ class LPHSController extends BaseController
                         $all_sf_fee_extra = '';
                         if ($finance = $file->financeLatest) {
                             $sf_report = FinanceReport::where('finance_file_id', $finance->id)
-                                ->where('type', 'SF')
+                            ->where('type', 'SF')
                                 ->first();
 
                             if ($sf_report) {
-                                $sf_fee = $sf_report->unit . ' unit(s) x RM' . number_format($sf_report->fee_sebulan, 2);
+                                $sf_fee = $sf_report->unit . ' unit(s) x RM' . $sf_report->fee_sebulan;
                             }
 
                             $sf_report_extras = FinanceReportExtra::where('finance_file_id', $finance->id)
-                                ->where('type', 'SF')
+                            ->where('type', 'SF')
                                 ->get();
 
                             if ($sf_report_extras) {
                                 foreach ($sf_report_extras as $sf_report_extra) {
-                                    $sf_fee_extra = $sf_report_extra->unit . ' unit(s) x RM' . number_format($sf_report_extra->fee_sebulan, 2);
+                                    $sf_fee_extra = $sf_report_extra->unit . ' unit(s) x RM' . $sf_report_extra->fee_sebulan;
 
                                     $all_sf_fee_extra = $all_sf_fee_extra . '; ' . $sf_fee_extra;
                                 }
