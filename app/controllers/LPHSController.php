@@ -2501,7 +2501,7 @@ class LPHSController extends BaseController
                         $all_mf_fee_extra = '';
                         if ($finance = $file->financeLatest) {
                             $mf_report = FinanceReport::where('finance_file_id', $finance->id)
-                            ->where('type', 'MF')
+                                ->where('type', 'MF')
                                 ->first();
 
                             if ($mf_report) {
@@ -2509,7 +2509,7 @@ class LPHSController extends BaseController
                             }
 
                             $mf_report_extras = FinanceReportExtra::where('finance_file_id', $finance->id)
-                            ->where('type', 'MF')
+                                ->where('type', 'MF')
                                 ->get();
 
                             if ($mf_report_extras) {
@@ -2527,7 +2527,7 @@ class LPHSController extends BaseController
                         $all_sf_fee_extra = '';
                         if ($finance = $file->financeLatest) {
                             $sf_report = FinanceReport::where('finance_file_id', $finance->id)
-                            ->where('type', 'SF')
+                                ->where('type', 'SF')
                                 ->first();
 
                             if ($sf_report) {
@@ -2535,7 +2535,7 @@ class LPHSController extends BaseController
                             }
 
                             $sf_report_extras = FinanceReportExtra::where('finance_file_id', $finance->id)
-                            ->where('type', 'SF')
+                                ->where('type', 'SF')
                                 ->get();
 
                             if ($sf_report_extras) {

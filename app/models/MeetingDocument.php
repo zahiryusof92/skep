@@ -26,7 +26,7 @@ class MeetingDocument extends Eloquent
 
     public function meetingDocumentStatus()
     {
-        return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->latest();
+        return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->orderBy('updated_at', 'desc');
     }
 
     public function noticeAgmEgmOcr() {
