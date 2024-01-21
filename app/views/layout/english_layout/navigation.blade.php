@@ -651,6 +651,12 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.reporting.strata_profile') }}
                         </a>
                     </li>
+
+                    <li id="strata_profile_list">
+                        <a class="left-menu-link" href="{{ URL::action('ReportController@strataProfileV2') }}">
+                            {{ trans('app.menus.reporting.strata_profile_v2') }}
+                        </a>
+                    </li>
                     @endif
 
                     @if (AccessGroup::hasAccess(49))

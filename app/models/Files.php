@@ -2369,22 +2369,36 @@ class Files extends Eloquent
         return $result;
     }
 
-    public static function getStrataProfileAnalytic($request = [])
+    public static function getStrataProfileAnalytic($request = [], $is_active = false, $exclude_finance = false)
     {
         $query = Files::with(['financeLatest', 'company'])
             ->file();
+
+        if ($is_active) {
+            $query = $query->where('files.is_active', true);
+        }
 
         if (!empty($request['company_id'])) {
             $company = Company::where('short_name', $request['company_id'])->first();
             $query = $query->where('files.company_id', $company->id);
         }
-        $pie_data = [
-            'Biru' => 0,
-            'Kuning' => 0,
-            'Merah' => 0,
-            'Kelabu' => 0
-        ];
-        $items = $query->chunk(500, function ($files) use (&$pie_data) {
+
+        if (!$exclude_finance) {
+            $pie_data = [
+                'Biru' => 0,
+                'Kuning' => 0,
+                'Merah' => 0,
+                'Kelabu' => 0
+            ];
+        } else {
+            $pie_data = [
+                'Biru' => 0,
+                'Kuning' => 0,
+                'Merah' => 0
+            ];
+        }
+
+        $items = $query->chunk(500, function ($files) use (&$pie_data, &$exclude_finance) {
             foreach ($files as $file) {
                 $finance = $file->financeLatest;
                 if ($finance) {
@@ -2404,17 +2418,28 @@ class Files extends Eloquent
                         $pie_data['Merah'] += 1;
                     }
                 } else {
-                    $pie_data['Kelabu'] += 1;
+                    if (!$exclude_finance) {
+                        $pie_data['Kelabu'] += 1;
+                    }
                 }
             }
         });
 
-        $data['pie_data'] = [
-            ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
-            ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
-            ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
-            ['name' => 'Kelabu', 'slug' => 'gray', 'y' => $pie_data['Kelabu']],
-        ];
+        if (!$exclude_finance) {
+            $data['pie_data'] = [
+                ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+                ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+                ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+                ['name' => 'Kelabu', 'slug' => 'gray', 'y' => $pie_data['Kelabu']],
+            ];
+        } else {
+            $data['pie_data'] = [
+                ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+                ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+                ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+            ];
+        }
+
         return $data;
     }
 
