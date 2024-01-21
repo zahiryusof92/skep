@@ -785,6 +785,11 @@ Route::get('/reporting/viewStrataProfile/{id}', 'ReportController@viewStrataProf
 Route::get('/reporting/getStrataProfileFinance/{file_id}', array('as' => 'reporting.strataProfile.finance', 'uses' => 'ReportController@getStrataProfileFinance'))->before('authMember');
 Route::get('/print/strataProfile/{id}', 'PrintController@printStrataProfile')->before('authMember');
 
+// strata profile V2
+Route::get('/reporting/strataProfileV2', 'ReportController@strataProfileV2')->before('authMember');
+Route::get('/reporting/getStrataProfileV2', 'ReportController@getStrataProfileV2')->before('authMember');
+Route::get('/reporting/getStrataProfileAnalyticV2', 'ReportController@getStrataProfileAnalyticV2')->before('authMember');
+
 // owner tenant
 Route::get('/reporting/ownerTenant', 'ReportController@ownerTenant')->before('authMember');
 Route::get('/print/ownerTenant/file_id={id}', 'PrintController@printOwnerTenant')->before('authMember');

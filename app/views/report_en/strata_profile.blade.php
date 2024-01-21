@@ -130,7 +130,7 @@ $zone = [
                 url: "{{URL::action('ReportController@getStrataProfileAnalytic')}}",
                 type: "GET",
                 data: {
-                    cob: this.value,
+                    company_id: this.value,
                 },
                 beforeSend: function () {
                     $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
