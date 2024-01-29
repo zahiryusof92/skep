@@ -73,7 +73,7 @@ Route::get('/lphs/extractData/{council}/{year}', 'LPHSController@extractData');
 Route::get('/lphs/agmHasBeenApproved/{council}', 'LPHSController@agmHasBeenApproved');
 Route::get('/lphs/exportOwner/{council}/{category}/{page}', 'LPHSController@exportOwner');
 Route::get('/lphs/activeStrata/{council}', 'LPHSController@activeStrata');
-Route::get('/lphs/exportFiles/{council}', 'LPHSController@exportFiles');
+Route::get('/lphs/exportFiles/{council}/{start}/{total}', 'LPHSController@exportFiles');
 
 /*
  * LPHS REPORT END
