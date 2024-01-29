@@ -3013,7 +3013,7 @@ class LPHSController extends BaseController
         return $this->result($result, $filename = 'Active_Strata_' . strtoupper($cob));
     }
 
-    public function exportFiles($cob = null)
+    public function exportFiles($cob = null, $start = 0, $total = 500)
     {
         ini_set('max_execution_time', -1);
 
@@ -3023,8 +3023,13 @@ class LPHSController extends BaseController
 
         if ($councils) {
             foreach ($councils as $council) {
-                $query = Files::where('company_id', $council->id)->where('is_deleted', 0);
-                $query->chunk(500, function ($files) use (&$result) {
+                $files = Files::where('company_id', $council->id)
+                    ->where('is_deleted', 0)
+                    ->offset($start) // Starting position of records
+                    ->limit($total) // Number of records to retrieve
+                    ->get();
+
+                if ($files) {
                     $count = 1;
 
                     foreach ($files as $file) {
@@ -3297,7 +3302,7 @@ class LPHSController extends BaseController
                             'New File No.' => '',
                         );
                     }
-                });
+                }
             }
         }
 
