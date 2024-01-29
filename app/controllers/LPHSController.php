@@ -3302,7 +3302,7 @@ class LPHSController extends BaseController
                             'New File No.' => '',
                         );
                     }
-                }
+                });
             }
         }
 
