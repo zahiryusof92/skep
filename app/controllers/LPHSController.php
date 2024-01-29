@@ -3012,4 +3012,294 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = 'Active_Strata_' . strtoupper($cob));
     }
+
+    public function exportFiles($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files->count() > 0) {
+                    $count = 1;
+
+                    foreach ($council->files as $file) {
+                        $houseScheme = HouseScheme::where('file_id', $file->id)->first();
+                        if ($houseScheme) {
+                            $developer = Developer::find($houseScheme->developer);
+                            if ($developer) {
+                                $developer_city = City::find($developer->city);
+                                $developer_state = State::find($developer->state);
+                                $developer_country = Country::find($developer->country);
+                            }
+                        } else {
+                            $developer = '';
+                        }
+
+                        $strata = Strata::where('file_id', $file->id)->first();
+                        if ($strata) {
+                            $strata_parliament = Parliment::find($strata->parliament);
+                            $strata_dun = Dun::find($strata->dun);
+                            $strata_park = Park::find($strata->park);
+                            $strata_city = City::find($strata->city);
+                            $strata_state = State::find($strata->state);
+                            $strata_country = Country::find($strata->country);
+                            $strata_town = City::find($strata->town);
+                            $strata_area = Area::find($strata->area);
+                            $strata_land_area_UOM = UnitMeasure::find($strata->land_area_unit);
+                            $strata_land_title = LandTitle::find($strata->land_title);
+                            $strata_category = Category::find($strata->category);
+                            $strata_perimeter = Perimeter::find($strata->perimeter);
+
+                            $strata_residential = Residential::where('strata_id', $strata->id)->first();
+                            if ($strata->is_residential && $strata_residential) {
+                                $strata_residential_mf_uom = UnitOption::find($strata_residential->maintenance_fee_option);
+                                $strata_residential_sf_uom = UnitOption::find($strata_residential->sinking_fund_option);
+                            } else {
+                                $strata_residential_mf_uom = '';
+                                $strata_residential_sf_uom = '';
+                            }
+
+                            $strata_commercial = Commercial::where('strata_id', $strata->id)->first();
+                            if ($strata->is_commercial && $strata_commercial) {
+                                $strata_commercial_mf_uom = UnitOption::find($strata_commercial->maintenance_fee_option);
+                                $strata_commercial_sf_uom = UnitOption::find($strata_commercial->sinking_fund_option);
+                            } else {
+                                $strata_commercial_mf_uom = '';
+                                $strata_commercial_sf_uom = '';
+                            }
+                        } else {
+                            $strata_residential = '';
+                            $strata_commercial = '';
+                        }
+
+                        $management = Management::where('file_id', $file->id)->first();
+                        if ($management) {
+                            $management_jmb = ManagementJMB::where('file_id', $file->id)->first();
+                            if ($management->is_jmb && $management_jmb) {
+                                $management_jmb_city = City::find($management_jmb->city);
+                                $management_jmb_state = State::find($management_jmb->state);
+                                $management_jmb_country = Country::find($management_jmb->country);
+                            } else {
+                                $management_jmb_city = '';
+                                $management_jmb_state = '';
+                                $management_jmb_country = '';
+                            }
+
+                            $management_mc = ManagementMC::where('file_id', $file->id)->first();
+                            if ($management->is_mc && $management_mc) {
+                                $management_mc_city = City::find($management_mc->city);
+                                $management_mc_state = State::find($management_mc->state);
+                                $management_mc_country = Country::find($management_mc->country);
+                            } else {
+                                $management_mc_city = '';
+                                $management_mc_state = '';
+                                $management_mc_country = '';
+                            }
+
+                            $management_agent = ManagementAgent::where('file_id', $file->id)->first();
+                            if ($management->is_agent && $management_agent) {
+                                $management_agent_city = City::find($management_agent->city);
+                                $management_agent_state = State::find($management_agent->state);
+                                $management_agent_country = Country::find($management_agent->country);
+                            } else {
+                                $management_agent_city = '';
+                                $management_agent_state = '';
+                                $management_agent_country = '';
+                            }
+
+                            $management_others = ManagementOthers::where('file_id', $file->id)->first();
+                            if ($management->is_others && $management_others) {
+                                $management_others_city = City::find($management_others->city);
+                                $management_others_state = State::find($management_others->state);
+                                $management_others_country = Country::find($management_others->country);
+                            } else {
+                                $management_others_city = '';
+                                $management_others_state = '';
+                                $management_others_country = '';
+                            }
+                        }
+
+                        $monitoring = Monitoring::where('file_id', $file->id)->first();
+                        $others_details = OtherDetails::where('file_id', $file->id)->first();
+
+                        $result[] = array(
+                            'Bil' => $count++,
+                            'File No.' => $file->file_no,
+                            'Cob File ID' => '',
+                            'Year' => (!empty($file->year) ? $file->year : ''),
+
+                            /**
+                             * Housing Scheme
+                             */
+                            'Name' => ($houseScheme ? $houseScheme->name : ''),
+                            'Housing Scheme Name' => ($houseScheme ? $houseScheme->name : ''),
+                            'Developer' => ($developer ? $developer->name : ''),
+                            'Developer Address 1' => ($developer ? $developer->address1 : ''),
+                            'Developer Address 2' => ($developer ? $developer->address2 : ''),
+                            'Developer Address 3' => ($developer ? $developer->address3 : ''),
+                            'Developer Address 4' => ($developer ? $developer->address4 : ''),
+                            'Developer Postcode' => ($developer ? $developer->poscode : ''),
+                            'Developer City' => ($developer ? ($developer_city ? $developer_city->description : '') : ''),
+                            'Developer State' => ($developer ? ($developer_state ? $developer_state->name : '') : ''),
+                            'Developer Country' => ($developer ? ($developer_country ? $developer_country->name : '') : ''),
+                            'Developer Office No.' => ($developer ? $developer->phone_no : ''),
+                            'Developer Fax No.' => ($developer ? $developer->fax_no : ''),
+                            'Developer Status' => ($developer ? ($developer->is_active ? 'Active' : '') : ''),
+
+                            /**
+                             * Strata
+                             */
+                            'Strata Title' => ($strata ? ($strata->title ? 'Y' : '') : ''),
+                            'Strata' => ($strata ? $strata->name : ''),
+                            'Strata Parliament' => ($strata ? ($strata_parliament ? $strata_parliament->description : '') : ''),
+                            'Strata DUN' => ($strata ? ($strata_dun ? $strata_dun->description : '') : ''),
+                            'Strata Park' => ($strata ? ($strata_park ? $strata_park->description : '') : ''),
+                            'Strata Address 1' => ($strata ? $strata->address1 : ''),
+                            'Strata Address 2' => ($strata ? $strata->address2 : ''),
+                            'Strata Address 3' => ($strata ? $strata->address3 : ''),
+                            'Strata Address 4' => ($strata ? $strata->address4 : ''),
+                            'Strata Postcode' => ($strata ? $strata->poscode : ''),
+                            'Strata City' => ($strata_city ? $strata_city->description : ''),
+                            'Strata State' => ($strata_state ? $strata_state->name : ''),
+                            'Strata Country' => ($strata_country ? $strata_country->name : ''),
+                            'Strata Total Block' => ($strata ? $strata->block_no : ''),
+                            'Strata Floor' => ($strata ? $strata->total_floor : ''),
+                            'Strata Year' => ($strata ? $strata->year : ''),
+                            'Strata Ownership No' => ($strata ? $strata->ownership_no : ''),
+                            'Strata District' => ($strata_town ? $strata_town->description : ''),
+                            'Strata Area' => ($strata_area ? $strata_area->description : ''),
+                            'Strata Total Land Area' => ($strata ? $strata->land_area : ''),
+                            'Strata Total Land Area UOM' => ($strata_land_area_UOM ? $strata_land_area_UOM->description : ''),
+                            'Strata Lot No.' => ($strata ? $strata->lot_no : ''),
+                            'Strata Vacant Possession Date' => ($strata ? ($strata->date > 0 ? $strata->date : '') : ''),
+                            'Strata Date CCC' => ($strata ? ($strata->ccc_date > 0 ? $strata->ccc_date : '') : ''),
+                            'Strata CCC No.' => ($strata ? $strata->ccc_no : ''),
+                            'Strata Land Title' => ($strata_land_title ? $strata_land_title->description : ''),
+                            'Strata Category' => ($strata_category ? $strata_category->description : ''),
+                            'Strata Perimeter' => ($strata_perimeter ? $strata_perimeter->description_en : ''),
+                            'Strata Total Share Unit' => ($strata ? $strata->total_share_unit : ''),
+                            'Strata Residential' => ($strata ? ($strata->is_residential ? 'Yes' : '') : ''),
+                            'Strata Residential Total Unit' => ($strata_residential ? $strata_residential->unit_no : ''),
+                            'Strata Residential Maintenance Fee' => ($strata_residential ? $strata_residential->maintenance_fee : ''),
+                            'Strata Residential Maintenance Fee UOM' => ($strata_residential ? ($strata_residential_mf_uom ? $strata_residential_mf_uom->description : '') : ''),
+                            'Strata Residential Singking Fund' => ($strata_residential ? $strata_residential->sinking_fund : ''),
+                            'Strata Residential Singking Fund UOM' => ($strata_residential ? ($strata_residential_sf_uom ? $strata_residential_sf_uom->description : '') : ''),
+                            'Strata Commercial' => ($strata ? ($strata->is_commercial ? 'Yes' : '') : ''),
+                            'Strata Commercial Total Unit' => ($strata_commercial ? $strata_commercial->unit_no : ''),
+                            'Strata Commercial Maintenance Fee' => ($strata_commercial ? $strata_commercial->maintenance_fee : ''),
+                            'Strata Commercial Maintenance Fee UOM' => ($strata_commercial ? ($strata_commercial_mf_uom ? $strata_commercial_mf_uom->description : '') : ''),
+                            'Strata Commercial Singking Fund' => ($strata_commercial ? $strata_commercial->sinking_fund : ''),
+                            'Strata Commercial Singking Fund UOM' => ($strata_commercial ? ($strata_commercial_sf_uom ? $strata_commercial_sf_uom->description : '') : ''),
+                            'Strata Others' => '',
+
+                            /**
+                             * Management JMB
+                             */
+                            'Management JMB' => ($management_jmb ? 'Yes' : ''),
+                            'Management JMB Date Formed' => ($management_jmb ? ($management_jmb->date_formed > 0 ? $management_jmb->date_formed : '') : ''),
+                            'Management JMB Certificate Series No' => ($management_jmb ? $management_jmb->certificate_no : ''),
+                            'Management JMB Name' => ($management_jmb ? $management_jmb->name : ''),
+                            'Management JMB Address 1'  => ($management_jmb ? $management_jmb->address1 : ''),
+                            'Management JMB Address 2'  => ($management_jmb ? $management_jmb->address2 : ''),
+                            'Management JMB Address 3'  => ($management_jmb ? $management_jmb->address3 : ''),
+                            'Management JMB Address 4'  => ($management_jmb ? $management_jmb->address4 : ''),
+                            'Management JMB Postcode'  => ($management_jmb ? $management_jmb->poscode : ''),
+                            'Management JMB City'  => ($management_jmb ? ($management_jmb_city ? $management_jmb_city->description : '') : ''),
+                            'Management JMB State'  => ($management_jmb ? ($management_jmb_state ? $management_jmb_state->name : '') : ''),
+                            'Management JMB Country'  => ($management_jmb ? ($management_jmb_country ? $management_jmb_country->name : '') : ''),
+                            'Management JMB Office No.' => ($management_jmb ? $management_jmb->phone_no : ''),
+                            'Management JMB Fax No.' => ($management_jmb ? $management_jmb->fax_no : ''),
+                            'Management JMB Email' => ($management_jmb ? $management_jmb->email : ''),
+
+                            /**
+                             * Management MC
+                             */
+                            'Management MC' => ($management_mc ? 'Yes' : ''),
+                            'Management MC Date Formed'  => ($management_mc ? ($management_mc->date_formed > 0 ? $management_mc->date_formed : '') : ''),
+                            'Management MC First AGM Date'  => ($management_mc ? ($management_mc->date_formed > 0 ? $management_mc->date_formed : '') : ''),
+                            'Management MC Name' => ($management_mc ? $management_mc->name : ''),
+                            'Management MC Address 1' => ($management_mc ? $management_mc->address1 : ''),
+                            'Management MC Address 2' => ($management_mc ? $management_mc->address2 : ''),
+                            'Management MC Address 3' => ($management_mc ? $management_mc->address3 : ''),
+                            'Management MC Address 4' => ($management_mc ? $management_mc->address4 : ''),
+                            'Management MC Postcode' => ($management_mc ? $management_mc->poscode : ''),
+                            'Management MC City'  => ($management_mc ? ($management_mc_city ? $management_mc_city->description : '') : ''),
+                            'Management MC State'  => ($management_mc ? ($management_mc_state ? $management_mc_state->name : '') : ''),
+                            'Management MC Country'  => ($management_mc ? ($management_mc_country ? $management_mc_country->name : '') : ''),
+                            'Management MC Office No.' => ($management_mc ? $management_mc->phone_no : ''),
+                            'Management MC Fax No.' => ($management_mc ? $management_mc->fax_no : ''),
+                            'Management MC Email' => ($management_mc ? $management_mc->email : ''),
+
+                            /**
+                             * Management Agent
+                             */
+                            'Management Agent' => ($management_agent ? 'Yes' : ''),
+                            'Management Agent Selected By' => ($management_agent ? $management_agent->selected_by : ''),
+                            'Management Agent Name' => ($management_agent ? $management_agent->name : ''),
+                            'Management Agent Address 1' => ($management_agent ? $management_agent->address1 : ''),
+                            'Management Agent Address 2' => ($management_agent ? $management_agent->address2 : ''),
+                            'Management Agent Address 3' => ($management_agent ? $management_agent->address3 : ''),
+                            'Management Agent Address 4' => ($management_agent ? $management_agent->address4 : ''),
+                            'Management Agent Postcode' => ($management_agent ? $management_agent->poscode : ''),
+                            'Management Agent City'  => ($management_agent ? ($management_agent_city ? $management_agent_city->description : '') : ''),
+                            'Management Agent State'  => ($management_agent ? ($management_agent_state ? $management_agent_state->name : '') : ''),
+                            'Management Agent Country'  => ($management_agent ? ($management_agent_country ? $management_agent_country->name : '') : ''),
+                            'Management Agent Office No.' => ($management_agent ? $management_agent->phone_no : ''),
+                            'Management Agent Fax No.' => ($management_agent ? $management_agent->fax_no : ''),
+                            'Management Agent Email' => ($management_agent ? $management_agent->email : ''),
+
+                            /**
+                             * Management Other
+                             */
+                            'Management Other' => ($management_others ? 'Yes' : ''),
+                            'Management Other Name' => ($management_others ? $management_others->name : ''),
+                            'Management Other Address 1' => ($management_others ? $management_others->address1 : ''),
+                            'Management Other Address 2' => ($management_others ? $management_others->address2 : ''),
+                            'Management Other Address 3' => ($management_others ? $management_others->address3 : ''),
+                            'Management Other Address 4' => ($management_others ? $management_others->address4 : ''),
+                            'Management Other Postcode' => ($management_others ? $management_others->poscode : ''),
+                            'Management Other City'  => ($management_others ? ($management_others_city ? $management_others_city->description : '') : ''),
+                            'Management Other State'  => ($management_others ? ($management_others_state ? $management_others_state->name : '') : ''),
+                            'Management Other Country'  => ($management_others ? ($management_others_country ? $management_others_country->name : '') : ''),
+                            'Management Other Office No.' => ($management_others ? $management_others->phone_no : ''),
+                            'Management Other Fax No.' => ($management_others ? $management_others->fax_no : ''),
+                            'Management Other Email' => ($management_others ? $management_others->email : ''),
+
+                            /**
+                             * No Management
+                             */
+                            'No Management' => ($management ? ($management->no_management ? 'Yes' : '') : ''),
+                            'Management Date Start' => ($management ? ($management->start > 0 ? $management->start : '') : ''),
+                            'Management Date End' => ($management ? ($management->end > 0 ? $management->end : '') : ''),
+
+                            /**
+                             * Monitoring
+                             */
+                            'Monitoring Precalculate Plan' => ($monitoring ? ($monitoring->pre_calculate ? 'Yes' : '') : ''),
+                            'Monitoring Buyer Registration' => ($monitoring ? ($monitoring->buyer_registration ? 'Yes' : '') : ''),
+                            'Monitoring Certificate No' => ($monitoring ? $monitoring->certificate_no : ''),
+                            'Monitoring Financial Report Start Month' => '',
+
+                            /**
+                             * Others
+                             */
+                            'Others Name' => ($others_details ? $others_details->name : ''),
+                            'Others Latitude' => ($others_details ? ($others_details->latitude > 0 ? $others_details->latitude : '') : ''),
+                            'Others Longitude' => ($others_details ? ($others_details->longitude > 0 ? $others_details->longitude : '') : ''),
+
+                            'Status' => ($file ? ($file->is_active ? 'Active' : '') : ''),
+                            'Certificate No' => '',
+                            'New File No.' => '',
+                        );
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = 'Export_Files_' . strtoupper($cob));
+    }
 }
