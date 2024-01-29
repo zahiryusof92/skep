@@ -3023,10 +3023,11 @@ class LPHSController extends BaseController
 
         if ($councils) {
             foreach ($councils as $council) {
-                if ($council->files->count() > 0) {
+                $query = Files::where('company_id', $council->id)->where('is_deleted', 0);
+                $query->chunk(500, function ($files) use (&$result) {
                     $count = 1;
 
-                    foreach ($council->files as $file) {
+                    foreach ($files as $file) {
                         $houseScheme = HouseScheme::where('file_id', $file->id)->first();
                         if ($houseScheme) {
                             $developer = Developer::find($houseScheme->developer);
@@ -3296,7 +3297,7 @@ class LPHSController extends BaseController
                             'New File No.' => '',
                         );
                     }
-                }
+                });
             }
         }
 
