@@ -602,15 +602,16 @@ class ReportController extends BaseController
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
         if (!Auth::user()->getAdmin()) {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            $data = Files::getStrataProfileAnalytic([], true, true);
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $data = [];
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $data = Files::getStrataProfileAnalytic([], true, true);
             }
         }
-
-        $data = Files::getStrataProfileAnalytic([], true, true);
 
         $viewData = array(
             'title' => trans('app.menus.reporting.strata_profile_v2'),
@@ -629,53 +630,68 @@ class ReportController extends BaseController
 
     public function getStrataProfileV2()
     {
-        $query = Files::with(['financeLatest', 'company'])
-            ->file();
-        
-        $query = $query->where('files.is_active', true);
+        $request = Request::all();
+        $proceed = false;
+        $data = array();
 
-        if (!empty($request['company_id'])) {
-            $company = Company::where('short_name', $request['company_id'])->first();
-            $query = $query->where('files.company_id', $company->id);
+        if (!Auth::user()->getAdmin()) {
+            $proceed = true;
+        } else {
+            if (!empty(Session::get('admin_cob'))) {
+                $proceed = true;
+            } else if (!empty($request['company_id'])) {
+                $proceed = true;
+            }
         }
 
-        $data = array();
-        $files = $query->chunk(500, function ($files) use (&$data) {
-            foreach ($files as $file) {
-                $finance = $file->financeLatest;
-                if ($finance) {
-                    $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
-                    $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
-                    $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+        if ($proceed) {
+            $query = Files::with(['financeLatest', 'company'])
+                ->file();
+            
+            $query = $query->where('files.is_active', true);
 
-                    if ($finance_report_fee_semasa > 0) {
-                        $percentage = round(($finance_income_semasa / $finance_report_fee_semasa) * 100);
+            if (!empty($request['company_id'])) {
+                $company = Company::where('short_name', $request['company_id'])->first();
+                $query = $query->where('files.company_id', $company->id);
+            }
 
-                        if ($percentage >= 80) {
-                            $zone = 'Biru';
-                        } else if ($percentage < 79 && $percentage >= 40) {
-                            $zone = 'Kuning';
+            $files = $query->chunk(500, function ($files) use (&$data) {
+                foreach ($files as $file) {
+                    $finance = $file->financeLatest;
+                    if ($finance) {
+                        $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
+                        $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
+                        $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+
+                        if ($finance_report_fee_semasa > 0) {
+                            $percentage = round(($finance_income_semasa / $finance_report_fee_semasa) * 100);
+
+                            if ($percentage >= 80) {
+                                $zone = 'Biru';
+                            } else if ($percentage < 79 && $percentage >= 40) {
+                                $zone = 'Kuning';
+                            } else {
+                                $zone = 'Merah';
+                            }
                         } else {
                             $zone = 'Merah';
                         }
                     } else {
-                        $zone = 'Merah';
+                        continue;
                     }
-                } else {
-                    continue;
+
+                    $data_raw = array(
+                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . "</a>",
+                        $file->strata->name,
+                        $file->company->short_name,
+                        ($file->strata->parliment) ? $file->strata->parliment->description : '-',
+                        $zone
+                    );
+
+                    array_push($data, $data_raw);
                 }
-
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . "</a>",
-                    $file->strata->name,
-                    $file->company->short_name,
-                    ($file->strata->parliment) ? $file->strata->parliment->description : '-',
-                    $zone
-                );
-
-                array_push($data, $data_raw);
-            }
-        });
+            });
+        }
 
         $output_raw = array(
             "aaData" => $data
@@ -689,11 +705,30 @@ class ReportController extends BaseController
     {
         try {
             $request = Request::all();
-            $items = Files::getStrataProfileAnalytic($request, true, true);
-            $response = [
-                'success' => true,
-                'data' => $items
-            ];
+            $proceed = false;
+
+            if (!Auth::user()->getAdmin()) {
+                $proceed = true;
+            } else {
+                if (!empty(Session::get('admin_cob'))) {
+                    $proceed = true;
+                } else if (!empty($request['company_id'])) {
+                    $proceed = true;
+                }
+            }
+    
+            if ($proceed) {
+                $items = Files::getStrataProfileAnalytic($request, true, true);
+                $response = [
+                    'success' => true,
+                    'data' => $items
+                ];
+            } else {
+                $response = [
+                    'success' => false,
+                    'data' => '',
+                ];
+            }
 
             return Response::json($response);
         } catch (Exception $e) {
@@ -710,15 +745,16 @@ class ReportController extends BaseController
         $parliament = Parliment::where('is_active', 1)->where('is_deleted', 0)->orderBy('description')->get();
         if (!Auth::user()->getAdmin()) {
             $cob = Company::where('id', Auth::user()->company_id)->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+            $data = Files::getStrataProfileAnalytic();
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $cob = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $data = [];
             } else {
                 $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+                $data = Files::getStrataProfileAnalytic();
             }
         }
-
-        $data = Files::getStrataProfileAnalytic();
 
         $viewData = array(
             'title' => trans('app.menus.reporting.strata_profile'),
@@ -737,56 +773,72 @@ class ReportController extends BaseController
 
     public function getStrataProfile()
     {
-        $query = Files::with(['financeLatest', 'company'])
-            ->file();
+        $request = Request::all();
+        $proceed = false;
+        $data = array();
 
-        if (!empty($request['company_id'])) {
-            $company = Company::where('short_name', $request['company_id'])->first();
-            $query = $query->where('files.company_id', $company->id);
+        if (!Auth::user()->getAdmin()) {
+            $proceed = true;
+        } else {
+            if (!empty(Session::get('admin_cob'))) {
+                $proceed = true;
+            } else if (!empty($request['company_id'])) {
+                $proceed = true;
+            }
         }
 
-        $data = array();
-        $files = $query->chunk(500, function ($files) use (&$data) {
-            foreach ($files as $file) {
-                $finance = $file->financeLatest;
-                if ($finance) {
-                    $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
-                    $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
-                    $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+        if ($proceed) {
+            $query = Files::with(['financeLatest', 'company'])
+                ->file();
 
-                    if ($finance_report_fee_semasa > 0) {
-                        $percentage = round(($finance_income_semasa / $finance_report_fee_semasa) * 100);
+            if (!empty($request['company_id'])) {
+                $company = Company::where('short_name', $request['company_id'])->first();
+                $query = $query->where('files.company_id', $company->id);
+            }
 
-                        if ($percentage >= 80) {
-                            $zone = 'Biru';
-                        } else if ($percentage < 79 && $percentage >= 40) {
-                            $zone = 'Kuning';
+            $files = $query->chunk(500, function ($files) use (&$data) {
+                foreach ($files as $file) {
+                    $finance = $file->financeLatest;
+                    if ($finance) {
+                        $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
+                        $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
+                        $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+
+                        if ($finance_report_fee_semasa > 0) {
+                            $percentage = round(($finance_income_semasa / $finance_report_fee_semasa) * 100);
+
+                            if ($percentage >= 80) {
+                                $zone = 'Biru';
+                            } else if ($percentage < 79 && $percentage >= 40) {
+                                $zone = 'Kuning';
+                            } else {
+                                $zone = 'Merah';
+                            }
                         } else {
-                            $zone = 'Merah';
+                            $zone = 'Kelabu';
                         }
                     } else {
                         $zone = 'Kelabu';
                     }
-                } else {
-                    $zone = 'Kelabu';
-                }
-                $data_raw = array(
-                    "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . "</a>",
-                    $file->strata->name,
-                    $file->company->short_name,
-                    ($file->strata->parliment) ? $file->strata->parliment->description : '-',
-                    $zone
-                );
+                    $data_raw = array(
+                        "<a style='text-decoration:underline;' href='" . URL::action('ReportController@viewStrataProfile', Helper::encode($file->id)) . "'>" . $file->file_no . "</a>",
+                        $file->strata->name,
+                        $file->company->short_name,
+                        ($file->strata->parliment) ? $file->strata->parliment->description : '-',
+                        $zone
+                    );
 
-                array_push($data, $data_raw);
-            }
-        });
+                    array_push($data, $data_raw);
+                }
+            });
+        }
 
         $output_raw = array(
             "aaData" => $data
         );
 
         $output = json_encode($output_raw);
+
         return $output;
     }
 
@@ -832,11 +884,30 @@ class ReportController extends BaseController
     {
         try {
             $request = Request::all();
-            $items = Files::getStrataProfileAnalytic($request);
-            $response = [
-                'success' => true,
-                'data' => $items
-            ];
+            $proceed = false;
+
+            if (!Auth::user()->getAdmin()) {
+                $proceed = true;
+            } else {
+                if (!empty(Session::get('admin_cob'))) {
+                    $proceed = true;
+                } else if (!empty($request['company_id'])) {
+                    $proceed = true;
+                }
+            }
+    
+            if ($proceed) {
+                $items = Files::getStrataProfileAnalytic($request);
+                $response = [
+                    'success' => true,
+                    'data' => $items
+                ];
+            } else {
+                $response = [
+                    'success' => false,
+                    'data' => '',
+                ];
+            }
 
             return Response::json($response);
         } catch (Exception $e) {
