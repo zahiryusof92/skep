@@ -3663,6 +3663,6 @@ class LPHSController extends BaseController
             }
         }
 
-        return $this->result($result, $filename = strtoupper($cob), 'raw');
+        return $this->result($result, $filename = strtoupper($cob));
     }
 }
