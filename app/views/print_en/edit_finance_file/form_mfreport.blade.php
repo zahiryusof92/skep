@@ -37,7 +37,12 @@ $prefix = 'mfr_';
                     <td class="text-right">{{ number_format($mf_fee_semasa, 2) }}</td>
                 </tr>
                 <tr>
-                    <th colspan="2"></th>
+                    <th class="text-left">JUMLAH TUNGGAKAN BELUM DIKUTIP</th>
+                    <th class="text-right">
+                        <input type="hidden" id="{{$prefix}}tunggakan_belum_dikutip"
+                            value="{{ $mfreport['tunggakan_belum_dikutip'] }}" />
+                        {{ $mfreport['tunggakan_belum_dikutip'] }}
+                    </th>
                     <th class="text-left">JUMLAH SERVICE FEE BERJAYA DIKUTIP SEMASA</th>
                     <th class="text-right" id="{{$prefix}}total_income"></th>
                 </tr>
@@ -106,6 +111,8 @@ $prefix = 'mfr_';
         var mfr_total_income = Number($("[id=income_semasa_1]").val());
         $('#{{ $prefix }}total_income').text(toCommas(parseFloat(mfr_total_income).toFixed(2)));
 
+        var mfr_tunggakan_belum_dikutip = Number($("[id={{ $prefix }}tunggakan_belum_dikutip]").val());
+
         var mfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var mfr_bayar_total = 0;
         for (var i = 0; i < mfr_bayar.length; i++) {
@@ -113,7 +120,7 @@ $prefix = 'mfr_';
         }
         $('#{{ $prefix }}bayar_total').text(toCommas(parseFloat(mfr_bayar_total).toFixed(2)));
 
-        var mfr_lebihan_kurangan = Number(mfr_kutipan) - Number(mfr_bayar_total);
+        var mfr_lebihan_kurangan = (Number(mfr_kutipan) - Number(mfr_bayar_total)) - Number(mfr_tunggakan_belum_dikutip);
         $('#{{ $prefix }}lebihan_kurangan').text(toCommas(parseFloat(mfr_lebihan_kurangan).toFixed(2)));
     }
 </script>
