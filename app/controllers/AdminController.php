@@ -3019,6 +3019,7 @@ class AdminController extends BaseController
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $type = $data['type'];
@@ -3050,6 +3051,7 @@ class AdminController extends BaseController
             $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->sworn_statement_url = $sworn_statement_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
             $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->type = $type;
@@ -3109,6 +3111,7 @@ class AdminController extends BaseController
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
 
@@ -3141,6 +3144,7 @@ class AdminController extends BaseController
             $new_line .= $strata_title_url != $agm_detail->strata_title_url ? "strata title, " : "";
             $new_line .= $maintenance_statement_url != $agm_detail->maintenance_statement_url ? "maintenance statement, " : "";
             $new_line .= $integrity_pledge_url != $agm_detail->integrity_pledge_url ? "integrity pledge, " : "";
+            $new_line .= $sworn_statement_url != $agm_detail->sworn_statement_url ? "sworn statement, " : "";
             $new_line .= $report_audited_financial_url != $agm_detail->report_audited_financial_url ? "report audited financial, " : "";
             $new_line .= $house_rules_url != $agm_detail->house_rules_url ? "house rules, " : "";
             if (!empty($new_line)) {
@@ -3175,6 +3179,7 @@ class AdminController extends BaseController
             $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->sworn_statement_url = $sworn_statement_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
             $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->save();
@@ -3518,6 +3523,21 @@ class AdminController extends BaseController
                 if ($agm->integrity_pledge_url != "") {
                     $result_new .= '<div id="btn_integrity_pledge_edit"><a href="' . asset($agm->integrity_pledge_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
                     $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
+                $result_new .= '<form id="upload_sworn_statement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadSwornStatement") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_sworn_statement') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_sworn_statement_edit" class="btn btn-xs btn-danger" onclick="clearReportAuditedFinancialEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="sworn_statement_edit" id="sworn_statement_edit">';
+                $result_new .= '<div id="validation-sworn_statement_edit"></div>';
+                if ($agm->sworn_statement_url != "") {
+                    $result_new .= '<div id="btn_sworn_statement_edit"><a href="' . asset($agm->sworn_statement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteSwornStatement(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
                 }
                 $result_new .= '</div>';
                 $result_new .= '</div>';
@@ -8921,6 +8941,39 @@ class AdminController extends BaseController
                 # Audit Trail
                 $files = Files::find($agm_details->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' integrity pledge file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
+
+                return "true";
+            } else {
+                return "false";
+            }
+            // } else {
+            //     return "false";
+            // }
+        }
+    }
+
+    public function deleteSwornStatement()
+    {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['reportAuditedFinancial'];
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            // if(empty($response->status) == false && $response->status == 200) {
+
+            $id = Helper::decode($data['id']);
+
+            $agm_details = MeetingDocument::findOrFail($id);
+            $agm_details->sworn_statement_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $files = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' report audited financial file' . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
                 return "true";

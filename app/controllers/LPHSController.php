@@ -1082,7 +1082,7 @@ class LPHSController extends BaseController
                 $audited_financial_file_url = 0;
                 $audit_report = 0;
                 $audit_report_url = 0;
-                $letter_egrity_url = 0;
+                $letter_integrity_url = 0;
                 $letter_bankruptcy_url = 0;
                 $notice_agm_egm_url = 0;
                 $minutes_agm_egm_url = 0;
@@ -1095,7 +1095,8 @@ class LPHSController extends BaseController
                 $purchase_aggrement_url = 0;
                 $strata_title_url = 0;
                 $maenance_statement_url = 0;
-                $egrity_pledge_url = 0;
+                $integrity_pledge_url = 0;
+                $sworn_statement_url = 0;
                 $report_audited_financial_url = 0;
                 $house_rules_url = 0;
                 $audit_start_date = 0;
@@ -1159,8 +1160,8 @@ class LPHSController extends BaseController
                                 if (empty($meetingDocument->audit_report_url) || $meetingDocument->audit_report_url == null) {
                                     $audit_report_url++;
                                 }
-                                if (empty($meetingDocument->letter_egrity_url) || $meetingDocument->letter_egrity_url == null) {
-                                    $letter_egrity_url++;
+                                if (empty($meetingDocument->letter_integrity_url) || $meetingDocument->letter_integrity_url == null) {
+                                    $letter_integrity_url++;
                                 }
                                 if (empty($meetingDocument->letter_bankruptcy_url) || $meetingDocument->letter_bankruptcy_url == null) {
                                     $letter_bankruptcy_url++;
@@ -1198,8 +1199,11 @@ class LPHSController extends BaseController
                                 if (empty($meetingDocument->maenance_statement_url) || $meetingDocument->maenance_statement_url == null) {
                                     $maenance_statement_url++;
                                 }
-                                if (empty($meetingDocument->egrity_pledge_url) || $meetingDocument->egrity_pledge_url == null) {
-                                    $egrity_pledge_url++;
+                                if (empty($meetingDocument->integrity_pledge_url) || $meetingDocument->integrity_pledge_url == null) {
+                                    $integrity_pledge_url++;
+                                }
+                                if (empty($meetingDocument->sworn_statement_url) || $meetingDocument->sworn_statement_url == null) {
+                                    $sworn_statement_url++;
                                 }
                                 if (empty($meetingDocument->report_audited_financial_url) || $meetingDocument->report_audited_financial_url == null) {
                                     $report_audited_financial_url++;
@@ -1234,7 +1238,7 @@ class LPHSController extends BaseController
                     trans('app.forms.meeting_minutes') => ($total_agm - $minit_meeting),
                     trans('app.forms.upload_minutes_ajk') => ($total_agm - $minutes_meeting_file_url),
                     trans('app.forms.jmc_spa_copy') => ($total_agm - $jmc_spa),
-                    trans('app.forms.pledge_letter_of_egrity') => ($total_agm - $jmc_file_url),
+                    trans('app.forms.pledge_letter_of_integrity') => ($total_agm - $jmc_file_url),
                     trans('app.forms.identity_card_list') => ($total_agm - $identity_card),
                     trans('Identity Card List File') => ($total_agm - $ic_file_url),
                     trans('app.forms.attendance_list') => ($total_agm - $attendance),
@@ -1243,7 +1247,7 @@ class LPHSController extends BaseController
                     trans('Audited Financial Report File') => ($total_agm - $audited_financial_file_url),
                     trans('app.forms.financial_audit_report') => ($total_agm - $audit_report),
                     trans('Financial Audit Report File') => ($total_agm - $audit_report_url),
-                    trans('app.forms.pledge_letter_of_egrity') => ($total_agm - $letter_egrity_url),
+                    trans('app.forms.pledge_letter_of_integrity') => ($total_agm - $letter_integrity_url),
                     trans('app.forms.declaration_letter_of_non_bankruptcy') => ($total_agm - $letter_bankruptcy_url),
                     trans('app.forms.upload_notice_agm_egm') => ($total_agm - $notice_agm_egm_url),
                     trans('app.forms.upload_minutes_agm_egm') => ($total_agm - $minutes_agm_egm_url),
@@ -1256,7 +1260,8 @@ class LPHSController extends BaseController
                     trans('app.forms.upload_purchase_aggrement') => ($total_agm - $purchase_aggrement_url),
                     trans('app.forms.upload_strata_title') => ($total_agm - $strata_title_url),
                     trans('app.forms.upload_maenance_statement') => ($total_agm - $maenance_statement_url),
-                    trans('app.forms.upload_egrity_pledge') => ($total_agm - $egrity_pledge_url),
+                    trans('app.forms.upload_integrity_pledge') => ($total_agm - $integrity_pledge_url),
+                    trans('app.forms.upload_sworn_statement') => ($total_agm - $sworn_statement_url),
                     trans('app.forms.upload_report_audited_financial') => ($total_agm - $report_audited_financial_url),
                     trans('app.forms.upload_house_rules') => ($total_agm - $house_rules_url),
                     trans('app.forms.financial_audit_start_date') => ($total_agm - $audit_start_date),

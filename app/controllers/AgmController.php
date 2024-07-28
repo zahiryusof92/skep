@@ -1804,6 +1804,7 @@ class AgmController extends BaseController {
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $type = $data['type'];
@@ -1864,6 +1865,7 @@ class AgmController extends BaseController {
             $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->sworn_statement_url = $sworn_statement_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
             $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->type = $type;
@@ -2085,6 +2087,7 @@ class AgmController extends BaseController {
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $remarks = $data['remarks'];
@@ -2191,6 +2194,7 @@ class AgmController extends BaseController {
                 $agm_detail->strata_title_url = $strata_title_url;
                 $agm_detail->maintenance_statement_url = $maintenance_statement_url;
                 $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+                $agm_detail->sworn_statement_url = $sworn_statement_url;
                 $agm_detail->report_audited_financial_url = $report_audited_financial_url;
                 $agm_detail->house_rules_url = $house_rules_url;
                 $agm_detail->remarks = $remarks;

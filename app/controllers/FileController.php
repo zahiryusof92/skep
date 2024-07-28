@@ -538,6 +538,34 @@ class FileController extends BaseController {
         // }
     }
 
+    public function uploadSwornStatement() {
+        $file = (!empty(Input::file('sworn_statement')) ? Input::file('sworn_statement') : Input::file('sworn_statement_edit'));
+
+        ## EAI Call
+        // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['upload']['uploadSwornStatement'];
+        // if(!empty(Input::file('sworn_statement'))) {
+        //     $data['sworn_statement'] = curl_file_create($_FILES['sworn_statement']['tmp_name'], $_FILES['sworn_statement']['type'], $_FILES['sworn_statement']['name']);
+        // } else {
+        //     $data['sworn_statement_edit'] = curl_file_create($_FILES['sworn_statement_edit']['tmp_name'], $_FILES['sworn_statement_edit']['type'], $_FILES['sworn_statement_edit']['name']);
+        // }
+        
+        // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+        //                         $url,
+        //                         $data, true)));
+        
+        // if(empty($response->status) == false && $response->status == 200) {
+            if ($file && !empty($file)) {
+                $destinationPath = 'uploads/sworn_statement';
+                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $upload = $file->move($destinationPath, $filename);
+
+                if ($upload) {
+                    return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
+                }
+            }
+        // }
+    }
+
     public function uploadReportAuditedFinancial() {
         $file = (!empty(Input::file('report_audited_financial')) ? Input::file('report_audited_financial') : Input::file('report_audited_financial_edit'));
 

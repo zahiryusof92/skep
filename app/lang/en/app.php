@@ -411,6 +411,7 @@ return array(
         "upload_strata_title" => "Salinan Hakmilik Strata (Strata Title) Bagi Setiap AJK",
         "upload_maintenance_statement" => "Salinan Penyata Akaun Caj Penyenggaraan Bagi Setiap AJK Sehingga Tarikh Mesyuarat Agung (Statement Of Account Of Maintenance Charges)",
         "upload_integrity_pledge" => "Ikrar Integriti Jawatankuasa Pengurusan Setiap AJK (Lampiran B)",
+        "upload_sworn_statement" => "Surat Akuan Bersumpah",
         "upload_report_audited_financial" => "Laporan Akaun Teraudit",
         "upload_house_rules" => "Salinan Kaedah-Kaedah Dalaman Yang Diluluskan (House Rules)",
         "financial_audit_start_date" => "Financial Audit Start Date",
