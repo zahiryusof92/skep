@@ -603,6 +603,34 @@ $(document).ready(function () {
         }).submit();
     });
 
+    //sworn_statement
+    $('body').delegate('#sworn_statement', 'change', function () {
+        $('#upload_sworn_statement').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#sworn_statement_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#sworn_statement_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearSwornStatement()'><i class='fa fa-times'></i> </button>").show();
+                    $("#sworn_statement_clear").show();
+                    $("#sworn_statement").css("color", "green");
+                    $("#sworn_statement_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#sworn_statement_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#sworn_statement_error").show();
+                    $("#sworn_statement").css("color", "red");
+                }
+            },
+        }).submit();
+    });
+
     //report_audited_financial
     $('body').delegate('#report_audited_financial', 'change', function () {
         $('#upload_report_audited_financial').ajaxForm({
@@ -1001,6 +1029,13 @@ function clearIntegrityPledge() {
     $("#integrity_pledge_url").val("");
     $("#integrity_pledge").css("color", "grey");
     $("#integrity_pledge_error").empty().hide();
+}
+
+function clearSwornStatement() {
+    $("#sworn_statement").val("");
+    $("#sworn_statement_url").val("");
+    $("#sworn_statement").css("color", "grey");
+    $("#sworn_statement_error").empty().hide();
 }
 
 function clearReportAuditedFinancial() {

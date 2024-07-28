@@ -299,6 +299,9 @@ Route::post('/deleteMaintenanceStatement/{id}', 'AdminController@deleteMaintenan
 Route::post('/uploadIntegrityPledge', 'FileController@uploadIntegrityPledge');
 Route::post('/deleteIntegrityPledge/{id}', 'AdminController@deleteIntegrityPledge')->before('authMember');
 
+Route::post('/uploadSwornStatement', 'FileController@uploadSwornStatement');
+Route::post('/deleteSwornStatement/{id}', 'AdminController@deleteSwornStatement')->before('authMember');
+
 Route::post('/uploadReportAuditedFinancial', 'FileController@uploadReportAuditedFinancial');
 Route::post('/deleteReportAuditedFinancial/{id}', 'AdminController@deleteReportAuditedFinancial')->before('authMember');
 

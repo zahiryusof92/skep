@@ -616,6 +616,20 @@ foreach ($user_permission as $permission) {
                         </div>
                     </div>
                 </form>
+
+                <form id="upload_sworn_statement" enctype="multipart/form-data" method="post" action="{{ url('uploadSwornStatement') }}" autocomplete="off">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label class="form-control-label">{{ trans('app.forms.upload_sworn_statement') }}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="clear_sworn_statement" class="btn btn-xs btn-danger" onclick="clearSwornStatement()" style="display: none;"><i class="fa fa-times"></i></button>
+                            &nbsp;
+                            <input type="file" name="sworn_statement" id="sworn_statement">
+                            <div id="validation-sworn_statement"></div>
+                        </div>
+                    </div>
+                </form>
                 
                 <form id="upload_report_audited_financial" enctype="multipart/form-data" method="post" action="{{ url('uploadReportAuditedFinancial') }}" autocomplete="off">
                     <div class="form-group row">
@@ -663,6 +677,7 @@ foreach ($user_permission as $permission) {
                     <input type="hidden" id="strata_title_url"/>
                     <input type="hidden" id="maintenance_statement_url"/>
                     <input type="hidden" id="integrity_pledge_url"/>
+                    <input type="hidden" id="sworn_statement_url"/>
                     <input type="hidden" id="report_audited_financial_url"/>
                     <input type="hidden" id="house_rules_url"/>
                     <input type="hidden" id="type"/>
@@ -760,6 +775,7 @@ foreach ($user_permission as $permission) {
                     <input type="hidden" id="strata_title_url_edit"/>
                     <input type="hidden" id="maintenance_statement_url_edit"/>
                     <input type="hidden" id="integrity_pledge_url_edit"/>
+                    <input type="hidden" id="sworn_statement_url_edit"/>
                     <input type="hidden" id="report_audited_financial_url_edit"/>
                     <input type="hidden" id="house_rules_url_edit"/>
                     
@@ -1367,6 +1383,7 @@ foreach ($user_permission as $permission) {
                 strata_title_url = $("#strata_title_url").val(),
                 maintenance_statement_url = $("#maintenance_statement_url").val(),
                 integrity_pledge_url = $("#integrity_pledge_url").val(),
+                sworn_statement_url = $("#sworn_statement_url").val(),
                 report_audited_financial_url = $("#report_audited_financial_url").val(),
                 house_rules_url = $("#house_rules_url").val(),
                 type = $("#type").val();
@@ -1404,6 +1421,7 @@ foreach ($user_permission as $permission) {
                     strata_title_url: strata_title_url,
                     maintenance_statement_url: maintenance_statement_url,
                     integrity_pledge_url: integrity_pledge_url,
+                    sworn_statement_url: sworn_statement_url,
                     report_audited_financial_url: report_audited_financial_url,
                     house_rules_url: house_rules_url,
                     type: type,
@@ -1499,6 +1517,7 @@ foreach ($user_permission as $permission) {
                 strata_title_url = $("#strata_title_url_edit").val(),
                 maintenance_statement_url = $("#maintenance_statement_url_edit").val(),
                 integrity_pledge_url = $("#integrity_pledge_url_edit").val(),
+                sworn_statement_url = $("#sworn_statement_url_edit").val(),
                 report_audited_financial_url = $("#report_audited_financial_url_edit").val(),
                 house_rules_url = $("#house_rules_url_edit").val();
 
@@ -1535,6 +1554,7 @@ foreach ($user_permission as $permission) {
                     strata_title_url: strata_title_url,
                     maintenance_statement_url: maintenance_statement_url,
                     integrity_pledge_url: integrity_pledge_url,
+                    sworn_statement_url: sworn_statement_url,
                     report_audited_financial_url: report_audited_financial_url,
                     house_rules_url: house_rules_url,
                     id: agm_id_edit

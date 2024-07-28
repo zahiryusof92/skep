@@ -1006,6 +1006,34 @@
                                     </div>
                                 </div>
                             </form>
+                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.upload_strata_title') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" name="strata_title" id="strata_title">
+                                        <div id="strata_title_error"></div>
+                                        @if ($meeting_doc->strata_title_url != '')
+                                            <div>
+                                                <a href="{{ asset($meeting_doc->strata_title_url) }}" target="_blank">
+                                                    <button type="button" class="btn btn-xs btn-own"
+                                                        data-toggle="tooltip" data-placement="bottom"
+                                                        title="Download File">
+                                                        <i class="icmn-file-download2"></i>
+                                                        {{ trans('app.forms.download') }}
+                                                    </button>
+                                                </a>
+                                                &nbsp;
+                                                {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteStrataTitle('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </form>
                             <?php } else if ($meeting_doc->type == 'mc') { ?>
                             <form id="upload_strata_title" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadStrataTitle') }}" autocomplete="off">
@@ -1092,6 +1120,37 @@
                                                 </a>
                                                 &nbsp;
                                                 {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteIntegrityPledge('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </form>
+
+                            <form id="upload_sworn_statement" enctype="multipart/form-data" method="post"
+                                action="{{ url('uploadSwornStatement') }}" autocomplete="off">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.upload_sworn_statement') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" name="sworn_statement"
+                                            id="sworn_statement">
+                                        <div id="sworn_statement_error"></div>
+                                        @if ($meeting_doc->sworn_statement_url != '')
+                                            <div>
+                                                <a href="{{ asset($meeting_doc->sworn_statement_url) }}"
+                                                    target="_blank">
+                                                    <button type="button" class="btn btn-xs btn-own"
+                                                        data-toggle="tooltip" data-placement="bottom"
+                                                        title="Download File">
+                                                        <i class="icmn-file-download2"></i>
+                                                        {{ trans('app.forms.download') }}
+                                                    </button>
+                                                </a>
+                                                &nbsp;
+                                                {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancial('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
                                             </div>
                                         @endif
                                     </div>
@@ -1518,6 +1577,8 @@
                                         value="{{ $meeting_doc->maintenance_statement_url }}" />
                                     <input type="hidden" id="integrity_pledge_url"
                                         value="{{ $meeting_doc->integrity_pledge_url }}" />
+                                    <input type="hidden" id="sworn_statement_url"
+                                        value="{{ $meeting_doc->sworn_statement_url }}" />
                                     <input type="hidden" id="report_audited_financial_url"
                                         value="{{ $meeting_doc->report_audited_financial_url }}" />
                                     <input type="hidden" id="house_rules_url"
@@ -1605,6 +1666,7 @@
                 strata_title_url = $("#strata_title_url").val(),
                 maintenance_statement_url = $("#maintenance_statement_url").val(),
                 integrity_pledge_url = $("#integrity_pledge_url").val(),
+                sworn_statement_url = $("#sworn_statement_url").val(),
                 report_audited_financial_url = $("#report_audited_financial_url").val(),
                 house_rules_url = $("#house_rules_url").val(),
                 remarks = $("#remarks").val(),
@@ -1732,6 +1794,7 @@
                         strata_title_url: strata_title_url,
                         maintenance_statement_url: maintenance_statement_url,
                         integrity_pledge_url: integrity_pledge_url,
+                        sworn_statement_url: sworn_statement_url,
                         report_audited_financial_url: report_audited_financial_url,
                         house_rules_url: house_rules_url,
                         remarks: remarks,
