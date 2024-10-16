@@ -73,8 +73,7 @@ class LPHSController extends BaseController
         if ($councils) {
             foreach ($councils as $council) {
                 if ($council->files) {
-                    $file_lists = Files::doesntHave('jmb')->where('company_id', $council->id)->where('is_deleted', 0)->orderBy('id')->take(500)->get();
-
+                    $file_lists = Files::doesntHave('jmb')->where('company_id', $council->id)->where('is_deleted', 0)->orderBy('id')->take(50)->get();
                     if ($file_lists) {
                         foreach ($file_lists as $files) {
                             if (!$files->jmb) {
@@ -92,14 +91,14 @@ class LPHSController extends BaseController
                                 $phone_no = '';
                                 $role = Role::where('name', Role::JMB)->pluck('id');
                                 $start_date = Carbon::now()->format('Y-m-d');
-                                $end_date = Carbon::now()->addMonth(2)->format('Y-m-d');
+                                $end_date = Carbon::now()->addYear(1)->endOfYear()->format('Y-m-d');
                                 $file_id = $files->id;
                                 $company_id = $council->id;
                                 $remarks = 'Created by System';
                                 $is_active = 1;
                                 $is_deleted = 0;
                                 $status = 1;
-                                $approved_by = Auth::user()->id;
+                                $approved_by = (Auth::user() ? Auth::user()->id : 1);
                                 $approved_at = Carbon::now()->format('Y-m-d H:i:s');
 
                                 $user = new User();
@@ -129,7 +128,7 @@ class LPHSController extends BaseController
                                         trans('app.forms.username') => $username,
                                         trans('app.forms.password') => $password,
                                         trans('app.forms.date_start') => $start_date,
-                                        trans('app.forms.date_end') => $end_date
+                                        trans('app.forms.date_end') => $end_date,
                                     ];
                                 }
                             }
