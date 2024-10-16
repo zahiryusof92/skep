@@ -38,6 +38,11 @@ Route::get('/test/testMail', 'TestController@testMail');
  */
 Route::post('search', array('as' => 'search.index', 'uses' => 'SearchController@index'));
 
+/**
+ * Reconcile
+ */
+Route::get('eservice/reconcile', array('as' => 'eservice.reconcile', 'uses' => 'EServiceController@reconcile'));
+
 /*
  * LPHS REPORT START
  */
