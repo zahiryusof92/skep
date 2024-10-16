@@ -9450,9 +9450,9 @@ class AdminController extends BaseController
     {
         if ($id == 'All') {
             if (!empty(Auth::user()->file_id)) {
-                $insurance = Insurance::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $insurance = Insurance::has('file')->where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
             } else {
-                $insurance = Insurance::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $insurance = Insurance::has('file')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
             }
 
             if ($insurance) {
@@ -9471,8 +9471,10 @@ class AdminController extends BaseController
                             }
                         } else {
                             if (!empty(Session::get('admin_cob'))) {
-                                if ($insurances->file->company_id != Session::get('admin_cob')) {
-                                    continue;
+                                if ($insurances->file) {
+                                    if ($insurances->file->company_id != Session::get('admin_cob')) {
+                                        continue;
+                                    }
                                 }
                             }
                         }
