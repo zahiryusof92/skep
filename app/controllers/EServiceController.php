@@ -973,6 +973,10 @@ class EServiceController extends BaseController
 			if ($order) {
 				if ($order->company && $order->company->short_name = 'MBPJ') {
 					if (!empty($request)) {
+						$order->update([
+							'reference_id' => Arr::get($request, 'pg_ref_id'),
+						]);
+						
 						$status = EServiceOrderTransaction::PENDING;
 						if (Arr::get($request, 'pg_status') == 1) {
 							$status = EServiceOrderTransaction::APPROVED;
@@ -986,50 +990,56 @@ class EServiceController extends BaseController
 							$message = $request['pg_desc'];
 						}
 
-						$transaction = EServiceOrderTransaction::create([
-							'eservice_order_id' => $order->id,
-							'payment_method' => Arr::get($request, 'pg_payment_type'),
-							'payment_amount' => Arr::get($request, 'pg_amount'),
-							'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
-							'payment_response' => json_encode($request),
-							'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
-							'status' => $status,
-						]);
+						if (Arr::get($request, 'pg_payment_type')) {
+							$transaction = EServiceOrderTransaction::updateOrCreate(
+								[
+									'eservice_order_id' => $order->id,
+									'payment_method' => Arr::get($request, 'pg_payment_type'),
+									'payment_amount' => Arr::get($request, 'pg_amount'),
+									'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
+									'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
+								],
+								[
+									'payment_response' => json_encode($request),
+									'status' => $status,
+								]
+							);
 
-						if ($transaction->status == EServiceOrderTransaction::APPROVED) {
-							$update = $order->update([
-								'status' => EServiceOrder::INPROGRESS,
-							]);
+							if ($transaction->status == EServiceOrderTransaction::APPROVED) {
+								$update = $order->update([
+									'status' => EServiceOrder::INPROGRESS,
+								]);
 
-							if ($update) {
-								/**
-								 * Send an email to JMB / MC and copy to COB
-								 */
-								if (Config::get('mail.driver') != '') {
-									if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
-										Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
-											$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
-										});
-									}
-
-									if ($order->user->isJMB() || $order->user->isMC()) {
-										if (!empty(Config::get('payment.mbpj.email_cob'))) {
-											Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
-												$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+								if ($update) {
+									/**
+									 * Send an email to JMB / MC and copy to COB
+									 */
+									if (Config::get('mail.driver') != '') {
+										if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+											Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+												$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
 											});
 										}
+
+										if ($order->user->isJMB() || $order->user->isMC()) {
+											if (!empty(Config::get('payment.mbpj.email_cob'))) {
+												Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+													$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+												});
+											}
+										}
 									}
+
+									/**
+									 * add audit trail
+									 */
+									$module = Str::upper($this->getModule()['name']);
+									$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
+									$remarks = $module . ': ' . $order->email . " has submitted a new application";
+									$this->addAudit($order->file_id, $module, $remarks);
+
+									return Redirect::route('eservice.index')->with('success', trans('app.successes.payment_successfully'));
 								}
-
-								/**
-								 * add audit trail
-								 */
-								$module = Str::upper($this->getModule()['name']);
-								$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
-								$remarks = $module . ': ' . $order->email . " has submitted a new application";
-								$this->addAudit($order->file_id, $module, $remarks);
-
-								return Redirect::route('eservice.index')->with('success', trans('app.successes.payment_successfully'));
 							}
 						}
 					}
@@ -1631,6 +1641,94 @@ class EServiceController extends BaseController
 		}
 
 		App::abort(404);
+	}
+
+	public function reconcile()
+	{
+		ini_set('max_execution_time', -1);
+
+		$response = [];
+		$request = Request::all();
+
+		$limit = (isset($request['limit']) ? $request['limit'] : null);
+
+		$orders = EServiceOrder::whereNotIn('status', [EServiceOrder::INPROGRESS, EServiceOrder::APPROVED])
+			->orderBy('id', 'desc')
+			->limit($limit)
+			->get();
+
+		if ($orders) {
+			foreach ($orders as $order) {
+				$params = [];
+				$requestArray = [];
+
+				$orderId = $this->encodeID($order->id);
+
+				$reconcile = (new Epay())->reconcile($orderId);
+				
+				if (Arr::get($reconcile, 'status') && !empty(Arr::get($reconcile, 'response'))) {
+					$queryString = Arr::get($reconcile, 'response');
+					parse_str($queryString, $requestArray);
+
+					$callback = $this->callbackReconcile($orderId, $requestArray);
+
+					Arr::set($params, 'order_id', $order->id);
+                    Arr::set($params, 'status', $callback);
+                    Arr::set($params, 'response', $requestArray);
+
+					array_push($response, $params);
+				}
+			}
+		}
+
+		return $response;
+	}
+
+	public function callbackReconcile($id, $request)
+	{
+		if (!empty($id)) {
+			$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
+			if ($order) {
+				if ($order->company && $order->company->short_name = 'MBPJ') {
+					if (!empty($request)) {
+						$status = EServiceOrderTransaction::PENDING;
+						if (Arr::get($request, 'pg_status') == 1) {
+							$status = EServiceOrderTransaction::APPROVED;
+						} else if (Arr::get($request, 'pg_status') == 2) {
+							$status = EServiceOrderTransaction::FAILED;
+						} else if (Arr::get($request, 'pg_status') == 3) {
+							$status = EServiceOrderTransaction::REJECTED;
+						}
+
+						if (Arr::get($request, 'pg_payment_type')) {
+							$transaction = EServiceOrderTransaction::updateOrCreate(
+								[
+									'eservice_order_id' => $order->id,
+									'payment_method' => Arr::get($request, 'pg_payment_type'),
+									'payment_amount' => Arr::get($request, 'pg_amount'),
+									'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
+									'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
+								],
+								[
+									'payment_response' => json_encode($request),
+									'status' => $status,
+								]
+							);
+
+							if ($transaction->status == EServiceOrderTransaction::APPROVED) {
+								$order->update([
+									'status' => EServiceOrder::INPROGRESS,
+								]);
+							}
+						}
+					}
+				}
+
+				return $order->status;
+			}
+		}
+
+		return false;
 	}
 
 	private function getModule()

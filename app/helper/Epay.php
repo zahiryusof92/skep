@@ -2,6 +2,7 @@
 
 namespace Helper;
 
+use EServiceController;
 use EServiceOrder;
 use Helper\KCurl;
 use Illuminate\Support\Arr;
@@ -82,8 +83,13 @@ class Epay
             $secret = Arr::get($params, 'secret');
             $pg_client = Arr::get($params, 'pg_client');
             $pg_ref_id = Arr::get($params, 'pg_ref_id');
+            $pg_action = Arr::get($params, 'pg_action');
 
-            $token = md5($secret . $pg_client . $pg_ref_id);
+            if ($pg_action == 'reconcile') {
+                $token = md5($secret . $pg_client . $pg_ref_id . $pg_action);
+            } else {
+                $token = md5($secret . $pg_client . $pg_ref_id);
+            }
         }
 
         return $token;
@@ -111,36 +117,66 @@ class Epay
 
             // update reference_id every time need to do payment
             $pg_ref_id = $order->order_no . '-' . date('His');
-            $update = $order->update([
-                'reference_id' => $pg_ref_id,
-            ]);
+            $pg_client = $this->payment_gateway_secret_id;
+            $pg_amount = number_format($order->price, 2);
+            $pg_account_no = $account_no;
+            $pg_revenue_code = Config::get('payment.mbpj.kod_hasil');
+            $pg_dept_code = Config::get('payment.mbpj.kod_jabatan');
+            $pg_return_url = route('eservice.callbackPayment', $this->generateEncodeID($order->id));
 
-            if ($update) {
-                $pg_client = $this->payment_gateway_secret_id;
-                $pg_amount = number_format($order->price, 2);
-                $pg_account_no = $account_no;
-                $pg_revenue_code = Config::get('payment.mbpj.kod_hasil');
-                $pg_dept_code = Config::get('payment.mbpj.kod_jabatan');
-                $pg_return_url = route('eservice.callbackPayment', $this->generateEncodeID($order->id));
+            $params_token = [
+                'secret' => $this->payment_gateway_secret_key,
+                'pg_client' => $pg_client,
+                'pg_ref_id' => $pg_ref_id,
+            ];
+            $token = $this->generateToken($params_token);
 
-                $params_token = [
-                    'secret' => $this->payment_gateway_secret_key,
-                    'pg_client' => $pg_client,
-                    'pg_ref_id' => $pg_ref_id,
-                ];
-                $token = $this->generateToken($params_token);
+            $param['pg_client'] = $pg_client; // BilPelbagai (client id)
+            $param['pg_ref_id'] = $pg_ref_id; // MBPJ-eCOB-ref_no (client ref id) (max 50 chars) 
+            $param['pg_amount'] = $pg_amount; // (amount to pay in 2 point decimal) 
+            $param['pg_account_no'] = $pg_account_no;
+            $param['pg_revenue_code'] = $pg_revenue_code; // (5 chars) 
+            $param['pg_dept_code'] = $pg_dept_code;
+            $param['pg_return_url'] =  $pg_return_url; // (client url to post response data once payment successful or failed)
+            $param['pg_token'] = $token; // (token to validate data)
 
-                $param['pg_client'] = $pg_client; // BilPelbagai (client id)
-                $param['pg_ref_id'] = $pg_ref_id; // MBPJ-eCOB-ref_no (client ref id) (max 50 chars) 
-                $param['pg_amount'] = $pg_amount; // (amount to pay in 2 point decimal) 
-                $param['pg_account_no'] = $pg_account_no;
-                $param['pg_revenue_code'] = $pg_revenue_code; // (5 chars) 
-                $param['pg_dept_code'] = $pg_dept_code;
-                $param['pg_return_url'] =  $pg_return_url; // (client url to post response data once payment successful or failed)
-                $param['pg_token'] = $token; // (token to validate data)
+            $post_data = http_build_query($param);
+            $response = $this->payment_gateway_url . '?' . $post_data;
+        }
 
-                $post_data = http_build_query($param);
-                $response = $this->payment_gateway_url . '?' . $post_data;
+        return $response;
+    }
+
+    public function reconcile($orderId) {
+        $response = '';
+
+        $order = EServiceOrder::find($this->generateDecodeID($orderId));
+        if ($order && !empty($order->reference_id)) {
+            $pg_client = $this->payment_gateway_secret_id;
+            $pg_ref_id = $order->reference_id;
+
+            $params_token = [
+                'secret' => $this->payment_gateway_secret_key,
+                'pg_client' => $pg_client,
+                'pg_ref_id' => $pg_ref_id,
+                'pg_action' => 'reconcile',
+            ];
+            $token = $this->generateToken($params_token);
+
+            $param['pg_action'] = 'reconcile'; // reconcile
+            $param['pg_client'] = $pg_client; // BilPelbagai (client id)
+            $param['pg_ref_id'] = $pg_ref_id; // MBPJ-eCOB-ref_no (client ref id) (max 50 chars) 
+            $param['pg_token'] = $token; // (token to validate data)
+
+            $post_data = http_build_query($param);
+            $url = $this->payment_gateway_url . '?' . $post_data;
+
+            try {
+                Arr::set($response, 'status', true);
+                Arr::set($response, 'response', (new KCurl())->requestGET($this->getHeader(), $url));
+            } catch (\Throwable $e) {
+                Arr::set($response, 'status', false);
+                \Log::error($e->getMessage());
             }
         }
 
