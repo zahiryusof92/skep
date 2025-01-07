@@ -80,6 +80,7 @@ Route::get('/lphs/exportOwner/{council}/{category}/{page}', 'LPHSController@expo
 Route::get('/lphs/activeStrata/{council}', 'LPHSController@activeStrata');
 Route::get('/lphs/exportFiles/{council}/{start}/{total}', 'LPHSController@exportFiles');
 Route::get('/lphs/fileInfo/{council}', 'LPHSController@fileInfo');
+Route::get('/lphs/totalUnit/{council}', 'LPHSController@totalUnit');
 
 /*
  * LPHS REPORT END

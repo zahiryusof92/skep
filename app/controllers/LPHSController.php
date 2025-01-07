@@ -3669,4 +3669,54 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = strtoupper($cob));
     }
+
+    public function totalUnit($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+        
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $file) {
+                        if ($file->strata) {
+                            $total_unit = 0;
+                            if ($file->strata->residential) {
+                                if ($file->strata->residential->unit_no > 0) {
+                                    $total_unit = $total_unit + $file->strata->residential->unit_no;
+                                }
+                            }
+                            if ($file->strata->commercial) {
+                                if ($file->strata->commercial->unit_no > 0) {
+                                    $total_unit = $total_unit + $file->strata->commercial->unit_no;
+                                }
+                            }
+
+                            Arr::set($result[$file->id], trans('Council'), $council->name . ' (' . $council->short_name . ')');
+                            Arr::set($result[$file->id], trans('File No'), $file->file_no);
+                            Arr::set($result[$file->id], trans('Active'), ($file->is_active ? 'Yes' : 'No'));
+                            Arr::set($result[$file->id], trans('Building Name'), $file->strata->name);
+                            Arr::set($result[$file->id], trans('Address 1'), $file->strata->address1);
+                            Arr::set($result[$file->id], trans('Address 2'), $file->strata->address2);
+                            Arr::set($result[$file->id], trans('Address 3'), $file->strata->address3);
+                            Arr::set($result[$file->id], trans('Address 4'), $file->strata->address4);
+                            Arr::set($result[$file->id], trans('Postcode'), $file->strata->poscode);
+                            Arr::set($result[$file->id], trans('City'), ($file->strata->cities ? $file->strata->cities->description : ''));
+                            Arr::set($result[$file->id], trans('State'), ($file->strata->states ? $file->strata->states->name : ''));
+                            Arr::set($result[$file->id], trans('Land Title'), ($file->strata->landTitle ? $file->strata->landTitle->description : ''));
+                            Arr::set($result[$file->id], trans('Category'), ($file->strata->categories ? $file->strata->categories->description : ''));
+                            Arr::set($result[$file->id], trans('No of Block'), $file->strata->block_no);
+                            Arr::set($result[$file->id], trans('Total Floor'), $file->strata->total_floor);
+                            Arr::set($result[$file->id], trans('Total Unit'), $total_unit);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, $filename = strtoupper($cob));
+    }
 }
