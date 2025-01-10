@@ -1721,7 +1721,7 @@ class EServiceController extends BaseController
 								$order->update([
 									'status' => EServiceOrder::INPROGRESS,
 								]);
-							} else if ($transaction->status == EServiceOrderTransaction::FAILED) {
+							} else if ($transaction->status == EServiceOrderTransaction::FAILED || $transaction->status == EServiceOrderTransaction::REJECTED) {
 								$order->update([
 									'status' => EServiceOrder::REJECTED,
 								]);
