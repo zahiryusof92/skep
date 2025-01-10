@@ -1659,24 +1659,26 @@ class EServiceController extends BaseController
 
 		if ($orders) {
 			foreach ($orders as $order) {
-				$params = [];
-				$requestArray = [];
+				if (empty($order->approval_date)) {
+					$params = [];
+					$requestArray = [];
 
-				$orderId = $this->encodeID($order->id);
+					$orderId = $this->encodeID($order->id);
 
-				$reconcile = (new Epay())->reconcile($orderId);
-				
-				if (Arr::get($reconcile, 'status') && !empty(Arr::get($reconcile, 'response'))) {
-					$queryString = Arr::get($reconcile, 'response');
-					parse_str($queryString, $requestArray);
+					$reconcile = (new Epay())->reconcile($orderId);
+					
+					if (Arr::get($reconcile, 'status') && !empty(Arr::get($reconcile, 'response'))) {
+						$queryString = Arr::get($reconcile, 'response');
+						parse_str($queryString, $requestArray);
 
-					$callback = $this->callbackReconcile($orderId, $requestArray);
+						$callback = $this->callbackReconcile($orderId, $requestArray);
 
-					Arr::set($params, 'order_id', $order->id);
-                    Arr::set($params, 'status', $callback);
-                    Arr::set($params, 'response', $requestArray);
+						Arr::set($params, 'order_id', $order->id);
+						Arr::set($params, 'status', $callback);
+						Arr::set($params, 'response', $requestArray);
 
-					array_push($response, $params);
+						array_push($response, $params);
+					}
 				}
 			}
 		}
@@ -1718,6 +1720,10 @@ class EServiceController extends BaseController
 							if ($transaction->status == EServiceOrderTransaction::APPROVED) {
 								$order->update([
 									'status' => EServiceOrder::INPROGRESS,
+								]);
+							} else if ($transaction->status == EServiceOrderTransaction::FAILED) {
+								$order->update([
+									'status' => EServiceOrder::REJECTED,
 								]);
 							}
 						}
