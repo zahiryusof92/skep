@@ -150,7 +150,7 @@ class NotificationController extends BaseController {
                     */
                     $audit_name = Auth::user()->fullname . " has mark all notifications";
                     $remarks = $audit_name;
-                    $file_id = ((Auth::user()->isJMB() || Auth::user()->isDeveloper()) ? Auth::user()->file_id : 0);
+                    $file_id = ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) ? Auth::user()->file_id : 0);
                     $this->addAudit($file_id, "Notification", $remarks);
                     
                     return Response::json([

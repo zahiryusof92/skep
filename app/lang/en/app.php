@@ -193,6 +193,7 @@ return array(
             'audit_logon' => "Audit Logon",
             'audit_logon_report' => "Audit Logon Report",
             'file_movement' => 'File Movement',
+            'finance' => 'Finance / Month',
         ),
         "agm" => array(
             "submission" => "AGM Submission",
@@ -273,7 +274,7 @@ return array(
             'report' => 'Report',
             "create" => "New Application",
             'edit' => 'Edit Application',
-            'show' => 'View Application',            
+            'show' => 'View Application',
             "pending" => ":count pending",
             'payment' => 'Payment',
             'show' => 'View Application',
@@ -691,6 +692,9 @@ return array(
         "file_draft" => "Draft COB File",
         "draft" => "Draft Created by JMB",
         "created_at" => "Date Created",
+        "under_ten_units" => "Kurang Daripada 10 Unit",
+        "no_management" => "Tiada Pengurusan",
+        "actual_purchase_price" => "Harga Belian Sebenar",
         'eagm_property' => 'eAGM Property',
         'finance_support' => 'Finance Support',
         'assigned_to' => 'Assigned To',
@@ -1432,8 +1436,8 @@ return array(
         'sell' => 'Jualan',
         'profit' => 'Untung/Rugi',
         'date' => 'Tarikh',
-        'buy_amount' => 'Hasil Belian', 
-        'sell_amount' => 'Hasil Jualan',        
+        'buy_amount' => 'Hasil Belian',
+        'sell_amount' => 'Hasil Jualan',
         'income' => 'Pendapatan',
         'others_income' => 'Lain-lain Hasil (Modal MPS)',
         'total' => 'Jumlah',
@@ -1444,5 +1448,11 @@ return array(
         'expenses' => 'Perbelanjaan',
         'salary' => 'Gaji, Elaun & Upah',
         'general' => 'Perbelanjaan Am',
-    ]
+    ],
+    'report' => [
+        'finance' => [
+            'tab_1' => 'Month & Year',
+            'tab_2' => 'Submission Date',
+        ],
+    ],
 );

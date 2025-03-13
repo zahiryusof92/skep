@@ -361,7 +361,7 @@ foreach ($user_permission as $permission) {
                                 </section>
                                 <!-- End House Form -->
 
-                                @if (!Auth::user()->isJMB())
+                                @if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper())
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="row">
