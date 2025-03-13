@@ -82,6 +82,7 @@ Route::get('/lphs/exportFiles/{council}/{start}/{total}', 'LPHSController@export
 Route::get('/lphs/fileInfo/{council}', 'LPHSController@fileInfo');
 Route::get('/lphs/fileSummary/{council}', 'LPHSController@fileSummary');
 Route::get('/lphs/auditedAccount/{council}', 'LPHSController@auditedAccount');
+Route::get('/lphs/totalUnit/{council}', 'LPHSController@totalUnit');
 
 /*
  * LPHS REPORT END
