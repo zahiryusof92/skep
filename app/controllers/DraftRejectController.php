@@ -41,7 +41,7 @@ class DraftRejectController extends BaseController {
                                 } else if($model->type == 'management') {
                                     $tab = 'management';
                                 }
-                                if(Auth::user()->isJMB()) {
+                                if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                                     return "<a style='text-decoration:underline;' href='" . route("cob.file.$tab.edit", Helper::encode($model->file->id)) . "'>" . $model->file->file_no . "</a>";
                                 }
                                 return "<a style='text-decoration:underline;' href='" . route("cob.file.draft.$tab.edit", Helper::encode($model->file->id)) . "'>" . $model->file->file_no . "</a>";

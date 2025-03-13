@@ -974,7 +974,7 @@ class ExportController extends BaseController
                  */
                 if (!empty($log->file_id)) {
                     $raw_data[$key][trans('app.forms.file_no')] = $log->file_no;
-                } else if ($log->user->isJMB()) {
+                } else if ($log->user->isJMB() || $log->user->isMC() || $log->user->isDeveloper()) {
                     if ($log->user->getFile) {
                         $raw_data[$key][trans('app.forms.file_no')] = $log->user->getFile->file_no;
                     } else {

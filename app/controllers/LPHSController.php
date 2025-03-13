@@ -3669,4 +3669,188 @@ class LPHSController extends BaseController
 
         return $this->result($result, $filename = strtoupper($cob));
     }
+
+    public function fileSummary($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+        
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $files) {
+                        if ($strata = $files->strata) {
+                            $total_unit = 0;
+                            if ($strata->residential) {
+                                if ($strata->residential->unit_no > 0) {
+                                    $total_unit = $total_unit + $strata->residential->unit_no;
+                                }
+                            }
+                            if ($strata->commercial) {
+                                if ($strata->commercial->unit_no > 0) {
+                                    $total_unit = $total_unit + $strata->commercial->unit_no;
+                                }
+                            }
+
+                            $strata_residential = Residential::where('strata_id', $strata->id)->first();
+                            if ($strata->is_residential && $strata_residential) {
+                                $strata_residential_mf_uom = UnitOption::find($strata_residential->maintenance_fee_option);
+                                $strata_residential_sf_uom = UnitOption::find($strata_residential->sinking_fund_option);
+                            } else {
+                                $strata_residential_mf_uom = '';
+                                $strata_residential_sf_uom = '';
+                            }
+
+                            $strata_commercial = Commercial::where('strata_id', $strata->id)->first();
+                            if ($strata->is_commercial && $strata_commercial) {
+                                $strata_commercial_mf_uom = UnitOption::find($strata_commercial->maintenance_fee_option);
+                                $strata_commercial_sf_uom = UnitOption::find($strata_commercial->sinking_fund_option);
+                            } else {
+                                $strata_commercial_mf_uom = '';
+                                $strata_commercial_sf_uom = '';
+                            }
+
+                            $total_lif = 0;
+                            $all_facility = [];
+                            if ($facility = $files->facility) {
+                                if ($facility->management_office) {
+                                    array_push($all_facility, 'Management Office' . ($facility->management_office_unit > 0 ? ' (' . $facility->management_office_unit . ')' : ''));
+                                }
+                                if ($facility->swimming_pool) {
+                                    array_push($all_facility, 'Swimming Pool' . ($facility->swimming_pool_unit > 0 ? ' (' . $facility->swimming_pool_unit . ')' : ''));
+                                }
+                                if ($facility->surau) {
+                                    array_push($all_facility, 'Surau' . ($facility->surau_unit > 0 ? ' (' . $facility->surau_unit . ')' : ''));
+                                }
+                                if ($facility->multipurpose_hall) {
+                                    array_push($all_facility, 'Multipurpose Hall' . ($facility->multipurpose_hall_unit > 0 ? ' (' . $facility->multipurpose_hall_unit . ')' : ''));
+                                }
+                                if ($facility->gym) {
+                                    array_push($all_facility, 'Gym' . ($facility->gym_unit > 0 ? ' (' . $facility->gym_unit . ')' : ''));
+                                }
+                                if ($facility->playground) {
+                                    array_push($all_facility, 'Playground' . ($facility->playground_unit > 0 ? ' (' . $facility->playground_unit . ')' : ''));
+                                }
+                                if ($facility->guardhouse) {
+                                    array_push($all_facility, 'Guardhouse' . ($facility->guardhouse_unit > 0 ? ' (' . $facility->guardhouse_unit . ')' : ''));
+                                }
+                                if ($facility->kindergarten) {
+                                    array_push($all_facility, 'Kindergarten' . ($facility->kindergarten_unit > 0 ? ' (' . $facility->kindergarten_unit . ')' : ''));
+                                }
+                                if ($facility->open_space) {
+                                    array_push($all_facility, 'Open Space' . ($facility->open_space_unit > 0 ? ' (' . $facility->open_space_unit . ')' : ''));
+                                }
+                                if ($facility->lift) {
+                                    $total_lif = $facility->lift_unit;
+                                    array_push($all_facility, 'Lift' . ($facility->lift_unit > 0 ? ' (' . $facility->lift_unit . ')' : ''));
+                                }
+                                if ($facility->rubbish_room) {
+                                    array_push($all_facility, 'Rubbish Room' . ($facility->rubbish_room_unit > 0 ? ' (' . $facility->rubbish_room_unit . ')' : ''));
+                                }
+                                if ($facility->gated) {
+                                    array_push($all_facility, 'Gated' . ($facility->gated_unit > 0 ? ' (' . $facility->gated_unit . ')' : ''));
+                                }
+                                if ($facility->others) {
+                                    array_push($all_facility, $facility->others);
+                                }
+                            }
+
+                            $all_management = [];
+                            if ($management = $files->management) {
+                                if ($management->is_developer && $files->managementDeveloper) {
+                                    array_push($all_management, 'Developer');
+                                }
+                                if ($management->is_jmb && $files->managementJMB) {
+                                    array_push($all_management, 'JMB');
+                                }
+                                if ($management->is_mc && $files->managementMC) {
+                                    array_push($all_management, 'MC');
+                                }
+                                if ($management->is_agent && $files->managementAgent) {
+                                    array_push($all_management, 'Agent');
+                                }
+                                if ($management->is_others && $files->managementOthers) {
+                                    array_push($all_management, 'Others');
+                                }
+                            }
+
+                            $agm_status = 'Tidak Pernah AGM';
+                            if ($lastAgm = $files->latestAgmDate) {
+                                if ($lastAgm->agm_date > 0) {
+                                    if (strtotime($lastAgm->agm_date) < strtotime('-15 months') ) {
+                                        $agm_status = 'Melebihi 15 bulan';
+                                    } else if (strtotime($lastAgm->agm_date) < strtotime('-12 months') ) {
+                                        $agm_status = 'Melebihi 12 bulan';
+                                    } else {
+                                        $agm_status = 'Kurang 12 bulan';
+                                    }
+                                }
+                            }
+
+                            Arr::set($result[$files->id], trans('COB'), $council->name . ' (' . $council->short_name . ')');
+                            Arr::set($result[$files->id], trans('No Fail'), $files->file_no);
+                            Arr::set($result[$files->id], trans('Skim'), $strata->strataName());
+                            Arr::set($result[$files->id], trans('Jenis Pemajuan'), ($strata->landTitle ? $strata->landTitle->description : ''));
+                            Arr::set($result[$files->id], trans('Kategori Pemajuan'), ($strata->categories ? $strata->categories->description : ''));
+                            Arr::set($result[$files->id], trans('Bilangan Unit'), $total_unit);
+                            Arr::set($result[$files->id], trans('Bilangan Blok'), $strata->block_no);
+                            Arr::set($result[$files->id], trans('Residential Maintenance Fee'), ($strata_residential ? $strata_residential->maintenance_fee : ''));
+                            Arr::set($result[$files->id], trans('Residential Maintenance Fee UOM'), ($strata_residential ? ($strata_residential_mf_uom ? $strata_residential_mf_uom->description : '') : ''));
+                            Arr::set($result[$files->id], trans('Residential Singking Fund'), ($strata_residential ? $strata_residential->sinking_fund : ''));
+                            Arr::set($result[$files->id], trans('Residential Singking Fund UOM'), ($strata_residential ? ($strata_residential_sf_uom ? $strata_residential_sf_uom->description : '') : ''));
+                            Arr::set($result[$files->id], trans('Commercial Maintenance Fee'), ($strata_commercial ? $strata_commercial->maintenance_fee : ''));
+                            Arr::set($result[$files->id], trans('Commercial Maintenance Fee UOM'), ($strata_commercial ? ($strata_commercial_mf_uom ? $strata_commercial_mf_uom->description : '') : ''));
+                            Arr::set($result[$files->id], trans('Commercial Singking Fund'), ($strata_commercial ? $strata_commercial->sinking_fund : ''));
+                            Arr::set($result[$files->id], trans('Commercial Singking Fund UOM'), ($strata_commercial ? ($strata_commercial_sf_uom ? $strata_commercial_sf_uom->description : '') : ''));
+                            Arr::set($result[$files->id], trans('Jumlah Lif'), $total_lif);
+                            Arr::set($result[$files->id], trans('Tahun Siap Bina/CCC/CF'), $strata->ccc_date > 0 ?  date('Y', strtotime($strata->ccc_date)) : '');
+                            Arr::set($result[$files->id], trans('Senarai Harta/Kemudahan Bersama'), implode(', ', $all_facility));
+                            Arr::set($result[$files->id], trans('Status Penubuhan JMB/MC/Bwh Pemaju'), implode(', ', $all_management));
+                            Arr::set($result[$files->id], trans('Status Pengurusan'), ($files->is_active ? 'Aktif' : 'Tidak Aktif'));
+                            Arr::set($result[$files->id], trans('AGM yg melebihi 12 bulan, 15 Bulan dan kurang 12 bulan'), $agm_status); 
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, strtoupper($cob));
+    }
+
+    public function auditedAccount($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+        
+        $result = [];
+
+        $councils = $this->council($cob);
+
+        if ($councils) {
+            foreach ($councils as $council) {
+                if ($council->files) {
+                    foreach ($council->files as $files) {
+                        if ($strata = $files->strata) {
+
+                            $latestAuditedAccount = '';
+                            if ($lastAgm = $files->latestAgmDate) {
+                                if ($lastAgm->audit_report_url || $lastAgm->report_audited_financial_url) {
+                                    $latestAuditedAccount = $lastAgm->updated_at->format('Y-m-d H:i:s');
+                                }
+                            }
+
+                            Arr::set($result[$files->id], trans('COB'), $council->name . ' (' . $council->short_name . ')');
+                            Arr::set($result[$files->id], trans('No Fail'), $files->file_no);
+                            Arr::set($result[$files->id], trans('Skim'), $strata->strataName());
+                            Arr::set($result[$files->id], trans('Last Submit Audited Account'), $latestAuditedAccount);
+                         }
+                    }
+                }
+            }
+        }
+
+        return $this->result($result, strtoupper($cob));
+    }
 }

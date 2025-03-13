@@ -862,7 +862,7 @@ class ImportController extends BaseController
 
                     (new FinanceController())->saveFinanceSummary($finance_file, $data_summary_amount);
 
-                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */

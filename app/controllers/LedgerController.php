@@ -184,7 +184,7 @@ class LedgerController extends \BaseController
 			App::abort(404);
 		}
 
-		if (!Auth::user()->isJMB()) {
+		if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper()) {
 			App::abort(404);
 		}
 	}

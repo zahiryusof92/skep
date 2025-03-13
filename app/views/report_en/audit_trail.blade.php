@@ -53,7 +53,7 @@ $company = Company::find(Auth::user()->company_id);
                                     </select>
                                 </div>
                             </div>
-                            @if(!Auth::user()->isJMB())
+                            @if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper())
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>{{ trans('app.forms.role') }}</label>

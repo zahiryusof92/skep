@@ -347,7 +347,7 @@ class PostponeAGMController extends \BaseController
 							});
 						}
 
-						if ($application->user->isJMB() || $application->user->isMC()) {
+						if ($application->user->isJMB() || $application->user->isMC() || $application->user->isDeveloper()) {
 							// Mail::later(Carbon::now()->addSeconds($delay), 'emails.postpone_agm.new_application_cob', array('model' => $application, 'date' => $application->created_at->toDayDateTimeString(), 'status' => $application->getStatusText()), function ($message) {
 							// 	$message->to('cob@mbpj.gov.my', 'COB')->subject('New Application');
 							// });
@@ -664,7 +664,7 @@ class PostponeAGMController extends \BaseController
 			App::abort(404);
 		}
 
-		if ((!Auth::user()->getAdmin() && !Auth::user()->isCOB()) && !Auth::user()->isJMB()) {
+		if ((!Auth::user()->getAdmin() && !Auth::user()->isCOB()) && !Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper()) {
 			App::abort(404);
 		}
 	}

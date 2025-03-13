@@ -44,7 +44,7 @@ class ReportController extends BaseController
                         if ($model->file) {
                             return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
                         }
-                        if ($model->user && $model->user->isJMB()) {
+                        if ($model->user && ($model->user->isJMB() || $model->user->isMC() || $model->user->isDeveloper())) {
                             if (empty($model->user->getFile)) {
                                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
                             }
@@ -147,7 +147,7 @@ class ReportController extends BaseController
                         if ($model->file_id > 0) {
                             return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
                         }
-                        if ($model->user->isJMB()) {
+                        if ($model->user && ($model->user->isJMB() || $model->user->isMC() || $model->user->isDeveloper())) {
                             if (empty($model->user->getFile)) {
                                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
                             }
@@ -253,7 +253,7 @@ class ReportController extends BaseController
                         if ($model->file_id > 0) {
                             return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->file->id)) . "'>" . $model->file_no . "</a>";
                         }
-                        if ($model->user->isJMB()) {
+                        if ($model->user && ($model->user->isJMB() || $model->user->isMC() || $model->user->isDeveloper())) {
                             if (empty($model->user->getFile)) {
                                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->user->getFile->id)) . "'>" . $model->user->getFile->file_no . "</a>";
                             }
@@ -647,7 +647,7 @@ class ReportController extends BaseController
         if ($proceed) {
             $query = Files::with(['financeLatest', 'company'])
                 ->file();
-            
+
             $query = $query->where('files.is_active', true);
 
             if (!empty($request['company_id'])) {
@@ -716,7 +716,7 @@ class ReportController extends BaseController
                     $proceed = true;
                 }
             }
-    
+
             if ($proceed) {
                 $items = Files::getStrataProfileAnalytic($request, true, true);
                 $response = [
@@ -895,7 +895,7 @@ class ReportController extends BaseController
                     $proceed = true;
                 }
             }
-    
+
             if ($proceed) {
                 $items = Files::getStrataProfileAnalytic($request);
                 $response = [
@@ -2429,8 +2429,18 @@ class ReportController extends BaseController
         if (Request::ajax()) {
             $request = Request::all();
             $model = Files::with([
-                'strata.towns', 'strata.categories', 'houseScheme.developers', 'management', 'managementDeveloperLatest',
-                'managementJMBLatest', 'managementMCLatest', 'insurance', 'other', 'resident', 'commercial', 'draft'
+                'strata.towns',
+                'strata.categories',
+                'houseScheme.developers',
+                'management',
+                'managementDeveloperLatest',
+                'managementJMBLatest',
+                'managementMCLatest',
+                'insurance',
+                'other',
+                'resident',
+                'commercial',
+                'draft'
             ])
                 ->file()
                 ->join('strata', 'files.id', '=', 'strata.file_id')
@@ -2707,11 +2717,11 @@ class ReportController extends BaseController
             $request = Request::all();
 
             $models = FileMovementUser::leftJoin('file_movements', 'file_movement_users.file_movement_id', '=', 'file_movements.id')
-            ->leftJoin('files', 'file_movements.file_id', '=', 'files.id')
-            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
-            ->leftJoin('users', 'file_movement_users.user_id', '=', 'users.id')
-            ->select('file_movements.*', 'files.file_no as file_no', 'strata.name as strata_name', 'file_movement_users.created_at as movement_date', 'users.full_name as appointed_name')
-            ->where('file_movements.is_deleted', 0);
+                ->leftJoin('files', 'file_movements.file_id', '=', 'files.id')
+                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                ->leftJoin('users', 'file_movement_users.user_id', '=', 'users.id')
+                ->select('file_movements.*', 'files.file_no as file_no', 'strata.name as strata_name', 'file_movement_users.created_at as movement_date', 'users.full_name as appointed_name')
+                ->where('file_movements.is_deleted', 0);
 
             if (!empty($request['filter'])) {
                 return Datatables::of($models)
@@ -2770,5 +2780,172 @@ class ReportController extends BaseController
         );
 
         return View::make('report_en.file_movement', $viewData);
+    }
+
+    public function finance()
+    {
+       Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Finance / Month'));
+
+        $request = Request::all();
+        $year = Files::getVPYear();
+        $company = Company::find(Auth::user()->company_id);
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty($user->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)
+                    ->where('company_id', $company->id)
+                    ->where('is_deleted', 0)
+                    ->orderBy('year', 'asc')
+                    ->get();
+            } else {
+                $files = Files::where('company_id', $company->id)
+                    ->where('is_deleted', 0)
+                    ->orderBy('year', 'asc')
+                    ->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)
+                    ->orderBy('year', 'asc')
+                    ->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))
+                    ->where('is_deleted', 0)
+                    ->orderBy('year', 'asc')
+                    ->get();
+            }
+        }
+
+        if (empty(Session::get('admin_cob'))) {
+            $cob = Company::where('is_active', 1)
+                ->where('is_main', 0)
+                ->where('is_deleted', 0)
+                ->orderBy('name')
+                ->get();
+        } else {
+            $cob = Company::where('id', Session::get('admin_cob'))
+                ->get();
+        }
+
+        if (Request::ajax()) {
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $models = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select('finance_file.*', 'files.file_no as file_no', 'strata.name as strata_name', 'finance_check.is_active as status')
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', $company->id)
+                        ->where('files.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_active', 1)
+                        ->where('finance_file.is_deleted', 0);
+                } else {
+                    $models = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select('finance_file.*', 'files.file_no as file_no', 'strata.name as strata_name', 'finance_check.is_active as status')
+                        ->where('files.company_id', $company->id)
+                        ->where('files.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_active', 1)
+                        ->where('finance_file.is_deleted', 0);
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $models = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select('finance_file.*', 'files.file_no as file_no', 'strata.name as strata_name', 'finance_check.is_active as status')
+                        ->where('files.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_active', 1)
+                        ->where('finance_file.is_deleted', 0);
+                } else {
+                    $models = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                        ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select('finance_file.*', 'files.file_no as file_no', 'strata.name as strata_name', 'finance_check.is_active as status')
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_active', 1)
+                        ->where('files.is_deleted', 0)
+                        ->where('finance_file.is_active', 1)
+                        ->where('finance_file.is_deleted', 0);
+                }
+            }
+
+            return Datatables::of($models)
+                ->addColumn('cob', function ($model) {
+                    return ($model->file->company ? $model->file->company->short_name : '-');
+                })
+                ->editColumn('file_no', function ($model) {
+                    return $model->file->file_no;
+                })
+                ->editColumn('created_at', function ($model) {
+                    return date('d/m/Y', strtotime($model->created_at));
+                })
+                ->editColumn('strata_name', function ($model) {
+                    return ($model->file->strata ? $model->file->strata->strataName() : '-');
+                })
+                ->editColumn('month', function ($model) {
+                    return ($model->month ? $model->monthName() : '');
+                })
+                ->editColumn('year', function ($model) {
+                    return ($model->year != '0' ? $model->year : '');
+                })
+                ->addColumn('status', function ($model) {
+                    if ($model->status == 1) {
+                        $is_active = trans('app.forms.approved');
+                    } else {
+                        $is_active = trans('app.forms.rejected');
+                    }
+
+                    return $is_active;
+                })
+                ->filter(function ($query) use ($request) {
+                    if (!empty($request['cob'])) {
+                        $query->where('company.id', $request['cob']);
+                    }
+                    if (!empty($request['file'])) {
+                        $query->where('files.id', $request['file']);
+                    }
+                    if (!empty($request['year'])) {
+                        $query->where('finance_file.year', $request['year']);
+                    }
+                    if (!empty($request['month'])) {
+                        $query->where('finance_file.month', $request['month']);
+                    }
+                    if (!empty($request['start_date']) || !empty($request['end_date'])) {
+                        $start_date = !empty($request['start_date']) ? Carbon::parse($request['start_date']) : Carbon::create(1984, 1, 35, 13, 0, 0);
+                        $end_date = !empty($request['end_date']) ? Carbon::parse($request['end_date']) : Carbon::now();
+                        $query->whereBetween('finance_file.created_at', [$start_date, $end_date]);
+                    }
+                })
+                ->make(true);
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.finance'),
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'finance_report_list',
+            'image' => '',
+            'cob' => $cob,
+            'year' => $year,
+            'month' => Finance::monthList(),
+            'files' => $files,
+            'company' => $company,
+        );
+
+        if (isset($request['tab']) && $request['tab'] == 'tab_2') {
+            return View::make('report_en.finance_tab_2', $viewData);
+        }
+
+        return View::make('report_en.finance_tab_1', $viewData);
+        
     }
 }

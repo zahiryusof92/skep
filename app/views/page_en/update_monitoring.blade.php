@@ -71,7 +71,7 @@ foreach ($user_permission as $permission) {
                                         </div>
                                     </section>
                                     
-                                    @if (Auth::user()->getAdmin() || Auth::user()->isJMB())
+                                    @if (Auth::user()->getAdmin() || Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
                                     <hr/>
                                     <section class="panel panel-pad">
                                         <div class="row padding-vertical-20">

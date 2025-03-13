@@ -234,7 +234,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function hasEpks() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Auth::user()->file_id) {
                 $file = Files::find(Auth::user()->file_id);
 
@@ -248,7 +248,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function myEpks() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Auth::user()->file_id) {
                 $file = Files::find(Auth::user()->file_id);
 

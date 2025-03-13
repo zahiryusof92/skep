@@ -24,7 +24,7 @@ foreach ($user_permission as $permission) {
             <div class="widget widget-four background-transparent">
                 <div class="row">
 
-                    @if (!Auth::user()->isJMB() && !Auth::user()->isMC())
+                    @if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper())
                         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <a href="{{ route('cob.file.index') }}">
                                 <div class="step-block">
@@ -328,7 +328,7 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            @if (!Auth::user()->isJMB() && !Auth::user()->isMC())
+            @if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper())
             <div class="row">
                 <div class="col-lg-12">
                     <div class="margin-bottom-50 chart-custom">

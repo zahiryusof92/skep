@@ -144,7 +144,7 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
-		if (Auth::user()->isJMB()) {
+		if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
 			if (Request::ajax()) {
 				$model = EServiceOrder::self()->draft();
 
@@ -412,7 +412,7 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
-		if (Auth::user()->isJMB()) {
+		if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
 			$cob = Auth::user()->getCOB->short_name;
 			if (!empty($cob)) {
 				if (!empty($type)) {
@@ -790,7 +790,7 @@ class EServiceController extends BaseController
 							});
 						}
 
-						if ($order->user->isJMB() || $order->user->isMC()) {
+						if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
 							if (!empty(Config::get('payment.mbpj.email_cob'))) {
 								Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
 									$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
@@ -936,7 +936,7 @@ class EServiceController extends BaseController
 								});
 							}
 
-							if ($order->user->isJMB() || $order->user->isMC()) {
+							if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
 								if (!empty(Config::get('payment.mbpj.email_cob'))) {
 									Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
 										$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
@@ -1021,7 +1021,7 @@ class EServiceController extends BaseController
 											});
 										}
 
-										if ($order->user->isJMB() || $order->user->isMC()) {
+										if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
 											if (!empty(Config::get('payment.mbpj.email_cob'))) {
 												Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
 													$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
@@ -1364,7 +1364,7 @@ class EServiceController extends BaseController
 	{
 		$management = [];
 
-		if (Auth::user()->isJMB()) {
+		if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
 			if (!empty(Auth::user()->file_id)) {
 				$file = Files::with(['strata'])->find(Auth::user()->file_id);
 				if ($file && $file->strata) {
