@@ -601,6 +601,387 @@ return [
             ]
 
         ],
+        'agm' => [
+            'minute' => [
+                'name' => 'agm_minute',
+                'agm' => [
+                    'jmb' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.agm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                    'mc' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.agm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                ],
+                'egm' => [
+                    'jmb' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.egm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                    'mc' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.egm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                ]
+            ]
+        ],
         'area' => [
             'name' => 'area'
         ],
@@ -1648,6 +2029,10 @@ return [
         'dlp_deposit' => 'uploads/dlp_deposit',
         'dlp_deposit_usage' => 'uploads/dlp_deposit_usage',
         'audit_accounts' => 'uploads/audit_accounts',
+        'jmb_agm' => 'uploads/agm/minute/jmb_agm',
+        'jmb_egm' => 'uploads/agm/minute/jmb_egm',
+        'mc_agm' => 'uploads/agm/minute/mc_agm',
+        'mc_egm' => 'uploads/agm/minute/mc_egm',
     ],
     'dlp_checklist' => [
         1 => 'Surat Rasmi Serahan Cek',

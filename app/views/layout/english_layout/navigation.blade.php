@@ -824,11 +824,19 @@ if (!Auth::user()->getAdmin()) {
                     @endif
 
                     @if (AccessGroup::hasAccess(32))
+                    @if (Auth::user()->getCOB->short_name == "MPKJ")
+                    <li id="agmminutesub_list">
+                        <a class="left-menu-link" href="{{URL::action('AGMMinuteController@index')}}">
+                            {{ trans('app.menus.agm.upload_of_minutes') }}
+                        </a>
+                    </li>
+                    @else
                     <li id="agmminutesub_list">
                         <a class="left-menu-link" href="{{URL::action('AgmController@minutes')}}">
                             {{ trans('app.menus.agm.upload_of_minutes') }}
                         </a>
                     </li>
+                    @endif
                     @endif
 
                     @if (AccessGroup::hasAccess(33))
@@ -1088,7 +1096,7 @@ if (!Auth::user()->getAdmin()) {
                     ?>
 
                     @foreach ($jmb as $cob)
-                    <li id="{{ $cob->short_name . "_list" }}">
+                    <li id="{{ $cob->short_name . "_list" }}" class="{{ (Session::get('admin_cob') == $cob->id ? 'left-menu-list-active' : '') }}">
                         <a class="left-menu-link" href='{{ URL::action('UserController@changeCOB', $cob->id) }}'>{{ strtoupper($cob->short_name) }}</a>
                     </li>
                     @endforeach

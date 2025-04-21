@@ -1120,6 +1120,13 @@ Route::group(array('before' => 'authMember'), function () {
     Route::get('draft/reject/{id}', array('as' => 'file.draft.reject.show', 'uses' => 'DraftRejectController@show'));
 
     /**
+     * New AGM Submission
+     */
+    Route::resource('agm-minute', 'AGMMinuteController');
+    Route::post('agm-minute/getForm',  array('as' => 'agm-minute.getForm', 'uses' => 'AGMMinuteController@getForm'));
+    Route::post('agm-minute/fileUpload',  array('as' => 'agm-minute.fileUpload', 'uses' => 'AGMMinuteController@fileUpload'));
+
+    /**
      * MPS Sync
      */
     Route::get('mpsSync', 'MPSSyncController@index');

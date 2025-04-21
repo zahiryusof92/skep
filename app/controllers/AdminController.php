@@ -2916,6 +2916,10 @@ class AdminController extends BaseController
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
 
+        if ($files->company && $files->company->short_name == 'MPKJ') {
+            return View::make('page_en.update_monitoring_new', $viewData);
+        }
+
         return View::make('page_en.update_monitoring', $viewData);
     }
 
@@ -3587,140 +3591,313 @@ class AdminController extends BaseController
 
     public function getAGM($file_id)
     {
-        $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $file = Files::find(Helper::decode($file_id));
 
-        if (count($agm_detail) > 0) {
-            $data = array();
-            foreach ($agm_detail as $agm_details) {
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
-                            data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
-                            data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
-                            data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
-                            data-audit_start_date_raw="' . ($agm_details->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_start_date)) : '') . '"
-                            data-audit_end_date_raw="' . ($agm_details->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_end_date)) : '') . '"
-                            data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
-                                <i class="fa fa-pencil"></i>
-                            </button>
-                            &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
-                                <i class="fa fa-trash""></i>
-                            </button>';
+        if ($file->company && $file->company->short_name == 'MPKJ') {
+            if (Request::ajax()) {
+                $condition = '';
+                if (!Auth::user()->getAdmin()) {
+                    if (!empty(Auth::user()->file_id)) {
+                        $condition = function ($query) {
+                            $query->where('agm_minutes.file_id', Auth::user()->file_id);
+                        };
+                    } else if (!empty($file_id)) {
+                        $condition = function ($query) use ($file_no) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                } else {
+                    if (!empty($file_id)) {
+                        $condition = function ($query) use ($file) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                }
+                $model = AGMMinute::join('files', 'agm_minutes.file_id', '=', 'files.id')
+                    ->where(function ($query) use ($condition) {
+                        if (!empty($condition)) {
+                            $query->where($condition);
+                        }
+                    })
+                    ->selectRaw("agm_minutes.*, files.file_no")
+                    ->where('agm_minutes.type', 'jmb')
+                    ->where('agm_minutes.is_deleted', 0)
+                    ->orderBy('agm_minutes.created_at', "desc");
 
-                if ($agm_details->agm_date == "0000-00-00") {
-                    $date_agm = '';
-                } else {
-                    $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
-                }
-                if ($agm_details->audit_start_date == "0000-00-00") {
-                    $date_audit_start = '';
-                } else {
-                    $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
-                }
-                if ($agm_details->audit_end_date == "0000-00-00") {
-                    $date_audit_end = '';
-                } else {
-                    $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
-                }
-                if ($agm_details->agm == 0 || $agm_details->agm == "") {
-                    $status1 = '';
-                } else {
-                    $status1 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->egm == 0 || $agm_details->egm == "") {
-                    $status2 = '';
-                } else {
-                    $status2 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
-                    $status3 = '';
-                } else {
-                    $status3 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_integrity_url == "") {
-                    $status4 = '';
-                } else {
-                    $status4 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_bankruptcy_url == "") {
-                    $status5 = '';
-                } else {
-                    $status5 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
-                    $status6 = '';
-                } else {
-                    $status6 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
-                    $status7 = '';
-                } else {
-                    $status7 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
-                    $status8 = '';
-                } else {
-                    $status8 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
-                    $status9 = '';
-                } else {
-                    $status9 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->audit_report_url == "") {
-                    $status10 = '';
-                } else {
-                    $status10 = '<i class="icmn-checkmark4"></i>';
-                }
+                return Datatables::of($model)
+                    ->editColumn('file_id', function ($model) {
+                        return $model->file_no;
+                    })
+                    ->editColumn('agm_type', function ($model) {
+                        return strtoupper($model->agm_type);
+                    })
+                    ->editColumn('description', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                $content .= $configs['questions'][str_replace("_file_url", "", $key)]['label'] . "<br/>";
+                            }
+                        }
+                        return $content;
+                    })
+                    ->editColumn('updated_at', function ($model) {
+                        return date('d-M-Y', strtotime($model->updated_at));
+                    })
+                    ->addColumn('check_status', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                if ($val == "") {
+                                    $status = '<i class="icmn-cross"></i>';
+                                } else {
+                                    $status = '<i class="icmn-checkmark"></i>';
+                                }
+                                if (!empty($configs['questions'][str_replace("_file_url", "", $key)])) {
+                                    $content .= "$status<br/>";
+                                }
+                            }
+                        }
+                        return $content;
+                    })
+                    ->addColumn('action', function ($model) {
+                        $btn = '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit"' .
+                            'data-id="' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" data-type="' . $model->type . '" data-agm_type="' . $model->agm_type . '" data-agm_date="' . $model->agm_date . '" ' .
+                            'data-is_first="' . $model->is_first . '" data-remarks="' . $model->remarks . '"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
+                        $btn .= '<form action="' . route('agm-minute.destroy', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" style="display:inline-block;">';
+                        $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form>';
 
-                $data_raw = array(
-                    $date_agm,
-                    trans('app.forms.annual_general_meeting') . '<br/>'
-                        . trans('app.forms.extra_general_meeting') . '<br/>'
-                        . trans('app.forms.meeting_minutes') . '<br/>'
-                        . trans('app.forms.pledge_letter_of_integrity') . '<br>'
-                        . trans('app.forms.declaration_letter_of_non_bankruptcy'),
-                    $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
-                    trans('app.forms.jmc_spa_copy') . '<br/>'
-                        . trans('app.forms.identity_card_list') . '<br/>'
-                        . trans('app.forms.attendance_list'),
-                    $status6 . '<br/>' . $status7 . '<br/>' . $status8,
-                    trans('app.forms.audited_financial_report') . '<br/>'
-                        . trans('app.forms.financial_audit_start_date') . '<br/>'
-                        . trans('app.forms.financial_audit_end_date') . '<br/>'
-                        . trans('app.forms.financial_audit_report'),
-                    $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
-                    date('d-M-Y', strtotime($agm_details->updated_at)),
-                    $button
+                        return $btn;
+                    })
+                    ->make(true);
+            }
+        } else {
+            $agm_detail = MeetingDocument::where('file_id', $file->id)->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+            if (count($agm_detail) > 0) {
+                $data = array();
+                foreach ($agm_detail as $agm_details) {
+                    $button = "";
+                    $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
+                                data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
+                                data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
+                                data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
+                                data-audit_start_date_raw="' . ($agm_details->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_start_date)) : '') . '"
+                                data-audit_end_date_raw="' . ($agm_details->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_end_date)) : '') . '"
+                                data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                &nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
+                                    <i class="fa fa-trash""></i>
+                                </button>';
+
+                    if ($agm_details->agm_date == "0000-00-00") {
+                        $date_agm = '';
+                    } else {
+                        $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
+                    }
+                    if ($agm_details->audit_start_date == "0000-00-00") {
+                        $date_audit_start = '';
+                    } else {
+                        $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
+                    }
+                    if ($agm_details->audit_end_date == "0000-00-00") {
+                        $date_audit_end = '';
+                    } else {
+                        $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
+                    }
+                    if ($agm_details->agm == 0 || $agm_details->agm == "") {
+                        $status1 = '';
+                    } else {
+                        $status1 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->egm == 0 || $agm_details->egm == "") {
+                        $status2 = '';
+                    } else {
+                        $status2 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
+                        $status3 = '';
+                    } else {
+                        $status3 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_integrity_url == "") {
+                        $status4 = '';
+                    } else {
+                        $status4 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_bankruptcy_url == "") {
+                        $status5 = '';
+                    } else {
+                        $status5 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
+                        $status6 = '';
+                    } else {
+                        $status6 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
+                        $status7 = '';
+                    } else {
+                        $status7 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
+                        $status8 = '';
+                    } else {
+                        $status8 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
+                        $status9 = '';
+                    } else {
+                        $status9 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->audit_report_url == "") {
+                        $status10 = '';
+                    } else {
+                        $status10 = '<i class="icmn-checkmark4"></i>';
+                    }
+
+                    $data_raw = array(
+                        $date_agm,
+                        trans('app.forms.annual_general_meeting') . '<br/>'
+                            . trans('app.forms.extra_general_meeting') . '<br/>'
+                            . trans('app.forms.meeting_minutes') . '<br/>'
+                            . trans('app.forms.pledge_letter_of_integrity') . '<br>'
+                            . trans('app.forms.declaration_letter_of_non_bankruptcy'),
+                        $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
+                        trans('app.forms.jmc_spa_copy') . '<br/>'
+                            . trans('app.forms.identity_card_list') . '<br/>'
+                            . trans('app.forms.attendance_list'),
+                        $status6 . '<br/>' . $status7 . '<br/>' . $status8,
+                        trans('app.forms.audited_financial_report') . '<br/>'
+                            . trans('app.forms.financial_audit_start_date') . '<br/>'
+                            . trans('app.forms.financial_audit_end_date') . '<br/>'
+                            . trans('app.forms.financial_audit_report'),
+                        $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
+                        date('d-M-Y', strtotime($agm_details->updated_at)),
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+                $output_raw = array(
+                    "aaData" => $data
                 );
 
-                array_push($data, $data_raw);
+                $output = json_encode($output_raw);
+                return $output;
+            } else {
+                $output_raw = array(
+                    "aaData" => []
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
             }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
         }
     }
 
     public function getAGMByMC($file_id)
     {
-        $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $file = Files::find(Helper::decode($file_id));
 
-        if (count($agm_detail) > 0) {
-            $data = array();
-            foreach ($agm_detail as $agm_details) {
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
+        if ($file->company && $file->company->short_name == 'MPKJ') {
+            if (Request::ajax()) {
+                $condition = '';
+                if (!Auth::user()->getAdmin()) {
+                    if (!empty(Auth::user()->file_id)) {
+                        $condition = function ($query) {
+                            $query->where('agm_minutes.file_id', Auth::user()->file_id);
+                        };
+                    } else if (!empty($file_id)) {
+                        $condition = function ($query) use ($file) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                } else {
+                    if (!empty($file_id)) {
+                        $condition = function ($query) use ($file) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                }
+                $model = AGMMinute::join('files', 'agm_minutes.file_id', '=', 'files.id')
+                    ->where(function ($query) use ($condition) {
+                        if (!empty($condition)) {
+                            $query->where($condition);
+                        }
+                    })
+                    ->selectRaw("agm_minutes.*, files.file_no")
+                    ->where('agm_minutes.type', 'mc')
+                    ->where('agm_minutes.is_deleted', 0)
+                    ->orderBy('agm_minutes.created_at', "desc");
+
+                return Datatables::of($model)
+                    ->editColumn('file_id', function ($model) {
+                        return $model->file_no;
+                    })
+                    ->editColumn('agm_type', function ($model) {
+                        return strtoupper($model->agm_type);
+                    })
+                    ->editColumn('description', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                $content .= $configs['questions'][str_replace("_file_url", "", $key)]['label'] . "<br/>";
+                            }
+                        }
+                        return $content;
+                    })
+                    ->editColumn('updated_at', function ($model) {
+                        return date('d-M-Y', strtotime($model->updated_at));
+                    })
+                    ->addColumn('check_status', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                if ($val == "") {
+                                    $status = '<i class="icmn-cross"></i>';
+                                } else {
+                                    $status = '<i class="icmn-checkmark"></i>';
+                                }
+                                if (!empty($configs['questions'][str_replace("_file_url", "", $key)])) {
+                                    $content .= "$status<br/>";
+                                }
+                            }
+                        }
+                        return $content;
+                    })
+                    ->addColumn('action', function ($model) {
+                        $btn = '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit"' .
+                            'data-id="' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" data-type="' . $model->type . '" data-agm_type="' . $model->agm_type . '" data-agm_date="' . $model->agm_date . '" ' .
+                            'data-is_first="' . $model->is_first . '" data-remarks="' . $model->remarks . '"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
+                        $btn .= '<form action="' . route('agm-minute.destroy', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" style="display:inline-block;">';
+                        $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form>';
+
+                        return $btn;
+                    })
+                    ->make(true);
+            }
+        } else {
+            $agm_detail = MeetingDocument::where('file_id', $file->id)->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+            if (count($agm_detail) > 0) {
+                $data = array();
+                foreach ($agm_detail as $agm_details) {
+                    $button = "";
+                    $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
                             data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
                             data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
                             data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
@@ -3730,112 +3907,113 @@ class AdminController extends BaseController
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
                                 <i class="fa fa-trash""></i>
                             </button>';
 
-                if ($agm_details->agm_date == "0000-00-00") {
-                    $date_agm = '';
-                } else {
-                    $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
-                }
-                if ($agm_details->audit_start_date == "0000-00-00") {
-                    $date_audit_start = '';
-                } else {
-                    $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
-                }
-                if ($agm_details->audit_end_date == "0000-00-00") {
-                    $date_audit_end = '';
-                } else {
-                    $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
-                }
-                if ($agm_details->agm == 0 || $agm_details->agm == "") {
-                    $status1 = '';
-                } else {
-                    $status1 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->egm == 0 || $agm_details->egm == "") {
-                    $status2 = '';
-                } else {
-                    $status2 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
-                    $status3 = '';
-                } else {
-                    $status3 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_integrity_url == "") {
-                    $status4 = '';
-                } else {
-                    $status4 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_bankruptcy_url == "") {
-                    $status5 = '';
-                } else {
-                    $status5 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
-                    $status6 = '';
-                } else {
-                    $status6 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
-                    $status7 = '';
-                } else {
-                    $status7 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
-                    $status8 = '';
-                } else {
-                    $status8 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
-                    $status9 = '';
-                } else {
-                    $status9 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->audit_report_url == "") {
-                    $status10 = '';
-                } else {
-                    $status10 = '<i class="icmn-checkmark4"></i>';
-                }
+                    if ($agm_details->agm_date == "0000-00-00") {
+                        $date_agm = '';
+                    } else {
+                        $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
+                    }
+                    if ($agm_details->audit_start_date == "0000-00-00") {
+                        $date_audit_start = '';
+                    } else {
+                        $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
+                    }
+                    if ($agm_details->audit_end_date == "0000-00-00") {
+                        $date_audit_end = '';
+                    } else {
+                        $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
+                    }
+                    if ($agm_details->agm == 0 || $agm_details->agm == "") {
+                        $status1 = '';
+                    } else {
+                        $status1 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->egm == 0 || $agm_details->egm == "") {
+                        $status2 = '';
+                    } else {
+                        $status2 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
+                        $status3 = '';
+                    } else {
+                        $status3 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_integrity_url == "") {
+                        $status4 = '';
+                    } else {
+                        $status4 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_bankruptcy_url == "") {
+                        $status5 = '';
+                    } else {
+                        $status5 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
+                        $status6 = '';
+                    } else {
+                        $status6 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
+                        $status7 = '';
+                    } else {
+                        $status7 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
+                        $status8 = '';
+                    } else {
+                        $status8 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
+                        $status9 = '';
+                    } else {
+                        $status9 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->audit_report_url == "") {
+                        $status10 = '';
+                    } else {
+                        $status10 = '<i class="icmn-checkmark4"></i>';
+                    }
 
-                $data_raw = array(
-                    $date_agm,
-                    trans('app.forms.annual_general_meeting') . '<br/>'
-                        . trans('app.forms.extra_general_meeting') . '<br/>'
-                        . trans('app.forms.meeting_minutes') . '<br/>'
-                        . trans('app.forms.pledge_letter_of_integrity') . '<br>'
-                        . trans('app.forms.declaration_letter_of_non_bankruptcy'),
-                    $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
-                    trans('app.forms.jmc_spa_copy') . '<br/>'
-                        . trans('app.forms.identity_card_list') . '<br/>'
-                        . trans('app.forms.attendance_list'),
-                    $status6 . '<br/>' . $status7 . '<br/>' . $status8,
-                    trans('app.forms.audited_financial_report') . '<br/>'
-                        . trans('app.forms.financial_audit_start_date') . '<br/>'
-                        . trans('app.forms.financial_audit_end_date') . '<br/>'
-                        . trans('app.forms.financial_audit_report'),
-                    $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
-                    date('d-M-Y', strtotime($agm_details->updated_at)),
-                    $button
+                    $data_raw = array(
+                        $date_agm,
+                        trans('app.forms.annual_general_meeting') . '<br/>'
+                            . trans('app.forms.extra_general_meeting') . '<br/>'
+                            . trans('app.forms.meeting_minutes') . '<br/>'
+                            . trans('app.forms.pledge_letter_of_integrity') . '<br>'
+                            . trans('app.forms.declaration_letter_of_non_bankruptcy'),
+                        $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
+                        trans('app.forms.jmc_spa_copy') . '<br/>'
+                            . trans('app.forms.identity_card_list') . '<br/>'
+                            . trans('app.forms.attendance_list'),
+                        $status6 . '<br/>' . $status7 . '<br/>' . $status8,
+                        trans('app.forms.audited_financial_report') . '<br/>'
+                            . trans('app.forms.financial_audit_start_date') . '<br/>'
+                            . trans('app.forms.financial_audit_end_date') . '<br/>'
+                            . trans('app.forms.financial_audit_report'),
+                        $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
+                        date('d-M-Y', strtotime($agm_details->updated_at)),
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+                $output_raw = array(
+                    "aaData" => $data
                 );
 
-                array_push($data, $data_raw);
+                $output = json_encode($output_raw);
+                return $output;
+            } else {
+                $output_raw = array(
+                    "aaData" => []
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
             }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
         }
     }
 
