@@ -874,6 +874,47 @@ return array(
         'upload_insurance_attachment' => 'Upload Cover Note / Supportive Document',
         'title' => 'Title',
         'message' => 'Message',
+        'agm_type' => 'AGM Type',
+        'first_agm' => 'First AGM',
+        "agm_submission" => [
+            "minute" => [
+                "common" => [
+                    "1" => "Borang Perakuan Pengesahan Dokumen",
+                    "2" => "Surat Permohonan <i>(Letter Head)</i>",
+                    "3" => "Salinan Notis Panggilan Mesyuarat",
+                    "4" => "Salinan Kehadiran Pembeli Yang Layak Mengundi <i>(Attendance)</i>",
+                    "5" => "Surat Lantikan Sebagai Proksi Yang Layak Mengundi bg AJK yg dilantik sahaja",
+                    "6" => "Minit Mesyuarat Jawatankuasa Pengurusan (AJK)",
+                    "7" => "Salinan Kehadiran Jawatankuasa Pengurusan (AJK)",
+                    "8" => "Senarai Nama Jawatankuasa Pengurusan (AJK)<br/>(Nama, Jawatan, No. K/P, Nombor Telefon, No. Unit Rumah)",
+                    "9" => "Salinan Kad Pengenalan setiap AJK",
+                    "10" => "Penyata Pembayaran Caj Penyenggaraan Setiap AJK",
+                    "11" => "Borang Integriti",
+                ],
+                'jmb' => [
+                    "common" => [
+                        "1" => "Salinan Surat Perjanjian Yang Lengkap Bagi Setiap Jenis Kegunaan Harta Yang Berbeza (S&P) Setiap AJK",
+                    ],
+                    "agm" => [
+                        "1" => "Minit Mesyuarat Agung (AGM)",
+                    ],
+                    "egm" => [
+                        "1" => "Minit Mesyuarat Agung (EGM)",
+                    ]
+                ],
+                "mc" => [
+                    "common" => [
+                        "1" => "Salinan Hakmilik Strata setiap AJK",
+                    ],
+                    "agm" => [
+                        "1" => "Minit Mesyuarat Agung (AGM)",
+                    ],
+                    "egm" => [
+                        "1" => "Minit Mesyuarat Agung (EGM)",
+                    ]
+                ],
+            ]
+        ],
     ),
     "errors" => array(
         "required" => "Please enter :attribute",
@@ -894,6 +935,7 @@ return array(
         "wrong_username_password" => "Wrong Username/Password",
         'payment_failed' => 'Payment Failed',
         "already_exist" => "Error, data already exist.",
+        "validation_fail" => "Some required information is missing. Please complete the form before proceeding.",
     ),
     "successes" => array(
         "deleted_title" => "Deleted",

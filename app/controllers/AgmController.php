@@ -1518,6 +1518,13 @@ class AgmController extends BaseController {
      */
 
     public function minutes() {
+        if (!empty(Session::get('admin_cob'))) {
+            $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_hidden', false)->where('is_deleted', 0)->first();
+            if ($cob && $cob->short_name == 'MPKJ') {
+                return Redirect::to('/agm-minute');
+            }
+        }
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
