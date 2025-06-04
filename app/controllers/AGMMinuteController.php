@@ -248,45 +248,45 @@ class AGMMinuteController extends BaseController
                     }
                 }
 
-                $data['file_no'] = Helper::decode($data['file_no'], $this->module['cob']['file']['name']);
-
-                $model = AGMMinute::create([
-                    'file_id' => $data['file_no'],
-                    'company_id' => Auth::user()->company_id,
-                    'type' => $data['type'],
-                    'agm_type' => $data['agm_type'],
-                    'agm_date' => $data['agm_date'],
-                    'description' => serialize($description),
-                    'remarks' => $data['remarks'],
-                ]);
-
-                if ($model) {
-                    /*
-                     * add audit trail
-                     */
-                    $file = Files::find($model->file_id);
-                    $remarks = 'AGM Minute: (' . $file->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($model->agm_date)) . $this->module['audit']['text']['data_inserted'];
-                    $this->addAudit($model->file_id, "COB File", $remarks);
-
-                    if (Auth::user()->isJMB()) {
-                        /**
-                         * Add Notification & send email to COB and JMB
-                         */
-                        $not_draft_strata = $file->strata;
-                        $notify_data['file_id'] = $file->id;
-                        $notify_data['route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
-                        $notify_data['cob_route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
-                        $notify_data['strata'] = "You";
-                        $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $file->file_no;
-                        $notify_data['title'] = "COB File AGM Minutes";
-                        $notify_data['module'] = "AGM Minutes";
-
-                        (new NotificationService())->store($notify_data);
-                    }
-                    return Response::json([
-                        'success' => true,
-                        'message' => trans('app.successes.saved_successfully')
+                $file = Files::find($data['file_no']);
+                if ($file) {
+                    $model = AGMMinute::create([
+                        'file_id' => $file->id,
+                        'company_id' => Auth::user()->company_id,
+                        'type' => $data['type'],
+                        'agm_type' => $data['agm_type'],
+                        'agm_date' => $data['agm_date'],
+                        'description' => serialize($description),
+                        'remarks' => $data['remarks'],
                     ]);
+    
+                    if ($model) {
+                        /*
+                         * add audit trail
+                         */
+                        $remarks = 'AGM Minute: (' . $file->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($model->agm_date)) . $this->module['audit']['text']['data_inserted'];
+                        $this->addAudit($model->file_id, "COB File", $remarks);
+    
+                        if (Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $file->strata;
+                            $notify_data['file_id'] = $file->id;
+                            $notify_data['route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
+                            $notify_data['cob_route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
+                            $notify_data['strata'] = "You";
+                            $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $file->file_no;
+                            $notify_data['title'] = "COB File AGM Minutes";
+                            $notify_data['module'] = "AGM Minutes";
+    
+                            (new NotificationService())->store($notify_data);
+                        }
+                        return Response::json([
+                            'success' => true,
+                            'message' => trans('app.successes.saved_successfully')
+                        ]);
+                    }
                 }
             }
         }
@@ -408,60 +408,61 @@ class AGMMinuteController extends BaseController
                         }
                     }
 
-                    $data['file_no'] = Helper::decode($data['file_no'], $this->module['cob']['file']['name']);
-
-                    /** Arrange audit fields changes */
-                    $audit_fields_changed = '';
-                    $new_line = '';
-                    $new_line .= $data['file_no'] != $model->file_id ? "file no, " : "";
-                    $new_line .= $data['type'] != $model->type ? "type, " : "";
-                    $new_line .= $data['agm_type'] != $model->agm_type ? "agm type, " : "";
-                    $new_line .= $data['agm_date'] != $model->agm_date ? "agm date, " : "";
-                    $new_line .= serialize($description) != $model->description ? "agm files, " : "";
-                    $new_line .= $data['remarks'] != $model->remarks ? "remarks, " : "";
-                    if (!empty($new_line)) {
-                        $audit_fields_changed .= "<br/><ul><li> Fields : (";
-                        $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
-                    }
-                    /** End Arrange audit fields changes */
-
-                    $model->update([
-                        'file_id' => $data['file_no'],
-                        'type' => $data['type'],
-                        'agm_type' => $data['agm_type'],
-                        'agm_date' => $data['agm_date'],
-                        'description' => serialize($description),
-                        'remarks' => $data['remarks'],
-                    ]);
-
-                    /*
-                     * add audit trail
-                     */
-                    $file = Files::find($model->file_id);
-                    if (!empty($audit_fields_changed)) {
-                        $remarks = 'AGM Minute: (' . $file->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($model->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
-                        $this->addAudit($model->file_id, "COB File", $remarks);
-                    }
-                    if (Auth::user()->isJMB()) {
-                        /**
-                         * Add Notification & send email to COB and JMB
+                    $file = Files::find($data['file_no']);
+                    if ($file) {
+                        /** Arrange audit fields changes */
+                        $audit_fields_changed = '';
+                        $new_line = '';
+                        $new_line .= $file->id != $model->file_id ? "file no, " : "";
+                        $new_line .= $data['type'] != $model->type ? "type, " : "";
+                        $new_line .= $data['agm_type'] != $model->agm_type ? "agm type, " : "";
+                        $new_line .= $data['agm_date'] != $model->agm_date ? "agm date, " : "";
+                        $new_line .= serialize($description) != $model->description ? "agm files, " : "";
+                        $new_line .= $data['remarks'] != $model->remarks ? "remarks, " : "";
+                        if (!empty($new_line)) {
+                            $audit_fields_changed .= "<br/><ul><li> Fields : (";
+                            $audit_fields_changed .= Helper::str_replace_last(', ', '', $new_line) . ")</li></ul>";
+                        }
+                        /** End Arrange audit fields changes */
+    
+                        $model->update([
+                            'file_id' => $file->id,
+                            'type' => $data['type'],
+                            'agm_type' => $data['agm_type'],
+                            'agm_date' => $data['agm_date'],
+                            'description' => serialize($description),
+                            'remarks' => $data['remarks'],
+                        ]);
+    
+                        /*
+                         * add audit trail
                          */
-                        $not_draft_strata = $file->strata;
-                        $notify_data['file_id'] = $file->id;
-                        $notify_data['route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
-                        $notify_data['cob_route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
-                        $notify_data['strata'] = "your";
-                        $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $file->file_no;
-                        $notify_data['title'] = "COB File AGM Minutes";
-                        $notify_data['module'] = "AGM Minutes";
-
-                        (new NotificationService())->store($notify_data, 'updated');
+                        $file = Files::find($model->file_id);
+                        if (!empty($audit_fields_changed)) {
+                            $remarks = 'AGM Minute: (' . $file->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($model->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
+                            $this->addAudit($model->file_id, "COB File", $remarks);
+                        }
+                        if (Auth::user()->isJMB()) {
+                            /**
+                             * Add Notification & send email to COB and JMB
+                             */
+                            $not_draft_strata = $file->strata;
+                            $notify_data['file_id'] = $file->id;
+                            $notify_data['route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
+                            $notify_data['cob_route'] = route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id));
+                            $notify_data['strata'] = "your";
+                            $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $file->file_no;
+                            $notify_data['title'] = "COB File AGM Minutes";
+                            $notify_data['module'] = "AGM Minutes";
+    
+                            (new NotificationService())->store($notify_data, 'updated');
+                        }
+    
+                        return Response::json([
+                            'success' => true,
+                            'message' => trans('app.successes.updated_successfully')
+                        ]);
                     }
-
-                    return Response::json([
-                        'success' => true,
-                        'message' => trans('app.successes.updated_successfully')
-                    ]);
                 }
             }
         }
