@@ -58,7 +58,7 @@
                                         <select id="file_no" name="file_no" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
                                             @foreach($fileList as $file)
-                                            <option value="{{ \Helper\Helper::encode(Config::get('constant.module.cob.file.name'), $file->id) }}" {{ Input::old('file_no') == $file->id ? 'selected' : '' }}>{{ $file->file_no }}</option>
+                                            <option value="{{ $file->id }}" {{ Input::old('file_no') == $file->id ? 'selected' : '' }}>{{ $file->file_no }}</option>
                                             @endforeach
                                         </select>
                                         @include('alert.feedback-ajax', ['field' => 'file_no'])
