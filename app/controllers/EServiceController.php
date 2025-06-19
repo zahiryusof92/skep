@@ -973,9 +973,11 @@ class EServiceController extends BaseController
 			if ($order) {
 				if ($order->company && $order->company->short_name = 'MBPJ') {
 					if (!empty($request)) {
-						$order->update([
-							'reference_id' => Arr::get($request, 'pg_ref_id'),
-						]);
+						if (Arr::get($request, 'pg_ref_id')) {
+							$order->update([
+								'reference_id' => Arr::get($request, 'pg_ref_id'),
+							]);
+						}
 						
 						$status = EServiceOrderTransaction::PENDING;
 						if (Arr::get($request, 'pg_status') == 1) {

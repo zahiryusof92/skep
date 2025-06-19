@@ -7,6 +7,8 @@ use EServiceOrder;
 use Helper\KCurl;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 class Epay
 {
@@ -142,6 +144,10 @@ class Epay
 
             $post_data = http_build_query($param);
             $response = $this->payment_gateway_url . '?' . $post_data;
+
+            $eserviceLog = new Logger('eservice');
+            $eserviceLog->pushHandler(new StreamHandler(storage_path('logs/eservice.log'), Logger::INFO));
+            $eserviceLog->info('Payment Submitted:', ['order_id' => $order->id, 'url' => $response]);
         }
 
         return $response;
