@@ -162,6 +162,22 @@
                                             </div>
                                         </div>
                                     </dd>
+                                    @if ($order->company && $order->company->short_name == 'MBSJ')
+                                    <dt class="col-sm-4">
+                                        <span style="color: red;">*</span>
+                                        {{ trans('app.forms.hijri_date') }}
+                                    </dt>
+                                    <dd class="col-sm-8">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <input type="text" id="hijri_date" name="hijri_date"
+                                                    class="form-control {{ $errors->has('hijri_date') ? 'has-danger' : '' }}"
+                                                    value="{{ !empty(Input::old('hijri_date')) ? Input::old('hijri_date') : '' }}" />
+                                                @include('alert.feedback-ajax', ['field' => "hijri_date"])
+                                            </div>
+                                        </div>
+                                    </dd>
+                                    @endif
                                 </div>
 
                                 <div id="reject_field"

@@ -156,4 +156,15 @@ class Helper
 
         return $dt['formatted'];
     }
+
+    public static function getDueDate($date)
+    {
+        if ($date == '') {
+            return null;
+        }
+
+        $dt = date('d/m/Y', strtotime($date));
+
+        return $dt;
+    }
 }

@@ -32,6 +32,7 @@ class EServiceOrder extends Eloquent
         'value',
         'bill_no',
         'date',
+        'hijri_date',
         'price',
         'reference_id',
         'jana_bil_no_akaun',
@@ -236,6 +237,7 @@ class EServiceOrder extends Eloquent
     {
         $data = [];
 
+        $cobId = Auth::user()->getCOB->id;
         $statuses = EServiceOrder::getStatusList();
         $types = EServiceOrder::getTypeList();
 
@@ -249,7 +251,8 @@ class EServiceOrder extends Eloquent
                 $value['name'] = $type;
 
                 foreach ($statuses as $status_key => $status) {
-                    $total = EServiceOrder::where('eservices_orders.status', $status_key)
+                    $total = EServiceOrder::where('eservices_orders.company_id', $cobId)
+                        ->where('eservices_orders.status', $status_key)
                         ->where('eservices_orders.type', $type_key)
                         ->count();
 
