@@ -209,7 +209,12 @@ class Files extends Eloquent
 
     public function personInCharge()
     {
-        return $this->hasMany('HousingSchemeUser', 'file_id');
+        return $this->hasMany('HousingSchemeUser', 'file_id')->where('is_deleted', false);
+    }
+
+    public function personInChargeLatest()
+    {
+        return $this->hasOne('HousingSchemeUser', 'file_id')->where('is_deleted', false)->latest();
     }
 
     public function file_movements()
