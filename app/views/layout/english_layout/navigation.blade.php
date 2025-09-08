@@ -224,7 +224,7 @@ if (!Auth::user()->getAdmin()) {
 
             @if (Module::hasAccessModule("e-Service"))
             {{-- e-service --}}
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MBPJ")))
+            @if (Auth::user()->hasAccessEservice())
             <li class="left-menu-list-submenu" id="eservice_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
@@ -566,7 +566,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
 
                     @if (AccessGroup::hasAccessModule('e-Service') && AccessGroup::hasAccessModule('e-Service Pricing'))
-                    @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MBPJ")))
+                    @if (Auth::user()->hasAccessEservice())
                     <li id="eservice_price_list">
                         <a class="left-menu-link" href="{{ route('eservicePrice.index') }}">
                             {{ trans('app.menus.master.eservice_price') }}

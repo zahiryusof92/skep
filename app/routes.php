@@ -1165,13 +1165,15 @@ Route::group(array('before' => 'authMember'), function () {
     Route::post('eservice/submitReject', ['as' => 'eservice.submitReject', 'uses' => 'EServiceController@submitReject']);
     Route::get('eservice/paymentHistory', array('as' => 'eservice.paymentHistory', 'uses' => 'EServiceController@paymentHistory'));
     Route::get('eservice/showPaymentHistory/{id}', array('as' => 'eservice.showPaymentHistory', 'uses' => 'EServiceController@showPaymentHistory'));
-
+    Route::get('eservice/view', ['as' => 'eservice.view', 'uses' => 'EServiceController@view']);
+    
     Route::resource('eservice', 'EServiceController');
     Route::get('eservice/create/{type}', array('as' => 'eservice.create', 'uses' => 'EServiceController@create'));
     Route::get('eservice/payment/{id}', array('as' => 'eservice.payment', 'uses' => 'EServiceController@payment'));
     Route::post('eservice/submitByCOB/{id}', ['as' => 'eservice.submitByCOB', 'uses' => 'EServiceController@submitByCOB']);
     Route::get('eservice/getLetterPDF/{id}', ['as' => 'eservice.getLetterPDF', 'uses' => 'EServiceController@getLetterPDF']);
     Route::get('eservice/getLetterWord/{id}', ['as' => 'eservice.getLetterWord', 'uses' => 'EServiceController@getLetterWord']);
+    
     /**
      * API Client
      */

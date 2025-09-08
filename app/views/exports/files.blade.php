@@ -28,19 +28,34 @@
                                                 <span style="color: red;">*</span>
                                                 {{ trans('app.forms.cob') }}
                                             </label>
-                                            <select id="company" name="company" class="form-control select2 {{ $errors->has('company') ? 'has-danger' : '' }}">
+                                            <select id="company" name="company"
+                                                class="form-control select2 {{ $errors->has('company') ? 'has-danger' : '' }}">
                                                 @if (count($cob) > 1)
                                                     <option value="">
                                                         {{ trans('app.forms.please_select') }}
                                                     </option>
                                                 @endif
                                                 @foreach ($cob as $companies)
-                                                    <option value="{{ $companies->id }}">
+                                                    <option value="{{ $companies->id }}"
+                                                        {{ Input::old('company') == $companies->id ? 'selected' : '' }}>
                                                         {{ $companies->name }} ({{ $companies->short_name }})
                                                     </option>
                                                 @endforeach
                                             </select>
                                             @include('alert.feedback', ['field' => 'company'])
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>
+                                                <span style="color: red;">*</span>
+                                                {{ trans('app.forms.page') }}
+                                                <span style="color: red; font-size: 8pt;">(Each page contains 500 records)</span>
+                                            </label>
+                                            <input type="number" id="page" name="page"
+                                                class="form-control {{ $errors->has('page') ? 'has-danger' : '' }}"
+                                                value="{{ Input::old('page') }}" />
+                                            @include('alert.feedback', ['field' => 'page'])
                                         </div>
                                     </div>
                                 </div>
