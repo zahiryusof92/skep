@@ -488,6 +488,7 @@ class ExportController extends BaseController
 
         $rules = array(
             'company' => 'required',
+            'page' => 'required|numeric|min:1',
         );
 
         $messages = array(
@@ -499,16 +500,22 @@ class ExportController extends BaseController
             return Redirect::back()->withErrors($validator)->withInput($data);
         } else {
             $data = [];
-
             $company_id = Input::get('company');
+            $page = Input::get('page', 1);
+            $perPage = 500;
+            $skip = ($page - 1) * $perPage;
+            $count = $skip + 1;
 
-            $council = Company::with('files')->find($company_id);
+            $council = Company::find($company_id);
             if ($council) {
+                $files = Files::where('company_id', $council->id)
+                    ->where('is_deleted', 0)
+                    ->skip($skip)
+                    ->take($perPage)
+                    ->get();
 
-                if ($council->files->count() > 0) {
-                    $count = 1;
-
-                    foreach ($council->files as $file) {
+                if ($files->count() > 0) {
+                    foreach ($files as $file) {
                         $houseScheme = HouseScheme::where('file_id', $file->id)->first();
                         if ($houseScheme) {
                             $developer = Developer::find($houseScheme->developer);
@@ -609,7 +616,7 @@ class ExportController extends BaseController
                         $others_details = OtherDetails::where('file_id', $file->id)->first();
 
                         $data[] = array(
-                            'Bil' => $count++,
+                            'Bil' => $count,
                             'File No.' => $file->file_no,
                             'Cob File ID' => '',
                             'Year' => (!empty($file->year) ? $file->year : ''),
@@ -777,12 +784,14 @@ class ExportController extends BaseController
                             'Certificate No' => '',
                             'New File No.' => '',
                         );
+                    
+                        $count++;
                     }
                 }
 
                 // return '<pre>' . print_r($data, true) . '</pre>';
 
-                return Excel::create(strtoupper($council->short_name) . '_Files_' . date('YmdHis'), function ($excel) use ($data) {
+                return Excel::create(strtoupper($council->short_name) . '_Files_' . date('Ymd') . '_Page_' . $page, function ($excel) use ($data) {
                     $excel->sheet('Sheet1', function ($sheet) use ($data) {
                         $sheet->fromArray($data);
                     });

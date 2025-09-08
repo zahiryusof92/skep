@@ -818,6 +818,22 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
+		if (Request::ajax()) {
+			$request = Request::all();
+			$data = EServiceOrder::getGraphData($request);
+
+			return Response::json([
+				'data' => $data,
+				'success' => true,
+			]);
+		}
+
+		if (empty(Session::get('admin_cob'))) {
+			$company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+		} else {
+			$company = Company::where('id', Session::get('admin_cob'))->get();
+		}
+
 		$data = EServiceOrder::getGraphData();
 
 		$viewData = array(
@@ -825,6 +841,7 @@ class EServiceController extends BaseController
 			'panel_nav_active' => 'eservice_panel',
 			'main_nav_active' => 'eservice_main',
 			'sub_nav_active' => 'eservice_report',
+			'company' => $company,
 			'data' => $data,
 			'image' => ""
 		);

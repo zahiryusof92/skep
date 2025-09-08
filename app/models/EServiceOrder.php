@@ -88,42 +88,60 @@ class EServiceOrder extends Eloquent
         return $builder->where('eservices_orders.status', self::REJECTED);
     }
 
-    public static function getTypeList()
+    public static function getTypeList($request = [])
     {
         $options = [];
 
-        if (!Auth::user()->getAdmin()) {
-            if (Auth::user()->getCOB) {
-                $cob = Auth::user()->getCOB->short_name;
-                if (!empty($cob)) {
-                    $types = (!empty(self::module()['cob'][Str::lower($cob)])) ? self::module()['cob'][Str::lower($cob)]['type'] : '';
-
-                    if (!empty($types)) {
-                        foreach ($types as $type) {
-                            $options[$type['name']] = $type['title'];
-                        }
-                    }
-                }
-            }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $cob = 'MBPJ';
-
-                $types = (!empty(self::module()['cob'][Str::lower($cob)])) ? self::module()['cob'][Str::lower($cob)]['type'] : '';
+        if (!empty($request['company'])) {
+            $cob = Company::find($request['company']);
+            if ($cob) {
+                $types = (!empty(self::module()['cob'][Str::lower($cob->short_name)])) ? self::module()['cob'][Str::lower($cob->short_name)]['type'] : '';
 
                 if (!empty($types)) {
                     foreach ($types as $type) {
                         $options[$type['name']] = $type['title'];
                     }
                 }
-            } else {
-                $cob = Company::find(Session::get('admin_cob'));
-                if ($cob) {
-                    $types = (!empty(self::module()['cob'][Str::lower($cob->short_name)])) ? self::module()['cob'][Str::lower($cob->short_name)]['type'] : '';
+            }
+        } else {
+            if (!Auth::user()->getAdmin()) {
+                if (Auth::user()->getCOB) {
+                    $cob = Auth::user()->getCOB->short_name;
+                    if (!empty($cob)) {
+                        $types = (!empty(self::module()['cob'][Str::lower($cob)])) ? self::module()['cob'][Str::lower($cob)]['type'] : '';
 
-                    if (!empty($types)) {
-                        foreach ($types as $type) {
-                            $options[$type['name']] = $type['title'];
+                        if (!empty($types)) {
+                            foreach ($types as $type) {
+                                $options[$type['name']] = $type['title'];
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $types = [];
+                    $companies = [
+                        'MBPJ',
+                    ];
+
+                    foreach ($companies as $cob) {
+                        $types = (!empty(self::module()['cob'][Str::lower($cob)])) ? self::module()['cob'][Str::lower($cob)]['type'] : '';
+
+                        if (!empty($types)) {
+                            foreach ($types as $type) {
+                                $options[$type['name']] = $type['title'];
+                            }
+                        }
+                    }
+                } else {
+                    $cob = Company::find(Session::get('admin_cob'));
+                    if ($cob) {
+                        $types = (!empty(self::module()['cob'][Str::lower($cob->short_name)])) ? self::module()['cob'][Str::lower($cob->short_name)]['type'] : '';
+
+                        if (!empty($types)) {
+                            foreach ($types as $type) {
+                                $options[$type['name']] = $type['title'];
+                            }
                         }
                     }
                 }
@@ -233,13 +251,12 @@ class EServiceOrder extends Eloquent
         return '<i>(not set)</i>';
     }
 
-    public static function getGraphData()
+    public static function getGraphData($request = [])
     {
         $data = [];
-
-        $cobId = Auth::user()->getCOB->id;
+       
         $statuses = EServiceOrder::getStatusList();
-        $types = EServiceOrder::getTypeList();
+        $types = EServiceOrder::getTypeList($request);
 
         if ($statuses && $types) {
             foreach ($statuses as $status) {
@@ -251,12 +268,50 @@ class EServiceOrder extends Eloquent
                 $value['name'] = $type;
 
                 foreach ($statuses as $status_key => $status) {
-                    $total = EServiceOrder::where('eservices_orders.company_id', $cobId)
-                        ->where('eservices_orders.status', $status_key)
-                        ->where('eservices_orders.type', $type_key)
-                        ->count();
+                    $query = EServiceOrder::where('eservices_orders.status', $status_key)
+                        ->where('eservices_orders.type', $type_key);
 
-                    $value['data'][] = $total;
+                    if (!Auth::user()->getAdmin()) {
+                        if (Auth::user()->getCOB) {
+                            $cobId = Auth::user()->getCOB->id;
+                            $query->where('eservices_orders.company_id', $cobId);
+                        }
+                    } else {
+                        if (!empty(Session::get('admin_cob'))) {
+                            $query->where('eservices_orders.company_id', Session::get('admin_cob'));
+                        } else {
+                            if (empty($request['company'])) {
+                                $mbpj = Company::where('short_name', 'MBPJ')->first();
+                                if ($mbpj) {
+                                    $query->where('eservices_orders.company_id', $mbpj->id);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!empty($request['company'])) {
+                        $query->where('eservices_orders.company_id', $request['company']);
+                    }
+
+                    if (!empty($request['date_from']) && empty($request['date_to'])) {
+                        $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                        $query->where('eservices_orders.created_at', '>=', $date_from);
+                    }
+
+                    if (!empty($request['date_to']) && empty($request['date_from'])) {
+                        $date_to = date('Y-m-d', strtotime($request['date_to']));
+                        $query->where('eservices_orders.created_at', '<=', $date_to . " 23:59:59");
+                    }
+
+                    if (!empty($request['date_from']) && !empty($request['date_to'])) {
+                        $date_from = date('Y-m-d H:i:s', strtotime($request['date_from']));
+                        $date_to = date('Y-m-d', strtotime($request['date_to']));
+                        $query->whereBetween('eservices_orders.created_at', [$date_from, $date_to . ' 23:59:59']);
+                    }
+
+                    $query = $query->count();
+
+                    $value['data'][] = $query;
                 }
 
                 $data['series'][] = $value;
