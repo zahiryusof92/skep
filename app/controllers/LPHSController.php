@@ -2197,7 +2197,6 @@ class LPHSController extends BaseController
         $query = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
             ->leftjoin('company', 'files.company_id', '=', 'company.id')
             ->leftjoin('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
-            ->where('files.is_active', 1)
             ->where('files.is_deleted', 0)
             ->where('insurance.is_deleted', 0)
             ->orderBy('company.short_name')
@@ -2208,23 +2207,62 @@ class LPHSController extends BaseController
         }
 
         $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'insurance_provider.name as provider', 'insurance.*')->get();
-
         if ($items->count() > 0) {
             foreach ($items as $item) {
-                $result[] = [
-                    trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
-                    trans('File No') => $item->file_no,
-                    trans('Insurance Provider') => $item->provider,
-                    trans('Public Liability Coverage (PLC)') => $item->public_liability_coverage,
-                    trans('PLC Premium Per Year') => $item->plc_premium_per_year,
-                    trans('PLC Validity From') => $item->plc_validity_from,
-                    trans('PLC Validity To') => $item->plc_validity_to,
-                    trans('Fire Insurance Coverage (FIC)') => $item->fire_insurance_coverage,
-                    trans('FIC Premium Per Year') => $item->fic_premium_per_year,
-                    trans('FIC Validity From') => $item->fic_validity_from,
-                    trans('FIC Validity To') => $item->fic_validity_to,
-                    trans('Remarks') => $item->remarks,
-                ];
+                $file = Files::with('personInChargeLatest')->find($item->file_id);
+                if ($file) {
+                    $pic_name = '';
+                    $pic_phone_no = '';
+                    $pic_email = '';
+
+                    if ($pic = $file->personInChargeLatest) {
+                        if ($pic->user->full_name) {
+                            $pic_name = $pic->user->full_name;
+                        }
+                        if ($pic->user->phone_no) {
+                            $pic_phone_no = $pic->user->phone_no;
+                        }
+                        if ($pic->user->email) {
+                            $pic_email = $pic->user->email;
+                        }
+                    }
+
+                    $result[$file->id] = [
+                        trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
+                        trans('File No') => $item->file_no,
+                        trans('Insurance Provider') => $item->provider,
+                        trans('Public Liability Coverage (PLC)') => $item->public_liability_coverage,
+                        trans('PLC Premium Per Year') => $item->plc_premium_per_year,
+                        trans('PLC Validity From') => $item->plc_validity_from,
+                        trans('PLC Validity To') => $item->plc_validity_to,
+                        trans('Fire Insurance Coverage (FIC)') => $item->fire_insurance_coverage,
+                        trans('FIC Premium Per Year') => $item->fic_premium_per_year,
+                        trans('FIC Validity From') => $item->fic_validity_from,
+                        trans('FIC Validity To') => $item->fic_validity_to,
+                        trans('PIC Name') => $pic_name,
+                        trans('PIC Phone No') => $pic_phone_no,
+                        trans('PIC E-mail') => $pic_email,
+                        trans('Cover Note / Supportive Document') => ($item->attachment ? asset($item->attachment) : ''),
+                        trans('Remarks') => $item->remarks,
+                    ];
+
+                    $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                    if ($designations) {
+                        foreach ($designations as $designation) {
+                            $ajk_detail = AJKDetails::where('file_id', $file->id)
+                                ->where('designation', $designation->id)
+                                ->where('is_deleted', 0)
+                                ->latest('start_year')
+                                ->latest('month')
+                                ->latest('created_at')
+                                ->first();
+
+                            Arr::set($result[$file->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                            Arr::set($result[$file->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                            Arr::set($result[$file->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));                           
+                        }
+                    }
+                }
             }
         }
 

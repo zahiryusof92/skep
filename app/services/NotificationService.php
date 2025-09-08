@@ -36,19 +36,35 @@ class NotificationService {
             $jmb_email_data['description'] = $jmb_message;
             $jmb_email = (new EmailLogController())->store($jmb_email_data);
         }
+
         // COB
-        if($send_cob) {
-            $role_ids = Role::whereIn('name', [Role::COB, Role::COB_BASIC, Role::COB_BASIC_ADMIN, Role::COB_MANAGER, Role::COB_PREMIUM, Role::COB_PREMIUM_ADMIN])
-                            ->get();
+        if ($send_cob) {
+            $role_ids = Role::whereIn(
+                'name',
+                [
+                    Role::COB,
+                    Role::COB_BASIC,
+                    Role::COB_BASIC_ADMIN,
+                    Role::COB_MANAGER,
+                    Role::COB_PREMIUM,
+                    Role::COB_PREMIUM_ADMIN,
+                    Role::COB_PREMIUM_ADMIN_USER_CONTROL,
+                ]
+            )
+            ->where('is_active', true)
+            ->where('is_deleted', false)
+            ->get();
+
             $cobs = User::where('company_id', Auth::user()->company_id)
-                        ->whereIn('role', array_pluck($role_ids, 'id'))
-                        ->where('status', true)
-                        ->where('is_deleted', false)
-                        // ->take(3)
-                        ->get();
-            foreach($cobs as $cob) {
-                if($cob->receive_notify) {
-                    $cob_message = $custom_text == 'deleted'? $data['strata_name'] ." ". $data['title'] . " has been " . $custom_text : $data['strata_name'] ." have submitted " . $data['title'];
+                ->whereIn('role', array_pluck($role_ids, 'id'))
+                ->where('status', true)
+                ->where('is_deleted', false)
+                // ->take(3)
+                ->get();
+
+            foreach ($cobs as $cob) {
+                if ($cob->receive_notify) {
+                    $cob_message = $custom_text == 'deleted' ? $data['strata_name'] . " " . $data['title'] . " has been " . $custom_text : $data['strata_name'] . " have submitted " . $data['title'];
                     $cob_notify['user_id'] = $cob->id;
                     $cob_notify['company_id'] = $cob->company_id;
                     $cob_notify['file_id'] = $data['file_id'];
@@ -57,9 +73,10 @@ class NotificationService {
                     $cob_notify['description'] = $cob_message;
                     $cob_notification = (new NotificationController())->store($cob_notify);
                 }
-                if(getenv('send_email') == true && $cob->receive_mail) {
+
+                if (getenv('send_email') == true && $cob->receive_mail) {
                     $cob_message = "We are pleased to inform you that ";
-                    $cob_message .= $custom_text == 'deleted'? $data['strata_name'] ." ". $data['title'] . " has been " . $custom_text : $data['strata_name'] ." have submitted " . $data['title'];
+                    $cob_message .= $custom_text == 'deleted' ? $data['strata_name'] . " " . $data['title'] . " has been " . $custom_text : $data['strata_name'] . " have submitted " . $data['title'];
                     $cob_email_data['title'] =  $data['title'];
                     $cob_email_data['delay'] = $delay;
                     $cob_email_data['user_id'] = $cob->id;
@@ -69,6 +86,7 @@ class NotificationService {
                     $cob_email_data['description'] = $cob_message;
                     $cob_email = (new EmailLogController())->store($cob_email_data);
                 }
+
                 $delay += $incrementDelay;
             }
         }
