@@ -2227,7 +2227,7 @@ class LPHSController extends BaseController
                         }
                     }
 
-                    $result[] = [
+                    $result[$file->id] = [
                         trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
                         trans('File No') => $item->file_no,
                         trans('Insurance Provider') => $item->provider,
@@ -2245,6 +2245,23 @@ class LPHSController extends BaseController
                         trans('Cover Note / Supportive Document') => ($item->attachment ? asset($item->attachment) : ''),
                         trans('Remarks') => $item->remarks,
                     ];
+
+                    $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                    if ($designations) {
+                        foreach ($designations as $designation) {
+                            $ajk_detail = AJKDetails::where('file_id', $file->id)
+                                ->where('designation', $designation->id)
+                                ->where('is_deleted', 0)
+                                ->latest('start_year')
+                                ->latest('month')
+                                ->latest('created_at')
+                                ->first();
+
+                            Arr::set($result[$file->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                            Arr::set($result[$file->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                            Arr::set($result[$file->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));                           
+                        }
+                    }
                 }
             }
         }
