@@ -11,7 +11,7 @@
             @include('alert.bootbox')
 
             <section class="panel panel-pad">
-                @if (Auth::user()->isJMB())
+                @if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
                         <a class="btn btn-own-outline margin-bottom-25" href="{{ route('summon.create', Summon::LETTER_OF_REMINDER) }}">

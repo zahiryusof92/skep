@@ -43,7 +43,7 @@ class HomeController extends BaseController
         }
 
         $ageing = '';
-        if (Auth::user()->isJMB() || Auth::user()->isMC()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::find(Auth::user()->file_id);
                 if ($file) {

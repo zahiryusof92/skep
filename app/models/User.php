@@ -5,6 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
@@ -145,7 +146,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function getAdmin() {
         if ($this->getRole->is_admin == 1) {
             return true;
-        } else if ($this->role == 1 || $this->role == 2) {
+        } else if ($this->isSuperadmin()) {
             return true;
         }
 
@@ -233,7 +234,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function hasEpks() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Auth::user()->file_id) {
                 $file = Files::find(Auth::user()->file_id);
 
@@ -247,7 +248,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function myEpks() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Auth::user()->file_id) {
                 $file = Files::find(Auth::user()->file_id);
 
@@ -260,4 +261,38 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    public function hasAccessOCR()
+    {
+        if (Auth::user()->getAdmin()) {
+            return true;
+        } else {
+            if (Auth::user()->isCOB() || (Auth::user()->isJMB() || Auth::user()->isMC())) {
+                if (Auth::user()->getCOB) {
+                    if (Auth::user()->getCOB->short_name == 'MBPJ') {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function hasAccessEservice()
+    {
+        if (Auth::user()->getAdmin()) {
+            return true;
+        } else {
+            if (Auth::user()->getCOB) {
+                if (Auth::user()->getCOB->short_name == 'MBPJ') {
+                    return true;
+                } 
+                else if (Auth::user()->getCOB->short_name == 'MBSJ') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

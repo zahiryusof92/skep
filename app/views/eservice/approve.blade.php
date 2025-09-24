@@ -48,6 +48,23 @@
                                 </div>
                             </div>
 
+                            @if (Auth::user()->getCOB->short_name == 'MBSJ')
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-3">
+                                        <label class="form-control-label">
+                                            <span style="color: red;">*</span>
+                                            {{ trans('app.forms.hijri_date') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" id="hijri_date" name="hijri_date" class="form-control" value="{{ !empty(Input::old('hijri_date')) ? Input::old('hijri_date') : '' }}" />
+                                        @include('alert.feedback-ajax', ['field' => "hijri_date"])
+                                    </div>
+                                </div>                                
+                            </div>
+                            @endif
+
                             <hr />
 
                             <table class="table table-hover table-own table-striped nowrap" style="width: 100%;">

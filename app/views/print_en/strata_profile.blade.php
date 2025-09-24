@@ -282,15 +282,16 @@
                                     $zone = 'Kelabu';
                                     $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
                                     $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
-                                    if($finance_report_fee_semasa > 0) {
-                                        $percentage = round(($finance_income_semasa / $finance_report_fee_semasa) * 100);
-                                        
-                                        if ($percentage >= 80) {
+                                    $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
+
+                                    if ($finance_report_fee_semasa > 0) {
+                                        $purata_dikutip = round(($finance_income_semasa / $finance_report_fee_semasa) * 100, 2);
+                                        if ($purata_dikutip >= 80) {
                                             $zone = 'Biru';
-                                        } else if ($percentage < 79 && $percentage >= 50) {
+                                        } else if ($purata_dikutip < 79 && $purata_dikutip >= 40) {
                                             $zone = 'Kuning';
                                         } else {
-                                            $zone = 'Merah';
+                                            $zone = "Merah";
                                         }
                                     } 
                                     ?>

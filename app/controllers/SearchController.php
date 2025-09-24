@@ -31,23 +31,23 @@ class SearchController extends BaseController
                     $meeting = $ocr->meetingDocument;
 
                     $url = '';
-                    if ($ocr->type == 'minutes_meeting') {
-                        $type = 'Minutes of Meetings';
-                        $url = $meeting->minutes_meeting_file_url;
-                    } else if ($ocr->type == 'copy_of_spa') {
-                        $type = 'Copy of JMC SPA';
-                        $url = $meeting->jmc_file_url;
-                    } else if ($ocr->type == 'attendance') {
-                        $type = 'Attendance List';
-                        $url = $meeting->attendance_file_url;
-                    } else if ($ocr->type == 'audited_financial') {
-                        $type = 'Audited Accounts';
-                        $url = $meeting->audited_financial_file_url;
-                    } else if ($ocr->type == 'eligible_vote') {
-                        $type = 'Eligible Voter Listing';
-                        $url = $meeting->ligible_vote_url;
+                    if ($ocr->type == 'notice_agm_egm') {
+                        $type = trans('Salinan Notis Mesyuarat Agung Tahunan AGM/EGM');
+                        $url = $meeting->notice_agm_egm_url;
+                    } else if ($ocr->type == 'minutes_agm_egm') {
+                        $type = trans('Salinan Minit Mesyuarat Agung Tahunan AGM/EGM');
+                        $url = $meeting->minutes_agm_egm_url;
+                    } else if ($ocr->type == 'minutes_ajk') {
+                        $type = trans('Salinan Minit Mesyuarat Jawatankuasa Pengurusan (Perlantikan 3 Jawatan tertinggi)');
+                        $url = $meeting->minutes_ajk_url;
+                    } else if ($ocr->type == 'ajk_info') {
+                        $type = trans('Maklumat Anggota Jawatankuasa Yang Dilantik (Lampiran A)');
+                        $url = $meeting->ajk_info_url;
+                    } else if ($ocr->type == 'report_audited_financial') {
+                        $type = trans('Laporan Akaun Teraudit');
+                        $url = $meeting->report_audited_financial_url;
                     } else if ($ocr->type == 'house_rules') {
-                        $type = 'Approved House Rules';
+                        $type = trans('Salinan Kaedah-Kaedah Dalaman Yang Diluluskan (House Rules)');
                         $url = $meeting->house_rules_url;
                     }
 
@@ -74,8 +74,6 @@ class SearchController extends BaseController
                     }
                 }
             }
-
-            // return '<pre>' . print_r($results, true) . '</pre>';
         }
 
         $viewData = array(

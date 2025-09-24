@@ -59,7 +59,11 @@
                                     {{ trans('app.forms.amount') }}
                                 </dt>
                                 <dd class="col-sm-8">
+                                    @if (!empty($order->price) && $order->price > 0)
                                     RM {{ $order->price }}
+                                    @else
+                                    {{ trans('Free') }}
+                                    @endif
                                 </dd>
 
                                 @if ($order->transaction)
@@ -67,7 +71,19 @@
                                     {{ trans('app.forms.payment_method') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $order->transaction->payment_method }}
+                                    @if ($order->transaction)
+                                    @if (!empty($order->transaction->payment_method))
+                                    @if ($order->transaction->payment_method == 'cc')
+                                    {{ trans('Credit Card') }}
+                                    @else
+                                    {{ strtoupper($order->transaction->payment_method) }}
+                                    @endif
+                                    @else
+                                    {{ trans('-') }}
+                                    @endif
+                                    @else
+                                    {{ trans('-') }}
+                                    @endif
                                 </dd>
 
                                 <dt class="col-sm-4">
@@ -146,6 +162,22 @@
                                             </div>
                                         </div>
                                     </dd>
+                                    @if ($order->company && $order->company->short_name == 'MBSJ')
+                                    <dt class="col-sm-4">
+                                        <span style="color: red;">*</span>
+                                        {{ trans('app.forms.hijri_date') }}
+                                    </dt>
+                                    <dd class="col-sm-8">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <input type="text" id="hijri_date" name="hijri_date"
+                                                    class="form-control {{ $errors->has('hijri_date') ? 'has-danger' : '' }}"
+                                                    value="{{ !empty(Input::old('hijri_date')) ? Input::old('hijri_date') : '' }}" />
+                                                @include('alert.feedback-ajax', ['field' => "hijri_date"])
+                                            </div>
+                                        </div>
+                                    </dd>
+                                    @endif
                                 </div>
 
                                 <div id="reject_field"
@@ -234,19 +266,32 @@
                                 onclick="window.location = '{{ route('eservice.edit', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
                                 {{ trans('app.forms.edit') }}
                             </button>
+                            @if (!empty($order->price) && $order->price > 0)
                             <button type="button" class="btn btn-own" id="payment_button"
                                 onclick="window.location = '{{ route('eservice.payment', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
                                 {{ trans('app.forms.eservice.proceed_to_pay') }}
                             </button>
+                            @else
+                            <button type="button" class="btn btn-own" id="submit_application_button"
+                                onclick="window.location = '{{ route('eservice.payment', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
+                                {{ trans('app.forms.submit') }}
+                            </button>
+                            @endif
                         </div>
                         @endif
 
-                        @if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS]) &&
+                        @if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS, EServiceOrder::REJECTED]) &&
                         (Auth::user()->getAdmin() || Auth::user()->isCOB()))
                         <div class="form-actions">
+                            <button type="button" class="btn btn-success" id="edit_button"
+                                onclick="window.location = '{{ route('eservice.edit', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
+                                {{ trans('app.forms.edit') }}
+                            </button>
+                            @if ($order->status != EServiceOrder::REJECTED)
                             <button type="button" class="btn btn-own" id="submit_button">
                                 {{ trans('app.forms.save') }}
                             </button>
+                            @endif
                         </div>
                         @endif
                     </div>

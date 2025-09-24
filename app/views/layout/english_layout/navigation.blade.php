@@ -224,14 +224,14 @@ if (!Auth::user()->getAdmin()) {
 
             @if (Module::hasAccessModule("e-Service"))
             {{-- e-service --}}
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MBPJ")))
+            @if (Auth::user()->hasAccessEservice())
             <li class="left-menu-list-submenu" id="eservice_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
                     <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()) ! @endif</span>
                 </a>
                 <ul class="left-menu-list list-unstyled" id="eservice_main">
-                    @if (Auth::user()->isJMB())
+                    @if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
                     <li class="left-menu-list-link" id="eservice_create">
                         <a class="left-menu-link" href="{{ route('eservice.create', '') }}">
                             {{ trans('app.menus.eservice.create') }}
@@ -257,7 +257,14 @@ if (!Auth::user()->getAdmin()) {
                         <a class="left-menu-link" href="{{ route('eservice.rejected') }}">
                             {{ trans('app.menus.eservice.rejected') }}
                         </a>
-                    </li>                   
+                    </li>
+                    @if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
+                    <li class="left-menu-list-link" id="eservice_payment_history">
+                        <a class="left-menu-link" href="{{ route('eservice.paymentHistory') }}">
+                            {{ trans('app.menus.eservice.payment_history') }}
+                        </a>
+                    </li>   
+                    @endif             
                     @if (Auth::user()->getAdmin() || Auth::user()->isCOB())
                     <li class="left-menu-list-link" id="eservice_report">
                         <a class="left-menu-link" href="{{ route('eservice.report') }}">
@@ -558,11 +565,15 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                     @endif
 
+                    @if (AccessGroup::hasAccessModule('e-Service') && AccessGroup::hasAccessModule('e-Service Pricing'))
+                    @if (Auth::user()->hasAccessEservice())
                     <li id="eservice_price_list">
                         <a class="left-menu-link" href="{{ route('eservicePrice.index') }}">
                             {{ trans('app.menus.master.eservice_price') }}
                         </a>
                     </li>
+                    @endif
+                    @endif
                     
                     @if (AccessGroup::hasAccessModule('Postponed AGM Reason'))
                     <li id="postpone_agm_reason_list">
@@ -576,7 +587,7 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
-            @if (Module::hasAccess(4) && (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()))
+            @if (Module::hasAccess(4) && (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper()))
             <li class="left-menu-list-submenu" id="reporting_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/report.png')}}"/>
@@ -638,6 +649,12 @@ if (!Auth::user()->getAdmin()) {
                     <li id="strata_profile_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@strataProfile') }}">
                             {{ trans('app.menus.reporting.strata_profile') }}
+                        </a>
+                    </li>
+
+                    <li id="strata_profile_list">
+                        <a class="left-menu-link" href="{{ URL::action('ReportController@strataProfileV2') }}">
+                            {{ trans('app.menus.reporting.strata_profile_v2') }}
                         </a>
                     </li>
                     @endif
@@ -762,6 +779,14 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     @endif
 
+                    @if (AccessGroup::hasAccessModule("Finance / Month"))
+                    <li id="finance_report_list">
+                        <a class="left-menu-link" href="{{ route('report.finance.index') }}">
+                            {{ trans('app.menus.reporting.finance') }}
+                        </a>
+                    </li>
+                    @endif
+
                 </ul>
             </li>
             @endif
@@ -799,11 +824,19 @@ if (!Auth::user()->getAdmin()) {
                     @endif
 
                     @if (AccessGroup::hasAccess(32))
+                    @if (Auth::user()->getCOB->short_name == "MPKJ")
+                    <li id="agmminutesub_list">
+                        <a class="left-menu-link" href="{{URL::action('AGMMinuteController@index')}}">
+                            {{ trans('app.menus.agm.upload_of_minutes') }}
+                        </a>
+                    </li>
+                    @else
                     <li id="agmminutesub_list">
                         <a class="left-menu-link" href="{{URL::action('AgmController@minutes')}}">
                             {{ trans('app.menus.agm.upload_of_minutes') }}
                         </a>
                     </li>
+                    @endif
                     @endif
 
                     @if (AccessGroup::hasAccess(33))
@@ -837,7 +870,7 @@ if (!Auth::user()->getAdmin()) {
             @endif
 
             @if (AccessGroup::hasAccessModule('Postponed AGM'))
-            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isJMB())
+            @if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
             <li class="left-menu-list-submenu" id="agm_postpone_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
@@ -847,7 +880,7 @@ if (!Auth::user()->getAdmin()) {
                     @endif
                    </a>
                 <ul class="left-menu-list list-unstyled" id="agm_postpone_main">
-                    @if (Auth::user()->isJMB())
+                    @if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
                     <li class="left-menu-list-link" id="agm_postpone_create">
                         <a class="left-menu-link" href="{{ route('statusAGM.create') }}">
                             {{ trans('app.menus.agm_postpone.create') }}
@@ -913,7 +946,7 @@ if (!Auth::user()->getAdmin()) {
             @endif
 
             @if (AccessGroup::hasAccessModule('Ledger'))
-            @if (Auth::user()->isJMB())
+            @if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
             <li class="left-menu-list-link" id="ledger">
                 <a class="left-menu-link" href="{{ route('ledger.index') }}">
                     <i class="left-menu-link-icon fa fa-book"><!-- --></i>
@@ -954,7 +987,7 @@ if (!Auth::user()->getAdmin()) {
             @if (Module::hasAccess(9))
             <!-- Summon Start -->
             @if (AccessGroup::hasAccess(61))
-            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))) && Auth::user()->isJMB())
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))) && (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()))
             <li class="left-menu-list-submenu" id="summon_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-envelope"><!-- --></i>
@@ -1028,7 +1061,7 @@ if (!Auth::user()->getAdmin()) {
             @endif
             
             @if (AccessGroup::hasAccess(61))
-            @if((Auth::user()->isJMB() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ'])) || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid() && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))))
+            @if(((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ'])) || Auth::user()->isHR() || Auth::user()->getAdmin() || Auth::user()->isCOBPaid() && (Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && in_array(Auth::user()->getCOB->short_name, ['MPS', 'MPAJ']))))
                 @if(!Auth::user()->isCOBPaid())
                 <li id="transaction_list">
                     <a class="left-menu-link" href="{{ URL::action('TransactionController@index') }}">
@@ -1063,7 +1096,7 @@ if (!Auth::user()->getAdmin()) {
                     ?>
 
                     @foreach ($jmb as $cob)
-                    <li id="{{ $cob->short_name . "_list" }}">
+                    <li id="{{ $cob->short_name . "_list" }}" class="{{ (Session::get('admin_cob') == $cob->id ? 'left-menu-list-active' : '') }}">
                         <a class="left-menu-link" href='{{ URL::action('UserController@changeCOB', $cob->id) }}'>{{ strtoupper($cob->short_name) }}</a>
                     </li>
                     @endforeach

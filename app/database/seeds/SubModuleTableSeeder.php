@@ -32,6 +32,12 @@ class SubModuleTableSeeder extends Seeder
                 'name_my' => 'Liquidator',
                 'sort_no' => 21
             ]);
+            SubModule::firstOrCreate([
+                'module_id' => $master_module->id,
+                'name_en' => 'e-Service Pricing',
+                'name_my' => 'e-Perkhidmatan Pricing',
+                'sort_no' => 21
+            ]);
         }
 
         $epks = Module::where('name_en', 'EPKS')->first();
@@ -87,6 +93,12 @@ class SubModuleTableSeeder extends Seeder
                 'name_en' => 'Movement of File',
                 'name_my' => 'Pergerakan Fail',
                 'sort_no' => 23
+            ]);
+            SubModule::firstOrCreate([
+                'module_id' => $report->id,
+                'name_en' => 'Finance / Month',
+                'name_my' => 'Kewangan / Bulan',
+                'sort_no' => 24
             ]);
         }
 

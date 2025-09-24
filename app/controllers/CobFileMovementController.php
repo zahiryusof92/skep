@@ -48,13 +48,13 @@ class CobFileMovementController extends \BaseController
 				->addColumn('action', function ($model) use ($file_id) {
 					$btn = '';
 
-					// if (AccessGroup::hasUpdateModule('File Movement')) {
-					// $btn .= '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
-					// $btn .= '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
-					// 	. '<input type="hidden" name="_method" value="DELETE">'
-					// 	. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
-					// 	. '</form>';
-					// }
+					if (AccessGroup::hasUpdateModule('File Movement')) {
+						// $btn .= '<a href="' . route('cob.file-movement.edit', [Helper::encode($this->module['file_movement']['name'], $model->id), $file_id]) . '" class="btn btn-xs btn-success" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+						$btn .= '<form action="' . route('cob.file-movement.destroy', Helper::encode($this->module['file_movement']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" style="display:inline-block;">'
+							. '<input type="hidden" name="_method" value="DELETE">'
+							. '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['file_movement']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>'
+							. '</form>';
+					}
 
 					return $btn;
 				})

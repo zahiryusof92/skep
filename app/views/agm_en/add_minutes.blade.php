@@ -180,27 +180,6 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
-                                <!-- OCR -->
-                                <form id="upload_minutes_meeting_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="minutes_meeting_ocr" id="minutes_meeting_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="minutes_meeting_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
                             <form>
                                 <div class="form-group row">
                                     <div class="col-md-6">
@@ -231,27 +210,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            @if (Auth::user()->getAdmin())
-                                <!-- OCR -->
-                                <form id="upload_copy_of_spa_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="copy_of_spa_ocr" id="copy_of_spa_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="copy_of_spa_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form>
                                 <div class="form-group row">
@@ -315,27 +273,6 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
-                                <!-- OCR -->
-                                <form id="upload_attendance_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="attendance_ocr" id="attendance_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="attendance_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
                             <form>
                                 <div class="form-group row">
                                     <div class="col-md-6">
@@ -367,28 +304,6 @@
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
-                                <!-- OCR -->
-                                <form id="upload_audited_financial_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="audited_financial_ocr"
-                                                id="audited_financial_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="audited_financial_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
                             <form>
                                 <div class="form-group row">
                                     <div class="col-md-6">
@@ -411,13 +326,8 @@
                                         <label class="form-control-label">&nbsp;</label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_audit_report_file" class="btn btn-xs btn-danger"
-                                            onclick="clearAuditFile()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="audit_report_file" id="audit_report_file">
-                                        <div id="validation-errors_audit_report_file"></div>
+                                        <div id="audit_report_file_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -431,13 +341,8 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_letter_integrity" class="btn btn-xs btn-danger"
-                                            onclick="clearLetterIntegrity()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="letter_integrity" id="letter_integrity">
-                                        <div id="validation-errors_letter_integrity"></div>
+                                        <div id="letter_integrity_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -451,13 +356,8 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_letter_bankruptcy" class="btn btn-xs btn-danger"
-                                            onclick="clearLetterBankruptcy()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="letter_bankruptcy" id="letter_bankruptcy">
-                                        <div id="validation-errors_letter_bankruptcy"></div>
+                                        <div id="letter_bankruptcy_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -510,16 +410,32 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_notice_agm_egm" class="btn btn-xs btn-danger"
-                                            onclick="clearNoticeAgmEgm()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="notice_agm_egm" id="notice_agm_egm">
-                                        <div id="validation-notice_agm_egm"></div>
+                                        <div id="notice_agm_egm_error"></div>
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- OCR -->
+                            @if (Auth::user()->hasAccessOCR())
+                                <form id="upload_notice_agm_egm_ocr" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadOcr') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">&nbsp;</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">OCR</label>
+                                            <br />
+                                            <input type="file" name="notice_agm_egm_ocr" id="notice_agm_egm_ocr">
+                                            <div>
+                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                            </div>
+                                            <div id="notice_agm_egm_ocr_error"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
 
                             <form id="upload_minutes_agm_egm" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadMinutesAgmEgm') }}" autocomplete="off">
@@ -530,16 +446,32 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_minutes_agm_egm" class="btn btn-xs btn-danger"
-                                            onclick="clearMinutesAgmEgm()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="minutes_agm_egm" id="minutes_agm_egm">
-                                        <div id="validation-minutes_agm_egm"></div>
+                                        <div id="minutes_agm_egm_error"></div>
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- OCR -->
+                            @if (Auth::user()->hasAccessOCR())
+                                <form id="upload_minutes_agm_egm_ocr" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadOcr') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">&nbsp;</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">OCR</label>
+                                            <br />
+                                            <input type="file" name="minutes_agm_egm_ocr" id="minutes_agm_egm_ocr">
+                                            <div>
+                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                            </div>
+                                            <div id="minutes_agm_egm_ocr_error"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
 
                             <form id="upload_minutes_ajk" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadMinutesAjk') }}" autocomplete="off">
@@ -550,16 +482,32 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_minutes_ajk" class="btn btn-xs btn-danger"
-                                            onclick="clearMinutesAjk()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="minutes_ajk" id="minutes_ajk">
-                                        <div id="validation-minutes_ajk"></div>
+                                        <div id="minutes_ajk_error"></div>
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- OCR -->
+                            @if (Auth::user()->hasAccessOCR())
+                                <form id="upload_minutes_ajk_ocr" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadOcr') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">&nbsp;</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">OCR</label>
+                                            <br />
+                                            <input type="file" name="minutes_ajk_ocr" id="minutes_ajk_ocr">
+                                            <div>
+                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                            </div>
+                                            <div id="minutes_ajk_ocr_error"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
 
                             <form id="upload_eligible_vote" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadEligibleVote') }}" autocomplete="off">
@@ -570,37 +518,11 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_eligible_vote" class="btn btn-xs btn-danger"
-                                            onclick="clearEligbleVote()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="eligible_vote" id="eligible_vote">
-                                        <div id="validation-eligible_vote"></div>
+                                        <div id="eligible_vote_error"></div>
                                     </div>
                                 </div>
                             </form>
-
-                            @if (Auth::user()->getAdmin())
-                                <!-- OCR -->
-                                <form id="upload_eligible_vote_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="eligible_vote_ocr" id="eligible_vote_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="eligible_vote_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_attend_meeting" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadAttendMeeting') }}" autocomplete="off">
@@ -611,13 +533,8 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_attend_meeting" class="btn btn-xs btn-danger"
-                                            onclick="clearAttendMeeting()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="attend_meeting" id="attend_meeting">
-                                        <div id="validation-attend_meeting"></div>
+                                        <div id="attend_meeting_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -631,13 +548,8 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_proksi" class="btn btn-xs btn-danger"
-                                            onclick="clearProksi()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="proksi" id="proksi">
-                                        <div id="validation-proksi"></div>
+                                        <div id="proksi_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -651,16 +563,32 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_ajk_info" class="btn btn-xs btn-danger"
-                                            onclick="clearAjkInfo()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="ajk_info" id="ajk_info">
-                                        <div id="validation-ajk_info"></div>
+                                        <div id="ajk_info_error"></div>
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- OCR -->
+                            @if (Auth::user()->hasAccessOCR())
+                                <form id="upload_ajk_info_ocr" enctype="multipart/form-data" method="post"
+                                    action="{{ url('uploadOcr') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">&nbsp;</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">OCR</label>
+                                            <br />
+                                            <input type="file" name="ajk_info_ocr" id="ajk_info_ocr">
+                                            <div>
+                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                            </div>
+                                            <div id="ajk_info_ocr_error"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
 
                             <form id="upload_ic" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadIc') }}" autocomplete="off">
@@ -671,17 +599,43 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_ic" class="btn btn-xs btn-danger"
-                                            onclick="clearIc()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="ic" id="ic">
-                                        <div id="validation-ic"></div>
+                                        <div id="ic_error"></div>
                                     </div>
                                 </div>
                             </form>
 
+                            <?php if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) || Auth::user()->isLPHS()) { ?>
+                            <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
+                                action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.upload_purchase_aggrement') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" name="purchase_aggrement" id="purchase_aggrement">
+                                        <div id="purchase_aggrement_error"></div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.upload_strata_title') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" name="strata_title" id="strata_title">
+                                        <div id="strata_title_error"></div>
+                                    </div>
+                                </div>
+                            </form>
+                            <?php } else { ?>
                             <?php if (Auth::user()->isJMB()) { ?>
                             <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
@@ -692,14 +646,22 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_purchase_aggrement"
-                                            class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
-                                            style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="purchase_aggrement" id="purchase_aggrement">
-                                        <div id="validation-purchase_aggrement"></div>
+                                        <div id="purchase_aggrement_error"></div>
+                                    </div>
+                                </div>
+                            </form>
+                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
+                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.upload_strata_title') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" name="strata_title" id="strata_title">
+                                        <div id="strata_title_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -713,56 +675,12 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
-                                            onclick="clearStrataTitle()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="strata_title" id="strata_title">
-                                        <div id="validation-strata_title"></div>
+                                        <div id="strata_title_error"></div>
                                     </div>
                                 </div>
                             </form>
-                            <?php } else { ?>
-                            <form id="upload_purchase_aggrement" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadPurchaseAggrement') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_purchase_aggrement') }}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_purchase_aggrement"
-                                            class="btn btn-xs btn-danger" onclick="clearPurchaseAggrement()"
-                                            style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="purchase_aggrement" id="purchase_aggrement">
-                                        <div id="validation-purchase_aggrement"></div>
-                                    </div>
-                                </div>
-                            </form>
-                            <form id="upload_strata_title" enctype="multipart/form-data" method="post"
-                                action="{{ url('uploadStrataTitle') }}" autocomplete="off">
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label class="form-control-label">
-                                            {{ trans('app.forms.upload_strata_title') }}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button" id="clear_strata_title" class="btn btn-xs btn-danger"
-                                            onclick="clearStrataTitle()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
-                                        <input type="file" name="strata_title" id="strata_title">
-                                        <div id="validation-strata_title"></div>
-                                    </div>
-                                </div>
-                            </form>
+                            <?php } ?>
                             <?php } ?>
 
                             <form id="upload_maintenance_statement" enctype="multipart/form-data" method="post"
@@ -774,14 +692,8 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_maintenance_statement"
-                                            class="btn btn-xs btn-danger" onclick="clearMaintenanceStatement()"
-                                            style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="maintenance_statement" id="maintenance_statement">
-                                        <div id="validation-maintenance_statement"></div>
+                                        <div id="maintenance_statement_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -795,13 +707,24 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_integrity_pledge" class="btn btn-xs btn-danger"
-                                            onclick="clearIntegrityPledge()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="integrity_pledge" id="integrity_pledge">
-                                        <div id="validation-integrity_pledge"></div>
+                                        <div id="integrity_pledge_error"></div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <form id="upload_sworn_statement" enctype="multipart/form-data" method="post"
+                                action="{{ url('uploadSwornStatement') }}" autocomplete="off">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label class="form-control-label">
+                                            {{ trans('app.forms.upload_sworn_statement') }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="file" name="sworn_statement"
+                                            id="sworn_statement">
+                                        <div id="sworn_statement_error"></div>
                                     </div>
                                 </div>
                             </form>
@@ -815,18 +738,34 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_report_audited_financial"
-                                            class="btn btn-xs btn-danger" onclick="clearReportAuditedFinancial()"
-                                            style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="report_audited_financial"
                                             id="report_audited_financial">
-                                        <div id="validation-report_audited_financial"></div>
+                                        <div id="report_audited_financial_error"></div>
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- OCR -->
+                            @if (Auth::user()->hasAccessOCR())
+                                <form id="upload_report_audited_financial_ocr" enctype="multipart/form-data"
+                                    method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">&nbsp;</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-control-label">OCR</label>
+                                            <br />
+                                            <input type="file" name="report_audited_financial_ocr"
+                                                id="report_audited_financial_ocr">
+                                            <div>
+                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
+                                            </div>
+                                            <div id="report_audited_financial_ocr_error"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
 
                             <form id="upload_house_rules" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadHouseRules') }}" autocomplete="off">
@@ -837,19 +776,14 @@
                                         </label>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" id="clear_house_rules" class="btn btn-xs btn-danger"
-                                            onclick="clearHouseRules()" style="display: none;">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        &nbsp;
                                         <input type="file" name="house_rules" id="house_rules">
-                                        <div id="validation-house_rules"></div>
+                                        <div id="house_rules_error"></div>
                                     </div>
                                 </div>
                             </form>
 
-                            @if (Auth::user()->getAdmin())
-                                <!-- OCR -->
+                            <!-- OCR -->
+                            @if (Auth::user()->hasAccessOCR())
                                 <form id="upload_house_rules_ocr" enctype="multipart/form-data" method="post"
                                     action="{{ url('uploadOcr') }}" autocomplete="off">
                                     <div class="form-group row">
@@ -905,13 +839,15 @@
                                     <input type="hidden" id="strata_title_url" />
                                     <input type="hidden" id="maintenance_statement_url" />
                                     <input type="hidden" id="integrity_pledge_url" />
+                                    <input type="hidden" id="sworn_statement_url" />
                                     <input type="hidden" id="report_audited_financial_url" />
                                     <input type="hidden" id="house_rules_url" />
-                                    <input type="hidden" id="minutes_meeting_ocr_url" />
-                                    <input type="hidden" id="copy_of_spa_ocr_url" />
-                                    <input type="hidden" id="attendance_ocr_url" />
-                                    <input type="hidden" id="audited_financial_ocr_url" />
-                                    <input type="hidden" id="eligible_vote_ocr_url" />
+                                    {{-- OCR --}}
+                                    <input type="hidden" id="notice_agm_egm_ocr_url" />
+                                    <input type="hidden" id="minutes_agm_egm_ocr_url" />
+                                    <input type="hidden" id="minutes_ajk_ocr_url" />
+                                    <input type="hidden" id="ajk_info_ocr_url" />
+                                    <input type="hidden" id="report_audited_financial_ocr_url" />
                                     <input type="hidden" id="house_rules_ocr_url" />
 
                                     <button type="button" class="btn btn-own" id="submit_button"
@@ -996,15 +932,17 @@
                 strata_title_url = $("#strata_title_url").val(),
                 maintenance_statement_url = $("#maintenance_statement_url").val(),
                 integrity_pledge_url = $("#integrity_pledge_url").val(),
+                sworn_statement_url = $("#sworn_statement_url").val(),
                 report_audited_financial_url = $("#report_audited_financial_url").val(),
                 house_rules_url = $("#house_rules_url").val(),
                 type = $("#type").val(),
                 remarks = $("#remarks").val(),
-                minutes_meeting_ocr_url = $("#minutes_meeting_ocr_url").val(),
-                copy_of_spa_ocr_url = $("#copy_of_spa_ocr_url").val(),
-                attendance_ocr_url = $("#attendance_ocr_url").val(),
-                audited_financial_ocr_url = $("#audited_financial_ocr_url").val(),
-                eligible_vote_ocr_url = $("#eligible_vote_ocr_url").val(),
+                // OCR
+                notice_agm_egm_ocr_url = $("#notice_agm_egm_ocr_url").val(),
+                minutes_agm_egm_ocr_url = $("#minutes_agm_egm_ocr_url").val(),
+                minutes_ajk_ocr_url = $("#minutes_ajk_ocr_url").val(),
+                ajk_info_ocr_url = $("#ajk_info_ocr_url").val(),
+                report_audited_financial_ocr_url = $("#report_audited_financial_ocr_url").val(),
                 house_rules_ocr_url = $("#house_rules_ocr_url").val();
 
             if (document.getElementById('agm').checked) {
@@ -1102,15 +1040,17 @@
                         strata_title_url: strata_title_url,
                         maintenance_statement_url: maintenance_statement_url,
                         integrity_pledge_url: integrity_pledge_url,
+                        sworn_statement_url: sworn_statement_url,
                         report_audited_financial_url: report_audited_financial_url,
                         house_rules_url: house_rules_url,
                         type: type,
                         remarks: remarks,
-                        minutes_meeting_ocr_url: minutes_meeting_ocr_url,
-                        copy_of_spa_ocr_url: copy_of_spa_ocr_url,
-                        attendance_ocr_url: attendance_ocr_url,
-                        audited_financial_ocr_url: audited_financial_ocr_url,
-                        eligible_vote_ocr_url: eligible_vote_ocr_url,
+                        // OCR
+                        notice_agm_egm_ocr_url: notice_agm_egm_ocr_url,
+                        minutes_agm_egm_ocr_url: minutes_agm_egm_ocr_url,
+                        minutes_ajk_ocr_url: minutes_ajk_ocr_url,
+                        ajk_info_ocr_url: ajk_info_ocr_url,
+                        report_audited_financial_ocr_url: report_audited_financial_ocr_url,
                         house_rules_ocr_url: house_rules_ocr_url
                     },
                     beforeSend: function() {

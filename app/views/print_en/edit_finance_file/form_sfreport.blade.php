@@ -108,6 +108,8 @@ $count = 0;
         var sfr_total_income = $("[id=income_semasa_2]").val();
         $('#{{ $prefix }}total_income').text(toCommas(parseFloat(sfr_total_income).toFixed(2)));
 
+        var sfr_tunggakan_belum_dikutip = Number($("[id={{ $prefix }}tunggakan_belum_dikutip]").val());
+
         var sfr_bayar = document.getElementsByName("{{ $prefix }}amount[]");
         var sfr_bayar_total = 0;
         for (var i = 0; i < sfr_bayar.length; i++) {
@@ -115,7 +117,7 @@ $count = 0;
         }
         $('#{{ $prefix }}bayar_total').text(toCommas(parseFloat(sfr_bayar_total).toFixed(2)));
 
-        var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_bayar_total);
+        var sfr_lebihan_kurangan = Number(sfr_kutipan) - Number(sfr_bayar_total) - Number(sfr_tunggakan_belum_dikutip);
         $('#{{ $prefix }}lebihan_kurangan').text(toCommas(parseFloat(sfr_lebihan_kurangan).toFixed(2)));
     }
 </script>

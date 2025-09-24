@@ -328,44 +328,22 @@ class PrintController extends BaseController
                     $tnb = ucfirst($files->other->tnb);
                 }
 
-                if ($files->financeLatest) {
-                    $finance = $files->financeLatest;
-                    $finance_income = $finance->financeIncome;
-                    $finance_report_fee = $finance->financeReport;
+                if ($finance = $files->financeLatest) {
+                    $finance_income_semasa = $finance->financeIncome()->where('name', 'SINKING FUND')->sum('semasa');
                     $finance_report_fee_semasa = $finance->financeReport()->where('type', 'SF')->sum('fee_semasa');
                     $finance_report_fee_semasa = $finance_report_fee_semasa + $finance->financeReportExtra()->where('type', 'SF')->sum('fee_semasa');
 
-                    if ($finance_income) {
-                        foreach ($finance_report_fee as $report) {
-                            if ($report->type == 'MF') {
-                                $mf_rate = $report->fee_sebulan;
-                            }
-                            if ($report->type == 'SF') {
-                                $sf_rate = $report->fee_sebulan;
-                                $sepatut_dikutip = $sepatut_dikutip + $report->fee_semasa;
-                            }
-                        }
-                        foreach ($finance_income as $income) {
-                            if ($income->name == 'SINKING FUND') {
-                                $berjaya_dikutip = $berjaya_dikutip + $income->semasa;
-                            }
-                        }
-                    }
-
-                    if (!empty($berjaya_dikutip) && !empty($sepatut_dikutip)) {
-                        $purata_dikutip = round(($berjaya_dikutip / $sepatut_dikutip) * 100, 2);
-                    }
-
                     if ($finance_report_fee_semasa > 0) {
+                        $purata_dikutip = round(($finance_income_semasa / $finance_report_fee_semasa) * 100, 2);
                         if ($purata_dikutip >= 80) {
                             $zone = 'BIRU';
-                        } else if ($purata_dikutip < 79 && $purata_dikutip >= 50) {
+                        } else if ($purata_dikutip < 79 && $purata_dikutip >= 40) {
                             $zone = 'KUNING';
                         } else {
                             $zone = "MERAH";
                         }
                     } else {
-                        $zone = "KELABU";
+                        $zone = 'KELABU';
                     }
                 } else {
                     $zone = "KELABU";

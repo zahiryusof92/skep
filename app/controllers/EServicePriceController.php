@@ -1,6 +1,9 @@
 <?php
 
 use Helper\Helper;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 
 class EServicePriceController extends \BaseController
 {
@@ -12,21 +15,48 @@ class EServicePriceController extends \BaseController
 	 */
 	public function index()
 	{
+		$this->checkAvailableAccess();
+
 		if (Request::ajax()) {
-			$prices = EServicePrice::orderBy('company_id')->get();
+			if (!Auth::user()->getAdmin()) {
+				$prices = EServicePrice::select('eservices_prices.*')
+					->join('category', 'eservices_prices.category_id', '=', 'category.id')
+					->join('company', 'eservices_prices.company_id', '=', 'company.id')
+					->where('category.is_deleted', 0)
+					->where('company.is_active', 1)
+					->where('company.id', Auth::user()->company_id)
+					->orderBy('eservices_prices.company_id')
+					->get();
+			} else {
+				if (empty(Session::get('admin_cob'))) {
+					$prices = EServicePrice::select('eservices_prices.*')
+						->join('category', 'eservices_prices.category_id', '=', 'category.id')
+						->where('category.is_deleted', 0)
+						->orderBy('eservices_prices.company_id')
+						->get();
+				} else {
+					$prices = EServicePrice::select('eservices_prices.*')
+						->join('category', 'eservices_prices.category_id', '=', 'category.id')
+						->join('company', 'eservices_prices.company_id', '=', 'company.id')
+						->where('category.is_deleted', 0)
+						->where('company.is_active', 1)
+						->where('company.id', Session::get('admin_cob'))
+						->orderBy('eservices_prices.company_id')
+						->get();
+				}
+			}
 
 			if (count($prices) > 0) {
 				$data = array();
 				foreach ($prices as $price) {
 					$button = "";
-					$button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('EServicePriceController@edit', Helper::encode($price->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-					$button .= '<button class="btn btn-xs btn-danger" onclick="deletePrice(\'' . Helper::encode($price->id) . '\')"><i class="fa fa-trash"></i></button>';
+					$button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('EServicePriceController@edit', $this->encodeID($price->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
 
 					$data_raw = array(
 						$price->company->name,
 						$price->category->description,
 						$price->type,
-						$price->price,
+						number_format($price->price, 2),
 						$button
 					);
 
@@ -53,26 +83,32 @@ class EServicePriceController extends \BaseController
 			$cob = Company::where('short_name', Str::lower($council))->first();
 			if ($cob) {
 				$categories = Category::where('is_deleted', 0)->get();
-				foreach ($categories as $category) {
-					if (isset($this->module['eservice']['cob'][Str::lower($council)]['type'])) {
-						foreach ($this->module['eservice']['cob'][Str::lower($council)]['type'] as $type) {
-							$exist = EServicePrice::where('company_id', $cob->id)
-								->where('category_id', $category->id)
-								->where('slug', $type['name'])
-								->first();
+				if ($categories) {
+					foreach ($categories as $category) {
+						$validType = [];
+						if (isset($this->module['eservice']['cob'][Str::lower($council)]['type'])) {
+							foreach ($this->module['eservice']['cob'][Str::lower($council)]['type'] as $type) {
 
-							if (!$exist) {
-								$price = new EServicePrice();
-								$price->company_id = $cob->id;
-								$price->category_id = $category->id;
-								$price->type = $type['title'];
-								$price->slug = $type['name'];
-								$price->price = 0;
-								$price->save();
-							} else {
-								$exist->price = 10;
-								$exist->save();
+								$price = EServicePrice::updateOrCreate(
+									[
+										'company_id' => $cob->id,
+										'category_id' => $category->id,
+										'slug' => $type['name'],
+									],
+									[
+										'type' => $type['title'],
+									]
+								);
+
+								$validType[] = $type['name'];
 							}
+						}
+
+						if (!empty($validType)) {
+							EServicePrice::where('company_id', $cob->id)
+								->where('category_id', $category->id)
+								->whereNotIn('slug', $validType)
+								->delete();
 						}
 					}
 				}
@@ -98,15 +134,7 @@ class EServicePriceController extends \BaseController
 	 */
 	public function create()
 	{
-		$viewData = array(
-			'title' => trans('app.menus.eservice_price.create'),
-			'panel_nav_active' => 'master_panel',
-			'main_nav_active' => 'master_main',
-			'sub_nav_active' => 'eservice_price_list',
-			'image' => ''
-		);
-
-		return View::make('eservice_price.create', $viewData);
+		App::abort(404);
 	}
 
 
@@ -141,7 +169,25 @@ class EServicePriceController extends \BaseController
 	 */
 	public function edit($id)
 	{
-		//
+		$this->checkAvailableAccess();
+
+		$model = EServicePrice::with(['company', 'category'])->find($this->decodeID($id));
+
+		if ($model) {
+			$viewData = array(
+				'title' => trans('app.menus.eservice_price.edit'),
+				'panel_nav_active' => 'master_panel',
+				'main_nav_active' => 'master_main',
+				'sub_nav_active' => 'eservice_price_list',
+				'image' => '',
+				'model' => $model,
+				'id' => $this->encodeID($model->id),
+			);
+
+			return View::make('eservice_price.edit', $viewData);
+		}
+
+		App::abort(404);
 	}
 
 
@@ -153,7 +199,44 @@ class EServicePriceController extends \BaseController
 	 */
 	public function update($id)
 	{
-		//
+		$this->checkAvailableAccess();
+
+		$request = Request::all();
+
+		if (Request::ajax()) {
+			$validation_rules = [
+				'price' => 'required|numeric',
+			];
+
+			$validator = Validator::make($request, $validation_rules, []);
+
+			if ($validator->fails()) {
+				return [
+					'error' => true,
+					'errors' => $validator->errors(),
+					'message' => trans('Validation Fail')
+				];
+			} else {
+				$model = EServicePrice::find($this->decodeID($id));
+				if ($model) {
+					$update = $model->update([
+						'price' => $request['price'],
+					]);
+
+					if ($update) {
+						return [
+							'success' => true,
+							'message' => trans('app.successes.saved_successfully')
+						];
+					}
+				}
+			}
+		}
+
+		return [
+			'error' => true,
+			'message' => trans('app.errors.occurred')
+		];
 	}
 
 
@@ -166,5 +249,27 @@ class EServicePriceController extends \BaseController
 	public function destroy($id)
 	{
 		//
+	}
+
+	private function getModule()
+	{
+		return $this->module['eservice'];
+	}
+
+	private function encodeID($id)
+	{
+		return Helper::encode($this->getModule()['name'], $id);
+	}
+
+	private function decodeID($id)
+	{
+		return Helper::decode($id, $this->getModule()['name']);
+	}
+
+	private function checkAvailableAccess($model = '')
+	{
+		if (!AccessGroup::hasAccessModule('e-Service') && !AccessGroup::hasAccessModule('e-Service Pricing')) {
+			App::abort(404);
+		}
 	}
 }

@@ -33,6 +33,10 @@ class Company extends Eloquent {
         return $this->hasMany('Files', 'company_id')->orderBy('files.id');
     }
 
+    public function activeFiles() {
+        return $this->hasMany('Files', 'company_id')->where('is_active', 1)->orderBy('files.id');
+    }
+
     public function users() {
         return $this->hasMany('User', 'company_id');
     }

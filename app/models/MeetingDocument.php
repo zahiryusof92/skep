@@ -26,30 +26,34 @@ class MeetingDocument extends Eloquent
 
     public function meetingDocumentStatus()
     {
-        return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->latest();
+        return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->orderBy('updated_at', 'desc');
     }
 
-    public function minutesMeetingOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_meeting')->latest();
+    public function noticeAgmEgmOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'notice_agm_egm')->latest();
     }
 
-    public function copyOfSpaOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'copy_of_spa')->latest();
+    public function minutesAgmEgmOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_agm_egm')->latest();
     }
 
-    public function attendanceOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'attendance')->latest();
+    public function minutesAjkOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_ajk')->latest();
     }
 
-    public function auditedFinancialOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'audited_financial')->latest();
+    public function ajkInfoOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'ajk_info')->latest();
     }
 
-    public function eligibleVoteOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'eligible_vote')->latest();
+    public function reportAuditedFinancialOcr() {
+        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'report_audited_financial')->latest();
     }
 
     public function houseRulesOcr() {
         return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'house_rules')->latest();
+    }
+
+    public function ocrs() {
+        return $this->hasMany('Ocr', 'meeting_document_id');
     }
 }

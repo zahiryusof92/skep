@@ -601,6 +601,387 @@ return [
             ]
 
         ],
+        'agm' => [
+            'minute' => [
+                'name' => 'agm_minute',
+                'agm' => [
+                    'jmb' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.agm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                    'mc' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.agm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                ],
+                'egm' => [
+                    'jmb' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.egm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.jmb.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                    'mc' => [
+                        'question_1' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.1'),
+                            'field' => [
+                                'question_1',
+                                'question_1_file'
+                            ]
+                        ],
+                        'question_2' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.2'),
+                            'field' => [
+                                'question_2',
+                                'question_2_file'
+                            ]
+                        ],
+                        'question_3' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.3'),
+                            'field' => [
+                                'question_3',
+                                'question_3_file'
+                            ]
+                        ],
+                        'question_4' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.egm.1'),
+                            'field' => [
+                                'question_4',
+                                'question_4_file'
+                            ]
+                        ],
+                        'question_5' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.4'),
+                            'field' => [
+                                'question_5',
+                                'question_5_file'
+                            ]
+                        ],
+                        'question_6' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.5'),
+                            'field' => [
+                                'question_6',
+                                'question_6_file'
+                            ]
+                        ],
+                        'question_7' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.6'),
+                            'field' => [
+                                'question_7',
+                                'question_7_file'
+                            ]
+                        ],
+                        'question_8' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.7'),
+                            'field' => [
+                                'question_8',
+                                'question_8_file'
+                            ]
+                        ],
+                        'question_9' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.8'),
+                            'field' => [
+                                'question_9',
+                                'question_9_file'
+                            ]
+                        ],
+                        'question_10' => [
+                            'label' => trans('app.forms.agm_submission.minute.mc.common.1'),
+                            'field' => [
+                                'question_10',
+                                'question_10_file'
+                            ]
+                        ],
+                        'question_11' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.9'),
+                            'field' => [
+                                'question_11',
+                                'question_11_file'
+                            ]
+                        ],
+                        'question_12' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.10'),
+                            'field' => [
+                                'question_12',
+                                'question_12_file'
+                            ]
+                        ],
+                        'question_13' => [
+                            'label' => trans('app.forms.agm_submission.minute.common.11'),
+                            'field' => [
+                                'question_13',
+                                'question_13_file'
+                            ]
+                        ],
+                    ],
+                ]
+            ]
+        ],
         'area' => [
             'name' => 'area'
         ],
@@ -866,7 +1247,7 @@ return [
                     'type' => [
                         'surat_kebocoran_antara_tingkat' => [
                             'name' => 'surat_kebocoran_antara_tingkat',
-                            'title' => trans('app.eservice.surat_kebocoran_antara_tingkat'),
+                            'title' => trans('app.eservice.mbpj.surat_kebocoran_antara_tingkat'),
                             'only' => [
                                 'building_name',
                                 'management_name',
@@ -878,7 +1259,7 @@ return [
                                 'management_state',
                                 'management_phone',
                                 'unit_no',
-                                'owner_name', 
+                                'owner_name',
                                 'owner_address1',
                                 'owner_address2',
                                 'owner_address3',
@@ -894,9 +1275,9 @@ return [
                                 'image_of_affected',
                             ],
                         ],
-                        'surat_peringatan_tunggakan_caj' => [
-                            'name' => 'surat_peringatan_tunggakan_caj',
-                            'title' => trans('app.eservice.surat_peringatan_tunggakan_caj'),
+                        'surat_peringatan_tunggakan_caj_jmb' => [
+                            'name' => 'surat_peringatan_tunggakan_caj_jmb',
+                            'title' => trans('app.eservice.mbpj.surat_peringatan_tunggakan_caj_jmb'),
                             'only' => [
                                 'building_name',
                                 'management_name',
@@ -925,211 +1306,704 @@ return [
                                 'proof_of_notice',
                             ],
                         ],
+                        'surat_peringatan_tunggakan_caj_mc' => [
+                            'name' => 'surat_peringatan_tunggakan_caj_mc',
+                            'title' => trans('app.eservice.mbpj.surat_peringatan_tunggakan_caj_mc'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'reminder_type',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                                'total_overdue',
+                                'date_overdue',
+                                'reference_no',
+                                'cover_letter',
+                                'account_statement',
+                                'copy_of_form',
+                                'proof_of_notice',
+                            ],
+                        ],
+                        'peraturan_mengenai_kerja_pengubahsuaian' => [
+                            'name' => 'peraturan_mengenai_kerja_pengubahsuaian',
+                            'title' => trans('app.eservice.mbpj.peraturan_mengenai_kerja_pengubahsuaian'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                            ],
+                        ],
+                        'peraturan_mengenai_petak_parkir' => [
+                            'name' => 'peraturan_mengenai_petak_parkir',
+                            'title' => trans('app.eservice.mbpj.peraturan_mengenai_petak_parkir'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                            ],
+                        ],
+                        'aduan_halangan_di_kawasan_harta_bersama' => [
+                            'name' => 'aduan_halangan_di_kawasan_harta_bersama',
+                            'title' => trans('app.eservice.mbpj.aduan_halangan_di_kawasan_harta_bersama'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                            ],
+                        ],
+                        'peraturan_pemeliharaan_haiwan_di_skim_strata' => [
+                            'name' => 'peraturan_pemeliharaan_haiwan_di_skim_strata',
+                            'title' => trans('app.eservice.mbpj.peraturan_pemeliharaan_haiwan_di_skim_strata'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                            ],
+                        ],
+                    ],
+                    'fields' => [
+                        'bill_no' => [
+                            'label' => trans('app.forms.eservice.mbpj.bill_no'),
+                            'name' => 'bill_no',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'date' => [
+                            'label' => trans('app.forms.eservice.mbpj.date'),
+                            'name' => 'date',
+                            'type' => 'date',
+                            'required' => true
+                        ],
+                        'building_name' => [
+                            'label' => trans('app.forms.eservice.mbpj.building_name'),
+                            'name' => 'building_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_name' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_name'),
+                            'name' => 'management_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_address1' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_address'),
+                            'name' => 'management_address1',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_address2' => [
+                            'label' => '',
+                            'name' => 'management_address2',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'management_address3' => [
+                            'label' => '',
+                            'name' => 'management_address3',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'management_postcode' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_postcode'),
+                            'name' => 'management_postcode',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_city' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_city'),
+                            'name' => 'management_city',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_state' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_state'),
+                            'name' => 'management_state',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_phone' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_phone'),
+                            'name' => 'management_phone',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'management_email' => [
+                            'label' => trans('app.forms.eservice.mbpj.management_email'),
+                            'name' => 'management_email',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'affected_unit' => [
+                            'label' => trans('app.forms.eservice.mbpj.affected_unit'),
+                            'name' => 'affected_unit',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_remark' => [
+                            'label' => trans('app.forms.eservice.mbpj.affected_remark'),
+                            'name' => 'affected_remark',
+                            'type' => 'textarea',
+                            'required' => false
+                        ],
+                        'cover_letter' => [
+                            'label' => trans('app.forms.eservice.mbpj.cover_letter'),
+                            'name' => 'cover_letter',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'complaint_letter' => [
+                            'label' => trans('app.forms.eservice.mbpj.complaint_letter'),
+                            'name' => 'complaint_letter',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'copy_of_form_28' => [
+                            'label' => trans('app.forms.eservice.mbpj.copy_of_form_28'),
+                            'name' => 'copy_of_form_28',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'proof_of_notice_28' => [
+                            'label' => trans('app.forms.eservice.mbpj.proof_of_notice_28'),
+                            'name' => 'proof_of_notice_28',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'image_of_affected' => [
+                            'label' => trans('app.forms.eservice.mbpj.image_of_affected'),
+                            'name' => 'image_of_affected',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'reminder_type' => [
+                            'label' => trans('app.forms.eservice.mbpj.reminder_type'),
+                            'name' => 'reminder_type',
+                            'type' => 'radio',
+                            'required' => true,
+                            'options' => [
+                                'first_reminder' => trans('app.forms.eservice.mbpj.reminder_type_option_1'),
+                                'second_reminder' => trans('app.forms.eservice.mbpj.reminder_type_option_2'),
+                            ],
+                        ],
+                        'unit_no' => [
+                            'label' => trans('app.forms.eservice.mbpj.unit_no'),
+                            'name' => 'unit_no',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_name' => [
+                            'label' => trans('app.forms.eservice.mbpj.owner_name'),
+                            'name' => 'owner_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_address1' => [
+                            'label' => trans('app.forms.eservice.mbpj.owner_address'),
+                            'name' => 'owner_address1',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_address2' => [
+                            'label' => '',
+                            'name' => 'owner_address2',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'owner_address3' => [
+                            'label' => '',
+                            'name' => 'owner_address3',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'owner_postcode' => [
+                            'label' => trans('app.forms.eservice.mbpj.owner_postcode'),
+                            'name' => 'owner_postcode',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_city' => [
+                            'label' => trans('app.forms.eservice.mbpj.owner_city'),
+                            'name' => 'owner_city',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_state' => [
+                            'label' => trans('app.forms.eservice.mbpj.owner_state'),
+                            'name' => 'owner_state',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'total_overdue' => [
+                            'label' => trans('app.forms.eservice.mbpj.total_overdue'),
+                            'name' => 'total_overdue',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'date_overdue' => [
+                            'label' => trans('app.forms.eservice.mbpj.date_overdue'),
+                            'name' => 'date_overdue',
+                            'type' => 'date',
+                            'required' => true
+                        ],
+                        'reference_no' => [
+                            'label' => trans('app.forms.eservice.mbpj.reference_no'),
+                            'name' => 'reference_no',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'account_statement' => [
+                            'label' => trans('app.forms.eservice.mbpj.account_statement'),
+                            'name' => 'account_statement',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'copy_of_form' => [
+                            'label' => trans('app.forms.eservice.mbpj.copy_of_form'),
+                            'name' => 'copy_of_form',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'proof_of_notice' => [
+                            'label' => trans('app.forms.eservice.mbpj.proof_of_notice'),
+                            'name' => 'proof_of_notice',
+                            'type' => 'file',
+                            'required' => true
+                        ],
                     ],
                 ],
-            ],
-            'fields' => [
-                'bill_no' => [
-                    'label' => trans('app.forms.eservice.bill_no'),
-                    'name' => 'bill_no',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'date' => [
-                    'label' => trans('app.forms.eservice.date'),
-                    'name' => 'date',
-                    'type' => 'date',
-                    'required' => true
-                ],
-                'building_name' => [
-                    'label' => trans('app.forms.eservice.building_name'),
-                    'name' => 'building_name',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'management_name' => [
-                    'label' => trans('app.forms.eservice.management_name'),
-                    'name' => 'management_name',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'management_address1' => [
-                    'label' => trans('app.forms.eservice.management_address'),
-                    'name' => 'management_address1',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'management_address2' => [
-                    'label' => '',
-                    'name' => 'management_address2',
-                    'type' => 'text',
-                    'required' => false
-                ],
-                'management_address3' => [
-                    'label' => '',
-                    'name' => 'management_address3',
-                    'type' => 'text',
-                    'required' => false
-                ],
-                'management_postcode' => [
-                    'label' => trans('app.forms.eservice.management_postcode'),
-                    'name' => 'management_postcode',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'management_city' => [
-                    'label' => trans('app.forms.eservice.management_city'),
-                    'name' => 'management_city',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'management_state' => [
-                    'label' => trans('app.forms.eservice.management_state'),
-                    'name' => 'management_state',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'management_phone' => [
-                    'label' => trans('app.forms.eservice.management_phone'),
-                    'name' => 'management_phone',
-                    'type' => 'text',
-                    'required' => false
-                ],
-                'affected_unit' => [
-                    'label' => trans('app.forms.eservice.affected_unit'),
-                    'name' => 'affected_unit',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'affected_remark' => [
-                    'label' => trans('app.forms.eservice.affected_remark'),
-                    'name' => 'affected_remark',
-                    'type' => 'textarea',
-                    'required' => false
-                ],
-                'cover_letter' => [
-                    'label' => trans('app.forms.eservice.cover_letter'),
-                    'name' => 'cover_letter',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'complaint_letter' => [
-                    'label' => trans('app.forms.eservice.complaint_letter'),
-                    'name' => 'complaint_letter',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'copy_of_form_28' => [
-                    'label' => trans('app.forms.eservice.copy_of_form_28'),
-                    'name' => 'copy_of_form_28',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'proof_of_notice_28' => [
-                    'label' => trans('app.forms.eservice.proof_of_notice_28'),
-                    'name' => 'proof_of_notice_28',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'image_of_affected' => [
-                    'label' => trans('app.forms.eservice.image_of_affected'),
-                    'name' => 'image_of_affected',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'reminder_type' => [
-                    'label' => trans('app.forms.eservice.reminder_type'),
-                    'name' => 'reminder_type',
-                    'type' => 'radio',
-                    'required' => true,
-                    'options' => [
-                        'first_reminder' => trans('app.forms.eservice.reminder_type_option_1'),
-                        'second_reminder' => trans('app.forms.eservice.reminder_type_option_2'),
+                'mbsj' => [
+                    'type' => [
+                        'surat_kebocoran_antara_tingkat' => [
+                            'name' => 'surat_kebocoran_antara_tingkat',
+                            'title' => trans('app.eservice.mbsj.surat_kebocoran_antara_tingkat'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_address4',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'management_pic',
+                                'owner_unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_address4',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                                'affected_unit_no',
+                                'affected_name',
+                                'affected_address1',
+                                'affected_address2',
+                                'affected_address3',
+                                'affected_address4',
+                                'affected_postcode',
+                                'affected_city',
+                                'affected_state',
+                                'cover_letter',
+                                'list_of_leak',
+                                'complaint_letter',
+                                'copy_of_form_28',
+                                'proof_of_notice_28',
+                                'image_of_affected',
+                            ],
+                        ],
+                        'surat_peringatan_tunggakan_caj_jmb' => [
+                            'name' => 'surat_peringatan_tunggakan_caj_jmb',
+                            'title' => trans('app.eservice.mbsj.surat_peringatan_tunggakan_caj_jmb'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_address4',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'owner_unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_address4',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                                'total_overdue',
+                                'date_overdue',
+                            ],
+                        ],
+                        'surat_peringatan_tunggakan_caj_mc' => [
+                            'name' => 'surat_peringatan_tunggakan_caj_mc',
+                            'title' => trans('app.eservice.mbsj.surat_peringatan_tunggakan_caj_mc'),
+                            'only' => [
+                                'building_name',
+                                'management_name',
+                                'management_address1',
+                                'management_address2',
+                                'management_address3',
+                                'management_address4',
+                                'management_postcode',
+                                'management_city',
+                                'management_state',
+                                'management_phone',
+                                'management_email',
+                                'owner_unit_no',
+                                'owner_name',
+                                'owner_address1',
+                                'owner_address2',
+                                'owner_address3',
+                                'owner_address4',
+                                'owner_postcode',
+                                'owner_city',
+                                'owner_state',
+                                'total_overdue',
+                                'date_overdue',
+                            ],
+                        ],
                     ],
-                ],
-                'unit_no' => [
-                    'label' => trans('app.forms.eservice.unit_no'),
-                    'name' => 'unit_no',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'owner_name' => [
-                    'label' => trans('app.forms.eservice.owner_name'),
-                    'name' => 'owner_name',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'owner_address1' => [
-                    'label' => trans('app.forms.eservice.owner_address'),
-                    'name' => 'owner_address1',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'owner_address2' => [
-                    'label' => '',
-                    'name' => 'owner_address2',
-                    'type' => 'text',
-                    'required' => false
-                ],
-                'owner_address3' => [
-                    'label' => '',
-                    'name' => 'owner_address3',
-                    'type' => 'text',
-                    'required' => false
-                ],
-                'owner_postcode' => [
-                    'label' => trans('app.forms.eservice.owner_postcode'),
-                    'name' => 'owner_postcode',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'owner_city' => [
-                    'label' => trans('app.forms.eservice.owner_city'),
-                    'name' => 'owner_city',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'owner_state' => [
-                    'label' => trans('app.forms.eservice.owner_state'),
-                    'name' => 'owner_state',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'total_overdue' => [
-                    'label' => trans('app.forms.eservice.total_overdue'),
-                    'name' => 'total_overdue',
-                    'type' => 'text',
-                    'required' => true
-                ],
-                'date_overdue' => [
-                    'label' => trans('app.forms.eservice.date_overdue'),
-                    'name' => 'date_overdue',
-                    'type' => 'date',
-                    'required' => true
-                ],
-                'reference_no' => [
-                    'label' => trans('app.forms.eservice.reference_no'),
-                    'name' => 'reference_no',
-                    'type' => 'text',
-                    'required' => false
-                ],
-                'account_statement' => [
-                    'label' => trans('app.forms.eservice.account_statement'),
-                    'name' => 'account_statement',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'copy_of_form' => [
-                    'label' => trans('app.forms.eservice.copy_of_form'),
-                    'name' => 'copy_of_form',
-                    'type' => 'file',
-                    'required' => true
-                ],
-                'proof_of_notice' => [
-                    'label' => trans('app.forms.eservice.proof_of_notice'),
-                    'name' => 'proof_of_notice',
-                    'type' => 'file',
-                    'required' => true
+                    'fields' => [
+                        'bill_no' => [
+                            'label' => trans('app.forms.eservice.mbsj.bill_no'),
+                            'name' => 'bill_no',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'date' => [
+                            'label' => trans('app.forms.eservice.mbsj.date'),
+                            'name' => 'date',
+                            'type' => 'date',
+                            'required' => true
+                        ],
+                        'building_name' => [
+                            'label' => trans('app.forms.eservice.mbsj.building_name'),
+                            'name' => 'building_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_name' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_name'),
+                            'name' => 'management_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_address1' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_address'),
+                            'name' => 'management_address1',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_address2' => [
+                            'label' => '',
+                            'name' => 'management_address2',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'management_address3' => [
+                            'label' => '',
+                            'name' => 'management_address3',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'management_address4' => [
+                            'label' => '',
+                            'name' => 'management_address4',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'management_postcode' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_postcode'),
+                            'name' => 'management_postcode',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_city' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_city'),
+                            'name' => 'management_city',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_state' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_state'),
+                            'name' => 'management_state',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_phone' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_phone'),
+                            'name' => 'management_phone',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_email' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_email'),
+                            'name' => 'management_email',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'management_pic' => [
+                            'label' => trans('app.forms.eservice.mbsj.management_pic'),
+                            'name' => 'management_pic',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_unit_no' => [
+                            'label' => trans('app.forms.eservice.mbsj.owner_unit_no'),
+                            'name' => 'owner_unit_no',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_name' => [
+                            'label' => trans('app.forms.eservice.mbsj.owner_name'),
+                            'name' => 'owner_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_address1' => [
+                            'label' => trans('app.forms.eservice.mbsj.owner_address'),
+                            'name' => 'owner_address1',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_address2' => [
+                            'label' => '',
+                            'name' => 'owner_address2',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'owner_address3' => [
+                            'label' => '',
+                            'name' => 'owner_address3',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'owner_address4' => [
+                            'label' => '',
+                            'name' => 'owner_address4',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'owner_postcode' => [
+                            'label' => trans('app.forms.eservice.mbsj.owner_postcode'),
+                            'name' => 'owner_postcode',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_city' => [
+                            'label' => trans('app.forms.eservice.mbsj.owner_city'),
+                            'name' => 'owner_city',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'owner_state' => [
+                            'label' => trans('app.forms.eservice.mbsj.owner_state'),
+                            'name' => 'owner_state',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_unit_no' => [
+                            'label' => trans('app.forms.eservice.mbsj.affected_unit_no'),
+                            'name' => 'affected_unit_no',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_name' => [
+                            'label' => trans('app.forms.eservice.mbsj.affected_name'),
+                            'name' => 'affected_name',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_address1' => [
+                            'label' => trans('app.forms.eservice.mbsj.affected_address'),
+                            'name' => 'affected_address1',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_address2' => [
+                            'label' => '',
+                            'name' => 'affected_address2',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'affected_address3' => [
+                            'label' => '',
+                            'name' => 'affected_address3',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'affected_address4' => [
+                            'label' => '',
+                            'name' => 'affected_address4',
+                            'type' => 'text',
+                            'required' => false
+                        ],
+                        'affected_postcode' => [
+                            'label' => trans('app.forms.eservice.mbsj.affected_postcode'),
+                            'name' => 'affected_postcode',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_city' => [
+                            'label' => trans('app.forms.eservice.mbsj.affected_city'),
+                            'name' => 'affected_city',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'affected_state' => [
+                            'label' => trans('app.forms.eservice.mbsj.affected_state'),
+                            'name' => 'affected_state',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'cover_letter' => [
+                            'label' => trans('app.forms.eservice.mbsj.cover_letter'),
+                            'name' => 'cover_letter',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'list_of_leak'  => [
+                            'label' => trans('app.forms.eservice.mbsj.list_of_leak'),
+                            'name' => 'list_of_leak',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'complaint_letter' => [
+                            'label' => trans('app.forms.eservice.mbsj.complaint_letter'),
+                            'name' => 'complaint_letter',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'copy_of_form_28' => [
+                            'label' => trans('app.forms.eservice.mbsj.copy_of_form_28'),
+                            'name' => 'copy_of_form_28',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'proof_of_notice_28' => [
+                            'label' => trans('app.forms.eservice.mbsj.proof_of_notice_28'),
+                            'name' => 'proof_of_notice_28',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'image_of_affected' => [
+                            'label' => trans('app.forms.eservice.mbsj.image_of_affected'),
+                            'name' => 'image_of_affected',
+                            'type' => 'file',
+                            'required' => true
+                        ],                       
+                        'total_overdue' => [
+                            'label' => trans('app.forms.eservice.mbsj.total_overdue'),
+                            'name' => 'total_overdue',
+                            'type' => 'text',
+                            'required' => true
+                        ],
+                        'date_overdue' => [
+                            'label' => trans('app.forms.eservice.mbsj.date_overdue'),
+                            'name' => 'date_overdue',
+                            'type' => 'date',
+                            'required' => true
+                        ],
+                        'account_statement' => [
+                            'label' => trans('app.forms.eservice.mbsj.account_statement'),
+                            'name' => 'account_statement',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'copy_of_form' => [
+                            'label' => trans('app.forms.eservice.mbsj.copy_of_form'),
+                            'name' => 'copy_of_form',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'proof_of_notice' => [
+                            'label' => trans('app.forms.eservice.mbsj.proof_of_notice'),
+                            'name' => 'proof_of_notice',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -1516,6 +2390,11 @@ return [
         'postponed_agm_approval' => 'uploads/postponed_agm_approval',
         'dlp_deposit' => 'uploads/dlp_deposit',
         'dlp_deposit_usage' => 'uploads/dlp_deposit_usage',
+        'audit_accounts' => 'uploads/audit_accounts',
+        'jmb_agm' => 'uploads/agm/minute/jmb_agm',
+        'jmb_egm' => 'uploads/agm/minute/jmb_egm',
+        'mc_agm' => 'uploads/agm/minute/mc_agm',
+        'mc_egm' => 'uploads/agm/minute/mc_egm',
     ],
     'dlp_checklist' => [
         1 => 'Surat Rasmi Serahan Cek',
@@ -1523,7 +2402,7 @@ return [
         3 => 'Surat Pemakluman Pemilikan Kosong (VP) Dan Tempoh DLP',
         4 => 'Salinan Borang 25',
         5 => 'Salinan Resit Pembayaran Pemfailan Notis Mengenai Niat Pemaju Untuk Serahan Milikan Kosong',
-        6 => 'Salinan Surat Akuan Penyerahan Milikan Kosong (VP) Kepada Pembeli',        
+        6 => 'Salinan Surat Akuan Penyerahan Milikan Kosong (VP) Kepada Pembeli',
     ],
     'dlp_return_checklist' => [
         1 => 'Surat Permohonan daripada Pemaju',

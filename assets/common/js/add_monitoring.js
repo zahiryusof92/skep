@@ -47,8 +47,6 @@ $(document).ready(function () {
         $("#audit_end").val(`${currentDate[2]}-${currentDate[1]}-${currentDate[0]}`);
     });
 
-    //ADD
-
     // agm_file
     $('body').delegate('#agm_file', 'change', function () {
         $('#upload_agm_file').ajaxForm({
@@ -208,27 +206,20 @@ $(document).ready(function () {
         $('#upload_audit_report_file').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-errors_audit_report_file").hide().empty();
+                $("#audit_report_file_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
-                    $.each(arr, function (index, value) {
-                        if (value.length != 0) {
-                            $("#validation-errors_audit_report_file").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                        }
-                    });
-                    $("#validation-errors_audit_report_file").show();
-                    $("#audit_report_file").css("color", "red");
-                } else {
-                    $("#validation-errors_audit_report_file").html("<i class='fa fa-check' id='check_audit_report_file' style='color:green;'></i>");
-                    $("#clear_audit_report_file").show();
-                    $("#validation-errors_audit_report_file").show();
+            success: function (result) {
+                if (result.success) {
+                    $("#audit_report_file_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAuditFile()'><i class='fa fa-times'></i> </button>").show();
+                    $("#audit_report_file_clear").show();
                     $("#audit_report_file").css("color", "green");
-                    $("#audit_report_file_url").val(response.file);
+                    $("#audit_report_file_url").val(result.file);
+                } else {
+                    $("#audit_report_file_error").html("<span style='color:red;'><i>" + result.msg + "</i></span>").show();
+                    $("#audit_report_file").css("color", "red");
                 }
-            }
+            },
         }).submit();
     });
 
@@ -237,27 +228,20 @@ $(document).ready(function () {
         $('#upload_letter_integrity').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-errors_letter_integrity").hide().empty();
+                $("#letter_integrity_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
-                    $.each(arr, function (index, value) {
-                        if (value.length != 0) {
-                            $("#validation-errors_letter_integrity").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                        }
-                    });
-                    $("#validation-errors_letter_integrity").show();
-                    $("#letter_integrity").css("color", "red");
-                } else {
-                    $("#validation-errors_letter_integrity").html("<i class='fa fa-check' id='check_letter_integrity' style='color:green;'></i>");
-                    $("#clear_letter_integrity").show();
-                    $("#validation-errors_letter_integrity").show();
+            success: function (result) {
+                if (result.success) {
+                    $("#letter_integrity_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearLetterIntegrity()'><i class='fa fa-times'></i> </button>").show();
+                    $("#letter_integrity_clear").show();
                     $("#letter_integrity").css("color", "green");
-                    $("#letter_integrity_url").val(response.file);
+                    $("#letter_integrity_url").val(result.file);
+                } else {
+                    $("#letter_integrity_error").html("<span style='color:red;'><i>" + result.msg + "</i></span>").show();
+                    $("#letter_integrity").css("color", "red");
                 }
-            }
+            },
         }).submit();
     });
 
@@ -266,27 +250,20 @@ $(document).ready(function () {
         $('#upload_letter_bankruptcy').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-errors_letter_bankruptcy").hide().empty();
+                $("#letter_bankruptcy_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
-                    $.each(arr, function (index, value) {
-                        if (value.length != 0) {
-                            $("#validation-errors_letter_bankruptcy").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
-                        }
-                    });
-                    $("#validation-errors_letter_bankruptcy").show();
-                    $("#letter_bankruptcy").css("color", "red");
-                } else {
-                    $("#validation-errors_letter_bankruptcy").html("<i class='fa fa-check' id='check_letter_bankruptcy' style='color:green;'></i>");
-                    $("#clear_letter_bankruptcy").show();
-                    $("#validation-errors_letter_bankruptcy").show();
+            success: function (result) {
+                if (result.success) {
+                    $("#letter_bankruptcy_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearLetterBankruptcy()'><i class='fa fa-times'></i> </button>").show();
+                    $("#letter_bankruptcy_clear").show();
                     $("#letter_bankruptcy").css("color", "green");
-                    $("#letter_bankruptcy_url").val(response.file);
+                    $("#letter_bankruptcy_url").val(result.file);
+                } else {
+                    $("#letter_bankruptcy_error").html("<span style='color:red;'><i>" + result.msg + "</i></span>").show();
+                    $("#letter_bankruptcy").css("color", "red");
                 }
-            }
+            },
         }).submit();
     });
 
@@ -295,27 +272,26 @@ $(document).ready(function () {
         $('#upload_notice_agm_egm').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-notice_agm_egm").hide().empty();
+                $("#notice_agm_egm_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#notice_agm_egm_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearNoticeAgmEgm()'><i class='fa fa-times'></i> </button>").show();
+                    $("#notice_agm_egm_clear").show();
+                    $("#notice_agm_egm").css("color", "green");
+                    $("#notice_agm_egm_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-notice_agm_egm").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#notice_agm_egm_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-notice_agm_egm").show();
+                    $("#notice_agm_egm_error").show();
                     $("#notice_agm_egm").css("color", "red");
-                } else {
-                    $("#validation-notice_agm_egm").html("<i class='fa fa-check' id='check_notice_agm_egm' style='color:green;'></i>");
-                    $("#clear_notice_agm_egm").show();
-                    $("#validation-notice_agm_egm").show();
-                    $("#notice_agm_egm").css("color", "green");
-                    $("#notice_agm_egm_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -324,27 +300,26 @@ $(document).ready(function () {
         $('#upload_minutes_agm_egm').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-minutes_agm_egm").hide().empty();
+                $("#minutes_agm_egm_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#minutes_agm_egm_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesAgmEgm()'><i class='fa fa-times'></i> </button>").show();
+                    $("#minutes_agm_egm_clear").show();
+                    $("#minutes_agm_egm").css("color", "green");
+                    $("#minutes_agm_egm_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-minutes_agm_egm").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#minutes_agm_egm_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-minutes_agm_egm").show();
+                    $("#minutes_agm_egm_error").show();
                     $("#minutes_agm_egm").css("color", "red");
-                } else {
-                    $("#validation-minutes_agm_egm").html("<i class='fa fa-check' id='check_minutes_agm_egm' style='color:green;'></i>");
-                    $("#clear_minutes_agm_egm").show();
-                    $("#validation-minutes_agm_egm").show();
-                    $("#minutes_agm_egm").css("color", "green");
-                    $("#minutes_agm_egm_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -353,27 +328,26 @@ $(document).ready(function () {
         $('#upload_minutes_ajk').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-minutes_ajk").hide().empty();
+                $("#minutes_ajk_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#minutes_ajk_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesAjk()'><i class='fa fa-times'></i> </button>").show();
+                    $("#minutes_ajk_clear").show();
+                    $("#minutes_ajk").css("color", "green");
+                    $("#minutes_ajk_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-minutes_ajk").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#minutes_ajk_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-minutes_ajk").show();
+                    $("#minutes_ajk_error").show();
                     $("#minutes_ajk").css("color", "red");
-                } else {
-                    $("#validation-minutes_ajk").html("<i class='fa fa-check' id='check_minutes_ajk' style='color:green;'></i>");
-                    $("#clear_minutes_ajk").show();
-                    $("#validation-minutes_ajk").show();
-                    $("#minutes_ajk").css("color", "green");
-                    $("#minutes_ajk_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -382,27 +356,26 @@ $(document).ready(function () {
         $('#upload_eligible_vote').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-eligible_vote").hide().empty();
+                $("#eligible_vote_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#eligible_vote_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearEligbleVote()'><i class='fa fa-times'></i> </button>").show();
+                    $("#eligible_vote_clear").show();
+                    $("#eligible_vote").css("color", "green");
+                    $("#eligible_vote_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-eligible_vote").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#eligible_vote_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-eligible_vote").show();
+                    $("#eligible_vote_error").show();
                     $("#eligible_vote").css("color", "red");
-                } else {
-                    $("#validation-eligible_vote").html("<i class='fa fa-check' id='check_eligible_vote' style='color:green;'></i>");
-                    $("#clear_eligible_vote").show();
-                    $("#validation-eligible_vote").show();
-                    $("#eligible_vote").css("color", "green");
-                    $("#eligible_vote_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -411,27 +384,26 @@ $(document).ready(function () {
         $('#upload_attend_meeting').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-attend_meeting").hide().empty();
+                $("#attend_meeting_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#attend_meeting_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAttendMeeting()'><i class='fa fa-times'></i> </button>").show();
+                    $("#attend_meeting_clear").show();
+                    $("#attend_meeting").css("color", "green");
+                    $("#attend_meeting_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-attend_meeting").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#attend_meeting_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-attend_meeting").show();
+                    $("#attend_meeting_error").show();
                     $("#attend_meeting").css("color", "red");
-                } else {
-                    $("#validation-attend_meeting").html("<i class='fa fa-check' id='check_attend_meeting' style='color:green;'></i>");
-                    $("#clear_attend_meeting").show();
-                    $("#validation-attend_meeting").show();
-                    $("#attend_meeting").css("color", "green");
-                    $("#attend_meeting_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -440,27 +412,26 @@ $(document).ready(function () {
         $('#upload_proksi').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-proksi").hide().empty();
+                $("#proksi_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#proksi_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearProksi()'><i class='fa fa-times'></i> </button>").show();
+                    $("#proksi_clear").show();
+                    $("#proksi").css("color", "green");
+                    $("#proksi_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-proksi").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#proksi_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-proksi").show();
+                    $("#proksi_error").show();
                     $("#proksi").css("color", "red");
-                } else {
-                    $("#validation-proksi").html("<i class='fa fa-check' id='check_proksi' style='color:green;'></i>");
-                    $("#clear_proksi").show();
-                    $("#validation-proksi").show();
-                    $("#proksi").css("color", "green");
-                    $("#proksi_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -469,27 +440,26 @@ $(document).ready(function () {
         $('#upload_ajk_info').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-ajk_info").hide().empty();
+                $("#ajk_info_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#ajk_info_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAjkInfo()'><i class='fa fa-times'></i> </button>").show();
+                    $("#ajk_info_clear").show();
+                    $("#ajk_info").css("color", "green");
+                    $("#ajk_info_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-ajk_info").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#ajk_info_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-ajk_info").show();
+                    $("#ajk_info_error").show();
                     $("#ajk_info").css("color", "red");
-                } else {
-                    $("#validation-ajk_info").html("<i class='fa fa-check' id='check_ajk_info' style='color:green;'></i>");
-                    $("#clear_ajk_info").show();
-                    $("#validation-ajk_info").show();
-                    $("#ajk_info").css("color", "green");
-                    $("#ajk_info_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -498,27 +468,26 @@ $(document).ready(function () {
         $('#upload_ic').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-ic").hide().empty();
+                $("#ic_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#ic_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearIc()'><i class='fa fa-times'></i> </button>").show();
+                    $("#ic_clear").show();
+                    $("#ic").css("color", "green");
+                    $("#ic_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-ic").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#ic_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-ic").show();
-                    $("#proksi").css("color", "red");
-                } else {
-                    $("#validation-ic").html("<i class='fa fa-check' id='check_ic' style='color:green;'></i>");
-                    $("#clear_ic").show();
-                    $("#validation-ic").show();
-                    $("#ic").css("color", "green");
-                    $("#ic_url").val(response.file);
+                    $("#ic_error").show();
+                    $("#ic").css("color", "red");
                 }
-            }
+            },
         }).submit();
     });
 
@@ -527,27 +496,26 @@ $(document).ready(function () {
         $('#upload_purchase_aggrement').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-purchase_aggrement").hide().empty();
+                $("#purchase_aggrement_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#purchase_aggrement_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearPurchaseAggrement()'><i class='fa fa-times'></i> </button>").show();
+                    $("#purchase_aggrement_clear").show();
+                    $("#purchase_aggrement").css("color", "green");
+                    $("#purchase_aggrement_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-purchase_aggrement").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#purchase_aggrement_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-purchase_aggrement").show();
+                    $("#purchase_aggrement_error").show();
                     $("#purchase_aggrement").css("color", "red");
-                } else {
-                    $("#validation-purchase_aggrement").html("<i class='fa fa-check' id='check_purchase_aggrement' style='color:green;'></i>");
-                    $("#clear_purchase_aggrement").show();
-                    $("#validation-purchase_aggrement").show();
-                    $("#purchase_aggrement").css("color", "green");
-                    $("#purchase_aggrement_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -556,27 +524,26 @@ $(document).ready(function () {
         $('#upload_strata_title').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-strata_title").hide().empty();
+                $("#strata_title_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#strata_title_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearStrataTitle()'><i class='fa fa-times'></i> </button>").show();
+                    $("#strata_title_clear").show();
+                    $("#strata_title").css("color", "green");
+                    $("#strata_title_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-strata_title").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#strata_title_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-strata_title").show();
+                    $("#strata_title_error").show();
                     $("#strata_title").css("color", "red");
-                } else {
-                    $("#validation-strata_title").html("<i class='fa fa-check' id='check_strata_title' style='color:green;'></i>");
-                    $("#clear_strata_title").show();
-                    $("#validation-strata_title").show();
-                    $("#strata_title").css("color", "green");
-                    $("#strata_title_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -585,27 +552,26 @@ $(document).ready(function () {
         $('#upload_maintenance_statement').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-maintenance_statement").hide().empty();
+                $("#maintenance_statement_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#maintenance_statement_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMaintenanceStatement()'><i class='fa fa-times'></i> </button>").show();
+                    $("#maintenance_statement_clear").show();
+                    $("#maintenance_statement").css("color", "green");
+                    $("#maintenance_statement_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-maintenance_statement").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#maintenance_statement_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-maintenance_statement").show();
+                    $("#maintenance_statement_error").show();
                     $("#maintenance_statement").css("color", "red");
-                } else {
-                    $("#validation-maintenance_statement").html("<i class='fa fa-check' id='check_maintenance_statement' style='color:green;'></i>");
-                    $("#clear_maintenance_statement").show();
-                    $("#validation-maintenance_statement").show();
-                    $("#maintenance_statement").css("color", "green");
-                    $("#maintenance_statement_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -614,27 +580,54 @@ $(document).ready(function () {
         $('#upload_integrity_pledge').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-integrity_pledge").hide().empty();
+                $("#integrity_pledge_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#integrity_pledge_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearIntegrityPledge()'><i class='fa fa-times'></i> </button>").show();
+                    $("#integrity_pledge_clear").show();
+                    $("#integrity_pledge").css("color", "green");
+                    $("#integrity_pledge_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-integrity_pledge").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#integrity_pledge_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-integrity_pledge").show();
+                    $("#integrity_pledge_error").show();
                     $("#integrity_pledge").css("color", "red");
-                } else {
-                    $("#validation-integrity_pledge").html("<i class='fa fa-check' id='check_integrity_pledge' style='color:green;'></i>");
-                    $("#clear_integrity_pledge").show();
-                    $("#validation-integrity_pledge").show();
-                    $("#integrity_pledge").css("color", "green");
-                    $("#integrity_pledge_url").val(response.file);
                 }
-            }
+            },
+        }).submit();
+    });
+
+    //sworn_statement
+    $('body').delegate('#sworn_statement', 'change', function () {
+        $('#upload_sworn_statement').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#sworn_statement_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#sworn_statement_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearSwornStatement()'><i class='fa fa-times'></i> </button>").show();
+                    $("#sworn_statement_clear").show();
+                    $("#sworn_statement").css("color", "green");
+                    $("#sworn_statement_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#sworn_statement_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#sworn_statement_error").show();
+                    $("#sworn_statement").css("color", "red");
+                }
+            },
         }).submit();
     });
 
@@ -643,27 +636,26 @@ $(document).ready(function () {
         $('#upload_report_audited_financial').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-report_audited_financial").hide().empty();
+                $("#report_audited_financial_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#report_audited_financial_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearReportAuditedFinancial()'><i class='fa fa-times'></i> </button>").show();
+                    $("#report_audited_financial_clear").show();
+                    $("#report_audited_financial").css("color", "green");
+                    $("#report_audited_financial_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-report_audited_financial").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#report_audited_financial_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-report_audited_financial").show();
+                    $("#report_audited_financial_error").show();
                     $("#report_audited_financial").css("color", "red");
-                } else {
-                    $("#validation-report_audited_financial").html("<i class='fa fa-check' id='check_report_audited_financial' style='color:green;'></i>");
-                    $("#clear_report_audited_financial").show();
-                    $("#validation-report_audited_financial").show();
-                    $("#report_audited_financial").css("color", "green");
-                    $("#report_audited_financial_url").val(response.file);
                 }
-            }
+            },
         }).submit();
     });
 
@@ -672,78 +664,210 @@ $(document).ready(function () {
         $('#upload_house_rules').ajaxForm({
             dataType: 'json',
             beforeSubmit: function () {
-                $("#validation-house_rules").hide().empty();
+                $("#house_rules_error").empty().hide();
                 return true;
             },
-            success: function (response) {
-                if (response.success == false) {
-                    var arr = response.errors;
+            success: function (result) {
+                if (result.success) {
+                    $("#house_rules_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearHouseRules()'><i class='fa fa-times'></i> </button>").show();
+                    $("#house_rules_clear").show();
+                    $("#house_rules").css("color", "green");
+                    $("#house_rules_url").val(result.file);
+                } else {
+                    var arr = result.errors;
                     $.each(arr, function (index, value) {
                         if (value.length != 0) {
-                            $("#validation-house_rules").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                            $("#house_rules_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
                         }
                     });
-                    $("#validation-house_rules").show();
+                    $("#house_rules_error").show();
                     $("#house_rules").css("color", "red");
-                } else {
-                    $("#validation-house_rules").html("<i class='fa fa-check' id='check_house_rules' style='color:green;'></i>");
-                    $("#clear_house_rules").show();
-                    $("#validation-house_rules").show();
-                    $("#house_rules").css("color", "green");
-                    $("#house_rules_url").val(response.file);
                 }
-            }
+            },
+        }).submit();
+    });
+
+    // OCR
+    // notice_agm_egm_ocr
+    $('body').delegate('#notice_agm_egm_ocr', 'change', function () {
+        $('#upload_notice_agm_egm_ocr').ajaxForm({
+            beforeSubmit: function () {
+                $("#notice_agm_egm_ocr_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#notice_agm_egm_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearNoticeAgmEgmOcr()'><i class='fa fa-times'></i> </button>").show();
+                    $("#notice_agm_egm_ocr_clear").show();
+                    $("#notice_agm_egm_ocr").css("color", "green");
+                    $("#notice_agm_egm_ocr_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#notice_agm_egm_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#notice_agm_egm_ocr_error").show();
+                    $("#notice_agm_egm_ocr").css("color", "red");
+                }
+            },
+            dataType: 'json'
+        }).submit();
+    });
+
+    // minutes_agm_egm_ocr
+    $('body').delegate('#minutes_agm_egm_ocr', 'change', function () {
+        $('#upload_minutes_agm_egm_ocr').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#minutes_agm_egm_ocr_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#minutes_agm_egm_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesAgmEgmOcr()'><i class='fa fa-times'></i> </button>").show();
+                    $("#minutes_agm_egm_ocr_clear").show();
+                    $("#minutes_agm_egm_ocr").css("color", "green");
+                    $("#minutes_agm_egm_ocr_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#minutes_agm_egm_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#minutes_agm_egm_ocr_error").show();
+                    $("#minutes_agm_egm_ocr").css("color", "red");
+                }
+            },
+        }).submit();
+    });
+
+    // ajk_info_ocr
+    $('body').delegate('#ajk_info_ocr', 'change', function () {
+        $('#upload_ajk_info_ocr').ajaxForm({
+            beforeSubmit: function () {
+                $("#ajk_info_ocr_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#ajk_info_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAjkInfoOcr()'><i class='fa fa-times'></i> </button>").show();
+                    $("#ajk_info_ocr_clear").show();
+                    $("#ajk_info_ocr").css("color", "green");
+                    $("#ajk_info_ocr_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#ajk_info_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#ajk_info_ocr_error").show();
+                    $("#ajk_info_ocr").css("color", "red");
+                }
+            },
+            dataType: 'json'
+        }).submit();
+    });
+
+    // report_audited_financial_ocr
+    $('body').delegate('#report_audited_financial_ocr', 'change', function () {
+        $('#upload_report_audited_financial_ocr').ajaxForm({
+            beforeSubmit: function () {
+                $("#report_audited_financial_ocr_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#report_audited_financial_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearReportAuditedFinancialOcr()'><i class='fa fa-times'></i> </button>").show();
+                    $("#report_audited_financial_ocr_clear").show();
+                    $("#report_audited_financial_ocr").css("color", "green");
+                    $("#report_audited_financial_ocr_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#report_audited_financial_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#report_audited_financial_ocr_error").show();
+                    $("#report_audited_financial_ocr").css("color", "red");
+                }
+            },
+            dataType: 'json'
+        }).submit();
+    });
+
+    // house_rules_ocr
+    $('body').delegate('#house_rules_ocr', 'change', function () {
+        $('#upload_house_rules_ocr').ajaxForm({
+            beforeSubmit: function () {
+                $("#house_rules_ocr_error").empty().hide();
+                return true;
+            },
+            success: function (result) {
+                if (result.success) {
+                    $("#house_rules_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearHouseRulesOcr()'><i class='fa fa-times'></i> </button>").show();
+                    $("#house_rules_ocr_clear").show();
+                    $("#house_rules_ocr").css("color", "green");
+                    $("#house_rules_ocr_url").val(result.file);
+                } else {
+                    var arr = result.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#house_rules_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
+                        }
+                    });
+                    $("#house_rules_ocr_error").show();
+                    $("#house_rules_ocr").css("color", "red");
+                }
+            },
+            dataType: 'json'
         }).submit();
     });
 });
 
-// ADD
-function clearAGMFile() {
-    $("#agm_file").val("");
-    $("#agm_file_url").val("");
-    $("#agm_file").css("color", "");
-    $("#agm_file_error").empty().hide();
-}
-
 function clearEGMFile() {
     $("#egm_file").val("");
     $("#egm_file_url").val("");
-    $("#egm_file").css("color", "");
+    $("#egm_file").css("color", "grey");
     $("#egm_file_error").empty().hide();
 }
 
 function clearMinutesMeetingFile() {
     $("#minutes_meeting_file").val("");
     $("#minutes_meeting_file_url").val("");
-    $("#minutes_meeting_file").css("color", "");
+    $("#minutes_meeting_file").css("color", "grey");
     $("#minutes_meeting_file_error").empty().hide();
 }
 
 function clearJMCFile() {
     $("#jmc_file").val("");
     $("#jmc_file_url").val("");
-    $("#jmc_file").css("color", "");
+    $("#jmc_file").css("color", "grey");
     $("#jmc_file_error").empty().hide();
 }
 
 function clearICFile() {
     $("#ic_file").val("");
     $("#ic_file_url").val("");
-    $("#ic_file").css("color", "");
+    $("#ic_file").css("color", "grey");
     $("#ic_file_error").empty().hide();
 }
 
 function clearAttendanceFile() {
     $("#attendance_file").val("");
     $("#attendance_file_url").val("");
-    $("#attendance_file").css("color", "");
+    $("#attendance_file").css("color", "grey");
     $("#attendance_file_error").empty().hide();
 }
 
 function clearAuditedFinancialFile() {
     $("#audited_financial_file").val("");
     $("#audited_financial_file_url").val("");
-    $("#audited_financial_file").css("color", "");
+    $("#audited_financial_file").css("color", "grey");
     $("#audited_financial_file_error").empty().hide();
 }
 
@@ -751,334 +875,156 @@ function clearAuditFile() {
     $("#audit_report_file").val("");
     $("#audit_report_file_url").val("");
     $("#audit_report_file").css("color", "grey");
-    $("#clear_audit_report_file").hide();
-    $("#check_audit_report_file").hide();
+    $("#audit_report_file_error").empty().hide();
 }
 
 function clearLetterIntegrity() {
     $("#letter_integrity").val("");
     $("#letter_integrity_url").val("");
     $("#letter_integrity").css("color", "grey");
-    $("#clear_letter_integrity").hide();
-    $("#check_letter_integrity").hide();
+    $("#letter_integrity_error").empty().hide();
 }
 
 function clearLetterBankruptcy() {
     $("#letter_bankruptcy").val("");
     $("#letter_bankruptcy_url").val("");
     $("#letter_bankruptcy").css("color", "grey");
-    $("#clear_letter_bankruptcy").hide();
-    $("#check_letter_bankruptcy").hide();
+    $("#letter_bankruptcy_error").empty().hide();
 }
 
 function clearNoticeAgmEgm() {
     $("#notice_agm_egm").val("");
     $("#notice_agm_egm_url").val("");
     $("#notice_agm_egm").css("color", "grey");
-    $("#clear_notice_agm_egm").hide();
-    $("#check_notice_agm_egm").hide();
+    $("#notice_agm_egm_error").empty().hide();
 }
 
 function clearMinutesAgmEgm() {
     $("#minutes_agm_egm").val("");
     $("#minutes_agm_egm_url").val("");
     $("#minutes_agm_egm").css("color", "grey");
-    $("#clear_minutes_agm_egm").hide();
-    $("#check_minutes_agm_egm").hide();
+    $("#minutes_agm_egm_error").empty().hide();
 }
 
 function clearMinutesAjk() {
     $("#minutes_ajk").val("");
     $("#minutes_ajk_url").val("");
     $("#minutes_ajk").css("color", "grey");
-    $("#clear_minutes_ajk").hide();
-    $("#check_minutes_ajk").hide();
+    $("#minutes_ajk_error").empty().hide();
 }
 
 function clearEligbleVote() {
     $("#eligible_vote").val("");
     $("#eligible_vote_url").val("");
     $("#eligible_vote").css("color", "grey");
-    $("#clear_eligible_vote").hide();
-    $("#check_eligible_vote").hide();
+    $("#eligible_vote_error").empty().hide();
 }
 
 function clearAttendMeeting() {
     $("#attend_meeting").val("");
     $("#attend_meeting_url").val("");
     $("#attend_meeting").css("color", "grey");
-    $("#clear_attend_meeting").hide();
-    $("#check_attend_meeting").hide();
+    $("#attend_meeting_error").empty().hide();
 }
 
 function clearProksi() {
     $("#proksi").val("");
     $("#proksi_url").val("");
     $("#proksi").css("color", "grey");
-    $("#clear_proksi").hide();
-    $("#check_proksi").hide();
+    $("#proksi_error").empty().hide();
 }
 
 function clearAjkInfo() {
     $("#ajk_info").val("");
     $("#ajk_info_url").val("");
     $("#ajk_info").css("color", "grey");
-    $("#clear_ajk_info").hide();
-    $("#check_ajk_info").hide();
+    $("#ajk_info_error").empty().hide();
 }
 
 function clearIc() {
     $("#ic").val("");
     $("#ic_url").val("");
     $("#ic").css("color", "grey");
-    $("#clear_ic").hide();
-    $("#check_ic").hide();
+    $("#ic_error").empty().hide();
 }
 
 function clearPurchaseAggrement() {
     $("#purchase_aggrement").val("");
     $("#purchase_aggrement_url").val("");
     $("#purchase_aggrement").css("color", "grey");
-    $("#clear_purchase_aggrement").hide();
-    $("#check_purchase_aggrement").hide();
+    $("#purchase_aggrement_error").empty().hide();
 }
 
 function clearStrataTitle() {
     $("#strata_title").val("");
     $("#strata_title_url").val("");
     $("#strata_title").css("color", "grey");
-    $("#clear_strata_title").hide();
-    $("#check_strata_title").hide();
+    $("#strata_title_error").empty().hide();
 }
 
 function clearMaintenanceStatement() {
     $("#maintenance_statement").val("");
     $("#maintenance_statement_url").val("");
     $("#maintenance_statement").css("color", "grey");
-    $("#clear_maintenance_statement").hide();
-    $("#check_maintenance_statement").hide();
+    $("#maintenance_statement_error").empty().hide();
 }
 
 function clearIntegrityPledge() {
     $("#integrity_pledge").val("");
     $("#integrity_pledge_url").val("");
     $("#integrity_pledge").css("color", "grey");
-    $("#clear_integrity_pledge").hide();
-    $("#check_integrity_pledge").hide();
+    $("#integrity_pledge_error").empty().hide();
+}
+
+function clearSwornStatement() {
+    $("#sworn_statement").val("");
+    $("#sworn_statement_url").val("");
+    $("#sworn_statement").css("color", "grey");
+    $("#sworn_statement_error").empty().hide();
 }
 
 function clearReportAuditedFinancial() {
     $("#report_audited_financial").val("");
     $("#report_audited_financial_url").val("");
     $("#report_audited_financial").css("color", "grey");
-    $("#clear_report_audited_financial").hide();
-    $("#check_report_audited_financial").hide();
+    $("#report_audited_financial_error").empty().hide();
 }
 
 function clearHouseRules() {
     $("#house_rules").val("");
     $("#house_rules_url").val("");
     $("#house_rules").css("color", "grey");
-    $("#clear_house_rules").hide();
-    $("#check_house_rules").hide();
+    $("#house_rules_error").empty().hide();
 }
 
-$('body').delegate('#minutes_meeting_ocr', 'change', function () {
-    $('#upload_minutes_meeting_ocr').ajaxForm({
-        beforeSubmit: function () {
-            $("#minutes_meeting_ocr_error").empty().hide();
-            return true;
-        },
-        success: function (result) {
-            if (result.success) {
-                $("#minutes_meeting_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearMinutesMeetingOcr()'><i class='fa fa-times'></i> </button>").show();
-                $("#minutes_meeting_ocr_clear").show();
-                $("#minutes_meeting_ocr").css("color", "green");
-                $("#minutes_meeting_ocr_url").val(result.file);
-            } else {
-                var arr = result.errors;
-                $.each(arr, function (index, value) {
-                    if (value.length != 0) {
-                        $("#minutes_meeting_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
-                    }
-                });
-                $("#minutes_meeting_ocr_error").show();
-                $("#minutes_meeting_ocr").css("color", "red");
-            }
-        },
-        dataType: 'json'
-    }).submit();
-});
-
-function clearMinutesMeetingOcr() {
-    $("#minutes_meeting_ocr").val("");
-    $("#minutes_meeting_ocr_url").val("");
-    $("#minutes_meeting_ocr").css("color", "grey");
-    $("#minutes_meeting_ocr_error").hide();
+// OCR
+function clearNoticeAgmEgmOcr() {
+    $("#notice_agm_egm_ocr").val("");
+    $("#notice_agm_egm_ocr_url").val("");
+    $("#notice_agm_egm_ocr").css("color", "grey");
+    $("#notice_agm_egm_ocr_error").hide();
 }
 
-$('body').delegate('#copy_of_spa_ocr', 'change', function () {
-    $('#upload_copy_of_spa_ocr').ajaxForm({
-        beforeSubmit: function () {
-            $("#copy_of_spa_ocr_error").empty().hide();
-            return true;
-        },
-        success: function (result) {
-            if (result.success) {
-                $("#copy_of_spa_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearCopyOfSpaOcr()'><i class='fa fa-times'></i> </button>").show();
-                $("#copy_of_spa_ocr_clear").show();
-                $("#copy_of_spa_ocr").css("color", "green");
-                $("#copy_of_spa_ocr_url").val(result.file);
-            } else {
-                var arr = result.errors;
-                $.each(arr, function (index, value) {
-                    if (value.length != 0) {
-                        $("#copy_of_spa_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
-                    }
-                });
-                $("#copy_of_spa_ocr_error").show();
-                $("#copy_of_spa_ocr").css("color", "red");
-            }
-        },
-        dataType: 'json'
-    }).submit();
-});
-
-function clearCopyOfSpaOcr() {
-    $("#copy_of_spa_ocr").val("");
-    $("#copy_of_spa_ocr_url").val("");
-    $("#copy_of_spa_ocr").css("color", "grey");
-    $("#copy_of_spa_ocr_error").hide();
+function clearMinutesAgmEgmOcr() {
+    $("#minutes_agm_egm_ocr").val("");
+    $("#minutes_agm_egm_ocr_url").val("");
+    $("#minutes_agm_egm_ocr").css("color", "grey");
+    $("#minutes_agm_egm_ocr_error").hide();
 }
 
-$('body').delegate('#attendance_ocr', 'change', function () {
-    $('#upload_attendance_ocr').ajaxForm({
-        beforeSubmit: function () {
-            $("#attendance_ocr_error").empty().hide();
-            return true;
-        },
-        success: function (result) {
-            if (result.success) {
-                $("#attendance_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAttendanceOcr()'><i class='fa fa-times'></i> </button>").show();
-                $("#attendance_ocr_clear").show();
-                $("#attendance_ocr").css("color", "green");
-                $("#attendance_ocr_url").val(result.file);
-            } else {
-                var arr = result.errors;
-                $.each(arr, function (index, value) {
-                    if (value.length != 0) {
-                        $("#attendance_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
-                    }
-                });
-                $("#attendance_ocr_error").show();
-                $("#attendance_ocr").css("color", "red");
-            }
-        },
-        dataType: 'json'
-    }).submit();
-});
-
-function clearAttendanceOcr() {
-    $("#attendance_ocr").val("");
-    $("#attendance_ocr_url").val("");
-    $("#attendance_ocr").css("color", "grey");
-    $("#attendance_ocr_error").hide();
+function clearAjkInfoOcr() {
+    $("#ajk_info_ocr").val("");
+    $("#ajk_info_ocr_url").val("");
+    $("#ajk_info_ocr").css("color", "grey");
+    $("#ajk_info_ocr_error").hide();
 }
 
-$('body').delegate('#audited_financial_ocr', 'change', function () {
-    $('#upload_audited_financial_ocr').ajaxForm({
-        beforeSubmit: function () {
-            $("#audited_financial_ocr_error").empty().hide();
-            return true;
-        },
-        success: function (result) {
-            if (result.success) {
-                $("#audited_financial_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearAuditedFinancialOcr()'><i class='fa fa-times'></i> </button>").show();
-                $("#audited_financial_ocr_clear").show();
-                $("#audited_financial_ocr").css("color", "green");
-                $("#audited_financial_ocr_url").val(result.file);
-            } else {
-                var arr = result.errors;
-                $.each(arr, function (index, value) {
-                    if (value.length != 0) {
-                        $("#audited_financial_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
-                    }
-                });
-                $("#audited_financial_ocr_error").show();
-                $("#audited_financial_ocr").css("color", "red");
-            }
-        },
-        dataType: 'json'
-    }).submit();
-});
-
-function clearAuditedFinancialOcr() {
-    $("#audited_financial_ocr").val("");
-    $("#audited_financial_ocr_url").val("");
-    $("#audited_financial_ocr").css("color", "grey");
-    $("#audited_financial_ocr_error").hide();
+function clearReportAuditedFinancialOcr() {
+    $("#report_audited_financial_ocr").val("");
+    $("#report_audited_financial_ocr_url").val("");
+    $("#report_audited_financial_ocr").css("color", "grey");
+    $("#report_audited_financial_ocr_error").hide();
 }
-
-$('body').delegate('#eligible_vote_ocr', 'change', function () {
-    $('#upload_eligible_vote_ocr').ajaxForm({
-        beforeSubmit: function () {
-            $("#eligible_vote_ocr_error").empty().hide();
-            return true;
-        },
-        success: function (result) {
-            if (result.success) {
-                $("#eligible_vote_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearEligibleVoteOcr()'><i class='fa fa-times'></i> </button>").show();
-                $("#eligible_vote_ocr_clear").show();
-                $("#eligible_vote_ocr").css("color", "green");
-                $("#eligible_vote_ocr_url").val(result.file);
-            } else {
-                var arr = result.errors;
-                $.each(arr, function (index, value) {
-                    if (value.length != 0) {
-                        $("#eligible_vote_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
-                    }
-                });
-                $("#eligible_vote_ocr_error").show();
-                $("#eligible_vote_ocr").css("color", "red");
-            }
-        },
-        dataType: 'json'
-    }).submit();
-});
-
-function clearEligibleVoteOcr() {
-    $("#eligible_vote_ocr").val("");
-    $("#eligible_vote_ocr_url").val("");
-    $("#eligible_vote_ocr").css("color", "grey");
-    $("#eligible_vote_ocr_error").hide();
-}
-
-$('body').delegate('#house_rules_ocr', 'change', function () {
-    $('#upload_house_rules_ocr').ajaxForm({
-        beforeSubmit: function () {
-            $("#house_rules_ocr_error").empty().hide();
-            return true;
-        },
-        success: function (result) {
-            if (result.success) {
-                $("#house_rules_ocr_error").html("<i class='fa fa-check' style='color:green;'></i>&nbsp;&nbsp;<button type='button' class='btn btn-xs btn-danger' onclick='clearHouseRulesOcr()'><i class='fa fa-times'></i> </button>").show();
-                $("#house_rules_ocr_clear").show();
-                $("#house_rules_ocr").css("color", "green");
-                $("#house_rules_ocr_url").val(result.file);
-            } else {
-                var arr = result.errors;
-                $.each(arr, function (index, value) {
-                    if (value.length != 0) {
-                        $("#house_rules_ocr_error").append('<span style="color:red;font-style:italic;font-size:13px;">' + value + '<span>');
-                    }
-                });
-                $("#house_rules_ocr_error").show();
-                $("#house_rules_ocr").css("color", "red");
-            }
-        },
-        dataType: 'json'
-    }).submit();
-});
 
 function clearHouseRulesOcr() {
     $("#house_rules_ocr").val("");

@@ -73,6 +73,7 @@ class ResidentApiController extends BaseController {
                                 'strata_title_url' => ($meeting->strata_title_url ? asset($meeting->strata_title_url) : ''),
                                 'maintenance_statement_url' => ($meeting->maintenance_statement_url ? asset($meeting->maintenance_statement_url) : ''),
                                 'integrity_pledge_url' => ($meeting->maintenance_statement_url ? asset($meeting->maintenance_statement_url) : ''),
+                                'sworn_statement_url' => ($meeting->sworn_statement_url ? asset($meeting->sworn_statement_url) : ''),
                                 'report_audited_financial_url' => ($meeting->report_audited_financial_url ? asset($meeting->report_audited_financial_url) : ''),
                                 'house_rules_url' => ($meeting->house_rules_url ? asset($meeting->house_rules_url) : ''),
                                 'audit_start_date' => ($meeting->audit_start_date ? $meeting->audit_start_date : ''),

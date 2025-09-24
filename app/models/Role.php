@@ -19,6 +19,8 @@ class Role extends Eloquent {
     const COB_BASIC_ADMIN = 'COB BASIC ADMIN';
     const COB_PREMIUM = 'COB PREMIUM';
     const COB_PREMIUM_ADMIN = 'COB PREMIUM ADMIN';
+    const COB_PREMIUM_ADMIN_USER_CONTROL = 'COB PREMIUM ADMIN USER CONTROL';
+    const COB_LIMITED = 'COB LIMITED';
     const MPS = 'MPS';
     const PRE_SALE = 'PRE-SALE';
     const DEVELOPER = 'DEVELOPER';

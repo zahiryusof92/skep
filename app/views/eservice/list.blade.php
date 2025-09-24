@@ -114,7 +114,7 @@
                                     </div>
                                 </div>
                                 @endif
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{ trans('app.forms.created_at') }} </label><br>
                                         <input id="start_date" name="start_date" data-column="0" type="text"
@@ -198,11 +198,16 @@
                                             var end_date = $('#end_date').val();
                                             var letter_type = $('#letter_type').val();
 
+                                            // Dapatkan file_id dari URL
+                                            var urlParams = new URLSearchParams(window.location.search);
+                                            var file_id = urlParams.get('file_id');
+
                                             // Append to data
                                             data.company = company;
                                             data.start_date = start_date;
                                             data.end_date = end_date;
                                             data.letter_type = letter_type;
+                                            data.file_id = file_id;
                                         }
                                     },
                                     lengthMenu: [[15, 30, 50], [15, 30, 50]],
@@ -296,11 +301,16 @@
                                             var end_date = $('#end_date').val();
                                             var letter_type = $('#letter_type').val();
 
+                                            // Dapatkan file_id dari URL
+                                            var urlParams = new URLSearchParams(window.location.search);
+                                            var file_id = urlParams.get('file_id');
+
                                             // Append to data
                                             data.company = company;
                                             data.start_date = start_date;
                                             data.end_date = end_date;
                                             data.letter_type = letter_type;
+                                            data.file_id = file_id;
                                         }
                                     },
                                     lengthMenu: [[15, 30, 50], [15, 30, 50]],

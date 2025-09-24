@@ -57,9 +57,19 @@ class Files extends Eloquent
         return $this->hasOne('Residential', 'file_id')->latest();
     }
 
+    public function residentExtra()
+    {
+        return $this->hasOne('ResidentialExtra', 'file_id')->latest();
+    }
+
     public function commercial()
     {
         return $this->hasOne('Commercial', 'file_id')->latest();
+    }
+
+    public function commercialExtra()
+    {
+        return $this->hasOne('CommercialExtra', 'file_id')->latest();
     }
 
     public function facility()
@@ -199,7 +209,12 @@ class Files extends Eloquent
 
     public function personInCharge()
     {
-        return $this->hasMany('HousingSchemeUser', 'file_id');
+        return $this->hasMany('HousingSchemeUser', 'file_id')->where('is_deleted', false);
+    }
+
+    public function personInChargeLatest()
+    {
+        return $this->hasOne('HousingSchemeUser', 'file_id')->where('is_deleted', false)->latest();
     }
 
     public function file_movements()
@@ -1125,113 +1140,236 @@ class Files extends Eloquent
     {
         $active = function ($query) {
             $query->where('files.is_deleted', 0)
-                ->where('company.is_hidden', false);
+                ->where('files.is_active', '!=', 2);
+            if (Auth::user()->getCOB->short_name == 'MPS') {
+                $query->where('files.company_id', 8);
+            }
         };
 
         $condition5 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 90)->where('scoring_quality_index.total_score', '<=', 100);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
-            $query->where('company.is_hidden', false);
+            $query->where('files.is_active', '!=', 2);
         };
 
         $condition4 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 70)->where('scoring_quality_index.total_score', '<=', 89);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
-            $query->where('company.is_hidden', false);
+            $query->where('files.is_active', '!=', 2);
         };
 
         $condition3 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 50)->where('scoring_quality_index.total_score', '<=', 69);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
-            $query->where('company.is_hidden', false);
+            $query->where('files.is_active', '!=', 2);
         };
 
         $condition2 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 40)->where('scoring_quality_index.total_score', '<=', 49);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
-            $query->where('company.is_hidden', false);
+            $query->where('files.is_active', '!=', 2);
         };
 
         $condition1 = function ($query) {
             $query->where('scoring_quality_index.total_score', '>=', 0)->where('scoring_quality_index.total_score', '<=', 39);
             $query->where('scoring_quality_index.is_deleted', 0);
             $query->where('files.is_deleted', 0);
-            $query->where('company.is_hidden', false);
+            $query->where('files.is_active', '!=', 2);
         };
 
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                // $total_developer = DB::table('developer')
-                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.id', Auth::user()->file_id)
-                //         ->where('files.company_id', Auth::user()->company_id)
-                //         ->where('developer.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 0)
-                //         ->where($active)
-                //         ->count();
-
-                // $total_liquidator = DB::table('liquidators')
-                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.id', Auth::user()->file_id)
-                //         ->where('files.company_id', Auth::user()->company_id)
-                //         ->where('liquidators.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 1)
-                //         ->where($active)
-                //         ->count();
-                $total_developer = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_developer = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.id', Auth::user()->file_id)
                     ->where('files.company_id', Auth::user()->company_id)
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 0)
+                    ->where('management.is_developer', 1)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
-                $total_liquidator = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_liquidator = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.id', Auth::user()->file_id)
                     ->where('files.company_id', Auth::user()->company_id)
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 1)
-                    ->where($active)
-                    ->count();
-
-                $total_jmb = DB::table('management_jmb')
-                    ->join('files', 'management_jmb.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.id', Auth::user()->file_id)
-                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 1)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_mc = DB::table('management_mc')
-                    ->join('files', 'management_mc.file_id', '=', 'files.id')
+                $total_jmb = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.id', Auth::user()->file_id)
                     ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where('management.is_jmb', 1)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_agent = DB::table('management_agent')
-                    ->join('files', 'management_agent.file_id', '=', 'files.id')
+                $total_mc = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.id', Auth::user()->file_id)
                     ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_mc', 1)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_others = DB::table('management_others')
-                    ->join('files', 'management_others.file_id', '=', 'files.id')
+                $total_agent = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.id', Auth::user()->file_id)
                     ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_agent', 1)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_others = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 1)
+                    ->where('management.no_management', 0)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_others', 0)
+                            ->orWhere('management.is_others', 1);
+                    })
+                    ->where('management.no_management', 1)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management_1 = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('management.is_developer', 0)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
@@ -1291,7 +1429,7 @@ class Files extends Eloquent
                     ->where('files.is_active', true)
                     ->where($active)
                     ->count();
-                
+
                 $total_inactive_strata = DB::table('strata')
                     ->join('files', 'strata.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
@@ -1320,15 +1458,6 @@ class Files extends Eloquent
                     ->count();
 
                 $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
-
-                $total_no_management = DB::table('management')
-                    ->join('files', 'management.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.id', Auth::user()->file_id)
-                    ->where('files.company_id', Auth::user()->company_id)
-                    ->where('management.no_management', true)
-                    ->where($active)
-                    ->count();
 
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
@@ -1356,65 +1485,185 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
             } else {
-                // $total_developer = DB::table('developer')
-                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', Auth::user()->company_id)
-                //         ->where('developer.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 0)
-                //         ->where($active)
-                //         ->count();
-
-                // $total_liquidator = DB::table('liquidators')
-                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', Auth::user()->company_id)
-                //         ->where('liquidators.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 1)
-                //         ->where($active)
-                //         ->count();
-                $total_developer = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_developer = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Auth::user()->company_id)
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 0)
+                    ->where('management.is_developer', 1)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
-                $total_liquidator = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_liquidator = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Auth::user()->company_id)
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 1)
-                    ->where($active)
-                    ->count();
-
-                $total_jmb = DB::table('management_jmb')
-                    ->join('files', 'management_jmb.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.company_id', Auth::user()->company_id)
-                    ->where($active)
-                    ->count();
-
-                $total_mc = DB::table('management_mc')
-                    ->join('files', 'management_mc.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 1)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_agent = DB::table('management_agent')
-                    ->join('files', 'management_agent.file_id', '=', 'files.id')
+                $total_jmb = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where('management.is_jmb', 1)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_others = DB::table('management_others')
-                    ->join('files', 'management_others.file_id', '=', 'files.id')
+                $total_mc = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_mc', 1)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_agent = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_agent', 1)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_others = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 1)
+                    ->where('management.no_management', 0)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_others', 0)
+                            ->orWhere('management.is_others', 1);
+                    })
+                    ->where('management.no_management', 1)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management_1 = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('management.is_developer', 0)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
@@ -1493,14 +1742,6 @@ class Files extends Eloquent
                     ->count();
 
                 $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
-
-                $total_no_management = DB::table('management')
-                    ->join('files', 'management.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.company_id', Auth::user()->company_id)
-                    ->where('management.no_management', true)
-                    ->where($active)
-                    ->count();
 
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
@@ -1527,57 +1768,177 @@ class Files extends Eloquent
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
-                // $total_developer = DB::table('developer')
-                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('developer.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 0)
-                //         ->where($active)
-                //         ->count();
-
-                // $total_liquidator = DB::table('liquidators')
-                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('liquidators.is_deleted', 0)
-                //         // ->where('house_scheme.is_liquidator', 1)
-                //         // ->where($active)
-                //         ->count();
-                $total_developer = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_developer = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 0)
+                    ->where('management.is_developer', 1)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
-                $total_liquidator = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_liquidator = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 1)
-                    ->where($active)
-                    ->count();
-
-                $total_jmb = DB::table('management_jmb')
-                    ->join('files', 'management_jmb.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where($active)
-                    ->count();
-
-                $total_mc = DB::table('management_mc')
-                    ->join('files', 'management_mc.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 1)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_agent = DB::table('management_agent')
-                    ->join('files', 'management_agent.file_id', '=', 'files.id')
+                $total_jmb = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where('management.is_jmb', 1)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_others = DB::table('management_others')
-                    ->join('files', 'management_others.file_id', '=', 'files.id')
+                $total_mc = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_mc', 1)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_agent = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_agent', 1)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_others = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 1)
+                    ->where('management.no_management', 0)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_others', 0)
+                            ->orWhere('management.is_others', 1);
+                    })
+                    ->where('management.no_management', 1)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management_1 = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('management.is_developer', 0)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
@@ -1646,13 +2007,6 @@ class Files extends Eloquent
                     ->count();
 
                 $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
-
-                $total_no_management = DB::table('management')
-                    ->join('files', 'management.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('management.no_management', true)
-                    ->where($active)
-                    ->count();
 
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
@@ -1674,65 +2028,185 @@ class Files extends Eloquent
                     ->where($active)
                     ->count();
             } else {
-                // $total_developer = DB::table('developer')
-                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', Session::get('admin_cob'))
-                //         ->where('developer.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 0)
-                //         ->where($active)
-                //         ->count();
-
-                // $total_liquidator = DB::table('liquidators')
-                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', Session::get('admin_cob'))
-                //         ->where('liquidators.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 1)
-                //         ->where($active)
-                //         ->count();
-                $total_developer = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_developer = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 0)
                     ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('management.is_developer', 1)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
-                $total_liquidator = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 1)
-                    ->where('files.company_id', Session::get('admin_cob'))
-                    ->where($active)
-                    ->count();
-
-                $total_jmb = DB::table('management_jmb')
-                    ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                $total_liquidator = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Session::get('admin_cob'))
-                    ->where($active)
-                    ->count();
-
-                $total_mc = DB::table('management_mc')
-                    ->join('files', 'management_mc.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 1)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_agent = DB::table('management_agent')
-                    ->join('files', 'management_agent.file_id', '=', 'files.id')
+                $total_jmb = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Session::get('admin_cob'))
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where('management.is_jmb', 1)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
-                $total_others = DB::table('management_others')
-                    ->join('files', 'management_others.file_id', '=', 'files.id')
+                $total_mc = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
                     ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', Session::get('admin_cob'))
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_mc', 1)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_agent = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_agent', 1)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_others = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 1)
+                    ->where('management.no_management', 0)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_others', 0)
+                            ->orWhere('management.is_others', 1);
+                    })
+                    ->where('management.no_management', 1)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($active)
+                    ->count();
+
+                $total_no_management_1 = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('management.is_developer', 0)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
                     ->where($active)
                     ->count();
 
@@ -1811,14 +2285,6 @@ class Files extends Eloquent
                     ->count();
 
                 $total_less_10_units = $count_residential_less10 + $count_commercial_less10;
-
-                $total_no_management = DB::table('management')
-                    ->join('files', 'management.file_id', '=', 'files.id')
-                    ->join('company', 'files.company_id', '=', 'company.id')
-                    ->where('files.company_id', Session::get('admin_cob'))
-                    ->where('management.no_management', true)
-                    ->where($active)
-                    ->count();
 
                 $total_rating = DB::table('scoring_quality_index')
                     ->join('files', 'scoring_quality_index.file_id', '=', 'files.id')
@@ -1897,7 +2363,7 @@ class Files extends Eloquent
             'total_active_strata' => $total_active_strata,
             'total_inactive_strata' => $total_inactive_strata,
             'total_less_10_units' => $total_less_10_units,
-            'total_no_management' => $total_no_management,
+            'total_no_management' => $total_no_management + $total_no_management_1,
             'total_jmb' => $total_jmb,
             'total_mc' => $total_mc,
             'total_owner' => $total_owner,
@@ -1908,22 +2374,36 @@ class Files extends Eloquent
         return $result;
     }
 
-    public static function getStrataProfileAnalytic($request = [])
+    public static function getStrataProfileAnalytic($request = [], $is_active = false, $exclude_finance = false)
     {
         $query = Files::with(['financeLatest', 'company'])
             ->file();
+
+        if ($is_active) {
+            $query = $query->where('files.is_active', true);
+        }
 
         if (!empty($request['company_id'])) {
             $company = Company::where('short_name', $request['company_id'])->first();
             $query = $query->where('files.company_id', $company->id);
         }
-        $pie_data = [
-            'Biru' => 0,
-            'Kuning' => 0,
-            'Merah' => 0,
-            'Kelabu' => 0
-        ];
-        $items = $query->chunk(500, function ($files) use (&$pie_data) {
+
+        if (!$exclude_finance) {
+            $pie_data = [
+                'Biru' => 0,
+                'Kuning' => 0,
+                'Merah' => 0,
+                'Kelabu' => 0
+            ];
+        } else {
+            $pie_data = [
+                'Biru' => 0,
+                'Kuning' => 0,
+                'Merah' => 0
+            ];
+        }
+
+        $items = $query->chunk(500, function ($files) use (&$pie_data, &$exclude_finance) {
             foreach ($files as $file) {
                 $finance = $file->financeLatest;
                 if ($finance) {
@@ -1943,17 +2423,28 @@ class Files extends Eloquent
                         $pie_data['Merah'] += 1;
                     }
                 } else {
-                    $pie_data['Kelabu'] += 1;
+                    if (!$exclude_finance) {
+                        $pie_data['Kelabu'] += 1;
+                    }
                 }
             }
         });
 
-        $data['pie_data'] = [
-            ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
-            ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
-            ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
-            ['name' => 'Kelabu', 'slug' => 'gray', 'y' => $pie_data['Kelabu']],
-        ];
+        if (!$exclude_finance) {
+            $data['pie_data'] = [
+                ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+                ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+                ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+                ['name' => 'Kelabu', 'slug' => 'gray', 'y' => $pie_data['Kelabu']],
+            ];
+        } else {
+            $data['pie_data'] = [
+                ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+                ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+                ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+            ];
+        }
+
         return $data;
     }
 
@@ -2309,6 +2800,7 @@ class Files extends Eloquent
         $agent = 0;
         $others = 0;
         $no_management = 0;
+        $bankruptcy = 0;
         $residential = 0;
         $commercial = 0;
         $count_less3 = 0;
@@ -2332,78 +2824,249 @@ class Files extends Eloquent
                 $company = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
             }
         }
+        $condition_mps = function ($query) {
+            if (Auth::user()->getCOB->short_name == 'MPS') {
+                $query->where('files.company_id', 8);
+            }
+        };
 
         if ($company) {
             foreach ($company as $cob) {
-                // $total_developer = DB::table('developer')
-                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.developer')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', $cob->id)
-                //         ->where('developer.is_deleted', 0)
-                //         ->where('files.is_deleted', 0)
-                //         ->groupBy('developer.id')
-                //         ->get();
-                // $total_developer = DB::table('developer')
-                //         ->join('house_scheme', 'developer.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', $cob->id)
-                //         ->where('developer.is_deleted', 0)
-                //         ->where('files.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 0)
-                //         ->count();
-
-                // $total_liquidator = DB::table('liquidators')
-                //         ->join('house_scheme', 'liquidators.id', '=', 'house_scheme.file_id')
-                //         ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                //         ->where('files.company_id', $cob->id)
-                //         ->where('liquidators.is_deleted', 0)
-                //         ->where('files.is_deleted', 0)
-                //         ->where('house_scheme.is_liquidator', 1)
-                //         ->count();
-                $total_developer = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
+                $total_developer = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 0)
-                    ->count();
-                $total_liquidator = DB::table('house_scheme')
-                    ->join('files', 'house_scheme.file_id', '=', 'files.id')
-                    ->where('files.company_id', $cob->id)
-                    ->where('files.is_deleted', 0)
-                    ->where('house_scheme.is_deleted', 0)
-                    ->where('house_scheme.is_liquidator', 1)
+                    ->where('files.is_active', '!=', 2)
+                    ->where('management.is_developer', 1)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
-                $total_jmb = DB::table('management_jmb')
-                    ->join('files', 'management_jmb.file_id', '=', 'files.id')
+                $total_jmb = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where('management.is_jmb', 1)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
-                $total_mc = DB::table('management_mc')
-                    ->join('files', 'management_mc.file_id', '=', 'files.id')
+                $total_mc = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_mc', 1)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
-                $total_agent = DB::table('management_agent')
-                    ->join('files', 'management_agent.file_id', '=', 'files.id')
+                $total_agent = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where('management.is_agent', 1)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
-                $total_others = DB::table('management_others')
-                    ->join('files', 'management_others.file_id', '=', 'files.id')
+                $total_liquidator = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 1)
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
+                    ->count();
+
+                $total_others = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', $cob->id)
+                    ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where('management.is_others', 1)
+                    ->where('management.no_management', 0)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
                     ->count();
 
                 $total_no_management = DB::table('management')
                     ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
                     ->where('files.company_id', $cob->id)
                     ->where('files.is_deleted', 0)
-                    ->where('management.no_management', true)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_others', 0)
+                            ->orWhere('management.is_others', 1);
+                    })
+                    ->where('management.no_management', 1)
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
+                    ->count();
+
+                $total_no_management_1 = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', $cob->id)
+                    ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where('management.is_developer', 0)
+                    ->where('management.is_jmb', 0)
+                    ->where('management.is_mc', 0)
+                    ->where('management.is_agent', 0)
+                    ->where('management.is_others', 0)
+                    ->where('management.no_management', 0)
+                    ->where('management.liquidator', 0)
+                    ->where('management.bankruptcy', 0)
+                    ->where($condition_mps)
+                    ->count();
+
+                $total_bankruptcy = DB::table('management')
+                    ->join('files', 'management.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->where('files.company_id', $cob->id)
+                    ->where('files.is_deleted', 0)
+                    ->where('files.is_active', '!=', 2)
+                    ->where(function ($query) {
+                        $query->where('management.is_developer', 0)
+                            ->orWhere('management.is_developer', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_mc', 0)
+                            ->orWhere('management.is_mc', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_jmb', 0)
+                            ->orWhere('management.is_jmb', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_agent', 0)
+                            ->orWhere('management.is_agent', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.is_others', 0)
+                            ->orWhere('management.is_others', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.no_management', 0)
+                            ->orWhere('management.no_management', 1);
+                    })
+                    ->where(function ($query) {
+                        $query->where('management.liquidator', 0)
+                            ->orWhere('management.liquidator', 1);
+                    })
+                    ->where('management.bankruptcy', 1)
+                    ->where($condition_mps)
                     ->count();
 
                 $count_residential = DB::table('residential_block')
@@ -2548,7 +3211,8 @@ class Files extends Eloquent
                 $mc = $mc + $total_mc;
                 $agent = $agent + $total_agent;
                 $others = $others + $total_others;
-                $no_management = $no_management + $total_no_management;
+                $no_management = $no_management + $total_no_management + $total_no_management_1;
+                $bankruptcy = $bankruptcy + $total_bankruptcy;
                 $residential = $residential + $sum_residential;
                 $commercial = $commercial + $sum_commercial;
                 $count_less3 = $count_less3 + ($count_residential_less3 + $count_commercial_less3);
@@ -2564,7 +3228,6 @@ class Files extends Eloquent
                 $total_all = $total_all + (($total_developer) + $total_liquidator + $total_jmb + $total_mc + $total_agent + $total_others);
             }
         }
-
         $result = array(
             'developer' => $developer,
             'liquidator' => $liquidator,
@@ -2573,6 +3236,7 @@ class Files extends Eloquent
             'agent' => $agent,
             'others' => $others,
             'no_management' => $no_management,
+            'bankruptcy' => $bankruptcy,
             'residential' => $residential,
             'commercial' => $commercial,
             'count_less3' => $count_less3,
@@ -2587,6 +3251,7 @@ class Files extends Eloquent
             'sum_all' => $sum_all,
             'total_all' => $total_all
         );
+
 
         return $result;
     }
@@ -2829,12 +3494,14 @@ class Files extends Eloquent
 
         return '';
     }
-    
-    public function epks() {
+
+    public function epks()
+    {
         return $this->hasOne('Epks', 'file_id');
     }
 
-    public function approvedEpks() {
+    public function approvedEpks()
+    {
         return $this->hasOne('Epks', 'file_id')->where('epks.status', Epks::APPROVED);
     }
 
@@ -2881,7 +3548,7 @@ class Files extends Eloquent
                     $percentage = ($total_berjaya_dikutip / $total_sepatut_dikutip) * 100;
                 }
 
-                $total_income_tuggakan = $month_finance->financeIncome->sum('tuggakan');
+                $total_income_tuggakan = $month_finance->financeIncome->sum('tunggakan');
                 $total_income_semasa = $month_finance->financeIncome->sum('semasa');
                 $total_income_hadapan = $month_finance->financeIncome->sum('hadapan');
                 $total_income = $total_income_tuggakan + $total_income_semasa + $total_income_hadapan;
@@ -2894,21 +3561,21 @@ class Files extends Eloquent
             }
 
             array_push($graph_month, $date->format('F') . '<br />' . $date->format('Y'));
-            array_push($graph_percentage, $percentage);
+            array_push($graph_percentage, round($percentage));
             array_push($data, [
                 'year' => $date->format('Y'),
                 'month' => $date->format('m'),
                 'month_name' => $date->format('F'),
-                'percentage' => number_format($percentage),
-                'total_income' => $total_income,
-                'total_expense' => $total_expense,
+                'percentage' => round($percentage),
+                'total_income' => number_format($total_income, 2),
+                'total_expense' => number_format($total_expense, 2),
                 'nett_income' => number_format($nett_income, 2),
-            ]);            
+            ]);
         }
 
         $result = [
             'data' => $data,
-            'graph'=> [
+            'graph' => [
                 'months' => $graph_month,
                 'percentages' => $graph_percentage,
             ],
@@ -2916,5 +3583,4 @@ class Files extends Eloquent
 
         return $result;
     }
-
 }

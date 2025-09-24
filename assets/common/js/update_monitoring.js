@@ -435,6 +435,35 @@ $(document).ready(function () {
         }).submit();
     });
 
+    //sworn_statement
+    $('body').delegate('#sworn_statement', 'change', function () {
+        $('#upload_sworn_statement').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-sworn_statement").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-sworn_statement").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-sworn_statement").show();
+                    $("#sworn_statement").css("color", "red");
+                } else {
+                    $("#validation-sworn_statement").html("<i class='fa fa-check' id='check_sworn_statement' style='color:green;'></i>");
+                    $("#clear_sworn_statement").show();
+                    $("#validation-sworn_statement").show();
+                    $("#sworn_statement").css("color", "green");
+                    $("#sworn_statement_url").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
     //report_audited_financial
     $('body').delegate('#report_audited_financial', 'change', function () {
         $('#upload_report_audited_financial').ajaxForm({
@@ -945,6 +974,36 @@ $('body').delegate('#notice_agm_egm_edit', 'change', function () {
         }).submit();
     });
 
+    //sworn_statement_edit
+    $('body').delegate('#sworn_statement_edit', 'change', function () {
+        $('#upload_sworn_statement_edit').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function () {
+                $("#validation-sworn_statement_edit").hide().empty();
+                return true;
+            },
+            success: function (response) {
+                if (response.success == false) {
+                    var arr = response.errors;
+                    $.each(arr, function (index, value) {
+                        if (value.length != 0) {
+                            $("#validation-sworn_statement_edit").append('<div class="alert alert-error"><strong>' + value + '</strong><div>');
+                        }
+                    });
+                    $("#validation-sworn_statement_edit").show();
+                    $("#sworn_statement_edit").css("color", "red");
+                } else {
+                    $("#btn_sworn_statement_edit").hide();
+                    $("#validation-sworn_statement_edit").html("<i class='fa fa-check' id='check_sworn_statement_edit' style='color:green;'></i>");
+                    $("#clear_sworn_statement_edit").show();
+                    $("#validation-sworn_statement_edit").show();
+                    $("#sworn_statement_edit").css("color", "green");
+                    $("#sworn_statement_url_edit").val(response.file);
+                }
+            }
+        }).submit();
+    });
+
     //report_audited_financial_edit
     $('body').delegate('#report_audited_financial_edit', 'change', function () {
         $('#upload_report_audited_financial_edit').ajaxForm({
@@ -1126,6 +1185,14 @@ function clearIntegrityPledge() {
     $("#integrity_pledge").css("color", "grey");
     $("#clear_integrity_pledge").hide();
     $("#check_integrity_pledge").hide();
+}
+
+function clearSwornStatement() {
+    $("#sworn_statement").val("");
+    $("#sworn_statement_url").val("");
+    $("#sworn_statement").css("color", "grey");
+    $("#clear_sworn_statement").hide();
+    $("#check_sworn_statement").hide();
 }
 
 function clearReportAuditedFinancial() {
