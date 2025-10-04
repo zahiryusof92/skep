@@ -3,8 +3,8 @@
 @section('content')
     <style>
         /* ========================================
-                           VALIDATION STYLES (aligned with create)
-                           ======================================== */
+                                   VALIDATION STYLES (aligned with create)
+                                   ======================================== */
         .is-invalid {
             border-color: #dc3545 !important;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
@@ -21,9 +21,10 @@
         .select2-container--default .select2-selection--single.is-invalid {
             border: 1px solid #dc3545 !important;
         }
+
         /* ========================================
-                                                                               GENERAL FORM STYLING
-                                                                            ======================================== */
+                                                                                       GENERAL FORM STYLING
+                                                                                    ======================================== */
         .mandatory-notice {
             margin-bottom: 20px;
         }
@@ -172,7 +173,7 @@
         }
 
         .form-control-file::before {
-            content: "📁 Pilih Fail";
+            content: "📁 {{ trans('app.forms.tppm.file_upload') }}";
             display: block;
             font-weight: 600;
             color: #495057;
@@ -203,12 +204,12 @@
         }
 
         .form-control-file.has-file::before {
-            content: "✅ Fail Dipilih";
+            content: "✅ {{ trans('app.forms.tppm.file_upload_selected') }}";
             color: #155724;
         }
 
         .form-control-file.has-file::after {
-            content: "Klik untuk tukar fail";
+            content: "{{ trans('app.forms.tppm.change_file_upload') }}";
             color: #155724;
         }
 
@@ -359,13 +360,13 @@
         }
 
         /* ========================================
-                                                                               BAHAGIAN A - APPLICATION DETAILS
-                                                                            ======================================== */
+                                                                                       BAHAGIAN A - APPLICATION DETAILS
+                                                                                    ======================================== */
         /* (Uses general form styling above) */
 
         /* ========================================
-                                                                               BAHAGIAN B - SCOPE OF WORKS
-                                                                            ======================================== */
+                                                                                       BAHAGIAN B - SCOPE OF WORKS
+                                                                                    ======================================== */
         .scope-table {
             margin-bottom: 0;
         }
@@ -498,8 +499,8 @@
         }
 
         /* ========================================
-                                                                               BAHAGIAN C - APPLICANT CHECKLIST
-                                                                            ======================================== */
+                                                                                       BAHAGIAN C - APPLICANT CHECKLIST
+                                                                                    ======================================== */
         .checklist-section {
             background-color: #fff;
             border: 1px solid #dee2e6;
@@ -539,8 +540,8 @@
         }
 
         /* ========================================
-                                                                               FORM ACTIONS
-                                                                            ======================================== */
+                                                                                       FORM ACTIONS
+                                                                                    ======================================== */
         .form-actions {
             background-color: #f8f9fa;
             border-top: 1px solid #dee2e6;
@@ -584,18 +585,17 @@
                 <h3>{{ $title }}</h3>
             </div>
             <div class="panel-body">
-                
+
                 <section class="panel panel-pad">
                     <div class="row padding-vertical-20">
                         <div class="col-lg-12">
 
                             @include('alert.bootbox')
 
-                            @if($model->status == TPPM::APPROVED)
+                            @if ($model->status == TPPM::APPROVED)
                                 <div class="text-right" style="margin-bottom: 15px;">
-                                    <a href="{{ route('tppm.pdf', \Helper\Helper::encode('tppm', $model->id)) }}" 
-                                       class="btn btn-primary" 
-                                       target="_blank">
+                                    <a href="{{ route('tppm.pdf', \Helper\Helper::encode('tppm', $model->id)) }}"
+                                        class="btn btn-primary" target="_blank">
                                         <i class="fa fa-download"></i>
                                         {{ trans('app.forms.tppm.download_pdf') }}
                                     </a>
@@ -634,7 +634,9 @@
                                                 <div class="category-row">
                                                     <div class="category-option">
                                                         <label class="category-label">
-                                                            <input type="radio" name="cost_category" value="low_cost" {{ (isset($model) && $model->cost_category == 'low_cost') ? 'checked' : '' }} disabled>
+                                                            <input type="radio" name="cost_category" value="low_cost"
+                                                                {{ isset($model) && $model->cost_category == 'low_cost' ? 'checked' : '' }}
+                                                                disabled>
                                                             <div class="category-content">
                                                                 <div class="category-title">
                                                                     {{ trans('app.forms.tppm.low_cost') }}</div>
@@ -642,9 +644,11 @@
                                                                     {{ trans('app.forms.tppm.original_purchase_price') }}
                                                                 </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.peninsular_price') }}</div>
+                                                                    {{ trans('app.forms.tppm.peninsular_low_cost_price') }}
+                                                                </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.sabah_sarawak_price') }}</div>
+                                                                    {{ trans('app.forms.tppm.sabah_sarawak_low_cost_price') }}
+                                                                </div>
                                                             </div>
                                                         </label>
                                                     </div>
@@ -653,7 +657,10 @@
 
                                                     <div class="category-option">
                                                         <label class="category-label">
-                                                            <input type="radio" name="cost_category" value="low_medium_cost" {{ (isset($model) && $model->cost_category == 'low_medium_cost') ? 'checked' : '' }} disabled>
+                                                            <input type="radio" name="cost_category"
+                                                                value="low_medium_cost"
+                                                                {{ isset($model) && $model->cost_category == 'low_medium_cost' ? 'checked' : '' }}
+                                                                disabled>
                                                             <div class="category-content">
                                                                 <div class="category-title">
                                                                     {{ trans('app.forms.tppm.low_medium_cost') }}</div>
@@ -661,9 +668,10 @@
                                                                     {{ trans('app.forms.tppm.original_purchase_price') }}
                                                                 </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.medium_low_price') }}</div>
+                                                                    {{ trans('app.forms.tppm.peninsular_low_medium_cost_price') }}
+                                                                </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.sabah_sarawak_medium_price') }}
+                                                                    {{ trans('app.forms.tppm.sabah_sarawak_low_medium_cost_price') }}
                                                                 </div>
                                                             </div>
                                                         </label>
@@ -693,9 +701,13 @@
                                                     {{ trans('app.forms.tppm.scheme_name') }}
 
                                                 </label>
-                                                <select id="strata_id" name="strata_id" class="form-control select3" data-placeholder="{{ trans('app.forms.please_select') }}" data-ajax--url="{{ route('v3.api.strata.getOption', ['type' => 'id', 'company_id' => Company::where('short_name', 'MPS')->first()->id]) }}" data-ajax--cache="true" disabled>
-                                                    @if(isset($model) && $model->strata)
-                                                        <option value="{{ $model->strata_id }}" selected>{{ $model->strata->name }}</option>
+                                                <select id="strata_id" name="strata_id" class="form-control select3"
+                                                    data-placeholder="{{ trans('app.forms.please_select') }}"
+                                                    data-ajax--url="{{ route('v3.api.strata.getOption', ['type' => 'id', 'company_id' => Company::where('short_name', 'MPS')->first()->id]) }}"
+                                                    data-ajax--cache="true" disabled>
+                                                    @if (isset($model) && $model->strata)
+                                                        <option value="{{ $model->strata_id }}" selected>
+                                                            {{ $model->strata->name }}</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -709,7 +721,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.applicant_name') }}
                                                 </label>
-                                                <input type="text" class="form-control" id="applicant_name" name="applicant_name" value="{{ isset($model) ? $model->applicant_name : '' }}" readonly>
+                                                <input type="text" class="form-control" id="applicant_name"
+                                                    name="applicant_name"
+                                                    value="{{ isset($model) ? $model->applicant_name : '' }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
@@ -718,7 +732,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.phone_no') }}
                                                 </label>
-                                                <input type="tel" class="form-control" id="applicant_phone" name="applicant_phone" value="{{ isset($model) ? $model->applicant_phone : '' }}" readonly>
+                                                <input type="tel" class="form-control" id="applicant_phone"
+                                                    name="applicant_phone"
+                                                    value="{{ isset($model) ? $model->applicant_phone : '' }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
@@ -727,7 +743,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.email') }}
                                                 </label>
-                                                <input type="email" class="form-control" id="applicant_email" name="applicant_email" value="{{ isset($model) ? $model->applicant_email : '' }}" readonly>
+                                                <input type="email" class="form-control" id="applicant_email"
+                                                    name="applicant_email"
+                                                    value="{{ isset($model) ? $model->applicant_email : '' }}" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -739,7 +757,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.jmb_mc_name') }}
                                                 </label>
-                                                <input type="text" class="form-control" id="organization_name" name="organization_name" value="{{ isset($model) ? $model->organization_name : '' }}" readonly>
+                                                <input type="text" class="form-control" id="organization_name"
+                                                    name="organization_name"
+                                                    value="{{ isset($model) ? $model->organization_name : '' }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -748,7 +768,10 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.position') }}
                                                 </label>
-                                                <input type="text" class="form-control" id="applicant_position" name="applicant_position" value="{{ isset($model) ? $model->applicant_position : '' }}" readonly>
+                                                <input type="text" class="form-control" id="applicant_position"
+                                                    name="applicant_position"
+                                                    value="{{ isset($model) ? $model->applicant_position : '' }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -760,7 +783,10 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.address1') }}
                                                 </label>
-                                                <input type="text" class="form-control" id="organization_address_1" name="organization_address_1" value="{{ isset($model) ? $model->organization_address_1 : '' }}" readonly>
+                                                <input type="text" class="form-control" id="organization_address_1"
+                                                    name="organization_address_1"
+                                                    value="{{ isset($model) ? $model->organization_address_1 : '' }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -768,7 +794,10 @@
                                                 <label class="form-control-label">
                                                     {{ trans('app.forms.tppm.address2') }}
                                                 </label>
-                                                <input type="text" class="form-control" id="organization_address_2" name="organization_address_2" value="{{ isset($model) ? $model->organization_address_2 : '' }}" readonly>
+                                                <input type="text" class="form-control" id="organization_address_2"
+                                                    name="organization_address_2"
+                                                    value="{{ isset($model) ? $model->organization_address_2 : '' }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -776,7 +805,10 @@
                                                 <label class="form-control-label">
                                                     {{ trans('app.forms.tppm.address3') }}
                                                 </label>
-                                                <input type="text" class="form-control" id="organization_address_3" name="organization_address_3" value="{{ isset($model) ? $model->organization_address_3 : '' }}" readonly>
+                                                <input type="text" class="form-control" id="organization_address_3"
+                                                    name="organization_address_3"
+                                                    value="{{ isset($model) ? $model->organization_address_3 : '' }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -788,10 +820,16 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.parliament') }}
                                                 </label>
-                                                <select id="parliament_id" name="parliament_id" class="form-control select3" data-placeholder="{{ trans('app.forms.please_select') }}" data-ajax--url="{{ route('v3.api.parliment.getOption') }}" data-ajax--cache="true" disabled>
-                                                    @if(isset($model) && $model->parliament_id)
+                                                <select id="parliament_id" name="parliament_id"
+                                                    class="form-control select3"
+                                                    data-placeholder="{{ trans('app.forms.please_select') }}"
+                                                    data-ajax--url="{{ route('v3.api.parliment.getOption') }}"
+                                                    data-ajax--cache="true" disabled>
+                                                    @if (isset($model) && $model->parliament_id)
                                                         <?php $parliament = Parliment::find($model->parliament_id); ?>
-                                                        <option value="{{ $model->parliament_id }}" selected>{{ $parliament ? $parliament->description : $model->parliament_id }}</option>
+                                                        <option value="{{ $model->parliament_id }}" selected>
+                                                            {{ $parliament ? $parliament->description : $model->parliament_id }}
+                                                        </option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -802,10 +840,14 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.dun') }}
                                                 </label>
-                                                <select id="dun_id" name="dun_id" class="form-control select3" data-placeholder="{{ trans('app.forms.please_select') }}" data-ajax--url="{{ route('v3.api.dun.getOption') }}" data-ajax--cache="true" disabled>
-                                                    @if(isset($model) && $model->dun_id)
+                                                <select id="dun_id" name="dun_id" class="form-control select3"
+                                                    data-placeholder="{{ trans('app.forms.please_select') }}"
+                                                    data-ajax--url="{{ route('v3.api.dun.getOption') }}"
+                                                    data-ajax--cache="true" disabled>
+                                                    @if (isset($model) && $model->dun_id)
                                                         <?php $dun = Dun::find($model->dun_id); ?>
-                                                        <option value="{{ $model->dun_id }}" selected>{{ $dun ? $dun->description : $model->dun_id }}</option>
+                                                        <option value="{{ $model->dun_id }}" selected>
+                                                            {{ $dun ? $dun->description : $model->dun_id }}</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -816,10 +858,14 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.district') }}
                                                 </label>
-                                                <select id="district_id" name="district_id" class="form-control select3" data-placeholder="{{ trans('app.forms.please_select') }}" data-ajax--url="{{ route('v3.api.area.getOption') }}" data-ajax--cache="true" disabled>
-                                                    @if(isset($model) && $model->district_id)
+                                                <select id="district_id" name="district_id" class="form-control select3"
+                                                    data-placeholder="{{ trans('app.forms.please_select') }}"
+                                                    data-ajax--url="{{ route('v3.api.area.getOption') }}"
+                                                    data-ajax--cache="true" disabled>
+                                                    @if (isset($model) && $model->district_id)
                                                         <?php $area = Area::find($model->district_id); ?>
-                                                        <option value="{{ $model->district_id }}" selected>{{ $area ? $area->description : $model->district_id }}</option>
+                                                        <option value="{{ $model->district_id }}" selected>
+                                                            {{ $area ? $area->description : $model->district_id }}</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -832,10 +878,14 @@
                                                 <label class="form-control-label">
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.first_purchase_price') }}
+                                                    ({{ trans('app.forms.tppm.first_purchase_price_label') }})
                                                 </label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon">RM</span>
-                                                    <input type="number" class="form-control" id="first_purchase_price" name="first_purchase_price" value="{{ isset($model) ? $model->first_purchase_price : '' }}" readonly>
+                                                    <input type="number" class="form-control" id="first_purchase_price"
+                                                        name="first_purchase_price"
+                                                        value="{{ isset($model) ? $model->first_purchase_price : '' }}"
+                                                        readonly>
                                                 </div>
                                                 <div class="help-block" style="font-style: italic;">
                                                     [{{ trans('app.forms.tppm.first_purchase_price_note') }}]
@@ -848,7 +898,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.year_built') }}
                                                 </label>
-                                                <input type="number" class="form-control" id="year_built" name="year_built" value="{{ isset($model) ? $model->year_built : '' }}" readonly>
+                                                <input type="number" class="form-control" id="year_built"
+                                                    name="year_built"
+                                                    value="{{ isset($model) ? $model->year_built : '' }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -857,8 +909,11 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.year_occupied') }}
                                                 </label>
-                                                <input type="number" class="form-control" id="year_occupied" name="year_occupied" value="{{ isset($model) ? $model->year_occupied : '' }}" readonly>
-                                                <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.year_occupied_note') }}]</div>
+                                                <input type="number" class="form-control" id="year_occupied"
+                                                    name="year_occupied"
+                                                    value="{{ isset($model) ? $model->year_occupied : '' }}" readonly>
+                                                <div class="help-block" style="font-style: italic;">
+                                                    [{{ trans('app.forms.tppm.year_occupied_note') }}]</div>
                                             </div>
                                         </div>
                                     </div>
@@ -871,7 +926,8 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.block_count') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_blocks" value="{{ isset($model) ? $model->num_blocks : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_blocks"
+                                                        value="{{ isset($model) ? $model->num_blocks : '' }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-2">
@@ -880,7 +936,8 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.unit_count') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units" value="{{ isset($model) ? $model->num_units : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_units"
+                                                        value="{{ isset($model) ? $model->num_units : '' }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-2">
@@ -889,7 +946,9 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.units_occupied') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units_occupied" value="{{ isset($model) ? $model->num_units_occupied : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_units_occupied"
+                                                        value="{{ isset($model) ? $model->num_units_occupied : '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
@@ -898,7 +957,9 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.units_owner') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units_owner" value="{{ isset($model) ? $model->num_units_owner : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_units_owner"
+                                                        value="{{ isset($model) ? $model->num_units_owner : '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
@@ -907,7 +968,9 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.units_malaysian') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units_malaysian" value="{{ isset($model) ? $model->num_units_malaysian : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_units_malaysian"
+                                                        value="{{ isset($model) ? $model->num_units_malaysian : '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -919,7 +982,8 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.storey_count') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_storeys" value="{{ isset($model) ? $model->num_storeys : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_storeys"
+                                                        value="{{ isset($model) ? $model->num_storeys : '' }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-2">
@@ -928,7 +992,8 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.resident_count') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_residents" value="{{ isset($model) ? $model->num_residents : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_residents"
+                                                        value="{{ isset($model) ? $model->num_residents : '' }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-2">
@@ -937,7 +1002,9 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.units_vacant') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units_vacant" value="{{ isset($model) ? $model->num_units_vacant : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_units_vacant"
+                                                        value="{{ isset($model) ? $model->num_units_vacant : '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
@@ -946,7 +1013,9 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.units_tenant') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units_tenant" value="{{ isset($model) ? $model->num_units_tenant : '' }}" readonly>
+                                                    <input type="number" class="form-control" name="num_units_tenant"
+                                                        value="{{ isset($model) ? $model->num_units_tenant : '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
@@ -955,7 +1024,10 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.units_non_malaysian') }}
                                                     </label>
-                                                    <input type="number" class="form-control" name="num_units_non_malaysian" value="{{ isset($model) ? $model->num_units_non_malaysian : '' }}" readonly>
+                                                    <input type="number" class="form-control"
+                                                        name="num_units_non_malaysian"
+                                                        value="{{ isset($model) ? $model->num_units_non_malaysian : '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -968,7 +1040,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.block_name') }}
                                                 </label>
-                                                <input type="text" class="form-control" name="requested_block_name" value="{{ isset($model) ? $model->requested_block_name : '' }}" readonly>
+                                                <input type="text" class="form-control" name="requested_block_name"
+                                                    value="{{ isset($model) ? $model->requested_block_name : '' }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -977,7 +1051,9 @@
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.block_no') }}
                                                 </label>
-                                                <input type="number" class="form-control" name="requested_block_no" value="{{ isset($model) ? $model->requested_block_no : '' }}" readonly>
+                                                <input type="number" class="form-control" name="requested_block_no"
+                                                    value="{{ isset($model) ? $model->requested_block_no : '' }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -994,68 +1070,98 @@
                                                 <table class="table table-bordered scope-table">
                                                     <thead>
                                                         <?php
-                                                            $scopeData = (isset($model) && $model->scope) ? json_decode($model->scope, true) : null;
-                                                            $scopeItems = isset($scopeData['items']) ? $scopeData['items'] : array();
+                                                        $scopeData = isset($model) && $model->scope ? json_decode($model->scope, true) : null;
+                                                        $scopeItems = isset($scopeData['items']) ? $scopeData['items'] : [];
                                                         ?>
                                                         <tr>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>A</span>
-                                                                    <input type="checkbox" class="scope-item" value="lift_avas" {{ in_array('lift_avas', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="lift_avas"
+                                                                        {{ in_array('lift_avas', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>B</span>
-                                                                    <input type="checkbox" class="scope-item" value="water_tank" {{ in_array('water_tank', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="water_tank"
+                                                                        {{ in_array('water_tank', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>C</span>
-                                                                    <input type="checkbox" class="scope-item" value="sanitary_pipe" {{ in_array('sanitary_pipe', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="sanitary_pipe"
+                                                                        {{ in_array('sanitary_pipe', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>D</span>
-                                                                    <input type="checkbox" class="scope-item" value="roof" {{ in_array('roof', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="roof"
+                                                                        {{ in_array('roof', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>E</span>
-                                                                    <input type="checkbox" class="scope-item" value="stair_handrail" {{ in_array('stair_handrail', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="stair_handrail"
+                                                                        {{ in_array('stair_handrail', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>F</span>
-                                                                    <input type="checkbox" class="scope-item" value="painting" {{ in_array('painting', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="painting"
+                                                                        {{ in_array('painting', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>G</span>
-                                                                    <input type="checkbox" class="scope-item" value="electrical" {{ in_array('electrical', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="electrical"
+                                                                        {{ in_array('electrical', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>H</span>
-                                                                    <input type="checkbox" class="scope-item" value="public_infrastructure" {{ in_array('public_infrastructure', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="public_infrastructure"
+                                                                        {{ in_array('public_infrastructure', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>I</span>
-                                                                    <input type="checkbox" class="scope-item" value="fence" {{ in_array('fence', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="fence"
+                                                                        {{ in_array('fence', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                             <th style="width: 10%; text-align: center;">
                                                                 <div class="header-checkbox">
                                                                     <span>J</span>
-                                                                    <input type="checkbox" class="scope-item" value="slope" {{ in_array('slope', $scopeItems) ? 'checked' : '' }} disabled>
+                                                                    <input type="checkbox" class="scope-item"
+                                                                        value="slope"
+                                                                        {{ in_array('slope', $scopeItems) ? 'checked' : '' }}
+                                                                        disabled>
                                                                 </div>
                                                             </th>
                                                         </tr>
@@ -1087,14 +1193,23 @@
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <label
                                                                     style="font-size: 11px;">{{ trans('app.forms.tppm.lift_count') }}:</label><br>
-                                                                <input type="text" class="form-control input-sm" name="lift_count" style="width: 60px; margin: 0 auto;" value="{{ isset($scopeData['lift_count']) ? $scopeData['lift_count'] : '' }}" readonly><br>
+                                                                <input type="text" class="form-control input-sm"
+                                                                    name="lift_count" style="width: 60px; margin: 0 auto;"
+                                                                    value="{{ isset($scopeData['lift_count']) ? $scopeData['lift_count'] : '' }}"
+                                                                    readonly><br>
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="lift_type" value="repair" {{ (isset($scopeData['lift_type']) && $scopeData['lift_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="lift_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['lift_type']) && $scopeData['lift_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="lift_type" value="replace" {{ (isset($scopeData['lift_type']) && $scopeData['lift_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="lift_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['lift_type']) && $scopeData['lift_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1102,14 +1217,24 @@
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <label
                                                                     style="font-size: 11px;">{{ trans('app.forms.tppm.water_tank_count') }}:</label><br>
-                                                                <input type="text" class="form-control input-sm" name="water_tank_count" style="width: 60px; margin: 0 auto;" value="{{ isset($scopeData['water_tank_count']) ? $scopeData['water_tank_count'] : '' }}" readonly><br>
+                                                                <input type="text" class="form-control input-sm"
+                                                                    name="water_tank_count"
+                                                                    style="width: 60px; margin: 0 auto;"
+                                                                    value="{{ isset($scopeData['water_tank_count']) ? $scopeData['water_tank_count'] : '' }}"
+                                                                    readonly><br>
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="water_tank_type" value="repair" {{ (isset($scopeData['water_tank_type']) && $scopeData['water_tank_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="water_tank_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['water_tank_type']) && $scopeData['water_tank_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="water_tank_type" value="replace" {{ (isset($scopeData['water_tank_type']) && $scopeData['water_tank_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="water_tank_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['water_tank_type']) && $scopeData['water_tank_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1117,11 +1242,17 @@
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="sanitary_pipe_type" value="repair" {{ (isset($scopeData['sanitary_pipe_type']) && $scopeData['sanitary_pipe_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="sanitary_pipe_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['sanitary_pipe_type']) && $scopeData['sanitary_pipe_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="sanitary_pipe_type" value="replace" {{ (isset($scopeData['sanitary_pipe_type']) && $scopeData['sanitary_pipe_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="sanitary_pipe_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['sanitary_pipe_type']) && $scopeData['sanitary_pipe_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1129,11 +1260,17 @@
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="roof_type" value="repair" {{ (isset($scopeData['roof_type']) && $scopeData['roof_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="roof_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['roof_type']) && $scopeData['roof_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="roof_type" value="replace" {{ (isset($scopeData['roof_type']) && $scopeData['roof_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="roof_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['roof_type']) && $scopeData['roof_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1141,11 +1278,17 @@
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="stair_handrail_type" value="repair" {{ (isset($scopeData['stair_handrail_type']) && $scopeData['stair_handrail_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="stair_handrail_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['stair_handrail_type']) && $scopeData['stair_handrail_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="stair_handrail_type" value="replace" {{ (isset($scopeData['stair_handrail_type']) && $scopeData['stair_handrail_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="stair_handrail_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['stair_handrail_type']) && $scopeData['stair_handrail_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1154,30 +1297,52 @@
                                                                 <div class="field-group">
                                                                     <div class="field-item">
                                                                         <label>i)</label>
-                                                                        <input type="text" class="form-control input-sm" name="painting_i" value="{{ isset($scopeData['painting']['i']) ? $scopeData['painting']['i'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="painting_i"
+                                                                            value="{{ isset($scopeData['painting']['i']) ? $scopeData['painting']['i'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                     <div class="field-item">
                                                                         <label>ii)</label>
-                                                                        <input type="text" class="form-control input-sm" name="painting_ii" value="{{ isset($scopeData['painting']['ii']) ? $scopeData['painting']['ii'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="painting_ii"
+                                                                            value="{{ isset($scopeData['painting']['ii']) ? $scopeData['painting']['ii'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                     <div class="field-item">
                                                                         <label>iii)</label>
-                                                                        <input type="text" class="form-control input-sm" name="painting_iii" value="{{ isset($scopeData['painting']['iii']) ? $scopeData['painting']['iii'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="painting_iii"
+                                                                            value="{{ isset($scopeData['painting']['iii']) ? $scopeData['painting']['iii'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                     <div class="field-item">
                                                                         <label>iv)</label>
-                                                                        <input type="text" class="form-control input-sm" name="painting_iv" value="{{ isset($scopeData['painting']['iv']) ? $scopeData['painting']['iv'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="painting_iv"
+                                                                            value="{{ isset($scopeData['painting']['iv']) ? $scopeData['painting']['iv'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="electrical_type" value="repair" {{ (isset($scopeData['electrical_type']) && $scopeData['electrical_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="electrical_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['electrical_type']) && $scopeData['electrical_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="electrical_type" value="replace" {{ (isset($scopeData['electrical_type']) && $scopeData['electrical_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="electrical_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['electrical_type']) && $scopeData['electrical_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1186,30 +1351,52 @@
                                                                 <div class="field-group">
                                                                     <div class="field-item">
                                                                         <label>i)</label>
-                                                                        <input type="text" class="form-control input-sm" name="public_infrastructure_i" value="{{ isset($scopeData['public_infrastructure']['i']) ? $scopeData['public_infrastructure']['i'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="public_infrastructure_i"
+                                                                            value="{{ isset($scopeData['public_infrastructure']['i']) ? $scopeData['public_infrastructure']['i'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                     <div class="field-item">
                                                                         <label>ii)</label>
-                                                                        <input type="text" class="form-control input-sm" name="public_infrastructure_ii" value="{{ isset($scopeData['public_infrastructure']['ii']) ? $scopeData['public_infrastructure']['ii'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="public_infrastructure_ii"
+                                                                            value="{{ isset($scopeData['public_infrastructure']['ii']) ? $scopeData['public_infrastructure']['ii'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                     <div class="field-item">
                                                                         <label>iii)</label>
-                                                                        <input type="text" class="form-control input-sm" name="public_infrastructure_iii" value="{{ isset($scopeData['public_infrastructure']['iii']) ? $scopeData['public_infrastructure']['iii'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="public_infrastructure_iii"
+                                                                            value="{{ isset($scopeData['public_infrastructure']['iii']) ? $scopeData['public_infrastructure']['iii'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                     <div class="field-item">
                                                                         <label>iv)</label>
-                                                                        <input type="text" class="form-control input-sm" name="public_infrastructure_iv" value="{{ isset($scopeData['public_infrastructure']['iv']) ? $scopeData['public_infrastructure']['iv'] : '' }}" readonly>
+                                                                        <input type="text"
+                                                                            class="form-control input-sm"
+                                                                            name="public_infrastructure_iv"
+                                                                            value="{{ isset($scopeData['public_infrastructure']['iv']) ? $scopeData['public_infrastructure']['iv'] : '' }}"
+                                                                            readonly>
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                             <td style="text-align: center; vertical-align: top;">
                                                                 <div class="radio-options">
                                                                     <label>
-                                                                        <input type="radio" name="fence_type" value="repair" {{ (isset($scopeData['fence_type']) && $scopeData['fence_type'] == 'repair') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="fence_type"
+                                                                            value="repair"
+                                                                            {{ isset($scopeData['fence_type']) && $scopeData['fence_type'] == 'repair' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.repair') }}
                                                                     </label>
                                                                     <label>
-                                                                        <input type="radio" name="fence_type" value="replace" {{ (isset($scopeData['fence_type']) && $scopeData['fence_type'] == 'replace') ? 'checked' : '' }} disabled>
+                                                                        <input type="radio" name="fence_type"
+                                                                            value="replace"
+                                                                            {{ isset($scopeData['fence_type']) && $scopeData['fence_type'] == 'replace' ? 'checked' : '' }}
+                                                                            disabled>
                                                                         {{ trans('app.forms.tppm.replace') }}
                                                                     </label>
                                                                 </div>
@@ -1224,20 +1411,17 @@
                                             </div>
 
                                             <div class="attention-notice arahan-notice" style="margin-top: 15px;">
-                                                <div class="attention-title">
-                                                    {{ trans('app.forms.tppm.instruction_title') }}</div>
-                                                <div class="attention-text">• {{ trans('app.forms.tppm.instruction_1') }}
-                                                </div>
-                                                <div class="attention-text">•
-                                                    {{ trans('app.forms.tppm.instruction_2', ['repair' => trans('app.forms.tppm.repair'), 'replace' => trans('app.forms.tppm.replace')]) }}
-                                                </div>
-                                                <div class="attention-text">• {{ trans('app.forms.tppm.instruction_3') }}
-                                                </div>
-                                                <div class="attention-text">• {{ trans('app.forms.tppm.instruction_4') }}
-                                                </div>
+                                                <ul class="attention-text" style="margin-left: -15px;">
+                                                    <li>{{ trans('app.forms.tppm.instruction_1') }}</li>
+                                                    <li>{{ trans('app.forms.tppm.instruction_2', ['repair' => trans('app.forms.tppm.repair'), 'replace' => trans('app.forms.tppm.replace')]) }}
+                                                    </li>
+                                                    <li>{{ trans('app.forms.tppm.instruction_3') }}</li>
+                                                    <li>{{ trans('app.forms.tppm.instruction_4') }}</li>
+                                                </ul>
                                             </div>
 
-                                                    <input type="hidden" id="scope" name="scope" value="{{ isset($model) && $model->scope ? $model->scope : '' }}">
+                                            <input type="hidden" id="scope" name="scope"
+                                                value="{{ isset($model) && $model->scope ? $model->scope : '' }}">
                                         </div>
                                     </div>
                                 </div>
@@ -1255,10 +1439,14 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.spa_copy') }}
                                                     </label>
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.spa_copy_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.spa_copy_note') }}]</div>
                                                     <div id="spa_copy_feedback" class="help-block small">
-                                                        @if(isset($model) && $model->spa_copy)
-                                                            <span class="text-success"><i class="fa fa-check"></i> <a href="{{ URL::to($model->spa_copy) }}" target="_blank" class="text-success">{{ basename($model->spa_copy) }}</a></span>
+                                                        @if (isset($model) && $model->spa_copy)
+                                                            <span class="text-success"><i class="fa fa-check"></i> <a
+                                                                    href="{{ URL::to($model->spa_copy) }}"
+                                                                    target="_blank"
+                                                                    class="text-success">{{ basename($model->spa_copy) }}</a></span>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -1272,10 +1460,14 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.detail_report') }}
                                                     </label>
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.detail_report_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.detail_report_note') }}]</div>
                                                     <div id="detail_report_feedback" class="help-block small">
-                                                        @if(isset($model) && $model->detail_report)
-                                                            <span class="text-success"><i class="fa fa-check"></i> <a href="{{ URL::to($model->detail_report) }}" target="_blank" class="text-success">{{ basename($model->detail_report) }}</a></span>
+                                                        @if (isset($model) && $model->detail_report)
+                                                            <span class="text-success"><i class="fa fa-check"></i> <a
+                                                                    href="{{ URL::to($model->detail_report) }}"
+                                                                    target="_blank"
+                                                                    class="text-success">{{ basename($model->detail_report) }}</a></span>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -1289,10 +1481,14 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.meeting_minutes') }}
                                                     </label>
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.meeting_minutes_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.meeting_minutes_note') }}]</div>
                                                     <div id="meeting_minutes_feedback" class="help-block small">
-                                                        @if(isset($model) && $model->meeting_minutes)
-                                                            <span class="text-success"><i class="fa fa-check"></i> <a href="{{ URL::to($model->meeting_minutes) }}" target="_blank" class="text-success">{{ basename($model->meeting_minutes) }}</a></span>
+                                                        @if (isset($model) && $model->meeting_minutes)
+                                                            <span class="text-success"><i class="fa fa-check"></i> <a
+                                                                    href="{{ URL::to($model->meeting_minutes) }}"
+                                                                    target="_blank"
+                                                                    class="text-success">{{ basename($model->meeting_minutes) }}</a></span>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -1306,10 +1502,14 @@
                                                         <span style="color: red;">*</span>&nbsp;
                                                         {{ trans('app.forms.tppm.cost_estimate') }}
                                                     </label>
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.cost_estimate_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.cost_estimate_note') }}]</div>
                                                     <div id="cost_estimate_feedback" class="help-block small">
-                                                        @if(isset($model) && $model->cost_estimate)
-                                                            <span class="text-success"><i class="fa fa-check"></i> <a href="{{ URL::to($model->cost_estimate) }}" target="_blank" class="text-success">{{ basename($model->cost_estimate) }}</a></span>
+                                                        @if (isset($model) && $model->cost_estimate)
+                                                            <span class="text-success"><i class="fa fa-check"></i> <a
+                                                                    href="{{ URL::to($model->cost_estimate) }}"
+                                                                    target="_blank"
+                                                                    class="text-success">{{ basename($model->cost_estimate) }}</a></span>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -1318,53 +1518,60 @@
                                     </div>
                                 </div>
 
-                                <div class="form-section">
-                                    <h5 class="text-bold">
-                                        D. {{ trans('app.forms.tppm.approval_by_cob') }}
-                                    </h5>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <label class="form-control-label">
-                                                            <span style="color: red;">*</span>&nbsp;
-                                                            {{ trans('app.forms.tppm.approval_status') }}
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <select name="status" id="status" class="form-control select3">
-                                                            @foreach(\TPPM::getStatusOption() as $key => $label)
-                                                                <option value="{{ $key }}" {{ (isset($model) && $model->status == $key) ? 'selected' : '' }}>{{ $label }}</option>
-                                                            @endforeach
-                                                        </select>
+                                @if (AccessGroup::hasUpdateModule('TPPM'))
+                                    <div class="form-section">
+                                        <h5 class="text-bold">
+                                            D. {{ trans('app.forms.tppm.approval_by_cob') }}
+                                        </h5>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <label class="form-control-label">
+                                                                <span style="color: red;">*</span>&nbsp;
+                                                                {{ trans('app.forms.tppm.approval_status') }}
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <select name="status" id="status"
+                                                                class="form-control select3">
+                                                                @foreach (\TPPM::getStatusOption() as $key => $label)
+                                                                    <option value="{{ $key }}"
+                                                                        {{ isset($model) && $model->status == $key ? 'selected' : '' }}>
+                                                                        {{ $label }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-8">
-                                            <div class="form-group">
-                                                <label class="form-control-label">
-                                                    <span style="color: red;">*</span>&nbsp;
-                                                    {{ trans('app.forms.tppm.approval_remark') }}
-                                                </label>
-                                                <textarea class="form-control" rows="10" name="approval_remark" id="approval_remark">{{ isset($model) ? $model->approval_remark : '' }}</textarea>
+                                        <div class="row">
+                                            <div class="col-lg-8">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">
+                                                        <span style="color: red;">*</span>&nbsp;
+                                                        {{ trans('app.forms.tppm.approval_remark') }}
+                                                    </label>
+                                                    <textarea class="form-control" rows="10" name="approval_remark" id="approval_remark">{{ isset($model) ? $model->approval_remark : '' }}</textarea>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="form-actions">
-                                    <button type="submit" class="btn btn-own" id="submit_button">
-                                        {{ trans('app.forms.save') }}
-                                    </button>
-                                    <button type="button" class="btn btn-default" id="cancel_button"
-                                        onclick="window.location ='{{ route('tppm.index') }}'">
-                                        {{ trans('app.forms.cancel') }}
-                                    </button>                                    
-                                </div>
+                                @endif
+
+                                @if (AccessGroup::hasUpdateModule('TPPM'))
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-own" id="submit_button">
+                                            {{ trans('app.forms.save') }}
+                                        </button>
+                                        <button type="button" class="btn btn-default" id="cancel_button"
+                                            onclick="window.location ='{{ route('tppm.index') }}'">
+                                            {{ trans('app.forms.cancel') }}
+                                        </button>
+                                    </div>
+                                @endif
 
                             </form>
                         </div>
@@ -1395,7 +1602,9 @@
             $(document).on('input change', '.form-control, .select3', function() {
                 $(this).removeClass('is-invalid');
                 var $fg = $(this).closest('.form-group');
-                if ($fg.length) { $fg.find('.invalid-feedback').remove(); }
+                if ($fg.length) {
+                    $fg.find('.invalid-feedback').remove();
+                }
                 if ($(this).hasClass('select3')) {
                     var s2 = $(this).next('.select2-container');
                     if (s2.length) s2.find('.select2-selection--single').removeClass('is-invalid');
@@ -1405,101 +1614,121 @@
             // ========================================
             // FORM SUBMISSION
             // ========================================
-            $("#submit_button").click(function(e) {
-                e.preventDefault();
+            // Only bind submit handler if submit button exists (user has update permission)
+            if ($("#submit_button").length > 0) {
+                $("#submit_button").click(function(e) {
+                    e.preventDefault();
 
-                $.blockUI({
-                    message: '{{ trans('app.confirmation.please_wait') }}'
-                });
+                    $.blockUI({
+                        message: '{{ trans('app.confirmation.please_wait') }}'
+                    });
 
-                clearAllValidationErrors();
-                let formData = $('form').serialize();
-                // Use update route with method override to PUT
-                let updateUrl = "{{ isset($model) ? route('tppm.update', \Helper\Helper::encode('tppm', $model->id)) : '' }}";
-                formData += '&_method=PUT';
+                    clearAllValidationErrors();
+                    let formData = $('form').serialize();
+                    // Use update route with method override to PUT
+                    let updateUrl =
+                        "{{ isset($model) ? route('tppm.update', \Helper\Helper::encode('tppm', $model->id)) : '' }}";
+                    formData += '&_method=PUT';
 
-                $.ajax({
-                    url: updateUrl,
-                    type: "POST",
-                    data: formData,
-                    dataType: 'JSON',
-                    beforeSend: function(xhr, settings) {
-                        $("#loading").css("display", "inline-block");
-                        $("#submit_button").attr("disabled", "disabled");
-                        $("#cancel_button").attr("disabled", "disabled");
-                    },
-                    success: function(res) {
-                        if (res.success == true) {
-                            bootbox.alert(
-                                "<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>",
-                                function() {
-                                    let url = "{{ route('tppm.index') }}";
-                                    window.location = url;
-                                });
-                        } else if (res.error == true) {
-                            // Handle validation errors
-                            if (res.errors) {
-                                // Render errors next to fields
-                                $.each(res.errors, function(field, messages) {
-                                    var $field = $('[name="' + field + '"]');
-                                    if ($field.length) {
-                                        $field.addClass('is-invalid');
-                                        var $fg = $field.closest('.form-group');
-                                        if ($fg.length && !$fg.find('.invalid-feedback').length) {
-                                            $fg.append('<div class="invalid-feedback">' + messages[0] + '</div>');
+                    $.ajax({
+                        url: updateUrl,
+                        type: "POST",
+                        data: formData,
+                        dataType: 'JSON',
+                        beforeSend: function(xhr, settings) {
+                            $("#loading").css("display", "inline-block");
+                            if ($("#submit_button").length > 0) $("#submit_button").attr(
+                                "disabled", "disabled");
+                            if ($("#cancel_button").length > 0) $("#cancel_button").attr(
+                                "disabled", "disabled");
+                        },
+                        success: function(res) {
+                            if (res.success == true) {
+                                bootbox.alert(
+                                    "<span style='color:green;'>{{ trans('app.successes.updated_successfully') }}</span>",
+                                    function() {
+                                        let url = "{{ route('tppm.index') }}";
+                                        window.location = url;
+                                    });
+                            } else if (res.error == true) {
+                                // Handle validation errors
+                                if (res.errors) {
+                                    // Render errors next to fields
+                                    $.each(res.errors, function(field, messages) {
+                                        var $field = $('[name="' + field + '"]');
+                                        if ($field.length) {
+                                            $field.addClass('is-invalid');
+                                            var $fg = $field.closest('.form-group');
+                                            if ($fg.length && !$fg.find(
+                                                    '.invalid-feedback')
+                                                .length) {
+                                                $fg.append(
+                                                    '<div class="invalid-feedback">' +
+                                                    messages[0] + '</div>');
+                                            }
+                                            if ($field.hasClass('select3')) {
+                                                var s2 = $field.next(
+                                                    '.select2-container');
+                                                if (s2.length) s2.find(
+                                                        '.select2-selection--single')
+                                                    .addClass('is-invalid');
+                                            }
                                         }
-                                        if ($field.hasClass('select3')) {
-                                            var s2 = $field.next('.select2-container');
-                                            if (s2.length) s2.find('.select2-selection--single').addClass('is-invalid');
-                                        }
+                                    });
+                                    // Scroll to first error field
+                                    let firstErrorField = $('.is-invalid').first();
+                                    if (firstErrorField.length) {
+                                        $('html, body').animate({
+                                            scrollTop: firstErrorField.offset().top -
+                                                100
+                                        }, 500);
+                                        firstErrorField.focus();
                                     }
-                                });
-                                // Scroll to first error field
-                                let firstErrorField = $('.is-invalid').first();
-                                if (firstErrorField.length) {
-                                    $('html, body').animate({
-                                        scrollTop: firstErrorField.offset().top - 100
-                                    }, 500);
-                                    firstErrorField.focus();
+                                } else {
+                                    // Display general error message
+                                    bootbox.alert("<span style='color:red;'>" + (res.message ||
+                                            '{{ trans('app.errors.occurred') }}') +
+                                        "</span>");
                                 }
                             } else {
-                                // Display general error message
                                 bootbox.alert("<span style='color:red;'>" + (res.message ||
                                     '{{ trans('app.errors.occurred') }}') + "</span>");
                             }
-                        } else {
-                            bootbox.alert("<span style='color:red;'>" + (res.message ||
-                                '{{ trans('app.errors.occurred') }}') + "</span>");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('AJAX Error:', xhr, status, error); // Debug logging
-                        console.log('Response:', xhr.responseJSON); // Debug logging
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('AJAX Error:', xhr, status, error); // Debug logging
+                            console.log('Response:', xhr.responseJSON); // Debug logging
 
-                        $.unblockUI();
-                        $("#loading").css("display", "none");
-                        $("#submit_button").removeAttr("disabled");
-                        $("#cancel_button").removeAttr("disabled");
+                            $.unblockUI();
+                            $("#loading").css("display", "none");
+                            if ($("#submit_button").length > 0) $("#submit_button").removeAttr(
+                                "disabled");
+                            if ($("#cancel_button").length > 0) $("#cancel_button").removeAttr(
+                                "disabled");
 
-                        let errorMessage = 'An error occurred while submitting the form.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        } else if (xhr.status === 422) {
-                            errorMessage = 'Validation failed. Please check your input.';
-                        } else if (xhr.status === 500) {
-                            errorMessage = 'Server error. Please try again later.';
-                        }
+                            let errorMessage = 'An error occurred while submitting the form.';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.status === 422) {
+                                errorMessage = 'Validation failed. Please check your input.';
+                            } else if (xhr.status === 500) {
+                                errorMessage = 'Server error. Please try again later.';
+                            }
 
-                        bootbox.alert("<span style='color:red;'>" + errorMessage + "</span>");
-                    },
-                    complete: function() {
-                        $.unblockUI();
-                        $("#loading").css("display", "none");
-                        $("#submit_button").removeAttr("disabled");
-                        $("#cancel_button").removeAttr("disabled");
-                    },
+                            bootbox.alert("<span style='color:red;'>" + errorMessage +
+                                "</span>");
+                        },
+                        complete: function() {
+                            $.unblockUI();
+                            $("#loading").css("display", "none");
+                            if ($("#submit_button").length > 0) $("#submit_button").removeAttr(
+                                "disabled");
+                            if ($("#cancel_button").length > 0) $("#cancel_button").removeAttr(
+                                "disabled");
+                        },
+                    });
                 });
-            });
+            } // End of if statement for submit button existence check
         });
     </script>
 @endsection

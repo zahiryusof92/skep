@@ -12,11 +12,13 @@
                 <section class="panel panel-pad">
                     <div class="row padding-vertical-20">
                         <div class="col-lg-12">
+                            @if (AccessGroup::hasInsertModule('TPPM'))
                             <div class="margin-bottom-30">
                                 <a href="{{ route('tppm.create') }}" class="btn btn-own">
                                     {{ trans('app.buttons.add_new_application') }}
                                 </a>
                             </div>
+                            @endif
 
                             <table class="table table-hover nowrap table-own table-striped" id="tppm_table" width="100%">
                                 <thead>

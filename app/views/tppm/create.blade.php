@@ -3,8 +3,8 @@
 @section('content')
     <style>
         /* ========================================
-                                                                               GENERAL FORM STYLING
-                                                                            ======================================== */
+                                                                                   GENERAL FORM STYLING
+                                                                                ======================================== */
         .mandatory-notice {
             margin-bottom: 20px;
         }
@@ -153,7 +153,7 @@
         }
 
         .form-control-file::before {
-            content: "📁 Pilih Fail";
+            content: "📁 {{ trans('app.forms.tppm.file_upload') }}";
             display: block;
             font-weight: 600;
             color: #495057;
@@ -184,12 +184,12 @@
         }
 
         .form-control-file.has-file::before {
-            content: "✅ Fail Dipilih";
+            content: "✅ {{ trans('app.forms.tppm.file_upload_selected') }}";
             color: #155724;
         }
 
         .form-control-file.has-file::after {
-            content: "Klik untuk tukar fail";
+            content: "{{ trans('app.forms.tppm.change_file_upload') }}";
             color: #155724;
         }
 
@@ -340,8 +340,8 @@
         }
 
         /* ========================================
-                           VALIDATION STYLES
-                           ======================================== */
+                               VALIDATION STYLES
+                               ======================================== */
 
         /* Base validation styles */
         .is-invalid {
@@ -413,13 +413,13 @@
         }
 
         /* ========================================
-                                                                               BAHAGIAN A - APPLICATION DETAILS
-                                                                            ======================================== */
+                                                                                   BAHAGIAN A - APPLICATION DETAILS
+                                                                                ======================================== */
         /* (Uses general form styling above) */
 
         /* ========================================
-                                                                               BAHAGIAN B - SCOPE OF WORKS
-                                                                            ======================================== */
+                                                                                   BAHAGIAN B - SCOPE OF WORKS
+                                                                                ======================================== */
         .scope-table {
             margin-bottom: 0;
         }
@@ -552,8 +552,8 @@
         }
 
         /* ========================================
-                                                                               BAHAGIAN C - APPLICANT CHECKLIST
-                                                                            ======================================== */
+                                                                                   BAHAGIAN C - APPLICANT CHECKLIST
+                                                                                ======================================== */
         .checklist-section {
             background-color: #fff;
             border: 1px solid #dee2e6;
@@ -593,8 +593,8 @@
         }
 
         /* ========================================
-                                                                               FORM ACTIONS
-                                                                            ======================================== */
+                                                                                   FORM ACTIONS
+                                                                                ======================================== */
         .form-actions {
             background-color: #f8f9fa;
             border-top: 1px solid #dee2e6;
@@ -638,7 +638,7 @@
                 <h3>{{ $title }}</h3>
             </div>
             <div class="panel-body">
-                
+
                 <section class="panel panel-pad">
                     <div class="row padding-vertical-20">
                         <div class="col-lg-12">
@@ -682,9 +682,11 @@
                                                                     {{ trans('app.forms.tppm.original_purchase_price') }}
                                                                 </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.peninsular_price') }}</div>
+                                                                    {{ trans('app.forms.tppm.peninsular_low_cost_price') }}
+                                                                </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.sabah_sarawak_price') }}</div>
+                                                                    {{ trans('app.forms.tppm.sabah_sarawak_low_cost_price') }}
+                                                                </div>
                                                             </div>
                                                         </label>
                                                     </div>
@@ -703,9 +705,10 @@
                                                                     {{ trans('app.forms.tppm.original_purchase_price') }}
                                                                 </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.medium_low_price') }}</div>
+                                                                    {{ trans('app.forms.tppm.peninsular_low_medium_cost_price') }}
+                                                                </div>
                                                                 <div class="price-range">
-                                                                    {{ trans('app.forms.tppm.sabah_sarawak_medium_price') }}
+                                                                    {{ trans('app.forms.tppm.sabah_sarawak_low_medium_cost_price') }}
                                                                 </div>
                                                             </div>
                                                         </label>
@@ -885,6 +888,7 @@
                                                 <label class="form-control-label">
                                                     <span style="color: red;">*</span>&nbsp;
                                                     {{ trans('app.forms.tppm.first_purchase_price') }}
+                                                    ({{ trans('app.forms.tppm.first_purchase_price_label') }})
                                                 </label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon">RM</span>
@@ -915,7 +919,8 @@
                                                 </label>
                                                 <input type="number" class="form-control" id="year_occupied"
                                                     name="year_occupied" value="{{ Input::old('year_occupied') }}">
-                                                <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.year_occupied_note') }}]</div>
+                                                <div class="help-block" style="font-style: italic;">
+                                                    [{{ trans('app.forms.tppm.year_occupied_note') }}]</div>
                                             </div>
                                         </div>
                                     </div>
@@ -1334,17 +1339,13 @@
                                             </div>
 
                                             <div class="attention-notice arahan-notice" style="margin-top: 15px;">
-                                                <div class="attention-title">
-                                                    {{ trans('app.forms.tppm.instruction_title') }}</div>
-                                                <div class="attention-text">• {{ trans('app.forms.tppm.instruction_1') }}
-                                                </div>
-                                                <div class="attention-text">•
-                                                    {{ trans('app.forms.tppm.instruction_2', ['repair' => trans('app.forms.tppm.repair'), 'replace' => trans('app.forms.tppm.replace')]) }}
-                                                </div>
-                                                <div class="attention-text">• {{ trans('app.forms.tppm.instruction_3') }}
-                                                </div>
-                                                <div class="attention-text">• {{ trans('app.forms.tppm.instruction_4') }}
-                                                </div>
+                                                <ul class="attention-text" style="margin-left: -15px;">
+                                                    <li>{{ trans('app.forms.tppm.instruction_1') }}</li>
+                                                    <li>{{ trans('app.forms.tppm.instruction_2', ['repair' => trans('app.forms.tppm.repair'), 'replace' => trans('app.forms.tppm.replace')]) }}
+                                                    </li>
+                                                    <li>{{ trans('app.forms.tppm.instruction_3') }}</li>
+                                                    <li>{{ trans('app.forms.tppm.instruction_4') }}</li>
+                                                </ul>
                                             </div>
 
                                             <input type="hidden" id="scope" name="scope"
@@ -1368,7 +1369,8 @@
                                                     </label>
                                                     <input type="file" class="form-control-file" name="spa_copy_file"
                                                         id="spa_copy_file" onChange="onUploadChecklist(this, 'spa_copy')">
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.spa_copy_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.spa_copy_note') }}]</div>
                                                     <input type="hidden" id="spa_copy" name="spa_copy"
                                                         value="{{ Input::old('spa_copy') }}">
                                                     <div id="spa_copy_feedback" class="help-block small"></div>
@@ -1386,7 +1388,8 @@
                                                     <input type="file" class="form-control-file"
                                                         name="detail_report_file" id="detail_report_file"
                                                         onChange="onUploadChecklist(this, 'detail_report')">
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.detail_report_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.detail_report_note') }}]</div>
                                                     <input type="hidden" id="detail_report" name="detail_report"
                                                         value="{{ Input::old('detail_report') }}">
                                                     <div id="detail_report_feedback" class="help-block small"></div>
@@ -1404,7 +1407,8 @@
                                                     <input type="file" class="form-control-file"
                                                         name="meeting_minutes_file" id="meeting_minutes_file"
                                                         onChange="onUploadChecklist(this, 'meeting_minutes')">
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.meeting_minutes_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.meeting_minutes_note') }}]</div>
                                                     <input type="hidden" id="meeting_minutes" name="meeting_minutes"
                                                         value="{{ Input::old('meeting_minutes') }}">
                                                     <div id="meeting_minutes_feedback" class="help-block small"></div>
@@ -1422,7 +1426,8 @@
                                                     <input type="file" class="form-control-file"
                                                         name="cost_estimate_file" id="cost_estimate_file"
                                                         onChange="onUploadChecklist(this, 'cost_estimate')">
-                                                    <div class="help-block" style="font-style: italic;">[{{ trans('app.forms.tppm.cost_estimate_note') }}]</div>
+                                                    <div class="help-block" style="font-style: italic;">
+                                                        [{{ trans('app.forms.tppm.cost_estimate_note') }}]</div>
                                                     <input type="hidden" id="cost_estimate" name="cost_estimate"
                                                         value="{{ Input::old('cost_estimate') }}">
                                                     <div id="cost_estimate_feedback" class="help-block small"></div>
@@ -1539,7 +1544,7 @@
                                     $field.addClass('is-invalid');
                                     if (!$field.next('.invalid-feedback').length) {
                                         $field.after('<div class="invalid-feedback">' + errors[field][0] +
-                                        '</div>');
+                                            '</div>');
                                     }
                                 }
                             }
@@ -1820,8 +1825,7 @@
                             bootbox.alert(
                                 "<span style='color:green;'>{{ trans('app.successes.saved_successfully') }}</span>",
                                 function() {
-                                    let url = "{{ route('tppm.show', [':id']) }}";
-                                    url = url.replace(":id", res.id);
+                                    let url = "{{ route('tppm.index') }}";
                                     window.location = url;
                                 });
                         } else if (res.error == true) {
@@ -1875,146 +1879,152 @@
                     },
                 });
             });
+            
+            // // Add dummy data button for testing
+            // addDummyDataButton();
 
-            // Add dummy data button for testing
-            addDummyDataButton();
+            // // ========================================
+            // // DUMMY DATA FUNCTIONS
+            // // ========================================
+            // function fillDummyData() {
+            //     // Basic applicant info
+            //     $('#applicant_name').val('Ahmad bin Ali');
+            //     $('#applicant_phone').val('012-3456789');
+            //     $('#applicant_email').val('ahmad.ali@example.com');
 
-            // ========================================
-            // DUMMY DATA FUNCTIONS
-            // ========================================
-            function fillDummyData() {
-                // Basic applicant info
-                $('#applicant_name').val('Ahmad bin Ali');
-                $('#applicant_phone').val('012-3456789');
-                $('#applicant_email').val('ahmad.ali@example.com');
+            //     // Organization info
+            //     $('#organization_name').val('JMB Taman Perdana');
+            //     $('#applicant_position').val('Pengerusi JMB');
+            //     $('#organization_address_1').val('No. 123, Jalan Perdana');
+            //     $('#organization_address_2').val('Taman Perdana');
+            //     $('#organization_address_3').val('43000 Kajang, Selangor');
 
-                // Organization info
-                $('#organization_name').val('JMB Taman Perdana');
-                $('#applicant_position').val('Pengerusi JMB');
-                $('#organization_address_1').val('No. 123, Jalan Perdana');
-                $('#organization_address_2').val('Taman Perdana');
-                $('#organization_address_3').val('43000 Kajang, Selangor');
+            //     // Property details
+            //     $('#first_purchase_price').val('250000');
+            //     $('#year_built').val('2015');
+            //     $('#year_occupied').val('2016');
 
-                // Property details
-                $('#first_purchase_price').val('250000');
-                $('#year_built').val('2015');
-                $('#year_occupied').val('2016');
+            //     // Category (radio)
+            //     $('input[name="cost_category"][value="low_cost"]').prop('checked', true).trigger('change');
 
-                // Category (radio)
-                $('input[name="cost_category"][value="low_cost"]').prop('checked', true).trigger('change');
+            //     // Select2 selects: Strata, Parliament, DUN, District (fetch real options and pick the first)
+            //     fetchAndSetFirstOption('#strata_id');
+            //     fetchAndSetFirstOption('#parliament_id');
+            //     fetchAndSetFirstOption('#dun_id');
+            //     fetchAndSetFirstOption('#district_id');
 
-                // Select2 selects: Strata, Parliament, DUN, District (fetch real options and pick the first)
-                fetchAndSetFirstOption('#strata_id');
-                fetchAndSetFirstOption('#parliament_id');
-                fetchAndSetFirstOption('#dun_id');
-                fetchAndSetFirstOption('#district_id');
+            //     // Unit counts
+            //     $('input[name="num_blocks"]').val('2');
+            //     $('input[name="num_units"]').val('120');
+            //     $('input[name="num_units_occupied"]').val('115');
+            //     $('input[name="num_units_owner"]').val('100');
+            //     $('input[name="num_units_malaysian"]').val('95');
+            //     $('input[name="num_storeys"]').val('15');
+            //     $('input[name="num_residents"]').val('350');
+            //     $('input[name="num_units_vacant"]').val('5');
+            //     $('input[name="num_units_tenant"]').val('15');
+            //     $('input[name="num_units_non_malaysian"]').val('5');
 
-                // Unit counts
-                $('input[name="num_blocks"]').val('2');
-                $('input[name="num_units"]').val('120');
-                $('input[name="num_units_occupied"]').val('115');
-                $('input[name="num_units_owner"]').val('100');
-                $('input[name="num_units_malaysian"]').val('95');
-                $('input[name="num_storeys"]').val('15');
-                $('input[name="num_residents"]').val('350');
-                $('input[name="num_units_vacant"]').val('5');
-                $('input[name="num_units_tenant"]').val('15');
-                $('input[name="num_units_non_malaysian"]').val('5');
+            //     // Block details
+            //     $('input[name="requested_block_name"]').val('Blok A');
+            //     $('input[name="requested_block_no"]').val('101');
 
-                // Block details
-                $('input[name="requested_block_name"]').val('Blok A');
-                $('input[name="requested_block_no"]').val('101');
+            //     // Scope items
+            //     $('.scope-item[value="lift_avas"]').prop('checked', true);
+            //     $('.scope-item[value="water_tank"]').prop('checked', true);
+            //     $('.scope-item[value="painting"]').prop('checked', true);
+            //     $('.scope-item[value="slope"]').prop('checked', true);
 
-                // Scope items
-                $('.scope-item[value="lift_avas"]').prop('checked', true);
-                $('.scope-item[value="water_tank"]').prop('checked', true);
-                $('.scope-item[value="painting"]').prop('checked', true);
-                $('.scope-item[value="slope"]').prop('checked', true);
+            //     // Scope specifics
+            //     $('input[name="lift_count"]').val('2');
+            //     $('input[name="lift_type"][value="repair"]').prop('checked', true);
 
-                // Scope specifics
-                $('input[name="lift_count"]').val('2');
-                $('input[name="lift_type"][value="repair"]').prop('checked', true);
+            //     $('input[name="water_tank_count"]').val('1');
+            //     $('input[name="water_tank_type"][value="replace"]').prop('checked', true);
 
-                $('input[name="water_tank_count"]').val('1');
-                $('input[name="water_tank_type"][value="replace"]').prop('checked', true);
+            //     // Painting text fields
+            //     $('input[name="painting_i"]').val('Block A');
+            //     $('input[name="painting_ii"]').val('Block B');
 
-                // Painting text fields
-                $('input[name="painting_i"]').val('Block A');
-                $('input[name="painting_ii"]').val('Block B');
+            //     // Refresh scope data
+            //     refreshScope();
 
-                // Refresh scope data
-                refreshScope();
+            //     // Checklist files (simulate uploaded values)
+            //     setChecklistDummy('#spa_copy', '#spa_copy_file', '#spa_copy_feedback',
+            //         'uploads/tppm/20251001012117_sample-1.pdf');
+            //     setChecklistDummy('#detail_report', '#detail_report_file', '#detail_report_feedback',
+            //         'uploads/tppm/20251001012117_sample-1.pdf');
+            //     setChecklistDummy('#meeting_minutes', '#meeting_minutes_file', '#meeting_minutes_feedback',
+            //         'uploads/tppm/20251001012117_sample-1.pdf');
+            //     setChecklistDummy('#cost_estimate', '#cost_estimate_file', '#cost_estimate_feedback',
+            //         'uploads/tppm/20251001012117_sample-1.pdf');
 
-                // Checklist files (simulate uploaded values)
-                setChecklistDummy('#spa_copy', '#spa_copy_file', '#spa_copy_feedback', 'uploads/tppm/20251001012117_sample-1.pdf');
-                setChecklistDummy('#detail_report', '#detail_report_file', '#detail_report_feedback', 'uploads/tppm/20251001012117_sample-1.pdf');
-                setChecklistDummy('#meeting_minutes', '#meeting_minutes_file', '#meeting_minutes_feedback', 'uploads/tppm/20251001012117_sample-1.pdf');
-                setChecklistDummy('#cost_estimate', '#cost_estimate_file', '#cost_estimate_feedback', 'uploads/tppm/20251001012117_sample-1.pdf');
+            //     console.log('Dummy data filled!');
+            // }
 
-                console.log('Dummy data filled!');
-            }
+            // // Add dummy data button (for testing)
+            // function addDummyDataButton() {
+            //     if ($('#dummy-data-btn').length === 0) {
+            //         $('.form-actions').prepend(
+            //             '<button type="button" id="dummy-data-btn" class="btn btn-warning" style="margin-right: 10px;">Fill Dummy Data</button>'
+            //         );
+            //         $('#dummy-data-btn').click(fillDummyData);
+            //     }
+            // }
 
-            // Add dummy data button (for testing)
-            function addDummyDataButton() {
-                if ($('#dummy-data-btn').length === 0) {
-                    $('.form-actions').prepend(
-                        '<button type="button" id="dummy-data-btn" class="btn btn-warning" style="margin-right: 10px;">Fill Dummy Data</button>'
-                        );
-                    $('#dummy-data-btn').click(fillDummyData);
-                }
-            }
+            // function setSelect2Value(selector, id, text) {
+            //     var $el = $(selector);
+            //     if ($el.length === 0) return;
+            //     var option = new Option(text, id, true, true);
+            //     $el.append(option).trigger('change');
+            // }
 
-            function setSelect2Value(selector, id, text) {
-                var $el = $(selector);
-                if ($el.length === 0) return;
-                var option = new Option(text, id, true, true);
-                $el.append(option).trigger('change');
-            }
+            // function fetchAndSetFirstOption(selector) {
+            //     var $el = $(selector);
+            //     if ($el.length === 0) return;
+            //     var url = $el.attr('data-ajax--url') || $el.data('ajax--url');
+            //     if (!url) return;
+            //     $.ajax({
+            //         url: url,
+            //         method: 'GET',
+            //         dataType: 'json',
+            //         success: function(resp) {
+            //             var items = [];
+            //             if (Array.isArray(resp)) {
+            //                 items = resp;
+            //             } else if (resp && Array.isArray(resp.results)) {
+            //                 items = resp.results;
+            //             } else if (resp && Array.isArray(resp.data)) {
+            //                 items = resp.data;
+            //             }
+            //             if (items.length > 0) {
+            //                 var first = items[0];
+            //                 var id = first.id !== undefined ? first.id : (first.value !== undefined ?
+            //                     first.value : null);
+            //                 var text = first.text !== undefined ? first.text : (first.label !==
+            //                     undefined ? first.label : String(id));
+            //                 if (id !== null) {
+            //                     setSelect2Value(selector, id, text);
+            //                 }
+            //             }
+            //         }
+            //     });
+            // }
 
-            function fetchAndSetFirstOption(selector) {
-                var $el = $(selector);
-                if ($el.length === 0) return;
-                var url = $el.attr('data-ajax--url') || $el.data('ajax--url');
-                if (!url) return;
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(resp) {
-                        var items = [];
-                        if (Array.isArray(resp)) {
-                            items = resp;
-                        } else if (resp && Array.isArray(resp.results)) {
-                            items = resp.results;
-                        } else if (resp && Array.isArray(resp.data)) {
-                            items = resp.data;
-                        }
-                        if (items.length > 0) {
-                            var first = items[0];
-                            var id = first.id !== undefined ? first.id : (first.value !== undefined ? first.value : null);
-                            var text = first.text !== undefined ? first.text : (first.label !== undefined ? first.label : String(id));
-                            if (id !== null) {
-                                setSelect2Value(selector, id, text);
-                            }
-                        }
-                    }
-                });
-            }
-
-            function setChecklistDummy(hiddenSelector, fileInputSelector, feedbackSelector, filename) {
-                var $hidden = $(hiddenSelector);
-                var $file = $(fileInputSelector);
-                var $feedback = $(feedbackSelector);
-                if ($hidden.length) {
-                    $hidden.val(filename);
-                }
-                if ($file.length) {
-                    $file.addClass('has-file');
-                }
-                if ($feedback.length) {
-                    $feedback.text(filename);
-                }
-            }
+            // function setChecklistDummy(hiddenSelector, fileInputSelector, feedbackSelector, filename) {
+            //     var $hidden = $(hiddenSelector);
+            //     var $file = $(fileInputSelector);
+            //     var $feedback = $(feedbackSelector);
+            //     if ($hidden.length) {
+            //         $hidden.val(filename);
+            //     }
+            //     if ($file.length) {
+            //         $file.addClass('has-file');
+            //     }
+            //     if ($feedback.length) {
+            //         $feedback.text(filename);
+            //     }
+            // }
         });
     </script>
 @endsection

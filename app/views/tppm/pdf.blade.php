@@ -226,28 +226,38 @@
 
         <!-- Category Section -->
         <div class="category-section">
-            <div class="category-option">
-                <span class="checkbox {{ $model->cost_category == 'low_cost' ? 'checked' : '' }}"></span>
-                <div style="padding: -5px 5px; display: inline-block;">
-                    <strong>{{ strtoupper('Kos Rendah Swasta') }}</strong><br>
-                    Harga Belian Asal:
-                    (Semenanjung - RM42,000.00 dan ke bawah),
-                    <div style="margin-left: 94px;">
-                        (Sarawak, Sabah dan Labuan - RM59,000.00 dan ke bawah); atau
-                    </div>
-                </div>
-            </div>
-            <div class="category-option">
-                <span class="checkbox {{ $model->cost_category == 'low_medium_cost' ? 'checked' : '' }}"></span>
-                <div style="padding: -5px 5px; display: inline-block;">
-                    <strong>{{ strtoupper('Kos Sederhana Rendah Swasta') }}</strong><br>
-                    Harga Belian Asal:
-                    (Semenanjung - RM42,001.00 hingga RM80,000.00),
-                    <div style="margin-left: 94px;">
-                        (Sarawak, Sabah dan Labuan - RM59,001.00 hingga RM100,000.00)
-                    </div>
-                </div>
-            </div>
+            <table style="width: 100%; border: none; padding-left: 80px;">
+                <tr>
+                    <td style="width: 20px; border: none; padding: 0; vertical-align: top;">
+                        <input type="checkbox" style="transform: scale(1.5);"
+                            {{ $model->cost_category == 'low_cost' ? 'checked' : '' }} disabled>
+                    </td>
+                    <td style="border: none; padding: 0; vertical-align: top; padding-left: 10px;">
+                        <strong>{{ strtoupper('Kos Rendah Swasta') }}</strong><br>
+                        Harga Belian Asal:
+                        (Semenanjung - RM42,000.00 dan ke bawah),
+                        <div style="margin-left: 94px;">
+                            (Sarawak, Sabah dan Labuan - RM59,000.00 dan ke bawah); atau
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%; border: none; margin-top: 10px; padding-left: 80px;">
+                <tr>
+                    <td style="width: 20px; border: none; padding: 0; vertical-align: top;">
+                        <input type="checkbox" style="transform: scale(1.5);"
+                            {{ $model->cost_category == 'low_medium_cost' ? 'checked' : '' }} disabled>
+                    </td>
+                    <td style="border: none; padding: 0; vertical-align: top; padding-left: 10px;">
+                        <strong>{{ strtoupper('Kos Sederhana Rendah Swasta') }}</strong><br>
+                        Harga Belian Asal:
+                        (Semenanjung - RM42,001.00 hingga RM80,000.00),
+                        <div style="margin-left: 94px;">
+                            (Sarawak, Sabah dan Labuan - RM59,001.00 hingga RM100,000.00)
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <!-- Attention Box -->
@@ -548,17 +558,131 @@
                     B. Kod & Skop Kerja Penyelenggaraan / Baik Pulih Yang Dipohon
                 </td>
             </tr>
+            <?php
+            $scopeData = isset($model) && $model->scope ? json_decode($model->scope, true) : null;
+            $scopeItems = isset($scopeData['items']) ? $scopeData['items'] : [];
+            ?>
             <tr>
-                <td class="work-scope-header" style="vertical-align: middle;">A</td>
-                <td class="work-scope-header" style="vertical-align: middle;">B</td>
-                <td class="work-scope-header" style="vertical-align: middle;">C</td>
-                <td class="work-scope-header" style="vertical-align: middle;">D</td>
-                <td class="work-scope-header" style="vertical-align: middle;">E</td>
-                <td class="work-scope-header" style="vertical-align: middle;">F</td>
-                <td class="work-scope-header" style="vertical-align: middle;">G</td>
-                <td class="work-scope-header" style="vertical-align: middle;">H</td>
-                <td class="work-scope-header" style="vertical-align: middle;">I</td>
-                <td class="work-scope-header" style="vertical-align: middle;">J</td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">A</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('lift_avas', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">B</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('water_tank', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">C</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('sanitary_pipe', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">D</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('roof', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">E</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('stair_handrail', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">F</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('painting', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">G</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('electrical', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">H</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('public_infrastructure', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">I</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('fence', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="work-scope-header" style="vertical-align: middle; text-align: center;">
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="text-align: center; border: none; padding: 0; vertical-align: middle;">J</td>
+                            <td
+                                style="text-align: left; border: none; padding: 0; width: 25px; vertical-align: middle;">
+                                <input type="checkbox" style="transform: scale(0.8); vertical-align: middle;"
+                                    {{ in_array('slope', $scopeItems) ? 'checked' : '' }} disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
             <tr>
                 <td class="work-scope-column" style="vertical-align: middle;">
@@ -594,54 +718,131 @@
             </tr>
             <tr>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    Bil. Lif:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
-                    <br>
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    Bil. Lif: <span>{{ isset($scopeData['lift_count']) ? $scopeData['lift_count'] : '' }}</span><br>
+                    <br />
+                    @if (in_array('lift_avas', $scopeItems))
+                        @if (isset($scopeData['lift_type']) && $scopeData['lift_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['lift_type']) && $scopeData['lift_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    Bil. Tangki:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
-                    <br>
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    Bil. Tangki:
+                    <span>{{ isset($scopeData['water_tank_count']) ? $scopeData['water_tank_count'] : '' }}</span><br>
+                    <br />
+                    @if (in_array('water_tank', $scopeItems))
+                        @if (isset($scopeData['water_tank_type']) && $scopeData['water_tank_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['water_tank_type']) && $scopeData['water_tank_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    @if (in_array('sanitary_pipe', $scopeItems))
+                        @if (isset($scopeData['sanitary_pipe_type']) && $scopeData['sanitary_pipe_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['sanitary_pipe_type']) && $scopeData['sanitary_pipe_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    @if (in_array('roof', $scopeItems))
+                        @if (isset($scopeData['roof_type']) && $scopeData['roof_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['roof_type']) && $scopeData['roof_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    @if (in_array('stair_handrail', $scopeItems))
+                        @if (isset($scopeData['stair_handrail_type']) && $scopeData['stair_handrail_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['stair_handrail_type']) && $scopeData['stair_handrail_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
+                </td>
+                <td class="work-scope-column" style="vertical-align: middle; text-align: left;">
+                    @if (isset($scopeData['painting']['i']) && !empty($scopeData['painting']['i']))
+                        i) {{ $scopeData['painting']['i'] }}<br>
+                    @endif
+                    @if (isset($scopeData['painting']['ii']) && !empty($scopeData['painting']['ii']))
+                        ii) {{ $scopeData['painting']['ii'] }}<br>
+                    @endif
+                    @if (isset($scopeData['painting']['iii']) && !empty($scopeData['painting']['iii']))
+                        iii) {{ $scopeData['painting']['iii'] }}<br>
+                    @endif
+                    @if (isset($scopeData['painting']['iv']) && !empty($scopeData['painting']['iv']))
+                        iv) {{ $scopeData['painting']['iv'] }}
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    i. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div><br>
-                    ii. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div><br>
-                    iii. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div><br>
-                    iv. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div>
+                    @if (in_array('electrical', $scopeItems))
+                        @if (isset($scopeData['electrical_type']) && $scopeData['electrical_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['electrical_type']) && $scopeData['electrical_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
+                </td>
+                <td class="work-scope-column" style="vertical-align: middle; text-align: left;">
+                    @if (isset($scopeData['public_infrastructure']['i']) && !empty($scopeData['public_infrastructure']['i']))
+                        i) {{ $scopeData['public_infrastructure']['i'] }}<br>
+                    @endif
+                    @if (isset($scopeData['public_infrastructure']['ii']) && !empty($scopeData['public_infrastructure']['ii']))
+                        ii) {{ $scopeData['public_infrastructure']['ii'] }}<br>
+                    @endif
+                    @if (isset($scopeData['public_infrastructure']['iii']) && !empty($scopeData['public_infrastructure']['iii']))
+                        iii) {{ $scopeData['public_infrastructure']['iii'] }}<br>
+                    @endif
+                    @if (isset($scopeData['public_infrastructure']['iv']) && !empty($scopeData['public_infrastructure']['iv']))
+                        iv) {{ $scopeData['public_infrastructure']['iv'] }}
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    @if (in_array('fence', $scopeItems))
+                        @if (isset($scopeData['fence_type']) && $scopeData['fence_type'] == 'repair')
+                            *Baik Pulih / <span style="text-decoration: line-through;">Ganti Baru</span>
+                        @elseif(isset($scopeData['fence_type']) && $scopeData['fence_type'] == 'replace')
+                            *<span style="text-decoration: line-through;">Baik Pulih</span> / Ganti Baru
+                        @else
+                            *Baik Pulih / Ganti Baru
+                        @endif
+                    @else
+                        *Baik Pulih / Ganti Baru
+                    @endif
                 </td>
                 <td class="work-scope-column" style="vertical-align: middle;">
-                    i. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div><br>
-                    ii. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div><br>
-                    iii. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div><br>
-                    iv. <div class="input-line" style="width: 70%; display: inline-block; margin: 2px 0;"></div>
-                </td>
-                <td class="work-scope-column" style="vertical-align: middle;">
-                    *Baik Pulih / Ganti Baru:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
-                </td>
-                <td class="work-scope-column" style="vertical-align: middle;">
-                    Baik Pulih:<br>
-                    <div class="input-line" style="width: 80%; margin: 2px 0;"></div>
+                    Baik Pulih
                 </td>
             </tr>
             <tr>
@@ -680,7 +881,8 @@
                     </small>
                 </td>
                 <td class="value-cell" style="text-align: center; width: 5%; vertical-align: middle;">
-                    <span class="checkbox"></span>
+                    <input type="checkbox" style="transform: scale(0.8);"
+                        {{ !empty($model->spa_copy) ? 'checked' : '' }} disabled>
                 </td>
             </tr>
             <tr>
@@ -695,7 +897,8 @@
                     </small>
                 </td>
                 <td class="value-cell" style="text-align: center; width: 5%; vertical-align: middle;">
-                    <span class="checkbox"></span>
+                    <input type="checkbox" style="transform: scale(0.8);"
+                        {{ !empty($model->detail_report) ? 'checked' : '' }} disabled>
                 </td>
             </tr>
             <tr>
@@ -710,7 +913,8 @@
                     </small>
                 </td>
                 <td class="value-cell" style="text-align: center; width: 5%; vertical-align: middle;">
-                    <span class="checkbox"></span>
+                    <input type="checkbox" style="transform: scale(0.8);"
+                        {{ !empty($model->meeting_minutes) ? 'checked' : '' }} disabled>
                 </td>
             </tr>
             <tr>
@@ -725,7 +929,8 @@
                     </small>
                 </td>
                 <td class="value-cell" style="text-align: center; width: 5%; vertical-align: middle;">
-                    <span class="checkbox"></span>
+                    <input type="checkbox" style="transform: scale(0.8);"
+                        {{ !empty($model->cost_estimate) ? 'checked' : '' }} disabled>
                 </td>
             </tr>
         </table>
@@ -779,22 +984,18 @@
                 </td>
             </tr>
             <tr>
-                <td class="value-cell" style="padding: 10px; vertical-align: top; font-weight: bold;" colspan="2">
+                <td class="value-cell" style="padding: 10px; vertical-align: top;" colspan="2">
                     <div style="margin-bottom: 10px;">
-                        Nama Pemohon:
-                        <div class="input-line"></div>
+                        <strong>Nama Pemohon:</strong> {{ $model->applicant_name ?: '' }}
                     </div>
                     <div style="margin-bottom: 10px;">
-                        Jawatan:
-                        <div class="input-line"></div>
+                        <strong>Jawatan:</strong> {{ $model->applicant_position ?: '' }}
                     </div>
                     <div style="margin-bottom: 10px;">
-                        No. Telefon:
-                        <div class="input-line"></div>
+                        <strong>No. Telefon:</strong> {{ $model->applicant_phone ?: '' }}
                     </div>
                     <div>
-                        Emel:
-                        <div class="input-line"></div>
+                        <strong>Emel:</strong> {{ $model->applicant_email ?: '' }}
                     </div>
                 </td>
             </tr>
@@ -832,26 +1033,38 @@
             </tr>
             <tr>
                 <td class="value-cell" colspan="2">
-                    Permohonan ini adalah memenuhi syarat-syarat seperti di dalam Panduan Permohonan TPPM:
-                    <div style="display: inline-block;">
-                        YA
-                        <br />
-                        TIDAK
-                    </div>
+                    <span style="padding-left: 20px;">
+                        Permohonan ini adalah memenuhi syarat-syarat seperti di dalam Panduan Permohonan TPPM:
+                    </span>
+                    <table style="border: none; padding-left: 20px;">
+                        <tr>
+                            <td
+                                style="border: none; padding: 0; vertical-align: middle; width: 20px; text-align: center;">
+                                <input type="checkbox" style="transform: scale(0.8);"
+                                    {{ $model->status == 'approved' ? 'checked' : '' }} disabled>
+                            </td>
+                            <td
+                                style="border: none; padding: 0; vertical-align: middle; width: 50px; font-weight: bold;">
+                                YA
+                            </td>
+                            <td
+                                style="border: none; padding: 0; vertical-align: middle; width: 20px; text-align: center;">
+                                <input type="checkbox" style="transform: scale(0.8);"
+                                    {{ $model->status == 'rejected' ? 'checked' : '' }} disabled>
+                            </td>
+                            <td
+                                style="border: none; padding: 0; vertical-align: middle; width: 30px; font-weight: bold;">
+                                TIDAK
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             <tr>
                 <td class="input-cell" style="padding: 10px;" colspan="2">
-                    Ulasan:
-                    <div style="margin-bottom: 10px;">
-                        i. <div class="input-line"></div>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        ii. <div class="input-line"></div>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        iii. <div class="input-line"></div>
-                    </div>
+                    Ulasan: 
+                    <br/>
+                    {{ $model->approval_remark ?: '' }}
                 </td>
             </tr>
             <tr>

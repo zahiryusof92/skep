@@ -410,33 +410,6 @@ class TPPMController extends \BaseController
     }
 
     /**
-     * Generate PDF for the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function getPDF($id)
-    {
-        $this->checkAvailableAccess();
-        $model = TPPM::findOrFail(Helper::decode($id, 'tppm'));
-
-        $viewData = array(
-            'model' => $model,
-            'title' => trans('app.forms.tppm.borang_permohonan')
-        );
-
-        $filename = 'TPPM_Form_' . $model->id . '_' . date('YmdHis') . '.pdf';
-        
-        $pdf = PDF::loadView('tppm.pdf', $viewData, [], [
-            'isHtml5ParserEnabled' => false,
-            'isPhpEnabled' => false,
-            'isRemoteEnabled' => false
-        ])->setPaper('A4', 'portrait');
-
-        return $pdf->stream($filename);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -569,6 +542,33 @@ class TPPMController extends \BaseController
             }
         }
         return Response::json(['error' => true, 'message' => "Fail"]);
+    }
+
+    /**
+     * Generate PDF for the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function getPDF($id)
+    {
+        $this->checkAvailableAccess();
+        $model = TPPM::findOrFail(Helper::decode($id, 'tppm'));
+
+        $viewData = array(
+            'model' => $model,
+            'title' => trans('app.forms.tppm.borang_permohonan') . ' ' . trans('app.forms.tppm.tabung_penyenggaraan_perumahan_malaysia')
+        );
+
+        $filename = 'TPPM_Form_' . $model->id . '_' . date('YmdHis') . '.pdf';
+        
+        $pdf = PDF::loadView('tppm.pdf', $viewData, [], [
+            'isHtml5ParserEnabled' => false,
+            'isPhpEnabled' => false,
+            'isRemoteEnabled' => false
+        ])->setPaper('A4', 'portrait');
+
+        return $pdf->stream($filename);
     }
 
     public function getPreview($id)
