@@ -1314,6 +1314,7 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('dun/getOption',  array('as' => 'v3.api.dun.getOption', 'uses' => 'Api\DunController@getOption'));
         Route::get('area/getOption',  array('as' => 'v3.api.area.getOption', 'uses' => 'Api\AreaController@getOption'));
         Route::get('category/getOption',  array('as' => 'v3.api.category.getOption', 'uses' => 'Api\CategoryController@getOption'));
+        Route::get('park/getOption',  array('as' => 'v3.api.park.getOption', 'uses' => 'Api\ParkController@getOption'));
 
         Route::get('insurance/getAnalyticData', 'Api\InsuranceController@getAnalyticData');
         Route::get('insurance/getListing', 'Api\InsuranceController@getListing');
