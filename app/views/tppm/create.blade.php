@@ -875,7 +875,7 @@
                                                 </label>
                                                 <select id="district_id" name="district_id" class="form-control select3"
                                                     data-placeholder="{{ trans('app.forms.please_select') }}"
-                                                    data-ajax--url="{{ route('v3.api.park.getOption') }}"
+                                                    data-ajax--url="{{ route('v3.api.area.getOption') }}"
                                                     data-ajax--cache="true">
                                                 </select>
                                             </div>
