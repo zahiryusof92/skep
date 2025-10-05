@@ -1070,6 +1070,14 @@ Route::group(array('before' => 'authMember'), function () {
     Route::resource('epksStatement', 'EpksStatementController');
 
     /**
+     * TPPM
+     */
+    Route::post('tppm/fileUpload', ['as' => 'tppm.fileUpload', 'uses' => 'TPPMController@fileUpload']);
+    Route::get('tppm/{id}/pdf', ['as' => 'tppm.pdf', 'uses' => 'TPPMController@getPDF']);
+    Route::get('tppm/{id}/preview', ['as' => 'tppm.preview', 'uses' => 'TPPMController@getPreview']);
+    Route::resource('tppm', 'TPPMController');
+
+    /**
      * Reporting
      */
     Route::get('/reporting/epks', array('as' => 'reporting.epks.index', 'uses' => 'ReportController@epks'));
@@ -1302,9 +1310,11 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('strata/getOption',  array('as' => 'v3.api.strata.getOption', 'uses' => 'Api\StrataController@getOption'));
         Route::get('city/getOption',  array('as' => 'v3.api.city.getOption', 'uses' => 'Api\CityController@getOption'));
         Route::get('developer/getOption',  array('as' => 'v3.api.developer.getOption', 'uses' => 'Api\DeveloperController@getOption'));
+        Route::get('parliment/getOption',  array('as' => 'v3.api.parliment.getOption', 'uses' => 'Api\ParlimentController@getOption'));
         Route::get('dun/getOption',  array('as' => 'v3.api.dun.getOption', 'uses' => 'Api\DunController@getOption'));
         Route::get('area/getOption',  array('as' => 'v3.api.area.getOption', 'uses' => 'Api\AreaController@getOption'));
         Route::get('category/getOption',  array('as' => 'v3.api.category.getOption', 'uses' => 'Api\CategoryController@getOption'));
+        Route::get('park/getOption',  array('as' => 'v3.api.park.getOption', 'uses' => 'Api\ParkController@getOption'));
 
         Route::get('insurance/getAnalyticData', 'Api\InsuranceController@getAnalyticData');
         Route::get('insurance/getListing', 'Api\InsuranceController@getListing');

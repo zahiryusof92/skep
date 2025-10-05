@@ -186,6 +186,38 @@ if (!Auth::user()->getAdmin()) {
             </li>
             @endif
 
+            @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('TPPM'))
+            <li class="left-menu-list-submenu" id="tppm_panel">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon fa fa-wrench"></i>
+                    {{ trans('app.menus.tppm.name') }}
+                    &nbsp;
+                    <?php $count = TPPM::self()->notPending()->where('tppms.status','!=', TPPM::REJECTED)->count(); ?>
+                    @if($count > 0)
+                        <span class="label left-menu-label label-danger">!</span>
+                    @endif
+                </a>
+                <ul class="left-menu-list list-unstyled" id="tppm_main">
+                    @if (AccessGroup::hasInsertModule('TPPM'))
+                    <li class="left-menu-list-link" id="tppm_create">
+                        <a class="left-menu-link" href="{{ route('tppm.create') }}">
+                            {{ trans('app.menus.tppm.create') }}
+                        </a>
+                    </li>
+                    @endif
+                    <li class="left-menu-list-link" id="tppm_index">
+                        <a class="left-menu-link" href="{{ route('tppm.index') }}">
+                            {{ trans('app.menus.tppm.index') }}
+                            <?php $pendingCount = TPPM::self()->where('tppms.status', TPPM::PENDING)->count(); ?>
+                            @if($pendingCount > 0)
+                                &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.tppm.pending', array('count'=> $pendingCount)) }}</span>
+                            @endif
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+
             @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('EPKS'))
             <li class="left-menu-list-submenu" id="epks_panel">
                 <a class="left-menu-link" href="javascript: void(0);">

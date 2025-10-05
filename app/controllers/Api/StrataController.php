@@ -42,55 +42,62 @@ class StrataController extends BaseController {
         }
     }
 
-    public function getOption() {
-        if(Request::ajax()) {
+    public function getOption()
+    {
+        if (Request::ajax()) {
             $request = Request::all();
             $options = [];
             $models = Strata::self()
-                            ->where(function($query) use($request) {
-                                if(!empty($request['term'])) {
-                                    $query->where('strata.name', "like", "%". $request['term'] ."%");
-                                }
-                                if(!empty($request['file_id'])) {
-                                    $query->where('strata.file_id', $request['file_id']);
-                                }
-                                if(!empty($request['company_id'])) {
-                                    $file_ids = [];
-                                    if(is_array($request['company_id']))  {
-                                        Files::whereIn('company_id', $request['company_id'])
-                                                ->chunk(500, function($models) use(&$file_ids) {
-                                                    foreach ($models as $model)
-                                                    {
-                                                        array_push($file_ids, $model->id);
-                                                    }
-                                                });
-                                    } else {
-                                        Files::where('company_id', $request['company_id'])
-                                                ->chunk(500, function($models) use(&$file_ids) {
-                                                    foreach ($models as $model)
-                                                    {
-                                                        array_push($file_ids, $model->id);
-                                                    }
-                                                });
+                ->select('strata.id', 'strata.name', 'files.file_no')
+                ->where(function ($query) use ($request) {
+                    if (!empty($request['term'])) {
+                        $query->where(function ($subQuery) use ($request) {
+                            $subQuery->where('strata.name', "like", "%" . $request['term'] . "%")
+                                ->orWhere('files.file_no', "like", "%" . $request['term'] . "%");
+                        });
+                    }
+                    if (!empty($request['file_id'])) {
+                        $query->where('strata.file_id', $request['file_id']);
+                    }
+                    if (!empty($request['company_id'])) {
+                        $file_ids = [];
+                        if (is_array($request['company_id'])) {
+                            Files::whereIn('company_id', $request['company_id'])
+                                ->chunk(500, function ($models) use (&$file_ids) {
+                                    foreach ($models as $model) {
+                                        array_push($file_ids, $model->id);
                                     }
-                                    $query->whereIn('strata.file_id', $file_ids);
-                                }
-                            })
-                            ->groupBy(['strata.name'])
-                            ->chunk(200, function($models) use(&$options, $request)
-                            {
-                                foreach ($models as $model)
-                                {
-                                    if(!empty($request['type']) && $request['type'] == 'id') {
-                                        if(!empty($model->name)) array_push($options, ['id' => $model->id, 'text' => $model->name]);
-                                    } else {
-                                        if(!empty($model->name)) array_push($options, ['id' => $model->name, 'text' => $model->name]);
+                                });
+                        } else {
+                            Files::where('company_id', $request['company_id'])
+                                ->chunk(500, function ($models) use (&$file_ids) {
+                                    foreach ($models as $model) {
+                                        array_push($file_ids, $model->id);
                                     }
-                                }
-                            });
+                                });
+                        }
+                        $query->whereIn('strata.file_id', $file_ids);
+                    }
+                })
+                ->groupBy(['strata.name', 'files.file_no'])
+                ->chunk(200, function ($models) use (&$options, $request) {
+                    foreach ($models as $model) {
+                        if (!empty($model->name)) {
+                            $displayText = $model->name;
+                            if (!empty($model->file_no)) {
+                                $displayText .= ' (' . $model->file_no . ')';
+                            }
+
+                            if (!empty($request['type']) && $request['type'] == 'id') {
+                                array_push($options, ['id' => $model->id, 'text' => $displayText]);
+                            } else {
+                                array_push($options, ['id' => $model->name, 'text' => $displayText]);
+                            }
+                        }
+                    }
+                });
 
             return Response::json(['success' => true, 'message' => trans('Success'), 'results' => $options]);
-
         }
 
         return Response::json(['error' => true, 'message' => trans('Fail')]);

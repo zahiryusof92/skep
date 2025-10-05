@@ -139,5 +139,21 @@ class SubModuleTableSeeder extends Seeder
                 'sort_no' => 1
             ]);
         }
+
+        $tppm = Module::where('name_en', 'TPPM')->first();
+        if (empty($tppm)) {
+            $tppm = new Module;
+            $tppm->name_en = "TPPM";
+            $tppm->name_my = "TPPM";
+            $tppm->save();
+        }
+        if ($tppm) {
+            SubModule::firstOrCreate([
+                'module_id' => $tppm->id,
+                'name_en' => 'TPPM',
+                'name_my' => 'TPPM',
+                'sort_no' => 1
+            ]);
+        }
     }
 }
