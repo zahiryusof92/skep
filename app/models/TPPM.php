@@ -125,7 +125,7 @@ class TPPM extends Eloquent
 
     public function district()
     {
-        return $this->belongsTo('Park', 'district_id');
+        return $this->belongsTo('Area', 'district_id');
     }
 
     public function user()
