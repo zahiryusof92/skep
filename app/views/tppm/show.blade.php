@@ -3,8 +3,8 @@
 @section('content')
     <style>
         /* ========================================
-                                   VALIDATION STYLES (aligned with create)
-                                   ======================================== */
+                                                           VALIDATION STYLES (aligned with create)
+                                                           ======================================== */
         .is-invalid {
             border-color: #dc3545 !important;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
@@ -23,8 +23,8 @@
         }
 
         /* ========================================
-                                                                                       GENERAL FORM STYLING
-                                                                                    ======================================== */
+                                                                                                               GENERAL FORM STYLING
+                                                                                                            ======================================== */
         .mandatory-notice {
             margin-bottom: 20px;
         }
@@ -360,13 +360,13 @@
         }
 
         /* ========================================
-                                                                                       BAHAGIAN A - APPLICATION DETAILS
-                                                                                    ======================================== */
+                                                                                                               BAHAGIAN A - APPLICATION DETAILS
+                                                                                                            ======================================== */
         /* (Uses general form styling above) */
 
         /* ========================================
-                                                                                       BAHAGIAN B - SCOPE OF WORKS
-                                                                                    ======================================== */
+                                                                                                               BAHAGIAN B - SCOPE OF WORKS
+                                                                                                            ======================================== */
         .scope-table {
             margin-bottom: 0;
         }
@@ -499,8 +499,8 @@
         }
 
         /* ========================================
-                                                                                       BAHAGIAN C - APPLICANT CHECKLIST
-                                                                                    ======================================== */
+                                                                                                               BAHAGIAN C - APPLICANT CHECKLIST
+                                                                                                            ======================================== */
         .checklist-section {
             background-color: #fff;
             border: 1px solid #dee2e6;
@@ -540,8 +540,8 @@
         }
 
         /* ========================================
-                                                                                       FORM ACTIONS
-                                                                                    ======================================== */
+                                                                                                               FORM ACTIONS
+                                                                                                            ======================================== */
         .form-actions {
             background-color: #f8f9fa;
             border-top: 1px solid #dee2e6;
@@ -593,12 +593,20 @@
                             @include('alert.bootbox')
 
                             @if ($model->status == TPPM::APPROVED)
-                                <div class="text-right" style="margin-bottom: 15px;">
-                                    <a href="{{ route('tppm.pdf', \Helper\Helper::encode('tppm', $model->id)) }}"
-                                        class="btn btn-primary" target="_blank">
-                                        <i class="fa fa-download"></i>
-                                        {{ trans('app.forms.tppm.download_pdf') }}
-                                    </a>
+                                <div class="row" style="margin-bottom: 50px;">
+                                    <div class="col-lg-12">
+                                        <div style="position: relative;">
+                                            <div class="alert alert-warning" role="alert" style="margin: 0;">
+                                                {{ trans('app.forms.tppm.management_note') }}
+                                            </div>
+                                            <a href="{{ route('tppm.pdf', \Helper\Helper::encode('tppm', $model->id)) }}"
+                                                class="btn btn-success btn-sm" target="_blank"
+                                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">
+                                                <i class="fa fa-download"></i>
+                                                {{ trans('app.forms.tppm.download_pdf') }}
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
 
@@ -1458,7 +1466,7 @@
                                                 <div class="checklist-item">
                                                     <label class="form-control-label">
                                                         <span style="color: red;">*</span>&nbsp;
-                                                        {{ trans('app.forms.tppm.detail_report') }}
+                                                        {{ trans('app.forms.tppm.detail_report') }} (Berwarna)
                                                     </label>
                                                     <div class="help-block" style="font-style: italic;">
                                                         [{{ trans('app.forms.tppm.detail_report_note') }}]</div>
@@ -1559,9 +1567,23 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endif
 
-                                @if (AccessGroup::hasUpdateModule('TPPM'))
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.tppm.created_at') }}
+                                                </label>
+                                                <input type="text" class="form-control datetimepicker"
+                                                    id="created_at_raw"
+                                                    value="{{ isset($model) && $model->created_at ? date('d-m-Y', strtotime($model->created_at)) : '' }}"
+                                                    placeholder="dd-mm-yyyy">
+                                                <input type="hidden" name="created_at" id="created_at"
+                                                    value="{{ isset($model) && $model->created_at ? date('Y-m-d', strtotime($model->created_at)) : '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="form-actions">
                                         <button type="submit" class="btn btn-own" id="submit_button">
                                             {{ trans('app.forms.save') }}
@@ -1587,6 +1609,26 @@
             // GENERAL INITIALIZATION
             // ========================================
             $('.select3').select2();
+
+            // Initialize project-standard datetimepicker on created_at (only if field exists)
+            if ($.fn.datetimepicker && $('#created_at_raw').length) {
+                $('#created_at_raw').datetimepicker({
+                    format: 'DD-MM-YYYY',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: "fa fa-chevron-left",
+                        next: "fa fa-chevron-right"
+                    }
+                }).on('dp.change', function() {
+                    var currentDate = $(this).val().split('-');
+                    if (currentDate.length === 3) {
+                        $('#created_at').val(currentDate[2] + '-' + currentDate[1] + '-' + currentDate[0]);
+                    }
+                });
+            }
 
             // ========================================
             // VALIDATION HELPERS (aligned with create)

@@ -308,7 +308,7 @@ return array(
             'create' => 'Create Statement',
         ],
         'tppm' => array(
-            'name' => 'TPPM',
+            'name' => '-TPPM',
             'index' => 'Senarai Permohonan',
             'create' => 'Permohonan Baru',
             'show' => 'Papar Permohonan',
@@ -1062,6 +1062,7 @@ return array(
             'approval_status' => 'Permohonan ini adalah memenuhi syarat-syarat seperti di dalam Panduan Permohonan TPPM.',
             'approval_remark' => 'Ulasan',
             'download_pdf' => 'Muat Turun PDF',
+            'management_note' => '** Diminta pihak pengurusan menghantar 3 salinan kepada pihak COB dengan laporan bergambar yang berwarna.',
         ),
     ),
     "errors" => array(

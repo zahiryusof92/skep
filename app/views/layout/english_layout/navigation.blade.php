@@ -190,7 +190,9 @@ if (!Auth::user()->getAdmin()) {
             <li class="left-menu-list-submenu" id="tppm_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-wrench"></i>
-                    {{ trans('app.menus.tppm.name') }}
+                    <span id="recycle">
+                        {{ trans('app.menus.tppm.name') }}
+                    </span>
                     &nbsp;
                     <?php $count = TPPM::self()->notPending()->where('tppms.status','!=', TPPM::REJECTED)->count(); ?>
                     @if($count > 0)

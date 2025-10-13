@@ -3,8 +3,8 @@
 @section('content')
     <style>
         /* ========================================
-                                                                                   GENERAL FORM STYLING
-                                                                                ======================================== */
+                                                                                           GENERAL FORM STYLING
+                                                                                        ======================================== */
         .mandatory-notice {
             margin-bottom: 20px;
         }
@@ -340,8 +340,8 @@
         }
 
         /* ========================================
-                               VALIDATION STYLES
-                               ======================================== */
+                                       VALIDATION STYLES
+                                       ======================================== */
 
         /* Base validation styles */
         .is-invalid {
@@ -413,13 +413,13 @@
         }
 
         /* ========================================
-                                                                                   BAHAGIAN A - APPLICATION DETAILS
-                                                                                ======================================== */
+                                                                                           BAHAGIAN A - APPLICATION DETAILS
+                                                                                        ======================================== */
         /* (Uses general form styling above) */
 
         /* ========================================
-                                                                                   BAHAGIAN B - SCOPE OF WORKS
-                                                                                ======================================== */
+                                                                                           BAHAGIAN B - SCOPE OF WORKS
+                                                                                        ======================================== */
         .scope-table {
             margin-bottom: 0;
         }
@@ -552,8 +552,8 @@
         }
 
         /* ========================================
-                                                                                   BAHAGIAN C - APPLICANT CHECKLIST
-                                                                                ======================================== */
+                                                                                           BAHAGIAN C - APPLICANT CHECKLIST
+                                                                                        ======================================== */
         .checklist-section {
             background-color: #fff;
             border: 1px solid #dee2e6;
@@ -593,8 +593,8 @@
         }
 
         /* ========================================
-                                                                                   FORM ACTIONS
-                                                                                ======================================== */
+                                                                                           FORM ACTIONS
+                                                                                        ======================================== */
         .form-actions {
             background-color: #f8f9fa;
             border-top: 1px solid #dee2e6;
@@ -1383,7 +1383,7 @@
                                                 <div class="checklist-item">
                                                     <label class="form-control-label">
                                                         <span style="color: red;">*</span>&nbsp;
-                                                        {{ trans('app.forms.tppm.detail_report') }}
+                                                        {{ trans('app.forms.tppm.detail_report') }} (Berwarna)
                                                     </label>
                                                     <input type="file" class="form-control-file"
                                                         name="detail_report_file" id="detail_report_file"
@@ -1437,6 +1437,27 @@
                                     </div>
                                 </div>
 
+                                @if (AccessGroup::hasUpdateModule('TPPM'))
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <label class="form-control-label">
+                                                    {{ trans('app.forms.tppm.created_at') }}
+                                                </label>
+                                                <input type="text" class="form-control datetimepicker"
+                                                    id="created_at_raw"
+                                                    value="{{ Input::old('created_at') ? date('d-m-Y', strtotime(Input::old('created_at'))) : date('d-m-Y') }}"
+                                                    placeholder="dd-mm-yyyy">
+                                                <input type="hidden" name="created_at" id="created_at"
+                                                    value="{{ Input::old('created_at') ?: date('Y-m-d') }}">
+                                                <div id="created_at_feedback" class="invalid-feedback"
+                                                    style="display:none;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="form-actions">
                                     <button type="submit" class="btn btn-own" id="submit_button">
                                         {{ trans('app.forms.save') }}
@@ -1461,6 +1482,43 @@
             // GENERAL INITIALIZATION
             // ========================================
             $('.select3').select2();
+
+            // Initialize created_at datepicker and sync hidden field
+            if ($.fn.datetimepicker && $('#created_at_raw').length) {
+                $('#created_at_raw').datetimepicker({
+                    format: 'DD-MM-YYYY',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: "fa fa-chevron-left",
+                        next: "fa fa-chevron-right"
+                    }
+                }).on('dp.change', function() {
+                    var currentDate = $(this).val().split('-');
+                    if (currentDate.length === 3) {
+                        $('#created_at').val(currentDate[2] + '-' + currentDate[1] + '-' + currentDate[0]);
+                    }
+                });
+
+                // Set default to today if empty
+                if (!$('#created_at').val()) {
+                    if (typeof moment !== 'undefined') {
+                        var todayRaw = moment().format('DD-MM-YYYY');
+                        var todayIso = moment().format('YYYY-MM-DD');
+                        $('#created_at_raw').val(todayRaw);
+                        $('#created_at').val(todayIso);
+                    } else {
+                        var d = new Date();
+                        var dd = ('0' + d.getDate()).slice(-2);
+                        var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+                        var yyyy = d.getFullYear();
+                        $('#created_at_raw').val(dd + '-' + mm + '-' + yyyy);
+                        $('#created_at').val(yyyy + '-' + mm + '-' + dd);
+                    }
+                }
+            }
 
             // ========================================
             // VALIDATION FUNCTIONS
@@ -1879,152 +1937,6 @@
                     },
                 });
             });
-
-            // // Add dummy data button for testing
-            // addDummyDataButton();
-
-            // // ========================================
-            // // DUMMY DATA FUNCTIONS
-            // // ========================================
-            // function fillDummyData() {
-            //     // Basic applicant info
-            //     $('#applicant_name').val('Ahmad bin Ali');
-            //     $('#applicant_phone').val('012-3456789');
-            //     $('#applicant_email').val('ahmad.ali@example.com');
-
-            //     // Organization info
-            //     $('#organization_name').val('JMB Taman Perdana');
-            //     $('#applicant_position').val('Pengerusi JMB');
-            //     $('#organization_address_1').val('No. 123, Jalan Perdana');
-            //     $('#organization_address_2').val('Taman Perdana');
-            //     $('#organization_address_3').val('43000 Kajang, Selangor');
-
-            //     // Property details
-            //     $('#first_purchase_price').val('250000');
-            //     $('#year_built').val('2015');
-            //     $('#year_occupied').val('2016');
-
-            //     // Category (radio)
-            //     $('input[name="cost_category"][value="low_cost"]').prop('checked', true).trigger('change');
-
-            //     // Select2 selects: Strata, Parliament, DUN, District (fetch real options and pick the first)
-            //     fetchAndSetFirstOption('#strata_id');
-            //     fetchAndSetFirstOption('#parliament_id');
-            //     fetchAndSetFirstOption('#dun_id');
-            //     fetchAndSetFirstOption('#district_id');
-
-            //     // Unit counts
-            //     $('input[name="num_blocks"]').val('2');
-            //     $('input[name="num_units"]').val('120');
-            //     $('input[name="num_units_occupied"]').val('115');
-            //     $('input[name="num_units_owner"]').val('100');
-            //     $('input[name="num_units_malaysian"]').val('95');
-            //     $('input[name="num_storeys"]').val('15');
-            //     $('input[name="num_residents"]').val('350');
-            //     $('input[name="num_units_vacant"]').val('5');
-            //     $('input[name="num_units_tenant"]').val('15');
-            //     $('input[name="num_units_non_malaysian"]').val('5');
-
-            //     // Block details
-            //     $('input[name="requested_block_name"]').val('Blok A');
-            //     $('input[name="requested_block_no"]').val('101');
-
-            //     // Scope items
-            //     $('.scope-item[value="lift_avas"]').prop('checked', true);
-            //     $('.scope-item[value="water_tank"]').prop('checked', true);
-            //     $('.scope-item[value="painting"]').prop('checked', true);
-            //     $('.scope-item[value="slope"]').prop('checked', true);
-
-            //     // Scope specifics
-            //     $('input[name="lift_count"]').val('2');
-            //     $('input[name="lift_type"][value="repair"]').prop('checked', true);
-
-            //     $('input[name="water_tank_count"]').val('1');
-            //     $('input[name="water_tank_type"][value="replace"]').prop('checked', true);
-
-            //     // Painting text fields
-            //     $('input[name="painting_i"]').val('Block A');
-            //     $('input[name="painting_ii"]').val('Block B');
-
-            //     // Refresh scope data
-            //     refreshScope();
-
-            //     // Checklist files (simulate uploaded values)
-            //     setChecklistDummy('#spa_copy', '#spa_copy_file', '#spa_copy_feedback',
-            //         'uploads/tppm/20251001012117_sample-1.pdf');
-            //     setChecklistDummy('#detail_report', '#detail_report_file', '#detail_report_feedback',
-            //         'uploads/tppm/20251001012117_sample-1.pdf');
-            //     setChecklistDummy('#meeting_minutes', '#meeting_minutes_file', '#meeting_minutes_feedback',
-            //         'uploads/tppm/20251001012117_sample-1.pdf');
-            //     setChecklistDummy('#cost_estimate', '#cost_estimate_file', '#cost_estimate_feedback',
-            //         'uploads/tppm/20251001012117_sample-1.pdf');
-
-            //     console.log('Dummy data filled!');
-            // }
-
-            // // Add dummy data button (for testing)
-            // function addDummyDataButton() {
-            //     if ($('#dummy-data-btn').length === 0) {
-            //         $('.form-actions').prepend(
-            //             '<button type="button" id="dummy-data-btn" class="btn btn-warning" style="margin-right: 10px;">Fill Dummy Data</button>'
-            //         );
-            //         $('#dummy-data-btn').click(fillDummyData);
-            //     }
-            // }
-
-            // function setSelect2Value(selector, id, text) {
-            //     var $el = $(selector);
-            //     if ($el.length === 0) return;
-            //     var option = new Option(text, id, true, true);
-            //     $el.append(option).trigger('change');
-            // }
-
-            // function fetchAndSetFirstOption(selector) {
-            //     var $el = $(selector);
-            //     if ($el.length === 0) return;
-            //     var url = $el.attr('data-ajax--url') || $el.data('ajax--url');
-            //     if (!url) return;
-            //     $.ajax({
-            //         url: url,
-            //         method: 'GET',
-            //         dataType: 'json',
-            //         success: function(resp) {
-            //             var items = [];
-            //             if (Array.isArray(resp)) {
-            //                 items = resp;
-            //             } else if (resp && Array.isArray(resp.results)) {
-            //                 items = resp.results;
-            //             } else if (resp && Array.isArray(resp.data)) {
-            //                 items = resp.data;
-            //             }
-            //             if (items.length > 0) {
-            //                 var first = items[0];
-            //                 var id = first.id !== undefined ? first.id : (first.value !== undefined ?
-            //                     first.value : null);
-            //                 var text = first.text !== undefined ? first.text : (first.label !==
-            //                     undefined ? first.label : String(id));
-            //                 if (id !== null) {
-            //                     setSelect2Value(selector, id, text);
-            //                 }
-            //             }
-            //         }
-            //     });
-            // }
-
-            // function setChecklistDummy(hiddenSelector, fileInputSelector, feedbackSelector, filename) {
-            //     var $hidden = $(hiddenSelector);
-            //     var $file = $(fileInputSelector);
-            //     var $feedback = $(feedbackSelector);
-            //     if ($hidden.length) {
-            //         $hidden.val(filename);
-            //     }
-            //     if ($file.length) {
-            //         $file.addClass('has-file');
-            //     }
-            //     if ($feedback.length) {
-            //         $feedback.text(filename);
-            //     }
-            // }
         });
     </script>
 @endsection
