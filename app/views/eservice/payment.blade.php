@@ -95,7 +95,11 @@
                             <div class="form-actions">
                                 <input type="hidden" name="order_id" value="{{ \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id) }}" />
                                 <button type="submit" class="btn btn-own" id="submit_button">
-                                    {{ trans('app.forms.eservice.pay_now') }}
+                                    @if (!empty($order->price) && $order->price > 0)
+                                        {{ trans('app.forms.eservice.pay_now') }}
+                                    @else
+                                        {{ trans('app.forms.submit') }}
+                                    @endif
                                 </button>
                                 <button type="button" class="btn btn-default" id="cancel_button"
                                     onclick="window.location ='{{ route('eservice.draft') }}'">

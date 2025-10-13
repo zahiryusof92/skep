@@ -277,4 +277,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         return false;
     }
+
+    public function hasAccessEservice()
+    {
+        if (Auth::user()->getAdmin()) {
+            return true;
+        } else {
+            if (Auth::user()->getCOB) {
+                if (Auth::user()->getCOB->short_name == 'MBPJ') {
+                    return true;
+                } 
+                else if (Auth::user()->getCOB->short_name == 'MBSJ') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
