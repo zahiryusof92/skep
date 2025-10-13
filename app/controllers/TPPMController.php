@@ -35,7 +35,7 @@ class TPPMController extends \BaseController
                     return method_exists($model, 'getStatusBadge') ? $model->getStatusBadge() : $model->status;
                 })
                 ->editColumn('created_at', function ($model) {
-                    return ($model->created_at ? $model->created_at->format('d-M-Y H:i A') : '');
+                    return ($model->created_at ? $model->created_at->format('d-M-Y') : '');
                 })
                 ->addColumn('applicant', function ($model) {
                     return $model->applicant_name ?: '-';
@@ -207,6 +207,11 @@ class TPPMController extends \BaseController
             'cost_estimate.string' => trans('app.validation.tppm.cost_estimate_string'),
         );
 
+        if (Request::has('created_at') && !empty(array_get($data, 'created_at'))) {
+            $rules['created_at'] = 'date_format:Y-m-d';
+            $messages['created_at.date_format'] = 'Invalid date format (YYYY-MM-DD).';
+        }
+
         $validator = Validator::make($data, $rules, $messages);
         $errors = [];
 
@@ -328,7 +333,7 @@ class TPPMController extends \BaseController
             if ($strata->file_id) {
                 $file = Files::find($strata->file_id);
                 if ($file) {
-                    $model = TPPM::create([
+                    $model = new TPPM([
                         'company_id' => $file->company_id,
                         'file_id' => $file->id,
                         'strata_id' => $strata->id,
@@ -368,7 +373,13 @@ class TPPMController extends \BaseController
                         'created_by' => Auth::user()->id,
                     ]);
 
-                    if ($model) {
+                    if (Request::has('created_at') && !empty(array_get($data, 'created_at'))) {
+                        $model->timestamps = false;
+                        $model->created_at = date('Y-m-d 00:00:00', strtotime(array_get($data, 'created_at')));
+                        $model->updated_at = date('Y-m-d H:i:s');
+                    }
+
+                    if ($model->save()) {
                         $module = 'TPPM';
                         $remarks = $module . ': ' . $model->id . ' created.';
                         $this->addAudit($model->file_id, $module, $remarks);
@@ -457,6 +468,11 @@ class TPPMController extends \BaseController
             'approval_remark.max' => trans('app.validation.tppm.approval_remark_max'),
         ];
 
+        if (Request::has('created_at') && !empty(array_get($data, 'created_at'))) {
+            $rules['created_at'] = 'date_format:Y-m-d';
+            $messages['created_at.date_format'] = 'Invalid date format (YYYY-MM-DD).';
+        }
+
         $validator = Validator::make($data, $rules, $messages);
         if ($validator->fails()) {
             return Response::json([
@@ -479,6 +495,10 @@ class TPPMController extends \BaseController
         } else {
             $updateData['approval_by'] = null;
             $updateData['approval_date'] = null;
+        }
+
+        if (Request::has('created_at') && !empty(array_get($data, 'created_at'))) {
+            $updateData['created_at'] = date('Y-m-d 00:00:00', strtotime(array_get($data, 'created_at')));
         }
 
         $success = $model->update($updateData);

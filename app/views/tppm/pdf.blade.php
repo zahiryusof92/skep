@@ -204,15 +204,9 @@
             <tr>
                 <td class="value-cell" style="width: 70%;">
                     No. Fail:
-                    <span class="input-line">
-                        {{ $model->file ? $model->file->file_no : '' }}
-                    </span>
                 </td>
                 <td class="value-cell" style="width: 30%;">
                     No. Rujukan:
-                    <span class="input-line">
-                        {{ $model->reference_no ?: '' }}
-                    </span>
                 </td>
             </tr>
         </table>
