@@ -9990,7 +9990,7 @@ class AdminController extends BaseController
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
-                $insurance = Insurance::where('file_id', $file->id)->first();
+                $insurance = Insurance::findOrFail(Helper::decode($file_id));
                 $image = OtherDetails::where('file_id', $file->id)->first();
                 $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(3));
                 if ($disallow) {
