@@ -20,6 +20,13 @@ class TPPM extends Eloquent
 
     protected $table = 'tppms';
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'approval_date'
+    ];
+
     protected $fillable = [
         'company_id',
         'file_id',
@@ -63,6 +70,8 @@ class TPPM extends Eloquent
         'approval_remark',
         'created_by',
         'updated_by',
+        'created_at',
+        'updated_at',
     ];
 
     public function scopeSelf(Builder $builder)
