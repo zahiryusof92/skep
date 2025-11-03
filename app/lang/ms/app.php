@@ -415,7 +415,7 @@ return array(
         "upload_minutes_ajk" => "Salinan Minit Mesyuarat Jawatankuasa Pengurusan (Perlantikan 3 Jawatan tertinggi)",
         "upload_eligible_vote" => "Salinan Senarai Nama Orang Yang Berhak Mengundi",
         "upload_attend_meeting" => "Salinan Senarai Kehadiran Mesyuarat",
-        "upload_proksi" => "Proksi (Sekiranya Ada)",
+        "upload_proksi" => "Borang proksi & surat perwakilan kuasa bagi wakil syarikat",
         "upload_ajk_info" => "Maklumat Anggota Jawatankuasa Yang Dilantik (Lampiran A)",
         "upload_ic" => "Salinan Kad Pengenalan Bagi Setiap AJK",
         "upload_purchase_aggrement" => "Salinan Surat Perjanjian Jual Beli Bagi Setiap AJK",
