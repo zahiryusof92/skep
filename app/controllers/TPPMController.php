@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class TPPMController extends \BaseController
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -552,7 +553,7 @@ class TPPMController extends \BaseController
                 if (!file_exists($destinationPath)) {
                     @mkdir($destinationPath, 0755, true);
                 }
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
