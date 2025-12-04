@@ -101,7 +101,7 @@ class DlpController extends \BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.dlp_deposit');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {
@@ -466,7 +466,7 @@ class DlpController extends \BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.dlp_deposit_usage');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {

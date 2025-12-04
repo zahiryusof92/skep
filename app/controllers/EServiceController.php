@@ -21,6 +21,7 @@ use yajra\Datatables\Facades\Datatables;
 
 class EServiceController extends BaseController
 {
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -1449,7 +1450,7 @@ class EServiceController extends BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.eservice');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {

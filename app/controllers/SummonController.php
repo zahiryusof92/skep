@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class SummonController extends \BaseController {
 
+
     /**
      * Display a listing of the resource.
      *
@@ -1090,7 +1091,7 @@ class SummonController extends \BaseController {
 
                 $destinationPath = 'attachment/summon/confirm/' . $model->id;
     
-                $filename = $file->getClientOriginalName();
+                $filename = Helper::sanitizeFilename($file->getClientOriginalName());
                 // $filename = $file->getClientOriginalName() . '.' . $ext;
                 $file->move($destinationPath, $filename);
                 $attachment[] = $destinationPath . "/" . $filename;
