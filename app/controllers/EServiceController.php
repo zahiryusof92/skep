@@ -21,60 +21,6 @@ use yajra\Datatables\Facades\Datatables;
 
 class EServiceController extends BaseController
 {
-
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function view()
-	{
-		$this->checkAvailableAccess();
-
-		$cob = Auth::user()->getCOB->short_name;
-		if ($cob == 'MBSJ' && Auth::user()->getAdmin() || Auth::user()->isCOB()) {
-			if (Request::ajax()) {
-				$cob = Company::where('company.short_name', $cob)->first();
-				if ($cob) {
-					$model = EServiceOrder::notDraft()
-						->join('files', 'eservices_orders.file_id', '=', 'files.id')
-						->join('strata', 'files.id', '=', 'strata.file_id')
-						->select(DB::raw('eservices_orders.file_id, files.file_no, strata.name, COUNT(*) as total_orders, MAX(eservices_orders.created_at) as latest_order'))
-						->where('eservices_orders.company_id', $cob->id)
-						->whereNull('eservices_orders.deleted_at')
-						->groupBy('eservices_orders.file_id', 'files.file_no')
-						->orderByRaw('MAX(eservices_orders.created_at) desc');
-
-					return Datatables::of($model)
-						->editColumn('latest_order', function ($data) {
-							return date('d/m/Y', strtotime($data->latest_order));
-						})
-						->addColumn('action', function ($model) {
-							$btn = '';
-							$btn .= '<a href="' . route('eservice.index', 'file_id=' . $this->encodeID($model->file_id)) . '" class="btn btn-xs btn-warning" title="View"><i class="fa fa-eye"></i></a>&nbsp;';
-							
-							return $btn;
-						})
-						->make(true);
-				}
-			}
-		} else {
-			return Redirect::route('eservice.index');
-		}
-
-		$viewData = array(
-			'title' => trans('app.menus.eservice.review'),
-			'panel_nav_active' => 'eservice_panel',
-			'main_nav_active' => 'eservice_main',
-			'sub_nav_active' => 'eservice_list',
-			'image' => ''
-		);
-
-		return View::make('eservice.view', $viewData);
-
-		App::abort(404);
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 *
