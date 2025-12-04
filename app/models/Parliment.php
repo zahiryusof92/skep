@@ -3,6 +3,11 @@
 class Parliment extends Eloquent {
     protected $table = 'parliment';
 
+    public function scopeSelf()
+    {
+        return self::where('is_active', true)->where('is_deleted', false);
+    }
+    
     public static function getOptions() {
         $items = self::orderBy('description', 'asc')->where('is_deleted',0)->get();
 

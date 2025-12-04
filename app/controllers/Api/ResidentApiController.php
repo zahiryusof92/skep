@@ -3,6 +3,7 @@
 namespace Api;
 
 use BaseController;
+use Helper\Helper;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Files;
@@ -13,6 +14,7 @@ use MeetingDocument;
 use AJKDetails;
 
 class ResidentApiController extends BaseController {
+
 
     public function agmEgm() {
         $result = array();
@@ -326,7 +328,7 @@ class ResidentApiController extends BaseController {
                     $attachment_url = '';
                     if ($attachment) {
                         $destinationPath = 'uploads/defect_attachment';
-                        $filename = date('YmdHis') . "_" . $attachment->getClientOriginalName();
+                        $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($attachment->getClientOriginalName());
                         $upload = $attachment->move($destinationPath, $filename);
 
                         if ($upload) {

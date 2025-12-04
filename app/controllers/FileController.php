@@ -1,14 +1,16 @@
 <?php
 
+use Helper\Helper;
 use Helper\KCurl;
 
 class FileController extends BaseController {
+
 
     public function uploadFormFile() {
         $file = Input::file('form_file');
         if ($file) {
             $destinationPath = 'uploads/form_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $upload = $file->move($destinationPath, $filename);
 
             if ($upload) {
@@ -36,7 +38,7 @@ class FileController extends BaseController {
                 if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                     if ($file->getClientSize() <= $allowedSize) {
                         $destinationPath = 'uploads/document_files';
-                        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                        $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                         $upload = $file->move($destinationPath, $filename);
             
                         if ($upload) {
@@ -64,7 +66,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/insurance_attachment';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -83,7 +85,7 @@ class FileController extends BaseController {
         $file = Input::file('defect_attachment');
         if ($file) {
             $destinationPath = 'uploads/defect_attachment';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $upload = $file->move($destinationPath, $filename);
 
             if ($upload) {
@@ -106,7 +108,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/strata_files';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
     
                 if ($upload) {
@@ -134,7 +136,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/audit_report_files';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
     
                 if ($upload) {
@@ -163,7 +165,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/letter_integrity_files';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -191,7 +193,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/letter_bankruptcy_files';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -219,7 +221,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/notice_agm_egm';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -247,7 +249,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/minutes_agm_egm';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -275,7 +277,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/minutes_ajk';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -303,7 +305,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/eligible_vote';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -331,7 +333,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/attend_meeting';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -359,7 +361,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/proksi';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -387,7 +389,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/ajk_info';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -415,7 +417,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/ic';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -443,7 +445,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/purchase_aggrement';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -472,7 +474,7 @@ class FileController extends BaseController {
 
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/strata_title';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -500,7 +502,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/maintenance_statement';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -528,7 +530,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/integrity_pledge';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -556,7 +558,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/sworn_statement';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -584,7 +586,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/report_audited_financial';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -612,7 +614,7 @@ class FileController extends BaseController {
         // if(empty($response->status) == false && $response->status == 200) {
             if ($file && !empty($file)) {
                 $destinationPath = 'uploads/house_rules';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
@@ -631,7 +633,7 @@ class FileController extends BaseController {
         $file = Input::file('uploadedCSV');
 
         if ($file) {
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 
             $file_ext = explode(".", $filename);
             $ext = end($file_ext);
@@ -737,7 +739,7 @@ class FileController extends BaseController {
         $file = Input::file('uploadedCSV');
 
         if ($file) {
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 
             $file_ext = explode(".", $filename);
             $ext = end($file_ext);
@@ -836,7 +838,7 @@ class FileController extends BaseController {
         $file = Input::file('uploadedCSV');
 
         if ($file) {
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 
             $file_ext = explode(".", $filename);
             $ext = end($file_ext);
@@ -932,7 +934,7 @@ class FileController extends BaseController {
         $file = Input::file('agm_file');
         if ($file) {
             $destinationPath = 'uploads/agm_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -946,7 +948,7 @@ class FileController extends BaseController {
         $file = Input::file('egm_file');
         if ($file) {
             $destinationPath = 'uploads/egm_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -960,7 +962,7 @@ class FileController extends BaseController {
         $file = Input::file('minutes_meeting_file');
         if ($file) {
             $destinationPath = 'uploads/minutes_meeting_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -974,7 +976,7 @@ class FileController extends BaseController {
         $file = Input::file('jmc_file');
         if ($file) {
             $destinationPath = 'uploads/jmc_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -988,7 +990,7 @@ class FileController extends BaseController {
         $file = Input::file('ic_file');
         if ($file) {
             $destinationPath = 'uploads/ic_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -1002,7 +1004,7 @@ class FileController extends BaseController {
         $file = Input::file('attendance_file');
         if ($file) {
             $destinationPath = 'uploads/attendance_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -1016,7 +1018,7 @@ class FileController extends BaseController {
         $file = Input::file('audited_financial_file');
         if ($file) {
             $destinationPath = 'uploads/audited_financial_files';
-            $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+            $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
             $file->move($destinationPath, $filename);
             $output = $destinationPath . "/" . $filename;
 
@@ -1059,7 +1061,7 @@ class FileController extends BaseController {
                         ];
                     }
                     $destinationPath = 'uploads/memo_files';
-                    $file_name = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $file_name = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $file_name);
                     $filename .= $destinationPath . "/" . $file_name;
                     if(!empty($files[$count + 1])) {
@@ -1068,7 +1070,7 @@ class FileController extends BaseController {
                     $count++;
                 } 
                 // $destinationPath = 'uploads/memo_files';
-                // $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                // $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 // $upload = $file->move($destinationPath, $filename);
     
                 if ($upload) {
@@ -1093,7 +1095,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -1110,7 +1112,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -1127,7 +1129,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -1144,7 +1146,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -1161,7 +1163,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -1178,7 +1180,7 @@ class FileController extends BaseController {
             if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
                 if ($file->getClientSize() <= $allowedSize) {
                     $destinationPath = 'uploads/ocr_files';
-                    $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                    $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                     $upload = $file->move($destinationPath, $filename);
 
                     if ($upload) {
@@ -1205,7 +1207,7 @@ class FileController extends BaseController {
         if (in_array($file->getClientOriginalExtension(), $allowedFile)) {
             if ($file->getClientSize() <= $allowedSize) {
                 $destinationPath = 'uploads/endorsement_letter';
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {
