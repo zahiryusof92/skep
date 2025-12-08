@@ -641,6 +641,11 @@ class EServiceController extends BaseController
 					$sub_nav_active = 'eservice_rejected';
 				}
 
+				$bill_no = '';
+				if ($cob == 'MBSJ') {
+					$bill_no = $order->file ? $order->file->file_no : '';
+				}
+
 				$viewData = array(
 					'title' => trans('app.menus.eservice.show') .  ' - ' . $title,
 					'panel_nav_active' => 'eservice_panel',
@@ -650,6 +655,7 @@ class EServiceController extends BaseController
 					'form' => $form,
 					'order' => $order,
 					"statusOptions" => $statusOptions,
+					'bill_no' => $bill_no,
 					'image' => ""
 				);
 
