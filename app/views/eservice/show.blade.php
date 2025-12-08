@@ -138,7 +138,7 @@
                                         <div class="row">
                                             <div class="col-sm-8">
                                                 <input type="text" id="bill_no" name="bill_no"
-                                                    class="form-control {{ $errors->has('bill_no') ? 'has-danger' : '' }}">
+                                                    class="form-control {{ $errors->has('bill_no') ? 'has-danger' : '' }}" value="{{ isset($bill_no) && !empty($bill_no) ? $bill_no : '' }}">
                                                 @include('alert.feedback-ajax', ['field' => "bill_no"])
                                             </div>
                                         </div>
@@ -326,6 +326,19 @@
                                         {{ trans('app.forms.date') }}
                                     </label>
                                     <input type="text" class="form-control" value="{{ $order->date }}" readonly="">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if (!empty($order->hijri_date))
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">
+                                        {{ trans('app.forms.hijri_date') }}
+                                    </label>
+                                    <input type="text" class="form-control" value="{{ $order->hijri_date }}" readonly="">
                                 </div>
                             </div>
                         </div>

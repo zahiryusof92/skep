@@ -292,5 +292,5 @@
 
 @section('page3')
     @include('eservice.mbsj.component.sk_1')
-    @include('eservice.mbsj.component.footer', ['page_num' => 3, 'page_count' => 3])
+    @include('eservice.mbsj.component.footer', ['page_num' => 3, 'page_count' => 3, 'last_page' => true])
 @endsection

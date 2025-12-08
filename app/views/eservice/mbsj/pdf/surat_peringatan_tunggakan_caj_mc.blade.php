@@ -238,5 +238,5 @@
 
     @include('eservice.mbsj.component.sk_2')
 
-    @include('eservice.mbsj.component.footer', ['page_num' => 2, 'page_count' => 2])
+    @include('eservice.mbsj.component.footer', ['page_num' => 2, 'page_count' => 2, 'last_page' => true])
 @endsection
