@@ -21,6 +21,7 @@ use yajra\Datatables\Facades\Datatables;
 
 class EServiceController extends BaseController
 {
+
 	/**
 	 * Display a listing of the resource.
 	 *
