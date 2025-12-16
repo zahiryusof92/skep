@@ -15,6 +15,7 @@ use Services\NotificationService;
 
 class AGMMinuteController extends BaseController
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -587,7 +588,7 @@ class AGMMinuteController extends BaseController
                         $file = $val;
                         $filePath = $request['type'] . '_' . $request['agm_type'];
                         $destinationPath = Config::get('constant.file_directory.' . $filePath);
-                        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                        $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                         $upload = $file->move($destinationPath, $filename);
 
                         if ($upload) {

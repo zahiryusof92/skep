@@ -465,7 +465,7 @@ class PostponeAGMController extends \BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.postponed_agm');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {
@@ -486,7 +486,7 @@ class PostponeAGMController extends \BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.postponed_agm_approval');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {

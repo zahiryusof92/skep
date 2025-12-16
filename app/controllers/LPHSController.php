@@ -2196,6 +2196,7 @@ class LPHSController extends BaseController
 
         $query = Insurance::join('files', 'insurance.file_id', '=', 'files.id')
             ->leftjoin('company', 'files.company_id', '=', 'company.id')
+            ->leftjoin('strata', 'files.id', '=', 'strata.file_id')
             ->leftjoin('insurance_provider', 'insurance.insurance_provider_id', '=', 'insurance_provider.id')
             ->where('files.is_deleted', 0)
             ->where('insurance.is_deleted', 0)
@@ -2206,7 +2207,7 @@ class LPHSController extends BaseController
             $query = $query->where('company.short_name', $cob);
         }
 
-        $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'insurance_provider.name as provider', 'insurance.*')->get();
+        $items = $query->select('company.name as cob_name', 'company.short_name as cob_short_name', 'files.id as file_id', 'files.file_no as file_no', 'strata.name as strata_name', 'insurance_provider.name as provider', 'insurance.*')->get();
         if ($items->count() > 0) {
             foreach ($items as $item) {
                 $file = Files::with('personInChargeLatest')->find($item->file_id);
@@ -2230,6 +2231,7 @@ class LPHSController extends BaseController
                     $result[$file->id] = [
                         trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
                         trans('File No') => $item->file_no,
+                        trans('Strata Name') => $item->strata_name,
                         trans('Insurance Provider') => $item->provider,
                         trans('Public Liability Coverage (PLC)') => $item->public_liability_coverage,
                         trans('PLC Premium Per Year') => $item->plc_premium_per_year,

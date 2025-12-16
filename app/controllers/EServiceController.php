@@ -21,6 +21,7 @@ use yajra\Datatables\Facades\Datatables;
 
 class EServiceController extends BaseController
 {
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -641,6 +642,11 @@ class EServiceController extends BaseController
 					$sub_nav_active = 'eservice_rejected';
 				}
 
+				$bill_no = '';
+				if ($cob == 'MBSJ') {
+					$bill_no = $order->file ? $order->file->file_no : '';
+				}
+
 				$viewData = array(
 					'title' => trans('app.menus.eservice.show') .  ' - ' . $title,
 					'panel_nav_active' => 'eservice_panel',
@@ -650,6 +656,7 @@ class EServiceController extends BaseController
 					'form' => $form,
 					'order' => $order,
 					"statusOptions" => $statusOptions,
+					'bill_no' => $bill_no,
 					'image' => ""
 				);
 
@@ -1449,7 +1456,7 @@ class EServiceController extends BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.eservice');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {
