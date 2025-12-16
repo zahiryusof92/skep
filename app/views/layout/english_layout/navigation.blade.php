@@ -282,6 +282,11 @@ if (!Auth::user()->getAdmin()) {
                             {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()]) }}</span>
                         </a>
                     </li>
+                    <li class="left-menu-list-link" id="eservice_incomplete">
+                        <a class="left-menu-link" href="{{ route('eservice.incomplete') }}">
+                            {{ trans('app.menus.eservice.incomplete') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->incomplete()->count()]) }}</span>
+                        </a>
+                    </li>
                     <li class="left-menu-list-link" id="eservice_approved">
                         <a class="left-menu-link" href="{{ route('eservice.approved') }}">
                             {{ trans('app.menus.eservice.approved') }}

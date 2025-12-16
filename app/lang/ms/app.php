@@ -248,6 +248,7 @@ return array(
             "list" => "e-Perkhidmatan",
             "draft" => "Draft List",
             "review" => "Review List",
+            "incomplete" => "Incomplete List",
             "approved" => "Approved List",
             "rejected" => "Rejected List",
             'report' => 'Report',
@@ -368,6 +369,7 @@ return array(
         "admin_status" => "Status Pentadbir",
         "active" => "Aktif",
         "inactive" => "Tidak Aktif",
+        "incomplete" => "Incomplete",
         "approve" => "Lulus",
         "approved_by" => "Diluluskan Oleh",
         "approved_date" => "Tarikh Diluluskan",
@@ -1593,6 +1595,7 @@ return array(
         'pending' => 'Pending',
         'inprogress' => 'In-progress',
         'failed' => 'Failed',
+        'incomplete' => 'Incomplete',
         'approved' => 'Approved',
         'rejected' => 'Rejected',
         'email_sent' => 'E-mail Sent'
