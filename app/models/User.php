@@ -234,7 +234,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function hasEpks() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Auth::user()->file_id) {
                 $file = Files::find(Auth::user()->file_id);
 
@@ -248,7 +248,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     public function myEpks() {
-        if (Auth::user()->isJMB()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Auth::user()->file_id) {
                 $file = Files::find(Auth::user()->file_id);
 
@@ -271,6 +271,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                     if (Auth::user()->getCOB->short_name == 'MBPJ') {
                         return true;
                     }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function hasAccessEservice()
+    {
+        if (Auth::user()->getAdmin()) {
+            return true;
+        } else {
+            if (Auth::user()->getCOB) {
+                if (Auth::user()->getCOB->short_name == 'MBPJ') {
+                    return true;
+                } 
+                else if (Auth::user()->getCOB->short_name == 'MBSJ') {
+                    return true;
                 }
             }
         }

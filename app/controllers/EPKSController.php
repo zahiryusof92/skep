@@ -17,6 +17,7 @@ use yajra\Datatables\Facades\Datatables;
 
 class EPKSController extends \BaseController {
 
+
     /**
      * Display a listing of the resource.
      *
@@ -454,7 +455,7 @@ class EPKSController extends \BaseController {
                 if(!in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'bmp', 'gif'])) {
                     return Response::json(['error' => true, 'message' => "Invalid File, ext must be (jpg, jpeg, png, bmp or gif)"]);
                 }
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
     
                 if ($upload) {
@@ -471,7 +472,7 @@ class EPKSController extends \BaseController {
             $files = Request::file();
             foreach($files as $file) {
                 $destinationPath = Config::get('constant.file_directory.epks');
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
     
                 if ($upload) {

@@ -24,7 +24,7 @@ foreach ($user_permission as $permission) {
             <div class="widget widget-four background-transparent">
                 <div class="row">
 
-                    @if (!Auth::user()->isJMB() && !Auth::user()->isMC())
+                    @if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper())
                         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <a href="{{ route('cob.file.index') }}">
                                 <div class="step-block">
@@ -328,7 +328,7 @@ foreach ($user_permission as $permission) {
                 </div>
             </div>
 
-            @if (!Auth::user()->isJMB() && !Auth::user()->isMC())
+            @if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper())
             <div class="row">
                 <div class="col-lg-12">
                     <div class="margin-bottom-50 chart-custom">
@@ -484,9 +484,9 @@ foreach ($user_permission as $permission) {
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                                 <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
-                                                <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.scheme_name') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.agm_due_date') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
@@ -500,8 +500,8 @@ foreach ($user_permission as $permission) {
                                         <thead>
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
-                                                <th style="width:55%;">{{ trans('app.forms.file_number') }}</th>
-                                                <th style="width:25%;">{{ trans('app.forms.scheme_name') }}</th>
+                                                <th style="width:40%;">{{ trans('app.forms.file_number') }}</th>
+                                                <th style="width:40%;">{{ trans('app.forms.scheme_name') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
@@ -516,9 +516,9 @@ foreach ($user_permission as $permission) {
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                                 <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
-                                                <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.scheme_name') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.agm_due_date') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
@@ -533,9 +533,9 @@ foreach ($user_permission as $permission) {
                                             <tr>
                                                 <th style="width:10%;">{{ trans('app.forms.cob') }}</th>
                                                 <th style="width:20%;">{{ trans('app.forms.file_number') }}</th>
-                                                <th style="width:30%;">{{ trans('app.forms.scheme_name') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.last_agm_date') }}</th>
-                                                <th style="width:15%;">{{ trans('app.forms.agm_due_date') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.scheme_name') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.last_agm_date') }}</th>
+                                                <th style="width:20%;">{{ trans('app.forms.agm_due_date') }}</th>
                                                 <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                             </tr>
                                         </thead>
@@ -678,7 +678,7 @@ foreach ($user_permission as $permission) {
             processing: true,
             serverSide: true,
             ajax: "{{ URL::action('HomeController@getNeverAGM') }}",
-            llengthMenu: [[5, 25, 50], [5, 25, 50]],
+            lengthMenu: [[5, 25, 50], [5, 25, 50]],
             pageLength: 5,
             order: [[0, 'asc'], [1, 'asc']],
             responsive: true,
@@ -852,6 +852,7 @@ foreach ($user_permission as $permission) {
             },
             yAxis: {
                 min: 0,
+                max: 100,
                 title: {
                     text: '%'
                 }
@@ -905,7 +906,7 @@ foreach ($user_permission as $permission) {
                     data.short_name = short_name;
                 }
             },
-            llengthMenu: [[5, 25, 50], [5, 25, 50]],
+            lengthMenu: [[5, 25, 50], [5, 25, 50]],
             pageLength: 5,
             order: [[0, 'asc'], [1, 'asc']],
             responsive: true,

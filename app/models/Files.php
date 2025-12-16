@@ -209,7 +209,12 @@ class Files extends Eloquent
 
     public function personInCharge()
     {
-        return $this->hasMany('HousingSchemeUser', 'file_id');
+        return $this->hasMany('HousingSchemeUser', 'file_id')->where('is_deleted', false);
+    }
+
+    public function personInChargeLatest()
+    {
+        return $this->hasOne('HousingSchemeUser', 'file_id')->where('is_deleted', false)->latest();
     }
 
     public function file_movements()
@@ -236,21 +241,39 @@ class Files extends Eloquent
 
     public function scopeNeverHasAGM($query)
     {
+        $filesWithAGM = DB::table('meeting_document')
+            ->whereNotNull('agm_date')
+            ->where('agm_date', '!=', '0000-00-00')
+            ->where('is_deleted', '=', 0)
+            ->lists('file_id');
+
         $query->file()
             ->join('company', 'files.company_id', '=', 'company.id')
             ->join('strata', 'files.id', '=', 'strata.file_id')
-            ->where(function ($query) {
-                $query->whereDoesntHave('meetingDocument');
-                $query->orWhereHas('meetingDocument', function ($query2) {
-                    $query2->where('meeting_document.agm_date', '0000-00-00');
-                    $query2->where('meeting_document.is_deleted', 0);
-                });
-            })
+            ->whereNotIn('files.id', $filesWithAGM)
             ->where('files.is_active', 1)
             ->where('files.is_deleted', 0)
             ->where('company.short_name', '!=', 'MPS');
 
         return $query;
+    }
+
+    public function scopeNeverHasAGMGroupByFileId($query)
+    {
+        $filesWithAGM = DB::table('meeting_document')
+            ->whereNotNull('agm_date')
+            ->where('agm_date', '!=', '0000-00-00')
+            ->where('is_deleted', '=', 0)
+            ->lists('file_id');
+    
+        return $query->file()
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->join('strata', 'files.id', '=', 'strata.file_id')
+            ->whereNotIn('files.id', $filesWithAGM)
+            ->where('files.is_active', '=', 1)
+            ->where('files.is_deleted', '=', 0)
+            ->where('company.short_name', '!=', 'MPS')
+            ->groupBy('files.id');
     }
 
     public static function getInsuranceReportByCOB($cob_id = NULL)
@@ -2343,8 +2366,8 @@ class Files extends Eloquent
                 $percentage = ($item->total / $total_files) * 100;
             }
 
-            array_push($never['categories'], [$item->short_name]);
-            array_push($never['data'], [round($percentage, 2)]);
+            array_push($never['categories'], $item->short_name);
+            array_push($never['data'], round($percentage, 2));
         }
 
         $result = array(
@@ -2369,22 +2392,36 @@ class Files extends Eloquent
         return $result;
     }
 
-    public static function getStrataProfileAnalytic($request = [])
+    public static function getStrataProfileAnalytic($request = [], $is_active = false, $exclude_finance = false)
     {
         $query = Files::with(['financeLatest', 'company'])
             ->file();
+
+        if ($is_active) {
+            $query = $query->where('files.is_active', true);
+        }
 
         if (!empty($request['company_id'])) {
             $company = Company::where('short_name', $request['company_id'])->first();
             $query = $query->where('files.company_id', $company->id);
         }
-        $pie_data = [
-            'Biru' => 0,
-            'Kuning' => 0,
-            'Merah' => 0,
-            'Kelabu' => 0
-        ];
-        $items = $query->chunk(500, function ($files) use (&$pie_data) {
+
+        if (!$exclude_finance) {
+            $pie_data = [
+                'Biru' => 0,
+                'Kuning' => 0,
+                'Merah' => 0,
+                'Kelabu' => 0
+            ];
+        } else {
+            $pie_data = [
+                'Biru' => 0,
+                'Kuning' => 0,
+                'Merah' => 0
+            ];
+        }
+
+        $items = $query->chunk(500, function ($files) use (&$pie_data, &$exclude_finance) {
             foreach ($files as $file) {
                 $finance = $file->financeLatest;
                 if ($finance) {
@@ -2404,17 +2441,28 @@ class Files extends Eloquent
                         $pie_data['Merah'] += 1;
                     }
                 } else {
-                    $pie_data['Kelabu'] += 1;
+                    if (!$exclude_finance) {
+                        $pie_data['Kelabu'] += 1;
+                    }
                 }
             }
         });
 
-        $data['pie_data'] = [
-            ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
-            ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
-            ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
-            ['name' => 'Kelabu', 'slug' => 'gray', 'y' => $pie_data['Kelabu']],
-        ];
+        if (!$exclude_finance) {
+            $data['pie_data'] = [
+                ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+                ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+                ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+                ['name' => 'Kelabu', 'slug' => 'gray', 'y' => $pie_data['Kelabu']],
+            ];
+        } else {
+            $data['pie_data'] = [
+                ['name' => 'Biru', 'slug' => 'biru', 'y' => $pie_data['Biru']],
+                ['name' => 'Kuning', 'slug' => 'kuning', 'y' => $pie_data['Kuning']],
+                ['name' => 'Merah', 'slug' => 'merah', 'y' => $pie_data['Merah']],
+            ];
+        }
+
         return $data;
     }
 

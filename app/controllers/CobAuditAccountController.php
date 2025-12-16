@@ -343,7 +343,7 @@ class CobAuditAccountController extends BaseController
             $files = Request::file();
             foreach ($files as $file) {
                 $destinationPath = Config::get('constant.file_directory.audit_accounts');
-                $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                 $upload = $file->move($destinationPath, $filename);
 
                 if ($upload) {

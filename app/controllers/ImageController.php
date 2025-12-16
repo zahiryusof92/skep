@@ -1,5 +1,6 @@
 <?php
 
+use Helper\Helper;
 use Helper\KCurl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
@@ -7,6 +8,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
 class ImageController extends BaseController {
+
 
     public function logoImage() {
         $file = Input::file('image');
@@ -19,7 +21,7 @@ class ImageController extends BaseController {
             return Response::json(['success' => false, 'errors' => $validator->getMessageBag()->toArray()]);
         } else {
             $destinationPath = 'assets/common/img/logo';
-            $filename = $file->getClientOriginalName();
+            $filename = Helper::sanitizeFilename($file->getClientOriginalName());
             Input::file('image')->move($destinationPath, $filename);
             return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
         }
@@ -36,7 +38,7 @@ class ImageController extends BaseController {
             return Response::json(['success' => false, 'errors' => $validator->getMessageBag()->toArray()]);
         } else {
             $destinationPath = 'assets/common/img/logo';
-            $filename = $file->getClientOriginalName();
+            $filename = Helper::sanitizeFilename($file->getClientOriginalName());
             Input::file('nav_image')->move($destinationPath, $filename);
             return Response::json(['success' => true, 'file' => $destinationPath . "/" . $filename, 'filename' => $filename]);
         }
@@ -66,7 +68,7 @@ class ImageController extends BaseController {
                         return Response::json(['success' => false, 'errors' => $validator->getMessageBag()->toArray()]);
                     } else {
                         $destinationPath = 'uploads/images';
-                        $filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+                        $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
                         Input::file('image')->move($destinationPath, $filename);
                         
                         # Audit Trail

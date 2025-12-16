@@ -94,6 +94,12 @@ class SubModuleTableSeeder extends Seeder
                 'name_my' => 'Pergerakan Fail',
                 'sort_no' => 23
             ]);
+            SubModule::firstOrCreate([
+                'module_id' => $report->id,
+                'name_en' => 'Finance / Month',
+                'name_my' => 'Kewangan / Bulan',
+                'sort_no' => 24
+            ]);
         }
 
         $cob_letter = Module::where('name_en', 'COB Letter')->first();
@@ -130,6 +136,22 @@ class SubModuleTableSeeder extends Seeder
                 'module_id' => $api_client->id,
                 'name_en' => 'API Building',
                 'name_my' => 'Bangunan API',
+                'sort_no' => 1
+            ]);
+        }
+
+        $tppm = Module::where('name_en', 'TPPM')->first();
+        if (empty($tppm)) {
+            $tppm = new Module;
+            $tppm->name_en = "TPPM";
+            $tppm->name_my = "TPPM";
+            $tppm->save();
+        }
+        if ($tppm) {
+            SubModule::firstOrCreate([
+                'module_id' => $tppm->id,
+                'name_en' => 'TPPM',
+                'name_my' => 'TPPM',
                 'sort_no' => 1
             ]);
         }

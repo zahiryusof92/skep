@@ -42,7 +42,7 @@ class ImportFile
         $status = $data['status'];
         $file_no = $row['1'];
         $user_id = $data['user_id'];
-        $audit_message = ' has been imported.';
+        $audit_message = ' has been updated.';
 
         $files = Files::where('company_id', $company_id)->where('file_no', $file_no)->where('is_deleted', 0)->first();
         if(!$files) {
@@ -51,17 +51,17 @@ class ImportFile
                 $files->approved_by = $user_id;
                 $files->approved_at = date('Y-m-d H:i:s');
             }
-            $audit_message = ' has been updated.';
+            $audit_message = ' has been imported.';
         }
         // 3. Year
         $year = '';
         if (isset($row['3']) && !empty($row['3'])) {
             $year = trim($row['3']);
         }
-        // 127. Status
+        // 155. Status
         $is_active = 0;
-        if (isset($row['127']) && !empty($row['127'])) {
-            $is_active_raw = trim($row['127']);
+        if (isset($row['155']) && !empty($row['155'])) {
+            $is_active_raw = trim($row['155']);
 
             if (!empty($is_active_raw)) {
                 if (strtolower($is_active_raw) == 'aktif' || strtolower($is_active_raw) == 'active') {

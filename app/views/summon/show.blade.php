@@ -197,7 +197,7 @@
                         </dl>
 
                         <div class="form-actions">
-                            @if (Auth::user()->isJMB() && $model->status == Summon::DRAFT)
+                            @if ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) && $model->status == Summon::DRAFT)
                                 <form method="POST" action="{{ url('summon/orders') }}">
 
                                     <div class="row">

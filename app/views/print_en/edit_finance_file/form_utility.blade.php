@@ -109,7 +109,7 @@ $prefix3 = 'utilab_';
                     <th class="text-right">{{ number_format($total_tunggakan + $totalb_tunggakan, 2) }}</th>
                     <th class="text-right">{{ number_format($total_semasa + $totalb_semasa, 2) }}</th>
                     <th class="text-right">{{ number_format($total_hadapan + $totalb_hadapan, 2) }}</th>
-                    <th class="text-right">{{ number_format($total_income + $totalb_income, 2) }}</th>
+                    <th class="text-right">{{ number_format($total_all + $totalb_income, 2) }}</th>
                     <th class="text-right">{{ number_format($total_tertunggak + $totalb_tertunggak, 2) }}</th>
                 </tr>
             </tbody>

@@ -21,6 +21,60 @@ use yajra\Datatables\Facades\Datatables;
 
 class EServiceController extends BaseController
 {
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function view()
+	{
+		$this->checkAvailableAccess();
+
+		$cob = Auth::user()->getCOB->short_name;
+		if ($cob == 'MBSJ' && Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+			if (Request::ajax()) {
+				$cob = Company::where('company.short_name', $cob)->first();
+				if ($cob) {
+					$model = EServiceOrder::notDraft()
+						->join('files', 'eservices_orders.file_id', '=', 'files.id')
+						->join('strata', 'files.id', '=', 'strata.file_id')
+						->select(DB::raw('eservices_orders.file_id, files.file_no, strata.name, COUNT(*) as total_orders, MAX(eservices_orders.created_at) as latest_order'))
+						->where('eservices_orders.company_id', $cob->id)
+						->whereNull('eservices_orders.deleted_at')
+						->groupBy('eservices_orders.file_id', 'files.file_no')
+						->orderByRaw('MAX(eservices_orders.created_at) desc');
+
+					return Datatables::of($model)
+						->editColumn('latest_order', function ($data) {
+							return date('d/m/Y', strtotime($data->latest_order));
+						})
+						->addColumn('action', function ($model) {
+							$btn = '';
+							$btn .= '<a href="' . route('eservice.index', 'file_id=' . $this->encodeID($model->file_id)) . '" class="btn btn-xs btn-warning" title="View"><i class="fa fa-eye"></i></a>&nbsp;';
+							
+							return $btn;
+						})
+						->make(true);
+				}
+			}
+		} else {
+			return Redirect::route('eservice.index');
+		}
+
+		$viewData = array(
+			'title' => trans('app.menus.eservice.review'),
+			'panel_nav_active' => 'eservice_panel',
+			'main_nav_active' => 'eservice_main',
+			'sub_nav_active' => 'eservice_list',
+			'image' => ''
+		);
+
+		return View::make('eservice.view', $viewData);
+
+		App::abort(404);
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -30,8 +84,19 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
+		$cob = Auth::user()->getCOB->short_name;
+		if ($cob == 'MBSJ' && Auth::user()->getAdmin() || Auth::user()->isCOB()) {
+			if (empty(Input::get('file_id'))) {
+				return Redirect::route('eservice.view');
+			}
+		}
+
 		if (Request::ajax()) {
 			$model = EServiceOrder::self()->notDraft();
+
+			if (!empty(Input::get('file_id'))) {
+				$model = $model->where('eservices_orders.file_id', $this->decodeID(Input::get('file_id')));
+			}
 
 			if (!empty(Input::get('company'))) {
 				$cob = Company::where('company.short_name', Str::lower(Input::get('company')))->first();
@@ -144,7 +209,7 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
-		if (Auth::user()->isJMB()) {
+		if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
 			if (Request::ajax()) {
 				$model = EServiceOrder::self()->draft();
 
@@ -412,7 +477,7 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
-		if (Auth::user()->isJMB()) {
+		if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
 			$cob = Auth::user()->getCOB->short_name;
 			if (!empty($cob)) {
 				if (!empty($type)) {
@@ -496,6 +561,8 @@ class EServiceController extends BaseController
 							$prefix = '';
 							if ($cob->short_name == 'MBPJ') {
 								$prefix = 'MBPJ-eCOB-';
+							} else if ($cob->short_name == 'MBSJ') {
+								$prefix = 'MBSJ-eCOB-';
 							}
 
 							$order_no = Auth::user()->id . date('YmdHis');
@@ -575,6 +642,11 @@ class EServiceController extends BaseController
 					$sub_nav_active = 'eservice_rejected';
 				}
 
+				$bill_no = '';
+				if ($cob == 'MBSJ') {
+					$bill_no = $order->file ? $order->file->file_no : '';
+				}
+
 				$viewData = array(
 					'title' => trans('app.menus.eservice.show') .  ' - ' . $title,
 					'panel_nav_active' => 'eservice_panel',
@@ -584,6 +656,7 @@ class EServiceController extends BaseController
 					'form' => $form,
 					'order' => $order,
 					"statusOptions" => $statusOptions,
+					'bill_no' => $bill_no,
 					'image' => ""
 				);
 
@@ -752,6 +825,22 @@ class EServiceController extends BaseController
 	{
 		$this->checkAvailableAccess();
 
+		if (Request::ajax()) {
+			$request = Request::all();
+			$data = EServiceOrder::getGraphData($request);
+
+			return Response::json([
+				'data' => $data,
+				'success' => true,
+			]);
+		}
+
+		if (empty(Session::get('admin_cob'))) {
+			$company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+		} else {
+			$company = Company::where('id', Session::get('admin_cob'))->get();
+		}
+
 		$data = EServiceOrder::getGraphData();
 
 		$viewData = array(
@@ -759,6 +848,7 @@ class EServiceController extends BaseController
 			'panel_nav_active' => 'eservice_panel',
 			'main_nav_active' => 'eservice_main',
 			'sub_nav_active' => 'eservice_report',
+			'company' => $company,
 			'data' => $data,
 			'image' => ""
 		);
@@ -772,8 +862,6 @@ class EServiceController extends BaseController
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order && $order->status == EServiceOrder::DRAFT) {
-			$total_amount = $order->price;
-
 			if (!empty($order->price) && $order->price > 0) {
 				$update = $order->update([
 					'status' => EServiceOrder::INPROGRESS,
@@ -790,11 +878,13 @@ class EServiceController extends BaseController
 							});
 						}
 
-						if ($order->user->isJMB() || $order->user->isMC()) {
-							if (!empty(Config::get('payment.mbpj.email_cob'))) {
-								Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
-									$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
-								});
+						if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
+							if ($order->company && $order->company->short_name == 'MBPJ') {
+								if (!empty(Config::get('payment.mbpj.email_cob'))) {
+									Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+										$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+									});
+								}
 							}
 						}
 					}
@@ -856,66 +946,99 @@ class EServiceController extends BaseController
 				return Redirect::back()->withErrors($validator)->withInput();
 			} else {
 				if (!empty($order->price) && $order->price > 0) {
-					if ($order->company && $order->company->short_name = 'MBPJ') {
-						if (!empty($order->jana_bil_no_akaun)) {
-							$proceed = true;
-						} else {
-							$content = (!empty($order->value) ? json_decode($order->value, true) : []);
-							if (!empty($content)) {
-								$cob = strtolower($order->company->short_name);
+					if ($order->company) {
+						if ($order->company->short_name == 'MBPJ') {
+							if (!empty($order->jana_bil_no_akaun)) {
+								$proceed = true;
+							} else {
+								$content = (!empty($order->value) ? json_decode($order->value, true) : []);
+								if (!empty($content)) {
+									$cob = strtolower($order->company->short_name);
 
-								$kodjabatan = Config::get('payment.' . $cob . '.kod_jabatan');
-								$perkara = $order->order_no . ' - ' . str_replace('_', ' ', $order->type);
-								$amaun = number_format($order->price, 2);
-								$kodhasil = Config::get('payment.' . $cob . '.kod_hasil');
-								$namapelanggan = Arr::get($content, 'management_name');
-								$alamat1 = Arr::get($content, 'management_address1');
-								$alamat2 = Arr::get($content, 'management_address2');
-								$alamat3 = Arr::get($content, 'management_address3');
-								$nokp = Config::get('payment.' . $cob . '.no_kp');
-								$pengguna = Config::get('payment.' . $cob . '.pengguna');
-								$sumber = Config::get('payment.' . $cob . '.sumber');
+									$kodjabatan = Config::get('payment.' . $cob . '.kod_jabatan');
+									$perkara = $order->order_no . ' - ' . str_replace('_', ' ', $order->type);
+									$amaun = number_format($order->price, 2);
+									$kodhasil = Config::get('payment.' . $cob . '.kod_hasil');
+									$namapelanggan = Arr::get($content, 'management_name');
+									$alamat1 = Arr::get($content, 'management_address1');
+									$alamat2 = Arr::get($content, 'management_address2');
+									$alamat3 = Arr::get($content, 'management_address3');
+									$nokp = Config::get('payment.' . $cob . '.no_kp');
+									$pengguna = Config::get('payment.' . $cob . '.pengguna');
+									$sumber = Config::get('payment.' . $cob . '.sumber');
 
-								$params = [
-									'kodjabatan' => $kodjabatan,
-									'perkara' => strtoupper($perkara),
-									'amaun' => $amaun,
-									'kodhasil' => $kodhasil,
-									'namapelanggan' => strtoupper($namapelanggan),
-									'alamat1' => strtoupper($alamat1),
-									'alamat2' => strtoupper($alamat2),
-									'alamat3' => strtoupper($alamat3),
-									'nokp' => $nokp,
-									'pengguna' => $pengguna,
-									'sumber' => $sumber
-								];
+									$params = [
+										'kodjabatan' => $kodjabatan,
+										'perkara' => strtoupper($perkara),
+										'amaun' => $amaun,
+										'kodhasil' => $kodhasil,
+										'namapelanggan' => strtoupper($namapelanggan),
+										'alamat1' => strtoupper($alamat1),
+										'alamat2' => strtoupper($alamat2),
+										'alamat3' => strtoupper($alamat3),
+										'nokp' => $nokp,
+										'pengguna' => $pengguna,
+										'sumber' => $sumber
+									];
 
-								$res_janabil = (new Epay())->generateBil($params);
-								if ($res_janabil) {
-									if (isset($res_janabil->status) && $res_janabil->status == 1) {
-										if (!empty($res_janabil->noakaun)) {
-											$update = $order->update([
-												'jana_bil_no_akaun' => $res_janabil->noakaun,
-												'jana_bil_response' => json_encode($res_janabil),
-												'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
-											]);
+									$res_janabil = (new Epay())->generateBil($params);
+									if ($res_janabil) {
+										if (isset($res_janabil->status) && $res_janabil->status == 1) {
+											if (!empty($res_janabil->noakaun)) {
+												$update = $order->update([
+													'jana_bil_no_akaun' => $res_janabil->noakaun,
+													'jana_bil_response' => json_encode($res_janabil),
+													'jana_bil_created_at' => (!empty($res_janabil->timeres) ? date('Y-m-d H:i:s', strtotime($res_janabil->timeres)) : date('Y-m-d H:i:s')),
+												]);
 
-											if ($update) {
-												$proceed = true;
+												if ($update) {
+													$proceed = true;
+												}
 											}
+										} else {
+											return Redirect::back()->with('error', 'Fail! ' . isset($res_janabil->message) ? $res_janabil->message : '');
 										}
-									} else {
-										return Redirect::back()->with('error', 'Fail! ' . isset($res_janabil->message) ? $res_janabil->message : '');
 									}
 								}
 							}
-						}
 
-						/** proceed payment */
-						if ($proceed) {
-							$payment = (new Epay())->paymentOnline($order->jana_bil_no_akaun, $this->encodeID($order->id));
-							if (!empty($payment)) {
-								return Redirect::to($payment);
+							/** proceed payment */
+							if ($proceed) {
+								$payment = (new Epay())->paymentOnline($order->jana_bil_no_akaun, $this->encodeID($order->id));
+								if (!empty($payment)) {
+									return Redirect::to($payment);
+								}
+							}
+						} else if ($order->company->short_name == 'MBSJ') {
+							$update = $order->update([
+								'status' => EServiceOrder::INPROGRESS,
+							]);
+
+							if ($update) {
+								/**
+								 * Send an email to JMB / MC and copy to COB
+								 */
+								if (Config::get('mail.driver') != '') {
+									if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+										Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+											$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
+										});
+									}
+
+									if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
+										// send email
+									}
+								}
+
+								/**
+								 * add audit trail
+								 */
+								$module = Str::upper($this->getModule()['name']);
+								$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
+								$remarks = $module . ': ' . $order->email . " has submitted a new application";
+								$this->addAudit($order->file_id, $module, $remarks);
+
+								return Redirect::route('eservice.index')->with('success', trans('app.successes.saved_successfully'));
 							}
 						}
 					}
@@ -936,11 +1059,13 @@ class EServiceController extends BaseController
 								});
 							}
 
-							if ($order->user->isJMB() || $order->user->isMC()) {
-								if (!empty(Config::get('payment.mbpj.email_cob'))) {
-									Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
-										$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
-									});
+							if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
+								if ($order->company && $order->company->short_name == 'MBPJ') {
+									if (!empty(Config::get('payment.mbpj.email_cob'))) {
+										Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+											$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+										});
+									}
 								}
 							}
 						}
@@ -971,8 +1096,14 @@ class EServiceController extends BaseController
 		if (!empty($id)) {
 			$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
 			if ($order) {
-				if ($order->company && $order->company->short_name = 'MBPJ') {
+				if ($order->company && $order->company->short_name == 'MBPJ') {
 					if (!empty($request)) {
+						if (Arr::get($request, 'pg_ref_id')) {
+							$order->update([
+								'reference_id' => Arr::get($request, 'pg_ref_id'),
+							]);
+						}
+						
 						$status = EServiceOrderTransaction::PENDING;
 						if (Arr::get($request, 'pg_status') == 1) {
 							$status = EServiceOrderTransaction::APPROVED;
@@ -986,50 +1117,58 @@ class EServiceController extends BaseController
 							$message = $request['pg_desc'];
 						}
 
-						$transaction = EServiceOrderTransaction::create([
-							'eservice_order_id' => $order->id,
-							'payment_method' => Arr::get($request, 'pg_payment_type'),
-							'payment_amount' => Arr::get($request, 'pg_amount'),
-							'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
-							'payment_response' => json_encode($request),
-							'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
-							'status' => $status,
-						]);
+						if (Arr::get($request, 'pg_payment_type')) {
+							$transaction = EServiceOrderTransaction::updateOrCreate(
+								[
+									'eservice_order_id' => $order->id,
+									'payment_method' => Arr::get($request, 'pg_payment_type'),
+									'payment_amount' => Arr::get($request, 'pg_amount'),
+									'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
+									'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
+								],
+								[
+									'payment_response' => json_encode($request),
+									'status' => $status,
+								]
+							);
 
-						if ($transaction->status == EServiceOrderTransaction::APPROVED) {
-							$update = $order->update([
-								'status' => EServiceOrder::INPROGRESS,
-							]);
+							if ($transaction->status == EServiceOrderTransaction::APPROVED) {
+								$update = $order->update([
+									'status' => EServiceOrder::INPROGRESS,
+								]);
 
-							if ($update) {
-								/**
-								 * Send an email to JMB / MC and copy to COB
-								 */
-								if (Config::get('mail.driver') != '') {
-									if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
-										Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
-											$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
-										});
-									}
-
-									if ($order->user->isJMB() || $order->user->isMC()) {
-										if (!empty(Config::get('payment.mbpj.email_cob'))) {
-											Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
-												$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+								if ($update) {
+									/**
+									 * Send an email to JMB / MC and copy to COB
+									 */
+									if (Config::get('mail.driver') != '') {
+										if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+											Mail::send('emails.eservice.new_application', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+												$message->to($order->user->email, $order->user->full_name)->subject('New Application for e-Perkhidmatan');
 											});
 										}
+
+										if ($order->user->isJMB() || $order->user->isMC() || $order->user->isDeveloper()) {
+											if ($order->company && $order->company->short_name == 'MBPJ') {
+												if (!empty(Config::get('payment.mbpj.email_cob'))) {
+													Mail::send('emails.eservice.new_application_cob', array('model' => $order, 'date' => $order->created_at->toDayDateTimeString(), 'status' => $order->getStatusText()), function ($message) {
+														$message->to(Config::get('payment.mbpj.email_cob'), 'COB')->subject('New Application for e-Perkhidmatan');
+													});
+												}
+											}
+										}
 									}
+
+									/**
+									 * add audit trail
+									 */
+									$module = Str::upper($this->getModule()['name']);
+									$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
+									$remarks = $module . ': ' . $order->email . " has submitted a new application";
+									$this->addAudit($order->file_id, $module, $remarks);
+
+									return Redirect::route('eservice.index')->with('success', trans('app.successes.payment_successfully'));
 								}
-
-								/**
-								 * add audit trail
-								 */
-								$module = Str::upper($this->getModule()['name']);
-								$remarks = $module . ': Application #' . $order->order_no . ' has been submitted.';
-								$remarks = $module . ': ' . $order->email . " has submitted a new application";
-								$this->addAudit($order->file_id, $module, $remarks);
-
-								return Redirect::route('eservice.index')->with('success', trans('app.successes.payment_successfully'));
 							}
 						}
 					}
@@ -1129,6 +1268,10 @@ class EServiceController extends BaseController
 			'date' => 'required'
 		);
 
+		if (Auth::user()->getCOB && Auth::user()->getCOB->short_name == 'MBSJ') {
+			$rules['hijri_date'] = 'required';
+		}
+
 		if (isset($request['bill_no'])) {
 			foreach ($request['bill_no'] as $key => $bill_no) {
 				$rules['bill_no.' . $key] = 'required';
@@ -1145,9 +1288,10 @@ class EServiceController extends BaseController
 			]);
 		} else {
 			$date = $request['date'];
+			$hijri_date = isset($request['hijri_date']) ? $request['hijri_date'] : '';
 
 			foreach ($request['bill_no'] as $id => $bill_no) {
-				$this->approvedByID($date, $bill_no, $this->encodeID($id));
+				$this->approvedByID($date, $hijri_date, $bill_no, $this->encodeID($id));
 			}
 
 			return Response::json([
@@ -1205,43 +1349,51 @@ class EServiceController extends BaseController
 		$request = Request::all();
 		$rules = [];
 
-		$status = $request['status'];
+		$order = EServiceOrder::find($this->decodeID($id));
+		if ($order) {
+			$status = $request['status'];
 
-		$rules = array(
-			'status' => 'required',
-		);
+			$rules = array(
+				'status' => 'required',
+			);
 
-		if ($status == EServiceOrder::REJECTED) {
-			$rules['approval_remark'] = 'required';;
-		} else if ($status == EServiceOrder::APPROVED) {
-			$rules['bill_no'] = 'required';
-			$rules['date'] = 'required';
-		}
+			if ($status == EServiceOrder::REJECTED) {
+				$rules['approval_remark'] = 'required';;
+			} else if ($status == EServiceOrder::APPROVED) {
+				$rules['bill_no'] = 'required';
+				$rules['date'] = 'required';
 
-		$validator = Validator::make($request, $rules);
-
-		if ($validator->fails()) {
-			return Response::json([
-				'error' => true,
-				'errors' => $validator->errors(),
-				'message' => trans('Validation Fail')
-			]);
-		} else {
-			if ($status == EServiceOrder::APPROVED) {
-				$date = $request['date'];
-				$bill_no = $request['bill_no'];
-
-				$this->approvedByID($date, $bill_no, $id);
-			} else if ($status == EServiceOrder::REJECTED) {
-				$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
-
-				$this->rejectedByID($approval_remark, $id);
+				if ($order->company && $order->company->short_name == 'MBSJ') {
+					$rules['hijri_date'] = 'required';
+				}
 			}
 
-			return Response::json([
-				'success' => true,
-				'message' => trans('app.successes.updated_successfully')
-			]);
+			$validator = Validator::make($request, $rules);
+
+			if ($validator->fails()) {
+				return Response::json([
+					'error' => true,
+					'errors' => $validator->errors(),
+					'message' => trans('Validation Fail')
+				]);
+			} else {
+				if ($status == EServiceOrder::APPROVED) {
+					$date = $request['date'];
+					$hijri_date = isset($request['hijri_date']) ? $request['hijri_date'] : '';
+					$bill_no = $request['bill_no'];
+
+					$this->approvedByID($date, $hijri_date, $bill_no, $id);
+				} else if ($status == EServiceOrder::REJECTED) {
+					$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
+
+					$this->rejectedByID($approval_remark, $id);
+				}
+
+				return Response::json([
+					'success' => true,
+					'message' => trans('app.successes.updated_successfully')
+				]);
+			}
 		}
 
 		return Response::json([
@@ -1264,7 +1416,11 @@ class EServiceController extends BaseController
 				'order' => $order,
 			];
 
-			$pdf = PDF::loadView('eservice.' . Str::lower($order->company->short_name) . '.pdf.' . $type, $viewData)->setPaper('A4', 'portrait');
+			$pdf = PDF::loadView('eservice.' . Str::lower($order->company->short_name) . '.pdf.' . $type, $viewData, [], [
+				'isHtml5ParserEnabled' => true,
+				'isPhpEnabled' => true
+			])->setPaper('A4', 'portrait');
+
 			return $pdf->stream($filename);
 		}
 
@@ -1300,7 +1456,7 @@ class EServiceController extends BaseController
 
 			foreach ($files as $file) {
 				$destinationPath = Config::get('constant.file_directory.eservice');
-				$filename = date('YmdHis') . "_" . $file->getClientOriginalName();
+				$filename = date('YmdHis') . "_" . Helper::sanitizeFilename($file->getClientOriginalName());
 				$upload = $file->move($destinationPath, $filename);
 
 				if ($upload) {
@@ -1354,7 +1510,7 @@ class EServiceController extends BaseController
 	{
 		$management = [];
 
-		if (Auth::user()->isJMB()) {
+		if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
 			if (!empty(Auth::user()->file_id)) {
 				$file = Files::with(['strata'])->find(Auth::user()->file_id);
 				if ($file && $file->strata) {
@@ -1369,6 +1525,7 @@ class EServiceController extends BaseController
 							'city' => (!empty($file->managementMC->city) ? $file->managementMC->cities->description : ''),
 							'state' => (!empty($file->managementMC->state) ? $file->managementMC->states->name : ''),
 							'phone_no' => $file->managementMC->phone_no,
+							'email' => $file->managementMC->email,
 						];
 					} else if ($file->managementJMB && !empty($file->managementJMB->name)) {
 						$management = [
@@ -1381,6 +1538,7 @@ class EServiceController extends BaseController
 							'city' => (!empty($file->managementJMB->city) ? $file->managementJMB->cities->description : ''),
 							'state' => (!empty($file->managementJMB->state) ? $file->managementJMB->states->name : ''),
 							'phone_no' => $file->managementJMB->phone_no,
+							'email' => $file->managementJMB->email,
 						];
 					} else if ($file->managementDeveloper && !empty($file->managementDeveloper->name)) {
 						$management = [
@@ -1393,6 +1551,7 @@ class EServiceController extends BaseController
 							'city' => (!empty($file->managementDeveloper->city) ? $file->managementDeveloper->cities->description : ''),
 							'state' => (!empty($file->managementDeveloper->state) ? $file->managementDeveloper->states->name : ''),
 							'phone_no' => $file->managementDeveloper->phone_no,
+							'email' => '',
 						];
 					}
 				}
@@ -1408,7 +1567,7 @@ class EServiceController extends BaseController
 	{
 		$data = [];
 		$data['attributes'] = $this->getFormAttributes($cob, $type);
-		$data['fields'] = $this->getFormFields();
+		$data['fields'] = $this->getFormFields($cob);
 
 		if (!empty($order)) {
 			$data['model'] = json_decode($order->value, true);
@@ -1421,10 +1580,10 @@ class EServiceController extends BaseController
 		return $data;
 	}
 
-	public function getFormFields()
+	public function getFormFields($cob)
 	{
 		$module_config = $this->getModule();
-		$data = $module_config['fields'];
+		$data = $module_config['cob'][Str::lower($cob)]['fields'];
 
 		return $data;
 	}
@@ -1449,7 +1608,7 @@ class EServiceController extends BaseController
 		App::abort(404);
 	}
 
-	private function approvedByID($date, $bill_no, $id)
+	private function approvedByID($date, $hijri_date, $bill_no, $id)
 	{
 		$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
 		if ($order) {
@@ -1458,6 +1617,7 @@ class EServiceController extends BaseController
 			$success = $order->update([
 				'bill_no' => $bill_no,
 				'date' => $date,
+				'hijri_date' => $hijri_date,
 				'status' => EServiceOrder::APPROVED,
 				'approval_by' => Auth::user()->id,
 				'approval_date' => date('Y-m-d'),
@@ -1633,6 +1793,100 @@ class EServiceController extends BaseController
 		App::abort(404);
 	}
 
+	public function reconcile()
+	{
+		ini_set('max_execution_time', -1);
+
+		$response = [];
+		$request = Request::all();
+
+		$limit = (isset($request['limit']) ? $request['limit'] : null);
+
+		$orders = EServiceOrder::whereNotIn('status', [EServiceOrder::INPROGRESS, EServiceOrder::APPROVED])
+			->orderBy('id', 'desc')
+			->limit($limit)
+			->get();
+
+		if ($orders) {
+			foreach ($orders as $order) {
+				if (empty($order->approval_date)) {
+					$params = [];
+					$requestArray = [];
+
+					$orderId = $this->encodeID($order->id);
+
+					$reconcile = (new Epay())->reconcile($orderId);
+					
+					if (Arr::get($reconcile, 'status') && !empty(Arr::get($reconcile, 'response'))) {
+						$queryString = Arr::get($reconcile, 'response');
+						parse_str($queryString, $requestArray);
+
+						$callback = $this->callbackReconcile($orderId, $requestArray);
+
+						Arr::set($params, 'order_id', $order->id);
+						Arr::set($params, 'status', $callback);
+						Arr::set($params, 'response', $requestArray);
+
+						array_push($response, $params);
+					}
+				}
+			}
+		}
+
+		return $response;
+	}
+
+	public function callbackReconcile($id, $request)
+	{
+		if (!empty($id)) {
+			$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
+			if ($order) {
+				if ($order->company && $order->company->short_name == 'MBPJ') {
+					if (!empty($request)) {
+						$status = EServiceOrderTransaction::PENDING;
+						if (Arr::get($request, 'pg_status') == 1) {
+							$status = EServiceOrderTransaction::APPROVED;
+						} else if (Arr::get($request, 'pg_status') == 2) {
+							$status = EServiceOrderTransaction::FAILED;
+						} else if (Arr::get($request, 'pg_status') == 3) {
+							$status = EServiceOrderTransaction::REJECTED;
+						}
+
+						if (Arr::get($request, 'pg_payment_type')) {
+							$transaction = EServiceOrderTransaction::updateOrCreate(
+								[
+									'eservice_order_id' => $order->id,
+									'payment_method' => Arr::get($request, 'pg_payment_type'),
+									'payment_amount' => Arr::get($request, 'pg_amount'),
+									'payment_receipt_no' => Arr::get($request, 'pg_receipt_no'),
+									'payment_created_at' => (!empty(Arr::get($request, 'pg_payment_date')) ? date('Y-m-d H:i:s', strtotime(Arr::get($request, 'pg_payment_date'))) : date('Y-m-d H:i:s')),
+								],
+								[
+									'payment_response' => json_encode($request),
+									'status' => $status,
+								]
+							);
+
+							if ($transaction->status == EServiceOrderTransaction::APPROVED) {
+								$order->update([
+									'status' => EServiceOrder::INPROGRESS,
+								]);
+							} else if ($transaction->status == EServiceOrderTransaction::FAILED || $transaction->status == EServiceOrderTransaction::REJECTED) {
+								$order->update([
+									'status' => EServiceOrder::REJECTED,
+								]);
+							}
+						}
+					}
+				}
+
+				return $order->status;
+			}
+		}
+
+		return false;
+	}
+
 	private function getModule()
 	{
 		return $this->module['eservice'];
@@ -1654,7 +1908,7 @@ class EServiceController extends BaseController
 			App::abort(404);
 		}
 
-		if (!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name != "MBPJ")) {
+		if (!Auth::user()->hasAccessEservice()) {
 			App::abort(404);
 		}
 

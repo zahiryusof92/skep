@@ -11,15 +11,15 @@
   |
  */
 
- /**
+/**
  * Route for maintenance mode
  */
-Route::get('/systemUp', function() {
+Route::get('/systemUp', function () {
     Artisan::call('up');
 
     return Redirect::to('/');
 });
-Route::get('/systemDown', function() {
+Route::get('/systemDown', function () {
     if (Auth::user()->isSuperadmin()) {
         Artisan::call('down');
     }
@@ -37,6 +37,11 @@ Route::get('/test/testMail', 'TestController@testMail');
  * Route for search
  */
 Route::post('search', array('as' => 'search.index', 'uses' => 'SearchController@index'));
+
+/**
+ * Reconcile
+ */
+Route::get('eservice/reconcile', array('as' => 'eservice.reconcile', 'uses' => 'EServiceController@reconcile'));
 
 /*
  * LPHS REPORT START
@@ -70,6 +75,14 @@ Route::get('/lphs/electricity/{council}', 'LPHSController@electricity');
 Route::get('/lphs/uploadOCR/{council}', 'LPHSController@uploadOCR');
 Route::get('/lphs/commercial/{council}', 'LPHSController@commercial');
 Route::get('/lphs/extractData/{council}/{year}', 'LPHSController@extractData');
+Route::get('/lphs/agmHasBeenApproved/{council}', 'LPHSController@agmHasBeenApproved');
+Route::get('/lphs/exportOwner/{council}/{category}/{page}', 'LPHSController@exportOwner');
+Route::get('/lphs/activeStrata/{council}', 'LPHSController@activeStrata');
+Route::get('/lphs/exportFiles/{council}/{start}/{total}', 'LPHSController@exportFiles');
+Route::get('/lphs/fileInfo/{council}', 'LPHSController@fileInfo');
+Route::get('/lphs/fileSummary/{council}', 'LPHSController@fileSummary');
+Route::get('/lphs/auditedAccount/{council}', 'LPHSController@auditedAccount');
+Route::get('/lphs/totalUnit/{council}', 'LPHSController@totalUnit');
 
 /*
  * LPHS REPORT END
@@ -293,6 +306,9 @@ Route::post('/deleteMaintenanceStatement/{id}', 'AdminController@deleteMaintenan
 
 Route::post('/uploadIntegrityPledge', 'FileController@uploadIntegrityPledge');
 Route::post('/deleteIntegrityPledge/{id}', 'AdminController@deleteIntegrityPledge')->before('authMember');
+
+Route::post('/uploadSwornStatement', 'FileController@uploadSwornStatement');
+Route::post('/deleteSwornStatement/{id}', 'AdminController@deleteSwornStatement')->before('authMember');
 
 Route::post('/uploadReportAuditedFinancial', 'FileController@uploadReportAuditedFinancial');
 Route::post('/deleteReportAuditedFinancial/{id}', 'AdminController@deleteReportAuditedFinancial')->before('authMember');
@@ -782,6 +798,11 @@ Route::get('/reporting/viewStrataProfile/{id}', 'ReportController@viewStrataProf
 Route::get('/reporting/getStrataProfileFinance/{file_id}', array('as' => 'reporting.strataProfile.finance', 'uses' => 'ReportController@getStrataProfileFinance'))->before('authMember');
 Route::get('/print/strataProfile/{id}', 'PrintController@printStrataProfile')->before('authMember');
 
+// strata profile V2
+Route::get('/reporting/strataProfileV2', 'ReportController@strataProfileV2')->before('authMember');
+Route::get('/reporting/getStrataProfileV2', 'ReportController@getStrataProfileV2')->before('authMember');
+Route::get('/reporting/getStrataProfileAnalyticV2', 'ReportController@getStrataProfileAnalyticV2')->before('authMember');
+
 // owner tenant
 Route::get('/reporting/ownerTenant', 'ReportController@ownerTenant')->before('authMember');
 Route::get('/print/ownerTenant/file_id={id}', 'PrintController@printOwnerTenant')->before('authMember');
@@ -920,7 +941,7 @@ Route::post('/submitUpdateAgmPurchaseSub', 'AgmController@submitUpdateAgmPurchas
 Route::post('/deleteAgmPurchaseSub/{id}', 'AgmController@deleteAgmPurchaseSub')->before('authMember');
 
 
-Route::group(array('before' => 'authMember'), function() {
+Route::group(array('before' => 'authMember'), function () {
     /*
      * Category Setup Start
      */
@@ -1010,14 +1031,14 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('statusAGM/review', ['as' => 'statusAGM.review', 'uses' => 'PostponeAGMController@review']);
     Route::post('statusAGM/submitByCOB/{id}', ['as' => 'statusAGM.submitByCOB', 'uses' => 'PostponeAGMController@submitByCOB']);
     Route::post('statusAGM/approvalUpload', ['as' => 'statusAGM.approvalUpload', 'uses' => 'PostponeAGMController@approvalUpload']);
-    Route::resource('statusAGM', 'PostponeAGMController'); 
+    Route::resource('statusAGM', 'PostponeAGMController');
 
     /**
      * DLP
      */
     Route::post('dlp/fileUpload', ['as' => 'dlp.fileUpload', 'uses' => 'DlpController@fileUpload']);
     Route::get('dlp/deposit', ['as' => 'dlp.deposit', 'uses' => 'DlpController@deposit']);
-    Route::get('dlp/deposit/create', ['as' => 'dlp.deposit.create', 'uses' => 'DlpController@createDeposit']);    
+    Route::get('dlp/deposit/create', ['as' => 'dlp.deposit.create', 'uses' => 'DlpController@createDeposit']);
     Route::post('dlp/deposit/store', ['as' => 'dlp.deposit.store', 'uses' => 'DlpController@storeDeposit']);
     Route::get('dlp/deposit/list', ['as' => 'dlp.deposit.list', 'uses' => 'DlpController@listDeposit']);
     Route::get('dlp/deposit/show/{id}', ['as' => 'dlp.deposit.show', 'uses' => 'DlpController@showDeposit']);
@@ -1043,10 +1064,18 @@ Route::group(array('before' => 'authMember'), function() {
      * Ledger
      */
     Route::resource('ledger', 'LedgerController');
-    
+
     Route::post('epksStatement/submit/{id}', ['as' => 'epksStatement.submit', 'uses' => 'EpksStatementController@submit']);
     Route::get('epksStatement/print/{id}', ['as' => 'epksStatement.print', 'uses' => 'EpksStatementController@printStatement']);
     Route::resource('epksStatement', 'EpksStatementController');
+
+    /**
+     * TPPM
+     */
+    Route::post('tppm/fileUpload', ['as' => 'tppm.fileUpload', 'uses' => 'TPPMController@fileUpload']);
+    Route::get('tppm/{id}/pdf', ['as' => 'tppm.pdf', 'uses' => 'TPPMController@getPDF']);
+    Route::get('tppm/{id}/preview', ['as' => 'tppm.preview', 'uses' => 'TPPMController@getPreview']);
+    Route::resource('tppm', 'TPPMController');
 
     /**
      * Reporting
@@ -1060,7 +1089,9 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('reporting/statistic',  array('as' => 'report.statistic.index', 'uses' => 'ReportController@statistic'));
     Route::get('reporting/fileMovement',  array('as' => 'report.fileMovement.index', 'uses' => 'ReportController@fileMovement'));
     Route::post('export/fileMovement', array('as' => 'export.fileMovement', 'uses' => 'ExportController@fileMovement'))->before('authMember');
-    
+
+    Route::get('reporting/finance',  array('as' => 'report.finance.index', 'uses' => 'ReportController@finance'));
+
     /**
      * Data Sync
      */
@@ -1079,15 +1110,15 @@ Route::group(array('before' => 'authMember'), function() {
     Route::delete('update/deleteFileMovement/{id}', array('as' => 'cob.file-movement.destroy', 'uses' => 'CobFileMovementController@destroy'));
     Route::get('update/printFileMovement/{id}', array('as' => 'cob.file-movement.print', 'uses' => 'PrintController@printFileMovement'));
 
-     /** COB Audit Account */
-     Route::get('update/auditAccount/{file_id}', array('as' => 'cob.audit-account.index', 'uses' => 'CobAuditAccountController@index'));
-     Route::get('update/addAuditAccount/{file_id}', array('as' => 'cob.audit-account.create', 'uses' => 'CobAuditAccountController@create'));
-     Route::post('update/submitAddAuditAccount', array('as' => 'cob.audit-account.store', 'uses' => 'CobAuditAccountController@store'));
-     Route::get('update/updateAuditAccount/{id}/{file_id}', array('as' => 'cob.audit-account.edit', 'uses' => 'CobAuditAccountController@edit'));
-     Route::put('update/submitUpdateAuditAccount/{id}', array('as' => 'cob.audit-account.update', 'uses' => 'CobAuditAccountController@update'));
-     Route::delete('update/deleteAuditAccount/{id}', array('as' => 'cob.audit-account.destroy', 'uses' => 'CobAuditAccountController@destroy'));
-     Route::post('auditAccount/fileUpload',  array('as' => 'cob.audit-account.fileUpload', 'uses' => 'CobAuditAccountController@fileUpload'));
-     
+    /** COB Audit Account */
+    Route::get('update/auditAccount/{file_id}', array('as' => 'cob.audit-account.index', 'uses' => 'CobAuditAccountController@index'));
+    Route::get('update/addAuditAccount/{file_id}', array('as' => 'cob.audit-account.create', 'uses' => 'CobAuditAccountController@create'));
+    Route::post('update/submitAddAuditAccount', array('as' => 'cob.audit-account.store', 'uses' => 'CobAuditAccountController@store'));
+    Route::get('update/updateAuditAccount/{id}/{file_id}', array('as' => 'cob.audit-account.edit', 'uses' => 'CobAuditAccountController@edit'));
+    Route::put('update/submitUpdateAuditAccount/{id}', array('as' => 'cob.audit-account.update', 'uses' => 'CobAuditAccountController@update'));
+    Route::delete('update/deleteAuditAccount/{id}', array('as' => 'cob.audit-account.destroy', 'uses' => 'CobAuditAccountController@destroy'));
+    Route::post('auditAccount/fileUpload',  array('as' => 'cob.audit-account.fileUpload', 'uses' => 'CobAuditAccountController@fileUpload'));
+
     /**
      * COB Draft Reject
      */
@@ -1097,19 +1128,26 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('draft/reject/{id}', array('as' => 'file.draft.reject.show', 'uses' => 'DraftRejectController@show'));
 
     /**
+     * New AGM Submission
+     */
+    Route::resource('agm-minute', 'AGMMinuteController');
+    Route::post('agm-minute/getForm',  array('as' => 'agm-minute.getForm', 'uses' => 'AGMMinuteController@getForm'));
+    Route::post('agm-minute/fileUpload',  array('as' => 'agm-minute.fileUpload', 'uses' => 'AGMMinuteController@fileUpload'));
+
+    /**
      * MPS Sync
      */
     Route::get('mpsSync', 'MPSSyncController@index');
     Route::get('mpsSync/getFileList', 'MPSSyncController@getFileList');
     Route::get('mpsSync/getFinanceList', 'MPSSyncController@getFinanceList');
-    Route::post('mpsSync/destroy', 'MPSSyncController@destroy');   
-    Route::post('file/sync', 'Api\FileController@submitSync'); 
-    
+    Route::post('mpsSync/destroy', 'MPSSyncController@destroy');
+    Route::post('file/sync', 'Api\FileController@submitSync');
+
     /**
      * Finance
      */
     Route::get('finance/recalculateSummary', 'FinanceController@recalculateSummary');
-    
+
     /**
      * COB Letter
      */
@@ -1135,13 +1173,15 @@ Route::group(array('before' => 'authMember'), function() {
     Route::post('eservice/submitReject', ['as' => 'eservice.submitReject', 'uses' => 'EServiceController@submitReject']);
     Route::get('eservice/paymentHistory', array('as' => 'eservice.paymentHistory', 'uses' => 'EServiceController@paymentHistory'));
     Route::get('eservice/showPaymentHistory/{id}', array('as' => 'eservice.showPaymentHistory', 'uses' => 'EServiceController@showPaymentHistory'));
-
+    Route::get('eservice/view', ['as' => 'eservice.view', 'uses' => 'EServiceController@view']);
+    
     Route::resource('eservice', 'EServiceController');
     Route::get('eservice/create/{type}', array('as' => 'eservice.create', 'uses' => 'EServiceController@create'));
     Route::get('eservice/payment/{id}', array('as' => 'eservice.payment', 'uses' => 'EServiceController@payment'));
     Route::post('eservice/submitByCOB/{id}', ['as' => 'eservice.submitByCOB', 'uses' => 'EServiceController@submitByCOB']);
     Route::get('eservice/getLetterPDF/{id}', ['as' => 'eservice.getLetterPDF', 'uses' => 'EServiceController@getLetterPDF']);
     Route::get('eservice/getLetterWord/{id}', ['as' => 'eservice.getLetterWord', 'uses' => 'EServiceController@getLetterWord']);
+    
     /**
      * API Client
      */
@@ -1151,7 +1191,7 @@ Route::group(array('before' => 'authMember'), function() {
     Route::get('client/buildings/{id}/active', array('as' => 'clients.building.status.active', 'uses' => 'APIBuildingController@updateActive'));
     Route::get('client/buildings/{id}/inactive', array('as' => 'clients.building.status.inactive', 'uses' => 'APIBuildingController@updateInactive'));
     Route::post('client/buildings/logs', array('as' => 'clients.building.log', 'uses' => 'APIBuildingController@log'));
-    
+
     Route::resource('email_log', 'EmailLogController');
     Route::get('notification/markAll', array('as' => 'notification.markAll', 'uses' => 'NotificationController@markAll'));
     Route::resource('notification', 'NotificationController');
@@ -1160,7 +1200,7 @@ Route::group(array('before' => 'authMember'), function() {
 /** Transaction */
 Route::get('transaction/success', 'TransactionController@success');
 
-Route::group(array('prefix' => 'revenue'), function() {
+Route::group(array('prefix' => 'revenue'), function () {
     Route::get('transaction/pay', 'TransactionController@processRevenueMonster')->before('authMember');
     Route::post('transaction/success', 'TransactionController@revenueSuccess');
     Route::get('transaction/getOrderStatus', 'TransactionController@getRevenueTransactionStatus');
@@ -1168,7 +1208,7 @@ Route::group(array('prefix' => 'revenue'), function() {
     // Route::post('process', 'TransactionController@paymentProcess')->before('authMember');
 });
 
-Route::group(array('prefix' => 'transaction'), function() {
+Route::group(array('prefix' => 'transaction'), function () {
     Route::get('/', 'TransactionController@index')->before('authMember');
     Route::get('get', 'TransactionController@getTransaction')->before('authMember');
     Route::post('process', 'TransactionController@paymentProcess')->before('authMember');
@@ -1179,18 +1219,18 @@ Route::get('/{cob}/login', 'UserController@login')->before('guest');
 Route::get('/{cob}/logout', 'UserController@logout')->before('authMember');
 
 // Route group for API
-Route::group(array('prefix' => 'api/v1'), function() {
+Route::group(array('prefix' => 'api/v1'), function () {
     Route::post('sso/username-checking', 'Api\ApiController@SSOUsernameValidate');
     Route::post('sso/login', 'Api\ApiController@SSOLogin');
     Route::post('profile/update_simple', 'Api\ApiController@updateSimpleProfileInfo');
     Route::post('/login', 'Api\ApiController@login');
     Route::get('getCouncil', 'Api\ApiController@getCouncil');
-    
+
     /** 
      * Finance File API 
      */
     Route::post('oauth/token', 'Api\AuthController@token');
-    Route::group(array('prefix' => 'api', 'before' => 'jwt-auth'), function() {
+    Route::group(array('prefix' => 'api', 'before' => 'jwt-auth'), function () {
         Route::post('files/get', 'Api\FileController@get');
         Route::post('finance/new', 'FinanceAPIController@addNewFinance');
         // Route::post('addNewFinanceCheck', 'FinanceAPIController@addNewFinanceCheck');
@@ -1203,7 +1243,7 @@ Route::group(array('prefix' => 'api/v1'), function() {
     });
 });
 //API route
-Route::group(array('prefix' => 'api', 'before' => ['auth.basic', 'authMember']), function() {
+Route::group(array('prefix' => 'api', 'before' => ['auth.basic', 'authMember']), function () {
 
     Route::post('addNewFinanceFile', 'FinanceAPIController@addNewFinance');
     Route::post('updateFinanceFile', 'FinanceAPIController@updateFinance');
@@ -1211,7 +1251,7 @@ Route::group(array('prefix' => 'api', 'before' => ['auth.basic', 'authMember']),
     Route::post('importFinanceFile', 'FinanceAPIController@import');
 });
 
-Route::group(array('prefix' => 'api/v1/export'), function() {
+Route::group(array('prefix' => 'api/v1/export'), function () {
     Route::get('councilFacility', 'ExportController@exportCouncilFacility');
     Route::get('councilFacilityByStrata', 'ExportController@exportCouncilFacilityByStrata');
     Route::get('strataName', 'ExportController@strataName');
@@ -1223,7 +1263,7 @@ Route::group(array('prefix' => 'api/v1/export'), function() {
 });
 
 
-Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
+Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function () {
     Route::post('/editProfile', 'Api\ApiController@editProfile');
 
     Route::post('/files', 'Api\ApiController@files');
@@ -1250,7 +1290,7 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'jwt-auth'), function() {
     Route::get('getDashboardData', 'Api\ApiController@getDashboardData');
 });
 
-Route::group(array('prefix' => 'api/v2'), function() {
+Route::group(array('prefix' => 'api/v2'), function () {
     Route::post('/agmEgm', 'Api\ResidentApiController@agmEgm');
     Route::post('/designation', 'Api\ResidentApiController@designation');
     Route::post('/complaint', 'Api\ResidentApiController@complaint');
@@ -1259,9 +1299,9 @@ Route::group(array('prefix' => 'api/v2'), function() {
     Route::post('/deleteComplaint', 'Api\ResidentApiController@deleteComplaint');
 });
 
-Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember']), function() {
+Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember']), function () {
     Route::get('dashboard/getAnalyticData', 'Api\DashboardAnalyticController@getAnalyticData');
-    Route::group(array('prefix' => 'cob'), function() {
+    Route::group(array('prefix' => 'cob'), function () {
         Route::get('company/getOption', array('as' => 'v3.api.company.getOption', 'uses' => 'Api\CompanyController@getOption'));
         Route::get('company/getNameOption', array('as' => 'v3.api.company.getNameOption', 'uses' => 'Api\CompanyController@getNameOption'));
         Route::get('files/getOption',  array('as' => 'v3.api.files.getOption', 'uses' => 'Api\COBFileController@getOption'));
@@ -1270,9 +1310,11 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('strata/getOption',  array('as' => 'v3.api.strata.getOption', 'uses' => 'Api\StrataController@getOption'));
         Route::get('city/getOption',  array('as' => 'v3.api.city.getOption', 'uses' => 'Api\CityController@getOption'));
         Route::get('developer/getOption',  array('as' => 'v3.api.developer.getOption', 'uses' => 'Api\DeveloperController@getOption'));
+        Route::get('parliment/getOption',  array('as' => 'v3.api.parliment.getOption', 'uses' => 'Api\ParlimentController@getOption'));
         Route::get('dun/getOption',  array('as' => 'v3.api.dun.getOption', 'uses' => 'Api\DunController@getOption'));
         Route::get('area/getOption',  array('as' => 'v3.api.area.getOption', 'uses' => 'Api\AreaController@getOption'));
         Route::get('category/getOption',  array('as' => 'v3.api.category.getOption', 'uses' => 'Api\CategoryController@getOption'));
+        Route::get('park/getOption',  array('as' => 'v3.api.park.getOption', 'uses' => 'Api\ParkController@getOption'));
 
         Route::get('insurance/getAnalyticData', 'Api\InsuranceController@getAnalyticData');
         Route::get('insurance/getListing', 'Api\InsuranceController@getListing');
@@ -1292,13 +1334,13 @@ Route::group(array('prefix' => 'api/v3', 'before' => ['auth.basic', 'authMember'
         Route::get('eservice/getTypeOptions', array('as' => 'v3.api.eservice.getTypeOptions', 'uses' => 'Api\EServiceController@getTypeOptions'));
     });
 
-    Route::group(array('prefix' => 'finance'), function() {
+    Route::group(array('prefix' => 'finance'), function () {
         Route::get('file/getAnalyticData', 'Api\FinanceFileController@getAnalyticData');
         Route::get('support/getListing', 'Api\FinanceSupportController@getListing');
         Route::get('support/getAnalyticData', 'Api\FinanceSupportController@getAnalyticData');
     });
 
-    Route::group(array('prefix' => 'other'), function() {
+    Route::group(array('prefix' => 'other'), function () {
         Route::get('agent/getListing', 'Api\AgentController@getListing');
         Route::get('city/getListing', 'Api\CityController@getListing');
         Route::get('complaint/getListing', 'Api\ComplaintController@getListing');
@@ -1328,7 +1370,7 @@ Route::get('cronjob/createFile/{id}', 'CronjobController@createFile');
 Route::get('cronjob/updateFile/{id}', 'CronjobController@updateFile');
 Route::get('cronjob/deleteFile/{id}', 'CronjobController@deleteFile');
 
-Route::group(array('prefix' => 'api/v4'), function() {
+Route::group(array('prefix' => 'api/v4'), function () {
     // Files API
     Route::get('files', 'Api\FileController@files');
     Route::get('filesHouseScheme', 'Api\FileController@filesHouseScheme');

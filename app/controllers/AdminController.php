@@ -967,7 +967,7 @@ class AdminController extends BaseController
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
             if (count($house_scheme) <= 0) {
@@ -1022,7 +1022,7 @@ class AdminController extends BaseController
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $house_scheme = HouseSchemeDraft::firstOrNew(array('file_id' => $files->id));
                 $house_scheme->reference_id = $data['reference_id'];
 
@@ -1172,7 +1172,7 @@ class AdminController extends BaseController
             }
             /** End Arrange audit fields changes */
 
-            if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()) {
+            if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper()) {
                 $files->is_active = $is_active;
                 $files->save();
             }
@@ -1214,7 +1214,7 @@ class AdminController extends BaseController
             $house_scheme->save();
 
             # Audit Trail
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $remarks = 'House Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
@@ -1305,7 +1305,7 @@ class AdminController extends BaseController
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             $strata = StrataDraft::where('file_id', $files->id)->first();
             $residential = ResidentialDraft::where('file_id', $files->id)->first();
             $residential_extra = ResidentialExtra::where('file_id', $files->id)->get();
@@ -1444,7 +1444,7 @@ class AdminController extends BaseController
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $strata = StrataDraft::firstOrNew(array('file_id' => $files->id));
                 $commercial = CommercialDraft::firstOrNew(array('file_id' => $files->id));
                 $residential = ResidentialDraft::firstOrNew(array('file_id' => $files->id));
@@ -1555,7 +1555,7 @@ class AdminController extends BaseController
 
 
             /** Arrange audit fields changes */
-            if (!Auth::user()->isJMB() && !Auth::user()->isDeveloper()) {
+            if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper()) {
                 $audit_fields_changed = "";
                 $strata_title_field = $title == $strata->title ? "" : "strata title";
                 $strata_name_field = $name == $strata->name ? "" : "strata name";
@@ -1876,7 +1876,7 @@ class AdminController extends BaseController
                 $residential->sinking_fund_option = $residential_sinking_fund_option;
                 $residential->save();
 
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     $delete_old_residential_extra = ResidentialExtraDraft::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
                 } else {
                     $delete_old_residential_extra = ResidentialExtra::where('file_id', $residential->file_id)->where('strata_id', $residential->strata_id)->delete();
@@ -1886,7 +1886,7 @@ class AdminController extends BaseController
                     if ($total_residential_custom > 0) {
                         for ($i = 0; $i < $total_residential_custom; $i++) {
                             $custom_residential =  new ResidentialExtra();
-                            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                                 $custom_residential =  new ResidentialExtraDraft();
                             }
                             $custom_residential->file_id = $residential->file_id;
@@ -1901,7 +1901,7 @@ class AdminController extends BaseController
                     }
                 }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     ResidentialDraft::where('file_id', $files->id)->delete();
                 } else {
                     Residential::where('file_id', $files->id)->delete();
@@ -1917,7 +1917,7 @@ class AdminController extends BaseController
                 $commercial->sinking_fund_option = $commercial_sinking_fund_option;
                 $commercial->save();
 
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     $delete_old_commercial_extra = CommercialExtraDraft::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
                 } else {
                     $delete_old_commercial_extra = CommercialExtra::where('file_id', $commercial->file_id)->where('strata_id', $commercial->strata_id)->delete();
@@ -1927,7 +1927,7 @@ class AdminController extends BaseController
                     if ($total_commercial_custom > 0) {
                         for ($i = 0; $i < $total_commercial_custom; $i++) {
                             $custom_commercial =  new CommercialExtra();
-                            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                                 $custom_commercial =  new CommercialExtraDraft();
                             }
                             $custom_commercial->file_id = $commercial->file_id;
@@ -1942,7 +1942,7 @@ class AdminController extends BaseController
                     }
                 }
             } else {
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     CommercialDraft::where('file_id', $files->id)->delete();
                 } else {
                     Commercial::where('file_id', $files->id)->delete();
@@ -1978,7 +1978,7 @@ class AdminController extends BaseController
             $facility->save();
 
             # Audit Trail
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $remarks = 'Strata Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
@@ -2080,7 +2080,7 @@ class AdminController extends BaseController
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             $house_scheme = HouseSchemeDraft::where('file_id', $files->id)->first();
             $management = ManagementDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
@@ -2138,7 +2138,7 @@ class AdminController extends BaseController
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id'], $this->module['cob']['file']['name']));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $management = ManagementDraft::firstOrNew(array('file_id' => $files->id));
                 $management->reference_id = $data['reference_id'];
 
@@ -2174,7 +2174,7 @@ class AdminController extends BaseController
 
             /** Arrange audit fields changes */
             $audit_fields_changed = '';
-            if (!Auth::user()->isJMB()) {
+            if (!Auth::user()->isJMB() && !Auth::user()->isMC() && !Auth::user()->isDeveloper()) {
                 $is_developer_field = ((!empty($data['is_developer']) && !$management->is_developer) || (empty($data['is_developer']) && $management->is_developer)) ? "management developer" : "";
                 $liquidator_field = ((!empty($data['liquidator']) && !$management->liquidator) || (empty($data['liquidator']) && $management->liquidator)) ? "management liquidator" : "";
                 $is_jmb_field = ((!empty($data['is_jmb']) && !$management->is_jmb) || (empty($data['is_jmb']) && $management->is_jmb)) ? "management jmb" : "";
@@ -2580,7 +2580,7 @@ class AdminController extends BaseController
             }
 
             // developer
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 ManagementDeveloperDraft::where('file_id', $files->id)->delete();
                 for ($i = 0; $i < count($data['developer_name']); $i++) {
                     $developer = new ManagementDeveloperDraft;
@@ -2623,7 +2623,7 @@ class AdminController extends BaseController
             }
 
             // liquidator
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 ManagementLiquidatorDraft::where('file_id', $files->id)->delete();
                 for ($i = 0; $i < count($data['liquidator_name']); $i++) {
                     $liquidator = new ManagementLiquidatorDraft;
@@ -2666,7 +2666,7 @@ class AdminController extends BaseController
             }
 
             // jmb
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 ManagementJMBDraft::where('file_id', $files->id)->delete();
                 for ($i = 0; $i < count($data['jmb_name']); $i++) {
                     $jmb = new ManagementJMBDraft;
@@ -2711,7 +2711,7 @@ class AdminController extends BaseController
             }
 
             // mc
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 ManagementMCDraft::where('file_id', $files->id)->delete();
                 for ($i = 0; $i < count($data['mc_name']); $i++) {
                     $mc = new ManagementMCDraft;
@@ -2758,7 +2758,7 @@ class AdminController extends BaseController
             }
 
             // agent
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 ManagementAgentDraft::where('file_id', $files->id)->delete();
                 for ($i = 0; $i < count($data['agent_name']); $i++) {
                     $agent = new ManagementAgentDraft;
@@ -2801,7 +2801,7 @@ class AdminController extends BaseController
             }
 
             // others
-            if (Auth::user()->isJMB()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 ManagementOthersDraft::where('file_id', $files->id)->delete();
                 for ($i = 0; $i < count($data['others_name']); $i++) {
                     $others = new ManagementOthersDraft;
@@ -2842,7 +2842,7 @@ class AdminController extends BaseController
             }
 
             # Audit Trail
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $remarks = 'Management Info (' . $files->file_no . ')' . $this->module['audit']['text']['jmb_submit_updated'];
                 $this->addAudit($files->id, "COB File", $remarks);
             } else {
@@ -2864,7 +2864,7 @@ class AdminController extends BaseController
 
     public function viewMonitoring($id)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('updateFile/others/' . $id);
         }
         //get user permission
@@ -2892,7 +2892,7 @@ class AdminController extends BaseController
 
     public function monitoring($id)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('updateFile/others/' . $id);
         }
 
@@ -2915,6 +2915,10 @@ class AdminController extends BaseController
             'monitoring' => $monitoring,
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
+
+        if ($files->company && $files->company->short_name == 'MPKJ') {
+            return View::make('page_en.update_monitoring_new', $viewData);
+        }
 
         return View::make('page_en.update_monitoring', $viewData);
     }
@@ -3019,6 +3023,7 @@ class AdminController extends BaseController
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $type = $data['type'];
@@ -3050,6 +3055,7 @@ class AdminController extends BaseController
             $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->sworn_statement_url = $sworn_statement_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
             $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->type = $type;
@@ -3109,6 +3115,7 @@ class AdminController extends BaseController
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
 
@@ -3141,6 +3148,7 @@ class AdminController extends BaseController
             $new_line .= $strata_title_url != $agm_detail->strata_title_url ? "strata title, " : "";
             $new_line .= $maintenance_statement_url != $agm_detail->maintenance_statement_url ? "maintenance statement, " : "";
             $new_line .= $integrity_pledge_url != $agm_detail->integrity_pledge_url ? "integrity pledge, " : "";
+            $new_line .= $sworn_statement_url != $agm_detail->sworn_statement_url ? "sworn statement, " : "";
             $new_line .= $report_audited_financial_url != $agm_detail->report_audited_financial_url ? "report audited financial, " : "";
             $new_line .= $house_rules_url != $agm_detail->house_rules_url ? "house rules, " : "";
             if (!empty($new_line)) {
@@ -3175,6 +3183,7 @@ class AdminController extends BaseController
             $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->sworn_statement_url = $sworn_statement_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
             $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->save();
@@ -3523,6 +3532,21 @@ class AdminController extends BaseController
                 $result_new .= '</div>';
                 $result_new .= '</form>';
 
+                $result_new .= '<form id="upload_sworn_statement_edit" enctype="multipart/form-data" method="post" action="' . url("uploadSwornStatement") . '" autocomplete="off">';
+                $result_new .= '<div class="form-group row">';
+                $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_sworn_statement') . '</label></div>';
+                $result_new .= '<div class="col-md-6">';
+                $result_new .= '<button type="button" id="clear_sworn_statement_edit" class="btn btn-xs btn-danger" onclick="clearReportAuditedFinancialEdit()" style="display: none;"><i class="fa fa-times"></i></button>&nbsp;';
+                $result_new .= '<input type="file" name="sworn_statement_edit" id="sworn_statement_edit">';
+                $result_new .= '<div id="validation-sworn_statement_edit"></div>';
+                if ($agm->sworn_statement_url != "") {
+                    $result_new .= '<div id="btn_sworn_statement_edit"><a href="' . asset($agm->sworn_statement_url) . '" target="_blank"><button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download File"><i class="icmn-file-download2"></i> ' . trans('app.forms.download') . '</button></a>&nbsp;';
+                    $result_new .= '<button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteSwornStatement(\'' . Helper::encode($agm->id) . '\')"><i class="fa fa-times"></i></button></div>';
+                }
+                $result_new .= '</div>';
+                $result_new .= '</div>';
+                $result_new .= '</form>';
+
                 $result_new .= '<form id="upload_report_audited_financial_edit" enctype="multipart/form-data" method="post" action="' . url("uploadReportAuditedFinancial") . '" autocomplete="off">';
                 $result_new .= '<div class="form-group row">';
                 $result_new .= '<div class="col-md-6"><label class="form-control-label">' . trans('app.forms.upload_report_audited_financial') . '</label></div>';
@@ -3567,140 +3591,313 @@ class AdminController extends BaseController
 
     public function getAGM($file_id)
     {
-        $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $file = Files::find(Helper::decode($file_id));
 
-        if (count($agm_detail) > 0) {
-            $data = array();
-            foreach ($agm_detail as $agm_details) {
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
-                            data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
-                            data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
-                            data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
-                            data-audit_start_date_raw="' . ($agm_details->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_start_date)) : '') . '"
-                            data-audit_end_date_raw="' . ($agm_details->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_end_date)) : '') . '"
-                            data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
-                                <i class="fa fa-pencil"></i>
-                            </button>
-                            &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
-                                <i class="fa fa-trash""></i>
-                            </button>';
+        if ($file->company && $file->company->short_name == 'MPKJ') {
+            if (Request::ajax()) {
+                $condition = '';
+                if (!Auth::user()->getAdmin()) {
+                    if (!empty(Auth::user()->file_id)) {
+                        $condition = function ($query) {
+                            $query->where('agm_minutes.file_id', Auth::user()->file_id);
+                        };
+                    } else if (!empty($file_id)) {
+                        $condition = function ($query) use ($file_no) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                } else {
+                    if (!empty($file_id)) {
+                        $condition = function ($query) use ($file) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                }
+                $model = AGMMinute::join('files', 'agm_minutes.file_id', '=', 'files.id')
+                    ->where(function ($query) use ($condition) {
+                        if (!empty($condition)) {
+                            $query->where($condition);
+                        }
+                    })
+                    ->selectRaw("agm_minutes.*, files.file_no")
+                    ->where('agm_minutes.type', 'jmb')
+                    ->where('agm_minutes.is_deleted', 0)
+                    ->orderBy('agm_minutes.created_at', "desc");
 
-                if ($agm_details->agm_date == "0000-00-00") {
-                    $date_agm = '';
-                } else {
-                    $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
-                }
-                if ($agm_details->audit_start_date == "0000-00-00") {
-                    $date_audit_start = '';
-                } else {
-                    $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
-                }
-                if ($agm_details->audit_end_date == "0000-00-00") {
-                    $date_audit_end = '';
-                } else {
-                    $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
-                }
-                if ($agm_details->agm == 0 || $agm_details->agm == "") {
-                    $status1 = '';
-                } else {
-                    $status1 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->egm == 0 || $agm_details->egm == "") {
-                    $status2 = '';
-                } else {
-                    $status2 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
-                    $status3 = '';
-                } else {
-                    $status3 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_integrity_url == "") {
-                    $status4 = '';
-                } else {
-                    $status4 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_bankruptcy_url == "") {
-                    $status5 = '';
-                } else {
-                    $status5 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
-                    $status6 = '';
-                } else {
-                    $status6 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
-                    $status7 = '';
-                } else {
-                    $status7 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
-                    $status8 = '';
-                } else {
-                    $status8 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
-                    $status9 = '';
-                } else {
-                    $status9 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->audit_report_url == "") {
-                    $status10 = '';
-                } else {
-                    $status10 = '<i class="icmn-checkmark4"></i>';
-                }
+                return Datatables::of($model)
+                    ->editColumn('file_id', function ($model) {
+                        return $model->file_no;
+                    })
+                    ->editColumn('agm_type', function ($model) {
+                        return strtoupper($model->agm_type);
+                    })
+                    ->editColumn('description', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                $content .= $configs['questions'][str_replace("_file_url", "", $key)]['label'] . "<br/>";
+                            }
+                        }
+                        return $content;
+                    })
+                    ->editColumn('updated_at', function ($model) {
+                        return date('d-M-Y', strtotime($model->updated_at));
+                    })
+                    ->addColumn('check_status', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                if ($val == "") {
+                                    $status = '<i class="icmn-cross"></i>';
+                                } else {
+                                    $status = '<i class="icmn-checkmark"></i>';
+                                }
+                                if (!empty($configs['questions'][str_replace("_file_url", "", $key)])) {
+                                    $content .= "$status<br/>";
+                                }
+                            }
+                        }
+                        return $content;
+                    })
+                    ->addColumn('action', function ($model) {
+                        $btn = '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit"' .
+                            'data-id="' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" data-type="' . $model->type . '" data-agm_type="' . $model->agm_type . '" data-agm_date="' . $model->agm_date . '" ' .
+                            'data-is_first="' . $model->is_first . '" data-remarks="' . $model->remarks . '"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
+                        $btn .= '<form action="' . route('agm-minute.destroy', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" style="display:inline-block;">';
+                        $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form>';
 
-                $data_raw = array(
-                    $date_agm,
-                    trans('app.forms.annual_general_meeting') . '<br/>'
-                        . trans('app.forms.extra_general_meeting') . '<br/>'
-                        . trans('app.forms.meeting_minutes') . '<br/>'
-                        . trans('app.forms.pledge_letter_of_integrity') . '<br>'
-                        . trans('app.forms.declaration_letter_of_non_bankruptcy'),
-                    $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
-                    trans('app.forms.jmc_spa_copy') . '<br/>'
-                        . trans('app.forms.identity_card_list') . '<br/>'
-                        . trans('app.forms.attendance_list'),
-                    $status6 . '<br/>' . $status7 . '<br/>' . $status8,
-                    trans('app.forms.audited_financial_report') . '<br/>'
-                        . trans('app.forms.financial_audit_start_date') . '<br/>'
-                        . trans('app.forms.financial_audit_end_date') . '<br/>'
-                        . trans('app.forms.financial_audit_report'),
-                    $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
-                    date('d-M-Y', strtotime($agm_details->updated_at)),
-                    $button
+                        return $btn;
+                    })
+                    ->make(true);
+            }
+        } else {
+            $agm_detail = MeetingDocument::where('file_id', $file->id)->where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+            if (count($agm_detail) > 0) {
+                $data = array();
+                foreach ($agm_detail as $agm_details) {
+                    $button = "";
+                    $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
+                                data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
+                                data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
+                                data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
+                                data-audit_start_date_raw="' . ($agm_details->audit_start_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_start_date)) : '') . '"
+                                data-audit_end_date_raw="' . ($agm_details->audit_end_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->audit_end_date)) : '') . '"
+                                data-audit_report_file_url="' . $agm_details->audit_report_url . '" data-letter_integrity_url="' . $agm_details->letter_integrity_url . '" data-letter_bankruptcy_url="' . $agm_details->letter_bankruptcy_url . '">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                &nbsp;';
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
+                                    <i class="fa fa-trash""></i>
+                                </button>';
+
+                    if ($agm_details->agm_date == "0000-00-00") {
+                        $date_agm = '';
+                    } else {
+                        $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
+                    }
+                    if ($agm_details->audit_start_date == "0000-00-00") {
+                        $date_audit_start = '';
+                    } else {
+                        $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
+                    }
+                    if ($agm_details->audit_end_date == "0000-00-00") {
+                        $date_audit_end = '';
+                    } else {
+                        $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
+                    }
+                    if ($agm_details->agm == 0 || $agm_details->agm == "") {
+                        $status1 = '';
+                    } else {
+                        $status1 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->egm == 0 || $agm_details->egm == "") {
+                        $status2 = '';
+                    } else {
+                        $status2 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
+                        $status3 = '';
+                    } else {
+                        $status3 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_integrity_url == "") {
+                        $status4 = '';
+                    } else {
+                        $status4 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_bankruptcy_url == "") {
+                        $status5 = '';
+                    } else {
+                        $status5 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
+                        $status6 = '';
+                    } else {
+                        $status6 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
+                        $status7 = '';
+                    } else {
+                        $status7 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
+                        $status8 = '';
+                    } else {
+                        $status8 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
+                        $status9 = '';
+                    } else {
+                        $status9 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->audit_report_url == "") {
+                        $status10 = '';
+                    } else {
+                        $status10 = '<i class="icmn-checkmark4"></i>';
+                    }
+
+                    $data_raw = array(
+                        $date_agm,
+                        trans('app.forms.annual_general_meeting') . '<br/>'
+                            . trans('app.forms.extra_general_meeting') . '<br/>'
+                            . trans('app.forms.meeting_minutes') . '<br/>'
+                            . trans('app.forms.pledge_letter_of_integrity') . '<br>'
+                            . trans('app.forms.declaration_letter_of_non_bankruptcy'),
+                        $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
+                        trans('app.forms.jmc_spa_copy') . '<br/>'
+                            . trans('app.forms.identity_card_list') . '<br/>'
+                            . trans('app.forms.attendance_list'),
+                        $status6 . '<br/>' . $status7 . '<br/>' . $status8,
+                        trans('app.forms.audited_financial_report') . '<br/>'
+                            . trans('app.forms.financial_audit_start_date') . '<br/>'
+                            . trans('app.forms.financial_audit_end_date') . '<br/>'
+                            . trans('app.forms.financial_audit_report'),
+                        $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
+                        date('d-M-Y', strtotime($agm_details->updated_at)),
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+                $output_raw = array(
+                    "aaData" => $data
                 );
 
-                array_push($data, $data_raw);
+                $output = json_encode($output_raw);
+                return $output;
+            } else {
+                $output_raw = array(
+                    "aaData" => []
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
             }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
         }
     }
 
     public function getAGMByMC($file_id)
     {
-        $agm_detail = MeetingDocument::where('file_id', Helper::decode($file_id))->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $file = Files::find(Helper::decode($file_id));
 
-        if (count($agm_detail) > 0) {
-            $data = array();
-            foreach ($agm_detail as $agm_details) {
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
+        if ($file->company && $file->company->short_name == 'MPKJ') {
+            if (Request::ajax()) {
+                $condition = '';
+                if (!Auth::user()->getAdmin()) {
+                    if (!empty(Auth::user()->file_id)) {
+                        $condition = function ($query) {
+                            $query->where('agm_minutes.file_id', Auth::user()->file_id);
+                        };
+                    } else if (!empty($file_id)) {
+                        $condition = function ($query) use ($file) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                } else {
+                    if (!empty($file_id)) {
+                        $condition = function ($query) use ($file) {
+                            $query->where('agm_minutes.file_id', $file->id);
+                        };
+                    }
+                }
+                $model = AGMMinute::join('files', 'agm_minutes.file_id', '=', 'files.id')
+                    ->where(function ($query) use ($condition) {
+                        if (!empty($condition)) {
+                            $query->where($condition);
+                        }
+                    })
+                    ->selectRaw("agm_minutes.*, files.file_no")
+                    ->where('agm_minutes.type', 'mc')
+                    ->where('agm_minutes.is_deleted', 0)
+                    ->orderBy('agm_minutes.created_at', "desc");
+
+                return Datatables::of($model)
+                    ->editColumn('file_id', function ($model) {
+                        return $model->file_no;
+                    })
+                    ->editColumn('agm_type', function ($model) {
+                        return strtoupper($model->agm_type);
+                    })
+                    ->editColumn('description', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                $content .= $configs['questions'][str_replace("_file_url", "", $key)]['label'] . "<br/>";
+                            }
+                        }
+                        return $content;
+                    })
+                    ->editColumn('updated_at', function ($model) {
+                        return date('d-M-Y', strtotime($model->updated_at));
+                    })
+                    ->addColumn('check_status', function ($model) {
+                        $questions = unserialize($model->description);
+                        $configs = (new AGMMinuteController())->getFormFields($model);
+                        $content = '';
+                        foreach ($questions as $key => $val) {
+                            if (str_contains($key, '_url')) {
+                                if ($val == "") {
+                                    $status = '<i class="icmn-cross"></i>';
+                                } else {
+                                    $status = '<i class="icmn-checkmark"></i>';
+                                }
+                                if (!empty($configs['questions'][str_replace("_file_url", "", $key)])) {
+                                    $content .= "$status<br/>";
+                                }
+                            }
+                        }
+                        return $content;
+                    })
+                    ->addColumn('action', function ($model) {
+                        $btn = '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit"' .
+                            'data-id="' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" data-type="' . $model->type . '" data-agm_type="' . $model->agm_type . '" data-agm_date="' . $model->agm_date . '" ' .
+                            'data-is_first="' . $model->is_first . '" data-remarks="' . $model->remarks . '"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
+                        $btn .= '<form action="' . route('agm-minute.destroy', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" style="display:inline-block;">';
+                        $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form>';
+
+                        return $btn;
+                    })
+                    ->make(true);
+            }
+        } else {
+            $agm_detail = MeetingDocument::where('file_id', $file->id)->where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+            if (count($agm_detail) > 0) {
+                $data = array();
+                foreach ($agm_detail as $agm_details) {
+                    $button = "";
+                    $button .= '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="getAGMDetails(\'' . Helper::encode($agm_details->id) . '\')"
                             data-agm_id="' . Helper::encode($agm_details->id) . '" data-agm_date="' . ($agm_details->agm_date != '0000-00-00' ? $agm_details->agm_date : '') . '"
                             data-agm_date_raw="' . ($agm_details->agm_date != '0000-00-00' ? date('d-m-Y', strtotime($agm_details->agm_date)) : '') . '"
                             data-audit_start_date="' . $agm_details->audit_start_date . '" data-audit_end_date="' . $agm_details->audit_end_date . '"
@@ -3710,112 +3907,113 @@ class AdminController extends BaseController
                                 <i class="fa fa-pencil"></i>
                             </button>
                             &nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
+                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAGMDetails(\'' . Helper::encode($agm_details->id) . '\')">
                                 <i class="fa fa-trash""></i>
                             </button>';
 
-                if ($agm_details->agm_date == "0000-00-00") {
-                    $date_agm = '';
-                } else {
-                    $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
-                }
-                if ($agm_details->audit_start_date == "0000-00-00") {
-                    $date_audit_start = '';
-                } else {
-                    $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
-                }
-                if ($agm_details->audit_end_date == "0000-00-00") {
-                    $date_audit_end = '';
-                } else {
-                    $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
-                }
-                if ($agm_details->agm == 0 || $agm_details->agm == "") {
-                    $status1 = '';
-                } else {
-                    $status1 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->egm == 0 || $agm_details->egm == "") {
-                    $status2 = '';
-                } else {
-                    $status2 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
-                    $status3 = '';
-                } else {
-                    $status3 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_integrity_url == "") {
-                    $status4 = '';
-                } else {
-                    $status4 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->letter_bankruptcy_url == "") {
-                    $status5 = '';
-                } else {
-                    $status5 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
-                    $status6 = '';
-                } else {
-                    $status6 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
-                    $status7 = '';
-                } else {
-                    $status7 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
-                    $status8 = '';
-                } else {
-                    $status8 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
-                    $status9 = '';
-                } else {
-                    $status9 = '<i class="icmn-checkmark4"></i>';
-                }
-                if ($agm_details->audit_report_url == "") {
-                    $status10 = '';
-                } else {
-                    $status10 = '<i class="icmn-checkmark4"></i>';
-                }
+                    if ($agm_details->agm_date == "0000-00-00") {
+                        $date_agm = '';
+                    } else {
+                        $date_agm = date('d-M-Y', strtotime($agm_details->agm_date));
+                    }
+                    if ($agm_details->audit_start_date == "0000-00-00") {
+                        $date_audit_start = '';
+                    } else {
+                        $date_audit_start = date('d-M-Y', strtotime($agm_details->audit_start_date));
+                    }
+                    if ($agm_details->audit_end_date == "0000-00-00") {
+                        $date_audit_end = '';
+                    } else {
+                        $date_audit_end = date('d-M-Y', strtotime($agm_details->audit_end_date));
+                    }
+                    if ($agm_details->agm == 0 || $agm_details->agm == "") {
+                        $status1 = '';
+                    } else {
+                        $status1 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->egm == 0 || $agm_details->egm == "") {
+                        $status2 = '';
+                    } else {
+                        $status2 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->minit_meeting == 0 || $agm_details->minit_meeting == "") {
+                        $status3 = '';
+                    } else {
+                        $status3 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_integrity_url == "") {
+                        $status4 = '';
+                    } else {
+                        $status4 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->letter_bankruptcy_url == "") {
+                        $status5 = '';
+                    } else {
+                        $status5 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->jmc_spa == 0 || $agm_details->jmc_spa == "") {
+                        $status6 = '';
+                    } else {
+                        $status6 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->identity_card == 0 || $agm_details->identity_card == "") {
+                        $status7 = '';
+                    } else {
+                        $status7 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->attendance == 0 || $agm_details->attendance == "") {
+                        $status8 = '';
+                    } else {
+                        $status8 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->financial_report == 0 || $agm_details->financial_report == "") {
+                        $status9 = '';
+                    } else {
+                        $status9 = '<i class="icmn-checkmark4"></i>';
+                    }
+                    if ($agm_details->audit_report_url == "") {
+                        $status10 = '';
+                    } else {
+                        $status10 = '<i class="icmn-checkmark4"></i>';
+                    }
 
-                $data_raw = array(
-                    $date_agm,
-                    trans('app.forms.annual_general_meeting') . '<br/>'
-                        . trans('app.forms.extra_general_meeting') . '<br/>'
-                        . trans('app.forms.meeting_minutes') . '<br/>'
-                        . trans('app.forms.pledge_letter_of_integrity') . '<br>'
-                        . trans('app.forms.declaration_letter_of_non_bankruptcy'),
-                    $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
-                    trans('app.forms.jmc_spa_copy') . '<br/>'
-                        . trans('app.forms.identity_card_list') . '<br/>'
-                        . trans('app.forms.attendance_list'),
-                    $status6 . '<br/>' . $status7 . '<br/>' . $status8,
-                    trans('app.forms.audited_financial_report') . '<br/>'
-                        . trans('app.forms.financial_audit_start_date') . '<br/>'
-                        . trans('app.forms.financial_audit_end_date') . '<br/>'
-                        . trans('app.forms.financial_audit_report'),
-                    $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
-                    date('d-M-Y', strtotime($agm_details->updated_at)),
-                    $button
+                    $data_raw = array(
+                        $date_agm,
+                        trans('app.forms.annual_general_meeting') . '<br/>'
+                            . trans('app.forms.extra_general_meeting') . '<br/>'
+                            . trans('app.forms.meeting_minutes') . '<br/>'
+                            . trans('app.forms.pledge_letter_of_integrity') . '<br>'
+                            . trans('app.forms.declaration_letter_of_non_bankruptcy'),
+                        $status1 . '<br/>' . $status2 . '<br/>' . $status3 . '<br/>' . $status4 . '<br/>' . $status5,
+                        trans('app.forms.jmc_spa_copy') . '<br/>'
+                            . trans('app.forms.identity_card_list') . '<br/>'
+                            . trans('app.forms.attendance_list'),
+                        $status6 . '<br/>' . $status7 . '<br/>' . $status8,
+                        trans('app.forms.audited_financial_report') . '<br/>'
+                            . trans('app.forms.financial_audit_start_date') . '<br/>'
+                            . trans('app.forms.financial_audit_end_date') . '<br/>'
+                            . trans('app.forms.financial_audit_report'),
+                        $status9 . '<br/>' . $date_audit_start . '<br/>' . $date_audit_end . '<br/>' . $status10,
+                        date('d-M-Y', strtotime($agm_details->updated_at)),
+                        $button
+                    );
+
+                    array_push($data, $data_raw);
+                }
+                $output_raw = array(
+                    "aaData" => $data
                 );
 
-                array_push($data, $data_raw);
+                $output = json_encode($output_raw);
+                return $output;
+            } else {
+                $output_raw = array(
+                    "aaData" => []
+                );
+
+                $output = json_encode($output_raw);
+                return $output;
             }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
         }
     }
 
@@ -4303,7 +4501,7 @@ class AdminController extends BaseController
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         $files = Files::with(['buyer'])->findOrFail(Helper::decode($id));
 
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             $other_details = OtherDetailsDraft::where('file_id', $files->id)->first();
             $image = OtherDetailsDraft::where('file_id', $files->id)->first();
             if (count($other_details) <= 0) {
@@ -4357,7 +4555,7 @@ class AdminController extends BaseController
             // if(empty($response->status) == false && $response->status == 200) {
 
             $files = Files::findOrFail(Helper::decode($data['file_id']));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 $others = OtherDetailsDraft::firstOrNew(array('file_id' => $files->id));
                 $others->reference_id = $data['reference_id'];
 
@@ -4627,7 +4825,7 @@ class AdminController extends BaseController
 
     public function viewScoring($id)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -4654,7 +4852,7 @@ class AdminController extends BaseController
 
     public function scoring($id)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -5036,7 +5234,7 @@ class AdminController extends BaseController
     public function viewBuyer($id)
     {
         //get user permission
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -5064,7 +5262,7 @@ class AdminController extends BaseController
 
     public function buyer($id)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         if (Auth::user()->isPreSale()) {
@@ -5622,7 +5820,7 @@ class AdminController extends BaseController
     //document
     public function document($id)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             return Redirect::to('update/monitoring/' . $id);
         }
 
@@ -8933,6 +9131,39 @@ class AdminController extends BaseController
         }
     }
 
+    public function deleteSwornStatement()
+    {
+        $data = Input::all();
+        if (Request::ajax()) {
+
+            ## EAI Call
+            // $url = $this->eai_domain . $this->eai_route['file']['cob']['monitoring']['delete']['reportAuditedFinancial'];
+            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
+            //                         $url,
+            //                         json_encode($data))));
+            // if(empty($response->status) == false && $response->status == 200) {
+
+            $id = Helper::decode($data['id']);
+
+            $agm_details = MeetingDocument::findOrFail($id);
+            $agm_details->sworn_statement_url = "";
+            $deleted = $agm_details->save();
+            if ($deleted) {
+                # Audit Trail
+                $files = Files::find($agm_details->file_id);
+                $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_details->agm_date)) . ' report audited financial file' . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($files->id, "COB File", $remarks);
+
+                return "true";
+            } else {
+                return "false";
+            }
+            // } else {
+            //     return "false";
+            // }
+        }
+    }
+
     public function deleteReportAuditedFinancial()
     {
         $data = Input::all();
@@ -9349,7 +9580,7 @@ class AdminController extends BaseController
             return View::make('insurance_en.insurance', $viewData);
         } else {
             $file = Files::findOrFail(Helper::decode($id));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
@@ -9397,9 +9628,9 @@ class AdminController extends BaseController
     {
         if ($id == 'All') {
             if (!empty(Auth::user()->file_id)) {
-                $insurance = Insurance::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $insurance = Insurance::has('file')->where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
             } else {
-                $insurance = Insurance::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $insurance = Insurance::has('file')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
             }
 
             if ($insurance) {
@@ -9418,8 +9649,10 @@ class AdminController extends BaseController
                             }
                         } else {
                             if (!empty(Session::get('admin_cob'))) {
-                                if ($insurances->file->company_id != Session::get('admin_cob')) {
-                                    continue;
+                                if ($insurances->file) {
+                                    if ($insurances->file->company_id != Session::get('admin_cob')) {
+                                        continue;
+                                    }
                                 }
                             }
                         }
@@ -9531,7 +9764,7 @@ class AdminController extends BaseController
                     $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_deleted'];
                     $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
-                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9606,7 +9839,7 @@ class AdminController extends BaseController
             return View::make('insurance_en.add_insurance', $viewData);
         } else {
             $file = Files::findOrFail(Helper::decode($id));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
@@ -9680,7 +9913,7 @@ class AdminController extends BaseController
                 $remarks = 'Insurance (' . $insurance->id . ')' . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($insurance->file->id, "Insurance", $remarks);
 
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -9753,11 +9986,11 @@ class AdminController extends BaseController
             return View::make('insurance_en.edit_insurance', $viewData);
         } else {
             $file = Files::findOrFail(Helper::decode($id));
-            if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+            if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                 return Redirect::to('updateFile/others/' . $id);
             }
             if ($file) {
-                $insurance = Insurance::where('file_id', $file->id)->first();
+                $insurance = Insurance::findOrFail(Helper::decode($file_id));
                 $image = OtherDetails::where('file_id', $file->id)->first();
                 $disallow = Helper::isAllow($file->id, $file->company_id, !AccessGroup::hasUpdate(3));
                 if ($disallow) {
@@ -9854,7 +10087,7 @@ class AdminController extends BaseController
                         $this->addAudit($insurance->file->id, "Insurance", $remarks);
                     }
 
-                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -9914,7 +10147,7 @@ class AdminController extends BaseController
     //finance support
     public function financeSupport($id)
     {
-        if ((Auth::user()->isJMB() || Auth::user()->isDeveloper()) || Auth::user()->isPreSale()) {
+        if ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) || Auth::user()->isPreSale()) {
             return Redirect::to('update/monitoring/' . $id);
         }
         //get user permission
@@ -10026,7 +10259,7 @@ class AdminController extends BaseController
                     $remarks = 'COB File (' . $files->file_no . ') has a Finance Support with id : ' . $finance->id .  $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB Finance Support", $remarks);
 
-                    if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -10115,7 +10348,7 @@ class AdminController extends BaseController
                             $this->addAudit($files->id, "COB Finance Support", $remarks);
                         }
 
-                        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -10169,7 +10402,7 @@ class AdminController extends BaseController
 
     public function createOrUpdateFileDraft($files)
     {
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             $draft = FileDrafts::firstOrNew(array('file_id' => $files->id));
             $draft->created_by = Auth::user()->id;
             $draft->is_deleted = 0;

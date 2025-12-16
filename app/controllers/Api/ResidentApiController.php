@@ -3,6 +3,7 @@
 namespace Api;
 
 use BaseController;
+use Helper\Helper;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Files;
@@ -13,6 +14,7 @@ use MeetingDocument;
 use AJKDetails;
 
 class ResidentApiController extends BaseController {
+
 
     public function agmEgm() {
         $result = array();
@@ -73,6 +75,7 @@ class ResidentApiController extends BaseController {
                                 'strata_title_url' => ($meeting->strata_title_url ? asset($meeting->strata_title_url) : ''),
                                 'maintenance_statement_url' => ($meeting->maintenance_statement_url ? asset($meeting->maintenance_statement_url) : ''),
                                 'integrity_pledge_url' => ($meeting->maintenance_statement_url ? asset($meeting->maintenance_statement_url) : ''),
+                                'sworn_statement_url' => ($meeting->sworn_statement_url ? asset($meeting->sworn_statement_url) : ''),
                                 'report_audited_financial_url' => ($meeting->report_audited_financial_url ? asset($meeting->report_audited_financial_url) : ''),
                                 'house_rules_url' => ($meeting->house_rules_url ? asset($meeting->house_rules_url) : ''),
                                 'audit_start_date' => ($meeting->audit_start_date ? $meeting->audit_start_date : ''),
@@ -325,7 +328,7 @@ class ResidentApiController extends BaseController {
                     $attachment_url = '';
                     if ($attachment) {
                         $destinationPath = 'uploads/defect_attachment';
-                        $filename = date('YmdHis') . "_" . $attachment->getClientOriginalName();
+                        $filename = date('YmdHis') . "_" . Helper::sanitizeFilename($attachment->getClientOriginalName());
                         $upload = $attachment->move($destinationPath, $filename);
 
                         if ($upload) {

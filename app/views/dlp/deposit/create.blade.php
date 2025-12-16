@@ -434,8 +434,8 @@
                                 function calcAmount(value) {
                                     var amount = '';
 
-                                    if (value > 0 && value != '') {
-                                        amount = value * 0.5;            
+                                    if (value > 0 && value != '') { 
+                                        amount = value * 0.005;            
                                     }
 
                                     $('#amount').val(amount);

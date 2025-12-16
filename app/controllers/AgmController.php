@@ -2,9 +2,16 @@
 
 use Carbon\Carbon;
 use Helper\Helper;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Services\NotificationService;
+use yajra\Datatables\Facades\Datatables;
 
 class AgmController extends BaseController {
 
@@ -188,7 +195,7 @@ class AgmController extends BaseController {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -301,7 +308,7 @@ class AgmController extends BaseController {
                         $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
 
-                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -343,7 +350,7 @@ class AgmController extends BaseController {
                 $remarks = 'AJK Details (' . $files->file_no . ') ' . $ajk_detail->name . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
 
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -600,7 +607,7 @@ class AgmController extends BaseController {
                     $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB File", $remarks);
 
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -783,7 +790,7 @@ class AgmController extends BaseController {
                             $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
-                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -826,7 +833,7 @@ class AgmController extends BaseController {
                 $files = Files::find($buyer->file_id);
                 $remarks = 'COB Owner List (' . $files->file_no . ') for Unit ' . $buyer->unit_no . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1001,77 +1008,77 @@ class AgmController extends BaseController {
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $posts = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['tenant.*'])
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('tenant.is_deleted', 0);
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['tenant.*'])
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('tenant.is_deleted', 0);
             } else {
                 $posts = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['tenant.*'])
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('tenant.is_deleted', 0);
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['tenant.*'])
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('tenant.is_deleted', 0);
             }
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $posts = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['tenant.*'])
-                        ->where('tenant.is_deleted', 0);
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['tenant.*'])
+                    ->where('tenant.is_deleted', 0);
             } else {
                 $posts = Tenant::join('files', 'tenant.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['tenant.*'])
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('tenant.is_deleted', 0);
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['tenant.*'])
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('tenant.is_deleted', 0);
             }
         }
 
         if ($posts) {
             return Datatables::of($posts)
-                            ->addColumn('cob', function ($model) {
-                                $cob = '';
-                                if ($model->file_id) {
-                                    $cob = $model->file->company->short_name;
-                                }
-                                return $cob;
-                            })
-                            ->addColumn('files', function ($model) {
-                                $files = '';
-                                if ($model->file_id) {
-                                    $files = $model->file->file_no;
-                                }
-                                return $files;
-                            })
-                            ->addColumn('strata', function ($model) {
-                                $race = '';
-                                if ($model->file_id) {
-                                    $race = $model->file->strata->name;
-                                }
-                                return $race;
-                            })
-                            ->addColumn('race', function ($model) {
-                                $race = '';
-                                if ($model->race_id) {
-                                    $race = $model->race->name_en;
-                                }
-                                return $race;
-                            })
-                            ->addColumn('action', function ($model) {
-                                $button = "";
-                                if (AccessGroup::hasUpdate(43)) {
-                                    $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                                    $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>&nbsp';
-                                }
+                ->addColumn('cob', function ($model) {
+                    $cob = '';
+                    if ($model->file_id) {
+                        $cob = $model->file->company->short_name;
+                    }
+                    return $cob;
+                })
+                ->addColumn('files', function ($model) {
+                    $files = '';
+                    if ($model->file_id) {
+                        $files = $model->file->file_no;
+                    }
+                    return $files;
+                })
+                ->addColumn('strata', function ($model) {
+                    $race = '';
+                    if ($model->file_id) {
+                        $race = $model->file->strata->name;
+                    }
+                    return $race;
+                })
+                ->addColumn('race', function ($model) {
+                    $race = '';
+                    if ($model->race_id) {
+                        $race = $model->race->name_en;
+                    }
+                    return $race;
+                })
+                ->addColumn('action', function ($model) {
+                    $button = "";
+                    if (AccessGroup::hasUpdate(43)) {
+                        $button .= '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editTenant', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                        $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteTenant(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>&nbsp';
+                    }
 
-                                return $button;
-                            })
-                            ->make(true);
+                    return $button;
+                })
+                ->make(true);
         }
     }
 
@@ -1169,7 +1176,7 @@ class AgmController extends BaseController {
                     $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit' . $tenant->unit_no . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($files->id, "COB File", $remarks);
                     
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -1322,7 +1329,7 @@ class AgmController extends BaseController {
                             $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                             $this->addAudit($files->id, "COB File", $remarks);
                         }
-                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                        if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                             /**
                              * Add Notification & send email to COB and JMB
                              */
@@ -1365,7 +1372,7 @@ class AgmController extends BaseController {
                 $files = Files::find($tenant->file_id);
                 $remarks = 'COB Tenant List (' . $files->file_no . ') for Unit ' . $tenant->unit_no . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -1518,6 +1525,13 @@ class AgmController extends BaseController {
      */
 
     public function minutes() {
+        if (!empty(Session::get('admin_cob'))) {
+            $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_hidden', false)->where('is_deleted', 0)->first();
+            if ($cob && $cob->short_name == 'MPKJ') {
+                return Redirect::to('/agm-minute');
+            }
+        }
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
 
@@ -1804,6 +1818,7 @@ class AgmController extends BaseController {
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $type = $data['type'];
@@ -1864,6 +1879,7 @@ class AgmController extends BaseController {
             $agm_detail->strata_title_url = $strata_title_url;
             $agm_detail->maintenance_statement_url = $maintenance_statement_url;
             $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+            $agm_detail->sworn_statement_url = $sworn_statement_url;
             $agm_detail->report_audited_financial_url = $report_audited_financial_url;
             $agm_detail->house_rules_url = $house_rules_url;
             $agm_detail->type = $type;
@@ -1974,7 +1990,7 @@ class AgmController extends BaseController {
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_inserted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2085,6 +2101,7 @@ class AgmController extends BaseController {
             $strata_title_url = $data['strata_title_url'];
             $maintenance_statement_url = $data['maintenance_statement_url'];
             $integrity_pledge_url = $data['integrity_pledge_url'];
+            $sworn_statement_url = $data['sworn_statement_url'];
             $report_audited_financial_url = $data['report_audited_financial_url'];
             $house_rules_url = $data['house_rules_url'];
             $remarks = $data['remarks'];
@@ -2191,6 +2208,7 @@ class AgmController extends BaseController {
                 $agm_detail->strata_title_url = $strata_title_url;
                 $agm_detail->maintenance_statement_url = $maintenance_statement_url;
                 $agm_detail->integrity_pledge_url = $integrity_pledge_url;
+                $agm_detail->sworn_statement_url = $sworn_statement_url;
                 $agm_detail->report_audited_financial_url = $report_audited_financial_url;
                 $agm_detail->house_rules_url = $house_rules_url;
                 $agm_detail->remarks = $remarks;
@@ -2348,7 +2366,7 @@ class AgmController extends BaseController {
                         $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($files->id, "COB File", $remarks);
                     }
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -2389,7 +2407,7 @@ class AgmController extends BaseController {
                 $files = Files::find($agm_detail->file_id);
                 $remarks = 'AGM Details (' . $files->file_no . ')' . ' dated ' . date('d/m/Y', strtotime($agm_detail->agm_date)) . $this->module['audit']['text']['data_deleted'];
                 $this->addAudit($files->id, "COB File", $remarks);
-                if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                     /**
                      * Add Notification & send email to COB and JMB
                      */
@@ -2447,120 +2465,107 @@ class AgmController extends BaseController {
     }
 
     public function getDocument() {
-        if (!empty(Auth::user()->file_id)) {
-            $document = Document::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $model = Document::join('document_type', 'document.document_type_id', '=', 'document_type.id')
+                    ->join('files', 'document.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['document.*'])
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('document.is_deleted', 0);
+            } else {
+                $model = Document::join('document_type', 'document.document_type_id', '=', 'document_type.id')
+                    ->join('files', 'document.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['document.*'])
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('document.is_deleted', 0);
+            }
         } else {
-            $document = Document::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+            if (empty(Session::get('admin_cob'))) {
+                $model = Document::join('document_type', 'document.document_type_id', '=', 'document_type.id')
+                    ->join('files', 'document.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['document.*'])
+                    ->where('document.is_deleted', 0);
+            } else {
+                $model = Document::join('document_type', 'document.document_type_id', '=', 'document_type.id')
+                    ->join('files', 'document.file_id', '=', 'files.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['document.*'])
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('document.is_deleted', 0);
+            }
         }
 
-        if (count($document) > 0) {
-            $data = Array();
-            foreach ($document as $documents) {
-                $button = "";
-
-                if ($documents->file) {
-                    if (!Auth::user()->getAdmin()) {
-                        if (!empty(Auth::user()->company_id)) {
-                            if ($documents->file->company_id != Auth::user()->company_id) {
-                                continue;
-                            }
-                        }
-                    } else {
-                        if (!empty(Session::get('admin_cob'))) {
-                            if ($documents->file->company_id != Session::get('admin_cob')) {
-                                continue;
-                            }
-                        }
+        if ($model) {
+            return Datatables::of($model)
+                ->filter(function ($query) {
+                    if (Request::has('file_id') && !empty(Request::get('file_id'))) {
+                        $query->where('files.id', Request::get('file_id'));
                     }
-                } else {
-                    if (!Auth::user()->getAdmin()) {
-                        continue;
-                    } else {
-                        if (!empty(Session::get('admin_cob'))) {
-                            continue;
-                        }
-                    }
-                }
+                })
+                ->editColumn('file_id', function ($model) {
+                    return $model->file->file_no;
+                })
+                ->editColumn('document_type_id', function ($model) {
+                    return $model->type->name;
+                })
+                ->editColumn('name', function ($model) {
+                    return $model->name;
+                })
+                ->editColumn('status', function ($model) {
+                    return $model->getStatusText();
+                })
+                ->addColumn('action', function ($model) {
+                    $btn = '<button type="button" class="btn btn-xs btn-success" title="Edit" onclick="window.location=\'' . URL::action('AgmController@updateDocument', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
+                    $btn .= '<form action="' . URL::action('AgmController@deleteDocument', Helper::encode($model->id)) . '" method="POST" id="delete_form_' . Helper::encode($model->id) . '" style="display:inline-block;">';
+                    $btn .= '<input type="hidden" name="_method" value="POST">';
+                    $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                    $btn .= '</form>';
 
-                $button .= '<button type="button" class="btn btn-xs btn-success" onclick="window.location=\'' . URL::action('AgmController@updateDocument', Helper::encode($documents->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
-                $button .= '<button class="btn btn-xs btn-danger" onclick="deleteDocument(\'' . Helper::encode($documents->id) . '\')"><i class="fa fa-trash"></i></button>';
-
-                $data_raw = array(
-                    ($documents->file ? $documents->file->file_no : '<i>(not set)</i>'),
-                    $documents->type->name,
-                    $documents->name,
-                    $documents->getStatusText(),
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
+                    return $btn;
+                })
+                ->make(true);
         }
     }
 
-    public function deleteDocument() {
-        $data = Input::all();
-        if (Request::ajax()) {
+    public function deleteDocument($id)
+    {
+        $document = Document::find(Helper::decode($id));
+        if ($document) {
+            $document->is_deleted = 1;
+            $deleted = $document->save();
+            if ($deleted) {
+                # Audit Trail
+                $remarks = 'Document: ' . $document->name . $this->module['audit']['text']['data_deleted'];
+                $this->addAudit($document->file_id, "Document", $remarks);
+                if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
+                    /**
+                     * Add Notification & send email to COB and JMB
+                     */
+                    $not_draft_strata = $document->file->strata;
+                    $notify_data['file_id'] = $document->file->id;
+                    $notify_data['route'] = route('document.index');
+                    $notify_data['cob_route'] = route('document.index');
+                    $notify_data['strata'] = "your";
+                    $notify_data['strata_name'] = $not_draft_strata->name != "" ? $not_draft_strata->name : $document->file->file_no;
+                    $notify_data['title'] = "COB File Document";
+                    $notify_data['module'] = "Document";
 
-            ## EAI Call
-            // $url = $this->eai_domain . $this->eai_route['file']['cob']['document']['delete'];
-            
-            // $response = json_decode((string) ((new KCurl())->requestPost(null, 
-            //                         $url,
-            //                         json_encode($data))));
-            
-            // if(empty($response->status) == false && $response->status == 200) {
-                $id = Helper::decode($data['id']);
-    
-                $document = Document::findOrFail($id);
-                if ($document) {
-                    $document->is_deleted = 1;
-                    $deleted = $document->save();
-                    if ($deleted) {
-                        # Audit Trail
-                        $remarks = 'Document: ' . $document->name . $this->module['audit']['text']['data_deleted'];
-                        $this->addAudit($document->file_id, "Document", $remarks);
-                        if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
-                            /**
-                             * Add Notification & send email to COB and JMB
-                             */
-                            $not_draft_strata = $document->file->strata;
-                            $notify_data['file_id'] = $document->file->id;
-                            $notify_data['route'] = route('document.index');
-                            $notify_data['cob_route'] = route('document.index');
-                            $notify_data['strata'] = "your";
-                            $notify_data['strata_name'] = $not_draft_strata->name != ""? $not_draft_strata->name : $document->file->file_no;
-                            $notify_data['title'] = "COB File Document";
-                            $notify_data['module'] = "Document";
-                            
-                            (new NotificationService())->store($notify_data, 'deleted');
-                        }
-    
-                        print "true";
-                    } else {
-                        print "false";
-                    }
-                } else {
-                    print "false";
+                    (new NotificationService())->store($notify_data, 'deleted');
                 }
-            // } else {
-            //     print "false";
-            // }
+
+                return Redirect::back()->with('success', trans('app.successes.deleted_successfully'));
+            }
         }
+
+        return Redirect::back()->with('error', trans('app.errors.occurred'));
     }
 
     public function deleteDocumentFile() {
@@ -2674,7 +2679,7 @@ class AgmController extends BaseController {
                     # Audit Trail
                     $remarks = 'Document: ' . $document->name_en . $this->module['audit']['text']['data_inserted'];
                     $this->addAudit($document->file_id, "Document", $remarks);
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */
@@ -2796,7 +2801,7 @@ class AgmController extends BaseController {
                         $remarks = 'Document id: ' . $document->id . $this->module['audit']['text']['data_updated'] . $audit_fields_changed;
                         $this->addAudit($document->file_id, "Document", $remarks);
                     }
-                    if(Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+                    if(Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
                         /**
                          * Add Notification & send email to COB and JMB
                          */

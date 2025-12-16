@@ -181,6 +181,13 @@ class AgmMinuteSync
                     $agm_detail->integrity_pledge_url = $path;
                 }
             }
+            if (!empty($item['sworn_statement'])) {
+                $folder = 'sworn_statement';
+                $path = $this->uploadFile($item['sworn_statement'], $folder);
+                if ($path) {
+                    $agm_detail->sworn_statement_url = $path;
+                }
+            }
             if (!empty($item['audited_financial_report'])) {
                 $folder = 'report_audited_financial';
                 $path = $this->uploadFile($item['audited_financial_report'], $folder);

@@ -156,4 +156,27 @@ class Helper
 
         return $dt['formatted'];
     }
+
+    public static function getDueDate($date)
+    {
+        if ($date == '') {
+            return null;
+        }
+
+        $dt = date('d/m/Y', strtotime($date));
+
+        return $dt;
+    }
+
+    /**
+     * Sanitize filename by removing/replacing special characters
+     * @param string $originalName
+     * @return string
+     */
+    public static function sanitizeFilename($originalName) {
+        $filename = pathinfo($originalName, PATHINFO_FILENAME);
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $sanitizedFilename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
+        return $sanitizedFilename . '.' . $extension;
+    }
 }

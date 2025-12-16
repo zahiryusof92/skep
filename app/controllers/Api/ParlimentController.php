@@ -55,4 +55,27 @@ class ParlimentController extends BaseController {
             throw($e);
         }
     }
+
+    public function getOption()
+    {
+        if (Request::ajax()) {
+            $request = Request::all();
+            $options = [];
+            $parliments = Parliment::self()
+                ->where(function ($query) use ($request) {
+                    if (!empty($request['term'])) {
+                        $query->where('description', "like", "%" . $request['term'] . "%");
+                    }
+                })
+                ->chunk(200, function ($models) use (&$options) {
+                    foreach ($models as $model) {
+                        array_push($options, ['id' => $model->id, 'text' => $model->description]);
+                    }
+                });
+
+            return Response::json(['success' => true, 'message' => trans('Success'), 'results' => $options]);
+        }
+
+        return Response::json(['error' => true, 'message' => trans('Fail')]);
+    }
 }

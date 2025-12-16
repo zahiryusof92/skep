@@ -110,7 +110,6 @@ $zone = [
 
     $(document).ready(function () {
         oTable = $('#filelist').DataTable({
-            "bProcessing": true,
             "sAjaxSource": "{{URL::action('ReportController@getStrataProfile')}}",
             "lengthMenu": [[15, 30, 50], [15, 30, 50]],
             "sorting": [
@@ -125,19 +124,30 @@ $zone = [
         
 
         $('#company').on('change', function () {
-            oTable.columns(2).search(this.value).draw();
+            $.ajax({
+                url: "{{ URL::action('ReportController@getStrataProfile') }}",
+                type: "GET",
+                data: {
+                    company_id: this.value,
+                },
+                success: function (data) {
+                    var rData = JSON.parse(data);
+                    oTable.clear().draw();
+                    oTable.rows.add(rData.aaData).draw(); // Add new data
+                }
+            });
             $.ajax({
                 url: "{{URL::action('ReportController@getStrataProfileAnalytic')}}",
                 type: "GET",
                 data: {
-                    cob: this.value,
+                    company_id: this.value,
                 },
                 beforeSend: function () {
                     $.blockUI({message: '{{ trans("app.confirmation.please_wait") }}'});
                 },
                 success: function (result) {
                     $.unblockUI();
-                    if (result) {
+                    if (result && result.data) {
                         generatePie(result.data.pie_data);
                     }
                 }

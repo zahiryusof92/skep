@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class SummonController extends \BaseController {
 
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +16,7 @@ class SummonController extends \BaseController {
      */
     public function index() {
         $this->checkAvailableAccess();
-        if (Auth::user()->isJMB() || Auth::user()->isDeveloper()) {
+        if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) {
             if (Request::ajax()) {
                 $model = Summon::where('user_id', Auth::user()->id)->where('is_deleted', 0)->orderBy('created_at','desc');
 
@@ -340,7 +341,7 @@ class SummonController extends \BaseController {
      */
     public function create($type) {
         $this->checkAvailableAccess();
-        if ((Auth::user()->isJMB() || Auth::user()->isDeveloper()) && Auth::user()->file_id) {
+        if ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) && Auth::user()->file_id) {
             $file = Files::find(Auth::user()->file_id);
             if ($file) {
                 $unit_no = Buyer::unitNoList($file->id);
@@ -515,7 +516,7 @@ class SummonController extends \BaseController {
      */
     public function show($id) {
         $this->checkAvailableAccess();
-        if ((Auth::user()->isJMB() || Auth::user()->isDeveloper()) && Auth::user()->file_id) {
+        if ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) && Auth::user()->file_id) {
             $file = Files::find(Auth::user()->file_id);
             if ($file) {
                 $model = Summon::findOrFail(Helper::decode($id));
@@ -1090,7 +1091,7 @@ class SummonController extends \BaseController {
 
                 $destinationPath = 'attachment/summon/confirm/' . $model->id;
     
-                $filename = $file->getClientOriginalName();
+                $filename = Helper::sanitizeFilename($file->getClientOriginalName());
                 // $filename = $file->getClientOriginalName() . '.' . $ext;
                 $file->move($destinationPath, $filename);
                 $attachment[] = $destinationPath . "/" . $filename;

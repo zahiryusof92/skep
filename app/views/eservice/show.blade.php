@@ -138,7 +138,7 @@
                                         <div class="row">
                                             <div class="col-sm-8">
                                                 <input type="text" id="bill_no" name="bill_no"
-                                                    class="form-control {{ $errors->has('bill_no') ? 'has-danger' : '' }}">
+                                                    class="form-control {{ $errors->has('bill_no') ? 'has-danger' : '' }}" value="{{ isset($bill_no) && !empty($bill_no) ? $bill_no : '' }}">
                                                 @include('alert.feedback-ajax', ['field' => "bill_no"])
                                             </div>
                                         </div>
@@ -162,6 +162,22 @@
                                             </div>
                                         </div>
                                     </dd>
+                                    @if ($order->company && $order->company->short_name == 'MBSJ')
+                                    <dt class="col-sm-4">
+                                        <span style="color: red;">*</span>
+                                        {{ trans('app.forms.hijri_date') }}
+                                    </dt>
+                                    <dd class="col-sm-8">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <input type="text" id="hijri_date" name="hijri_date"
+                                                    class="form-control {{ $errors->has('hijri_date') ? 'has-danger' : '' }}"
+                                                    value="{{ !empty(Input::old('hijri_date')) ? Input::old('hijri_date') : '' }}" />
+                                                @include('alert.feedback-ajax', ['field' => "hijri_date"])
+                                            </div>
+                                        </div>
+                                    </dd>
+                                    @endif
                                 </div>
 
                                 <div id="reject_field"
@@ -310,6 +326,19 @@
                                         {{ trans('app.forms.date') }}
                                     </label>
                                     <input type="text" class="form-control" value="{{ $order->date }}" readonly="">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if (!empty($order->hijri_date))
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">
+                                        {{ trans('app.forms.hijri_date') }}
+                                    </label>
+                                    <input type="text" class="form-control" value="{{ $order->hijri_date }}" readonly="">
                                 </div>
                             </div>
                         </div>
