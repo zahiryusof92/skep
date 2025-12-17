@@ -248,6 +248,7 @@ return array(
             "list" => "e-Perkhidmatan",
             "draft" => "Draft List",
             "review" => "Review List",
+            "incomplete" => "Incomplete List",
             "approved" => "Approved List",
             "rejected" => "Rejected List",
             'report' => 'Report',
@@ -368,6 +369,7 @@ return array(
         "admin_status" => "Admin Status",
         "active" => "Active",
         "inactive" => "Inactive",
+        "incomplete" => "Incomplete",
         "approve" => "Approve",
         "approved_by" => "Approved By",
         "approved_date" => "Approved Date",
@@ -1593,6 +1595,7 @@ return array(
         'pending' => 'Pending',
         'inprogress' => 'In-progress',
         'failed' => 'Failed',
+        'incomplete' => 'Incomplete',
         'approved' => 'Approved',
         'rejected' => 'Rejected',
         'email_sent' => 'E-mail Sent'

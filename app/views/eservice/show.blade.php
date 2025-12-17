@@ -9,7 +9,7 @@
         </div>
 
         <?php 
-            $readonly = ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS])) ? "" : "readonly";
+            $readonly = ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS, EServiceOrder::INCOMPLETE])) ? "" : "readonly";
         ?>
 
         <div class="panel-body">
@@ -90,7 +90,7 @@
                                     {{ trans('app.forms.payment_status') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $order->transaction->getStatusText() }}
+                                    {{ $order->transaction->getStatusBadge() }}
                                 </dd>
                                 @endif
 
@@ -127,6 +127,24 @@
                                         </div>
                                     </div>
                                 </dd>
+
+                                <div id="incomplete_field"
+                                    style="display: {{ (Input::old('status') == EServiceOrder::INCOMPLETE ? 'show' : 'none') }};">
+                                    <dt class="col-sm-4">
+                                        <span style="color: red;">*</span>
+                                        {{ trans('app.forms.approval_remark') }}
+                                    </dt>
+                                    <dd class="col-sm-8">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <textarea id="approval_remark_incomplete" name="approval_remark"
+                                                    class="form-control {{ $errors->has('approval_remark') ? 'has-danger' : '' }}"
+                                                    rows="5">{{ Input::old('approval_remark') }}</textarea>
+                                                @include('alert.feedback-ajax', ['field' => "approval_remark"])
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </div>
 
                                 <div id="approve_field"
                                     style="display: {{ (Input::old('status') == EServiceOrder::APPROVED ? 'show' : 'none') }};">
@@ -189,7 +207,7 @@
                                     <dd class="col-sm-8">
                                         <div class="row">
                                             <div class="col-sm-10">
-                                                <textarea id="approval_remark" name="approval_remark"
+                                                <textarea id="approval_remark_reject" name="approval_remark"
                                                     class="form-control {{ $errors->has('approval_remark') ? 'has-danger' : '' }}"
                                                     rows="5">{{ Input::old('approval_remark') }}</textarea>
                                                 @include('alert.feedback-ajax', ['field' => "approval_remark"])
@@ -202,10 +220,10 @@
                                     {{ trans('app.forms.status') }}
                                 </dt>
                                 <dd class="col-sm-8">
-                                    {{ $order->getStatusText() }}
+                                    {{ $order->getStatusBadge() }}
                                 </dd>
 
-                                @if ($order->approver)
+                                @if ($order->approver && $order->status != EServiceOrder::INPROGRESS)
                                 <dt class="col-sm-4">
                                     {{ trans('app.forms.approval_by') }}
                                 </dt>
@@ -293,6 +311,13 @@
                             </button>
                             @endif
                         </div>
+                        @elseif ($order->status == EServiceOrder::INCOMPLETE)
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-success" id="edit_button"
+                                onclick="window.location = '{{ route('eservice.edit', \Helper\Helper::encode(Config::get('constant.module.eservice.name'), $order->id)) }}'">
+                                {{ trans('app.forms.edit') }}
+                            </button>
+                        </div>
                         @endif
                     </div>
 
@@ -361,6 +386,11 @@
                 @elseif ($order->status == EServiceOrder::DRAFT)
                 <button type="button" class="btn btn-default" id="cancel_button"
                     onclick="window.location ='{{ route('eservice.draft') }}'">
+                    {{ trans('app.forms.cancel') }}
+                </button>
+                @elseif ($order->status == EServiceOrder::INCOMPLETE)
+                <button type="button" class="btn btn-default" id="cancel_button"
+                    onclick="window.location ='{{ route('eservice.incomplete') }}'">
                     {{ trans('app.forms.cancel') }}
                 </button>
                 @elseif ($order->status == EServiceOrder::APPROVED)
@@ -437,6 +467,34 @@
 <script>
     $(document).ready( function () {
         $('.select2').select2();
+
+        // Initialize field visibility based on current status
+        var currentStatus = $('#status').val();
+        if (currentStatus == '{{ EServiceOrder::INCOMPLETE }}') {
+            $('#incomplete_field').show();
+            $('#approval_remark_incomplete').prop('disabled', false);
+            $('#reject_field').hide();
+            $('#approval_remark_reject').prop('disabled', true);
+            $('#approve_field').hide();
+        } else if (currentStatus == '{{ EServiceOrder::REJECTED }}') {
+            $('#incomplete_field').hide();
+            $('#approval_remark_incomplete').prop('disabled', true);
+            $('#reject_field').show();
+            $('#approval_remark_reject').prop('disabled', false);
+            $('#approve_field').hide();
+        } else if (currentStatus == '{{ EServiceOrder::APPROVED }}') {
+            $('#incomplete_field').hide();
+            $('#approval_remark_incomplete').prop('disabled', true);
+            $('#reject_field').hide();
+            $('#approval_remark_reject').prop('disabled', true);
+            $('#approve_field').show();
+        } else {
+            $('#incomplete_field').hide();
+            $('#approval_remark_incomplete').prop('disabled', true);
+            $('#reject_field').hide();
+            $('#approval_remark_reject').prop('disabled', true);
+            $('#approve_field').hide();
+        }
 
         $(".date_picker").datetimepicker({
             widgetPositioning: {
@@ -525,14 +583,29 @@
     });
 
     function statusChange(value) {
-        if (value == '{{ EServiceOrder::REJECTED }}') {
+        if (value == '{{ EServiceOrder::INCOMPLETE }}') {
+            $('#incomplete_field').show();
+            $('#approval_remark_incomplete').prop('disabled', false);
+            $('#reject_field').hide();
+            $('#approval_remark_reject').prop('disabled', true);
+            $('#approve_field').hide();
+        } else if (value == '{{ EServiceOrder::REJECTED }}') {
+            $('#incomplete_field').hide();
+            $('#approval_remark_incomplete').prop('disabled', true);
             $('#reject_field').show();
+            $('#approval_remark_reject').prop('disabled', false);
             $('#approve_field').hide();
         } else if (value == '{{ EServiceOrder::APPROVED }}') {
+            $('#incomplete_field').hide();
+            $('#approval_remark_incomplete').prop('disabled', true);
             $('#reject_field').hide();
+            $('#approval_remark_reject').prop('disabled', true);
             $('#approve_field').show();            
         } else {
+            $('#incomplete_field').hide();
+            $('#approval_remark_incomplete').prop('disabled', true);
             $('#reject_field').hide();
+            $('#approval_remark_reject').prop('disabled', true);
             $('#approve_field').hide();
         }
     }

@@ -173,6 +173,8 @@
                             </table>
 
                             <div class="form-actions">
+                                <input type="submit" class="btn btn-info" name="incomplete"
+                                    value="{{ trans('app.forms.incomplete') }}" />
                                 <input type="submit" class="btn btn-success" name="approve"
                                     value="{{ trans('app.forms.approve') }}" />
                                 <input type="submit" class="btn btn-danger" name="reject"
