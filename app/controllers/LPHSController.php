@@ -1538,21 +1538,24 @@ class LPHSController extends BaseController
 
     public function updateJMBExpiration($cob = null, $date = null)
     {
+        $end_date = (!empty($date) ? $date : date('Y') . '-12-31');
         $councils = $this->council($cob);
+        $roles = Role::whereIn('name', [Role::JMB, Role::MC])->lists('id');
+
         if ($councils) {
             foreach ($councils as $council) {
-                $jmb_role = Role::where('name', Role::JMB)->pluck('id');
-                $users = User::where('role', $jmb_role)
+                User::whereIn('role', $roles)
                     ->where('company_id', $council->id)
-                    // ->where('remarks', 'Created by System')
                     ->where('is_active', 1)
                     ->where('is_deleted', 0)
-                    ->get();
-
-                foreach ($users as $user) {
-                    $user->end_date = (!empty($date) ? $date : date('Y') . '-12-31');
-                    $user->save();
-                }
+                    ->where(function ($query) use ($end_date) {
+                        $query->whereNull('end_date')
+                            ->orWhere('end_date', '!=', $end_date);
+                    })
+                    ->update([
+                        'end_date' => $end_date,
+                        'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
             }
         }
 
