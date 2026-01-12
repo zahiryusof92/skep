@@ -288,9 +288,10 @@
     </table>
 
     @include('eservice.mbsj.component.footer', ['page_num' => 2, 'page_count' => 3])
+    @include('eservice.mbsj.component.no_signature_text')
 @endsection
 
 @section('page3')
     @include('eservice.mbsj.component.sk_1')
-    @include('eservice.mbsj.component.footer', ['page_num' => 3, 'page_count' => 3, 'last_page' => true])
+    @include('eservice.mbsj.component.footer', ['page_num' => 3, 'page_count' => 3])
 @endsection

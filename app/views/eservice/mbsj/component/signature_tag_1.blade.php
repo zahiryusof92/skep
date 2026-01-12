@@ -75,7 +75,7 @@
     <td colspan="7">
         &nbsp;
         <br />
-        &nbsp;
+        T.T
         <br />
         <span style="font-weight: bold;">
             (Sr. <span style="text-transform: uppercase">NORNIZAM BINTI MOHD JUSOH</span>)
@@ -86,13 +86,5 @@
         b.p.<span style="padding-left: 1em;">Datuk Bandar</span>
         <br />
         Majlis Bandaraya Subang Jaya
-    </td>
-</tr>
-<tr>
-    <td colspan="7">
-        &nbsp;
-        <br />
-        &nbsp;
-        <br />
     </td>
 </tr>
