@@ -60,7 +60,7 @@ Route::get('/lphs/tenant/{council}', 'LPHSController@tenant');
 Route::get('/lphs/management/{council}', 'LPHSController@management');
 Route::get('/lphs/createJMB/{council}', 'LPHSController@createJMB');
 Route::get('/lphs/removeJMB/{council}', 'LPHSController@removeJMB');
-Route::get('/lphs/updateJMBExpiration/{council}/{date}', 'LPHSController@updateJMBExpiration');
+Route::get('/lphs/updateJMBExpiration/{council}/{date?}', 'LPHSController@updateJMBExpiration');
 Route::get('/lphs/update/rating', 'LPHSController@updateRatingSummary');
 Route::get('/lphs/odesiLife/{council}', 'LPHSController@odesiLife');
 Route::get('/lphs/JMBMCSignIn/{council}', 'LPHSController@JMBMCSignIn');
@@ -1160,6 +1160,7 @@ Route::group(array('before' => 'authMember'), function () {
     Route::resource('eservicePrice', 'EServicePriceController');
 
     Route::get('eservice/draft', ['as' => 'eservice.draft', 'uses' => 'EServiceController@draft']);
+    Route::get('eservice/incomplete', ['as' => 'eservice.incomplete', 'uses' => 'EServiceController@incomplete']);
     Route::get('eservice/approved', ['as' => 'eservice.approved', 'uses' => 'EServiceController@approved']);
     Route::get('eservice/rejected', ['as' => 'eservice.rejected', 'uses' => 'EServiceController@rejected']);
     Route::post('eservice/verify', ['as' => 'eservice.verify', 'uses' => 'EServiceController@verify']);
@@ -1169,6 +1170,7 @@ Route::group(array('before' => 'authMember'), function () {
     Route::post('eservice/submitPayment', array('as' => 'eservice.submitPayment', 'uses' => 'EServiceController@submitPayment'));
     Route::get('eservice/callbackPayment/{orderID}', array('as' => 'eservice.callbackPayment', 'uses' => 'EServiceController@callbackPayment'));
     Route::post('eservice/review', ['as' => 'eservice.review', 'uses' => 'EServiceController@review']);
+    Route::post('eservice/submitIncomplete', ['as' => 'eservice.submitIncomplete', 'uses' => 'EServiceController@submitIncomplete']);
     Route::post('eservice/submitApprove', ['as' => 'eservice.submitApprove', 'uses' => 'EServiceController@submitApprove']);
     Route::post('eservice/submitReject', ['as' => 'eservice.submitReject', 'uses' => 'EServiceController@submitReject']);
     Route::get('eservice/paymentHistory', array('as' => 'eservice.paymentHistory', 'uses' => 'EServiceController@paymentHistory'));

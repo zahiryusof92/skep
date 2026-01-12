@@ -852,6 +852,7 @@ foreach ($user_permission as $permission) {
             },
             yAxis: {
                 min: 0,
+                max: 100,
                 title: {
                     text: '%'
                 }

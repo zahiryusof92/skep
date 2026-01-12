@@ -21,6 +21,7 @@ use yajra\Datatables\Facades\Datatables;
 
 class EServiceController extends BaseController
 {
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -289,6 +290,89 @@ class EServiceController extends BaseController
 		}
 
 		App::abort(404);
+	}
+	
+	public function incomplete()
+	{
+		$this->checkAvailableAccess();
+
+		if (Request::ajax()) {
+			$model = EServiceOrder::self()->incomplete();
+
+			if (!empty(Input::get('company'))) {
+				$cob = Company::where('company.short_name', Str::lower(Input::get('company')))->first();
+				if ($cob) {
+					$model = $model->where('eservices_orders.company_id', $cob->id);
+				}
+			}
+
+			if (!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
+				$start_date = !empty(Input::get('start_date')) ? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0);
+				$end_date = !empty(Input::get('end_date')) ? Carbon::parse(Input::get('end_date'))->addDay() : Carbon::now();
+
+				$model = $model->whereBetween('eservices_orders.created_at', [$start_date, $end_date]);
+			}
+
+			if (!empty(Input::get('letter_type'))) {
+				$model = $model->where('eservices_orders.type', Input::get('letter_type'));
+			}
+
+			return Datatables::of($model)
+				->editColumn('created_at', function ($model) {
+					$created_at =  $model->created_at ? "<a style='text-decoration:underline;' href='" . route('eservice.show', $this->encodeID($model->id)) . "'>" . $model->created_at->format('d-M-Y H:i A') . "</a>" : "-";
+
+					return $created_at;
+				})
+				->editColumn('type', function ($model) {
+					return $model->getTypeText();
+				})
+				->editColumn('strata_id', function ($model) {
+					return $model->strata->name;
+				})
+
+				->editColumn('order_no', function ($model) {
+					return $model->order_no;
+				})
+				->editColumn('status', function ($model) {
+					return $model->getStatusBadge();
+				})
+				->addColumn('action', function ($model) {
+					$btn = '';
+					$btn .= '<a href="' . route('eservice.show', $this->encodeID($model->id)) . '" class="btn btn-xs btn-warning" title="Edit"><i class="fa fa-eye"></i></a>&nbsp;';
+
+					return $btn;
+				})
+				->make(true);
+		}
+
+		if (empty(Session::get('admin_cob'))) {
+			$company = Company::where('is_active', 1)->where('is_main', 0)->where('is_deleted', 0)->orderBy('name')->get();
+		} else {
+			$company = Company::where('id', Session::get('admin_cob'))->get();
+		}
+
+		$types = [];
+		$cob = Auth::user()->getCOB->short_name;
+		if (!empty($cob)) {
+			$options = (!empty($this->getModule()['cob'][Str::lower($cob)])) ? $this->getModule()['cob'][Str::lower($cob)]['type'] : '';
+			if (!empty($options)) {
+				foreach ($options as $type) {
+					array_push($types, ['id' => $type['name'], 'text' => $type['title']]);
+				}
+			}
+		}
+
+		$viewData = array(
+			'title' => trans('app.menus.eservice.incomplete'),
+			'panel_nav_active' => 'eservice_panel',
+			'main_nav_active' => 'eservice_main',
+			'sub_nav_active' => 'eservice_incomplete',
+			'company' => $company,
+			'types' => $types,
+			'image' => ''
+		);
+
+		return View::make('eservice.incomplete_list', $viewData);
 	}
 
 	public function approved()
@@ -635,6 +719,8 @@ class EServiceController extends BaseController
 					$sub_nav_active = 'eservice_draft';
 				} else if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS])) {
 					$sub_nav_active = 'eservice_list';
+				} else if ($order->status == EServiceOrder::INCOMPLETE) {
+					$sub_nav_active = 'eservice_incomplete';
 				} else if ($order->status == EServiceOrder::APPROVED) {
 					$sub_nav_active = 'eservice_approved';
 				} else {
@@ -680,9 +766,16 @@ class EServiceController extends BaseController
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order) {
-			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::INPROGRESS, EServiceOrder::REJECTED])) {
+			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::INPROGRESS, EServiceOrder::INCOMPLETE, EServiceOrder::REJECTED])) {
 				$edit = true;
-				$sub_nav_active = 'eservice_list';
+				if ($order->status == EServiceOrder::INCOMPLETE) {
+					$sub_nav_active = 'eservice_incomplete';
+				} else {
+					$sub_nav_active = 'eservice_list';
+				}
+			} else if ($order->status == EServiceOrder::INCOMPLETE) {
+				$edit = true;
+				$sub_nav_active = 'eservice_incomplete';
 			} else if ($order->status == EServiceOrder::DRAFT) {
 				$edit = true;
 				$sub_nav_active = 'eservice_create';
@@ -731,7 +824,9 @@ class EServiceController extends BaseController
 
 		$order = EServiceOrder::find($this->decodeID($id));
 		if ($order) {
-			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::INPROGRESS, EServiceOrder::REJECTED])) {
+			if ((Auth::user()->getAdmin() || Auth::user()->isCOB()) && in_array($order->status, [EServiceOrder::INPROGRESS, EServiceOrder::INCOMPLETE, EServiceOrder::REJECTED])) {
+				$update = true;
+			} else if ($order->status == EServiceOrder::INCOMPLETE) {
 				$update = true;
 			} else if ($order->status == EServiceOrder::DRAFT) {
 				$update = true;
@@ -763,7 +858,7 @@ class EServiceController extends BaseController
 
 						$success = $order->update([
 							'value' => json_encode($request),
-							'status' => ($order->status == EServiceOrder::REJECTED ? EServiceOrder::INPROGRESS : $order->status),
+							'status' => ($order->status == EServiceOrder::INCOMPLETE || $order->status == EServiceOrder::REJECTED ? EServiceOrder::INPROGRESS : $order->status),
 						]);
 
 						if ($success) {
@@ -1194,7 +1289,18 @@ class EServiceController extends BaseController
 					->get();
 
 				if ($orders) {
-					if (isset($request['approve'])) {
+					if (isset($request['incomplete'])) {
+						$viewData = array(
+							'title' => trans('app.menus.eservice.incomplete'),
+							'panel_nav_active' => 'eservice_panel',
+							'main_nav_active' => 'eservice_main',
+							'sub_nav_active' => 'eservice_list',
+							'orders' => $orders,
+							'image' => ""
+						);
+
+						return View::make('eservice.incomplete', $viewData);
+					} else if (isset($request['approve'])) {
 						$viewData = array(
 							'title' => trans('app.menus.eservice.approve'),
 							'panel_nav_active' => 'eservice_panel',
@@ -1249,6 +1355,42 @@ class EServiceController extends BaseController
 					'message' => trans('app.successes.updated_successfully')
 				]);
 			}
+		}
+
+		return Response::json([
+			'error' => true,
+			'message' => trans('app.errors.occurred')
+		]);
+	}
+
+	public function submitIncomplete()
+	{
+		$this->checkAvailableAccess();
+
+		$request = Request::all();
+
+		$rules = array(
+			'approval_remark' => 'required'
+		);
+
+		$validator = Validator::make($request, $rules);
+		if ($validator->fails()) {
+			return Response::json([
+				'error' => true,
+				'errors' => $validator->errors(),
+				'message' => trans('Validation Fail')
+			]);
+		} else {
+			$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
+
+			foreach ($request['bill_no'] as $id => $bill_no) {
+				$this->incompleteByID($approval_remark, $this->encodeID($id));
+			}
+
+			return Response::json([
+				'success' => true,
+				'message' => trans('app.successes.updated_successfully')
+			]);
 		}
 
 		return Response::json([
@@ -1356,7 +1498,7 @@ class EServiceController extends BaseController
 				'status' => 'required',
 			);
 
-			if ($status == EServiceOrder::REJECTED) {
+			if ($status == EServiceOrder::INCOMPLETE || $status == EServiceOrder::REJECTED) {
 				$rules['approval_remark'] = 'required';;
 			} else if ($status == EServiceOrder::APPROVED) {
 				$rules['bill_no'] = 'required';
@@ -1376,7 +1518,11 @@ class EServiceController extends BaseController
 					'message' => trans('Validation Fail')
 				]);
 			} else {
-				if ($status == EServiceOrder::APPROVED) {
+				if ($status == EServiceOrder::INCOMPLETE) {
+					$approval_remark = (isset($request['approval_remark']) ? $request['approval_remark'] : null);
+
+					$this->incompleteByID($approval_remark, $id);
+				} else if ($status == EServiceOrder::APPROVED) {
 					$date = $request['date'];
 					$hijri_date = isset($request['hijri_date']) ? $request['hijri_date'] : '';
 					$bill_no = $request['bill_no'];
@@ -1607,6 +1753,50 @@ class EServiceController extends BaseController
 		App::abort(404);
 	}
 
+	private function incompleteByID($approval_remark, $id)
+	{
+		$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
+		if ($order) {
+			$old_status = $order->status;
+
+			$success = $order->update([
+				'status' => EServiceOrder::INCOMPLETE,
+				'approval_by' => Auth::user()->id,
+				'approval_date' => date('Y-m-d'),
+				'approval_remark' => (!empty($approval_remark) ? $approval_remark : null),
+			]);
+
+			if ($success) {
+				/**
+				 * If status incomplete send an email to JMB / MC
+				 */
+				if (Config::get('mail.driver') != '') {
+					$delay = 0;
+
+					if (in_array($order->status, [EServiceOrder::INPROGRESS])) {
+						if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
+							Mail::later(Carbon::now()->addSeconds($delay), 'emails.eservice.status_update', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
+								$message->to($order->user->email, $order->user->full_name)->subject("Your Application e-Perkhidmatan has been marked as " . Str::upper($order->getStatusText()));
+							});
+						}
+					}
+				}
+
+				/**
+				 * add audit trail
+				 */
+				$module = Str::upper($this->getModule()['name']);
+				$status = ($old_status == $order->status ? '' : 'status');
+				if (!empty($status)) {
+					$audit_fields_changed = $order->getStatusText();
+					$remarks = $module . ': ' . $order->id . $this->module['audit']['text']['status_updated'] . $audit_fields_changed;
+
+					$this->addAudit($order->file_id, $module, $remarks);
+				}
+			}
+		}
+	}
+
 	private function approvedByID($date, $hijri_date, $bill_no, $id)
 	{
 		$order = EServiceOrder::with(['user'])->find($this->decodeID($id));
@@ -1625,12 +1815,12 @@ class EServiceController extends BaseController
 
 			if ($success) {
 				/**
-				 * If status rejected or success send an email to JMB / MC
+				 * If status approved send an email to JMB / MC
 				 */
 				if (Config::get('mail.driver') != '') {
 					$delay = 0;
 
-					if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS, EServiceOrder::APPROVED, EServiceOrder::REJECTED])) {
+					if (in_array($order->status, [EServiceOrder::APPROVED])) {
 						if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
 							Mail::later(Carbon::now()->addSeconds($delay), 'emails.eservice.status_update', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
 								$message->to($order->user->email, $order->user->full_name)->subject("Your Application e-Perkhidmatan has been " . Str::upper($order->getStatusText()));
@@ -1669,12 +1859,12 @@ class EServiceController extends BaseController
 
 			if ($success) {
 				/**
-				 * If status rejected or success send an email to JMB / MC
+				 * If status rejected send an email to JMB / MC
 				 */
 				if (Config::get('mail.driver') != '') {
 					$delay = 0;
 
-					if (in_array($order->status, [EServiceOrder::PENDING, EServiceOrder::INPROGRESS, EServiceOrder::APPROVED, EServiceOrder::REJECTED])) {
+					if (in_array($order->status, [EServiceOrder::REJECTED])) {
 						if (!empty($order->user->email) && Helper::validateEmail($order->user->email)) {
 							Mail::later(Carbon::now()->addSeconds($delay), 'emails.eservice.status_update', array('model' => $order, 'status' => $order->getStatusText()), function ($message) use ($order) {
 								$message->to($order->user->email, $order->user->full_name)->subject("Your Application e-Perkhidmatan has been " . Str::upper($order->getStatusText()));

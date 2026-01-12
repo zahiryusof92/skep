@@ -246,6 +246,25 @@ class Files extends Eloquent
             ->where('agm_date', '!=', '0000-00-00')
             ->where('is_deleted', '=', 0)
             ->lists('file_id');
+
+        $query->file()
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->join('strata', 'files.id', '=', 'strata.file_id')
+            ->whereNotIn('files.id', $filesWithAGM)
+            ->where('files.is_active', 1)
+            ->where('files.is_deleted', 0)
+            ->where('company.short_name', '!=', 'MPS');
+
+        return $query;
+    }
+
+    public function scopeNeverHasAGMGroupByFileId($query)
+    {
+        $filesWithAGM = DB::table('meeting_document')
+            ->whereNotNull('agm_date')
+            ->where('agm_date', '!=', '0000-00-00')
+            ->where('is_deleted', '=', 0)
+            ->lists('file_id');
     
         return $query->file()
             ->join('company', 'files.company_id', '=', 'company.id')
@@ -2347,8 +2366,8 @@ class Files extends Eloquent
                 $percentage = ($item->total / $total_files) * 100;
             }
 
-            array_push($never['categories'], [$item->short_name]);
-            array_push($never['data'], [round($percentage, 2)]);
+            array_push($never['categories'], $item->short_name);
+            array_push($never['data'], round($percentage, 2));
         }
 
         $result = array(

@@ -76,8 +76,9 @@ class TPPM extends Eloquent
 
     public function scopeSelf(Builder $builder)
     {
-        $builder = self::join('users', 'tppms.created_by', '=', 'users.id')
+        $builder = self::leftJoin('users', 'tppms.created_by', '=', 'users.id')
             ->leftJoin('files', 'tppms.file_id', '=', 'files.id')
+            ->leftJoin('strata', 'tppms.strata_id', '=', 'strata.id')
             ->leftJoin('company', 'tppms.company_id', '=', 'company.id')
             ->select(['tppms.*']);
 
