@@ -78,8 +78,6 @@ class HomeController extends BaseController
             'image' => ""
         );
 
-        \Log::debug("Data: " . print_r($data, true));
-
         return View::make('home_en.dashboard', $viewData);
     }
 
