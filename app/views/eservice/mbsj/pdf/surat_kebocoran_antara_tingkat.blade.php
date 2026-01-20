@@ -276,8 +276,7 @@
         <tr>
             <td colspan="7" style="text-align: justify;">
                 <span style="padding-right: 1em;">5.</span>
-                Pihak tuan boleh menghubungi pegawai kami,
-                {{ isset($content['management_pic']) ? $content['management_pic'] : '' }} di talian
+                Pihak tuan boleh menghubungi pegawai kami, di talian
                 {{ isset($content['management_phone']) ? $content['management_phone'] : '' }}
                 sekiranya terdapat sebarang pertanyaan berhubung perkara tersebut.
             </td>

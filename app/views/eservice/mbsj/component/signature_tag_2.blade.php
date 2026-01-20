@@ -22,25 +22,6 @@
     </td>
 </tr>
 <tr>
-    <td colspan="7" style="text-align: center; font-weight: bold; font-style: italic;">
-        “VISIT SELANGOR 2025”
-        <br />
-        “TAHUN MELAWAT SELANGOR 2025”
-        <br />
-        “SURPRISING SELANGOR”
-        <br />
-        “SELANGOR KAN ADA!”
-    </td>
-</tr>
-<tr>
-    <td colspan="7">
-        &nbsp;
-        <br />
-        &nbsp;
-        <br />
-    </td>
-</tr>
-<tr>
     <td colspan="7" style="font-weight: bold;">
         “KITA SELANGOR MAJU BERSAMA”
         <br />
@@ -68,7 +49,9 @@
     <td colspan="7">
         &nbsp;
         <br />
-        T.T
+        <span style="padding-left: 8em;">
+            TT
+        </span>
         <br />
         <span style="font-weight: bold;">
             (Sr. <span style="text-transform: uppercase">NORNIZAM BINTI MOHD JUSOH</span>)
