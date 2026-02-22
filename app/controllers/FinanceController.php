@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade as PDF;
 use Enums\AdminStatus;
 use Services\NotificationService;
 
@@ -801,6 +803,9 @@ class FinanceController extends BaseController
         if (!empty(Input::get('company'))) {
             $file = $file->where('company.short_name', Input::get('company'));
         }
+        if (!empty(Input::get('year'))) {
+            $file = $file->where('finance_file.year', Input::get('year'));
+        }
 
         return Datatables::of($file)
             ->addColumn('cob', function ($model) {
@@ -847,6 +852,180 @@ class FinanceController extends BaseController
                 return $button;
             })
             ->make(true);
+    }
+
+    /**
+     * Base query for finance list with same filters as getFinanceList (for export).
+     */
+    protected function getFinanceListBaseQuery()
+    {
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
+                    ->where('files.id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_deleted', 0)
+                    ->where('finance_file.is_deleted', 0);
+            } else {
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
+                    ->where('files.company_id', Auth::user()->company_id)
+                    ->where('files.is_deleted', 0)
+                    ->where('finance_file.is_deleted', 0);
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
+                    ->where('files.is_deleted', 0)
+                    ->where('finance_file.is_deleted', 0);
+            } else {
+                $file = Finance::join('files', 'finance_file.file_id', '=', 'files.id')
+                    ->join('finance_check', 'finance_check.finance_file_id', '=', 'finance_file.id')
+                    ->join('company', 'files.company_id', '=', 'company.id')
+                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->select(['finance_file.*', 'strata.id as strata_id', 'finance_check.is_active as status'])
+                    ->where('files.company_id', Session::get('admin_cob'))
+                    ->where('files.is_deleted', 0)
+                    ->where('finance_file.is_deleted', 0);
+            }
+        }
+
+        if (!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
+            $start_date = !empty(Input::get('start_date')) ? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 35, 13, 0, 0);
+            $today = !empty(Input::get('end_date')) ? Carbon::parse(Input::get('end_date')) : Carbon::now();
+            $file = $file->where(function ($query) use ($start_date, $today) {
+                $query->where(function ($query1) use ($start_date) {
+                    $query1->where('finance_file.year', '>', $start_date->year)
+                        ->orWhere(function ($query2) use ($start_date) {
+                            $query2->where('finance_file.year', $start_date->year)
+                                ->where(function ($query3) use ($start_date) {
+                                    $query3->where('finance_file.month', '>', $start_date->month)
+                                        ->orWhere('finance_file.month', $start_date->month);
+                                });
+                        });
+                })
+                    ->where(function ($query1) use ($today) {
+                        $query1->where('finance_file.year', '<', $today->year)
+                            ->orWhere(function ($query2) use ($today) {
+                                $query2->where('finance_file.year', $today->year)
+                                    ->where(function ($query3) use ($today) {
+                                        $query3->where('finance_file.month', '<', $today->month)
+                                            ->orWhere('finance_file.month', $today->month);
+                                    });
+                            });
+                    });
+            });
+        }
+        if (!empty(Input::get('month'))) {
+            $month = (substr(Input::get('month'), 0, 1) === "0") ? str_replace("0", "", Input::get('month')) : Input::get('month');
+            $file = $file->where('finance_file.month', $month);
+        }
+        if (!empty(Input::get('company'))) {
+            $file = $file->where('company.short_name', Input::get('company'));
+        }
+        if (!empty(Input::get('year'))) {
+            $file = $file->where('finance_file.year', Input::get('year'));
+        }
+
+        return $file->orderBy('company.short_name', 'asc')
+            ->orderBy('files.file_no', 'asc')
+            ->orderBy('finance_file.year', 'desc')
+            ->orderBy('finance_file.month', 'desc');
+    }
+
+    /**
+     * Export finance list to Excel based on current filters.
+     */
+    public function exportFinanceListExcel()
+    {
+        $query = $this->getFinanceListBaseQuery();
+        $rows = $query->get();
+
+        $export_data = [];
+        $export_data[] = [
+            trans('app.forms.cob'),
+            trans('app.forms.finance_management'),
+            trans('app.forms.strata'),
+            trans('app.forms.month'),
+            trans('app.forms.year'),
+            trans('app.forms.status'),
+            trans('app.forms.submission_date'),
+        ];
+
+        foreach ($rows as $model) {
+            $status = ($model->status == 1) ? trans('app.forms.approved') : trans('app.forms.rejected');
+            $export_data[] = [
+                $model->file_id ? $model->file->company->short_name : '-',
+                $model->file->file_no . ' ' . $model->year . '-' . strtoupper($model->monthName()),
+                $model->file_id ? $model->file->strata->strataName() : '-',
+                $model->month ? $model->monthName() : '',
+                $model->year != '0' ? $model->year : '',
+                $status,
+                date('d/m/Y', strtotime($model->created_at)),
+            ];
+        }
+
+        $filename = 'finance-list-' . date('YmdHis');
+
+        return Excel::create($filename, function ($excel) use ($export_data) {
+            $excel->sheet('Finance List', function ($sheet) use ($export_data) {
+                $sheet->fromArray($export_data, null, 'A1', false, false);
+            });
+        })->download('xlsx');
+    }
+
+    /**
+     * Export finance list to PDF based on current filters.
+     */
+    public function exportFinanceListPdf()
+    {
+        $query = $this->getFinanceListBaseQuery();
+        $rows = $query->get();
+
+        $export_data = [];
+        foreach ($rows as $model) {
+            $status = ($model->status == 1) ? trans('app.forms.approved') : trans('app.forms.rejected');
+            $export_data[] = [
+                'cob' => $model->file_id ? $model->file->company->short_name : '-',
+                'file_no' => $model->file->file_no . ' ' . $model->year . '-' . strtoupper($model->monthName()),
+                'strata' => $model->file_id ? $model->file->strata->strataName() : '-',
+                'month' => $model->month ? $model->monthName() : '',
+                'year' => $model->year != '0' ? $model->year : '',
+                'status' => $status,
+                'created_at' => date('d/m/Y', strtotime($model->created_at)),
+            ];
+        }
+
+        $viewData = [
+            'data' => $export_data,
+            'headers' => [
+                trans('app.forms.cob'),
+                trans('app.forms.finance_management'),
+                trans('app.forms.strata'),
+                trans('app.forms.month'),
+                trans('app.forms.year'),
+                trans('app.forms.status'),
+                trans('app.forms.submission_date'),
+            ],
+        ];
+
+        $pdf = PDF::loadView('finance_en.finance_list_pdf', $viewData, [], [
+            'format' => 'A4-L',
+            'default_font_size' => 8,
+        ]);
+        $filename = 'finance-list-' . date('YmdHis') . '.pdf';
+        return $pdf->stream($filename);
     }
 
     public function deleteFinanceList()

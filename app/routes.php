@@ -876,6 +876,8 @@ Route::post('/print/financeSupport', 'PrintController@financeSupport')->before('
 // FINANCE FILE LIST
 Route::get('/financeList', array('as' => 'finance_file.index', 'uses' => 'FinanceController@financeList'))->before('authMember');
 Route::get('/getFinanceList', 'FinanceController@getFinanceList')->before('authMember');
+Route::get('/exportFinanceListExcel', array('as' => 'finance_file.export_excel', 'uses' => 'FinanceController@exportFinanceListExcel'))->before('authMember');
+Route::get('/exportFinanceListPdf', array('as' => 'finance_file.export_pdf', 'uses' => 'FinanceController@exportFinanceListPdf'))->before('authMember');
 Route::post('/inactiveFinanceList', 'FinanceController@inactiveFinanceList')->before('authMember');
 Route::post('/activeFinanceList', 'FinanceController@activeFinanceList')->before('authMember');
 Route::post('/deleteFinanceList', 'FinanceController@deleteFinanceList')->before('authMember');

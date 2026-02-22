@@ -247,12 +247,21 @@ foreach ($user_permission as $permission) {
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-md-4">
                                     <div class="form-group float-left">
                                         <label>{{ trans('app.forms.date_finance_file') }} </label><br>
                                         <input id="start_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="From"/>
                                         <span class="margin-right-10">&nbsp; —</span>
                                         <input id="end_date" data-column="0" type="text" class="form-control width-150 display-inline-block" placeholder="To"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row text-left">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label><br>
+                                        <a href="#" id="btn_export_excel" class="btn btn-sm btn-success"><i class="fa fa-file-excel-o"></i> Export to Excel</a>
+                                        <a href="#" id="btn_export_pdf" class="btn btn-sm btn-danger"><i class="fa fa-file-pdf-o"></i> Export to PDF</a>
                                     </div>
                                 </div>
                             </div>
@@ -288,14 +297,6 @@ foreach ($user_permission as $permission) {
     <!-- End  -->
 </div>
 
-<!-- DataTables Button -->
-<link href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
-<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-
 <!-- Page Scripts -->
 <script>
     var oTable;
@@ -310,13 +311,13 @@ foreach ($user_permission as $permission) {
                     var from_date = $('#start_date').val();
                     var to_date = $('#end_date').val();
                     var month = $('#month').val();
+                    var year = $('#year').val();
 
-                    // Append to data
                     data.company = company;
                     data.start_date = from_date;
                     data.end_date = to_date;
                     data.month = month;
-
+                    data.year = year;
                 }
             },
             lengthMenu: [[15, 30, 50], [15, 30, 50]],
@@ -334,32 +335,33 @@ foreach ($user_permission as $permission) {
                 {data: 'created_at', name: 'finance_file.created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
-            "dom": "<'row'<'col-md-12 margin-bottom-10'B>>" +
-                "<'row'<'col-md-6'l><'col-md-6'f>>" +
+            "dom": "<'row'<'col-md-6'l><'col-md-6'f>>" +
                 "<'row'<'col-md-12'tr>>" +
-                "<'row'<'col-md-5'i><'col-md-7'p>>",
-            "buttons": [
-                {
-                    extend: 'excel',
-                    text: 'Export to Excel',
-                    exportOptions: {
-                        modifier: {
-                            search: 'applied',
-                            order: 'applied'
-                        }
-                    }
-                },
-                {
-                    extend: 'pdf',
-                    text: 'Export to PDF',
-                    exportOptions: {
-                        modifier: {
-                            search: 'applied',
-                            order: 'applied'
-                        }
-                    }
-                }
-            ]
+                "<'row'<'col-md-5'i><'col-md-7'p>>"
+        });
+
+        function buildExportUrl(baseUrl) {
+            var params = [];
+            var company = $('#company').val();
+            var month = $('#month').val();
+            var year = $('#year').val();
+            var start_date = $('#start_date').val();
+            var end_date = $('#end_date').val();
+            if (company) params.push('company=' + encodeURIComponent(company));
+            if (month) params.push('month=' + encodeURIComponent(month));
+            if (year) params.push('year=' + encodeURIComponent(year));
+            if (start_date) params.push('start_date=' + encodeURIComponent(start_date));
+            if (end_date) params.push('end_date=' + encodeURIComponent(end_date));
+            return baseUrl + (params.length ? '?' + params.join('&') : '');
+        }
+
+        $('#btn_export_excel').on('click', function (e) {
+            e.preventDefault();
+            window.location.href = buildExportUrl("{{ URL::action('FinanceController@exportFinanceListExcel') }}");
+        });
+        $('#btn_export_pdf').on('click', function (e) {
+            e.preventDefault();
+            window.open(buildExportUrl("{{ URL::action('FinanceController@exportFinanceListPdf') }}"), '_blank');
         });
 
         $('#company').on('change', function () {
@@ -369,7 +371,7 @@ foreach ($user_permission as $permission) {
             oTable.draw();
         });
         $('#year').on('change', function () {
-            oTable.columns(4).search(this.value).draw();
+            oTable.draw();
         });
         
         $('#start_date').datetimepicker({
