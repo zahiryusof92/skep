@@ -44,4 +44,9 @@ class AGMMinute extends Eloquent {
     public function file() {
         return $this->belongsTo('Files', 'file_id');
     }
+
+    public function agmMinuteStatus()
+    {
+        return $this->hasOne('AgmMinuteStatus', 'agm_minute_id')->where('is_deleted', 0);
+    }
 }

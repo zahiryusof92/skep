@@ -1511,6 +1511,7 @@ return array(
         'pending' => 'Belum Selesai',
         'inprogress' => 'In-progress',
         'approved' => 'Diluluskan',
+        'accepted' => 'Diterima',
         'rejected' => 'Ditolak',
         'canceled' => 'Dibatal',
         'upload_letter_of_reminder' => 'Muat Naik Surat Peringatan',

@@ -1511,6 +1511,7 @@ return array(
         'pending' => 'Pending',
         'inprogress' => 'In-progress',
         'approved' => 'Approved',
+        'accepted' => 'Accepted',
         'rejected' => 'Rejected',
         'canceled' => 'Canceled',
         'upload_letter_of_reminder' => 'Upload Surat Peringatan',
