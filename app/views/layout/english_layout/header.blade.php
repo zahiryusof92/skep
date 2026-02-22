@@ -1,14 +1,34 @@
 <!-- BEGIN TOP NAVIGATION -->
 <?php
-$company = Company::find(Auth::user()->company_id);
+// Cache company data to avoid duplicate queries (also used in navigation) - keep until logout (24 hours cache)
+$company_cache_key = 'company_' . Auth::user()->company_id;
+$company = Cache::remember($company_cache_key, 86400, function() {
+    return Company::find(Auth::user()->company_id);
+});
 
 if ($company->is_main != 1) {
     $cob_logout = strtolower($company->short_name);
 } else {
     $cob_logout = '';
 }
-$notifications = Notification::self()->notView()->latest('notifications.created_at')->take(5)->get();
-$notification_total = Notification::self()->notView()->count();
+
+// Optimize notification queries - combine into single query
+if (AccessGroup::hasAccessModule("Notification")) {
+    $notification_cache_key = 'notifications_' . Auth::user()->id . '_' . Auth::user()->company_id;
+    $notification_data = Cache::remember($notification_cache_key, 60, function() {
+        $notifications = Notification::self()->notView()->latest('notifications.created_at')->take(5)->get();
+        $notification_total = Notification::self()->notView()->count();
+        return [
+            'notifications' => $notifications,
+            'total' => $notification_total
+        ];
+    });
+    $notifications = $notification_data['notifications'];
+    $notification_total = $notification_data['total'];
+} else {
+    $notifications = new \Illuminate\Support\Collection([]);
+    $notification_total = 0;
+}
 $swith_lang = true;
 ?>
 

@@ -1,5 +1,9 @@
 <?php
-$company = Company::find(Auth::user()->company_id);
+// Use cached company data to avoid duplicate query - keep until logout (24 hours cache)
+$company_cache_key = 'company_' . Auth::user()->company_id;
+$company = Cache::remember($company_cache_key, 86400, function() {
+    return Company::find(Auth::user()->company_id);
+});
 ?>
 
 <footer style="margin-top: 15px; padding-left: 0px;">

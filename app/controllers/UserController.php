@@ -3,6 +3,7 @@
 use Helper\KCurl;
 use Helper\OAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 class UserController extends BaseController {
@@ -459,6 +460,26 @@ class UserController extends BaseController {
         # Audit Trail
         $remarks = 'User ' . Auth::user()->username . ' is sign out.';
         $this->addAudit(0, "System Authentication", $remarks);
+
+        // Clear user-related cache on logout
+        $user_id = Auth::user()->id;
+        $company_id = Auth::user()->company_id;
+        
+        // Clear user-specific caches
+        Cache::forget('notifications_' . $user_id . '_' . $company_id);
+        Cache::forget('company_' . $company_id);
+        Cache::forget('pending_files_' . $user_id . '_' . (Session::get('admin_cob') ?: $company_id));
+        Cache::forget('file_drafts_pending_' . $user_id);
+        Cache::forget('tppm_count_' . $user_id);
+        Cache::forget('tppm_pending_' . $user_id);
+        Cache::forget('epks_count_' . $user_id);
+        Cache::forget('eservice_count_' . $user_id);
+        Cache::forget('eservice_incomplete_' . $user_id);
+        Cache::forget('user_pending_' . $user_id);
+        Cache::forget('postponed_agm_count_' . $user_id);
+        
+        // Clear COB list cache (shared cache, but clear on logout for fresh data)
+        Cache::forget('cob_list');
 
         Session::forget('id');
         Session::forget('username');

@@ -416,69 +416,76 @@ class AgmController extends BaseController {
     }
 
     public function getPurchaser() {
+        // Get company filter from DataTables column search (when filtered via dropdown)
+        $company_short_name = Input::get('columns.0.search.value', '');
+        $company_id = null;
+        
+        // Try to get company from column search value
+        if (!empty($company_short_name)) {
+            $company = Company::where('short_name', $company_short_name)->first();
+            if ($company) {
+                $company_id = $company->id;
+            }
+        }
+        
+        // Fallback to session if available
+        if (empty($company_id) && !empty(Session::get('admin_cob'))) {
+            $company_id = Session::get('admin_cob');
+        }
+
+        // Optimize query - apply company filter early for better performance
+        $query = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->join('strata', 'files.id', '=', 'strata.file_id')
+            ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+            ->select([
+                'buyer.id',
+                'buyer.file_id',
+                'buyer.unit_no',
+                'buyer.unit_share',
+                'buyer.owner_name',
+                'buyer.phone_no',
+                'buyer.email',
+                'buyer.race_id',
+                'company.short_name as cob',
+                'files.file_no',
+                'strata.name as strata_name',
+                'race.name_en as race_name'
+            ])
+            ->where('buyer.is_deleted', 0)
+            ->where('files.is_deleted', 0);
+
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['buyer.*'])
-                        ->where('files.id', Auth::user()->file_id)
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('buyer.is_deleted', 0);
+                $query->where('files.id', Auth::user()->file_id)
+                      ->where('files.company_id', Auth::user()->company_id);
             } else {
-                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['buyer.*'])
-                        ->where('files.company_id', Auth::user()->company_id)
-                        ->where('buyer.is_deleted', 0);
+                $query->where('files.company_id', Auth::user()->company_id);
             }
         } else {
-            if (empty(Session::get('admin_cob'))) {
-                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['buyer.*'])
-                        ->where('buyer.is_deleted', 0);
-            } else {
-                $posts = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
-                        ->join('company', 'files.company_id', '=', 'company.id')
-                        ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['buyer.*'])
-                        ->where('files.company_id', Session::get('admin_cob'))
-                        ->where('buyer.is_deleted', 0);
+            if (!empty($company_id)) {
+                $query->where('files.company_id', $company_id);
             }
         }
 
-        if ($posts) {
-            return Datatables::of($posts)
+        // Add orderBy early for better query optimization
+        $query->orderBy('company.short_name', 'ASC')
+              ->orderBy('files.file_no', 'ASC')
+              ->orderBy('buyer.unit_no', 'ASC');
+
+        if ($query) {
+            return Datatables::of($query)
                             ->addColumn('cob', function ($model) {
-                                $cob = '';
-                                if ($model->file_id) {
-                                    $cob = $model->file->company->short_name;
-                                }
-                                return $cob;
+                                return $model->cob ? $model->cob : '';
                             })
                             ->addColumn('files', function ($model) {
-                                $files = '';
-                                if ($model->file_id) {
-                                    $files = $model->file->file_no;
-                                }
-                                return $files;
+                                return $model->file_no ? $model->file_no : '';
                             })
                             ->addColumn('strata', function ($model) {
-                                $race = '';
-                                if ($model->file_id) {
-                                    $race = $model->file->strata->name;
-                                }
-                                return $race;
+                                return $model->strata_name ? $model->strata_name : '';
                             })
                             ->addColumn('race', function ($model) {
-                                $race = '';
-                                if ($model->race_id) {
-                                    $race = $model->race->name_en;
-                                }
-                                return $race;
+                                return $model->race_name ? $model->race_name : '';
                             })
                             ->addColumn('action', function ($model) {
                                 $button = "";

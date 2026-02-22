@@ -7,16 +7,25 @@
 </script>
 
 <?php
-$company = Company::find(Auth::user()->company_id);
-if (!Auth::user()->getAdmin()) {
-    $pending = Files::where('company_id', Auth::user()->company_id)->where('status', 0)->where('is_deleted', 0)->count();
-} else {
-    if (empty(Session::get('admin_cob'))) {
-        $pending = Files::where('status', 0)->where('is_deleted', 0)->count();
+// Use cached company data from header to avoid duplicate query - keep until logout (24 hours cache)
+$company_cache_key = 'company_' . Auth::user()->company_id;
+$company = Cache::remember($company_cache_key, 86400, function() {
+    return Company::find(Auth::user()->company_id);
+});
+
+// Cache pending files count - short cache (30 seconds) to ensure accuracy
+$pending_cache_key = 'pending_files_' . Auth::user()->id . '_' . (Session::get('admin_cob') ?: Auth::user()->company_id);
+$pending = Cache::remember($pending_cache_key, 30, function() {
+    if (!Auth::user()->getAdmin()) {
+        return Files::where('company_id', Auth::user()->company_id)->where('status', 0)->where('is_deleted', 0)->count();
     } else {
-        $pending = Files::where('company_id', Session::get('admin_cob'))->where('status', 0)->where('is_deleted', 0)->count();
+        if (empty(Session::get('admin_cob'))) {
+            return Files::where('status', 0)->where('is_deleted', 0)->count();
+        } else {
+            return Files::where('company_id', Session::get('admin_cob'))->where('status', 0)->where('is_deleted', 0)->count();
+        }
     }
-}
+});
 ?>
 <!-- BEGIN SIDE NAVIGATION -->
 <nav class="left-menu" left-menu>
@@ -44,7 +53,14 @@ if (!Auth::user()->getAdmin()) {
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/setting.png')}}"/>
                     {{ trans('app.menus.cob.maintenance') }}
-                    @if(FileDrafts::getTotalPending() > 0)
+                    <?php
+                    // Cache file drafts pending count - short cache (30 seconds) to ensure accuracy
+                    $file_drafts_cache_key = 'file_drafts_pending_' . Auth::user()->id;
+                    $file_drafts_pending = Cache::remember($file_drafts_cache_key, 30, function() {
+                        return FileDrafts::getTotalPending();
+                    });
+                    ?>
+                    @if($file_drafts_pending > 0)
                         <span class="label label-danger">!</span>
                     @endif
                 </a>
@@ -87,7 +103,7 @@ if (!Auth::user()->getAdmin()) {
                     <li id="cob_draft_list">
                         <a class="left-menu-link" href="{{URL::action('DraftController@fileList')}}">
                             {{ trans('app.menus.cob.file_draft_list') }}
-                            <span class="label label-danger"> {{ FileDrafts::getTotalPending() . ' ' . trans('pending') }}</span>
+                            <span class="label label-danger"> {{ $file_drafts_pending . ' ' . trans('pending') }}</span>
                         </a>
                     </li>
                     @endif
@@ -194,8 +210,14 @@ if (!Auth::user()->getAdmin()) {
                         {{ trans('app.menus.tppm.name') }}
                     </span>
                     &nbsp;
-                    <?php $count = TPPM::self()->notPending()->where('tppms.status','!=', TPPM::REJECTED)->count(); ?>
-                    @if($count > 0)
+                    <?php 
+                    // Cache TPPM count - short cache (30 seconds) to ensure accuracy
+                    $tppm_count_cache_key = 'tppm_count_' . Auth::user()->id;
+                    $tppm_count = Cache::remember($tppm_count_cache_key, 30, function() {
+                        return TPPM::self()->notPending()->where('tppms.status','!=', TPPM::REJECTED)->count();
+                    });
+                    ?>
+                    @if($tppm_count > 0)
                         <span class="label left-menu-label label-danger">!</span>
                     @endif
                 </a>
@@ -210,9 +232,15 @@ if (!Auth::user()->getAdmin()) {
                     <li class="left-menu-list-link" id="tppm_index">
                         <a class="left-menu-link" href="{{ route('tppm.index') }}">
                             {{ trans('app.menus.tppm.index') }}
-                            <?php $pendingCount = TPPM::self()->where('tppms.status', TPPM::PENDING)->count(); ?>
-                            @if($pendingCount > 0)
-                                &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.tppm.pending', array('count'=> $pendingCount)) }}</span>
+                            <?php 
+                            // Cache TPPM pending count - short cache (30 seconds) to ensure accuracy
+                            $tppm_pending_cache_key = 'tppm_pending_' . Auth::user()->id;
+                            $tppm_pendingCount = Cache::remember($tppm_pending_cache_key, 30, function() {
+                                return TPPM::self()->where('tppms.status', TPPM::PENDING)->count();
+                            });
+                            ?>
+                            @if($tppm_pendingCount > 0)
+                                &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.tppm.pending', array('count'=> $tppm_pendingCount)) }}</span>
                             @endif
                         </a>
                     </li>
@@ -224,7 +252,14 @@ if (!Auth::user()->getAdmin()) {
             <li class="left-menu-list-submenu" id="epks_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-recycle"><!-- --></i>
-                    <span id="recycle">{{ trans('app.menus.epks.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(Epks::self()->notDraft()->where('epks.status', '!=', Epks::REJECTED)->count()) ! @endif</span>
+                    <?php
+                    // Cache Epks count - short cache (30 seconds) to ensure accuracy
+                    $epks_count_cache_key = 'epks_count_' . Auth::user()->id;
+                    $epks_count = Cache::remember($epks_count_cache_key, 30, function() {
+                        return Epks::self()->notDraft()->where('epks.status', '!=', Epks::REJECTED)->count();
+                    });
+                    ?>
+                    <span id="recycle">{{ trans('app.menus.epks.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if($epks_count) ! @endif</span>
                 </a>
                 <ul class="left-menu-list list-unstyled" id="epks_main">
                     <li class="left-menu-list-link" id="epks_create">
@@ -234,7 +269,7 @@ if (!Auth::user()->getAdmin()) {
                     </li>
                     <li class="left-menu-list-link" id="epks_list">
                         <a class="left-menu-link" href="{{ route('epks.index') }}">
-                            {{ trans('app.menus.epks.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.epks.pending', ['count'=> Epks::self()->notDraft()->where('epks.status', '!=', Epks::REJECTED)->count()]) }}</span>
+                            {{ trans('app.menus.epks.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.epks.pending', ['count'=> $epks_count]) }}</span>
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="epks_approval">
@@ -262,7 +297,14 @@ if (!Auth::user()->getAdmin()) {
             <li class="left-menu-list-submenu" id="eservice_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
-                    <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if(EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()) ! @endif</span>
+                    <?php
+                    // Cache EServiceOrder count - short cache (30 seconds) to ensure accuracy
+                    $eservice_count_cache_key = 'eservice_count_' . Auth::user()->id;
+                    $eservice_count = Cache::remember($eservice_count_cache_key, 30, function() {
+                        return EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count();
+                    });
+                    ?>
+                    <span id="recycle">{{ trans('app.menus.eservice.name1') }}</span> &nbsp;<span class="label left-menu-label label-danger">@if($eservice_count) ! @endif</span>
                 </a>
                 <ul class="left-menu-list list-unstyled" id="eservice_main">
                     @if (Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper())
@@ -277,14 +319,21 @@ if (!Auth::user()->getAdmin()) {
                         </a>
                     </li>
                     @endif
+                    <?php
+                    // Cache EServiceOrder incomplete count
+                    $eservice_incomplete_cache_key = 'eservice_incomplete_' . Auth::user()->id;
+                    $eservice_incomplete_count = Cache::remember($eservice_incomplete_cache_key, 120, function() {
+                        return EServiceOrder::self()->incomplete()->count();
+                    });
+                    ?>
                     <li class="left-menu-list-link" id="eservice_list">
                         <a class="left-menu-link" href="{{ route('eservice.index') }}">
-                            {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->notDraft()->where('eservices_orders.status', '!=', EServiceOrder::REJECTED)->count()]) }}</span>
+                            {{ trans('app.menus.eservice.review') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> $eservice_count]) }}</span>
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="eservice_incomplete">
                         <a class="left-menu-link" href="{{ route('eservice.incomplete') }}">
-                            {{ trans('app.menus.eservice.incomplete') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> EServiceOrder::self()->incomplete()->count()]) }}</span>
+                            {{ trans('app.menus.eservice.incomplete') }} &nbsp;<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.eservice.pending', ['count'=> $eservice_incomplete_count]) }}</span>
                         </a>
                     </li>
                     <li class="left-menu-list-link" id="eservice_approved">
@@ -353,7 +402,14 @@ if (!Auth::user()->getAdmin()) {
                 <a class="left-menu-link" href="javascript: void(0);">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/user.png')}}"/>
                     {{ trans('app.menus.administration.administration') }}
-                    @if(User::where('status', 0)->where('is_deleted', 0)->count() > 0)
+                    <?php
+                    // Cache User pending count - short cache (30 seconds) to ensure accuracy
+                    $user_pending_cache_key = 'user_pending_' . Auth::user()->id;
+                    $user_pending_count = Cache::remember($user_pending_cache_key, 30, function() {
+                        return User::where('status', 0)->where('is_deleted', 0)->count();
+                    });
+                    ?>
+                    @if($user_pending_count > 0)
                         <span class="label label-danger">!</span>
                     @endif
                 </a>
@@ -378,7 +434,7 @@ if (!Auth::user()->getAdmin()) {
                     @if (AccessGroup::hasAccess(6))
                     <li id="user_list">
                         <a class="left-menu-link" href="{{URL::action('AdminController@user')}}">
-                            {{ trans('app.menus.administration.user_management') }}<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.administration.pending', ['count'=> User::where('status', 0)->where('is_deleted', 0)->count()]) }}</span>
+                            {{ trans('app.menus.administration.user_management') }}<span class="label left-menu-label label-danger">&nbsp;{{ trans('app.menus.administration.pending', ['count'=> $user_pending_count]) }}</span>
                         </a>
                     </li>
                     @endif
@@ -913,8 +969,15 @@ if (!Auth::user()->getAdmin()) {
             <li class="left-menu-list-submenu" id="agm_postpone_panel">
                 <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon fa fa-file-text"><!-- --></i>
+                    <?php
+                    // Cache PostponedAGM count - short cache (30 seconds) to ensure accuracy
+                    $postponed_agm_count_cache_key = 'postponed_agm_count_' . Auth::user()->id;
+                    $postponed_agm_count = Cache::remember($postponed_agm_count_cache_key, 30, function() {
+                        return PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count();
+                    });
+                    ?>
                     <span>{{ trans('app.menus.agm_postpone.name') }}</span>
-                    @if (PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count())
+                    @if ($postponed_agm_count)
                     &nbsp;<span class="label left-menu-label label-danger">!</span>
                     @endif
                    </a>
@@ -930,7 +993,7 @@ if (!Auth::user()->getAdmin()) {
                         <a class="left-menu-link" href="{{ route('statusAGM.index') }}">
                             {{ trans('app.menus.agm_postpone.review') }} &nbsp;
                             <span class="label left-menu-label label-danger">
-                                {{ trans('app.menus.agm_postpone.pending', ['count'=> PostponedAGM::self()->notDraft()->where('postponed_agms.status', '!=', PostponedAGM::REJECTED)->count()]) }}
+                                {{ trans('app.menus.agm_postpone.pending', ['count'=> $postponed_agm_count]) }}
                             </span>
                         </a>
                     </li>
@@ -1131,7 +1194,11 @@ if (!Auth::user()->getAdmin()) {
 
                     @if (AccessGroup::hasAccess(35))
                     <?php
-                    $jmb = Company::where('is_active', 1)->where('short_name', '!=', '')->where('is_hidden', false)->where('is_deleted', 0)->orderBy('short_name')->get();
+                    // Cache COB list for COB change - keep until logout (24 hours cache)
+                    $cob_list_cache_key = 'cob_list';
+                    $jmb = Cache::remember($cob_list_cache_key, 86400, function() {
+                        return Company::where('is_active', 1)->where('short_name', '!=', '')->where('is_hidden', false)->where('is_deleted', 0)->orderBy('short_name')->get();
+                    });
                     ?>
 
                     @foreach ($jmb as $cob)

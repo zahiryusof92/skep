@@ -495,6 +495,7 @@ Route::post('/uploadPurchaserCSVAction', 'FileController@uploadPurchaserCSVActio
 Route::post('/submitUploadPurchaser', 'AgmController@submitUploadPurchaser')->before('authMember');
 Route::post('/report/purchaser', 'ReportController@purchaser')->before('authMember');
 Route::post('/print/purchaser', 'PrintController@printPurchaser')->before('authMember');
+Route::post('/export/purchaser', array('as' => 'export.purchaser', 'uses' => 'ExportController@exportPurchaser'))->before('authMember');
 
 //Tenant Submission
 Route::get('/tenant', array('as' => 'tenant.index', 'uses' => 'AgmController@tenant'))->before('authMember');
