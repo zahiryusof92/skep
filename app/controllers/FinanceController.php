@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade as PDF;
 use Enums\AdminStatus;
 use Services\NotificationService;
 
@@ -949,8 +948,10 @@ class FinanceController extends BaseController
      */
     public function exportFinanceListExcel()
     {
+        set_time_limit(300);
+        ini_set('memory_limit', '512M');
+
         $query = $this->getFinanceListBaseQuery();
-        $rows = $query->get();
 
         $export_data = [];
         $export_data[] = [
@@ -963,18 +964,20 @@ class FinanceController extends BaseController
             trans('app.forms.submission_date'),
         ];
 
-        foreach ($rows as $model) {
-            $status = ($model->status == 1) ? trans('app.forms.approved') : trans('app.forms.rejected');
-            $export_data[] = [
-                $model->file_id ? $model->file->company->short_name : '-',
-                $model->file->file_no . ' ' . $model->year . '-' . strtoupper($model->monthName()),
-                $model->file_id ? $model->file->strata->strataName() : '-',
-                $model->month ? $model->monthName() : '',
-                $model->year != '0' ? $model->year : '',
-                $status,
-                date('d/m/Y', strtotime($model->created_at)),
-            ];
-        }
+        $query->chunk(500, function ($rows) use (&$export_data) {
+            foreach ($rows as $model) {
+                $status = ($model->status == 1) ? trans('app.forms.approved') : trans('app.forms.rejected');
+                $export_data[] = [
+                    $model->file_id ? $model->file->company->short_name : '-',
+                    $model->file->file_no . ' ' . $model->year . '-' . strtoupper($model->monthName()),
+                    $model->file_id ? $model->file->strata->strataName() : '-',
+                    $model->month ? $model->monthName() : '',
+                    $model->year != '0' ? $model->year : '',
+                    $status,
+                    date('d/m/Y', strtotime($model->created_at)),
+                ];
+            }
+        });
 
         $filename = 'finance-list-' . date('YmdHis');
 
@@ -983,49 +986,6 @@ class FinanceController extends BaseController
                 $sheet->fromArray($export_data, null, 'A1', false, false);
             });
         })->download('xlsx');
-    }
-
-    /**
-     * Export finance list to PDF based on current filters.
-     */
-    public function exportFinanceListPdf()
-    {
-        $query = $this->getFinanceListBaseQuery();
-        $rows = $query->get();
-
-        $export_data = [];
-        foreach ($rows as $model) {
-            $status = ($model->status == 1) ? trans('app.forms.approved') : trans('app.forms.rejected');
-            $export_data[] = [
-                'cob' => $model->file_id ? $model->file->company->short_name : '-',
-                'file_no' => $model->file->file_no . ' ' . $model->year . '-' . strtoupper($model->monthName()),
-                'strata' => $model->file_id ? $model->file->strata->strataName() : '-',
-                'month' => $model->month ? $model->monthName() : '',
-                'year' => $model->year != '0' ? $model->year : '',
-                'status' => $status,
-                'created_at' => date('d/m/Y', strtotime($model->created_at)),
-            ];
-        }
-
-        $viewData = [
-            'data' => $export_data,
-            'headers' => [
-                trans('app.forms.cob'),
-                trans('app.forms.finance_management'),
-                trans('app.forms.strata'),
-                trans('app.forms.month'),
-                trans('app.forms.year'),
-                trans('app.forms.status'),
-                trans('app.forms.submission_date'),
-            ],
-        ];
-
-        $pdf = PDF::loadView('finance_en.finance_list_pdf', $viewData, [], [
-            'format' => 'A4-L',
-            'default_font_size' => 8,
-        ]);
-        $filename = 'finance-list-' . date('YmdHis') . '.pdf';
-        return $pdf->stream($filename);
     }
 
     public function deleteFinanceList()

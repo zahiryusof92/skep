@@ -261,7 +261,6 @@ foreach ($user_permission as $permission) {
                                     <div class="form-group">
                                         <label>&nbsp;</label><br>
                                         <a href="#" id="btn_export_excel" class="btn btn-sm btn-success"><i class="fa fa-file-excel-o"></i> Export to Excel</a>
-                                        <a href="#" id="btn_export_pdf" class="btn btn-sm btn-danger"><i class="fa fa-file-pdf-o"></i> Export to PDF</a>
                                     </div>
                                 </div>
                             </div>
@@ -358,10 +357,6 @@ foreach ($user_permission as $permission) {
         $('#btn_export_excel').on('click', function (e) {
             e.preventDefault();
             window.location.href = buildExportUrl("{{ URL::action('FinanceController@exportFinanceListExcel') }}");
-        });
-        $('#btn_export_pdf').on('click', function (e) {
-            e.preventDefault();
-            window.open(buildExportUrl("{{ URL::action('FinanceController@exportFinanceListPdf') }}"), '_blank');
         });
 
         $('#company').on('change', function () {
