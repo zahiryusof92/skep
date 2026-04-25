@@ -45,7 +45,7 @@ class ImportFile
         $audit_message = ' has been updated.';
 
         $files = Files::where('company_id', $company_id)->where('file_no', $file_no)->where('is_deleted', 0)->first();
-        if(!$files) {
+        if (!$files) {
             $files = new Files();
             if ($status == 1 || $status == '1') {
                 $files->approved_by = $user_id;
@@ -53,21 +53,50 @@ class ImportFile
             }
             $audit_message = ' has been imported.';
         }
+
+         // 155. Status
+         $is_active = 0;
+         if (isset($row['155']) && !empty($row['155'])) {
+             $is_active_raw = trim($row['155']);
+ 
+             if (!empty($is_active_raw)) {
+                 if (strtolower($is_active_raw) == 'aktif' || strtolower($is_active_raw) == 'active') {
+                     $is_active = 1;
+                 }
+             }
+         }
+
+        // 157. New File No
+        $new_file_no = '';
+        if (isset($row['157']) && !empty($row['157'])) {
+            $new_file_no = trim($row['157']);
+        }
+
+        // If new file no is provided, only update file_no and skip other updates.
+        if (!empty($new_file_no)) {
+            $files->company_id = $company_id;
+            $files->file_no = $new_file_no;
+            $files->is_active = $is_active;
+            $files->status = $status;
+            $files->created_by = $user_id;
+            $files->save();
+
+            $remarks = $files->file_no . $audit_message;
+            $auditTrail = new AuditTrail();
+            $auditTrail->module = "COB File";
+            $auditTrail->remarks = $remarks;
+            $auditTrail->audit_by = $user_id;
+            $auditTrail->save();
+
+            $job->delete();
+
+            return;
+        }
+
         // 3. Year
         $year = '';
         if (isset($row['3']) && !empty($row['3'])) {
             $year = trim($row['3']);
-        }
-        // 155. Status
-        $is_active = 0;
-        if (isset($row['155']) && !empty($row['155'])) {
-            $is_active_raw = trim($row['155']);
-
-            if (!empty($is_active_raw)) {
-                if (strtolower($is_active_raw) == 'aktif' || strtolower($is_active_raw) == 'active') {
-                    $is_active = 1;
-                }
-            }
         }
 
         $files->company_id = $company_id;
@@ -77,7 +106,6 @@ class ImportFile
         $files->status = $status;
         $files->created_by = $user_id;
         $create_or_update_file = $files->save();
-
 
         if ($create_or_update_file) {
             // 4. Name
@@ -220,7 +248,7 @@ class ImportFile
             }
 
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
-            if(empty($house_scheme)) {
+            if (empty($house_scheme)) {
                 $house_scheme = new HouseScheme();
                 $house_scheme->file_id = $files->id;
             }
@@ -487,7 +515,7 @@ class ImportFile
             $vacant_date = '';
             if (isset($row['40']) && !empty($row['40'])) {
                 // $vacant_date = trim($row['40']);
-                if(!empty($row['40']['date'])) {
+                if (!empty($row['40']['date'])) {
                     $vacant_date = Carbon::parse($row['40']['date'])->format('Y-m-d');
                 } else {
                     $vacant_date = Carbon::createFromFormat('d/m/Y', trim($row['40']))->format('Y-m-d');
@@ -497,7 +525,7 @@ class ImportFile
             $ccc_date = '';
             if (isset($row['41']) && !empty($row['41'])) {
                 // $ccc_date = trim($row['41']);
-                if(!empty($row['41']['date'])) {
+                if (!empty($row['41']['date'])) {
                     $ccc_date = Carbon::parse($row['41']['date'])->format('Y-m-d');
                 } else {
                     $ccc_date = Carbon::createFromFormat('d/m/Y', trim($row['41']))->format('Y-m-d');
@@ -591,7 +619,7 @@ class ImportFile
             }
 
             $strata = Strata::where('file_id', $files->id)->first();
-            if(empty($strata)) {
+            if (empty($strata)) {
                 $strata = new Strata();
                 $strata->file_id = $files->id;
             }
@@ -690,13 +718,13 @@ class ImportFile
                     }
 
                     $residential = Residential::where('file_id', $files->id)->first();
-                    if(empty($residential)) {
+                    if (empty($residential)) {
                         $residential = new Residential();
                         $residential->file_id = $files->id;
                     }
                     $residential->strata_id = $strata->id;
                     $residential->unit_no = $residential_unit_no;
-                    $residential->under_ten_units = (!empty($residential_unit_no) && $residential_unit_no < 10)? true : false;
+                    $residential->under_ten_units = (!empty($residential_unit_no) && $residential_unit_no < 10) ? true : false;
                     $residential->maintenance_fee = $residential_mf;
                     $residential->maintenance_fee_option = $residential_mf_unit;
                     $residential->sinking_fund = $residential_sf;
@@ -764,13 +792,13 @@ class ImportFile
                     }
 
                     $commercial = Commercial::where('file_id', $files->id)->first();
-                    if(empty($commercial)) {
+                    if (empty($commercial)) {
                         $commercial = new Commercial();
                         $commercial->file_id = $files->id;
                     }
                     $commercial->strata_id = $strata->id;
                     $commercial->unit_no = $commercial_unit_no;
-                    $commercial->under_ten_units = (!empty($commercial_unit_no) && $commercial_unit_no < 10)? true : false;
+                    $commercial->under_ten_units = (!empty($commercial_unit_no) && $commercial_unit_no < 10) ? true : false;
                     $commercial->maintenance_fee = $commercial_mf;
                     $commercial->maintenance_fee_option = $commercial_mf_unit;
                     $commercial->sinking_fund = $commercial_sf;
@@ -779,7 +807,7 @@ class ImportFile
                 }
 
                 $facility = Facility::where('file_id', $files->id)->first();
-                if(empty($facility)) {
+                if (empty($facility)) {
                     $facility = new Facility();
                     $facility->file_id = $files->id;
                 }
@@ -846,7 +874,7 @@ class ImportFile
                     $is_others = 1;
                 }
             }
-    
+
             // 143. No Management
             $no_management = false;
             if (isset($row['143']) && !empty($row['143'])) {
@@ -863,7 +891,7 @@ class ImportFile
             // 144. Date Start
             $date_start = '';
             if (isset($row['144']) && !empty($row['144'])) {
-                if(!empty($row['144']['date'])) {
+                if (!empty($row['144']['date'])) {
                     $date_start = Carbon::parse($row['144']['date'])->format('Y-m-d');
                 } else {
                     $date_start = Carbon::createFromFormat('d/m/Y', trim($row['144']))->format('Y-m-d');
@@ -873,7 +901,7 @@ class ImportFile
             // 145. Date End
             $date_end = '';
             if (isset($row['145']) && !empty($row['145'])) {
-                if(!empty($row['145']['date'])) {
+                if (!empty($row['145']['date'])) {
                     $date_end = Carbon::parse($row['145']['date'])->format('Y-m-d');
                 } else {
                     $date_end = Carbon::createFromFormat('d/m/Y', trim($row['145']['date']))->format('Y-m-d');
@@ -897,11 +925,11 @@ class ImportFile
             }
 
             $management = Management::where('file_id', $files->id)->first();
-            if(empty($management)) {
+            if (empty($management)) {
                 $management = new Management();
                 $management->file_id = $files->id;
             }
-                
+
             $management->is_developer = $is_developer;
             $management->liquidator = $liquidator;
             $management->is_jmb = $is_jmb;
@@ -1024,7 +1052,7 @@ class ImportFile
                     }
 
                     $new_developer = ManagementDeveloper::where('file_id', $files->id)->first();
-                    if(empty($new_developer)) {
+                    if (empty($new_developer)) {
                         $new_developer = new ManagementDeveloper();
                         $new_developer->file_id = $files->id;
                     }
@@ -1150,7 +1178,7 @@ class ImportFile
                     }
 
                     $new_liquidator = ManagementLiquidator::where('file_id', $files->id)->first();
-                    if(empty($new_liquidator)) {
+                    if (empty($new_liquidator)) {
                         $new_liquidator = new ManagementLiquidator();
                         $new_liquidator->file_id = $files->id;
                     }
@@ -1169,12 +1197,12 @@ class ImportFile
                     $new_liquidator->remarks = $liquidator_remarks;
                     $new_liquidator->save();
                 }
-                
+
                 if ($is_jmb) {
                     // 87. Date Formed
                     $jmb_date_formed = '';
                     if (isset($row['87']) && !empty($row['87'])) {
-                        if(!empty($row['61']['date'])) {
+                        if (!empty($row['61']['date'])) {
                             $jmb_date_formed = Carbon::parse($row['87']['date'])->format('Y-m-d');
                         } else {
                             $jmb_date_formed = Carbon::createFromFormat('d/m/Y', trim($row['87']))->format('Y-m-d');
@@ -1289,7 +1317,7 @@ class ImportFile
                     }
 
                     $new_jmb = ManagementJMB::where('file_id', $files->id)->first();
-                    if(empty($new_jmb)) {
+                    if (empty($new_jmb)) {
                         $new_jmb = new ManagementJMB();
                         $new_jmb->file_id = $files->id;
                     }
@@ -1315,7 +1343,7 @@ class ImportFile
                     // 102. Date Formed
                     $mc_date_formed = '';
                     if (isset($row['102']) && !empty($row['102'])) {
-                        if(!empty($row['102']['date'])) {
+                        if (!empty($row['102']['date'])) {
                             $mc_date_formed = Carbon::parse($row['102']['date'])->format('Y-m-d');
                         } else {
                             $mc_date_formed = Carbon::createFromFormat('d/m/Y', trim($row['102']))->format('Y-m-d');
@@ -1324,7 +1352,7 @@ class ImportFile
                     // 103. First AGM Date
                     $mc_first_agm = '';
                     if (isset($row['103']) && !empty($row['103'])) {
-                        if(!empty($row['103']['date'])) {
+                        if (!empty($row['103']['date'])) {
                             $mc_first_agm = Carbon::parse($row['103']['date'])->format('Y-m-d');
                         } else {
                             $mc_first_agm = Carbon::createFromFormat('d/m/Y', trim($row['103']))->format('Y-m-d');
@@ -1440,7 +1468,7 @@ class ImportFile
                     }
 
                     $new_mc = ManagementMC::where('file_id', $files->id)->first();
-                    if(empty($new_mc)) {
+                    if (empty($new_mc)) {
                         $new_mc = new ManagementMC();
                         $new_mc->file_id = $files->id;
                     }
@@ -1573,7 +1601,7 @@ class ImportFile
                     }
 
                     $new_agent = ManagementAgent::where('file_id', $files->id)->first();
-                    if(empty($new_agent)) {
+                    if (empty($new_agent)) {
                         $new_agent = new ManagementAgent();
                         $new_agent->file_id = $files->id;
                     }
@@ -1699,7 +1727,7 @@ class ImportFile
                     }
 
                     $new_others = ManagementOthers::where('file_id', $files->id)->first();
-                    if(empty($new_others)) {
+                    if (empty($new_others)) {
                         $new_others = new ManagementOthers();
                         $new_others->file_id = $files->id;
                     }
@@ -1738,7 +1766,7 @@ class ImportFile
             // 151. Financial Report Start Month
 
             $monitor = Monitoring::where('file_id', $files->id)->first();
-            if(empty($monitor)) {
+            if (empty($monitor)) {
                 $monitor = new Monitoring();
                 $monitor->file_id = $files->id;
             }
@@ -1764,7 +1792,7 @@ class ImportFile
             }
 
             $others_details = OtherDetails::where('file_id', $files->id)->first();
-            if(empty($others_details)) {
+            if (empty($others_details)) {
                 $others_details = new OtherDetails();
                 $others_details->file_id = $files->id;
             }
@@ -1787,17 +1815,6 @@ class ImportFile
             $others_details->others_composition = '';
             $others_details->foreigner_composition = '';
             $others_details->save();
-        }
-
-        // 157. New File No
-        $new_file_no = '';
-        if (isset($row['157']) && !empty($row['157'])) {
-            $new_file_no = trim($row['157']);
-        }
-
-        if (!empty($new_file_no)) {
-            $files->file_no = $new_file_no;
-            $update_file = $files->save();
         }
 
         # Audit Trail

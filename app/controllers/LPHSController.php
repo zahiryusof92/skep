@@ -3356,7 +3356,7 @@ class LPHSController extends BaseController
         return $this->result($result, $filename = 'Export_Files_' . strtoupper($cob));
     }
 
-    public function fileInfo($cob = null)
+    public function fileInfo($cob = null, $filter = null)
     {
         ini_set('max_execution_time', -1);
         
@@ -3366,9 +3366,45 @@ class LPHSController extends BaseController
 
         if ($councils) {
             foreach ($councils as $council) {
-                if ($council->activeFiles) {
-                    foreach ($council->activeFiles as $files) {
+                if ($filter) {
+                    $files = $council->files;
+                } else {
+                    $files = $council->activeFiles;
+                }
+
+                if ($files) {
+                    foreach ($files as $files) {
                         if ($files->strata) {
+
+                            $includeDeveloper = true;
+                            $includeJMB = true;
+                            $includeMC = true;
+                            $includeAgent = true;
+                            $includeOthers = true;
+                            $includePic = true;
+                            $includeDesignation = true;
+                            if ($filter) {
+                                if ($files->managementMC) {
+                                    $includeDeveloper = false;
+                                    $includeJMB = false;
+                                    $includeMC = true;
+                                    $includeAgent = true;
+                                } else if ($files->managementJMB) {
+                                    $includeDeveloper = false;
+                                    $includeJMB = true;
+                                    $includeMC = false;
+                                    $includeAgent = true;
+                                } else if ($files->managementDeveloper) {
+                                    $includeDeveloper = true;
+                                    $includeJMB = false;
+                                    $includeMC = false;
+                                    $includeAgent = false;
+                                }
+                                $includeOthers = false;
+                                $includePic = false;
+                                $includeDesignation = false;
+                            }
+
                             $total_unit = 0;
                             if ($files->strata->residential) {
                                 if ($files->strata->residential->unit_no > 0) {
@@ -3391,7 +3427,8 @@ class LPHSController extends BaseController
                             $developer_state = '';
                             $developer_phone_no = '';
                             $developer_email = '';
-                            if ($files->managementDeveloper) {
+
+                            if ($includeDeveloper && $files->managementDeveloper) {
                                 if ($files->managementDeveloper->name) {
                                     $developer_name = $files->managementDeveloper->name;
                                 }
@@ -3434,7 +3471,7 @@ class LPHSController extends BaseController
                             $jmb_state = '';
                             $jmb_phone_no = '';
                             $jmb_email = '';
-                            if ($files->managementJMB) {
+                            if ($includeJMB && $files->managementJMB) {
                                 if ($files->managementJMB->name) {
                                     $jmb_name = $files->managementJMB->name;
                                 }
@@ -3477,7 +3514,7 @@ class LPHSController extends BaseController
                             $mc_state = '';
                             $mc_phone_no = '';
                             $mc_email = '';
-                            if ($files->managementMC) {
+                            if ($includeMC && $files->managementMC) {
                                 if ($files->managementMC->name) {
                                     $mc_name = $files->managementMC->name;
                                 }
@@ -3520,7 +3557,7 @@ class LPHSController extends BaseController
                             $agent_state = '';
                             $agent_phone_no = '';
                             $agent_email = '';
-                            if ($files->managementAgent) {
+                            if ($includeAgent && $files->managementAgent) {
                                 if ($files->managementAgent->name) {
                                     $agent_name = $files->managementAgent->name;
                                 }
@@ -3563,7 +3600,7 @@ class LPHSController extends BaseController
                             $others_state = '';
                             $others_phone_no = '';
                             $others_email = '';
-                            if ($files->managementOthers) {
+                            if ($includeOthers && $files->managementOthers) {
                                 if ($files->managementOthers->name) {
                                     $others_name = $files->managementOthers->name;
                                 }
@@ -3599,7 +3636,7 @@ class LPHSController extends BaseController
                             $pic_name = '';
                             $pic_phone_no = '';
                             $pic_email = '';
-                            if ($files->personInCharge) {
+                            if ($includePic && $files->personInCharge) {
                                 foreach ($files->personInCharge as $pic) {
                                     if ($pic->user->full_name) {
                                         $pic_name = $pic->user->full_name;
@@ -3629,9 +3666,11 @@ class LPHSController extends BaseController
                             Arr::set($result[$files->id], trans('Total Floor'), $files->strata->total_floor);
                             Arr::set($result[$files->id], trans('Total Unit'), $total_unit);
 
-                            Arr::set($result[$files->id], trans('PIC Name'), $pic_name);
-                            Arr::set($result[$files->id], trans('PIC Phone No'), $pic_phone_no);
-                            Arr::set($result[$files->id], trans('PIC E-mail'), $pic_email);
+                            if ($includePic) {
+                                Arr::set($result[$files->id], trans('PIC Name'), $pic_name);
+                                Arr::set($result[$files->id], trans('PIC Phone No'), $pic_phone_no);
+                                Arr::set($result[$files->id], trans('PIC E-mail'), $pic_email);
+                            }
 
                             Arr::set($result[$files->id], trans('Developer Name'), $developer_name);
                             Arr::set($result[$files->id], trans('Developer Address 1'), $developer_address1);
@@ -3677,31 +3716,35 @@ class LPHSController extends BaseController
                             Arr::set($result[$files->id], trans('Agent Phone No'), $agent_phone_no);
                             Arr::set($result[$files->id], trans('Agent E-mail'), $agent_email);
 
-                            Arr::set($result[$files->id], trans('Others Name'), $others_name);
-                            Arr::set($result[$files->id], trans('Others Address 1'), $others_address1);
-                            Arr::set($result[$files->id], trans('Others Address 2'), $others_address2);
-                            Arr::set($result[$files->id], trans('Others Address 3'), $others_address3);
-                            Arr::set($result[$files->id], trans('Others Address 4'), $others_address4);
-                            Arr::set($result[$files->id], trans('Others Postcode'), $others_postcode);
-                            Arr::set($result[$files->id], trans('Others City'), $others_city);
-                            Arr::set($result[$files->id], trans('Others State'), $others_state);
-                            Arr::set($result[$files->id], trans('Others Phone No'), $others_phone_no);
-                            Arr::set($result[$files->id], trans('Others E-mail'), $others_email);
+                            if ($includeOthers) {
+                                Arr::set($result[$files->id], trans('Others Name'), $others_name);
+                                Arr::set($result[$files->id], trans('Others Address 1'), $others_address1);
+                                Arr::set($result[$files->id], trans('Others Address 2'), $others_address2);
+                                Arr::set($result[$files->id], trans('Others Address 3'), $others_address3);
+                                Arr::set($result[$files->id], trans('Others Address 4'), $others_address4);
+                                Arr::set($result[$files->id], trans('Others Postcode'), $others_postcode);
+                                Arr::set($result[$files->id], trans('Others City'), $others_city);
+                                Arr::set($result[$files->id], trans('Others State'), $others_state);
+                                Arr::set($result[$files->id], trans('Others Phone No'), $others_phone_no);
+                                Arr::set($result[$files->id], trans('Others E-mail'), $others_email);
+                            }
 
-                            $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
-                            if ($designations) {
-                                foreach ($designations as $designation) {
-                                    $ajk_detail = AJKDetails::where('file_id', $files->id)
-                                        ->where('designation', $designation->id)
-                                        ->where('is_deleted', 0)
-                                        ->orderBy('start_year', 'desc')
-                                        ->orderBy('month', 'desc')
-                                        ->orderBy('created_at', 'desc')
-                                        ->first();
+                            if ($includeDesignation) {
+                                $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                                if ($designations) {
+                                    foreach ($designations as $designation) {
+                                        $ajk_detail = AJKDetails::where('file_id', $files->id)
+                                            ->where('designation', $designation->id)
+                                            ->where('is_deleted', 0)
+                                            ->orderBy('start_year', 'desc')
+                                            ->orderBy('month', 'desc')
+                                            ->orderBy('created_at', 'desc')
+                                            ->first();
 
-                                    Arr::set($result[$files->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
-                                    Arr::set($result[$files->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
-                                    Arr::set($result[$files->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                                        Arr::set($result[$files->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                                        Arr::set($result[$files->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
+                                        Arr::set($result[$files->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                                    }
                                 }
                             }
                         }
