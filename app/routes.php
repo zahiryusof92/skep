@@ -83,6 +83,7 @@ Route::get('/lphs/fileInfo/{council}/{filter?}', 'LPHSController@fileInfo');
 Route::get('/lphs/fileSummary/{council}', 'LPHSController@fileSummary');
 Route::get('/lphs/auditedAccount/{council}', 'LPHSController@auditedAccount');
 Route::get('/lphs/totalUnit/{council}', 'LPHSController@totalUnit');
+Route::get('/lphs/totalLift/{council}', 'LPHSController@totalLift');
 
 /*
  * LPHS REPORT END

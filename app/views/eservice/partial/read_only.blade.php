@@ -49,6 +49,11 @@
                 </button>
             </a>
             @endif
+            @elseif ($fields[$attribute]['type'] == 'number')
+            <input type="number" id="{{ $fields[$attribute]['name'] }}" name="{{ $fields[$attribute]['name'] }}"
+                class="form-control"
+                value="{{ (isset($model[$fields[$attribute]['name']]) ? $model[$fields[$attribute]['name']] : '') }}"
+                readonly />
             @else
             <input type="text" id="{{ $fields[$attribute]['name'] }}" name="{{ $fields[$attribute]['name'] }}"
                 class="form-control"

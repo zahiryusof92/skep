@@ -174,7 +174,7 @@
                 <span
                     style="font-weight:bold;">{{ isset($content['date_overdue']) ? \Helper\Helper::getDueDate($content['date_overdue']) : '' }}
                     berjumlah RM
-                    {{ isset($content['total_overdue']) ? number_format($content['total_overdue'], 2) : '0.00' }}</span>.
+                    {{ isset($content['total_overdue']) ? number_format((float) $content['total_overdue'], 2) : '0.00' }}</span>.
                 Sehubungan dengan itu, tuan adalah diminta menjelaskan tunggakan tuan
                 <span style="text-transform: uppercase; font-weight:bold;">dalam tempoh 14 hari</span> dari tarikh notis ini
                 sebelum sebarang tindakan diambil di bawah peruntukan tersebut.

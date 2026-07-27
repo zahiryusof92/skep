@@ -1986,7 +1986,7 @@ return [
                         'total_overdue' => [
                             'label' => trans('app.forms.eservice.mbsj.total_overdue'),
                             'name' => 'total_overdue',
-                            'type' => 'text',
+                            'type' => 'number',
                             'required' => true
                         ],
                         'date_overdue' => [
