@@ -1075,6 +1075,7 @@ Route::group(array('before' => 'authMember'), function () {
     /**
      * TPPM
      */
+    Route::get('tppm/sso', ['as' => 'tppm.sso', 'uses' => 'TPPMController@sso']);
     Route::post('tppm/fileUpload', ['as' => 'tppm.fileUpload', 'uses' => 'TPPMController@fileUpload']);
     Route::get('tppm/{id}/pdf', ['as' => 'tppm.pdf', 'uses' => 'TPPMController@getPDF']);
     Route::get('tppm/{id}/preview', ['as' => 'tppm.preview', 'uses' => 'TPPMController@getPreview']);

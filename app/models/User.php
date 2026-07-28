@@ -295,4 +295,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         return false;
     }
+
+    /**
+     * TPPM access for additional COBs (not MPS).
+     * No Access Group required — enabled for COB, JMB & MC roles.
+     * MPS keeps its existing access check in navigation / controller.
+     */
+    public function hasAccessTPPM()
+    {
+        if (!Auth::user()->getCOB) {
+            return false;
+        }
+
+        if (!in_array(Auth::user()->getCOB->short_name, ['MPS'])) {
+            return false;
+        }
+
+        return Auth::user()->isCOB() || Auth::user()->isJMB() || Auth::user()->isMC();
+    }
 }
