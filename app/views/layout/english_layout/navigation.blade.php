@@ -246,6 +246,13 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                     </li>
                 </ul>
             </li>
+            @elseif (Auth::user()->hasAccessTPPM())
+            <li class="left-menu-list-link" id="tppm_cob_list">
+                <a class="left-menu-link" href="{{ route('tppm.sso') }}">
+                    <i class="left-menu-link-icon fa fa-trophy"></i>
+                    <span id="recycle">{{ trans('app.menus.tppm.name') }}</span>
+                </a>
+            </li>
             @endif
 
             @if ((Auth::user()->getAdmin() || (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name == "MPS")) && AccessGroup::hasAccessModule('EPKS'))
