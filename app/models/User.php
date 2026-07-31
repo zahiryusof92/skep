@@ -300,6 +300,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
      * TPPM access for additional COBs (not MPS).
      * No Access Group required — enabled for COB, JMB & MC roles.
      * MPS keeps its existing access check in navigation / controller.
+     * Allowed COBs: estrata_tppm_cobs in .env.php (comma-separated).
+     * Allowed usernames: estrata_tppm_usernames (comma-separated; empty = allow all).
      */
     public function hasAccessTPPM()
     {
@@ -307,7 +309,17 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             return false;
         }
 
-        if (!in_array(Auth::user()->getCOB->short_name, ['MPS'])) {
+        $allowedCobs = Config::get('constant.third_party.estrata.tppm_cobs');
+        $allowedCobs = array_filter(array_map('trim', explode(',', (string) $allowedCobs)));
+
+        if (empty($allowedCobs) || !in_array(Auth::user()->getCOB->short_name, $allowedCobs)) {
+            return false;
+        }
+
+        $allowedUsernames = Config::get('constant.third_party.estrata.tppm_usernames');
+        $allowedUsernames = array_filter(array_map('trim', explode(',', (string) $allowedUsernames)));
+
+        if (!empty($allowedUsernames) && !in_array(Auth::user()->username, $allowedUsernames)) {
             return false;
         }
 
