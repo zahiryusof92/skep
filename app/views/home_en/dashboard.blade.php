@@ -627,7 +627,7 @@
 </div>
 
 <div class="modal fade modal" id="memoDetailsModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content"></div>
     </div>
 </div>
@@ -834,20 +834,30 @@
         });
     }
 
+    var memoAlertQueue = [];
+    var memoAlertShowing = false;
+
     function loadActiveMemoAlerts() {
         $.ajax({
             url: "{{ URL::action('HomeController@getActiveMemoAlerts') }}",
             type: "GET",
             dataType: "json",
             success: function (res) {
-                if (!res || !res.success || !res.ids) {
+                if (!res || !res.success || !res.ids || !res.ids.length) {
                     return;
                 }
-                $.each(res.ids, function (i, id) {
-                    getMemoDetails(id);
-                });
+                memoAlertQueue = res.ids.slice();
+                showNextMemoAlert();
             }
         });
+    }
+
+    function showNextMemoAlert() {
+        if (memoAlertShowing || !memoAlertQueue.length) {
+            return;
+        }
+        memoAlertShowing = true;
+        getMemoDetails(memoAlertQueue.shift());
     }
 
     function getMemoDetails(id) {
@@ -858,11 +868,21 @@
                 id: id
             },
             success: function (data) {
-                $(".modal-content").html(data);
+                $("#memoDetailsModal .modal-content").html(data);
                 $("#memoDetailsModal").modal("show");
+            },
+            error: function () {
+                memoAlertShowing = false;
+                showNextMemoAlert();
             }
         });
     }
+
+    $("#memoDetailsModal").on("hidden.bs.modal", function () {
+        memoAlertShowing = false;
+        $(this).find(".modal-content").empty();
+        showNextMemoAlert();
+    });
 
     function generatePie(id, title, series_title, data) {
         Highcharts.chart(id, {

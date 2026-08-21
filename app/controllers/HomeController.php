@@ -124,9 +124,6 @@ class HomeController extends BaseController
         if ($memos && count($memos) > 0) {
             foreach ($memos as $memo) {
                 $ids[] = Helper::encode($memo->id);
-                if (count($ids) >= 3) {
-                    break;
-                }
             }
         }
 
@@ -493,7 +490,7 @@ class HomeController extends BaseController
             });
         }
 
-        return $memo->orderBy('memo_date', 'desc')->take(3)->get();
+        return $memo->orderBy('memo_date', 'desc')->take(5)->get();
     }
 
     public function getMemoDetails()
@@ -518,7 +515,7 @@ class HomeController extends BaseController
                 if (!empty($memo->document_file)) {
                     $files = explode(',', $memo->document_file);
                     foreach ($files as $file) {
-                        $result .= "<img src='" . $file . "' style='width:100%;'/><br/><br/>";
+                        $result .= "<img src='" . $file . "' style='max-width:100%; height:auto;'/><br/><br/>";
                     }
                 }
                 $result .= "</div>";
