@@ -2074,6 +2074,8 @@ return [
             'api_clients' => getenv('estrata_api_clients'),
             'api_key' => getenv('estrata_api_key'),
             'api_secret' => getenv('estrata_api_secret'),
+            'tppm_cobs' => getenv('estrata_tppm_cobs'),
+            'tppm_usernames' => getenv('estrata_tppm_usernames'),
         ],
     ],
     'eai' => [
