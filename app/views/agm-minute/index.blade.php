@@ -50,6 +50,7 @@
                                         <th style="width:10%;">{{ trans('app.forms.agm_date') }}</th>
                                         <th style="width:25%;">{{ trans('app.forms.description') }}</th>
                                         <th style="width:5%;"></th>
+                                        <th style="width:10%;">{{ trans('app.forms.status') }}</th>
                                         <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                     </tr>
                                 </thead>
@@ -92,6 +93,7 @@
                 {data: 'agm_date', name: 'agm_date'},
                 {data: 'description', name: 'description'},
                 {data: 'check_status', name: 'description', orderable: false, searchable: false},
+                {data: 'status', name: 'agm_minute_statuses.status'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             columnDefs: [{"targets": -1, "className": "text-center"}]

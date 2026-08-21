@@ -26,7 +26,6 @@ class AGMMinuteController extends BaseController
         if (!empty(Session::get('admin_cob'))) {
             $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_hidden', false)->where('is_deleted', 0)->first();
             if ($cob && $cob->short_name != 'MPKJ') {
-                \Log::debug("Session: " . $cob->short_name);
                 return Redirect::to('/minutes');
             }
         }
@@ -79,7 +78,11 @@ class AGMMinuteController extends BaseController
                     }
                 })
                 ->where('agm_minutes.is_deleted', 0)
-                ->selectRaw("agm_minutes.*, files.file_no, strata.name as strata_name");
+                ->leftJoin('agm_minute_statuses', function ($join) {
+                    $join->on('agm_minutes.id', '=', 'agm_minute_statuses.agm_minute_id')
+                        ->where('agm_minute_statuses.is_deleted', '=', 0);
+                })
+                ->selectRaw("agm_minutes.*, files.file_no, strata.name as strata_name, agm_minute_statuses.status as endorsement_status");
 
             return Datatables::of($model)
                 ->addColumn('strata', function ($model) {
@@ -128,13 +131,27 @@ class AGMMinuteController extends BaseController
                     }
                     return $content;
                 })
+                ->addColumn('status', function ($model) {
+                    $status = isset($model->endorsement_status) ? $model->endorsement_status : 'pending';
+                    if ($status === 'approved') {
+                        $status = 'accepted';
+                    }
+                    $label = trans('app.forms.' . $status);
+                    return $label ? $label : strtoupper($status);
+                })
                 ->addColumn('action', function ($model) {
-                    $btn = '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="window.location=\'' . route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;';
-                    $btn .= '<form action="' . route('agm-minute.destroy', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" style="display:inline-block;">';
-                    $btn .= '<input type="hidden" name="_method" value="DELETE">';
-                    $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
-                    $btn .= '</form>';
-
+                    $btn = '<button type="button" class="btn btn-xs btn-success edit_agm" title="Edit" onclick="window.location=\'' . route('agm-minute.edit', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '\'"><i class="fa fa-pencil"></i></button>';
+                    $status = isset($model->endorsement_status) ? $model->endorsement_status : null;
+                    if ($status === 'approved') {
+                        $status = 'accepted';
+                    }
+                    $allowDelete = !$status || !in_array($status, array('accepted', 'rejected'));
+                    if ($allowDelete) {
+                        $btn .= '&nbsp;&nbsp;<form action="' . route('agm-minute.destroy', Helper::encode($this->module['agm']['minute']['name'], $model->id)) . '" method="POST" id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" style="display:inline-block;">';
+                        $btn .= '<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button type="submit" class="btn btn-xs btn-danger confirm-delete" data-id="delete_form_' . Helper::encode($this->module['agm']['minute']['name'], $model->id) . '" title="Delete"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form>';
+                    }
                     return $btn;
                 })
                 ->filter(function ($query) {
@@ -172,7 +189,6 @@ class AGMMinuteController extends BaseController
         if (!empty(Session::get('admin_cob'))) {
             $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_hidden', false)->where('is_deleted', 0)->first();
             if ($cob && $cob->short_name != 'MPKJ') {
-                \Log::debug("Session: " . $cob->short_name);
                 return Redirect::to('/minutes');
             }
         }
@@ -320,7 +336,6 @@ class AGMMinuteController extends BaseController
         if (!empty(Session::get('admin_cob'))) {
             $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_hidden', false)->where('is_deleted', 0)->first();
             if ($cob && $cob->short_name != 'MPKJ') {
-                \Log::debug("Session: " . $cob->short_name);
                 return Redirect::to('/minutes');
             }
         }
@@ -330,6 +345,7 @@ class AGMMinuteController extends BaseController
             $fileList = Files::file()->get();
             $userList = User::self()->whereNotIn('role', [1, 2])->get();
             $configs = $this->getFormFields($model);
+            $endorse = (Auth::user()->isSuperadmin() || Auth::user()->isCOB());
 
             $viewData = array(
                 'title' => trans('app.menus.agm.upload_of_minutes'),
@@ -340,6 +356,8 @@ class AGMMinuteController extends BaseController
                 'userList' => $userList,
                 'questions' => $configs['questions'],
                 'model' => $model,
+                'minuteStatus' => $model->agmMinuteStatus,
+                'endorse' => $endorse,
                 'image' => ""
             );
 
@@ -366,8 +384,19 @@ class AGMMinuteController extends BaseController
                 'file_no' => 'required|exists:files,id,is_deleted,' . false,
                 'agm_date' => 'required'
             );
-
-            $custom_messages = [];
+            $custom_messages = array();
+            if (Auth::user()->isSuperadmin() || Auth::user()->isCOB()) {
+                $validate_fields['status'] = 'required|in:pending,accepted,rejected';
+                $validate_fields['endorsed_by'] = 'required';
+                $validate_fields['endorsed_email'] = 'required|email';
+                $custom_messages = array(
+                    'status.required' => str_replace(':attribute', trans('app.forms.status'), trans('app.errors.select')),
+                    'status.in' => trans('app.forms.status') . ' ' . trans('app.errors.required_valid'),
+                    'endorsed_by.required' => str_replace(':attribute', trans('app.forms.endorsed_by'), trans('app.errors.required')),
+                    'endorsed_email.required' => str_replace(':attribute', trans('app.forms.endorsed_email'), trans('app.errors.required')),
+                    'endorsed_email.email' => str_replace(':attribute', trans('app.forms.endorsed_email'), trans('app.errors.required_valid')),
+                );
+            }
             $extraValidation = $this->getExtraFieldValidate();
             // if(count($extraValidation)) {
             //     foreach($this->getExtraFieldValidate() as $question) {
@@ -434,6 +463,26 @@ class AGMMinuteController extends BaseController
                             'description' => serialize($description),
                             'remarks' => $data['remarks'],
                         ]);
+
+                        /** Save endorsement status to agm_minute_statuses (only COB/Superadmin) */
+                        if (Auth::user()->isSuperadmin() || Auth::user()->isCOB()) {
+                            $statusData = [
+                                'user_id' => Auth::user()->id,
+                                'status' => isset($data['status']) ? $data['status'] : 'pending',
+                                'reason' => isset($data['reason']) ? $data['reason'] : null,
+                                'endorsed_by' => isset($data['endorsed_by']) ? $data['endorsed_by'] : null,
+                                'endorsed_email' => isset($data['endorsed_email']) ? $data['endorsed_email'] : null,
+                                'attachment' => isset($data['endorsement_letter_url']) ? $data['endorsement_letter_url'] : null,
+                                'is_deleted' => 0,
+                            ];
+                            $agmMinuteStatus = AgmMinuteStatus::where('agm_minute_id', $model->id)->where('is_deleted', 0)->first();
+                            if ($agmMinuteStatus) {
+                                $agmMinuteStatus->update($statusData);
+                            } else {
+                                $statusData['agm_minute_id'] = $model->id;
+                                AgmMinuteStatus::create($statusData);
+                            }
+                        }
     
                         /*
                          * add audit trail
@@ -484,6 +533,13 @@ class AGMMinuteController extends BaseController
     {
         $model = AGMMinute::find(Helper::decode($id, $this->module['agm']['minute']['name']));
         if ($model) {
+            $status = $model->agmMinuteStatus ? $model->agmMinuteStatus->status : null;
+            if ($status === 'approved') {
+                $status = 'accepted';
+            }
+            if ($status && in_array($status, array('accepted', 'rejected'))) {
+                return Redirect::back()->with('error', trans('app.errors.delete_not_allowed'));
+            }
             $success = $model->update([
                 'is_deleted' => true
             ]);

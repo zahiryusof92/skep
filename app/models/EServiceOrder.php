@@ -16,6 +16,7 @@ class EServiceOrder extends Eloquent
     const INPROGRESS = 'inprogress';
     const APPROVED = 'approved';
     const REJECTED = 'rejected';
+    const INCOMPLETE = 'incomplete';
     const FPX = 'FPX';
     const CARD = 'card';
 
@@ -75,7 +76,7 @@ class EServiceOrder extends Eloquent
 
     public function scopeNotDraft(Builder $builder)
     {
-        return $builder->whereNotIn('eservices_orders.status', [self::DRAFT, self::APPROVED, self::REJECTED]);
+        return $builder->whereNotIn('eservices_orders.status', [self::DRAFT, self::APPROVED, self::REJECTED, self::INCOMPLETE]);
     }
 
     public function scopeApproved(Builder $builder)
@@ -86,6 +87,11 @@ class EServiceOrder extends Eloquent
     public function scopeRejected(Builder $builder)
     {
         return $builder->where('eservices_orders.status', self::REJECTED);
+    }
+
+    public function scopeIncomplete(Builder $builder)
+    {
+        return $builder->where('eservices_orders.status', self::INCOMPLETE);
     }
 
     public static function getTypeList($request = [])
@@ -181,6 +187,7 @@ class EServiceOrder extends Eloquent
         $list = [
             // self::DRAFT => trans('app.eservice.draft'),
             self::INPROGRESS => trans('app.eservice.inprogress'),
+            self::INCOMPLETE => trans('app.eservice.incomplete'),
             self::APPROVED => trans('app.eservice.approved'),
             self::REJECTED => trans('app.eservice.rejected'),
         ];
@@ -194,6 +201,7 @@ class EServiceOrder extends Eloquent
             '' => trans('- Please Select -'),
             // self::PENDING => trans('app.eservice.pending'),
             self::INPROGRESS => trans('app.eservice.inprogress'),
+            self::INCOMPLETE => trans('app.eservice.incomplete'),
             self::APPROVED => trans('app.eservice.approved'),
             self::REJECTED => trans('app.eservice.rejected'),
         ];
@@ -209,6 +217,8 @@ class EServiceOrder extends Eloquent
             $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.eservice.pending') . '</span>';
         } else if ($this->status == self::INPROGRESS) {
             $status = '<span class="label label-pill label-warning" style="font-size:12px;">' . trans('app.eservice.inprogress') . '</span>';
+        } else if ($this->status == self::INCOMPLETE) {
+            $status = '<span class="label label-pill label-info" style="font-size:12px;">' . trans('app.eservice.incomplete') . '</span>';
         } else if ($this->status == self::APPROVED) {
             $status = '<span class="label label-pill label-success" style="font-size:12px;">' . trans('app.eservice.approved') . '</span>';
             if (Auth::user()->getAdmin()) {
@@ -223,15 +233,17 @@ class EServiceOrder extends Eloquent
 
     public function getStatusText()
     {
-        $status = 'Draft';
+        $status = trans('app.eservice.draft');
         if ($this->status == self::PENDING) {
-            $status = "Pending";
+            $status = trans('app.eservice.pending');
         } else if ($this->status == self::INPROGRESS) {
-            $status = "In-Progress";
+            $status = trans('app.eservice.inprogress');
+        } else if ($this->status == self::INCOMPLETE) {
+            $status = trans('app.eservice.incomplete');
         } else if ($this->status == self::APPROVED) {
-            $status = "Approved";
+            $status = trans('app.eservice.approved');
         } else if ($this->status == self::REJECTED) {
-            $status = "Rejected";
+            $status = trans('app.eservice.rejected');
         }
 
         return $status;

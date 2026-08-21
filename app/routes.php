@@ -60,7 +60,7 @@ Route::get('/lphs/tenant/{council}', 'LPHSController@tenant');
 Route::get('/lphs/management/{council}', 'LPHSController@management');
 Route::get('/lphs/createJMB/{council}', 'LPHSController@createJMB');
 Route::get('/lphs/removeJMB/{council}', 'LPHSController@removeJMB');
-Route::get('/lphs/updateJMBExpiration/{council}/{date}', 'LPHSController@updateJMBExpiration');
+Route::get('/lphs/updateJMBExpiration/{council}/{date?}', 'LPHSController@updateJMBExpiration');
 Route::get('/lphs/update/rating', 'LPHSController@updateRatingSummary');
 Route::get('/lphs/odesiLife/{council}', 'LPHSController@odesiLife');
 Route::get('/lphs/JMBMCSignIn/{council}', 'LPHSController@JMBMCSignIn');
@@ -79,10 +79,11 @@ Route::get('/lphs/agmHasBeenApproved/{council}', 'LPHSController@agmHasBeenAppro
 Route::get('/lphs/exportOwner/{council}/{category}/{page}', 'LPHSController@exportOwner');
 Route::get('/lphs/activeStrata/{council}', 'LPHSController@activeStrata');
 Route::get('/lphs/exportFiles/{council}/{start}/{total}', 'LPHSController@exportFiles');
-Route::get('/lphs/fileInfo/{council}', 'LPHSController@fileInfo');
+Route::get('/lphs/fileInfo/{council}/{filter?}', 'LPHSController@fileInfo');
 Route::get('/lphs/fileSummary/{council}', 'LPHSController@fileSummary');
 Route::get('/lphs/auditedAccount/{council}', 'LPHSController@auditedAccount');
 Route::get('/lphs/totalUnit/{council}', 'LPHSController@totalUnit');
+Route::get('/lphs/totalLift/{council}', 'LPHSController@totalLift');
 
 /*
  * LPHS REPORT END
@@ -495,6 +496,7 @@ Route::post('/uploadPurchaserCSVAction', 'FileController@uploadPurchaserCSVActio
 Route::post('/submitUploadPurchaser', 'AgmController@submitUploadPurchaser')->before('authMember');
 Route::post('/report/purchaser', 'ReportController@purchaser')->before('authMember');
 Route::post('/print/purchaser', 'PrintController@printPurchaser')->before('authMember');
+Route::post('/export/purchaser', array('as' => 'export.purchaser', 'uses' => 'ExportController@exportPurchaser'))->before('authMember');
 
 //Tenant Submission
 Route::get('/tenant', array('as' => 'tenant.index', 'uses' => 'AgmController@tenant'))->before('authMember');
@@ -875,6 +877,7 @@ Route::post('/print/financeSupport', 'PrintController@financeSupport')->before('
 // FINANCE FILE LIST
 Route::get('/financeList', array('as' => 'finance_file.index', 'uses' => 'FinanceController@financeList'))->before('authMember');
 Route::get('/getFinanceList', 'FinanceController@getFinanceList')->before('authMember');
+Route::get('/exportFinanceListExcel', array('as' => 'finance_file.export_excel', 'uses' => 'FinanceController@exportFinanceListExcel'))->before('authMember');
 Route::post('/inactiveFinanceList', 'FinanceController@inactiveFinanceList')->before('authMember');
 Route::post('/activeFinanceList', 'FinanceController@activeFinanceList')->before('authMember');
 Route::post('/deleteFinanceList', 'FinanceController@deleteFinanceList')->before('authMember');
@@ -1072,6 +1075,7 @@ Route::group(array('before' => 'authMember'), function () {
     /**
      * TPPM
      */
+    Route::get('tppm/sso', ['as' => 'tppm.sso', 'uses' => 'TPPMController@sso']);
     Route::post('tppm/fileUpload', ['as' => 'tppm.fileUpload', 'uses' => 'TPPMController@fileUpload']);
     Route::get('tppm/{id}/pdf', ['as' => 'tppm.pdf', 'uses' => 'TPPMController@getPDF']);
     Route::get('tppm/{id}/preview', ['as' => 'tppm.preview', 'uses' => 'TPPMController@getPreview']);
@@ -1160,6 +1164,7 @@ Route::group(array('before' => 'authMember'), function () {
     Route::resource('eservicePrice', 'EServicePriceController');
 
     Route::get('eservice/draft', ['as' => 'eservice.draft', 'uses' => 'EServiceController@draft']);
+    Route::get('eservice/incomplete', ['as' => 'eservice.incomplete', 'uses' => 'EServiceController@incomplete']);
     Route::get('eservice/approved', ['as' => 'eservice.approved', 'uses' => 'EServiceController@approved']);
     Route::get('eservice/rejected', ['as' => 'eservice.rejected', 'uses' => 'EServiceController@rejected']);
     Route::post('eservice/verify', ['as' => 'eservice.verify', 'uses' => 'EServiceController@verify']);
@@ -1169,6 +1174,7 @@ Route::group(array('before' => 'authMember'), function () {
     Route::post('eservice/submitPayment', array('as' => 'eservice.submitPayment', 'uses' => 'EServiceController@submitPayment'));
     Route::get('eservice/callbackPayment/{orderID}', array('as' => 'eservice.callbackPayment', 'uses' => 'EServiceController@callbackPayment'));
     Route::post('eservice/review', ['as' => 'eservice.review', 'uses' => 'EServiceController@review']);
+    Route::post('eservice/submitIncomplete', ['as' => 'eservice.submitIncomplete', 'uses' => 'EServiceController@submitIncomplete']);
     Route::post('eservice/submitApprove', ['as' => 'eservice.submitApprove', 'uses' => 'EServiceController@submitApprove']);
     Route::post('eservice/submitReject', ['as' => 'eservice.submitReject', 'uses' => 'EServiceController@submitReject']);
     Route::get('eservice/paymentHistory', array('as' => 'eservice.paymentHistory', 'uses' => 'EServiceController@paymentHistory'));

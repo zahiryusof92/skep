@@ -23,12 +23,25 @@
         .page-break {
             page-break-before: always;
         }
+
+        .pdf-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page1-content {
+            margin-top: 1.5cm;
+        }
     </style>
 </head><body>
 
     @if (isset($__env->getSections()['page1']))
-        <div>
-            @yield('page1')
+        <div class="pdf-content">
+            <img src="{{ public_path('assets/common/img/eservice/mbsj/letterhead.jpg') }}"
+                style="position: fixed; top: 0; left: 0; width: 210mm; height: 297mm; z-index: -1;" />
+            <div class="page1-content">
+                @yield('page1')
+            </div>
         </div>
     @endif
 

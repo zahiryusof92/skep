@@ -174,7 +174,7 @@
                 <span
                     style="font-weight:bold;">{{ isset($content['date_overdue']) ? \Helper\Helper::getDueDate($content['date_overdue']) : '' }}
                     berjumlah RM
-                    {{ isset($content['total_overdue']) ? number_format($content['total_overdue'], 2) : '0.00' }}</span>.
+                    {{ isset($content['total_overdue']) ? number_format((float) $content['total_overdue'], 2) : '0.00' }}</span>.
                 Sehubungan dengan itu, tuan adalah diminta menjelaskan tunggakan tuan
                 <span style="font-weight:bold;">dalam tempoh 14 hari</span> dari tarikh notis ini sebelum sebarang tindakan
                 diambil di bawah peruntukan tersebut.
@@ -237,6 +237,6 @@
     </table>
 
     @include('eservice.mbsj.component.sk_2')
-
     @include('eservice.mbsj.component.footer', ['page_num' => 2, 'page_count' => 2])
+    @include('eservice.mbsj.component.no_signature_text')
 @endsection

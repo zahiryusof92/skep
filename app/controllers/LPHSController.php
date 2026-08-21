@@ -45,9 +45,18 @@ class LPHSController extends BaseController
     public function result($result, $filename, $output = 'excel')
     {
         if ($output == 'excel') {
-            Excel::create($filename . '_' . date('YmdHis'), function ($excel) use ($filename, $result) {
-                $excel->sheet($filename, function ($sheet) use ($result) {
-                    $sheet->fromArray($result);
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            $sheetName = substr(preg_replace('/[\[\]\*\/\\\\\?:]/', '', $filename), 0, 31);
+            if ($sheetName === '' || $sheetName === null) {
+                $sheetName = 'Sheet1';
+            }
+
+            Excel::create($filename . '_' . date('YmdHis'), function ($excel) use ($sheetName, $result) {
+                $excel->sheet($sheetName, function ($sheet) use ($result) {
+                    $sheet->fromArray(array_values($result));
                 });
             })->export('xlsx');
         }
@@ -83,7 +92,7 @@ class LPHSController extends BaseController
 
                                 $council_name = $council->short_name;
                                 $file_no = $files->file_no;
-                                $file_name = $files->strata->name;
+                                $file_name = ($files->strata ? $files->strata->name : '');
                                 $username = strtolower($generated_file_no);
                                 $password = $this->randomString();
                                 $full_name = strtoupper($generated_file_no);
@@ -166,7 +175,7 @@ class LPHSController extends BaseController
                         if (!$files->jmb) {
                             $council_name = $council->short_name;
                             $file_no = $files->file_no;
-                            $file_name = $files->strata->name;
+                            $file_name = ($files->strata ? $files->strata->name : '');
                             $username = strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
                             $password = $this->randomString();
                             $full_name = strtoupper(preg_replace('/[^\p{L}\p{N}\s]/u', '', $files->file_no));
@@ -309,6 +318,9 @@ class LPHSController extends BaseController
                             ->join('files', 'house_scheme.file_id', '=', 'files.id')
                             ->select('developer.*')
                             ->where('files.id', $files->id)
+                            ->where('developer.is_deleted', 0)
+                            ->where('house_scheme.is_deleted', 0)
+                            ->where('files.is_deleted', 0)
                             ->first();
 
                         if (!empty($developer)) {
@@ -1538,21 +1550,24 @@ class LPHSController extends BaseController
 
     public function updateJMBExpiration($cob = null, $date = null)
     {
+        $end_date = (!empty($date) ? $date : date('Y') . '-12-31');
         $councils = $this->council($cob);
+        $roles = Role::whereIn('name', [Role::JMB, Role::MC])->lists('id');
+
         if ($councils) {
             foreach ($councils as $council) {
-                $jmb_role = Role::where('name', Role::JMB)->pluck('id');
-                $users = User::where('role', $jmb_role)
+                User::whereIn('role', $roles)
                     ->where('company_id', $council->id)
-                    // ->where('remarks', 'Created by System')
                     ->where('is_active', 1)
                     ->where('is_deleted', 0)
-                    ->get();
-
-                foreach ($users as $user) {
-                    $user->end_date = (!empty($date) ? $date : date('Y') . '-12-31');
-                    $user->save();
-                }
+                    ->where(function ($query) use ($end_date) {
+                        $query->whereNull('end_date')
+                            ->orWhere('end_date', '!=', $end_date);
+                    })
+                    ->update([
+                        'end_date' => $end_date,
+                        'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
             }
         }
 
@@ -1667,10 +1682,10 @@ class LPHSController extends BaseController
                                     $developer_postcode = $files->managementDeveloper->poscode;
                                 }
                                 if ($files->managementDeveloper->city) {
-                                    $developer_city = $files->managementDeveloper->cities->description;
+                                    $developer_city = ($files->managementDeveloper->cities ? $files->managementDeveloper->cities->description : '');
                                 }
                                 if ($files->managementDeveloper->state) {
-                                    $developer_state = $files->managementDeveloper->states->name;
+                                    $developer_state = ($files->managementDeveloper->states ? $files->managementDeveloper->states->name : '');
                                 }
                                 if ($files->managementDeveloper->phone_no) {
                                     $developer_phone_no = $files->managementDeveloper->phone_no;
@@ -1710,10 +1725,10 @@ class LPHSController extends BaseController
                                     $jmb_postcode = $files->managementJMB->poscode;
                                 }
                                 if ($files->managementJMB->city) {
-                                    $jmb_city = $files->managementJMB->cities->description;
+                                    $jmb_city = ($files->managementJMB->cities ? $files->managementJMB->cities->description : '');
                                 }
                                 if ($files->managementJMB->state) {
-                                    $jmb_state = $files->managementJMB->states->name;
+                                    $jmb_state = ($files->managementJMB->states ? $files->managementJMB->states->name : '');
                                 }
                                 if ($files->managementJMB->phone_no) {
                                     $jmb_phone_no = $files->managementJMB->phone_no;
@@ -1753,10 +1768,10 @@ class LPHSController extends BaseController
                                     $mc_postcode = $files->managementMC->poscode;
                                 }
                                 if ($files->managementMC->city) {
-                                    $mc_city = $files->managementMC->cities->description;
+                                    $mc_city = ($files->managementMC->cities ? $files->managementMC->cities->description : '');
                                 }
                                 if ($files->managementMC->state) {
-                                    $mc_state = $files->managementMC->states->name;
+                                    $mc_state = ($files->managementMC->states ? $files->managementMC->states->name : '');
                                 }
                                 if ($files->managementMC->phone_no) {
                                     $mc_phone_no = $files->managementMC->phone_no;
@@ -1796,10 +1811,10 @@ class LPHSController extends BaseController
                                     $agent_postcode = $files->managementAgent->poscode;
                                 }
                                 if ($files->managementAgent->city) {
-                                    $agent_city = $files->managementAgent->cities->description;
+                                    $agent_city = ($files->managementAgent->cities ? $files->managementAgent->cities->description : '');
                                 }
                                 if ($files->managementAgent->state) {
-                                    $agent_state = $files->managementAgent->states->name;
+                                    $agent_state = ($files->managementAgent->states ? $files->managementAgent->states->name : '');
                                 }
                                 if ($files->managementAgent->phone_no) {
                                     $agent_phone_no = $files->managementAgent->phone_no;
@@ -1839,10 +1854,10 @@ class LPHSController extends BaseController
                                     $others_postcode = $files->managementOthers->poscode;
                                 }
                                 if ($files->managementOthers->city) {
-                                    $others_city = $files->managementOthers->cities->description;
+                                    $others_city = ($files->managementOthers->cities ? $files->managementOthers->cities->description : '');
                                 }
                                 if ($files->managementOthers->state) {
-                                    $others_state = $files->managementOthers->states->name;
+                                    $others_state = ($files->managementOthers->states ? $files->managementOthers->states->name : '');
                                 }
                                 if ($files->managementOthers->phone_no) {
                                     $others_phone_no = $files->managementOthers->phone_no;
@@ -1872,14 +1887,14 @@ class LPHSController extends BaseController
                             $result[] = [
                                 trans('Council') => $council->name . ' (' . $council->short_name . ')',
                                 trans('File No') => $files->file_no,
-                                trans('Building Name') => $files->strata->name,
+                                trans('Building Name') => ($files->strata ? $files->strata->name : '(not set)'),
                                 trans('Address 1') => $files->strata->address1,
                                 trans('Address 2') => $files->strata->address2,
                                 trans('Address 3') => $files->strata->address3,
                                 trans('Address 4') => $files->strata->address4,
                                 trans('Postcode') => $files->strata->poscode,
-                                trans('City') => ($files->strata->city ? $files->strata->cities->description : ''),
-                                trans('State') => ($files->strata->state ? $files->strata->states->name : ''),
+                                trans('City') => ($files->strata->city && $files->strata->cities ? $files->strata->cities->description : ''),
+                                trans('State') => ($files->strata->state && $files->strata->states ? $files->strata->states->name : ''),
                                 trans('Land Title') => ($files->strata->landTitle ? $files->strata->landTitle->description : ''),
                                 trans('Category') => ($files->strata->categories ? $files->strata->categories->description : ''),
                                 trans('No of Block') => $files->strata->block_no,
@@ -2427,7 +2442,7 @@ class LPHSController extends BaseController
                         }
 
                         $result[$file->id] = [
-                            'Council' => $file->company->short_name,
+                            'Council' => ($file->company ? $file->company->short_name : '(not set)'),
                             'File No' => $file->file_no,
                             'Strata Name' => $strata,
                             'Category' => $category,
@@ -3353,7 +3368,7 @@ class LPHSController extends BaseController
         return $this->result($result, $filename = 'Export_Files_' . strtoupper($cob));
     }
 
-    public function fileInfo($cob = null)
+    public function fileInfo($cob = null, $filter = null)
     {
         ini_set('max_execution_time', -1);
         
@@ -3363,9 +3378,45 @@ class LPHSController extends BaseController
 
         if ($councils) {
             foreach ($councils as $council) {
-                if ($council->activeFiles) {
-                    foreach ($council->activeFiles as $files) {
+                if ($filter) {
+                    $files = $council->files;
+                } else {
+                    $files = $council->activeFiles;
+                }
+
+                if ($files) {
+                    foreach ($files as $files) {
                         if ($files->strata) {
+
+                            $includeDeveloper = true;
+                            $includeJMB = true;
+                            $includeMC = true;
+                            $includeAgent = true;
+                            $includeOthers = true;
+                            $includePic = true;
+                            $includeDesignation = true;
+                            if ($filter) {
+                                if ($files->managementMC) {
+                                    $includeDeveloper = false;
+                                    $includeJMB = false;
+                                    $includeMC = true;
+                                    $includeAgent = true;
+                                } else if ($files->managementJMB) {
+                                    $includeDeveloper = false;
+                                    $includeJMB = true;
+                                    $includeMC = false;
+                                    $includeAgent = true;
+                                } else if ($files->managementDeveloper) {
+                                    $includeDeveloper = true;
+                                    $includeJMB = false;
+                                    $includeMC = false;
+                                    $includeAgent = false;
+                                }
+                                $includeOthers = false;
+                                $includePic = false;
+                                $includeDesignation = false;
+                            }
+
                             $total_unit = 0;
                             if ($files->strata->residential) {
                                 if ($files->strata->residential->unit_no > 0) {
@@ -3388,7 +3439,8 @@ class LPHSController extends BaseController
                             $developer_state = '';
                             $developer_phone_no = '';
                             $developer_email = '';
-                            if ($files->managementDeveloper) {
+
+                            if ($includeDeveloper && $files->managementDeveloper) {
                                 if ($files->managementDeveloper->name) {
                                     $developer_name = $files->managementDeveloper->name;
                                 }
@@ -3408,10 +3460,10 @@ class LPHSController extends BaseController
                                     $developer_postcode = $files->managementDeveloper->poscode;
                                 }
                                 if ($files->managementDeveloper->city) {
-                                    $developer_city = $files->managementDeveloper->cities->description;
+                                    $developer_city = ($files->managementDeveloper->cities ? $files->managementDeveloper->cities->description : '');
                                 }
                                 if ($files->managementDeveloper->state) {
-                                    $developer_state = $files->managementDeveloper->states->name;
+                                    $developer_state = ($files->managementDeveloper->states ? $files->managementDeveloper->states->name : '');
                                 }
                                 if ($files->managementDeveloper->phone_no) {
                                     $developer_phone_no = $files->managementDeveloper->phone_no;
@@ -3431,7 +3483,7 @@ class LPHSController extends BaseController
                             $jmb_state = '';
                             $jmb_phone_no = '';
                             $jmb_email = '';
-                            if ($files->managementJMB) {
+                            if ($includeJMB && $files->managementJMB) {
                                 if ($files->managementJMB->name) {
                                     $jmb_name = $files->managementJMB->name;
                                 }
@@ -3451,10 +3503,10 @@ class LPHSController extends BaseController
                                     $jmb_postcode = $files->managementJMB->poscode;
                                 }
                                 if ($files->managementJMB->city) {
-                                    $jmb_city = $files->managementJMB->cities->description;
+                                    $jmb_city = ($files->managementJMB->cities ? $files->managementJMB->cities->description : '');
                                 }
                                 if ($files->managementJMB->state) {
-                                    $jmb_state = $files->managementJMB->states->name;
+                                    $jmb_state = ($files->managementJMB->states ? $files->managementJMB->states->name : '');
                                 }
                                 if ($files->managementJMB->phone_no) {
                                     $jmb_phone_no = $files->managementJMB->phone_no;
@@ -3474,7 +3526,7 @@ class LPHSController extends BaseController
                             $mc_state = '';
                             $mc_phone_no = '';
                             $mc_email = '';
-                            if ($files->managementMC) {
+                            if ($includeMC && $files->managementMC) {
                                 if ($files->managementMC->name) {
                                     $mc_name = $files->managementMC->name;
                                 }
@@ -3494,10 +3546,10 @@ class LPHSController extends BaseController
                                     $mc_postcode = $files->managementMC->poscode;
                                 }
                                 if ($files->managementMC->city) {
-                                    $mc_city = $files->managementMC->cities->description;
+                                    $mc_city = ($files->managementMC->cities ? $files->managementMC->cities->description : '');
                                 }
                                 if ($files->managementMC->state) {
-                                    $mc_state = $files->managementMC->states->name;
+                                    $mc_state = ($files->managementMC->states ? $files->managementMC->states->name : '');
                                 }
                                 if ($files->managementMC->phone_no) {
                                     $mc_phone_no = $files->managementMC->phone_no;
@@ -3517,7 +3569,7 @@ class LPHSController extends BaseController
                             $agent_state = '';
                             $agent_phone_no = '';
                             $agent_email = '';
-                            if ($files->managementAgent) {
+                            if ($includeAgent && $files->managementAgent) {
                                 if ($files->managementAgent->name) {
                                     $agent_name = $files->managementAgent->name;
                                 }
@@ -3537,10 +3589,10 @@ class LPHSController extends BaseController
                                     $agent_postcode = $files->managementAgent->poscode;
                                 }
                                 if ($files->managementAgent->city) {
-                                    $agent_city = $files->managementAgent->cities->description;
+                                    $agent_city = ($files->managementAgent->cities ? $files->managementAgent->cities->description : '');
                                 }
                                 if ($files->managementAgent->state) {
-                                    $agent_state = $files->managementAgent->states->name;
+                                    $agent_state = ($files->managementAgent->states ? $files->managementAgent->states->name : '');
                                 }
                                 if ($files->managementAgent->phone_no) {
                                     $agent_phone_no = $files->managementAgent->phone_no;
@@ -3560,7 +3612,7 @@ class LPHSController extends BaseController
                             $others_state = '';
                             $others_phone_no = '';
                             $others_email = '';
-                            if ($files->managementOthers) {
+                            if ($includeOthers && $files->managementOthers) {
                                 if ($files->managementOthers->name) {
                                     $others_name = $files->managementOthers->name;
                                 }
@@ -3580,10 +3632,10 @@ class LPHSController extends BaseController
                                     $others_postcode = $files->managementOthers->poscode;
                                 }
                                 if ($files->managementOthers->city) {
-                                    $others_city = $files->managementOthers->cities->description;
+                                    $others_city = ($files->managementOthers->cities ? $files->managementOthers->cities->description : '');
                                 }
                                 if ($files->managementOthers->state) {
-                                    $others_state = $files->managementOthers->states->name;
+                                    $others_state = ($files->managementOthers->states ? $files->managementOthers->states->name : '');
                                 }
                                 if ($files->managementOthers->phone_no) {
                                     $others_phone_no = $files->managementOthers->phone_no;
@@ -3596,7 +3648,7 @@ class LPHSController extends BaseController
                             $pic_name = '';
                             $pic_phone_no = '';
                             $pic_email = '';
-                            if ($files->personInCharge) {
+                            if ($includePic && $files->personInCharge) {
                                 foreach ($files->personInCharge as $pic) {
                                     if ($pic->user->full_name) {
                                         $pic_name = $pic->user->full_name;
@@ -3612,23 +3664,25 @@ class LPHSController extends BaseController
 
                             Arr::set($result[$files->id], trans('Council'), $council->name . ' (' . $council->short_name . ')');
                             Arr::set($result[$files->id], trans('File No'), $files->file_no);
-                            Arr::set($result[$files->id], trans('Building Name'), $files->strata->name);
+                            Arr::set($result[$files->id], trans('Building Name'), ($files->strata ? $files->strata->name : '(not set)'));
                             Arr::set($result[$files->id], trans('Address 1'), $files->strata->address1);
                             Arr::set($result[$files->id], trans('Address 2'), $files->strata->address2);
                             Arr::set($result[$files->id], trans('Address 3'), $files->strata->address3);
                             Arr::set($result[$files->id], trans('Address 4'), $files->strata->address4);
                             Arr::set($result[$files->id], trans('Postcode'), $files->strata->poscode);
-                            Arr::set($result[$files->id], trans('City'), ($files->strata->city ? $files->strata->cities->description : ''));
-                            Arr::set($result[$files->id], trans('State'), ($files->strata->state ? $files->strata->states->name : ''));
+                            Arr::set($result[$files->id], trans('City'), ($files->strata->city && $files->strata->cities ? $files->strata->cities->description : ''));
+                            Arr::set($result[$files->id], trans('State'), ($files->strata->state && $files->strata->states ? $files->strata->states->name : ''));
                             Arr::set($result[$files->id], trans('Land Title'), ($files->strata->landTitle ? $files->strata->landTitle->description : ''));
                             Arr::set($result[$files->id], trans('Category'), ($files->strata->categories ? $files->strata->categories->description : ''));
                             Arr::set($result[$files->id], trans('No of Block'), $files->strata->block_no);
                             Arr::set($result[$files->id], trans('Total Floor'), $files->strata->total_floor);
                             Arr::set($result[$files->id], trans('Total Unit'), $total_unit);
 
-                            Arr::set($result[$files->id], trans('PIC Name'), $pic_name);
-                            Arr::set($result[$files->id], trans('PIC Phone No'), $pic_phone_no);
-                            Arr::set($result[$files->id], trans('PIC E-mail'), $pic_email);
+                            if ($includePic) {
+                                Arr::set($result[$files->id], trans('PIC Name'), $pic_name);
+                                Arr::set($result[$files->id], trans('PIC Phone No'), $pic_phone_no);
+                                Arr::set($result[$files->id], trans('PIC E-mail'), $pic_email);
+                            }
 
                             Arr::set($result[$files->id], trans('Developer Name'), $developer_name);
                             Arr::set($result[$files->id], trans('Developer Address 1'), $developer_address1);
@@ -3674,31 +3728,35 @@ class LPHSController extends BaseController
                             Arr::set($result[$files->id], trans('Agent Phone No'), $agent_phone_no);
                             Arr::set($result[$files->id], trans('Agent E-mail'), $agent_email);
 
-                            Arr::set($result[$files->id], trans('Others Name'), $others_name);
-                            Arr::set($result[$files->id], trans('Others Address 1'), $others_address1);
-                            Arr::set($result[$files->id], trans('Others Address 2'), $others_address2);
-                            Arr::set($result[$files->id], trans('Others Address 3'), $others_address3);
-                            Arr::set($result[$files->id], trans('Others Address 4'), $others_address4);
-                            Arr::set($result[$files->id], trans('Others Postcode'), $others_postcode);
-                            Arr::set($result[$files->id], trans('Others City'), $others_city);
-                            Arr::set($result[$files->id], trans('Others State'), $others_state);
-                            Arr::set($result[$files->id], trans('Others Phone No'), $others_phone_no);
-                            Arr::set($result[$files->id], trans('Others E-mail'), $others_email);
+                            if ($includeOthers) {
+                                Arr::set($result[$files->id], trans('Others Name'), $others_name);
+                                Arr::set($result[$files->id], trans('Others Address 1'), $others_address1);
+                                Arr::set($result[$files->id], trans('Others Address 2'), $others_address2);
+                                Arr::set($result[$files->id], trans('Others Address 3'), $others_address3);
+                                Arr::set($result[$files->id], trans('Others Address 4'), $others_address4);
+                                Arr::set($result[$files->id], trans('Others Postcode'), $others_postcode);
+                                Arr::set($result[$files->id], trans('Others City'), $others_city);
+                                Arr::set($result[$files->id], trans('Others State'), $others_state);
+                                Arr::set($result[$files->id], trans('Others Phone No'), $others_phone_no);
+                                Arr::set($result[$files->id], trans('Others E-mail'), $others_email);
+                            }
 
-                            $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
-                            if ($designations) {
-                                foreach ($designations as $designation) {
-                                    $ajk_detail = AJKDetails::where('file_id', $files->id)
-                                        ->where('designation', $designation->id)
-                                        ->where('is_deleted', 0)
-                                        ->orderBy('start_year', 'desc')
-                                        ->orderBy('month', 'desc')
-                                        ->orderBy('created_at', 'desc')
-                                        ->first();
+                            if ($includeDesignation) {
+                                $designations = Designation::where('is_deleted', 0)->orderBy('description')->get();
+                                if ($designations) {
+                                    foreach ($designations as $designation) {
+                                        $ajk_detail = AJKDetails::where('file_id', $files->id)
+                                            ->where('designation', $designation->id)
+                                            ->where('is_deleted', 0)
+                                            ->orderBy('start_year', 'desc')
+                                            ->orderBy('month', 'desc')
+                                            ->orderBy('created_at', 'desc')
+                                            ->first();
 
-                                    Arr::set($result[$files->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
-                                    Arr::set($result[$files->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
-                                    Arr::set($result[$files->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                                        Arr::set($result[$files->id], $designation->description . ' Name', ($ajk_detail ? $ajk_detail->name : ''));
+                                        Arr::set($result[$files->id], $designation->description . ' E-mail', ($ajk_detail ? $ajk_detail->email : ''));
+                                        Arr::set($result[$files->id], $designation->description . ' Phone No', ($ajk_detail ? $ajk_detail->phone_no : ''));
+                                    }
                                 }
                             }
                         }
@@ -3922,7 +3980,7 @@ class LPHSController extends BaseController
                             Arr::set($result[$file->id], trans('Council'), $council->name . ' (' . $council->short_name . ')');
                             Arr::set($result[$file->id], trans('File No'), $file->file_no);
                             Arr::set($result[$file->id], trans('Active'), ($file->is_active ? 'Yes' : 'No'));
-                            Arr::set($result[$file->id], trans('Building Name'), $file->strata->name);
+                            Arr::set($result[$file->id], trans('Building Name'), ($file->strata ? $file->strata->name : '(not set)'));
                             Arr::set($result[$file->id], trans('Address 1'), $file->strata->address1);
                             Arr::set($result[$file->id], trans('Address 2'), $file->strata->address2);
                             Arr::set($result[$file->id], trans('Address 3'), $file->strata->address3);
@@ -3942,5 +4000,72 @@ class LPHSController extends BaseController
         }
 
         return $this->result($result, $filename = strtoupper($cob));
+    }
+
+    public function totalLift($cob = null)
+    {
+        ini_set('max_execution_time', -1);
+        ini_set('memory_limit', '512M');
+
+        $result = [];
+
+        $query = Files::join('company', 'files.company_id', '=', 'company.id')
+            ->join('facility', 'files.id', '=', 'facility.file_id')
+            ->join('strata', 'files.id', '=', 'strata.file_id')
+            ->leftJoin('city', 'strata.city', '=', 'city.id')
+            ->leftJoin('state', 'strata.state', '=', 'state.id')
+            ->leftJoin('land_title', 'strata.land_title', '=', 'land_title.id')
+            ->leftJoin('category', 'strata.category', '=', 'category.id')
+            ->where('facility.lift', 1)
+            ->where('files.is_deleted', 0)
+            ->where('company.is_main', 0)
+            ->where('company.is_deleted', 0)
+            ->where('company.short_name', '!=', 'MPS')
+            ->orderBy('company.short_name')
+            ->orderBy('files.file_no');
+
+        if (!empty($cob) && $cob != 'all') {
+            $query->where('company.short_name', strtoupper($cob));
+        }
+
+        $items = $query->select(
+            'files.id',
+            'company.name as cob_name',
+            'company.short_name as cob_short_name',
+            'files.file_no',
+            'files.is_active',
+            'strata.name as strata_name',
+            'strata.address1',
+            'strata.address2',
+            'strata.address3',
+            'strata.address4',
+            'strata.poscode',
+            'city.description as city_name',
+            'state.name as state_name',
+            'land_title.description as land_title_name',
+            'category.description as category_name',
+            'facility.lift_unit'
+        )->get();
+
+        foreach ($items as $item) {
+            $result[] = [
+                trans('Council') => $item->cob_name . ' (' . $item->cob_short_name . ')',
+                trans('File No') => $item->file_no,
+                trans('Active') => ($item->is_active ? 'Yes' : 'No'),
+                trans('Building Name') => ($item->strata_name ?: '(not set)'),
+                trans('Address 1') => (string) $item->address1,
+                trans('Address 2') => (string) $item->address2,
+                trans('Address 3') => (string) $item->address3,
+                trans('Address 4') => (string) $item->address4,
+                trans('Postcode') => (string) $item->poscode,
+                trans('City') => (string) $item->city_name,
+                trans('State') => (string) $item->state_name,
+                trans('Land Title') => (string) $item->land_title_name,
+                trans('Category') => (string) $item->category_name,
+                trans('Total Lift') => (int) $item->lift_unit,
+            ];
+        }
+
+        return $this->result($result, 'TOTAL_LIFT_' . strtoupper($cob));
     }
 }

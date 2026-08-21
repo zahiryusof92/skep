@@ -1134,4 +1134,157 @@ class ExportController extends BaseController
         })->download();
     }
 
+    public function exportPurchaser()
+    {
+        // Increase execution time and memory limit for large exports
+        ini_set('max_execution_time', -1);
+        ini_set('memory_limit', '512M');
+
+        $data = Input::all();
+
+        $cob_company = '';
+        if (isset($data['company']) && !empty($data['company'])) {
+            $cob_company = $data['company'];
+        }
+
+        $file_no = '';
+        if (isset($data['file_no']) && !empty($data['file_no'])) {
+            $file_no = $data['file_no'];
+        }
+
+        // Build query based on filters - select all needed fields
+        $query = Buyer::join('files', 'buyer.file_id', '=', 'files.id')
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->join('strata', 'files.id', '=', 'strata.file_id')
+            ->leftJoin('race', 'buyer.race_id', '=', 'race.id')
+            ->leftJoin('nationality', 'buyer.nationality_id', '=', 'nationality.id')
+            ->select([
+                'buyer.*', 
+                'company.short_name as cob', 
+                'files.file_no', 
+                'strata.name as strata_name', 
+                'race.name_en as race_name',
+                'nationality.name as nationality_name'
+            ])
+            ->where('buyer.is_deleted', 0)
+            ->where('files.is_deleted', 0);
+
+        if (!empty($cob_company) && !empty($file_no)) {
+            $query->where('company.short_name', $cob_company)
+                  ->where('files.file_no', $file_no);
+        } else if (!empty($cob_company)) {
+            $query->where('company.short_name', $cob_company);
+        } else if (!empty($file_no)) {
+            $query->where('files.file_no', $file_no);
+        } else {
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $query->where('files.id', Auth::user()->file_id)
+                          ->where('files.company_id', Auth::user()->company_id);
+                } else {
+                    $query->where('files.company_id', Auth::user()->company_id);
+                }
+            } else {
+                if (!empty(Session::get('admin_cob'))) {
+                    $query->where('files.company_id', Session::get('admin_cob'));
+                }
+            }
+        }
+
+        $query->orderBy('company.short_name', 'ASC')
+              ->orderBy('files.file_no', 'ASC')
+              ->orderBy('unit_no', 'ASC');
+
+        // Prepare header - match importBuyer format exactly
+        $export_data = [];
+        $export_data[] = [
+            'BIL',
+            'File Number', // 1
+            'NO.UNIT', // 2
+            'NO.PETAK', // 3
+            'NO.PETAK AKSESORI(JIKA ADA)', // 4
+            'KELUASAN LANTAI PETAK(SQ.M)', // 5
+            'KELUASAN LANTAI PETAK AKSESORI(SQ.M)', // 6
+            'UNIT SHARE', // 7
+            'JENIS KEGUNAAN', // 8
+            'NAMA PEMILIK', // 9
+            'NO.KAD PENGENALAN', // 10
+            'EMEL', // 11
+            'NO.TELEFON BIMBIT', // 12
+            'ALAMAT', // 13
+            'ALAMAT SURAT MENYURAT(JIKA BERLAINAN)', // 14
+            'BANGSA', // 15
+            'KEWARGANEGARAAN', // 16
+            'STATUS PENGHUNIAN(PEMILIK, PENYEWA, KOSONG)', // 17
+            'CAJ PENYENGGARAAN(RM)', // 18
+            'SINKING FUND (RM)', // 19
+            'CATATAN', // 20
+            'NAMA PEMILIK 2', // 21
+            'NO.KAD PENGENALAN', // 22 (Pemilik 2)
+            'EMEL PEMILIK 2', // 23
+            'NO.TELEFON BIMBIT PEMILIK 2', // 24
+            'NAMA PEMILIK 3', // 25
+            'NO.KAD PENGENALAN PEMILIK 3', // 26
+            'EMEL PEMILIK 3', // 27
+            'NO.TELEFON BIMBIT PEMILIK 3', // 28
+            'NAMA PEGUAMCARA', // 29
+            'ALAMAT PEGUAMCARA', // 30
+            'NO RUJ FAIL PEGUAMCARA' // 31
+        ];
+
+        // Process data in chunks to avoid memory issues
+        $chunk_size = 1000;
+        $bil = 0;
+        $query->chunk($chunk_size, function ($purchasers) use (&$export_data, &$bil) {
+            foreach ($purchasers as $p) {
+                $bil++;
+                $export_data[] = [
+                    $bil, // BIL
+                    $p->file_no ? $p->file_no : '', // 1. File Number
+                    $p->unit_no ? $p->unit_no : '', // 2. NO.UNIT
+                    $p->no_petak ? $p->no_petak : '', // 3. NO.PETAK
+                    $p->no_petak_aksesori ? $p->no_petak_aksesori : '', // 4. NO.PETAK AKSESORI
+                    $p->keluasan_lantai_petak ? $p->keluasan_lantai_petak : '', // 5. KELUASAN LANTAI PETAK
+                    $p->keluasan_lantai_petak_aksesori ? $p->keluasan_lantai_petak_aksesori : '', // 6. KELUASAN LANTAI PETAK AKSESORI
+                    $p->unit_share ? $p->unit_share : '', // 7. UNIT SHARE
+                    $p->jenis_kegunaan ? $p->jenis_kegunaan : '', // 8. JENIS KEGUNAAN
+                    $p->owner_name ? $p->owner_name : '', // 9. NAMA PEMILIK
+                    $p->ic_company_no ? $p->ic_company_no : '', // 10. NO.KAD PENGENALAN
+                    $p->email ? $p->email : '', // 11. EMEL
+                    $p->phone_no ? $p->phone_no : '', // 12. NO.TELEFON BIMBIT
+                    $p->address ? $p->address : '', // 13. ALAMAT
+                    $p->alamat_surat_menyurat ? $p->alamat_surat_menyurat : '', // 14. ALAMAT SURAT MENYURAT
+                    $p->race_name ? $p->race_name : '', // 15. BANGSA
+                    $p->nationality_name ? $p->nationality_name : '', // 16. KEWARGANEGARAAN
+                    '', // 17. STATUS PENGHUNIAN (field tidak ada di database)
+                    $p->caj_penyelenggaraan ? $p->caj_penyelenggaraan : '', // 18. CAJ PENYENGGARAAN
+                    $p->sinking_fund ? $p->sinking_fund : '', // 19. SINKING FUND
+                    $p->remarks ? $p->remarks : '', // 20. CATATAN
+                    $p->nama2 ? $p->nama2 : '', // 21. NAMA PEMILIK 2
+                    $p->ic_no2 ? $p->ic_no2 : '', // 22. NO.KAD PENGENALAN PEMILIK 2
+                    $p->email2 ? $p->email2 : '', // 23. EMEL PEMILIK 2
+                    $p->phone_no2 ? $p->phone_no2 : '', // 24. NO.TELEFON BIMBIT PEMILIK 2
+                    $p->nama3 ? $p->nama3 : '', // 25. NAMA PEMILIK 3
+                    $p->ic_no3 ? $p->ic_no3 : '', // 26. NO.KAD PENGENALAN PEMILIK 3
+                    $p->email3 ? $p->email3 : '', // 27. EMEL PEMILIK 3
+                    $p->phone_no3 ? $p->phone_no3 : '', // 28. NO.TELEFON BIMBIT PEMILIK 3
+                    $p->lawyer_name ? $p->lawyer_name : '', // 29. NAMA PEGUAMCARA
+                    $p->lawyer_address ? $p->lawyer_address : '', // 30. ALAMAT PEGUAMCARA
+                    $p->lawyer_fail_ref_no ? $p->lawyer_fail_ref_no : '' // 31. NO RUJ FAIL PEGUAMCARA
+                ];
+            }
+        });
+
+        $filename = 'Purchaser-Export-' . date('YmdHis');
+        if (!empty($file_no)) {
+            $filename = 'Purchaser-Export-' . $file_no . '-' . date('YmdHis');
+        }
+
+        return Excel::create($filename, function ($excel) use ($export_data) {
+            $excel->sheet('Purchaser Details', function ($sheet) use ($export_data) {
+                $sheet->fromArray($export_data, null, 'A1', false, false);
+            });
+        })->download('xlsx');
+    }
+
 }

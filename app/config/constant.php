@@ -1713,6 +1713,11 @@ return [
                                 'owner_state',
                                 'total_overdue',
                                 'date_overdue',
+                                'cover_letter',
+                                'copy_of_form',
+                                'proof_of_notice',
+                                'list_of_owner',
+                                'account_statement',
                             ],
                         ],
                         'surat_peringatan_tunggakan_caj_mc' => [
@@ -1741,6 +1746,11 @@ return [
                                 'owner_state',
                                 'total_overdue',
                                 'date_overdue',
+                                'cover_letter',
+                                'copy_of_form',
+                                'proof_of_notice',
+                                'list_of_owner',
+                                'account_statement',
                             ],
                         ],
                     ],
@@ -1976,7 +1986,7 @@ return [
                         'total_overdue' => [
                             'label' => trans('app.forms.eservice.mbsj.total_overdue'),
                             'name' => 'total_overdue',
-                            'type' => 'text',
+                            'type' => 'number',
                             'required' => true
                         ],
                         'date_overdue' => [
@@ -2000,6 +2010,12 @@ return [
                         'proof_of_notice' => [
                             'label' => trans('app.forms.eservice.mbsj.proof_of_notice'),
                             'name' => 'proof_of_notice',
+                            'type' => 'file',
+                            'required' => true
+                        ],
+                        'list_of_owner' => [
+                            'label' => trans('app.forms.eservice.mbsj.list_of_owner'),
+                            'name' => 'list_of_owner',
                             'type' => 'file',
                             'required' => true
                         ],
@@ -2052,6 +2068,12 @@ return [
         'life' => [
             'api_domain' => getenv('life_domain'),
             'api_token' => getenv('life_token'),
+        ],
+        'estrata' => [
+            'api_domain' => getenv('estrata_domain'),
+            'api_clients' => getenv('estrata_api_clients'),
+            'api_key' => getenv('estrata_api_key'),
+            'api_secret' => getenv('estrata_api_secret'),
         ],
     ],
     'eai' => [

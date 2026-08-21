@@ -3,6 +3,8 @@
 use Helper\Helper;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
@@ -609,9 +611,128 @@ class TPPMController extends \BaseController
         return View::make('tppm.pdf', $viewData);
     }
 
+    /**
+     * SSO redirect to eStrata for other COB users.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sso()
+    {
+        if (!Auth::user()->hasAccessTPPM()) {
+            Log::error('TPPM SSO denied: user has no TPPM access. username=' . Auth::user()->username);
+            App::abort(404);
+        }
+
+        $user = Auth::user();
+        $payload = [
+            'username' => $user->username,
+            'email' => $user->email,
+            'name' => $user->full_name,
+            'cob' => ($user->getCOB ? $user->getCOB->short_name : ''),
+            'file_no' => ($user->getFile ? $user->getFile->file_no : ''),
+            'role_type' => $this->resolveTppmRoleType($user),
+        ];
+
+        $domain = rtrim(Config::get('constant.third_party.estrata.api_domain'), '/');
+        $path = ltrim(Config::get('constant.third_party.estrata.api_clients'), '/');
+        $url = $domain . '/' . $path;
+
+        $result = $this->postEstrataApiClients($url, $payload);
+        $response = isset($result['body']) ? $result['body'] : [];
+        $autoLoginUrl = isset($response['data']['auto_login_url']) ? $response['data']['auto_login_url'] : null;
+
+        if (empty($autoLoginUrl)) {
+            Log::error(
+                'TPPM SSO failed | url=' . $url
+                . ' | http=' . (isset($result['http_code']) ? $result['http_code'] : '-')
+                . ' | curl_error=' . (isset($result['curl_error']) ? $result['curl_error'] : '-')
+                . ' | payload=' . json_encode($payload)
+                . ' | raw=' . (isset($result['raw']) ? $result['raw'] : '-')
+                . ' | response=' . json_encode($response)
+            );
+
+            return Redirect::to('/')->with('error', trans('app.errors.occurred'));
+        }
+
+        return Redirect::away($autoLoginUrl);
+    }
+
+    private function resolveTppmRoleType($user)
+    {
+        if ($user->isJMB()) {
+            return 'JMB';
+        }
+        if ($user->isMC()) {
+            return 'MC';
+        }
+        if ($user->isDeveloper()) {
+            return 'DEVELOPER';
+        }
+        if ($user->isCOB()) {
+            return 'COB';
+        }
+
+        return ($user->getRole ? $user->getRole->name : '');
+    }
+
+    private function postEstrataApiClients($url, $data)
+    {
+        $apiKey = Config::get('constant.third_party.estrata.api_key');
+        $apiSecret = Config::get('constant.third_party.estrata.api_secret');
+        $headers = [
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'X-API-Key: ' . $apiKey,
+            'X-API-Secret: ' . $apiSecret,
+        ];
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+        ]);
+
+        $raw = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $error = curl_error($curl);
+        curl_close($curl);
+
+        if ($error) {
+            Log::error('TPPM SSO curl error: ' . $error . ' | url=' . $url);
+            return [
+                'body' => [],
+                'raw' => $raw,
+                'http_code' => $httpCode,
+                'curl_error' => $error,
+            ];
+        }
+
+        $decoded = json_decode($raw, true);
+
+        return [
+            'body' => is_array($decoded) ? $decoded : [],
+            'raw' => $raw,
+            'http_code' => $httpCode,
+            'curl_error' => '',
+        ];
+    }
+
     private function checkAvailableAccess()
     {
-        if (!Auth::user()->getAdmin() && (!Auth::user()->getAdmin() && Auth::user()->getCOB->short_name != "MPS")) {
+        $isMpsAccess = Auth::user()->getAdmin()
+            || (Auth::user()->getCOB && Auth::user()->getCOB->short_name == 'MPS');
+
+        if (!$isMpsAccess && !Auth::user()->hasAccessTPPM()) {
             App::abort(404);
         }
     }

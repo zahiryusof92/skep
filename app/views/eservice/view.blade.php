@@ -51,7 +51,8 @@
                 columns: [
                     {
                         data: 'latest_order',
-                        name: 'latest_order'
+                        name: 'latest_order',
+                        searchable: false
                     },
                     {
                         data: 'file_no',
@@ -63,7 +64,8 @@
                     },
                     {
                         data: 'total_orders',
-                        name: 'total_orders'
+                        name: 'total_orders',
+                        searchable: false
                     },
                     {
                         data: 'action',

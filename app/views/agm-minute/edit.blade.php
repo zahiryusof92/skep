@@ -95,13 +95,183 @@
                                 <div class="col-md-6">
                                     <div class="form-group {{ $errors->has('remarks') ? 'has-danger' : '' }}">
                                         <textarea class="form-control" rows="4" placeholder="{{ trans('app.forms.remarks') }}" id="remarks" name="remarks">{{ $model->remarks }}</textarea>
-                                        @include('alert.feedback', ['field' => 'remarks'])
+                                        @include('alert.feedback-ajax', ['field' => 'remarks'])
                                     </div>
                                 </div>
                             </div>
 
+                            <hr />
+                            <h5>{{ trans('Endorsement') }}</h5>
+
+                            @if ($endorse)
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        <span style="color: red; font-style: italic;">*</span>
+                                        {{ trans('app.forms.status') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select id="status" name="status" class="form-control select2">
+                                        <option value="">{{ trans('app.forms.please_select') }}</option>
+                                        <option value="pending"
+                                            {{ !$minuteStatus || $minuteStatus->status == 'pending' ? ' selected' : '' }}>
+                                            {{ trans('app.forms.pending') }}</option>
+                                        <option value="accepted"
+                                            {{ $minuteStatus && $minuteStatus->status == 'accepted' ? ' selected' : '' }}>
+                                            {{ trans('app.forms.accepted') }}</option>
+                                        <option value="rejected"
+                                            {{ $minuteStatus && $minuteStatus->status == 'rejected' ? ' selected' : '' }}>
+                                            {{ trans('app.forms.rejected') }}</option>
+                                    </select>
+                                    @include('alert.feedback-ajax', ['field' => 'status'])
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.reason') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" placeholder="{{ trans('app.forms.reason') }}" id="reason" name="reason" rows="3">{{ $minuteStatus ? $minuteStatus->reason : '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        <span style="color: red; font-style: italic;">*</span>
+                                        {{ trans('app.forms.endorsed_by') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="endorsed_by" name="endorsed_by"
+                                        placeholder="{{ trans('app.forms.endorsed_by') }}"
+                                        value="{{ $minuteStatus ? $minuteStatus->endorsed_by : '' }}" />
+                                    @include('alert.feedback-ajax', ['field' => 'endorsed_by'])
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">
+                                        <span style="color: red; font-style: italic;">*</span>
+                                        {{ trans('app.forms.endorsed_email') }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" id="endorsed_email" name="endorsed_email"
+                                        placeholder="{{ trans('app.forms.endorsed_email') }}"
+                                        value="{{ $minuteStatus ? $minuteStatus->endorsed_email : '' }}" />
+                                    @include('alert.feedback-ajax', ['field' => 'endorsed_email'])
+                                </div>
+                            </div>
+
+                            @if ($minuteStatus && !empty($minuteStatus->created_at))
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.endorsed_date') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ date('Y-m-d', strtotime($minuteStatus->created_at)) }}" />
+                                </div>
+                            </div>
+                            @endif
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.endorsement_letter') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="file" id="endorsement_letter" accept="application/pdf" />
+                                    <div><small>* Accept PDF only. Maximum size: 10MB.</small></div>
+                                    <div id="endorsement_letter_error"></div>
+                                    @if ($minuteStatus && !empty($minuteStatus->attachment))
+                                    <div class="margin-top-10">
+                                        <a href="{{ asset($minuteStatus->attachment) }}" target="_blank">
+                                            <button type="button" class="btn btn-xs btn-own">
+                                                <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
+                                            </button>
+                                        </a>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            <input type="hidden" id="endorsement_letter_url" name="endorsement_letter_url"
+                                value="{{ $minuteStatus && $minuteStatus->attachment ? $minuteStatus->attachment : '' }}" />
+                            @else
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.status') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ $minuteStatus ? trans('app.forms.' . ($minuteStatus->status === 'approved' ? 'accepted' : $minuteStatus->status)) : trans('app.forms.pending') }}" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.reason') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" rows="3" readonly>{{ $minuteStatus ? $minuteStatus->reason : '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.endorsed_by') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ $minuteStatus ? $minuteStatus->endorsed_by : '' }}" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.endorsed_email') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ $minuteStatus ? $minuteStatus->endorsed_email : '' }}" />
+                                </div>
+                            </div>
+
+                            @if ($minuteStatus && !empty($minuteStatus->created_at))
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.endorsed_date') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ date('Y-m-d', strtotime($minuteStatus->created_at)) }}" />
+                                </div>
+                            </div>
+                            @endif
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label">{{ trans('app.forms.endorsement_letter') }}</label>
+                                </div>
+                                <div class="col-md-6">
+                                    @if ($minuteStatus && !empty($minuteStatus->attachment))
+                                    <a href="{{ asset($minuteStatus->attachment) }}" target="_blank">
+                                        <button type="button" class="btn btn-xs btn-own">
+                                            <i class="icmn-file-download2"></i> {{ trans('app.forms.download') }}
+                                        </button>
+                                    </a>
+                                    @else
+                                    -
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+
                             <div class="form-actions">
-                                @if (AccessGroup::hasUpdate(32))
+                                @if (AccessGroup::hasUpdate(32) && ($endorse || !$minuteStatus || ($minuteStatus && $minuteStatus->status != 'accepted' && $minuteStatus->status != 'rejected' && $minuteStatus->status != 'approved')))
                                 <button type="submit" class="btn btn-own" id="submit_button">{{ trans('app.forms.save') }}</button>
                                 @endif
                                 <button type="button" class="btn btn-default" id="cancel_button" onclick="window.location ='{{ route('agm-minute.index') }}'">{{ trans('app.forms.cancel') }}</button>
@@ -141,6 +311,31 @@
         });
         $('#type').change(function() {
             getForm();
+        });
+        $('#endorsement_letter').change(function() {
+            var file = this.files[0];
+            if (!file) return;
+            var formData = new FormData();
+            formData.append('endorsement_letter', file);
+            formData.append('_token', '{{ csrf_token() }}');
+            $.ajax({
+                url: '{{ url("uploadEndorsementLetter") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.success && res.file) {
+                        $('#endorsement_letter_url').val(res.file);
+                        $('#endorsement_letter_error').html('');
+                    } else if (res.errors) {
+                        $('#endorsement_letter_error').html('<span class="text-danger">' + (res.errors[0] || '') + '</span>');
+                    }
+                },
+                error: function() {
+                    $('#endorsement_letter_error').html('<span class="text-danger">{{ trans("app.errors.occurred") }}</span>');
+                }
+            });
         });
         $("#minute-form").submit(function (e) {
             e.preventDefault();

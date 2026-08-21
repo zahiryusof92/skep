@@ -45,7 +45,8 @@ class ImportFile
         $audit_message = ' has been updated.';
 
         $files = Files::where('company_id', $company_id)->where('file_no', $file_no)->where('is_deleted', 0)->first();
-        if(!$files) {
+        $is_existing_file = !empty($files);
+        if (!$files) {
             $files = new Files();
             if ($status == 1 || $status == '1') {
                 $files->approved_by = $user_id;
@@ -53,11 +54,7 @@ class ImportFile
             }
             $audit_message = ' has been imported.';
         }
-        // 3. Year
-        $year = '';
-        if (isset($row['3']) && !empty($row['3'])) {
-            $year = trim($row['3']);
-        }
+
         // 155. Status
         $is_active = 0;
         if (isset($row['155']) && !empty($row['155'])) {
@@ -70,14 +67,50 @@ class ImportFile
             }
         }
 
+        // 157. New File No
+        $new_file_no = '';
+        if (isset($row['157']) && !empty($row['157'])) {
+            $new_file_no = trim($row['157']);
+        }
+
+        // If new file no is provided, only update file_no and skip other updates.
+        if (!empty($new_file_no)) {
+            $files->company_id = $company_id;
+            $files->file_no = $new_file_no;
+            $files->is_active = $is_active;
+            $files->status = $status;
+            $files->created_by = $user_id;
+            $files->save();
+
+            $remarks = $files->file_no . $audit_message;
+            $auditTrail = new AuditTrail();
+            $auditTrail->module = "COB File";
+            $auditTrail->remarks = $remarks;
+            $auditTrail->audit_by = $user_id;
+            $auditTrail->save();
+
+            $job->delete();
+
+            return;
+        }
+
+        // 3. Year
+        $year = '';
+        if (isset($row['3']) && !empty($row['3'])) {
+            $year = trim($row['3']);
+        }
+
         $files->company_id = $company_id;
         $files->file_no = $file_no;
-        $files->year = $year;
-        $files->is_active = $is_active;
+        if (!$is_existing_file || $this->hasExcelValue($row, '3')) {
+            $files->year = $year;
+        }
+        if (!$is_existing_file || $this->hasExcelValue($row, '155')) {
+            $files->is_active = $is_active;
+        }
         $files->status = $status;
         $files->created_by = $user_id;
         $create_or_update_file = $files->save();
-
 
         if ($create_or_update_file) {
             // 4. Name
@@ -220,22 +253,25 @@ class ImportFile
             }
 
             $house_scheme = HouseScheme::where('file_id', $files->id)->first();
-            if(empty($house_scheme)) {
+            $is_new_house_scheme = empty($house_scheme);
+            if ($is_new_house_scheme) {
                 $house_scheme = new HouseScheme();
                 $house_scheme->file_id = $files->id;
             }
-            $house_scheme->name = $name;
-            $house_scheme->developer = $developer;
-            $house_scheme->address1 = $address1;
-            $house_scheme->address2 = $address2;
-            $house_scheme->address3 = $address3;
-            $house_scheme->address4 = $address4;
-            $house_scheme->poscode = $postcode;
-            $house_scheme->city = $city;
-            $house_scheme->state = $state;
-            $house_scheme->country = $country;
-            $house_scheme->phone_no = $phone_no;
-            $house_scheme->fax_no = $fax_no;
+            $this->applyExcelFields($house_scheme, $row, $is_new_house_scheme, [
+                'name' => ['col' => '4', 'val' => $name],
+                'developer' => ['col' => '6', 'val' => $developer],
+                'address1' => ['col' => '7', 'val' => $address1],
+                'address2' => ['col' => '8', 'val' => $address2],
+                'address3' => ['col' => '9', 'val' => $address3],
+                'address4' => ['col' => '10', 'val' => $address4],
+                'poscode' => ['col' => '11', 'val' => $postcode],
+                'city' => ['col' => '12', 'val' => $city],
+                'state' => ['col' => '13', 'val' => $state],
+                'country' => ['col' => '14', 'val' => $country],
+                'phone_no' => ['col' => '15', 'val' => $phone_no],
+                'fax_no' => ['col' => '16', 'val' => $fax_no],
+            ]);
             $house_scheme->is_active = 1;
             $house_scheme->save();
 
@@ -487,7 +523,7 @@ class ImportFile
             $vacant_date = '';
             if (isset($row['40']) && !empty($row['40'])) {
                 // $vacant_date = trim($row['40']);
-                if(!empty($row['40']['date'])) {
+                if (!empty($row['40']['date'])) {
                     $vacant_date = Carbon::parse($row['40']['date'])->format('Y-m-d');
                 } else {
                     $vacant_date = Carbon::createFromFormat('d/m/Y', trim($row['40']))->format('Y-m-d');
@@ -497,7 +533,7 @@ class ImportFile
             $ccc_date = '';
             if (isset($row['41']) && !empty($row['41'])) {
                 // $ccc_date = trim($row['41']);
-                if(!empty($row['41']['date'])) {
+                if (!empty($row['41']['date'])) {
                     $ccc_date = Carbon::parse($row['41']['date'])->format('Y-m-d');
                 } else {
                     $ccc_date = Carbon::createFromFormat('d/m/Y', trim($row['41']))->format('Y-m-d');
@@ -591,42 +627,47 @@ class ImportFile
             }
 
             $strata = Strata::where('file_id', $files->id)->first();
-            if(empty($strata)) {
+            $is_new_strata = empty($strata);
+            if ($is_new_strata) {
                 $strata = new Strata();
                 $strata->file_id = $files->id;
             }
-            $strata->title = $strata_title;
-            $strata->name = $strata_name;
-            $strata->parliament = $parliament;
-            $strata->dun = $dun;
-            $strata->park = $park;
-            $strata->address1 = $strata_address1;
-            $strata->address2 = $strata_address2;
-            $strata->address3 = $strata_address3;
-            $strata->address4 = $strata_address4;
-            $strata->poscode = $strata_postcode;
-            $strata->city = $strata_city;
-            $strata->state = $strata_state;
-            $strata->country = $strata_country;
-            $strata->block_no = $block_no;
-            $strata->total_floor = $total_floor;
-            $strata->year = $strata_year;
-            $strata->town = $town;
-            $strata->area = $area;
-            $strata->land_area = $land_area;
-            $strata->total_share_unit = $total_share_unit;
-            $strata->land_area_unit = $land_area_unit;
-            $strata->lot_no = $lot_no;
-            $strata->ownership_no = $ownership_no;
-            $strata->date = $vacant_date;
-            $strata->land_title = $land_title;
-            $strata->category = $category;
-            $strata->perimeter = $perimeter;
-            $strata->ccc_no = $ccc_no;
-            $strata->ccc_date = $ccc_date;
-            $strata->file_url = '';
-            $strata->is_residential = $is_residential;
-            $strata->is_commercial = $is_commercial;
+            $this->applyExcelFields($strata, $row, $is_new_strata, [
+                'title' => ['col' => '18', 'val' => $strata_title],
+                'name' => ['col' => '19', 'val' => $strata_name],
+                'parliament' => ['col' => '20', 'val' => $parliament],
+                'dun' => ['col' => '21', 'val' => $dun],
+                'park' => ['col' => '22', 'val' => $park],
+                'address1' => ['col' => '23', 'val' => $strata_address1],
+                'address2' => ['col' => '24', 'val' => $strata_address2],
+                'address3' => ['col' => '25', 'val' => $strata_address3],
+                'address4' => ['col' => '26', 'val' => $strata_address4],
+                'poscode' => ['col' => '27', 'val' => $strata_postcode],
+                'city' => ['col' => '28', 'val' => $strata_city],
+                'state' => ['col' => '29', 'val' => $strata_state],
+                'country' => ['col' => '30', 'val' => $strata_country],
+                'block_no' => ['col' => '31', 'val' => $block_no],
+                'total_floor' => ['col' => '32', 'val' => $total_floor],
+                'year' => ['col' => '33', 'val' => $strata_year],
+                'town' => ['col' => '35', 'val' => $town],
+                'area' => ['col' => '36', 'val' => $area],
+                'land_area' => ['col' => '37', 'val' => $land_area],
+                'total_share_unit' => ['col' => '46', 'val' => $total_share_unit],
+                'land_area_unit' => ['col' => '38', 'val' => $land_area_unit],
+                'lot_no' => ['col' => '39', 'val' => $lot_no],
+                'ownership_no' => ['col' => '34', 'val' => $ownership_no],
+                'date' => ['col' => '40', 'val' => $vacant_date],
+                'land_title' => ['col' => '43', 'val' => $land_title],
+                'category' => ['col' => '44', 'val' => $category],
+                'perimeter' => ['col' => '45', 'val' => $perimeter],
+                'ccc_no' => ['col' => '42', 'val' => $ccc_no],
+                'ccc_date' => ['col' => '41', 'val' => $ccc_date],
+                'is_residential' => ['col' => '47', 'val' => $is_residential],
+                'is_commercial' => ['col' => '53', 'val' => $is_commercial],
+            ]);
+            if ($is_new_strata) {
+                $strata->file_url = '';
+            }
             $create_strata = $strata->save();
 
             if ($create_strata) {
@@ -690,17 +731,22 @@ class ImportFile
                     }
 
                     $residential = Residential::where('file_id', $files->id)->first();
-                    if(empty($residential)) {
+                    $is_new_residential = empty($residential);
+                    if ($is_new_residential) {
                         $residential = new Residential();
                         $residential->file_id = $files->id;
                     }
                     $residential->strata_id = $strata->id;
-                    $residential->unit_no = $residential_unit_no;
-                    $residential->under_ten_units = (!empty($residential_unit_no) && $residential_unit_no < 10)? true : false;
-                    $residential->maintenance_fee = $residential_mf;
-                    $residential->maintenance_fee_option = $residential_mf_unit;
-                    $residential->sinking_fund = $residential_sf;
-                    $residential->sinking_fund_option = $residential_sf_unit;
+                    $this->applyExcelFields($residential, $row, $is_new_residential, [
+                        'unit_no' => ['col' => '48', 'val' => $residential_unit_no],
+                        'maintenance_fee' => ['col' => '49', 'val' => $residential_mf],
+                        'maintenance_fee_option' => ['col' => '50', 'val' => $residential_mf_unit],
+                        'sinking_fund' => ['col' => '51', 'val' => $residential_sf],
+                        'sinking_fund_option' => ['col' => '52', 'val' => $residential_sf_unit],
+                    ]);
+                    if ($is_new_residential || $this->hasExcelValue($row, '48')) {
+                        $residential->under_ten_units = (!empty($residential_unit_no) && $residential_unit_no < 10) ? true : false;
+                    }
                     $residential->save();
                 }
 
@@ -764,22 +810,27 @@ class ImportFile
                     }
 
                     $commercial = Commercial::where('file_id', $files->id)->first();
-                    if(empty($commercial)) {
+                    $is_new_commercial = empty($commercial);
+                    if ($is_new_commercial) {
                         $commercial = new Commercial();
                         $commercial->file_id = $files->id;
                     }
                     $commercial->strata_id = $strata->id;
-                    $commercial->unit_no = $commercial_unit_no;
-                    $commercial->under_ten_units = (!empty($commercial_unit_no) && $commercial_unit_no < 10)? true : false;
-                    $commercial->maintenance_fee = $commercial_mf;
-                    $commercial->maintenance_fee_option = $commercial_mf_unit;
-                    $commercial->sinking_fund = $commercial_sf;
-                    $commercial->sinking_fund_option = $commercial_sf_unit;
+                    $this->applyExcelFields($commercial, $row, $is_new_commercial, [
+                        'unit_no' => ['col' => '54', 'val' => $commercial_unit_no],
+                        'maintenance_fee' => ['col' => '55', 'val' => $commercial_mf],
+                        'maintenance_fee_option' => ['col' => '56', 'val' => $commercial_mf_unit],
+                        'sinking_fund' => ['col' => '57', 'val' => $commercial_sf],
+                        'sinking_fund_option' => ['col' => '58', 'val' => $commercial_sf_unit],
+                    ]);
+                    if ($is_new_commercial || $this->hasExcelValue($row, '54')) {
+                        $commercial->under_ten_units = (!empty($commercial_unit_no) && $commercial_unit_no < 10) ? true : false;
+                    }
                     $commercial->save();
                 }
 
                 $facility = Facility::where('file_id', $files->id)->first();
-                if(empty($facility)) {
+                if (empty($facility)) {
                     $facility = new Facility();
                     $facility->file_id = $files->id;
                 }
@@ -846,7 +897,7 @@ class ImportFile
                     $is_others = 1;
                 }
             }
-    
+
             // 143. No Management
             $no_management = false;
             if (isset($row['143']) && !empty($row['143'])) {
@@ -863,7 +914,7 @@ class ImportFile
             // 144. Date Start
             $date_start = '';
             if (isset($row['144']) && !empty($row['144'])) {
-                if(!empty($row['144']['date'])) {
+                if (!empty($row['144']['date'])) {
                     $date_start = Carbon::parse($row['144']['date'])->format('Y-m-d');
                 } else {
                     $date_start = Carbon::createFromFormat('d/m/Y', trim($row['144']))->format('Y-m-d');
@@ -873,7 +924,7 @@ class ImportFile
             // 145. Date End
             $date_end = '';
             if (isset($row['145']) && !empty($row['145'])) {
-                if(!empty($row['145']['date'])) {
+                if (!empty($row['145']['date'])) {
                     $date_end = Carbon::parse($row['145']['date'])->format('Y-m-d');
                 } else {
                     $date_end = Carbon::createFromFormat('d/m/Y', trim($row['145']['date']))->format('Y-m-d');
@@ -897,29 +948,34 @@ class ImportFile
             }
 
             $management = Management::where('file_id', $files->id)->first();
-            if(empty($management)) {
+            $is_new_management = empty($management);
+            if ($is_new_management) {
                 $management = new Management();
                 $management->file_id = $files->id;
             }
-                
-            $management->is_developer = $is_developer;
-            $management->liquidator = $liquidator;
-            $management->is_jmb = $is_jmb;
-            $management->is_mc = $is_mc;
-            $management->is_agent = $is_agent;
-            $management->is_others = $is_others;
-            $management->no_management = $no_management;
-            $management->start = $date_start;
-            $management->end = $date_end;
-            $management->under_10_units = $under_10_units;
-            $management->under_10_units_remarks = $under_10_units_remarks;
-            $management->bankruptcy = $bankruptcy;
-            $management->bankruptcy_remarks = $bankruptcy_remarks;
+
+            $this->applyExcelFields($management, $row, $is_new_management, [
+                'is_developer' => ['col' => '60', 'val' => $is_developer],
+                'liquidator' => ['col' => '73', 'val' => $liquidator],
+                'is_jmb' => ['col' => '86', 'val' => $is_jmb],
+                'is_mc' => ['col' => '101', 'val' => $is_mc],
+                'is_agent' => ['col' => '116', 'val' => $is_agent],
+                'is_others' => ['col' => '130', 'val' => $is_others],
+                'no_management' => ['col' => '143', 'val' => $no_management],
+                'start' => ['col' => '144', 'val' => $date_start],
+                'end' => ['col' => '145', 'val' => $date_end],
+                'bankruptcy' => ['col' => '146', 'val' => $bankruptcy],
+                'bankruptcy_remarks' => ['col' => '147', 'val' => $bankruptcy_remarks],
+            ]);
+            if ($is_new_management) {
+                $management->under_10_units = $under_10_units;
+                $management->under_10_units_remarks = $under_10_units_remarks;
+            }
             $create_management = $management->save();
 
             if ($create_management) {
                 /** Create Developer */
-                if ($is_developer) {
+                if ($management->is_developer) {
                     // 61. Name
                     $developer_name = '';
                     if (isset($row['61']) && !empty($row['61'])) {
@@ -1024,28 +1080,31 @@ class ImportFile
                     }
 
                     $new_developer = ManagementDeveloper::where('file_id', $files->id)->first();
-                    if(empty($new_developer)) {
+                    $is_new_developer = empty($new_developer);
+                    if ($is_new_developer) {
                         $new_developer = new ManagementDeveloper();
                         $new_developer->file_id = $files->id;
                     }
                     $new_developer->management_id = $management->id;
-                    $new_developer->name = $developer_name;
-                    $new_developer->address_1 = $developer_address1;
-                    $new_developer->address_2 = $developer_address2;
-                    $new_developer->address_3 = $developer_address3;
-                    $new_developer->address_4 = $developer_address4;
-                    $new_developer->city = $developer_city;
-                    $new_developer->poscode = $developer_postcode;
-                    $new_developer->state = $developer_state;
-                    $new_developer->country = $developer_country;
-                    $new_developer->phone_no = $developer_phone_no;
-                    $new_developer->fax_no = $developer_fax_no;
-                    $new_developer->remarks = $developer_remarks;
+                    $this->applyExcelFields($new_developer, $row, $is_new_developer, [
+                        'name' => ['col' => '61', 'val' => $developer_name],
+                        'address_1' => ['col' => '62', 'val' => $developer_address1],
+                        'address_2' => ['col' => '63', 'val' => $developer_address2],
+                        'address_3' => ['col' => '64', 'val' => $developer_address3],
+                        'address_4' => ['col' => '65', 'val' => $developer_address4],
+                        'city' => ['col' => '67', 'val' => $developer_city],
+                        'poscode' => ['col' => '66', 'val' => $developer_postcode],
+                        'state' => ['col' => '68', 'val' => $developer_state],
+                        'country' => ['col' => '69', 'val' => $developer_country],
+                        'phone_no' => ['col' => '70', 'val' => $developer_phone_no],
+                        'fax_no' => ['col' => '71', 'val' => $developer_fax_no],
+                        'remarks' => ['col' => '72', 'val' => $developer_remarks],
+                    ]);
                     $new_developer->save();
                 }
 
                 /** Create Liquidator */
-                if ($liquidator) {
+                if ($management->liquidator) {
                     // 74. Name
                     $liquidator_name = '';
                     if (isset($row['74']) && !empty($row['74'])) {
@@ -1150,31 +1209,34 @@ class ImportFile
                     }
 
                     $new_liquidator = ManagementLiquidator::where('file_id', $files->id)->first();
-                    if(empty($new_liquidator)) {
+                    $is_new_liquidator = empty($new_liquidator);
+                    if ($is_new_liquidator) {
                         $new_liquidator = new ManagementLiquidator();
                         $new_liquidator->file_id = $files->id;
                     }
                     $new_liquidator->management_id = $management->id;
-                    $new_liquidator->name = $liquidator_name;
-                    $new_liquidator->address_1 = $liquidator_address1;
-                    $new_liquidator->address_2 = $liquidator_address2;
-                    $new_liquidator->address_3 = $liquidator_address3;
-                    $new_liquidator->address_4 = $liquidator_address4;
-                    $new_liquidator->city = $liquidator_city;
-                    $new_liquidator->poscode = $liquidator_postcode;
-                    $new_liquidator->state = $liquidator_state;
-                    $new_liquidator->country = $liquidator_country;
-                    $new_liquidator->phone_no = $liquidator_phone_no;
-                    $new_liquidator->fax_no = $liquidator_fax_no;
-                    $new_liquidator->remarks = $liquidator_remarks;
+                    $this->applyExcelFields($new_liquidator, $row, $is_new_liquidator, [
+                        'name' => ['col' => '74', 'val' => $liquidator_name],
+                        'address_1' => ['col' => '75', 'val' => $liquidator_address1],
+                        'address_2' => ['col' => '76', 'val' => $liquidator_address2],
+                        'address_3' => ['col' => '77', 'val' => $liquidator_address3],
+                        'address_4' => ['col' => '78', 'val' => $liquidator_address4],
+                        'city' => ['col' => '80', 'val' => $liquidator_city],
+                        'poscode' => ['col' => '79', 'val' => $liquidator_postcode],
+                        'state' => ['col' => '81', 'val' => $liquidator_state],
+                        'country' => ['col' => '82', 'val' => $liquidator_country],
+                        'phone_no' => ['col' => '83', 'val' => $liquidator_phone_no],
+                        'fax_no' => ['col' => '84', 'val' => $liquidator_fax_no],
+                        'remarks' => ['col' => '85', 'val' => $liquidator_remarks],
+                    ]);
                     $new_liquidator->save();
                 }
-                
-                if ($is_jmb) {
+
+                if ($management->is_jmb) {
                     // 87. Date Formed
                     $jmb_date_formed = '';
                     if (isset($row['87']) && !empty($row['87'])) {
-                        if(!empty($row['61']['date'])) {
+                        if (!empty($row['61']['date'])) {
                             $jmb_date_formed = Carbon::parse($row['87']['date'])->format('Y-m-d');
                         } else {
                             $jmb_date_formed = Carbon::createFromFormat('d/m/Y', trim($row['87']))->format('Y-m-d');
@@ -1289,33 +1351,36 @@ class ImportFile
                     }
 
                     $new_jmb = ManagementJMB::where('file_id', $files->id)->first();
-                    if(empty($new_jmb)) {
+                    $is_new_jmb = empty($new_jmb);
+                    if ($is_new_jmb) {
                         $new_jmb = new ManagementJMB();
                         $new_jmb->file_id = $files->id;
                     }
                     $new_jmb->management_id = $management->id;
-                    $new_jmb->date_formed = $jmb_date_formed;
-                    $new_jmb->certificate_no = $jmb_certificate_no;
-                    $new_jmb->name = $jmb_name;
-                    $new_jmb->address1 = $jmb_address1;
-                    $new_jmb->address2 = $jmb_address2;
-                    $new_jmb->address3 = $jmb_address3;
-                    $new_jmb->address4 = $jmb_address4;
-                    $new_jmb->city = $jmb_city;
-                    $new_jmb->poscode = $jmb_postcode;
-                    $new_jmb->state = $jmb_state;
-                    $new_jmb->country = $jmb_country;
-                    $new_jmb->phone_no = $jmb_office_no;
-                    $new_jmb->fax_no = $jmb_fax_no;
-                    $new_jmb->email = $jmb_email;
+                    $this->applyExcelFields($new_jmb, $row, $is_new_jmb, [
+                        'date_formed' => ['col' => '87', 'val' => $jmb_date_formed],
+                        'certificate_no' => ['col' => '88', 'val' => $jmb_certificate_no],
+                        'name' => ['col' => '89', 'val' => $jmb_name],
+                        'address1' => ['col' => '90', 'val' => $jmb_address1],
+                        'address2' => ['col' => '91', 'val' => $jmb_address2],
+                        'address3' => ['col' => '92', 'val' => $jmb_address3],
+                        'address4' => ['col' => '93', 'val' => $jmb_address4],
+                        'city' => ['col' => '95', 'val' => $jmb_city],
+                        'poscode' => ['col' => '94', 'val' => $jmb_postcode],
+                        'state' => ['col' => '96', 'val' => $jmb_state],
+                        'country' => ['col' => '97', 'val' => $jmb_country],
+                        'phone_no' => ['col' => '98', 'val' => $jmb_office_no],
+                        'fax_no' => ['col' => '99', 'val' => $jmb_fax_no],
+                        'email' => ['col' => '100', 'val' => $jmb_email],
+                    ]);
                     $new_jmb->save();
                 }
 
-                if ($is_mc) {
+                if ($management->is_mc) {
                     // 102. Date Formed
                     $mc_date_formed = '';
                     if (isset($row['102']) && !empty($row['102'])) {
-                        if(!empty($row['102']['date'])) {
+                        if (!empty($row['102']['date'])) {
                             $mc_date_formed = Carbon::parse($row['102']['date'])->format('Y-m-d');
                         } else {
                             $mc_date_formed = Carbon::createFromFormat('d/m/Y', trim($row['102']))->format('Y-m-d');
@@ -1324,7 +1389,7 @@ class ImportFile
                     // 103. First AGM Date
                     $mc_first_agm = '';
                     if (isset($row['103']) && !empty($row['103'])) {
-                        if(!empty($row['103']['date'])) {
+                        if (!empty($row['103']['date'])) {
                             $mc_first_agm = Carbon::parse($row['103']['date'])->format('Y-m-d');
                         } else {
                             $mc_first_agm = Carbon::createFromFormat('d/m/Y', trim($row['103']))->format('Y-m-d');
@@ -1440,30 +1505,33 @@ class ImportFile
                     }
 
                     $new_mc = ManagementMC::where('file_id', $files->id)->first();
-                    if(empty($new_mc)) {
+                    $is_new_mc = empty($new_mc);
+                    if ($is_new_mc) {
                         $new_mc = new ManagementMC();
                         $new_mc->file_id = $files->id;
                     }
                     $new_mc->management_id = $management->id;
-                    $new_mc->date_formed = $mc_date_formed;
-                    $new_mc->certificate_no = $certificate_no;
-                    $new_mc->first_agm = $mc_first_agm;
-                    $new_mc->name = $mc_name;
-                    $new_mc->address1 = $mc_address1;
-                    $new_mc->address2 = $mc_address2;
-                    $new_mc->address3 = $mc_address3;
-                    $new_mc->address4 = $mc_address4;
-                    $new_mc->city = $mc_city;
-                    $new_mc->poscode = $mc_postcode;
-                    $new_mc->state = $mc_state;
-                    $new_mc->country = $mc_country;
-                    $new_mc->phone_no = $mc_office_no;
-                    $new_mc->fax_no = $mc_fax_no;
-                    $new_mc->email = $mc_email;
+                    $this->applyExcelFields($new_mc, $row, $is_new_mc, [
+                        'date_formed' => ['col' => '102', 'val' => $mc_date_formed],
+                        'certificate_no' => ['col' => '150', 'val' => $certificate_no],
+                        'first_agm' => ['col' => '103', 'val' => $mc_first_agm],
+                        'name' => ['col' => '104', 'val' => $mc_name],
+                        'address1' => ['col' => '105', 'val' => $mc_address1],
+                        'address2' => ['col' => '106', 'val' => $mc_address2],
+                        'address3' => ['col' => '107', 'val' => $mc_address3],
+                        'address4' => ['col' => '108', 'val' => $mc_address4],
+                        'city' => ['col' => '110', 'val' => $mc_city],
+                        'poscode' => ['col' => '109', 'val' => $mc_postcode],
+                        'state' => ['col' => '111', 'val' => $mc_state],
+                        'country' => ['col' => '112', 'val' => $mc_country],
+                        'phone_no' => ['col' => '113', 'val' => $mc_office_no],
+                        'fax_no' => ['col' => '114', 'val' => $mc_fax_no],
+                        'email' => ['col' => '115', 'val' => $mc_email],
+                    ]);
                     $new_mc->save();
                 }
 
-                if ($is_agent) {
+                if ($management->is_agent) {
                     // 117. Selected By
                     $agent_selected_by = '';
                     if (isset($row['117']) && !empty($row['117'])) {
@@ -1573,28 +1641,31 @@ class ImportFile
                     }
 
                     $new_agent = ManagementAgent::where('file_id', $files->id)->first();
-                    if(empty($new_agent)) {
+                    $is_new_agent = empty($new_agent);
+                    if ($is_new_agent) {
                         $new_agent = new ManagementAgent();
                         $new_agent->file_id = $files->id;
                     }
                     $new_agent->management_id = $management->id;
-                    $new_agent->selected_by = $agent_selected_by;
-                    $new_agent->agent = $agent_name;
-                    $new_agent->address1 = $agent_address1;
-                    $new_agent->address2 = $agent_address2;
-                    $new_agent->address3 = $agent_address3;
-                    $new_agent->address4 = $agent_address4;
-                    $new_agent->city = $agent_city;
-                    $new_agent->poscode = $agent_postcode;
-                    $new_agent->state = $agent_state;
-                    $new_agent->country = $agent_country;
-                    $new_agent->phone_no = $agent_office_no;
-                    $new_agent->fax_no = $agent_fax_no;
-                    $new_agent->email = $agent_email;
+                    $this->applyExcelFields($new_agent, $row, $is_new_agent, [
+                        'selected_by' => ['col' => '117', 'val' => $agent_selected_by],
+                        'agent' => ['col' => '118', 'val' => $agent_name],
+                        'address1' => ['col' => '119', 'val' => $agent_address1],
+                        'address2' => ['col' => '120', 'val' => $agent_address2],
+                        'address3' => ['col' => '121', 'val' => $agent_address3],
+                        'address4' => ['col' => '122', 'val' => $agent_address4],
+                        'city' => ['col' => '124', 'val' => $agent_city],
+                        'poscode' => ['col' => '123', 'val' => $agent_postcode],
+                        'state' => ['col' => '125', 'val' => $agent_state],
+                        'country' => ['col' => '126', 'val' => $agent_country],
+                        'phone_no' => ['col' => '127', 'val' => $agent_office_no],
+                        'fax_no' => ['col' => '128', 'val' => $agent_fax_no],
+                        'email' => ['col' => '129', 'val' => $agent_email],
+                    ]);
                     $new_agent->save();
                 }
 
-                if ($is_others) {
+                if ($management->is_others) {
                     // 131. Name
                     $others_name = '';
                     if (isset($row['131']) && !empty($row['131'])) {
@@ -1699,23 +1770,26 @@ class ImportFile
                     }
 
                     $new_others = ManagementOthers::where('file_id', $files->id)->first();
-                    if(empty($new_others)) {
+                    $is_new_management_others = empty($new_others);
+                    if ($is_new_management_others) {
                         $new_others = new ManagementOthers();
                         $new_others->file_id = $files->id;
                     }
                     $new_others->management_id = $management->id;
-                    $new_others->name = $others_name;
-                    $new_others->address1 = $others_address1;
-                    $new_others->address2 = $others_address2;
-                    $new_others->address3 = $others_address3;
-                    $new_others->address4 = $others_address4;
-                    $new_others->city = $others_city;
-                    $new_others->poscode = $others_postcode;
-                    $new_others->state = $others_state;
-                    $new_others->country = $others_country;
-                    $new_others->phone_no = $others_office_no;
-                    $new_others->fax_no = $others_fax_no;
-                    $new_others->email = $others_email;
+                    $this->applyExcelFields($new_others, $row, $is_new_management_others, [
+                        'name' => ['col' => '131', 'val' => $others_name],
+                        'address1' => ['col' => '132', 'val' => $others_address1],
+                        'address2' => ['col' => '133', 'val' => $others_address2],
+                        'address3' => ['col' => '134', 'val' => $others_address3],
+                        'address4' => ['col' => '135', 'val' => $others_address4],
+                        'city' => ['col' => '137', 'val' => $others_city],
+                        'poscode' => ['col' => '136', 'val' => $others_postcode],
+                        'state' => ['col' => '138', 'val' => $others_state],
+                        'country' => ['col' => '139', 'val' => $others_country],
+                        'phone_no' => ['col' => '140', 'val' => $others_office_no],
+                        'fax_no' => ['col' => '141', 'val' => $others_fax_no],
+                        'email' => ['col' => '142', 'val' => $others_email],
+                    ]);
                     $new_others->save();
                 }
             }
@@ -1738,13 +1812,16 @@ class ImportFile
             // 151. Financial Report Start Month
 
             $monitor = Monitoring::where('file_id', $files->id)->first();
-            if(empty($monitor)) {
+            $is_new_monitor = empty($monitor);
+            if ($is_new_monitor) {
                 $monitor = new Monitoring();
                 $monitor->file_id = $files->id;
             }
-            $monitor->pre_calculate = $precalculate_plan;
-            $monitor->buyer_registration = $buyer_registration;
-            $monitor->certificate_no = $certificate_no;
+            $this->applyExcelFields($monitor, $row, $is_new_monitor, [
+                'pre_calculate' => ['col' => '148', 'val' => $precalculate_plan],
+                'buyer_registration' => ['col' => '149', 'val' => $buyer_registration],
+                'certificate_no' => ['col' => '150', 'val' => $certificate_no],
+            ]);
             $monitor->save();
 
             // 152. Name
@@ -1764,40 +1841,34 @@ class ImportFile
             }
 
             $others_details = OtherDetails::where('file_id', $files->id)->first();
-            if(empty($others_details)) {
+            $is_new_other_details = empty($others_details);
+            if ($is_new_other_details) {
                 $others_details = new OtherDetails();
                 $others_details->file_id = $files->id;
             }
-            $others_details->name = $other_details_name;
-            $others_details->image_url = '';
-            $others_details->latitude = $latitude;
-            $others_details->longitude = $longitude;
-            $others_details->description = '';
-            $others_details->pms_system = '';
-            $others_details->owner_occupied = '';
-            $others_details->rented = '';
-            $others_details->bantuan_lphs = '';
-            $others_details->bantuan_others = '';
-            $others_details->rsku = '';
-            $others_details->water_meter = '';
-            $others_details->tnb = '';
-            $others_details->malay_composition = '';
-            $others_details->chinese_composition = '';
-            $others_details->indian_composition = '';
-            $others_details->others_composition = '';
-            $others_details->foreigner_composition = '';
+            $this->applyExcelFields($others_details, $row, $is_new_other_details, [
+                'name' => ['col' => '152', 'val' => $other_details_name],
+                'latitude' => ['col' => '153', 'val' => $latitude],
+                'longitude' => ['col' => '154', 'val' => $longitude],
+            ]);
+            if ($is_new_other_details) {
+                $others_details->image_url = '';
+                $others_details->description = '';
+                $others_details->pms_system = '';
+                $others_details->owner_occupied = '';
+                $others_details->rented = '';
+                $others_details->bantuan_lphs = '';
+                $others_details->bantuan_others = '';
+                $others_details->rsku = '';
+                $others_details->water_meter = '';
+                $others_details->tnb = '';
+                $others_details->malay_composition = '';
+                $others_details->chinese_composition = '';
+                $others_details->indian_composition = '';
+                $others_details->others_composition = '';
+                $others_details->foreigner_composition = '';
+            }
             $others_details->save();
-        }
-
-        // 157. New File No
-        $new_file_no = '';
-        if (isset($row['157']) && !empty($row['157'])) {
-            $new_file_no = trim($row['157']);
-        }
-
-        if (!empty($new_file_no)) {
-            $files->file_no = $new_file_no;
-            $update_file = $files->save();
         }
 
         # Audit Trail
@@ -1809,5 +1880,33 @@ class ImportFile
         $auditTrail->save();
 
         $job->delete();
+    }
+
+    private function hasExcelValue($row, $column)
+    {
+        if (!isset($row[$column])) {
+            return false;
+        }
+
+        $value = $row[$column];
+
+        if ($value === '' || $value === null) {
+            return false;
+        }
+
+        if (is_array($value)) {
+            return !empty($value['date']);
+        }
+
+        return trim((string) $value) !== '';
+    }
+
+    private function applyExcelFields($model, $row, $isNew, array $fields)
+    {
+        foreach ($fields as $attribute => $config) {
+            if ($isNew || $this->hasExcelValue($row, $config['col'])) {
+                $model->$attribute = $config['val'];
+            }
+        }
     }
 }

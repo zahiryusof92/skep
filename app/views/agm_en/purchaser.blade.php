@@ -207,7 +207,18 @@ foreach ($user_permission as $permission) {
                                         <button type="submit" class="btn btn-own" data-toggle="tooltip" data-placement="top" title="Print"><i class="fa fa-print"></i></button>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label><br/>
+                                        <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Export to Excel" id="btn_export_excel"><i class="fa fa-file-excel-o"></i></button>
+                                    </div>
+                                </div>
                             </div>
+                        </form>
+                        <form target="_blank" action="{{ route('export.purchaser') }}" method="POST" id="export_form" style="display: none;">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                            <input type="hidden" name="company" value="" id="export_company">
+                            <input type="hidden" name="file_no" value="" id="export_file_no">
                         </form>
                     </div>
                 </div>
@@ -250,42 +261,66 @@ foreach ($user_permission as $permission) {
         var oTable = $('#purchaser_list').DataTable({
             processing: true,
             serverSide: true,
+            deferRender: true,
             ajax: "{{ URL::action('AgmController@getPurchaser') }}",
             columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'files', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'unit_no', name: 'buyer.unit_no'},
-                {data: 'unit_share', name: 'buyer.unit_share'},
-                {data: 'owner_name', name: 'buyer.owner_name'},
-                {data: 'phone_no', name: 'buyer.phone_no'},
-                {data: 'email', name: 'buyer.email'},
-                {data: 'race', name: 'buyer.race_id'},
+                {data: 'cob', name: 'company.short_name', orderable: true, searchable: true},
+                {data: 'files', name: 'files.file_no', orderable: true, searchable: true},
+                {data: 'strata', name: 'strata.name', orderable: true, searchable: true},
+                {data: 'unit_no', name: 'buyer.unit_no', orderable: true, searchable: true},
+                {data: 'unit_share', name: 'buyer.unit_share', orderable: true, searchable: true},
+                {data: 'owner_name', name: 'buyer.owner_name', orderable: true, searchable: true},
+                {data: 'phone_no', name: 'buyer.phone_no', orderable: true, searchable: true},
+                {data: 'email', name: 'buyer.email', orderable: true, searchable: true},
+                {data: 'race', name: 'race.name_en', orderable: true, searchable: true},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
-            lengthMenu: [[10, 25, 50], [10, 25, 50]],
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            pageLength: 25,
             order: [[0, "asc"], [1, "asc"], [3, "asc"]],
-            responsive: false
+            responsive: false,
+            stateSave: false
         });
 
         $('#company').on('change', function () {
+            var companyValue = $(this).val();
+            
             $.ajax({
                 url: "{{ URL::action('AgmController@getFileListByCOB') }}",
                 type: "POST",
                 data: {
-                    company: $("#company").val()
+                    company: companyValue
                 },
                 success: function (data) {
                     $("#file_no").html(data);
-                    oTable.columns(1).search('').draw();
+                    // Combine both search and draw in one call to avoid double request
+                    oTable.columns(0).search(companyValue);
+                    oTable.columns(1).search('');
+                    oTable.draw();
                 }
             });
-
-            oTable.columns(0).search(this.value).draw();
         });
         $('#file_no').on('change', function () {
             oTable.columns(1).search(this.value).draw();
         });
+
+        // Update export form hidden fields when company or file_no changes
+        $('#company, #file_no').on('change', function () {
+            updateExportForm();
+        });
+
+        // Handle export button click
+        $('#btn_export_excel').on('click', function() {
+            updateExportForm();
+            $('#export_form').submit();
+        });
+
+        // Initialize export form values
+        function updateExportForm() {
+            $('#export_company').val($('#company').val());
+            $('#export_file_no').val($('#file_no').val());
+        }
+        updateExportForm();
     });
 
     function deletePurchaser(id) {
