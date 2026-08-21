@@ -2,17 +2,6 @@
 
 @section('content')
 
-<?php
-$update_permission = 0;
-$company = Company::find(Auth::user()->company_id);
-
-foreach ($user_permission as $permission) {
-    if ($permission->submodule_id == 9) {
-        $update_permission = $permission->update_permission;
-    }
-}
-?>
-
 <div class="page-content-inner">
     <section class="panel panel-style">
         <div class="panel-heading">
@@ -33,7 +22,7 @@ foreach ($user_permission as $permission) {
                                     </span>
                                     <div class="step-desc">
                                         <span class="step-title">Strata</span>
-                                        <p>{{ $data['total_strata'] }}</p>
+                                        <p class="dashboard-stat" data-stat="total_strata">{{ $data['total_strata'] }}</p>
                                     </div>
                                 </div>
                             </a>
@@ -47,7 +36,7 @@ foreach ($user_permission as $permission) {
                                     </span>
                                     <div class="step-desc">
                                         <span class="step-title">{{ trans('Active Strata') }}</span>
-                                        <p>
+                                        <p class="dashboard-stat" data-stat="total_active_strata">
                                             {{ $data['total_active_strata'] }}
                                         </p>
                                     </div>
@@ -63,7 +52,7 @@ foreach ($user_permission as $permission) {
                                     </span>
                                     <div class="step-desc">
                                         <span class="step-title">{{ trans('Inactive Strata') }}</span>
-                                        <p>
+                                        <p class="dashboard-stat" data-stat="total_inactive_strata">
                                             {{ $data['total_inactive_strata'] }}
                                         </p>
                                     </div>
@@ -78,7 +67,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">{{ trans('Strata <10 Units') }}</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_less_10_units">
                                         {{ $data['total_less_10_units'] }}
                                     </p>
                                 </div>
@@ -92,7 +81,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">JMB</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_jmb">
                                         {{ $data['total_jmb'] }}
                                     </p>
                                 </div>
@@ -106,7 +95,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">MC</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_mc">
                                         {{ $data['total_mc'] }}
                                     </p>
                                 </div>
@@ -120,7 +109,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">{{ trans('Developer') }}</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_developer">
                                         {{ $data['total_developer'] }}
                                     </p>
                                 </div>
@@ -134,7 +123,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">{{ trans('Liquidator') }}</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_liquidator">
                                         {{ $data['total_liquidator'] }}
                                     </p>
                                 </div>
@@ -148,7 +137,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">{{ trans('Agent') }}</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_agent">
                                         {{ $data['total_agent'] }}
                                     </p>
                                 </div>
@@ -162,7 +151,7 @@ foreach ($user_permission as $permission) {
                                 </span>
                                 <div class="step-desc">
                                     <span class="step-title">{{ trans('No Management') }}</span>
-                                    <p>
+                                    <p class="dashboard-stat" data-stat="total_no_management">
                                         {{ $data['total_no_management'] }}
                                     </p>
                                 </div>
@@ -177,7 +166,7 @@ foreach ($user_permission as $permission) {
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">Owner</span>
-                                <p>
+                                <p class="dashboard-stat" data-stat="total_owner">
                                     {{ $data['total_owner'] }}
                                 </p>
                             </div>
@@ -191,7 +180,7 @@ foreach ($user_permission as $permission) {
                             </span>
                             <div class="step-desc">
                                 <span class="step-title">Tenant</span>
-                                <p>
+                                <p class="dashboard-stat" data-stat="total_tenant">
                                     {{ $data['total_tenant'] }}
                                 </p>
                             </div>
@@ -551,7 +540,7 @@ foreach ($user_permission as $permission) {
 
             <hr />
 
-            <div class="row">
+            <div class="row" id="dashboard_designation_section">
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.designation') }}</h4>
                     <div>
@@ -595,7 +584,7 @@ foreach ($user_permission as $permission) {
 
             <hr />
 
-            <div class="row">
+            <div class="row" id="dashboard_insurance_section">
                 <div class="col-lg-12">
                     <h4>{{ trans('app.forms.insurance') }}</h4>
                     <div>
@@ -643,20 +632,35 @@ foreach ($user_permission as $permission) {
     </div>
 </div>
 
-@if (!empty($activeMemo) && $activeMemo->count() > 0)
-@foreach ($activeMemo as $alertMemo)
-<script type="text/javascript">
-    $(document).ready(function () {
-        getMemoDetails('{{ Helper\Helper::encode($alertMemo->id) }}')
-    });     
-</script>
-@endforeach
-@endif
-
 <script type="text/javascript">
     var custom_never_table, short_name;
+    var dashboardTables = {};
+
+    function initDashboardTable(key, selector, options) {
+        if (dashboardTables[key]) {
+            if ($.fn.DataTable.isDataTable(selector)) {
+                $(selector).DataTable().columns.adjust();
+            }
+            return dashboardTables[key];
+        }
+        dashboardTables[key] = $(selector).DataTable(options);
+        return dashboardTables[key];
+    }
+
+    function agmReminderColumns() {
+        return [
+            {data: 'cob', name: 'company.short_name'},
+            {data: 'file_no', name: 'files.file_no'},
+            {data: 'strata', name: 'strata.name'},
+            {data: 'agm_date', name: 'meeting_document.agm_date'},
+            {data: 'agm_expiry_date', name: 'agm_expiry_date', orderable: false, searchable: false},
+            {data: 'action', name: 'action', orderable: false, searchable: false}
+        ];
+    }
+
     $(document).ready(function () {
-        $('#agm_remainder').DataTable({
+        // Active AGM tab only on first paint
+        initDashboardTable('agm_remainder', '#agm_remainder', {
             processing: true,
             serverSide: true,
             ajax: "{{ URL::action('HomeController@getAGMRemainder') }}",
@@ -664,127 +668,187 @@ foreach ($user_permission as $permission) {
             pageLength: 5,
             order: [[3, "desc"]],
             responsive: true,
-            columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'agm_date', name: 'meeting_document.agm_date'},
-                {data: 'agm_expiry_date', name: 'agm_expiry_date', orderable: false, searchable: false},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
+            columns: agmReminderColumns()
         });
 
-        $('#never_agm').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ URL::action('HomeController@getNeverAGM') }}",
-            lengthMenu: [[5, 25, 50], [5, 25, 50]],
-            pageLength: 5,
-            order: [[0, 'asc'], [1, 'asc']],
-            responsive: true,
-            columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
+        // Defer below-the-fold tables slightly so first paint stays light
+        setTimeout(function () {
+            initDashboardTable('memo', '#memo', {
+                processing: true,
+                serverSide: true,
+                ajax: "{{ URL::action('HomeController@getMemoHome') }}",
+                lengthMenu: [[5, 25, 50], [5, 25, 50]],
+                pageLength: 5,
+                order: [[1, "desc"]],
+                responsive: true,
+                columns: [
+                    {data: 'subject', name: 'subject'},
+                    {data: 'memo_date', name: 'memo_date'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                ]
+            });
+        }, 150);
+
+        // Designation & Insurance: only when scrolled into view (heaviest tables)
+        function initDesignationTable() {
+            initDashboardTable('designation', '#designation_remainder', {
+                processing: true,
+                serverSide: true,
+                ajax: "{{ URL::action('HomeController@getDesignationRemainder') }}",
+                lengthMenu: [[5, 25, 50], [5, 25, 50]],
+                pageLength: 5,
+                order: [[7, 'asc'], [6, 'asc']],
+                responsive: true,
+                columns: [
+                    {data: 'cob', name: 'company.short_name'},
+                    {data: 'file_no', name: 'files.file_no'},
+                    {data: 'strata', name: 'strata.name'},
+                    {data: 'designation', name: 'designation.description'},
+                    {data: 'name', name: 'ajk_details.name'},
+                    {data: 'email', name: 'ajk_details.email'},
+                    {data: 'phone_no', name: 'ajk_details.phone_no'},
+                    {data: 'month', name: 'ajk_details.month'},
+                    {data: 'start_year', name: 'ajk_details.start_year'},
+                    {data: 'end_year', name: 'ajk_details.end_year'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                ]
+            });
+        }
+
+        function initInsuranceTable() {
+            initDashboardTable('insurance', '#insurance_remainder', {
+                processing: true,
+                serverSide: true,
+                ajax: "{{ URL::action('HomeController@getInsuranceRemainder') }}",
+                lengthMenu: [[5, 25, 50], [5, 25, 50]],
+                pageLength: 5,
+                order: [0, 'asc'],
+                responsive: true,
+                columns: [
+                    {data: 'cob', name: 'company.short_name'},
+                    {data: 'file_no', name: 'files.file_no'},
+                    {data: 'strata', name: 'strata.name'},
+                    {data: 'provider', name: 'insurance_provider.name'},
+                    {data: 'plc_validity_to', name: 'insurance.plc_validity_to'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                ]
+            });
+        }
+
+        function observeSection(selector, callback) {
+            var el = document.querySelector(selector);
+            if (!el) {
+                return;
+            }
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting) {
+                        callback();
+                        observer.disconnect();
+                    }
+                }, { rootMargin: '200px' });
+                observer.observe(el);
+            } else {
+                setTimeout(callback, 2000);
+            }
+        }
+
+        observeSection('#dashboard_designation_section', initDesignationTable);
+        observeSection('#dashboard_insurance_section', initInsuranceTable);
+
+        // Lazy-load AGM tabs when opened
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr('data-target') || $(e.target).data('target');
+            if (target === '#tab2') {
+                initDashboardTable('never_agm', '#never_agm', {
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ URL::action('HomeController@getNeverAGM') }}",
+                    lengthMenu: [[5, 25, 50], [5, 25, 50]],
+                    pageLength: 5,
+                    order: [[0, 'asc'], [1, 'asc']],
+                    responsive: true,
+                    columns: [
+                        {data: 'cob', name: 'company.short_name'},
+                        {data: 'file_no', name: 'files.file_no'},
+                        {data: 'strata', name: 'strata.name'},
+                        {data: 'action', name: 'action', orderable: false, searchable: false}
+                    ]
+                });
+            } else if (target === '#tab3') {
+                initDashboardTable('more_12months', '#more_12months', {
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ URL::action('HomeController@getAGM12Months') }}",
+                    lengthMenu: [[5, 25, 50], [5, 25, 50]],
+                    pageLength: 5,
+                    order: [[3, "desc"]],
+                    responsive: true,
+                    columns: agmReminderColumns()
+                });
+            } else if (target === '#tab4') {
+                initDashboardTable('more_15months', '#more_15months', {
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ URL::action('HomeController@getAGM15Months') }}",
+                    lengthMenu: [[5, 25, 50], [5, 25, 50]],
+                    pageLength: 5,
+                    order: [[3, "desc"]],
+                    responsive: true,
+                    columns: agmReminderColumns()
+                });
+            }
         });
 
-        $('#more_12months').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ URL::action('HomeController@getAGM12Months') }}",
-            lengthMenu: [[5, 25, 50], [5, 25, 50]],
-            pageLength: 5,
-            order: [[3, "desc"]],
-            responsive: true,
-            columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'agm_date', name: 'meeting_document.agm_date'},
-                {data: 'agm_expiry_date', name: 'agm_expiry_date', orderable: false, searchable: false},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
-        });
-
-        $('#more_15months').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ URL::action('HomeController@getAGM15Months') }}",
-            lengthMenu: [[5, 25, 50], [5, 25, 50]],
-            pageLength: 5,
-            order: [[3, "desc"]],
-            responsive: true,
-            columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'agm_date', name: 'meeting_document.agm_date'},
-                {data: 'agm_expiry_date', name: 'agm_expiry_date', orderable: false, searchable: false},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
-        });
-
-        $('#memo').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ URL::action('HomeController@getMemoHome') }}",
-            lengthMenu: [[5, 25, 50], [5, 25, 50]],
-            pageLength: 5,
-            order: [[1, "desc"]],
-            responsive: true,
-            columns: [
-                {data: 'subject', name: 'subject'},
-                {data: 'memo_date', name: 'memo_date'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
-        });
-
-        $('#designation_remainder').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ URL::action('HomeController@getDesignationRemainder') }}",
-            lengthMenu: [[5, 25, 50], [5, 25, 50]],
-            pageLength: 5,
-            order: [[7, 'asc'], [6, 'asc']],
-            responsive: true,
-            columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'designation', name: 'designation.description'},
-                {data: 'name', name: 'ajk_details.name'},
-                {data: 'email', name: 'ajk_details.email'},
-                {data: 'phone_no', name: 'ajk_details.phone_no'},
-                {data: 'month', name: 'ajk_details.month'},
-                {data: 'start_year', name: 'ajk_details.start_year'},
-                {data: 'end_year', name: 'ajk_details.end_year'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
-        });
-
-        $('#insurance_remainder').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ URL::action('HomeController@getInsuranceRemainder') }}",
-            lengthMenu: [[5, 25, 50], [5, 25, 50]],
-            pageLength: 5,
-            order: [0, 'asc'],
-            responsive: true,
-            columns: [
-                {data: 'cob', name: 'company.short_name'},
-                {data: 'file_no', name: 'files.file_no'},
-                {data: 'strata', name: 'strata.name'},
-                {data: 'provider', name: 'insurance_provider.name'},
-                {data: 'plc_validity_to', name: 'insurance.plc_validity_to'},
-                {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
-        });
-        generatePie('management_type', 'COB File By Management Type', 'Management Type', <?php echo json_encode($data ? $data['management'] : ''); ?>);
-        generatePie('rating_star', 'Star Rating of Development Area', 'Star Rating', <?php echo json_encode($data ? $data['rating'] : ''); ?>);
-        generateColumn('never_has_agm_chart', "{{ trans('app.forms.never_has_agm') }}", <?php echo json_encode($data ? $data['never']['categories'] : ''); ?>, <?php echo json_encode($data ? $data['never']['data'] : ''); ?>);
+        // Heavy stats/charts — after HTML is already visible
+        loadDashboardStats();
+        loadActiveMemoAlerts();
     });
+
+    function loadDashboardStats() {
+        $.ajax({
+            url: "{{ URL::action('HomeController@getDashboardStats') }}",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+                if (!res || !res.success || !res.data) {
+                    return;
+                }
+                var data = res.data;
+                $('.dashboard-stat').each(function () {
+                    var key = $(this).data('stat');
+                    if (data[key] !== undefined && data[key] !== null) {
+                        $(this).text(data[key]);
+                    }
+                });
+                if (data.management) {
+                    generatePie('management_type', 'COB File By Management Type', 'Management Type', data.management);
+                }
+                if (data.rating) {
+                    generatePie('rating_star', 'Star Rating of Development Area', 'Star Rating', data.rating);
+                }
+                if (data.never) {
+                    generateColumn('never_has_agm_chart', "{{ trans('app.forms.never_has_agm') }}", data.never.categories || [], data.never.data || []);
+                }
+            }
+        });
+    }
+
+    function loadActiveMemoAlerts() {
+        $.ajax({
+            url: "{{ URL::action('HomeController@getActiveMemoAlerts') }}",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+                if (!res || !res.success || !res.ids) {
+                    return;
+                }
+                $.each(res.ids, function (i, id) {
+                    getMemoDetails(id);
+                });
+            }
+        });
+    }
 
     function getMemoDetails(id) {
         $.ajax({

@@ -20,23 +20,47 @@ class Notification extends Eloquent {
         'is_view'
     ];
 
+    /**
+     * List query: lean joins (files + strata only).
+     * Admin without admin_cob sees all companies (use indexes for speed).
+     */
     public function scopeSelf(Builder $builder) {
-        $builder->join('files', 'notifications.file_id', '=', 'files.id')
-                ->join('strata', 'strata.file_id', '=', 'files.id')
-                ->join('company', 'notifications.company_id', '=', 'company.id')
-                ->join('users', 'notifications.user_id', '=', 'users.id');
+        $builder->leftJoin('files', 'files.id', '=', 'notifications.file_id')
+                ->leftJoin('strata', 'strata.file_id', '=', 'files.id');
+
         if (!Auth::user()->getAdmin()) {
             $builder->where('notifications.user_id', Auth::user()->id);
-        } else {
-            if (!empty(Session::get('admin_cob'))) {
-                $builder->where('notifications.company_id', Session::get('admin_cob'));
-            }
+        } else if (!empty(Session::get('admin_cob'))) {
+            $builder->where('notifications.company_id', Session::get('admin_cob'));
         }
-        return $builder->selectRaw('notifications.*, company.name as company, files.file_no as file_no, strata.name as strata, users.full_name as user');
+
+        return $builder->select([
+            'notifications.id',
+            'notifications.user_id',
+            'notifications.company_id',
+            'notifications.file_id',
+            'notifications.module',
+            'notifications.route',
+            'notifications.description',
+            'notifications.is_view',
+            'notifications.created_at',
+            'notifications.updated_at',
+            'notifications.deleted_at',
+            'files.file_no as file_no',
+            'strata.name as strata',
+        ]);
     }
 
     public function scopeNotView(Builder $builder) {
         $builder->where('notifications.is_view', false);
+    }
+
+    /**
+     * Unread for bell — notifications table only (no joins).
+     */
+    public function scopeBellUnread(Builder $builder) {
+        return $builder->where('user_id', Auth::user()->id)
+            ->where('is_view', false);
     }
 
     /**
