@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use yajra\Datatables\Facades\Datatables;
 use Barryvdh\DomPDF\Facade as PDF;
 
@@ -625,8 +627,8 @@ class TPPMController extends \BaseController
 
         $user = Auth::user();
         $payload = [
-            'username' => $user->username,
-            'email' => $user->email,
+            'username' => trim($user->username),
+            'email' => trim($user->email),
             'name' => $user->full_name,
             'cob' => ($user->getCOB ? $user->getCOB->short_name : ''),
             'file_no' => ($user->getFile ? $user->getFile->file_no : ''),
@@ -642,19 +644,40 @@ class TPPMController extends \BaseController
         $autoLoginUrl = isset($response['data']['auto_login_url']) ? $response['data']['auto_login_url'] : null;
 
         if (empty($autoLoginUrl)) {
-            Log::error(
-                'TPPM SSO failed | url=' . $url
-                . ' | http=' . (isset($result['http_code']) ? $result['http_code'] : '-')
-                . ' | curl_error=' . (isset($result['curl_error']) ? $result['curl_error'] : '-')
-                . ' | payload=' . json_encode($payload)
-                . ' | raw=' . (isset($result['raw']) ? $result['raw'] : '-')
-                . ' | response=' . json_encode($response)
-            );
+            $this->logTppmSsoFailed($payload, $response, $url, $result);
 
             return Redirect::to('/')->with('error', trans('app.errors.occurred'));
         }
 
+        $this->logTppmSsoSuccess($payload, $response, $url);
+
         return Redirect::away($autoLoginUrl);
+    }
+
+    private function logTppmSsoSuccess($payload, $response, $url)
+    {
+        $logger = new Logger('tppm_sso');
+        $logger->pushHandler(new StreamHandler(storage_path('logs/tppm_sso.log'), Logger::INFO));
+        $logger->info('TPPM SSO success', [
+            'url' => $url,
+            'payload' => $payload,
+            'user' => isset($response['data']['user']) ? $response['data']['user'] : null,
+            'expires_in' => isset($response['data']['expires_in']) ? $response['data']['expires_in'] : null,
+        ]);
+    }
+
+    private function logTppmSsoFailed($payload, $response, $url, $result)
+    {
+        $logger = new Logger('tppm_sso');
+        $logger->pushHandler(new StreamHandler(storage_path('logs/tppm_sso_failed.log'), Logger::ERROR));
+        $logger->error('TPPM SSO failed', [
+            'url' => $url,
+            'http_code' => isset($result['http_code']) ? $result['http_code'] : null,
+            'curl_error' => isset($result['curl_error']) ? $result['curl_error'] : null,
+            'payload' => $payload,
+            'raw' => isset($result['raw']) ? $result['raw'] : null,
+            'response' => $response,
+        ]);
     }
 
     private function resolveTppmRoleType($user)
