@@ -1,6 +1,26 @@
 @extends('layout.english_layout.default')
 
 @section('content')
+<style>
+    #notification_table tbody tr.notification-unread td {
+        font-weight: 600;
+    }
+    #notification_table tbody tr.notification-unread {
+        box-shadow: inset 3px 0 0 #2c7be5;
+    }
+    #notification_table .notification-unread-label {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #fff;
+        background: #2c7be5;
+        padding: 1px 6px;
+        border-radius: 3px;
+        margin-right: 6px;
+        vertical-align: middle;
+    }
+</style>
 <div class="page-content-inner">
     <section class="panel panel-style">
         <div class="panel-heading">
@@ -29,6 +49,7 @@
                                     <th style="width:25%;">{{ trans('app.forms.strata') }}</th>
                                     <th style="width:35%;">{{ trans('app.forms.description') }}</th>
                                     <th style="width:15%;">{{ trans('app.forms.created_at') }}</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,11 +76,17 @@
             responsive: true,
             columns: [
                 {data: 'file_no', name: 'files.file_no'},
-                {data: 'module', name: 'module'},
+                {data: 'module', name: 'notifications.module'},
                 {data: 'strata', name: 'strata.name'},
-                {data: 'description', name: 'description'},
+                {data: 'description', name: 'notifications.description'},
                 {data: 'created_at', name: 'notifications.created_at'},
+                {data: 'is_view', name: 'notifications.is_view', visible: false, searchable: false},
             ],
+            createdRow: function (row, data) {
+                if (data.is_view == 0 || data.is_view === false || data.is_view === '0') {
+                    $(row).addClass('notification-unread');
+                }
+            },
         });
     });
     function markAll() {

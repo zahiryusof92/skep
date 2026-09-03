@@ -574,13 +574,13 @@ class AdminController extends BaseController
                 return ($model->strata_id ? $model->strata->name : '-');
             })
             ->addColumn('year', function ($model) {
-                return ($model->strata->year != '0' ? $model->strata->year : '');
+                return ($model->strata && $model->strata->year != '0' ? $model->strata->year : '');
             })
             ->addColumn('park', function ($model) {
-                return ($model->strata->park > '0' ? $model->strata->parks->description : '');
+                return ($model->strata && $model->strata->park > '0' && $model->strata->parks ? $model->strata->parks->description : '');
             })
             ->addColumn('category', function ($model) {
-                return ($model->strata->category > '0' ? $model->strata->categories->description : '');
+                return ($model->strata && $model->strata->category > '0' && $model->strata->categories ? $model->strata->categories->description : '');
             })
             ->addColumn('active', function ($model) {
                 if ($model->is_active == 1) {
@@ -703,13 +703,13 @@ class AdminController extends BaseController
                 return ($model->strata_id ? $model->strata->name : '-');
             })
             ->addColumn('year', function ($model) {
-                return ($model->strata->year != '0' ? $model->strata->year : '');
+                return ($model->strata && $model->strata->year != '0' ? $model->strata->year : '');
             })
             ->addColumn('park', function ($model) {
-                return ($model->strata->parks > '0' ? $model->strata->parks->description : '');
+                return ($model->strata && $model->strata->park > '0' && $model->strata->parks ? $model->strata->parks->description : '');
             })
             ->addColumn('category', function ($model) {
-                return ($model->strata->category > '0' ? $model->strata->categories->description : '');
+                return ($model->strata && $model->strata->category > '0' && $model->strata->categories ? $model->strata->categories->description : '');
             })
             ->addColumn('active', function ($model) {
                 if ($model->is_active == 1) {
@@ -6449,7 +6449,9 @@ class AdminController extends BaseController
             $city = City::where('is_active', 1)->where('is_deleted', 0)->orderBy('description', 'asc')->get();
             $country = Country::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
             $state = State::where('is_active', 1)->where('is_deleted', 0)->orderBy('name', 'asc')->get();
-            $disallow = Helper::isAllow(0, $company->id, !AccessGroup::hasUpdate(4));
+            // Admin/superadmin may edit any org profile even when a COB filter is selected.
+            $companyIdCheck = Auth::user()->getAdmin() ? 0 : $company->id;
+            $disallow = Helper::isAllow(0, $companyIdCheck, !AccessGroup::hasUpdate(4));
 
             $viewData = array(
                 'title' => trans('app.menus.administration.edit_organization_profile'),

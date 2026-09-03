@@ -12,19 +12,11 @@ if ($company->is_main != 1) {
     $cob_logout = '';
 }
 
-// Optimize notification queries - combine into single query
 if (AccessGroup::hasAccessModule("Notification")) {
-    $notification_cache_key = 'notifications_' . Auth::user()->id . '_' . Auth::user()->company_id;
-    $notification_data = Cache::remember($notification_cache_key, 60, function() {
-        $notifications = Notification::self()->notView()->latest('notifications.created_at')->take(5)->get();
-        $notification_total = Notification::self()->notView()->count();
-        return [
-            'notifications' => $notifications,
-            'total' => $notification_total
-        ];
-    });
-    $notifications = $notification_data['notifications'];
-    $notification_total = $notification_data['total'];
+    $notifications = Notification::bellUnread()->latest('created_at')->take(5)->get();
+    $notification_total = $notifications->count() < 5
+        ? $notifications->count()
+        : Notification::bellUnread()->count();
 } else {
     $notifications = new \Illuminate\Support\Collection([]);
     $notification_total = 0;
@@ -122,20 +114,28 @@ $swith_lang = true;
                     @endif
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" aria-labelledby="" role="menu">
-                    @foreach($notifications as $notification)
-                    <li>
-                        <a class="dropdown-item notification-link" href="javascript:void(0)" onclick="updateNotification({{ $notification->id }})">
-                            <i class="dropdown-icon fa fa-star notification-img"></i>
-                            <div>
-                                <p class="text-sm text-overflow notification-message">
-                                    {{ $notification->description }}
-                                </p>
-                                <span class="text-sm text-muted"><i class="fa fa-clock-o mr-1"></i> {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
-                            </div>
-                        </a>
-                    </li>
-                    @endforeach
-                    <a href="{{ route('notification.index') }}" class="dropdown-item dropdown-footer text-center">See All Messages</a>
+                    @if($notifications->count())
+                        @foreach($notifications as $notification)
+                        <li>
+                            <a class="dropdown-item notification-link" href="javascript:void(0)" onclick="updateNotification({{ $notification->id }})">
+                                <i class="dropdown-icon fa fa-star notification-img"></i>
+                                <div>
+                                    <p class="text-sm text-overflow notification-message">
+                                        {{ $notification->description }}
+                                    </p>
+                                    <span class="text-sm text-muted"><i class="fa fa-clock-o mr-1"></i> {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
+                                </div>
+                            </a>
+                        </li>
+                        @endforeach
+                    @else
+                        <li>
+                            <span class="dropdown-item text-muted text-center" style="white-space: normal; cursor: default;">
+                                {{ trans('app.forms.no_new_notifications') }}
+                            </span>
+                        </li>
+                    @endif
+                    <a href="{{ route('notification.index') }}" class="dropdown-item dropdown-footer text-center">{{ trans('app.forms.see_all_notifications') }}</a>
                 </ul>
             </li>
         </div>

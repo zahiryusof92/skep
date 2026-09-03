@@ -466,8 +466,8 @@ class UserController extends BaseController {
         $company_id = Auth::user()->company_id;
         
         // Clear user-specific caches
-        Cache::forget('notifications_' . $user_id . '_' . $company_id);
         Cache::forget('company_' . $company_id);
+        Cache::forget('dashboard_data_' . $user_id . '_' . (Session::get('admin_cob') ?: $company_id) . '_' . (Auth::user()->file_id ?: '0'));
         Cache::forget('pending_files_' . $user_id . '_' . (Session::get('admin_cob') ?: $company_id));
         Cache::forget('file_drafts_pending_' . $user_id);
         Cache::forget('tppm_count_' . $user_id);

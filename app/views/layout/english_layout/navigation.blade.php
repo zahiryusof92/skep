@@ -20,7 +20,8 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
         return Files::where('company_id', Auth::user()->company_id)->where('status', 0)->where('is_deleted', 0)->count();
     } else {
         if (empty(Session::get('admin_cob'))) {
-            return Files::where('status', 0)->where('is_deleted', 0)->count();
+            // Avoid full-table scan for superadmin without COB selected
+            return 0;
         } else {
             return Files::where('company_id', Session::get('admin_cob'))->where('status', 0)->where('is_deleted', 0)->count();
         }

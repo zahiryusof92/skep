@@ -136,6 +136,8 @@ Route::post('/submitEditProfile', 'UserController@submitEditProfile')->before('a
 
 //home
 Route::get('/home', 'HomeController@home')->before('authMember');
+Route::get('/home/getDashboardStats', 'HomeController@getDashboardStats')->before('authMember');
+Route::get('/home/getActiveMemoAlerts', 'HomeController@getActiveMemoAlerts')->before('authMember');
 Route::get('/home/getAGMRemainder', 'HomeController@getAGMRemainder')->before('authMember');
 Route::get('/home/getNeverAGM', 'HomeController@getNeverAGM')->before('authMember');
 Route::get('/home/getAGM12Months', 'HomeController@getAGM12Months')->before('authMember');

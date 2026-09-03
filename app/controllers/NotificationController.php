@@ -1,10 +1,10 @@
 <?php
 
 use Helper\Helper;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use yajra\Datatables\Facades\Datatables;
@@ -19,24 +19,26 @@ class NotificationController extends BaseController {
     public function index() {
         $disallow = Helper::isAllow(0, 0, !AccessGroup::hasAccessModule("Notification"));
         if (Request::ajax()) {
-            $model = Notification::with(['user'])
-                                    ->self();
+            $model = Notification::self();
             return Datatables::of($model)
                             ->editColumn('file_no', function($model) {
-                                $tab = 'others';
-                                if($model->module == 'House Scheme') {
-                                    $tab = 'house';
-                                } else if($model->module == 'Strata') {
-                                    $tab = 'strata';
-                                } else if($model->module == 'Management') {
-                                    $tab = 'management';
+                                $fileNo = e($model->file_no ?: '-');
+                                return "<a style='text-decoration:underline;' href='javascript:void(0)' onclick='updateNotification(" . (int) $model->id . ")'>" . $fileNo . "</a>";
+                            })
+                            ->editColumn('description', function($model) {
+                                $description = e($model->description);
+                                if (!$model->is_view) {
+                                    return '<span class="notification-unread-label">' . e(trans('app.forms.notification_new')) . '</span> ' . $description;
                                 }
-                                return "<a style='text-decoration:underline;' href='" . $model->route . "'>" . $model->file->file_no . "</a>";
+                                return $description;
                             })
                             ->editColumn('created_at', function($model) {
                                 $created_at = ($model->created_at ? $model->created_at->format('d-M-Y') : '');
 
                                 return $created_at;
+                            })
+                            ->editColumn('is_view', function($model) {
+                                return $model->is_view ? 1 : 0;
                             })
                             ->make(true);
         }
@@ -68,7 +70,7 @@ class NotificationController extends BaseController {
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            false;
+            return false;
         }
 
         $notification = Notification::create([
@@ -90,6 +92,8 @@ class NotificationController extends BaseController {
             
             return true;
         }
+
+        return false;
     }
 
     /**
@@ -101,27 +105,30 @@ class NotificationController extends BaseController {
     public function update($id) {
         if(Request::ajax()) {
             $notification = Notification::findOrFail($id);
-            if(!Auth::user()->getAdmin()) {
-                $notification->update([
-                    'is_view' => true,
-                ]);
-            }
-            
-            if ($notification) {
-                /*
-                    * add audit trail
-                    */
-                $audit_name = "$notification->description, view";
-                $remarks = $audit_name . $this->module['audit']['text']['data_updated'];
-                $this->addAudit($notification->file_id, "Notification", $remarks);
-                
+
+            if (!$this->canAccessNotification($notification)) {
                 return Response::json([
-                    'success' => true, 
-                    'route' => $notification->route,
-                    'message' => trans('app.successes.updated_successfully')
-                ]);
-                
+                    'error' => true,
+                    'message' => trans('app.errors.occurred')
+                ], 403);
             }
+
+            $notification->update([
+                'is_view' => true,
+            ]);
+
+            /*
+                * add audit trail
+                */
+            $audit_name = "$notification->description, view";
+            $remarks = $audit_name . $this->module['audit']['text']['data_updated'];
+            $this->addAudit($notification->file_id, "Notification", $remarks);
+            
+            return Response::json([
+                'success' => true, 
+                'route' => $notification->route,
+                'message' => trans('app.successes.updated_successfully')
+            ]);
         }
 
         return Response::json([
@@ -133,32 +140,29 @@ class NotificationController extends BaseController {
     /**
      * markReadAll the specified resource in storage.
      *
-     * @param  int  $id
      * @return Response
      */
     public function markAll() {
         if(Request::ajax()) {
             if(!Auth::user()->getAdmin()) {
-                $notifications = Notification::notView()
-                ->where('user_id', Auth::user()->id)                            
-                ->update([
-                    'is_view' => true
-                ]);
-                if ($notifications) {
-                    /*
-                    * add audit trail
-                    */
-                    $audit_name = Auth::user()->fullname . " has mark all notifications";
-                    $remarks = $audit_name;
-                    $file_id = ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) ? Auth::user()->file_id : 0);
-                    $this->addAudit($file_id, "Notification", $remarks);
-                    
-                    return Response::json([
-                        'success' => true, 
-                        'message' => trans('app.successes.updated_successfully')
+                Notification::notView()
+                    ->where('user_id', Auth::user()->id)                            
+                    ->update([
+                        'is_view' => true
                     ]);
-                    
-                }
+
+                /*
+                * add audit trail
+                */
+                $audit_name = Auth::user()->fullname . " has mark all notifications";
+                $remarks = $audit_name;
+                $file_id = ((Auth::user()->isJMB() || Auth::user()->isMC() || Auth::user()->isDeveloper()) ? Auth::user()->file_id : 0);
+                $this->addAudit($file_id, "Notification", $remarks);
+                
+                return Response::json([
+                    'success' => true, 
+                    'message' => trans('app.successes.updated_successfully')
+                ]);
             }
         }
 
@@ -169,14 +173,21 @@ class NotificationController extends BaseController {
     }
 
     /**
-     * Display a listing of the resource.
+     * Non-admin: own notification only.
+     * Admin: same company (or selected admin_cob).
      *
-     * @return Response
+     * @param Notification $notification
+     * @return bool
      */
-    public function getSome() {
-        $notifications = Notification::with(['user'])
-                                ->self()
-                                ->take(10);
-        return View::make('notification.show', compact('notifications'));
+    protected function canAccessNotification($notification) {
+        $user = Auth::user();
+
+        if (!$user->getAdmin()) {
+            return (int) $notification->user_id === (int) $user->id;
+        }
+
+        $companyId = Session::get('admin_cob') ?: $user->company_id;
+
+        return (int) $notification->company_id === (int) $companyId;
     }
 }

@@ -241,16 +241,17 @@ class Files extends Eloquent
 
     public function scopeNeverHasAGM($query)
     {
-        $filesWithAGM = DB::table('meeting_document')
-            ->whereNotNull('agm_date')
-            ->where('agm_date', '!=', '0000-00-00')
-            ->where('is_deleted', '=', 0)
-            ->lists('file_id');
-
         $query->file()
             ->join('company', 'files.company_id', '=', 'company.id')
             ->join('strata', 'files.id', '=', 'strata.file_id')
-            ->whereNotIn('files.id', $filesWithAGM)
+            ->whereNotExists(function ($sub) {
+                $sub->select(DB::raw(1))
+                    ->from('meeting_document')
+                    ->whereRaw('meeting_document.file_id = files.id')
+                    ->whereNotNull('meeting_document.agm_date')
+                    ->where('meeting_document.agm_date', '!=', '0000-00-00')
+                    ->where('meeting_document.is_deleted', '=', 0);
+            })
             ->where('files.is_active', 1)
             ->where('files.is_deleted', 0)
             ->where('company.short_name', '!=', 'MPS');
@@ -260,16 +261,17 @@ class Files extends Eloquent
 
     public function scopeNeverHasAGMGroupByFileId($query)
     {
-        $filesWithAGM = DB::table('meeting_document')
-            ->whereNotNull('agm_date')
-            ->where('agm_date', '!=', '0000-00-00')
-            ->where('is_deleted', '=', 0)
-            ->lists('file_id');
-    
         return $query->file()
             ->join('company', 'files.company_id', '=', 'company.id')
             ->join('strata', 'files.id', '=', 'strata.file_id')
-            ->whereNotIn('files.id', $filesWithAGM)
+            ->whereNotExists(function ($sub) {
+                $sub->select(DB::raw(1))
+                    ->from('meeting_document')
+                    ->whereRaw('meeting_document.file_id = files.id')
+                    ->whereNotNull('meeting_document.agm_date')
+                    ->where('meeting_document.agm_date', '!=', '0000-00-00')
+                    ->where('meeting_document.is_deleted', '=', 0);
+            })
             ->where('files.is_active', '=', 1)
             ->where('files.is_deleted', '=', 0)
             ->where('company.short_name', '!=', 'MPS')
@@ -2350,16 +2352,26 @@ class Files extends Eloquent
             'data' => [],
         ];
         $items_never = self::neverHasAGM()
-            ->selectRaw('count(files.id) as total, company.short_name')
-            ->groupBy(['company.short_name'])
+            ->selectRaw('count(files.id) as total, company.id as company_id, company.short_name')
+            ->groupBy(['company.id', 'company.short_name'])
             ->get();
 
-        foreach ($items_never as $item) {
-            $council = Company::where('short_name', $item->short_name)->first();
-            $total_files = self::where('company_id', $council->id)
+        $fileTotals = [];
+        if (count($items_never) > 0) {
+            $companyIds = [];
+            foreach ($items_never as $item) {
+                $companyIds[] = $item->company_id;
+            }
+            $fileTotals = self::whereIn('company_id', $companyIds)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
-                ->count();
+                ->groupBy('company_id')
+                ->selectRaw('company_id, count(*) as total')
+                ->lists('total', 'company_id');
+        }
+
+        foreach ($items_never as $item) {
+            $total_files = isset($fileTotals[$item->company_id]) ? $fileTotals[$item->company_id] : 0;
 
             $percentage = 0;
             if ($total_files > 0 && $item->total > 0) {
