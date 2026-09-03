@@ -89,6 +89,10 @@
                                 </a>
                             @endif
                         </div>
+                    @elseif ($fields[$attribute]['type'] == 'number')
+                        <input type="number" id="{{ $fields[$attribute]['name'] }}"
+                            name="{{ $fields[$attribute]['name'] }}" class="form-control"
+                            value="{{ !empty(Input::old($fields[$attribute]['name'])) ? Input::old($fields[$attribute]['name']) : (isset($model[$fields[$attribute]['name']]) ? $model[$fields[$attribute]['name']] : (isset($preset_val) ? $preset_val : '')) }}" />
                     @else
                         <input type="text" id="{{ $fields[$attribute]['name'] }}"
                             name="{{ $fields[$attribute]['name'] }}" class="form-control"
