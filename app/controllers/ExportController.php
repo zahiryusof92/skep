@@ -566,7 +566,55 @@ class ExportController extends BaseController
                         }
 
                         $management = Management::where('file_id', $file->id)->first();
+                        $management_developer = '';
+                        $management_developer_city = '';
+                        $management_developer_state = '';
+                        $management_developer_country = '';
+                        $management_liquidator = '';
+                        $management_liquidator_city = '';
+                        $management_liquidator_state = '';
+                        $management_liquidator_country = '';
+                        $management_jmb = '';
+                        $management_jmb_city = '';
+                        $management_jmb_state = '';
+                        $management_jmb_country = '';
+                        $management_mc = '';
+                        $management_mc_city = '';
+                        $management_mc_state = '';
+                        $management_mc_country = '';
+                        $management_agent = '';
+                        $management_agent_city = '';
+                        $management_agent_state = '';
+                        $management_agent_country = '';
+                        $management_others = '';
+                        $management_others_city = '';
+                        $management_others_state = '';
+                        $management_others_country = '';
                         if ($management) {
+                            $management_developer = ManagementDeveloper::where('file_id', $file->id)->first();
+                            if ($management->is_developer && $management_developer) {
+                                $management_developer_city = City::find($management_developer->city);
+                                $management_developer_state = State::find($management_developer->state);
+                                $management_developer_country = Country::find($management_developer->country);
+                            } else {
+                                $management_developer = '';
+                                $management_developer_city = '';
+                                $management_developer_state = '';
+                                $management_developer_country = '';
+                            }
+
+                            $management_liquidator = ManagementLiquidator::where('file_id', $file->id)->first();
+                            if ($management->liquidator && $management_liquidator) {
+                                $management_liquidator_city = City::find($management_liquidator->city);
+                                $management_liquidator_state = State::find($management_liquidator->state);
+                                $management_liquidator_country = Country::find($management_liquidator->country);
+                            } else {
+                                $management_liquidator = '';
+                                $management_liquidator_city = '';
+                                $management_liquidator_state = '';
+                                $management_liquidator_country = '';
+                            }
+
                             $management_jmb = ManagementJMB::where('file_id', $file->id)->first();
                             if ($management->is_jmb && $management_jmb) {
                                 $management_jmb_city = City::find($management_jmb->city);
@@ -686,6 +734,40 @@ class ExportController extends BaseController
                             'Strata Others' => '',
 
                             /**
+                             * Management Developer
+                             */
+                            'Management Developer' => ($management && $management->is_developer ? 'Yes' : ''),
+                            'Management Developer Name' => ($management_developer ? $management_developer->name : ''),
+                            'Management Developer Address 1' => ($management_developer ? $management_developer->address_1 : ''),
+                            'Management Developer Address 2' => ($management_developer ? $management_developer->address_2 : ''),
+                            'Management Developer Address 3' => ($management_developer ? $management_developer->address_3 : ''),
+                            'Management Developer Address 4' => ($management_developer ? $management_developer->address_4 : ''),
+                            'Management Developer Postcode' => ($management_developer ? $management_developer->poscode : ''),
+                            'Management Developer City' => ($management_developer ? ($management_developer_city ? $management_developer_city->description : '') : ''),
+                            'Management Developer State' => ($management_developer ? ($management_developer_state ? $management_developer_state->name : '') : ''),
+                            'Management Developer Country' => ($management_developer ? ($management_developer_country ? $management_developer_country->name : '') : ''),
+                            'Management Developer Phone No.' => ($management_developer ? $management_developer->phone_no : ''),
+                            'Management Developer Fax No.' => ($management_developer ? $management_developer->fax_no : ''),
+                            'Management Developer Remarks' => ($management_developer ? $management_developer->remarks : ''),
+
+                            /**
+                             * Liquidator
+                             */
+                            'Management Liquidator' => ($management && $management->liquidator ? 'Yes' : ''),
+                            'Management Liquidator Name' => ($management_liquidator ? $management_liquidator->name : ''),
+                            'Management Liquidator Address 1' => ($management_liquidator ? $management_liquidator->address_1 : ''),
+                            'Management Liquidator Address 2' => ($management_liquidator ? $management_liquidator->address_2 : ''),
+                            'Management Liquidator Address 3' => ($management_liquidator ? $management_liquidator->address_3 : ''),
+                            'Management Liquidator Address 4' => ($management_liquidator ? $management_liquidator->address_4 : ''),
+                            'Management Liquidator Postcode' => ($management_liquidator ? $management_liquidator->poscode : ''),
+                            'Management Liquidator City' => ($management_liquidator ? ($management_liquidator_city ? $management_liquidator_city->description : '') : ''),
+                            'Management Liquidator State' => ($management_liquidator ? ($management_liquidator_state ? $management_liquidator_state->name : '') : ''),
+                            'Management Liquidator Country' => ($management_liquidator ? ($management_liquidator_country ? $management_liquidator_country->name : '') : ''),
+                            'Management Liquidator Phone No.' => ($management_liquidator ? $management_liquidator->phone_no : ''),
+                            'Management Liquidator Fax No.' => ($management_liquidator ? $management_liquidator->fax_no : ''),
+                            'Management Liquidator Remarks' => ($management_liquidator ? $management_liquidator->remarks : ''),
+
+                            /**
                              * Management JMB
                              */
                             'Management JMB' => ($management_jmb ? 'Yes' : ''),
@@ -764,6 +846,8 @@ class ExportController extends BaseController
                             'No Management' => ($management ? ($management->no_management ? 'Yes' : '') : ''),
                             'Management Date Start' => ($management ? ($management->start > 0 ? $management->start : '') : ''),
                             'Management Date End' => ($management ? ($management->end > 0 ? $management->end : '') : ''),
+                            'Bankruptcy' => ($management ? ($management->bankruptcy ? 'Yes' : '') : ''),
+                            'Bankruptcy Remarks' => ($management ? $management->bankruptcy_remarks : ''),
 
                             /**
                              * Monitoring
