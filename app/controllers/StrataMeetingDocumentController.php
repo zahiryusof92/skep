@@ -38,7 +38,6 @@ class StrataMeetingDocumentController extends BaseController
         }
 
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
-        $files = Files::file()->orderBy('created_at', 'desc')->get();
 
         return View::make('strata-meeting-document.index', array(
             'title' => trans('app.menus.agm.upload_of_minutes') . ' (MPKL)',
@@ -46,7 +45,6 @@ class StrataMeetingDocumentController extends BaseController
             'main_nav_active' => 'agm_main',
             'sub_nav_active' => 'agmminutesub_mpkl_list',
             'user_permission' => $user_permission,
-            'files' => $files,
             'image' => '',
         ));
     }

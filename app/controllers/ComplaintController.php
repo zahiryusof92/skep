@@ -31,43 +31,25 @@ class ComplaintController extends \BaseController
 	public function index()
 	{
 		if (Request::ajax()) {
-			if (!Auth::user()->getAdmin()) {
-				if (!empty(Auth::user()->file_id)) {
-					$complaints = Complaint::with(['category', 'type'])
-						->join('files', 'complaints.file_id', '=', 'files.id')
-						->join('company', 'files.company_id', '=', 'company.id')
-						->join('strata', 'files.id', '=', 'strata.file_id')
-						->select(['complaints.*'])
-						->where('files.id', Auth::user()->file_id)
-						->where('files.company_id', Auth::user()->company_id)
-						->where('files.is_deleted', 0);
-				} else {
-					$complaints = Complaint::with(['category', 'type'])
-						->join('files', 'complaints.file_id', '=', 'files.id')
-						->join('company', 'files.company_id', '=', 'company.id')
-						->join('strata', 'files.id', '=', 'strata.file_id')
-						->select(['complaints.*'])
-						->where('files.company_id', Auth::user()->company_id)
-						->where('files.is_deleted', 0);
-				}
+		$complaints = Complaint::with(['category', 'type'])
+			->join('files', 'complaints.file_id', '=', 'files.id')
+			->join('company', 'files.company_id', '=', 'company.id')
+			->join('strata', 'files.id', '=', 'strata.file_id')
+			->select(['complaints.*'])
+			->where('files.is_deleted', 0)
+			->where('company.short_name', 'MPKL')
+			->where('company.is_deleted', 0);
+
+		if (!Auth::user()->getAdmin()) {
+			if (!empty(Auth::user()->file_id)) {
+				$complaints->where('files.id', Auth::user()->file_id)
+					->where('files.company_id', Auth::user()->company_id);
 			} else {
-				if (empty(Session::get('admin_cob'))) {
-					$complaints = Complaint::with(['category', 'type'])
-						->join('files', 'complaints.file_id', '=', 'files.id')
-						->join('company', 'files.company_id', '=', 'company.id')
-						->join('strata', 'files.id', '=', 'strata.file_id')
-						->select(['complaints.*'])
-						->where('files.is_deleted', 0);
-				} else {
-					$complaints = Complaint::with(['category', 'type'])
-						->join('files', 'complaints.file_id', '=', 'files.id')
-						->join('company', 'files.company_id', '=', 'company.id')
-						->join('strata', 'files.id', '=', 'strata.file_id')
-						->select(['complaints.*'])
-						->where('files.company_id', Session::get('admin_cob'))
-						->where('files.is_deleted', 0);
-				}
+				$complaints->where('files.company_id', Auth::user()->company_id);
 			}
+		} else if (!empty(Session::get('admin_cob'))) {
+			$complaints->where('files.company_id', Session::get('admin_cob'));
+		}
 
 			if (!empty(Input::get('start_date')) || !empty(Input::get('end_date'))) {
 				$start_date = Input::get('start_date') ? Carbon::parse(Input::get('start_date')) : Carbon::create(1984, 1, 1);
@@ -120,27 +102,13 @@ class ComplaintController extends \BaseController
 				->make(true);
 		}
 
-		if (!Auth::user()->getAdmin()) {
-			if (!empty(Auth::user()->file_id)) {
-				$files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
-			} else {
-				$files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
-			}
-		} else {
-			if (empty(Session::get('admin_cob'))) {
-				$files = Files::where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
-			} else {
-				$files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
-			}
-		}
-
 		$viewData = array(
 			'title' => trans('app.menus.complaint.name') . ' (MPKL)',
 			'panel_nav_active' => '',
 			'main_nav_active' => '',
 			'sub_nav_active' => 'complaint_list',
 			'image' => "",
-			'files' => $files
+			'files' => $this->getComplaintFileOptions()
 		);
 
 		return View::make('complaint.index', $viewData);
@@ -524,7 +492,8 @@ class ComplaintController extends \BaseController
 	 */
 	private function getComplaintFileOptions()
 	{
-		$query = Files::join('company', 'files.company_id', '=', 'company.id')
+		$query = Files::with('strata')
+			->join('company', 'files.company_id', '=', 'company.id')
 			->where('files.is_deleted', 0)
 			->where('company.short_name', 'MPKL')
 			->where('company.is_deleted', 0)

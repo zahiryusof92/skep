@@ -1575,25 +1575,35 @@ class AgmController extends BaseController {
     }
 
     public function getMinutes() {
+        $query = MeetingDocument::where('meeting_document.type', '!=', '')
+            ->where('meeting_document.is_deleted', 0)
+            ->leftJoin('files', 'meeting_document.file_id', '=', 'files.id')
+            ->leftJoin('company', 'files.company_id', '=', 'company.id')
+            ->select('meeting_document.*')
+            ->orderBy('meeting_document.id', 'desc');
+
+        // MPKL dual-list page: only MPKL legacy minutes (avoids All-COB OOM)
+        if (Input::get('mpkl_only') == '1') {
+            $query->where('company.short_name', 'MPKL')->where('company.is_deleted', 0);
+        }
+
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
-                $agm_detail = MeetingDocument::where('file_id', Auth::user()->file_id)->where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                $query->where('meeting_document.file_id', Auth::user()->file_id)
+                    ->where('files.company_id', Auth::user()->company_id);
             } else {
                 if (strtoupper(Auth::user()->getRole->name) == 'JMB') {
-                    $agm_detail = MeetingDocument::where('type', 'jmb')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                    $query->where('meeting_document.type', 'jmb');
                 } else if (strtoupper(Auth::user()->getRole->name) == 'MC') {
-                    $agm_detail = MeetingDocument::where('type', 'mc')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
-                } else {
-                    $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+                    $query->where('meeting_document.type', 'mc');
                 }
+                $query->where('files.company_id', Auth::user()->company_id);
             }
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
-            } else {
-                $agm_detail = MeetingDocument::where('type', '!=', '')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
-            }
+        } else if (!empty(Session::get('admin_cob'))) {
+            $query->where('files.company_id', Session::get('admin_cob'));
         }
+
+        $agm_detail = $query->get();
 
         if (count($agm_detail) > 0) {
             $data = Array();

@@ -114,7 +114,7 @@
         });
 
         $('#legacy_meeting_documents_table').DataTable({
-            sAjaxSource: "{{ URL::action('AgmController@getMinutes') }}",
+            sAjaxSource: "{{ URL::action('AgmController@getMinutes') }}?mpkl_only=1",
             lengthMenu: [[10, 25, 50], [10, 25, 50]],
             order: [[2, 'desc']],
             aoColumnDefs: [{bSortable: false, aTargets: [3, 4, 5, 6, 7, 8, -1]}]
