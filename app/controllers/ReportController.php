@@ -2894,4 +2894,152 @@ class ReportController extends BaseController
         return View::make('report_en.finance_tab_1', $viewData);
         
     }
+
+    public function complaints()
+    {
+        Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint') || !Helper::showMPKLModules());
+
+        $categoryList = ComplaintCategory::with('types')->where('is_active', true)->orderBy('sort_no')->get();
+        $yearList = [];
+        $request = Request::all();
+
+        if ($categoryList) {
+            foreach ($categoryList as $category) {
+                $category->types = $category->types->map(function ($type) {
+                    return (object) [
+                        'id' => $type->id,
+                        'encoded_id' => Helper::encode($type->id),
+                        'name' => $type->name,
+                    ];
+                });
+            }
+        }
+
+        $result = \DB::table('complaints')
+            ->select(\DB::raw('MIN(YEAR(date_received)) as min_year, MAX(YEAR(date_received)) as max_year'))
+            ->whereNotNull('date_received')
+            ->first();
+
+        if ($result) {
+            $minYear = $result->min_year;
+            $maxYear = $result->max_year;
+
+            if ($minYear && $maxYear) {
+                for ($year = $maxYear; $year >= $minYear; $year--) {
+                    $yearList[$year] = $year;
+                }
+            }
+        }
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $files = Files::where('id', Auth::user()->file_id)->where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
+            }
+        } else {
+            if (empty(Session::get('admin_cob'))) {
+                $files = Files::where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
+            } else {
+                $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
+            }
+        }
+
+        $viewData = array(
+            'title' => trans('app.menus.reporting.complaints') . ' (MPKL)',
+            'panel_nav_active' => 'reporting_panel',
+            'main_nav_active' => 'reporting_main',
+            'sub_nav_active' => 'complaints_report_list',
+            'image' => '',
+            'categoryList' => $categoryList,
+            'yearList' => $yearList,
+            'request' => $request,
+            'files' => $files,
+        );
+
+        if (Request::ajax()) {
+            if (!Auth::user()->getAdmin()) {
+                if (!empty(Auth::user()->file_id)) {
+                    $complaints = Complaint::with(['category', 'type'])
+                        ->join('files', 'complaints.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['complaints.*'])
+                        ->where('files.id', Auth::user()->file_id)
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0);
+                } else {
+                    $complaints = Complaint::with(['category', 'type'])
+                        ->join('files', 'complaints.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['complaints.*'])
+                        ->where('files.company_id', Auth::user()->company_id)
+                        ->where('files.is_deleted', 0);
+                }
+            } else {
+                if (empty(Session::get('admin_cob'))) {
+                    $complaints = Complaint::with(['category', 'type'])
+                        ->join('files', 'complaints.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['complaints.*'])
+                        ->where('files.is_deleted', 0);
+                } else {
+                    $complaints = Complaint::with(['category', 'type'])
+                        ->join('files', 'complaints.file_id', '=', 'files.id')
+                        ->join('company', 'files.company_id', '=', 'company.id')
+                        ->join('strata', 'files.id', '=', 'strata.file_id')
+                        ->select(['complaints.*'])
+                        ->where('files.company_id', Session::get('admin_cob'))
+                        ->where('files.is_deleted', 0);
+                }
+            }
+
+            if (!empty($request['category'])) {
+                $complaints = $complaints->where('complaints.complaint_category_id', Helper::decode($request['category']));
+            }
+
+            if (!empty($request['type'])) {
+                $complaints = $complaints->where('complaints.complaint_type_id', Helper::decode($request['type']));
+            }
+
+            if (!empty($request['year'])) {
+                $complaints = $complaints->whereRaw('YEAR(complaints.date_received) = ?', [$request['year']]);
+            }
+
+            if (!empty($request['file_id'])) {
+                $complaints = $complaints->where('complaints.file_id', $request['file_id']);
+            }
+
+            return Datatables::of($complaints)
+                ->editColumn('date_received', function ($model) {
+                    return !empty($model->date_received) ? date('d-M-Y', strtotime($model->date_received)) : '-';
+                })
+                ->editColumn('complaint_category_id', function ($model) {
+                    return $model->category ? $model->category->name : '-';
+                })
+                ->editColumn('complaint_type_id', function ($model) {
+                    return $model->type ? $model->type->name : '-';
+                })
+                ->editColumn('status', function ($model) {
+                    $status = trans('app.forms.complaint.under_investigation_1');
+
+                    if ($model->status == 1) {
+                        $status = trans('app.forms.complaint.under_investigation_1');
+                    } else if ($model->status == 2) {
+                        $status = trans('app.forms.complaint.under_investigation_2');
+                    } else if ($model->status == 3) {
+                        $status = trans('app.forms.complaint.resolved');
+                    } else if ($model->status == 4) {
+                        $status = trans('app.forms.complaint.received');
+                    }
+
+                    return $status;
+                })
+                ->make(true);
+        }
+
+        return View::make('report_en.complaints', $viewData);
+    }
 }

@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder {
 
 		// $this->call('EPerkhidmatanModuleTableSeeder');
 		$this->call('SubModuleTableSeeder');
+		$this->call('ComplaintModuleTableSeeder');
 		// $this->call('UserTableSeeder');
 	}
 

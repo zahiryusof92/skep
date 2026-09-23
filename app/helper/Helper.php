@@ -179,4 +179,152 @@ class Helper
         $sanitizedFilename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
         return $sanitizedFilename . '.' . $extension;
     }
+
+    public static function getChangedFields($input, $model = null)
+    {
+        $new_line = '';
+
+        if (!$model) {
+            return '<br/><ul><li>Fields: (all fields created)</li></ul>';
+        }
+
+        $new_line .= (isset($input['file_id']) && $input['file_id'] != $model->file_id) ? "file id, " : "";
+        $new_line .= (isset($input['complaint_category_id']) && $input['complaint_category_id'] != $model->complaint_category_id) ? "complaint category id, " : "";
+        $new_line .= (isset($input['complaint_type_id']) && $input['complaint_type_id'] != $model->complaint_type_id) ? "complaint type id, " : "";
+        $new_line .= (isset($input['name']) && $input['name'] != $model->name) ? "name, " : "";
+        $new_line .= (isset($input['description']) && $input['description'] != $model->description) ? "description, " : "";
+        $new_line .= (isset($input['attachment_url']) && $input['attachment_url'] != $model->attachment_url) ? "attachment, " : "";
+        $new_line .= (isset($input['letter_ref_no']) && $input['letter_ref_no'] != $model->letter_ref_no) ? "letter ref no, " : "";
+        $new_line .= (isset($input['date_received']) && $input['date_received'] != $model->date_received) ? "date received, " : "";
+        $new_line .= (isset($input['scheme_address']) && $input['scheme_address'] != $model->scheme_address) ? "scheme address, " : "";
+        $new_line .= (isset($input['scheme_zone']) && $input['scheme_zone'] != $model->scheme_zone) ? "scheme zone, " : "";
+
+        $receiver_now = !empty($input['scheme_receiver']) ? (is_array($input['scheme_receiver']) ? implode(',', $input['scheme_receiver']) : $input['scheme_receiver']) : null;
+        $new_line .= $receiver_now != $model->scheme_receiver ? "scheme receiver, " : "";
+
+        $new_line .= (isset($input['complainant_phone_no']) && $input['complainant_phone_no'] != $model->complainant_phone_no) ? "complainant phone no, " : "";
+        $new_line .= (isset($input['complainant_email']) && $input['complainant_email'] != $model->complainant_email) ? "complainant email, " : "";
+        $new_line .= (isset($input['complainant_ic_no']) && $input['complainant_ic_no'] != $model->complainant_ic_no) ? "complainant IC no, " : "";
+        $new_line .= (isset($input['complainant_type']) && $input['complainant_type'] != $model->complainant_type) ? "complainant type, " : "";
+        $new_line .= (isset($input['complainant_type_others']) && $input['complainant_type_others'] != $model->complainant_type_others) ? "complainant type others, " : "";
+        $new_line .= (isset($input['complaint_category']) && $input['complaint_category'] != $model->complaint_category) ? "complaint category, " : "";
+        $new_line .= (isset($input['complaint_complication']) && $input['complaint_complication'] != $model->complaint_complication) ? "complaint complication, " : "";
+        $new_line .= (isset($input['action_duration']) && $input['action_duration'] != $model->action_duration) ? "action duration, " : "";
+        $new_line .= (isset($input['status']) && $input['status'] != $model->status) ? "status, " : "";
+        $new_line .= (isset($input['officer_review']) && $input['officer_review'] != $model->officer_review) ? "officer review, " : "";
+
+        if (!empty($new_line)) {
+            return "<br/><ul><li>Fields: (" . self::str_replace_last(', ', '', $new_line) . ")</li></ul>";
+        }
+
+        return '';
+    }
+
+    /**
+     * Active COB for feature gating: Change COB (admin_cob) wins over user's company.
+     * Cached per-request to avoid repeated Company queries from navigation.
+     *
+     * @return \Company|null
+     */
+    public static function activeCompany()
+    {
+        static $resolved = false;
+        static $company = null;
+
+        if ($resolved) {
+            return $company;
+        }
+
+        $resolved = true;
+
+        if (Auth::check() && Auth::user()->getAdmin() && !empty(Session::get('admin_cob'))) {
+            $company = \Company::where('id', Session::get('admin_cob'))
+                ->where('is_active', 1)
+                ->where('is_hidden', false)
+                ->where('is_deleted', 0)
+                ->first();
+
+            return $company;
+        }
+
+        if (Auth::check() && Auth::user()->getCOB) {
+            $company = Auth::user()->getCOB;
+
+            return $company;
+        }
+
+        return null;
+    }
+
+    /**
+     * Superadmin / admin with no specific COB selected (All COB view).
+     *
+     * @return bool
+     */
+    public static function isAllCobContext()
+    {
+        return Auth::check()
+            && Auth::user()->getAdmin()
+            && empty(Session::get('admin_cob'));
+    }
+
+    /**
+     * True when the active COB context is MPKL.
+     *
+     * @return bool
+     */
+    public static function isMPKLContext()
+    {
+        $company = self::activeCompany();
+
+        return $company && strtoupper($company->short_name) === 'MPKL';
+    }
+
+    /**
+     * True when company (id, short_name, or Company) is MPKL.
+     *
+     * @param mixed $company Company model, id, or short_name
+     * @return bool
+     */
+    public static function isMPKL($company = null)
+    {
+        if ($company === null) {
+            return self::isMPKLContext();
+        }
+
+        if ($company instanceof \Company) {
+            return strtoupper((string) $company->short_name) === 'MPKL';
+        }
+
+        if (is_numeric($company)) {
+            $model = \Company::find($company);
+            return $model && strtoupper((string) $model->short_name) === 'MPKL';
+        }
+
+        return strtoupper((string) $company) === 'MPKL';
+    }
+
+    /**
+     * Show MPKL-only menus (Complaint module, eStrata minutes): MPKL context or All COB.
+     *
+     * @return bool
+     */
+    public static function showMPKLModules()
+    {
+        return self::isMPKLContext() || self::isAllCobContext();
+    }
+
+    /**
+     * Show legacy Defect menu: All COB, or specific non-MPKL COB (not when MPKL-only context).
+     *
+     * @return bool
+     */
+    public static function showLegacyDefectMenu()
+    {
+        if (self::isMPKLContext()) {
+            return false;
+        }
+
+        return true;
+    }
 }

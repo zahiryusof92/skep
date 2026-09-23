@@ -112,6 +112,11 @@ class Files extends Eloquent
         return $this->hasMany('Defect', 'file_id');
     }
 
+    public function complaints()
+    {
+        return $this->hasMany('Complaint', 'file_id');
+    }
+
     public function buyer()
     {
         return $this->hasMany('Buyer', 'file_id');
@@ -3612,5 +3617,14 @@ class Files extends Eloquent
         ];
 
         return $result;
+    }
+
+    public function strataName()
+    {
+        if ($this->strata && !empty($this->strata->name)) {
+            return $this->file_no . ' - ' . $this->strata->name;
+        }
+
+        return $this->file_no;
     }
 }

@@ -2916,7 +2916,7 @@ class AdminController extends BaseController
             'image' => (!empty($image->image_url) ? $image->image_url : '')
         );
 
-        if ($files->company && $files->company->short_name == 'MPKJ') {
+        if ($files->company && in_array(strtoupper($files->company->short_name), array('MPKJ', 'MPKL'))) {
             return View::make('page_en.update_monitoring_new', $viewData);
         }
 
@@ -3593,7 +3593,11 @@ class AdminController extends BaseController
     {
         $file = Files::find(Helper::decode($file_id));
 
-        if ($file->company && $file->company->short_name == 'MPKJ') {
+        if ($file->company && Helper::isMPKL($file->company)) {
+            if (Request::ajax()) {
+                return (new StrataMeetingDocumentController())->monitoringDatatableResponse($file);
+            }
+        } elseif ($file->company && $file->company->short_name == 'MPKJ') {
             if (Request::ajax()) {
                 $condition = '';
                 if (!Auth::user()->getAdmin()) {
@@ -3807,7 +3811,11 @@ class AdminController extends BaseController
     {
         $file = Files::find(Helper::decode($file_id));
 
-        if ($file->company && $file->company->short_name == 'MPKJ') {
+        if ($file->company && Helper::isMPKL($file->company)) {
+            if (Request::ajax()) {
+                return (new StrataMeetingDocumentController())->monitoringDatatableResponse($file);
+            }
+        } elseif ($file->company && $file->company->short_name == 'MPKJ') {
             if (Request::ajax()) {
                 $condition = '';
                 if (!Auth::user()->getAdmin()) {

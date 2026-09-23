@@ -980,7 +980,10 @@ return [
                         ],
                     ],
                 ]
-            ]
+            ],
+            'strata_meeting_document' => array(
+                'name' => 'strata_meeting_document',
+            ),
         ],
         'area' => [
             'name' => 'area'
@@ -2419,6 +2422,10 @@ return [
         'jmb_egm' => 'uploads/agm/minute/jmb_egm',
         'mc_agm' => 'uploads/agm/minute/mc_agm',
         'mc_egm' => 'uploads/agm/minute/mc_egm',
+        'strata_meeting_1_1' => 'uploads/agm/strata_meeting/1_1',
+        'strata_meeting_1_2' => 'uploads/agm/strata_meeting/1_2',
+        'strata_meeting_2_1' => 'uploads/agm/strata_meeting/2_1',
+        'strata_meeting_2_2' => 'uploads/agm/strata_meeting/2_2',
     ],
     'dlp_checklist' => [
         1 => 'Surat Rasmi Serahan Cek',

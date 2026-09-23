@@ -176,11 +176,20 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
             </li>
             @endif
             
-            @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
+            @if (AccessGroup::hasAccess(45) && \Helper\Helper::showLegacyDefectMenu() && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
             <li class="left-menu-list-link" id="defect_list">
                 <a class="left-menu-link" href="{{ URL::action('AdminController@defect') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/complaint.png')}}"/>
                     {{ trans('app.menus.agm.defect') }}
+                </a>
+            </li>
+            @endif
+
+            @if (AccessGroup::hasAccessModule('Complaint') && \Helper\Helper::showMPKLModules())
+            <li class="left-menu-list-link" id="complaint_list">
+                <a class="left-menu-link" href="{{ route('complaint.index') }}">
+                    <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/complaint.png')}}"/>
+                    {{ trans('app.menus.complaint.name') }} (MPKL)
                 </a>
             </li>
             @endif
@@ -634,13 +643,21 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
+                    @if (AccessGroup::hasAccess(45) && \Helper\Helper::showLegacyDefectMenu() && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
                     <li id="defect_category_list">
                         <a class="left-menu-link" href="{{URL::action('SettingController@defectCategory')}}">
                             {{ trans('app.menus.master.defect_category') }}
                         </a>
                     </li>
-                    @endif                    
+                    @endif
+
+                    @if (AccessGroup::hasAccessModule('Complaint Category') && \Helper\Helper::showMPKLModules())
+                    <li id="complaint_category_list">
+                        <a class="left-menu-link" href="{{ route('complaintCategory.index') }}">
+                            {{ trans('app.menus.master.complaint_category') }} (MPKL)
+                        </a>
+                    </li>
+                    @endif
 
                     @if (AccessGroup::hasAccess(48))
                     <li id="insurance_provider_list">
@@ -778,10 +795,18 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccess(45) && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
+                    @if (AccessGroup::hasAccess(45) && \Helper\Helper::showLegacyDefectMenu() && ((!empty(Session::get('admin_cob')) && !in_array(Session::get('admin_cob'),[2, 10])) || (!in_array(Auth::user()->company_id,[2, 10]) && empty(Session::get('admin_cob'))) || (Auth::user()->company_id > 0 && !in_array(Auth::user()->company_id,[2, 10]))))
                     <li id="complaint_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@complaint') }}">
                             {{ trans('app.menus.reporting.complaint') }}
+                        </a>
+                    </li>
+                    @endif
+
+                    @if (AccessGroup::hasAccessModule('Complaint') && \Helper\Helper::showMPKLModules())
+                    <li class="left-menu-list-link" id="complaints_report_list">
+                        <a class="left-menu-link" href="{{ URL::action('ReportController@complaints') }}">
+                            {{ trans('app.menus.reporting.complaints') }} (MPKL)
                         </a>
                     </li>
                     @endif
@@ -927,7 +952,24 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                     @endif
 
                     @if (AccessGroup::hasAccess(32))
-                    @if (Auth::user()->getCOB->short_name == "MPKJ")
+                    @if (\Helper\Helper::isAllCobContext())
+                    <li id="agmminutesub_list">
+                        <a class="left-menu-link" href="{{URL::action('AgmController@minutes')}}">
+                            {{ trans('app.menus.agm.upload_of_minutes') }}
+                        </a>
+                    </li>
+                    <li id="agmminutesub_mpkl_list">
+                        <a class="left-menu-link" href="{{ URL::action('StrataMeetingDocumentController@index') }}">
+                            {{ trans('app.menus.agm.upload_of_minutes') }} (MPKL)
+                        </a>
+                    </li>
+                    @elseif (\Helper\Helper::isMPKLContext())
+                    <li id="agmminutesub_mpkl_list">
+                        <a class="left-menu-link" href="{{ URL::action('StrataMeetingDocumentController@index') }}">
+                            {{ trans('app.menus.agm.upload_of_minutes') }} (MPKL)
+                        </a>
+                    </li>
+                    @elseif (($__activeCob = \Helper\Helper::activeCompany()) && strtoupper($__activeCob->short_name) == 'MPKJ')
                     <li id="agmminutesub_list">
                         <a class="left-menu-link" href="{{URL::action('AGMMinuteController@index')}}">
                             {{ trans('app.menus.agm.upload_of_minutes') }}

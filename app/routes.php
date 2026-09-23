@@ -819,6 +819,9 @@ Route::get('/print/insurance/file_id={id}', 'PrintController@printInsurance')->b
 Route::get('/reporting/complaint', 'ReportController@complaint')->before('authMember');
 Route::get('/print/complaint/file_id={id}', 'PrintController@printComplaint')->before('authMember');
 
+// complaints (Putrajaya module / MPKL)
+Route::get('/reporting/complaints', 'ReportController@complaints')->before('authMember');
+
 // collection
 Route::get('/reporting/collection', 'ReportController@collection')->before('authMember');
 Route::get('/print/collection/file_id={id}', 'PrintController@printCollection')->before('authMember');
@@ -1139,6 +1142,17 @@ Route::group(array('before' => 'authMember'), function () {
     Route::resource('agm-minute', 'AGMMinuteController');
     Route::post('agm-minute/getForm',  array('as' => 'agm-minute.getForm', 'uses' => 'AGMMinuteController@getForm'));
     Route::post('agm-minute/fileUpload',  array('as' => 'agm-minute.fileUpload', 'uses' => 'AGMMinuteController@fileUpload'));
+
+    Route::resource('strata-meeting-document', 'StrataMeetingDocumentController');
+    Route::post('strata-meeting-document/getForm', array('as' => 'strata-meeting-document.getForm', 'uses' => 'StrataMeetingDocumentController@getForm'));
+    Route::post('strata-meeting-document/fileUpload', array('as' => 'strata-meeting-document.fileUpload', 'uses' => 'StrataMeetingDocumentController@fileUpload'));
+
+    /**
+     * Complaint (Putrajaya / MPKL)
+     */
+    Route::resource('complaint', 'ComplaintController');
+    Route::resource('complaintCategory', 'ComplaintCategoryController');
+    Route::resource('complaintCategory.complaintType', 'ComplaintTypeController');
 
     /**
      * MPS Sync
