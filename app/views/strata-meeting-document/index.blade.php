@@ -101,7 +101,7 @@
                 {data: 'type', name: 'meeting_documents.type'},
                 {data: 'agm_type', name: 'meeting_documents.agm_type'},
                 {data: 'agm_date', name: 'meeting_documents.agm_date'},
-                {data: 'description', name: 'description', orderable: false},
+                {data: 'description', name: 'description', orderable: false, searchable: false},
                 {data: 'check_status', orderable: false, searchable: false},
                 {data: 'status', name: 'strata_meeting_document_statuses.status'},
                 {data: 'action', orderable: false, searchable: false}
