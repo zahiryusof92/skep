@@ -53,79 +53,88 @@ class AgmController extends BaseController {
     }
 
     public function getAJK() {
-        if (!empty(Auth::user()->file_id)) {
-            $ajk_detail = AJKDetails::where('file_id', Auth::user()->file_id)->where('is_deleted', 0)->orderBy('id', 'desc')->get();
-        } else {
-            $ajk_detail = AJKDetails::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $company_short_name = Input::get('columns.0.search.value', '');
+        $company_id = null;
+
+        if (!empty($company_short_name)) {
+            $company = Company::where('short_name', $company_short_name)->first();
+            if ($company) {
+                $company_id = $company->id;
+            }
         }
 
-        if (count($ajk_detail) > 0) {
-            $data = Array();
-            foreach ($ajk_detail as $ajk_details) {
+        if (empty($company_id) && !empty(Session::get('admin_cob'))) {
+            $company_id = Session::get('admin_cob');
+        }
 
-                if (!empty($ajk_details->file_id)) {
-                    if (!Auth::user()->getAdmin()) {
-                        if (!empty(Auth::user()->company_id)) {
-                            if ($ajk_details->file_id && $ajk_details->file->company_id != Auth::user()->company_id) {
-                                continue;
-                            }
-                        }
-                    } else {
-                        if (!empty(Session::get('admin_cob'))) {
-                            if ($ajk_details->file_id && $ajk_details->file->company_id != Session::get('admin_cob')) {
-                                continue;
-                            }
-                        }
-                    }
-                } else {
-                    if (!Auth::user()->getAdmin()) {
-                        continue;
-                    } else {
-                        if (!empty(Session::get('admin_cob'))) {
-                            continue;
-                        }
-                    }
+        $month_search = Input::get('columns.6.search.value', '');
+
+        $query = AJKDetails::join('files', 'ajk_details.file_id', '=', 'files.id')
+            ->join('company', 'files.company_id', '=', 'company.id')
+            ->leftJoin('designation', 'ajk_details.designation', '=', 'designation.id')
+            ->select([
+                'ajk_details.id',
+                'ajk_details.name',
+                'ajk_details.email',
+                'ajk_details.phone_no',
+                'ajk_details.month',
+                'ajk_details.start_year',
+                'ajk_details.end_year',
+                'company.short_name as cob',
+                'files.file_no',
+                'designation.description as designation',
+            ])
+            ->where('ajk_details.is_deleted', 0)
+            ->where('files.is_deleted', 0);
+
+        if (!Auth::user()->getAdmin()) {
+            if (!empty(Auth::user()->file_id)) {
+                $query->where('files.id', Auth::user()->file_id)
+                      ->where('files.company_id', Auth::user()->company_id);
+            } else {
+                $query->where('files.company_id', Auth::user()->company_id);
+            }
+        } else if (!empty($company_id)) {
+            $query->where('files.company_id', $company_id);
+        }
+
+        if ($month_search !== null && $month_search !== '') {
+            $padded_month = str_pad($month_search, 2, '0', STR_PAD_LEFT);
+            $query->where(function ($q) use ($padded_month, $month_search) {
+                $q->where('ajk_details.month', $padded_month)
+                  ->orWhere('ajk_details.month', (int) $month_search);
+            });
+        }
+
+        $canUpdate = AccessGroup::hasUpdate(30);
+        $months = AJKDetails::monthList();
+
+        return Datatables::of($query)
+            ->editColumn('cob', function ($model) {
+                return $model->cob ? $model->cob : '';
+            })
+            ->editColumn('file_no', function ($model) {
+                return $model->file_no ? $model->file_no : '';
+            })
+            ->editColumn('designation', function ($model) {
+                return $model->designation ? $model->designation : '';
+            })
+            ->editColumn('month', function ($model) use ($months) {
+                $key = str_pad($model->month, 2, '0', STR_PAD_LEFT);
+                return isset($months[$key]) ? $months[$key] : ($model->month ?: '');
+            })
+            ->addColumn('action', function ($model) use ($canUpdate) {
+                if (!$canUpdate) {
+                    return '';
                 }
 
-                $designation = Designation::find($ajk_details->designation);
+                $button = '';
+                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit" onclick="window.location=\'' . URL::action('AgmController@editAJK', Helper::encode($model->id)) . '\'"><i class="fa fa-pencil"></i></button>&nbsp;';
+                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . Helper::encode($model->id) . '\')"><i class="fa fa-trash"></i></button>&nbsp;';
 
-                $button = "";
-                $button .= '<button type="button" class="btn btn-xs btn-success edit_ajk" title="Edit"  onclick="window.location=\'' . URL::action('AgmController@editAJK', Helper::encode($ajk_details->id)) . '\'">
-                                <i class="fa fa-pencil"></i>
-                            </button>&nbsp;';
-                $button .= '<button type="button" class="btn btn-xs btn-danger" title="Delete" onclick="deleteAJKDetails(\'' . Helper::encode($ajk_details->id) . '\')">
-                                <i class="fa fa-trash"></i>
-                            </button>&nbsp';
-
-                $data_raw = array(
-                    $ajk_details->file->company->short_name,
-                    $ajk_details->file->file_no,
-                    $designation->description,
-                    $ajk_details->name,
-                    $ajk_details->email,
-                    $ajk_details->phone_no,
-                    $ajk_details->monthName(),
-                    $ajk_details->start_year,
-                    $ajk_details->end_year,
-                    $button
-                );
-
-                array_push($data, $data_raw);
-            }
-            $output_raw = array(
-                "aaData" => $data
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        } else {
-            $output_raw = array(
-                "aaData" => []
-            );
-
-            $output = json_encode($output_raw);
-            return $output;
-        }
+                return $button;
+            })
+            ->make(true);
     }
 
     public function addAJK() {

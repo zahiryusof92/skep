@@ -64,8 +64,8 @@ foreach ($user_permission as $permission) {
                                         <label>{{ trans('app.forms.month') }}</label>
                                         <select id="month" class="form-control select2">
                                             <option value="">{{ trans('app.forms.please_select') }}</option>
-                                            @foreach ($month as $months)
-                                            <option value="{{ $months }}">{{ $months }}</option>
+                                            @foreach ($month as $month_key => $month_label)
+                                            <option value="{{ $month_key }}">{{ $month_label }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -126,16 +126,26 @@ foreach ($user_permission as $permission) {
     $(document).ready(function () {
         $('.select2').val(null).trigger("change")
         oTable = $('#ajk_details_list').DataTable({
-            "sAjaxSource": "{{URL::action('AgmController@getAJK')}}",
-            "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-            "order": [[5, 'desc'], [6, 'desc']],
-            "responsive": true,
-            "aoColumnDefs": [
-                {
-                    "bSortable": false,
-                    "aTargets": [-1]
-                }
-            ]
+            processing: true,
+            serverSide: true,
+            ajax: "{{ URL::action('AgmController@getAJK') }}",
+            columns: [
+                {data: 'cob', name: 'company.short_name'},
+                {data: 'file_no', name: 'files.file_no'},
+                {data: 'designation', name: 'designation.description'},
+                {data: 'name', name: 'ajk_details.name'},
+                {data: 'email', name: 'ajk_details.email'},
+                {data: 'phone_no', name: 'ajk_details.phone_no'},
+                {data: 'month', name: 'ajk_details.month', searchable: false},
+                {data: 'start_year', name: 'ajk_details.start_year'},
+                {data: 'end_year', name: 'ajk_details.end_year'}
+                <?php if ($update_permission == 1) { ?>
+                ,{data: 'action', name: 'action', orderable: false, searchable: false}
+                <?php } ?>
+            ],
+            lengthMenu: [[10, 25, 50], [10, 25, 50]],
+            order: [[7, 'desc'], [6, 'desc']],
+            responsive: true
         });
 
         $('#company').on('change', function () {
@@ -145,10 +155,10 @@ foreach ($user_permission as $permission) {
             oTable.columns(1).search(this.value).draw();
         });
         $('#month').on('change', function () {
-            oTable.columns(5).search(this.value).draw();
+            oTable.columns(6).search(this.value).draw();
         });
         $('#start_year').on('change', function () {
-            oTable.columns(6).search(this.value).draw();
+            oTable.columns(7).search(this.value).draw();
         });
     });
 
