@@ -7049,9 +7049,15 @@ class AdminController extends BaseController
         if (empty(Session::get('admin_cob'))) {
             $role = Role::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
             $cob = Company::where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            if (!Auth::user()->getAdmin()) {
+                $files = Files::where('company_id', Auth::user()->company_id)->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
+            } else {
+                $files = Files::where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
+            }
         } else {
             $role = Role::where('is_admin', 0)->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->lists('name', 'id');
             $cob = Company::where('id', Session::get('admin_cob'))->where('is_active', 1)->where('is_deleted', 0)->orderBy('name')->get();
+            $files = Files::where('company_id', Session::get('admin_cob'))->where('is_deleted', 0)->orderBy('file_no', 'asc')->get();
         }
 
         $viewData = array(
@@ -7062,6 +7068,7 @@ class AdminController extends BaseController
             'user_permission' => $user_permission,
             'role' => $role,
             'cob' => $cob,
+            'files' => $files,
             'image' => ""
         );
 
@@ -7226,32 +7233,16 @@ class AdminController extends BaseController
 
     public function getUser()
     {
-        if (!Auth::user()->getAdmin()) {
-            $users = User::leftJoin('role', 'users.role', '=', 'role.id')
-                ->leftJoin('company', 'users.company_id', '=', 'company.id')
-                ->leftJoin('files', 'users.file_id', '=', 'files.id')
-                ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
-                ->where('company.id', Auth::user()->company_id)
-                ->where('users.is_deleted', 0);
-        } else {
-            if (empty(Session::get('admin_cob'))) {
-                $users = User::join('role', 'users.role', '=', 'role.id')
-                    ->leftJoin('company', 'users.company_id', '=', 'company.id')
-                    ->leftJoin('files', 'users.file_id', '=', 'files.id')
-                    ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
-                    ->where('users.is_deleted', 0);
-            } else {
-                $users = User::leftJoin('role', 'users.role', '=', 'role.id')
-                    ->leftJoin('company', 'users.company_id', '=', 'company.id')
-                    ->leftJoin('files', 'users.file_id', '=', 'files.id')
-                    ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no'])
-                    ->where('company.id', Session::get('admin_cob'))
-                    ->where('users.is_deleted', 0);
-            }
-        }
+        $users = $this->getUserBaseQuery();
 
         if ($users) {
             return Datatables::of($users)
+                ->editColumn('file_no', function ($model) {
+                    return !empty($model->file_no) ? $model->file_no : '-';
+                })
+                ->editColumn('strata_name', function ($model) {
+                    return !empty($model->strata_name) ? $model->strata_name : '-';
+                })
                 ->editColumn('is_active', function ($model) {
                     if ($model->is_active) {
                         return trans('app.forms.yes');
@@ -7283,6 +7274,95 @@ class AdminController extends BaseController
                 })
                 ->make(true);
         }
+    }
+
+    protected function getUserBaseQuery()
+    {
+        if (!Auth::user()->getAdmin()) {
+            return User::leftJoin('role', 'users.role', '=', 'role.id')
+                ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no', 'strata.name as strata_name'])
+                ->where('company.id', Auth::user()->company_id)
+                ->where('users.is_deleted', 0);
+        }
+
+        if (empty(Session::get('admin_cob'))) {
+            return User::join('role', 'users.role', '=', 'role.id')
+                ->leftJoin('company', 'users.company_id', '=', 'company.id')
+                ->leftJoin('files', 'users.file_id', '=', 'files.id')
+                ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+                ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no', 'strata.name as strata_name'])
+                ->where('users.is_deleted', 0);
+        }
+
+        return User::leftJoin('role', 'users.role', '=', 'role.id')
+            ->leftJoin('company', 'users.company_id', '=', 'company.id')
+            ->leftJoin('files', 'users.file_id', '=', 'files.id')
+            ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
+            ->select(['users.*', 'role.name as role', 'company.name as council', 'files.file_no as file_no', 'strata.name as strata_name'])
+            ->where('company.id', Session::get('admin_cob'))
+            ->where('users.is_deleted', 0);
+    }
+
+    public function exportUserExcel()
+    {
+        set_time_limit(300);
+        ini_set('memory_limit', '512M');
+
+        Helper::isAllow(0, 0, !AccessGroup::hasAccess(6));
+
+        $query = $this->getUserBaseQuery();
+
+        $company = Input::get('company');
+        $file_no = Input::get('file_no');
+        $role = Input::get('role');
+
+        if (!empty($company)) {
+            $query->where('company.name', $company);
+        }
+        if (!empty($file_no)) {
+            $query->where('files.file_no', $file_no);
+        }
+        if (!empty($role)) {
+            $query->where('role.name', $role);
+        }
+
+        $query->orderBy('users.username', 'asc');
+
+        $export_data = [];
+        $export_data[] = [
+            trans('app.forms.username'),
+            trans('app.forms.full_name'),
+            trans('app.forms.email'),
+            trans('app.forms.access_group'),
+            trans('app.forms.file_no'),
+            trans('app.forms.strata'),
+            trans('app.forms.is_active'),
+        ];
+
+        $query->chunk(500, function ($rows) use (&$export_data) {
+            foreach ($rows as $model) {
+                $export_data[] = [
+                    !empty($model->username) ? $model->username : '-',
+                    !empty($model->full_name) ? $model->full_name : '-',
+                    !empty($model->email) ? $model->email : '-',
+                    !empty($model->role) ? $model->role : '-',
+                    !empty($model->file_no) ? $model->file_no : '-',
+                    !empty($model->strata_name) ? $model->strata_name : '-',
+                    $model->is_active ? trans('app.forms.active') : trans('app.forms.inactive'),
+                ];
+            }
+        });
+
+        $filename = 'user-list-' . date('YmdHis');
+
+        return Excel::create($filename, function ($excel) use ($export_data) {
+            $excel->sheet('User List', function ($sheet) use ($export_data) {
+                $sheet->fromArray($export_data, null, 'A1', false, false);
+            });
+        })->download('xlsx');
     }
 
     public function getUserDetails($id)

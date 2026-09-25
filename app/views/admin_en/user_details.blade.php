@@ -38,7 +38,9 @@ foreach ($user_permission as $permission) {
                     <dt>{{ trans('app.forms.date_end') }}</dt>
                     <dd>{{($user->end_date != "" ? date('d-m-Y', strtotime($user->end_date)) : "-")}}</dd>
                     <dt>{{ trans('app.forms.file_no') }}</dt>
-                    <dd>{{($user->getFile->file_no != "" ? $user->getFile->file_no : "-")}}</dd>
+                    <dd>{{($user->getFile && $user->getFile->file_no != "" ? $user->getFile->file_no : "-")}}</dd>
+                    <dt>{{ trans('app.forms.strata') }}</dt>
+                    <dd>{{($user->getFile && $user->getFile->strata && $user->getFile->strata->name != "" ? $user->getFile->strata->name : "-")}}</dd>
                     @endif
                     <dt>{{ trans('app.forms.is_active') }}</dt>
                     <dd>{{ ($user->is_active == '1' ? 'Yes' : 'No') }}</dd>
