@@ -37,7 +37,7 @@
                         <div class="col-lg-12 text-center">
                             <form>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.cob') }}</label>
                                             <select id="company" class="form-control select2">
@@ -46,7 +46,7 @@
                                                 </option>
                                                 @if ($cob)
                                                     @foreach ($cob as $companies)
-                                                        <option value="{{ $companies->name }}">
+                                                        <option value="{{ $companies->name }}" data-id="{{ $companies->id }}">
                                                             {{ $companies->name }} ({{ $companies->short_name }})
                                                         </option>
                                                     @endforeach
@@ -54,7 +54,24 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>{{ trans('app.forms.file_no') }}</label>
+                                            <select id="file_no" class="form-control select2">
+                                                <option value="">
+                                                    {{ trans('app.forms.please_select') }}
+                                                </option>
+                                                @if (!empty($files))
+                                                    @foreach ($files as $file)
+                                                        <option value="{{ $file->file_no }}" data-company-id="{{ $file->company_id }}">
+                                                            {{ $file->file_no }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.role') }}</label>
                                             <select id="role" class="form-control select2">
@@ -72,6 +89,16 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row text-left">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>&nbsp;</label><br>
+                                            <a href="#" id="btn_export_excel" class="btn btn-sm btn-success">
+                                                <i class="fa fa-file-excel-o"></i> Export to Excel
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -83,13 +110,15 @@
                             <table class="table table-hover table-own table-striped" id="userlist_datatable" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="width:10%;">{{ trans('app.forms.username') }}</th>
-                                        <th style="width:15%;">{{ trans('app.forms.full_name') }}</th>
-                                        <th style="width:15%;">{{ trans('app.forms.email') }}</th>
-                                        <th style="width:20%;">{{ trans('app.forms.cob') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.access_group') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.is_active') }}</th>
-                                        <th style="width:10%;">{{ trans('app.forms.status') }}</th>
+                                        <th style="width:8%;">{{ trans('app.forms.username') }}</th>
+                                        <th style="width:12%;">{{ trans('app.forms.full_name') }}</th>
+                                        <th style="width:12%;">{{ trans('app.forms.email') }}</th>
+                                        <th style="width:12%;">{{ trans('app.forms.cob') }}</th>
+                                        <th style="width:10%;">{{ trans('app.forms.file_no') }}</th>
+                                        <th style="width:12%;">{{ trans('app.forms.strata') }}</th>
+                                        <th style="width:8%;">{{ trans('app.forms.access_group') }}</th>
+                                        <th style="width:8%;">{{ trans('app.forms.is_active') }}</th>
+                                        <th style="width:8%;">{{ trans('app.forms.status') }}</th>
                                         <?php if ($update_permission == 1) { ?>
                                         <th style="width:10%;">{{ trans('app.forms.action') }}</th>
                                         <?php } ?>
@@ -130,6 +159,14 @@
                         name: 'company.name'
                     },
                     {
+                        data: 'file_no',
+                        name: 'files.file_no'
+                    },
+                    {
+                        data: 'strata_name',
+                        name: 'strata.name'
+                    },
+                    {
                         data: 'role',
                         name: 'role.name'
                     },
@@ -158,12 +195,58 @@
                 responsive: false
             });
 
+            var allFileOptions = $('#file_no').html();
+
+            function filterFileNoOptions(companyId) {
+                var $fileNo = $('#file_no');
+                if ($fileNo.hasClass('select2-hidden-accessible')) {
+                    $fileNo.select2('destroy');
+                }
+                $fileNo.html(allFileOptions);
+
+                if (companyId) {
+                    $fileNo.find('option').each(function() {
+                        var optionCompanyId = $(this).data('company-id');
+                        if ($(this).val() !== '' && String(optionCompanyId) !== String(companyId)) {
+                            $(this).remove();
+                        }
+                    });
+                }
+
+                $fileNo.val('');
+                $fileNo.select2();
+            }
+
             $('#company').on('change', function() {
-                oTable.columns(3).search(this.value).draw();
+                var companyId = $(this).find(':selected').data('id') || '';
+                filterFileNoOptions(companyId);
+                oTable.columns(3).search(this.value);
+                oTable.columns(4).search('');
+                oTable.draw();
+            });
+
+            $('#file_no').on('change', function() {
+                oTable.columns(4).search(this.value).draw();
             });
 
             $('#role').on('change', function() {
-                oTable.columns(4).search(this.value).draw();
+                oTable.columns(6).search(this.value).draw();
+            });
+
+            function buildExportUrl(baseUrl) {
+                var params = [];
+                var company = $('#company').val();
+                var file_no = $('#file_no').val();
+                var role = $('#role').val();
+                if (company) params.push('company=' + encodeURIComponent(company));
+                if (file_no) params.push('file_no=' + encodeURIComponent(file_no));
+                if (role) params.push('role=' + encodeURIComponent(role));
+                return baseUrl + (params.length ? '?' + params.join('&') : '');
+            }
+
+            $('#btn_export_excel').on('click', function(e) {
+                e.preventDefault();
+                window.location.href = buildExportUrl("{{ URL::action('AdminController@exportUserExcel') }}");
             });
         });
 

@@ -428,6 +428,7 @@ Route::get('/user', 'AdminController@user')->before('authMember');
 Route::get('/addUser', 'AdminController@addUser')->before('authMember');
 Route::post('/submitUser', 'AdminController@submitUser')->before('authMember');
 Route::get('/getUser', 'AdminController@getUser')->before('authMember');
+Route::get('/exportUserExcel', 'AdminController@exportUserExcel')->before('authMember');
 Route::get('/getUserDetails/{id}', 'AdminController@getUserDetails')->before('authMember');
 Route::post('/submitApprovedUser', 'AdminController@submitApprovedUser')->before('authMember');
 Route::post('/activeUser', 'AdminController@activeUser')->before('authMember');
