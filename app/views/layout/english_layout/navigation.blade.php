@@ -958,11 +958,13 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                             {{ trans('app.menus.agm.upload_of_minutes') }}
                         </a>
                     </li>
+                    @if (\Helper\Helper::showMPKLModules())
                     <li id="agmminutesub_mpkl_list">
                         <a class="left-menu-link" href="{{ URL::action('StrataMeetingDocumentController@index') }}">
-                            {{ trans('app.menus.agm.upload_of_minutes') }} (MPKL)
-                        </a>
-                    </li>
+                                {{ trans('app.menus.agm.upload_of_minutes') }} (MPKL)
+                            </a>
+                        </li>
+                    @endif
                     @elseif (\Helper\Helper::isMPKLContext())
                     <li id="agmminutesub_mpkl_list">
                         <a class="left-menu-link" href="{{ URL::action('StrataMeetingDocumentController@index') }}">
