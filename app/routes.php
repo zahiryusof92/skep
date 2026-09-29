@@ -34,11 +34,6 @@ Route::get('/test/testMail', 'TestController@testMail');
 
 
 /**
- * Route for search
- */
-Route::post('search', array('as' => 'search.index', 'uses' => 'SearchController@index'));
-
-/**
  * Reconcile
  */
 Route::get('eservice/reconcile', array('as' => 'eservice.reconcile', 'uses' => 'EServiceController@reconcile'));
@@ -72,7 +67,6 @@ Route::get('/lphs/insurance/{council}', 'LPHSController@insurance');
 Route::get('/lphs/financeOutstanding/{council}', 'LPHSController@financeOutstanding');
 Route::get('/lphs/strataByCategory/{council}', 'LPHSController@strataByCategory');
 Route::get('/lphs/electricity/{council}', 'LPHSController@electricity');
-Route::get('/lphs/uploadOCR/{council}', 'LPHSController@uploadOCR');
 Route::get('/lphs/commercial/{council}', 'LPHSController@commercial');
 Route::get('/lphs/extractData/{council}/{year}', 'LPHSController@extractData');
 Route::get('/lphs/agmHasBeenApproved/{council}', 'LPHSController@agmHasBeenApproved');
@@ -262,11 +256,6 @@ Route::post('/uploadJMCFile', 'FileController@uploadJMCFile');
 Route::post('/uploadICFile', 'FileController@uploadICFile');
 Route::post('/uploadAttendanceFile', 'FileController@uploadAttendanceFile');
 Route::post('/uploadAuditedFinancialFile', 'FileController@uploadAuditedFinancialFile');
-
-/**
- * OCR
- */
-Route::post('/uploadOcr', 'FileController@uploadOcr');
 
 /**
  * Endorsement Letter

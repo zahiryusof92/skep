@@ -568,38 +568,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_notice_agm_egm_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="notice_agm_egm_ocr" id="notice_agm_egm_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="notice_agm_egm_ocr_error"></div>
-                                            @if ($meeting_doc->noticeAgmEgmOcr && !empty($meeting_doc->noticeAgmEgmOcr->url))
-                                                <div>
-                                                    <a href="{{ asset($meeting_doc->noticeAgmEgmOcr->url) }}"
-                                                        target="_blank">
-                                                        <button type="button" class="btn btn-xs btn-own"
-                                                            data-toggle="tooltip" data-placement="bottom"
-                                                            title="Download File">
-                                                            <i class="icmn-file-download2"></i>
-                                                            {{ trans('app.forms.download') }}
-                                                        </button>
-                                                    </a>
-                                                    &nbsp;
-                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteNoticeAgmEgmOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </form>
@@ -633,38 +601,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_minutes_agm_egm_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="minutes_agm_egm_ocr" id="minutes_agm_egm_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="minutes_agm_egm_ocr_error"></div>
-                                            @if ($meeting_doc->minutesAgmEgmOcr && !empty($meeting_doc->minutesAgmEgmOcr->url))
-                                                <div>
-                                                    <a href="{{ asset($meeting_doc->minutesAgmEgmOcr->url) }}"
-                                                        target="_blank">
-                                                        <button type="button" class="btn btn-xs btn-own"
-                                                            data-toggle="tooltip" data-placement="bottom"
-                                                            title="Download File">
-                                                            <i class="icmn-file-download2"></i>
-                                                            {{ trans('app.forms.download') }}
-                                                        </button>
-                                                    </a>
-                                                    &nbsp;
-                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgmOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </form>
@@ -698,38 +634,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_minutes_ajk_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="minutes_ajk_ocr" id="minutes_ajk_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="minutes_ajk_ocr_error"></div>
-                                            @if ($meeting_doc->minutesAjkOcr && !empty($meeting_doc->minutesAjkOcr->url))
-                                                <div>
-                                                    <a href="{{ asset($meeting_doc->minutesAjkOcr->url) }}"
-                                                        target="_blank">
-                                                        <button type="button" class="btn btn-xs btn-own"
-                                                            data-toggle="tooltip" data-placement="bottom"
-                                                            title="Download File">
-                                                            <i class="icmn-file-download2"></i>
-                                                            {{ trans('app.forms.download') }}
-                                                        </button>
-                                                    </a>
-                                                    &nbsp;
-                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteMinutesAgmEgmOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </form>
@@ -850,38 +754,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_ajk_info_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="ajk_info_ocr" id="ajk_info_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="ajk_info_ocr_error"></div>
-                                            @if ($meeting_doc->ajkInfoOcr && !empty($meeting_doc->ajkInfoOcr->url))
-                                                <div>
-                                                    <a href="{{ asset($meeting_doc->ajkInfoOcr->url) }}"
-                                                        target="_blank">
-                                                        <button type="button" class="btn btn-xs btn-own"
-                                                            data-toggle="tooltip" data-placement="bottom"
-                                                            title="Download File">
-                                                            <i class="icmn-file-download2"></i>
-                                                            {{ trans('app.forms.download') }}
-                                                        </button>
-                                                    </a>
-                                                    &nbsp;
-                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteAjkInfoOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </form>
@@ -1187,39 +1059,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_report_audited_financial_ocr" enctype="multipart/form-data"
-                                    method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="report_audited_financial_ocr"
-                                                id="report_audited_financial_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="report_audited_financial_ocr_error"></div>
-                                            @if ($meeting_doc->reportAuditedFinancialOcr && !empty($meeting_doc->reportAuditedFinancialOcr->url))
-                                                <div>
-                                                    <a href="{{ asset($meeting_doc->reportAuditedFinancialOcr->url) }}"
-                                                        target="_blank">
-                                                        <button type="button" class="btn btn-xs btn-own"
-                                                            data-toggle="tooltip" data-placement="bottom"
-                                                            title="Download File">
-                                                            <i class="icmn-file-download2"></i>
-                                                            {{ trans('app.forms.download') }}
-                                                        </button>
-                                                    </a>
-                                                    &nbsp;
-                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteReportAuditedFinancialOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </form>
@@ -1253,38 +1092,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_house_rules_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="house_rules_ocr" id="house_rules_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="house_rules_ocr_error"></div>
-                                            @if ($meeting_doc->houseRulesOcr && !empty($meeting_doc->houseRulesOcr->url))
-                                                <div>
-                                                    <a href="{{ asset($meeting_doc->houseRulesOcr->url) }}"
-                                                        target="_blank">
-                                                        <button type="button" class="btn btn-xs btn-own"
-                                                            data-toggle="tooltip" data-placement="bottom"
-                                                            title="Download File">
-                                                            <i class="icmn-file-download2"></i>
-                                                            {{ trans('app.forms.download') }}
-                                                        </button>
-                                                    </a>
-                                                    &nbsp;
-                                                    {{-- <button type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete File" onclick="deleteHouseRulesOcr('{{ \Helper\Helper::encode($meeting_doc->id) }}')"><i class="fa fa-times"></i></button> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </form>
@@ -1583,19 +1390,6 @@
                                         value="{{ $meeting_doc->report_audited_financial_url }}" />
                                     <input type="hidden" id="house_rules_url"
                                         value="{{ $meeting_doc->house_rules_url }}" />
-                                    {{-- OCR --}}
-                                    <input type="hidden" id="notice_agm_egm_ocr_url"
-                                        value="{{ $meeting_doc->noticeAgmEgmOcr ? $meeting_doc->noticeAgmEgmOcr->url : '' }}" />
-                                    <input type="hidden" id="minutes_agm_egm_ocr_url"
-                                        value="{{ $meeting_doc->minutesAgmEgmOcr ? $meeting_doc->minutesAgmEgmOcr->url : '' }}" />
-                                    <input type="hidden" id="minutes_ajk_ocr_url"
-                                        value="{{ $meeting_doc->minutesAjkOcr ? $meeting_doc->minutesAjkOcr->url : '' }}" />
-                                    <input type="hidden" id="ajk_info_ocr_url"
-                                        value="{{ $meeting_doc->ajkInfoOcr ? $meeting_doc->ajkInfoOcr->url : '' }}" />
-                                    <input type="hidden" id="report_audited_financial_ocr_url"
-                                        value="{{ $meeting_doc->reportAuditedFinancialOcr ? $meeting_doc->reportAuditedFinancialOcr->url : '' }}" />
-                                    <input type="hidden" id="house_rules_ocr_url"
-                                        value="{{ $meeting_doc->houseRulesOcr ? $meeting_doc->houseRulesOcr->url : '' }}" />
                                     {{-- Endorsement Letter --}}
                                     <input type="hidden" id="endorsement_letter_url"
                                         value="{{ $meeting_doc->meetingDocumentStatus ? $meeting_doc->meetingDocumentStatus->attachment : '' }}" />
@@ -1670,13 +1464,6 @@
                 report_audited_financial_url = $("#report_audited_financial_url").val(),
                 house_rules_url = $("#house_rules_url").val(),
                 remarks = $("#remarks").val(),
-                // OCR
-                notice_agm_egm_ocr_url = $("#notice_agm_egm_ocr_url").val(),
-                minutes_agm_egm_ocr_url = $("#minutes_agm_egm_ocr_url").val(),
-                minutes_ajk_ocr_url = $("#minutes_ajk_ocr_url").val(),
-                ajk_info_ocr_url = $("#ajk_info_ocr_url").val(),
-                report_audited_financial_ocr_url = $("#report_audited_financial_ocr_url").val(),
-                house_rules_ocr_url = $("#house_rules_ocr_url").val(),
                 // Endorsement
                 status = $("#status").val(),
                 reason = $("#reason").val(),
@@ -1798,13 +1585,6 @@
                         report_audited_financial_url: report_audited_financial_url,
                         house_rules_url: house_rules_url,
                         remarks: remarks,
-                        // OCR
-                        notice_agm_egm_ocr_url: notice_agm_egm_ocr_url,
-                        minutes_agm_egm_ocr_url: minutes_agm_egm_ocr_url,
-                        minutes_ajk_ocr_url: minutes_ajk_ocr_url,
-                        ajk_info_ocr_url: ajk_info_ocr_url,
-                        report_audited_financial_ocr_url: report_audited_financial_ocr_url,
-                        house_rules_ocr_url: house_rules_ocr_url,
                         // Endorsement
                         status: status,
                         reason: reason,
