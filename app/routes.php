@@ -138,6 +138,7 @@ Route::get('/home/getAGM12Months', 'HomeController@getAGM12Months')->before('aut
 Route::get('/home/getAGM15Months', 'HomeController@getAGM15Months')->before('authMember');
 Route::get('/home/getMemoHome', 'HomeController@getMemoHome')->before('authMember');
 Route::post('/home/getMemoDetails', 'HomeController@getMemoDetails')->before('authMember');
+Route::post('/home/dismissMemoAlerts', 'HomeController@dismissMemoAlerts')->before('authMember');
 Route::get('/home/getDesignationRemainder', 'HomeController@getDesignationRemainder')->before('authMember');
 Route::get('/home/getInsuranceRemainder', 'HomeController@getInsuranceRemainder')->before('authMember');
 Route::get('/home/getActiveMemoHome', 'HomeController@getActiveMemoHome')->before('authMember');
