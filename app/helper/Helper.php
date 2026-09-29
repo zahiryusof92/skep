@@ -281,6 +281,18 @@ class Helper
     }
 
     /**
+     * True when the active COB context is MBS.
+     *
+     * @return bool
+     */
+    public static function isMBSContext()
+    {
+        $company = self::activeCompany();
+
+        return $company && strtoupper($company->short_name) === 'MBS';
+    }
+
+    /**
      * True when company (id, short_name, or Company) is MPKL.
      *
      * @param mixed $company Company model, id, or short_name
@@ -305,13 +317,47 @@ class Helper
     }
 
     /**
+     * True when company (id, short_name, or Company) is MBS.
+     *
+     * @param mixed $company Company model, id, or short_name
+     * @return bool
+     */
+    public static function isMBS($company = null)
+    {
+        if ($company === null) {
+            return self::isMBSContext();
+        }
+
+        if ($company instanceof \Company) {
+            return strtoupper((string) $company->short_name) === 'MBS';
+        }
+
+        if (is_numeric($company)) {
+            $model = \Company::find($company);
+            return $model && strtoupper((string) $model->short_name) === 'MBS';
+        }
+
+        return strtoupper((string) $company) === 'MBS';
+    }
+
+    /**
      * Show MPKL-only menus (Complaint module, eStrata minutes): MPKL context or All COB.
      *
      * @return bool
      */
     public static function showMPKLModules()
     {
-        return self::isMPKLContext() || self::isAllCobContext();
+        return (self::isMPKLContext() || self::isAllCobContext()) && !self::isMBSContext();
+    }
+
+    /**
+     * Show MBS-only menus (Complaint module, eStrata minutes): MBS context or All COB.
+     *
+     * @return bool
+     */
+    public static function showMBSModules()
+    {
+        return (self::isMBSContext() || self::isAllCobContext()) && !self::isMPKLContext();
     }
 
     /**
