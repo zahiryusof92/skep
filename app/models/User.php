@@ -261,23 +261,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
-    public function hasAccessOCR()
-    {
-        if (Auth::user()->getAdmin()) {
-            return true;
-        } else {
-            if (Auth::user()->isCOB() || (Auth::user()->isJMB() || Auth::user()->isMC())) {
-                if (Auth::user()->getCOB) {
-                    if (Auth::user()->getCOB->short_name == 'MBPJ') {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
     public function hasAccessEservice()
     {
         if (Auth::user()->getAdmin()) {
@@ -298,7 +281,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
     /**
      * TPPM access for additional COBs (not MPS).
-     * No Access Group required — enabled for COB, JMB & MC roles.
+     * No Access Group required Ã¢â‚¬â€ enabled for COB, JMB & MC roles.
      * MPS keeps its existing access check in navigation / controller.
      * Allowed COBs: estrata_tppm_cobs in .env.php (comma-separated).
      * Allowed usernames: estrata_tppm_usernames (comma-separated; empty = allow all).

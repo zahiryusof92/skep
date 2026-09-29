@@ -148,8 +148,6 @@
         <!-- BEGIN CONTENT -->
         <section class="page-content">
 
-            @include('layout.english_layout.search')
-
             @yield('content')
 
             @include('layout.english_layout.footer')

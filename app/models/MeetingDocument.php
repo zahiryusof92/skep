@@ -28,32 +28,4 @@ class MeetingDocument extends Eloquent
     {
         return $this->hasOne('MeetingDocumentStatus', 'meeting_document_id')->orderBy('updated_at', 'desc');
     }
-
-    public function noticeAgmEgmOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'notice_agm_egm')->latest();
-    }
-
-    public function minutesAgmEgmOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_agm_egm')->latest();
-    }
-
-    public function minutesAjkOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'minutes_ajk')->latest();
-    }
-
-    public function ajkInfoOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'ajk_info')->latest();
-    }
-
-    public function reportAuditedFinancialOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'report_audited_financial')->latest();
-    }
-
-    public function houseRulesOcr() {
-        return $this->hasOne('Ocr', 'meeting_document_id')->where('type', 'house_rules')->latest();
-    }
-
-    public function ocrs() {
-        return $this->hasMany('Ocr', 'meeting_document_id');
-    }
 }

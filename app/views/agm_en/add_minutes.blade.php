@@ -416,27 +416,6 @@
                                 </div>
                             </form>
 
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_notice_agm_egm_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="notice_agm_egm_ocr" id="notice_agm_egm_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="notice_agm_egm_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
                             <form id="upload_minutes_agm_egm" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadMinutesAgmEgm') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -452,27 +431,6 @@
                                 </div>
                             </form>
 
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_minutes_agm_egm_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="minutes_agm_egm_ocr" id="minutes_agm_egm_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="minutes_agm_egm_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
                             <form id="upload_minutes_ajk" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadMinutesAjk') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -487,27 +445,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_minutes_ajk_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="minutes_ajk_ocr" id="minutes_ajk_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="minutes_ajk_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_eligible_vote" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadEligibleVote') }}" autocomplete="off">
@@ -568,27 +505,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_ajk_info_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="ajk_info_ocr" id="ajk_info_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="ajk_info_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_ic" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadIc') }}" autocomplete="off">
@@ -745,28 +661,6 @@
                                 </div>
                             </form>
 
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_report_audited_financial_ocr" enctype="multipart/form-data"
-                                    method="post" action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="report_audited_financial_ocr"
-                                                id="report_audited_financial_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="report_audited_financial_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
                             <form id="upload_house_rules" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadHouseRules') }}" autocomplete="off">
                                 <div class="form-group row">
@@ -781,27 +675,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            <!-- OCR -->
-                            @if (Auth::user()->hasAccessOCR())
-                                <form id="upload_house_rules_ocr" enctype="multipart/form-data" method="post"
-                                    action="{{ url('uploadOcr') }}" autocomplete="off">
-                                    <div class="form-group row">
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">&nbsp;</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-control-label">OCR</label>
-                                            <br />
-                                            <input type="file" name="house_rules_ocr" id="house_rules_ocr">
-                                            <div>
-                                                <small>* Accept TXT only. Maximum size: 10MB.</small>
-                                            </div>
-                                            <div id="house_rules_ocr_error"></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form>
                                 <div class="form-group row">
@@ -842,13 +715,6 @@
                                     <input type="hidden" id="sworn_statement_url" />
                                     <input type="hidden" id="report_audited_financial_url" />
                                     <input type="hidden" id="house_rules_url" />
-                                    {{-- OCR --}}
-                                    <input type="hidden" id="notice_agm_egm_ocr_url" />
-                                    <input type="hidden" id="minutes_agm_egm_ocr_url" />
-                                    <input type="hidden" id="minutes_ajk_ocr_url" />
-                                    <input type="hidden" id="ajk_info_ocr_url" />
-                                    <input type="hidden" id="report_audited_financial_ocr_url" />
-                                    <input type="hidden" id="house_rules_ocr_url" />
 
                                     <button type="button" class="btn btn-own" id="submit_button"
                                         onclick="addMinutes()">
@@ -936,14 +802,7 @@
                 report_audited_financial_url = $("#report_audited_financial_url").val(),
                 house_rules_url = $("#house_rules_url").val(),
                 type = $("#type").val(),
-                remarks = $("#remarks").val(),
-                // OCR
-                notice_agm_egm_ocr_url = $("#notice_agm_egm_ocr_url").val(),
-                minutes_agm_egm_ocr_url = $("#minutes_agm_egm_ocr_url").val(),
-                minutes_ajk_ocr_url = $("#minutes_ajk_ocr_url").val(),
-                ajk_info_ocr_url = $("#ajk_info_ocr_url").val(),
-                report_audited_financial_ocr_url = $("#report_audited_financial_ocr_url").val(),
-                house_rules_ocr_url = $("#house_rules_ocr_url").val();
+                remarks = $("#remarks").val();
 
             if (document.getElementById('agm').checked) {
                 agm = 1;
@@ -1044,14 +903,7 @@
                         report_audited_financial_url: report_audited_financial_url,
                         house_rules_url: house_rules_url,
                         type: type,
-                        remarks: remarks,
-                        // OCR
-                        notice_agm_egm_ocr_url: notice_agm_egm_ocr_url,
-                        minutes_agm_egm_ocr_url: minutes_agm_egm_ocr_url,
-                        minutes_ajk_ocr_url: minutes_ajk_ocr_url,
-                        ajk_info_ocr_url: ajk_info_ocr_url,
-                        report_audited_financial_ocr_url: report_audited_financial_ocr_url,
-                        house_rules_ocr_url: house_rules_ocr_url
+                        remarks: remarks
                     },
                     beforeSend: function() {
                         $.blockUI({
