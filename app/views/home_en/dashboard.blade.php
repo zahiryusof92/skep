@@ -627,7 +627,7 @@
 </div>
 
 <div class="modal fade modal" id="memoDetailsModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content"></div>
     </div>
 </div>
@@ -834,16 +834,8 @@
         });
     }
 
-    var memoAlertNotices = [];
-    var memoAlertIndex = 0;
-    var memoAlertMode = false;
-
-    var memoAlertLabels = {
-        previous: {{ json_encode(trans('app.forms.previous')) }},
-        next: {{ json_encode(trans('app.forms.next')) }},
-        dismiss: {{ json_encode(trans('app.forms.dismiss')) }},
-        dismissAll: {{ json_encode(trans('app.forms.dismiss_all')) }}
-    };
+    var memoAlertQueue = [];
+    var memoAlertShowing = false;
 
     function loadActiveMemoAlerts() {
         $.ajax({
@@ -851,188 +843,24 @@
             type: "GET",
             dataType: "json",
             success: function (res) {
-                if (!res || !res.success) {
+                if (!res || !res.success || !res.ids || !res.ids.length) {
                     return;
                 }
-                var notices = res.notices;
-                if (!notices || !notices.length) {
-                    // Backward-compatible fallback if only ids are returned
-                    if (res.ids && res.ids.length) {
-                        notices = [];
-                        for (var i = 0; i < res.ids.length; i++) {
-                            notices.push({ id: res.ids[i] });
-                        }
-                    } else {
-                        return;
-                    }
-                }
-                memoAlertNotices = notices.slice();
-                memoAlertIndex = 0;
-                memoAlertMode = true;
-                // If payload is id-only, hydrate via getMemoDetails HTML once into carousel later;
-                // prefer full notices from API.
-                if (memoAlertNotices[0].subject !== undefined) {
-                    renderMemoAlertCarousel();
-                    $("#memoDetailsModal").modal("show");
-                } else {
-                    hydrateMemoAlertsThenShow();
-                }
+                memoAlertQueue = res.ids.slice();
+                showNextMemoAlert();
             }
         });
     }
 
-    function hydrateMemoAlertsThenShow() {
-        // Fallback path: should not normally run when API returns full notices
-        var pending = memoAlertNotices.slice();
-        var loaded = [];
-        var remaining = pending.length;
-
-        if (!remaining) {
+    function showNextMemoAlert() {
+        if (memoAlertShowing || !memoAlertQueue.length) {
             return;
         }
-
-        for (var i = 0; i < pending.length; i++) {
-            (function (idx, encodedId) {
-                $.ajax({
-                    url: "{{ URL::action('HomeController@getMemoDetails') }}",
-                    type: "POST",
-                    data: { id: encodedId },
-                    success: function (html) {
-                        loaded[idx] = { id: encodedId, html: html };
-                    },
-                    complete: function () {
-                        remaining--;
-                        if (remaining <= 0) {
-                            memoAlertNotices = loaded.filter(Boolean);
-                            memoAlertIndex = 0;
-                            if (!memoAlertNotices.length) {
-                                memoAlertMode = false;
-                                return;
-                            }
-                            renderMemoAlertCarousel();
-                            $("#memoDetailsModal").modal("show");
-                        }
-                    }
-                });
-            })(i, pending[i].id);
-        }
+        memoAlertShowing = true;
+        getMemoDetails(memoAlertQueue.shift());
     }
 
-    function escapeMemoText(text) {
-        return String(text == null ? "" : text)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
-    }
-
-    function renderMemoAlertCarousel() {
-        if (!memoAlertNotices.length) {
-            memoAlertMode = false;
-            $("#memoDetailsModal").modal("hide");
-            return;
-        }
-
-        if (memoAlertIndex < 0) {
-            memoAlertIndex = 0;
-        }
-        if (memoAlertIndex >= memoAlertNotices.length) {
-            memoAlertIndex = memoAlertNotices.length - 1;
-        }
-
-        var notice = memoAlertNotices[memoAlertIndex];
-        var total = memoAlertNotices.length;
-        var pos = memoAlertIndex + 1;
-        var html;
-
-        // Fallback hydrated HTML entries
-        if (notice.html) {
-            html = notice.html;
-            // Inject footer controls if missing
-            if (html.indexOf("memo-alert-footer") === -1) {
-                html += buildMemoAlertFooter(pos, total);
-            }
-        } else {
-            var imagesHtml = "";
-            if (notice.document_files && notice.document_files.length) {
-                for (var i = 0; i < notice.document_files.length; i++) {
-                    imagesHtml += "<img src=\"" + escapeMemoText(notice.document_files[i]) + "\" style=\"max-width:100%; height:auto;\"/><br/><br/>";
-                }
-            }
-
-            html = "";
-            html += "<div class=\"modal-header\">";
-            html += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>";
-            html += "<h4 class=\"modal-title\" id=\"myModalLabel\">" + escapeMemoText(notice.subject) + "</h4>";
-            html += "<h6 class=\"modal-title\">" + escapeMemoText(notice.memo_date);
-            html += " <span class=\"label label-default memo-alert-progress\">" + pos + " / " + total + "</span></h6>";
-            html += "</div>";
-            html += "<div class=\"modal-body\">";
-            html += "<p>" + (notice.description != null ? notice.description : "-") + "</p>";
-            html += imagesHtml;
-            html += "</div>";
-            html += buildMemoAlertFooter(pos, total);
-        }
-
-        $("#memoDetailsModal .modal-content").html(html);
-        updateMemoAlertNavButtons();
-    }
-
-    function buildMemoAlertFooter(pos, total) {
-        var html = "";
-        html += "<div class=\"modal-footer memo-alert-footer\" style=\"text-align:left;\">";
-        html += "<span class=\"memo-alert-progress text-muted\" style=\"margin-right:12px;\">" + pos + " / " + total + "</span>";
-        html += "<button type=\"button\" class=\"btn btn-default\" id=\"memoAlertPrev\">" + memoAlertLabels.previous + "</button> ";
-        html += "<button type=\"button\" class=\"btn btn-primary\" id=\"memoAlertNext\">" + memoAlertLabels.next + "</button> ";
-        html += "<button type=\"button\" class=\"btn btn-warning\" id=\"memoAlertDismiss\">" + memoAlertLabels.dismiss + "</button> ";
-        html += "<button type=\"button\" class=\"btn btn-danger\" id=\"memoAlertDismissAll\">" + memoAlertLabels.dismissAll + "</button>";
-        html += "</div>";
-        return html;
-    }
-
-    function updateMemoAlertNavButtons() {
-        var $prev = $("#memoAlertPrev");
-        var $next = $("#memoAlertNext");
-        if ($prev.length) {
-            $prev.prop("disabled", memoAlertIndex <= 0);
-        }
-        if ($next.length) {
-            $next.prop("disabled", memoAlertIndex >= memoAlertNotices.length - 1);
-        }
-    }
-
-    function dismissMemoAlerts(ids, done) {
-        if (!ids || !ids.length) {
-            if (done) {
-                done(true);
-            }
-            return;
-        }
-        $.ajax({
-            url: "{{ URL::action('HomeController@dismissMemoAlerts') }}",
-            type: "POST",
-            data: { ids: ids },
-            success: function (res) {
-                if (done) {
-                    done(res && res.success !== false);
-                }
-            },
-            error: function () {
-                if (done) {
-                    done(false);
-                }
-            }
-        });
-    }
-
-    /**
-     * Notice table "View" button — single notice, no carousel / no auto-queue.
-     */
     function getMemoDetails(id) {
-        memoAlertMode = false;
-        memoAlertNotices = [];
-        memoAlertIndex = 0;
         $.ajax({
             url: "{{ URL::action('HomeController@getMemoDetails') }}",
             type: "POST",
@@ -1042,78 +870,18 @@
             success: function (data) {
                 $("#memoDetailsModal .modal-content").html(data);
                 $("#memoDetailsModal").modal("show");
+            },
+            error: function () {
+                memoAlertShowing = false;
+                showNextMemoAlert();
             }
         });
     }
 
     $("#memoDetailsModal").on("hidden.bs.modal", function () {
-        // X / backdrop close: do NOT dismiss and do NOT reopen next notice.
+        memoAlertShowing = false;
         $(this).find(".modal-content").empty();
-        memoAlertMode = false;
-    });
-
-    $(document).on("click", "#memoAlertPrev", function () {
-        if (!memoAlertMode || memoAlertIndex <= 0) {
-            return;
-        }
-        memoAlertIndex--;
-        renderMemoAlertCarousel();
-    });
-
-    $(document).on("click", "#memoAlertNext", function () {
-        if (!memoAlertMode || memoAlertIndex >= memoAlertNotices.length - 1) {
-            return;
-        }
-        memoAlertIndex++;
-        renderMemoAlertCarousel();
-    });
-
-    $(document).on("click", "#memoAlertDismiss", function () {
-        if (!memoAlertMode || !memoAlertNotices.length) {
-            return;
-        }
-        var notice = memoAlertNotices[memoAlertIndex];
-        if (!notice || !notice.id) {
-            return;
-        }
-        var $btn = $(this).prop("disabled", true);
-        dismissMemoAlerts([notice.id], function (ok) {
-            $btn.prop("disabled", false);
-            if (!ok) {
-                return;
-            }
-            memoAlertNotices.splice(memoAlertIndex, 1);
-            if (!memoAlertNotices.length) {
-                $("#memoDetailsModal").modal("hide");
-                return;
-            }
-            if (memoAlertIndex >= memoAlertNotices.length) {
-                memoAlertIndex = memoAlertNotices.length - 1;
-            }
-            renderMemoAlertCarousel();
-        });
-    });
-
-    $(document).on("click", "#memoAlertDismissAll", function () {
-        if (!memoAlertMode || !memoAlertNotices.length) {
-            return;
-        }
-        var ids = [];
-        for (var i = 0; i < memoAlertNotices.length; i++) {
-            if (memoAlertNotices[i] && memoAlertNotices[i].id) {
-                ids.push(memoAlertNotices[i].id);
-            }
-        }
-        var $btn = $(this).prop("disabled", true);
-        dismissMemoAlerts(ids, function (ok) {
-            $btn.prop("disabled", false);
-            if (!ok) {
-                return;
-            }
-            memoAlertNotices = [];
-            memoAlertIndex = 0;
-            $("#memoDetailsModal").modal("hide");
-        });
+        showNextMemoAlert();
     });
 
     function generatePie(id, title, series_title, data) {

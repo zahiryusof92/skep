@@ -116,33 +116,19 @@ class HomeController extends BaseController
     public function getActiveMemoAlerts()
     {
         if (Auth::user()->isLPHS()) {
-            return Response::json(array('success' => true, 'notices' => array(), 'ids' => array()));
+            return Response::json(array('success' => true, 'ids' => array()));
         }
 
-        $memos = $this->getActiveMemoHome();
-        $notices = array();
+        $memos = self::getActiveMemoHome();
         $ids = array();
         if ($memos && count($memos) > 0) {
             foreach ($memos as $memo) {
-                $encodedId = Helper::encode($memo->id);
-                $ids[] = $encodedId;
-                $files = array();
-                if (!empty($memo->document_file)) {
-                    $files = array_values(array_filter(array_map('trim', explode(',', $memo->document_file))));
-                }
-                $notices[] = array(
-                    'id' => $encodedId,
-                    'subject' => ($memo->subject != "" ? $memo->subject : "-"),
-                    'memo_date' => ($memo->memo_date ? date('d-M-Y', strtotime($memo->memo_date)) : "-"),
-                    'description' => ($memo->description != "" ? $memo->description : "-"),
-                    'document_files' => $files,
-                );
+                $ids[] = Helper::encode($memo->id);
             }
         }
 
         return Response::json(array(
             'success' => true,
-            'notices' => $notices,
             'ids' => $ids,
         ));
     }
@@ -504,11 +490,6 @@ class HomeController extends BaseController
             });
         }
 
-        $dismissedIds = $this->getDismissedMemoIds();
-        if (!empty($dismissedIds)) {
-            $memo->whereNotIn('id', $dismissedIds);
-        }
-
         return $memo->orderBy('memo_date', 'desc')->take(5)->get();
     }
 
@@ -544,68 +525,6 @@ class HomeController extends BaseController
 
             print $result;
         }
-    }
-
-    /**
-     * Dismiss one or more active memo notices for the current user (cookie-backed).
-     * Accepts encoded ids[] — same mechanism for single dismiss and dismiss-all.
-     */
-    public function dismissMemoAlerts()
-    {
-        $data = Input::all();
-        $encodedIds = isset($data['ids']) ? $data['ids'] : array();
-        if (!is_array($encodedIds)) {
-            $encodedIds = array($encodedIds);
-        }
-
-        $dismissed = $this->getDismissedMemoIds();
-        foreach ($encodedIds as $encoded) {
-            if ($encoded === null || $encoded === '') {
-                continue;
-            }
-            $id = intval(Helper::decode($encoded));
-            if ($id > 0) {
-                $dismissed[] = $id;
-            }
-        }
-
-        $this->saveDismissedMemoIds($dismissed);
-
-        return Response::json(array('success' => true));
-    }
-
-    /**
-     * Cookie key for per-user dismissed memo IDs.
-     */
-    protected function dismissedMemoCookieName()
-    {
-        $userId = Auth::check() ? Auth::user()->id : 0;
-        return 'skep_dismissed_memos_' . $userId;
-    }
-
-    /**
-     * Read dismissed memo IDs from cookie.
-     */
-    protected function getDismissedMemoIds()
-    {
-        $raw = Cookie::get($this->dismissedMemoCookieName());
-        if (empty($raw)) {
-            return array();
-        }
-        $ids = json_decode($raw, true);
-        if (!is_array($ids)) {
-            return array();
-        }
-        return array_values(array_unique(array_map('intval', $ids)));
-    }
-
-    /**
-     * Persist dismissed memo IDs (1 year).
-     */
-    protected function saveDismissedMemoIds(array $ids)
-    {
-        $ids = array_values(array_unique(array_map('intval', $ids)));
-        Cookie::queue(Cookie::make($this->dismissedMemoCookieName(), json_encode($ids), 525600));
     }
 
     public function getCompanyName()
