@@ -141,20 +141,6 @@ $swith_lang = true;
         </div>
         @endif
         <div class="menu-info-block">
-            <div class="right hidden-md-down margin-right-20">
-                <div class="search-block">
-                    <form action="{{ route('search.index') }}" method="POST">
-                        <div class="form-input-icon form-input-icon-right">
-                            <i class="icmn-search"></i>
-                            <input type="text" name="keyword" class="form-control form-control-sm form-control-rounded" placeholder="Search...">
-                            @include('alert.feedback', ['field' => 'keyword'])
-                            <button type="submit" class="search-block-submit"></button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="menu-info-block">
             <div class="row">
                 <h6 class="margin-top-10">{{ trans('app.app_sub_title', ['title' => $company->name]) }}</h6>
             </div>
