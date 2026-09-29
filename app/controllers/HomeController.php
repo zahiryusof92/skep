@@ -600,12 +600,12 @@ class HomeController extends BaseController
     }
 
     /**
-     * Persist dismissed memo IDs (1 year).
+     * Persist dismissed memo IDs for the browser session.
      */
     protected function saveDismissedMemoIds(array $ids)
     {
         $ids = array_values(array_unique(array_map('intval', $ids)));
-        Cookie::queue(Cookie::make($this->dismissedMemoCookieName(), json_encode($ids), 525600));
+        Cookie::queue(Cookie::make($this->dismissedMemoCookieName(), json_encode($ids), 0));
     }
 
     public function getCompanyName()
