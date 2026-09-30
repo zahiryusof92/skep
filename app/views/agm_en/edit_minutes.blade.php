@@ -568,10 +568,6 @@
                                     </div>
                                 </div>
                             </form>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_minutes_agm_egm" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadMinutesAgmEgm') }}" autocomplete="off">
@@ -601,10 +597,6 @@
                                     </div>
                                 </div>
                             </form>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_minutes_ajk" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadMinutesAjk') }}" autocomplete="off">
@@ -634,10 +626,6 @@
                                     </div>
                                 </div>
                             </form>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_eligible_vote" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadEligibleVote') }}" autocomplete="off">
@@ -754,10 +742,6 @@
                                     </div>
                                 </div>
                             </form>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_ic" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadIc') }}" autocomplete="off">
@@ -1059,10 +1043,6 @@
                                     </div>
                                 </div>
                             </form>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form id="upload_house_rules" enctype="multipart/form-data" method="post"
                                 action="{{ url('uploadHouseRules') }}" autocomplete="off">
@@ -1092,10 +1072,6 @@
                                     </div>
                                 </div>
                             </form>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
 
                             <form>
                                 <div class="form-group row">
