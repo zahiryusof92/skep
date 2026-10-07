@@ -185,11 +185,15 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
             </li>
             @endif
 
-            @if (AccessGroup::hasAccessModule('Complaint') && \Helper\Helper::showMPKLModules())
+            @if (AccessGroup::hasAccessModule('Complaint') && (\Helper\Helper::showMPKLModules() || \Helper\Helper::showMBSJModules()))
             <li class="left-menu-list-link" id="complaint_list">
                 <a class="left-menu-link" href="{{ route('complaint.index') }}">
                     <img class="left-menu-link-icon" src="{{asset('assets/common/img/icon/complaint.png')}}"/>
-                    {{ trans('app.menus.complaint.name') }} (MPKL)
+                    {{ trans('app.menus.complaint.name') }}
+                    @if (\Helper\Helper::isMPKLContext()) (MPKL)
+                    @elseif (\Helper\Helper::isMBSJContext()) (MBSJ)
+                    @else (MPKL / MBSJ)
+                    @endif
                 </a>
             </li>
             @endif
@@ -651,10 +655,14 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccessModule('Complaint Category') && \Helper\Helper::showMPKLModules())
+                    @if (AccessGroup::hasAccessModule('Complaint Category') && (\Helper\Helper::showMPKLModules() || \Helper\Helper::showMBSJModules()))
                     <li id="complaint_category_list">
                         <a class="left-menu-link" href="{{ route('complaintCategory.index') }}">
-                            {{ trans('app.menus.master.complaint_category') }} (MPKL)
+                            {{ trans('app.menus.master.complaint_category') }}
+                            @if (\Helper\Helper::isMPKLContext()) (MPKL)
+                            @elseif (\Helper\Helper::isMBSJContext()) (MBSJ)
+                            @else (MPKL / MBSJ)
+                            @endif
                         </a>
                     </li>
                     @endif
@@ -803,10 +811,14 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                     </li>
                     @endif
 
-                    @if (AccessGroup::hasAccessModule('Complaint') && \Helper\Helper::showMPKLModules())
+                    @if (AccessGroup::hasAccessModule('Complaint') && (\Helper\Helper::showMPKLModules() || \Helper\Helper::showMBSJModules()))
                     <li class="left-menu-list-link" id="complaints_report_list">
                         <a class="left-menu-link" href="{{ URL::action('ReportController@complaints') }}">
-                            {{ trans('app.menus.reporting.complaints') }} (MPKL)
+                            {{ trans('app.menus.reporting.complaints') }}
+                            @if (\Helper\Helper::isMPKLContext()) (MPKL)
+                            @elseif (\Helper\Helper::isMBSJContext()) (MBSJ)
+                            @else (MPKL / MBSJ)
+                            @endif
                         </a>
                     </li>
                     @endif

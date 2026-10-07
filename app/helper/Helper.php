@@ -293,6 +293,42 @@ class Helper
     }
 
     /**
+     * True when the active COB context is MBSJ.
+     *
+     * @return bool
+     */
+    public static function isMBSJContext()
+    {
+        $company = self::activeCompany();
+
+        return $company && strtoupper($company->short_name) === 'MBSJ';
+    }
+
+    /**
+     * True when company (id, short_name, or Company) is MBSJ.
+     *
+     * @param mixed $company Company model, id, or short_name
+     * @return bool
+     */
+    public static function isMBSJ($company = null)
+    {
+        if ($company === null) {
+            return self::isMBSJContext();
+        }
+
+        if ($company instanceof \Company) {
+            return strtoupper((string) $company->short_name) === 'MBSJ';
+        }
+
+        if (is_numeric($company)) {
+            $model = \Company::find($company);
+            return $model && strtoupper((string) $model->short_name) === 'MBSJ';
+        }
+
+        return strtoupper((string) $company) === 'MBSJ';
+    }
+
+    /**
      * True when company (id, short_name, or Company) is MPKL.
      *
      * @param mixed $company Company model, id, or short_name
@@ -358,6 +394,16 @@ class Helper
     public static function showMBSModules()
     {
         return (self::isMBSContext() || self::isAllCobContext()) && !self::isMPKLContext();
+    }
+
+    /**
+     * Show MBSJ-only menus (Complaint module): MBSJ context or All COB.
+     *
+     * @return bool
+     */
+    public static function showMBSJModules()
+    {
+        return self::isMBSJContext() || self::isAllCobContext();
     }
 
     /**
