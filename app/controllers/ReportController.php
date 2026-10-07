@@ -2897,7 +2897,7 @@ class ReportController extends BaseController
 
     public function complaints()
     {
-        Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint') || !Helper::showMPKLModules());
+        Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint') || (!Helper::showMPKLModules() && !Helper::showMBSJModules()));
 
         $categoryList = ComplaintCategory::with('types')->where('is_active', true)->orderBy('sort_no')->get();
         $yearList = [];
@@ -2945,8 +2945,9 @@ class ReportController extends BaseController
             }
         }
 
+        $companyLabel = Helper::isMPKLContext() ? 'MPKL' : (Helper::isMBSJContext() ? 'MBSJ' : 'MPKL / MBSJ');
         $viewData = array(
-            'title' => trans('app.menus.reporting.complaints') . ' (MPKL)',
+            'title' => trans('app.menus.reporting.complaints') . ' (' . $companyLabel . ')',
             'panel_nav_active' => 'reporting_panel',
             'main_nav_active' => 'reporting_main',
             'sub_nav_active' => 'complaints_report_list',

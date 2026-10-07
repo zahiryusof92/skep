@@ -19,7 +19,7 @@ class ComplaintController extends \BaseController
 
 	public function __construct()
 	{
-		Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint') || !Helper::showMPKLModules());
+		Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint') || (!Helper::showMPKLModules() && !Helper::showMBSJModules()));
 		$this->module = Config::get('constant.module');
 	}
 
@@ -37,8 +37,16 @@ class ComplaintController extends \BaseController
 			->join('strata', 'files.id', '=', 'strata.file_id')
 			->select(['complaints.*'])
 			->where('files.is_deleted', 0)
-			->where('company.short_name', 'MPKL')
-			->where('company.is_deleted', 0);
+			->where('company.is_deleted', 0)
+			->where(function ($q) {
+				if (Helper::isMPKLContext()) {
+					$q->where('company.short_name', 'MPKL');
+				} elseif (Helper::isMBSJContext()) {
+					$q->where('company.short_name', 'MBSJ');
+				} else {
+					$q->whereIn('company.short_name', ['MPKL', 'MBSJ']);
+				}
+			});
 
 		if (!Auth::user()->getAdmin()) {
 			if (!empty(Auth::user()->file_id)) {
@@ -103,7 +111,7 @@ class ComplaintController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.complaint.name') . ' (MPKL)',
+			'title' => trans('app.menus.complaint.name') . ' (' . $this->getActiveCompanyLabel() . ')',
 			'panel_nav_active' => '',
 			'main_nav_active' => '',
 			'sub_nav_active' => 'complaint_list',
@@ -129,7 +137,7 @@ class ComplaintController extends \BaseController
 			->get();
 
 		$viewData = array(
-			'title' => trans('app.menus.complaint.name') . ' (MPKL)',
+			'title' => trans('app.menus.complaint.name') . ' (' . $this->getActiveCompanyLabel() . ')',
 			'panel_nav_active' => '',
 			'main_nav_active' => '',
 			'sub_nav_active' => 'complaint_list',
@@ -213,8 +221,8 @@ class ComplaintController extends \BaseController
 		$validator = Validator::make($input, $rules, $messages);
 		if (!$validator->fails()) {
 			$fileModel = Files::with('company')->find($input['file_id']);
-			if (!$fileModel || !Helper::isMPKL($fileModel->company)) {
-				return Redirect::back()->withInput()->with('error', 'Complaint module is only available for MPKL files.');
+			if (!$fileModel || (!Helper::isMPKL($fileModel->company) && !Helper::isMBSJ($fileModel->company))) {
+				return Redirect::back()->withInput()->with('error', 'Complaint module is only available for MPKL or MBSJ files.');
 			}
 
 			if (empty($input['complaint_type_id']) && !empty($input['complaint_type_text'])) {
@@ -303,7 +311,7 @@ class ComplaintController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.complaint.name') . ' (MPKL)',
+			'title' => trans('app.menus.complaint.name') . ' (' . $this->getActiveCompanyLabel() . ')',
 			'panel_nav_active' => '',
 			'main_nav_active' => '',
 			'sub_nav_active' => 'complaint_list',
@@ -490,13 +498,28 @@ class ComplaintController extends \BaseController
 	/**
 	 * File dropdown for complaint forms — MPKL files only (All COB still restricted to MPKL).
 	 */
+	private function getActiveCompanyLabel()
+	{
+		if (Helper::isMPKLContext()) return 'MPKL';
+		if (Helper::isMBSJContext()) return 'MBSJ';
+		return 'MPKL / MBSJ';
+	}
+
 	private function getComplaintFileOptions()
 	{
 		$query = Files::with('strata')
 			->join('company', 'files.company_id', '=', 'company.id')
 			->where('files.is_deleted', 0)
-			->where('company.short_name', 'MPKL')
 			->where('company.is_deleted', 0)
+			->where(function ($q) {
+				if (Helper::isMPKLContext()) {
+					$q->where('company.short_name', 'MPKL');
+				} elseif (Helper::isMBSJContext()) {
+					$q->where('company.short_name', 'MBSJ');
+				} else {
+					$q->whereIn('company.short_name', ['MPKL', 'MBSJ']);
+				}
+			})
 			->select('files.*')
 			->orderBy('files.file_no', 'asc');
 

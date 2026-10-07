@@ -13,7 +13,7 @@ class ComplaintCategoryController extends \BaseController
 {
 	public function __construct()
 	{
-		Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint Category') || !Helper::showMPKLModules());
+		Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint Category') || (!Helper::showMPKLModules() && !Helper::showMBSJModules()));
 	}
 
 	/**
