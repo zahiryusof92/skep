@@ -520,7 +520,7 @@ class AdminController extends BaseController
         if (!Auth::user()->getAdmin()) {
             if (!empty(Auth::user()->file_id)) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                     ->leftJoin('park', 'strata.park', '=', 'park.id')
                     ->leftJoin('category', 'strata.category', '=', 'category.id')
                     ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
@@ -530,7 +530,7 @@ class AdminController extends BaseController
                     ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                     ->leftJoin('park', 'strata.park', '=', 'park.id')
                     ->leftJoin('category', 'strata.category', '=', 'category.id')
                     ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
@@ -541,7 +541,7 @@ class AdminController extends BaseController
         } else {
             if (empty(Session::get('admin_cob'))) {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                     ->leftJoin('park', 'strata.park', '=', 'park.id')
                     ->leftJoin('category', 'strata.category', '=', 'category.id')
                     ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
@@ -549,7 +549,7 @@ class AdminController extends BaseController
                     ->where('files.is_deleted', 0);
             } else {
                 $file = Files::join('company', 'files.company_id', '=', 'company.id')
-                    ->join('strata', 'files.id', '=', 'strata.file_id')
+                    ->leftJoin('strata', 'files.id', '=', 'strata.file_id')
                     ->leftJoin('park', 'strata.park', '=', 'park.id')
                     ->leftJoin('category', 'strata.category', '=', 'category.id')
                     ->select(['files.*', 'strata.id as strata_id', 'company.short_name'])
@@ -571,7 +571,7 @@ class AdminController extends BaseController
                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
             })
             ->addColumn('strata', function ($model) {
-                return ($model->strata_id ? $model->strata->name : '-');
+                return ($model->strata ? $model->strata->name : '-');
             })
             ->addColumn('year', function ($model) {
                 return ($model->strata && $model->strata->year != '0' ? $model->strata->year : '');
