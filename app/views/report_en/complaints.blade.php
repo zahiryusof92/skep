@@ -11,7 +11,8 @@
             overflow-wrap: break-word;
         }
 
-        #complaint_table td {
+        #complaint_table td,
+        #complaint_table th {
             white-space: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
@@ -181,43 +182,67 @@
                             <div class="col-lg-12">
                                 <div class="table-responsive">
 
+                                    <?php
+                                        // table-layout: fixed needs the column widths to add up to
+                                        // 100%. The COB / MBSJ columns push the total over 100%
+                                        // (MBSJ = 132%, All-COB = 140%) which overflows the table and
+                                        // breaks the header, so scale the weights to total 100%.
+                                        $thDate = 10;
+                                        $thCob = 8;
+                                        $thBlock = 10;
+                                        $thZone = 10;
+                                        $thResolution = 12;
+                                        $thCat = 25;
+                                        $thType = 25;
+                                        $thTitle = 30;
+                                        $thStatus = 10;
+
+                                        $thTotal = $thDate + $thCat + $thType + $thTitle + $thStatus;
+                                        if (\Helper\Helper::isAllCobContext()) {
+                                            $thTotal += $thCob;
+                                        }
+                                        if (\Helper\Helper::showMBSJModules()) {
+                                            $thTotal += $thBlock + $thZone + $thResolution;
+                                        }
+                                        $thScale = $thTotal > 0 ? 100 / $thTotal : 1;
+                                    ?>
                                     <table class="table table-hover nowrap table-own table-striped" id="complaint_table"
                                         style="table-layout: fixed; width: 100%;">
                                         <thead>
                                             <tr>
-                                                <th style="width:10%;">
+                                                <th style="width:{{ round($thDate * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.date_received') }}
                                                 </th>
                                                 @if (\Helper\Helper::isAllCobContext())
-                                                    <th style="width:8%;">
+                                                    <th style="width:{{ round($thCob * $thScale, 2) }}%;">
                                                         {{ trans('app.forms.complaint.cob') }}
                                                     </th>
                                                 @endif
                                                 @if (\Helper\Helper::showMBSJModules())
-                                                    <th style="width:10%;">
+                                                    <th style="width:{{ round($thBlock * $thScale, 2) }}%;">
                                                         {{ trans('app.forms.complaint.planning_block') }}
                                                     </th>
-                                                    <th style="width:10%;">
+                                                    <th style="width:{{ round($thZone * $thScale, 2) }}%;">
                                                         {{ trans('app.forms.complaint.mpp_zone') }}
                                                     </th>
-                                                    <th style="width:12%;">
+                                                    <th style="width:{{ round($thResolution * $thScale, 2) }}%;">
                                                         {{ trans('app.forms.complaint.resolution_method') }}
                                                     </th>
                                                 @endif
-                                                <th style="width:25%;">
+                                                <th style="width:{{ round($thCat * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.category') }}
                                                 </th>
-                                                <th style="width:25%;">
+                                                <th style="width:{{ round($thType * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.type') }}
                                                 </th>
-                                                <th style="width:30%;">
+                                                <th style="width:{{ round($thTitle * $thScale, 2) }}%;">
                                                     @if (\Helper\Helper::showMBSJModules())
                                                         {{ trans('app.forms.complaint.title') }}
                                                     @else
                                                         {{ trans('app.forms.complaint.name') }}
                                                     @endif
                                                 </th>
-                                                <th style="width:10%;">
+                                                <th style="width:{{ round($thStatus * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.status') }}
                                                 </th>
                                             </tr>

@@ -8,12 +8,41 @@
             overflow-wrap: break-word;
         }
 
-        #complaint_table td {
+        #complaint_table td,
+        #complaint_table th {
             white-space: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
     </style>
+
+    <?php
+        // The table uses table-layout: fixed, so the column widths must add up to
+        // 100%. The extra COB / MBSJ / action columns push the total over 100%
+        // (MBSJ = 116%, All-COB = 124%) which overflows the table and breaks the
+        // header, so scale the weights to always total 100%.
+        $thDate = 10;
+        $thCob = 8;
+        $thBlock = 8;
+        $thZone = 8;
+        $thCat = 20;
+        $thType = 20;
+        $thTitle = 30;
+        $thStatus = 10;
+        $thAction = 10;
+
+        $thTotal = $thDate + $thCat + $thType + $thTitle + $thStatus;
+        if (\Helper\Helper::isAllCobContext()) {
+            $thTotal += $thCob;
+        }
+        if (\Helper\Helper::showMBSJModules()) {
+            $thTotal += $thBlock + $thZone;
+        }
+        if (AccessGroup::hasUpdateModule('Complaint')) {
+            $thTotal += $thAction;
+        }
+        $thScale = $thTotal > 0 ? 100 / $thTotal : 1;
+    ?>
 
     <div class="page-content-inner">
         <section class="panel panel-style">
@@ -117,40 +146,40 @@
                                 style="table-layout: fixed; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th style="width:10%;">
+                                        <th style="width:{{ round($thDate * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.date_received') }}
                                         </th>
                                         @if (\Helper\Helper::isAllCobContext())
-                                            <th style="width:8%;">
+                                            <th style="width:{{ round($thCob * $thScale, 2) }}%;">
                                                 {{ trans('app.forms.complaint.cob') }}
                                             </th>
                                         @endif
                                         @if (\Helper\Helper::showMBSJModules())
-                                            <th style="width:8%;">
+                                            <th style="width:{{ round($thBlock * $thScale, 2) }}%;">
                                                 {{ trans('app.forms.complaint.planning_block') }}
                                             </th>
-                                            <th style="width:8%;">
+                                            <th style="width:{{ round($thZone * $thScale, 2) }}%;">
                                                 {{ trans('app.forms.complaint.mpp_zone') }}
                                             </th>
                                         @endif
-                                        <th style="width:20%;">
+                                        <th style="width:{{ round($thCat * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.category') }}
                                         </th>
-                                        <th style="width:20%;">
+                                        <th style="width:{{ round($thType * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.type') }}
                                         </th>
-                                        <th style="width:30%;">
+                                        <th style="width:{{ round($thTitle * $thScale, 2) }}%;">
                                             @if (\Helper\Helper::showMBSJModules())
                                                 {{ trans('app.forms.complaint.title') }}
                                             @else
                                                 {{ trans('app.forms.complaint.name') }}
                                             @endif
                                         </th>
-                                        <th style="width:10%;">
+                                        <th style="width:{{ round($thStatus * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.status') }}
                                         </th>
                                         @if (AccessGroup::hasUpdateModule('Complaint'))
-                                            <th style="width:10%;">
+                                            <th style="width:{{ round($thAction * $thScale, 2) }}%;">
                                                 {{ trans('app.forms.action') }}
                                             </th>
                                         @endif
@@ -178,6 +207,9 @@
     <!-- Page Scripts -->
     <script>
         var oTable;
+        // When the user cannot update complaints the action column is not
+        // rendered, so export every column instead of dropping the last one.
+        var hasActionColumn = {{ AccessGroup::hasUpdateModule('Complaint') ? 'true' : 'false' }};
 
         $(document).ready(function() {
             oTable = $('#complaint_table').DataTable({
@@ -245,13 +277,14 @@
                         data: 'status',
                         name: 'complaints.status',
                         searchable: false
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
+                    }@if (AccessGroup::hasUpdateModule('Complaint')),
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    @endif
                 ],
                 "dom": "<'row'<'col-md-12 margin-bottom-10'B>>" +
                     "<'row'<'col-md-6'l><'col-md-6'f>>" +
@@ -268,7 +301,7 @@
                             return 'Complaint_' + year + '-' + month + '-' + day;
                         },
                         exportOptions: {
-                            columns: ':not(:last-child)', // exclude the action column
+                            columns: hasActionColumn ? ':not(:last-child)' : ':visible',
                             modifier: {
                                 search: 'applied',
                                 order: 'applied'
@@ -286,7 +319,7 @@
                             return 'Complaint_' + year + '-' + month + '-' + day;
                         },
                         exportOptions: {
-                            columns: ':not(:last-child)', // exclude the action column
+                            columns: hasActionColumn ? ':not(:last-child)' : ':visible',
                             modifier: {
                                 search: 'applied',
                                 order: 'applied'
