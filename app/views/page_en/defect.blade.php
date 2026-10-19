@@ -27,7 +27,7 @@ foreach ($user_permission as $permissions) {
             <section class="panel panel-pad">
                 <div class="row padding-vertical-20">
                     <div class="col-lg-12">
-                        <?php if ($insert_permission) { ?>
+                        <?php if ($insert_permission && !\Helper\Helper::isMBSJContext() && !\Helper\Helper::isMPKLContext()) { ?>
                             <button onclick="window.location = '{{ URL::action('AdminController@addDefect') }}'" type="button" class="btn btn-own margin-bottom-25">
                                 {{ trans('app.buttons.add_defect') }}
                             </button>

@@ -110,7 +110,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>
                                                     {{ trans('app.forms.file_no') }}
@@ -127,6 +127,40 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        @if (\Helper\Helper::isAllCobContext())
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>
+                                                        {{ trans('app.forms.complaint.cob') }}
+                                                    </label>
+                                                    <select id="cob" name="cob" class="form-control select2">
+                                                        <option value="">
+                                                            {{ trans('app.forms.please_select') }}
+                                                        </option>
+                                                        <option value="MPKL">MPKL</option>
+                                                        <option value="MBSJ">MBSJ</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (\Helper\Helper::showMBSJModules())
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>
+                                                        {{ trans('app.forms.complaint.planning_block') }}
+                                                    </label>
+                                                    <select id="planning_block" name="planning_block"
+                                                        class="form-control select2">
+                                                        <option value="">
+                                                            {{ trans('app.forms.please_select') }}
+                                                        </option>
+                                                        @foreach (\Helper\Helper::mbsjPlanningBlocks() as $block)
+                                                            <option value="{{ $block }}">{{ $block }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     <div class="row">
@@ -154,6 +188,22 @@
                                                 <th style="width:10%;">
                                                     {{ trans('app.forms.complaint.date_received') }}
                                                 </th>
+                                                @if (\Helper\Helper::isAllCobContext())
+                                                    <th style="width:8%;">
+                                                        {{ trans('app.forms.complaint.cob') }}
+                                                    </th>
+                                                @endif
+                                                @if (\Helper\Helper::showMBSJModules())
+                                                    <th style="width:10%;">
+                                                        {{ trans('app.forms.complaint.planning_block') }}
+                                                    </th>
+                                                    <th style="width:10%;">
+                                                        {{ trans('app.forms.complaint.mpp_zone') }}
+                                                    </th>
+                                                    <th style="width:12%;">
+                                                        {{ trans('app.forms.complaint.resolution_method') }}
+                                                    </th>
+                                                @endif
                                                 <th style="width:25%;">
                                                     {{ trans('app.forms.complaint.category') }}
                                                 </th>
@@ -161,7 +211,11 @@
                                                     {{ trans('app.forms.complaint.type') }}
                                                 </th>
                                                 <th style="width:30%;">
-                                                    {{ trans('app.forms.complaint.name') }}
+                                                    @if (\Helper\Helper::showMBSJModules())
+                                                        {{ trans('app.forms.complaint.title') }}
+                                                    @else
+                                                        {{ trans('app.forms.complaint.name') }}
+                                                    @endif
                                                 </th>
                                                 <th style="width:10%;">
                                                     {{ trans('app.forms.complaint.status') }}
@@ -205,12 +259,16 @@
                         var type = $('#type').val();
                         var year = $('#year').val();
                         var file_id = $('#file_id').val();
+                        var planning_block = $('#planning_block').val();
+                        var cob = $('#cob').val();
 
                         // Append to data
                         data.category = category;
                         data.type = type;
                         data.year = year;
                         data.file_id = file_id;
+                        data.planning_block = planning_block;
+                        data.cob = cob;
                     }
                 },
                 lengthMenu: [
@@ -226,6 +284,27 @@
                         data: 'date_received',
                         name: 'complaints.date_received'
                     },
+                    @if (\Helper\Helper::isAllCobContext())
+                        {
+                            data: 'cob',
+                            name: 'company.short_name'
+                        },
+                    @endif
+                    @if (\Helper\Helper::showMBSJModules())
+                        {
+                            data: 'planning_block',
+                            name: 'complaints.planning_block'
+                        },
+                        {
+                            data: 'mpp_zone',
+                            name: 'complaints.mpp_zone'
+                        },
+                        {
+                            data: 'resolution_method',
+                            name: 'complaints.resolution_method',
+                            searchable: false
+                        },
+                    @endif
                     {
                         data: 'complaint_category_id',
                         name: 'complaints.complaint_category_id'
@@ -327,7 +406,7 @@
                 $('#category').trigger('change');
             }
 
-            $('#year, #type, #file_id').on('change', function() {
+            $('#year, #type, #file_id, #planning_block, #cob').on('change', function() {
                 oTable.draw();
             });
         });

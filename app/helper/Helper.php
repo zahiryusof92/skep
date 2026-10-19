@@ -407,6 +407,69 @@ class Helper
     }
 
     /**
+     * MBSJ planning blocks (Blok Perancangan).
+     *
+     * @return array
+     */
+    public static function mbsjPlanningBlocks()
+    {
+        return ['BP1', 'BP2', 'BP3', 'BP4', 'BP5', 'BP6', 'BP7'];
+    }
+
+    /**
+     * MBSJ planning block to MPP zone mapping.
+     *
+     * @return array
+     */
+    public static function mbsjPlanningBlockZones()
+    {
+        return [
+            'BP1' => 'Zon 1',
+            // TODO: confirm the BP2 - BP7 zone mapping.
+            'BP2' => null,
+            'BP3' => null,
+            'BP4' => null,
+            'BP5' => null,
+            'BP6' => null,
+            'BP7' => null,
+        ];
+    }
+
+    /**
+     * Resolve the MPP zone for a planning block (null when not mapped yet).
+     *
+     * @param string $block
+     * @return string|null
+     */
+    public static function mbsjZoneForBlock($block)
+    {
+        $map = self::mbsjPlanningBlockZones();
+        $block = strtoupper(trim((string) $block));
+
+        return (isset($map[$block]) && $map[$block] !== '') ? $map[$block] : null;
+    }
+
+    /**
+     * MBSJ complaint resolution methods.
+     *
+     * @return array
+     */
+    public static function mbsjResolutionMethods()
+    {
+        return ['letter', 'site_visit', 'email', 'meeting', 'refer_agency', 'sispaa', 'phone'];
+    }
+
+    /**
+     * MBSJ complainant types.
+     *
+     * @return array
+     */
+    public static function mbsjComplainantTypes()
+    {
+        return ['owner', 'tenant', 'jmb_mc', 'others'];
+    }
+
+    /**
      * Show legacy Defect menu: All COB, or specific non-MPKL COB (not when MPKL-only context).
      *
      * @return bool
