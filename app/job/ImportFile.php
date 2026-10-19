@@ -40,13 +40,13 @@ class ImportFile
         $row = $data['row'];
         $company_id = $data['company_id'];
         $status = $data['status'];
-        $file_no = $row['1'];
+        $file_no = trim($row['1']);
         $user_id = $data['user_id'];
         $audit_message = ' has been updated.';
 
         $files = Files::where('company_id', $company_id)->where('file_no', $file_no)->where('is_deleted', 0)->first();
         $is_existing_file = !empty($files);
-        if (!$files) {
+        if (empty($files)) {
             $files = new Files();
             if ($status == 1 || $status == '1') {
                 $files->approved_by = $user_id;
@@ -75,19 +75,23 @@ class ImportFile
 
         // If new file no is provided, only update file_no and skip other updates.
         if (!empty($new_file_no)) {
-            $files->company_id = $company_id;
-            $files->file_no = $new_file_no;
-            $files->is_active = $is_active;
-            $files->status = $status;
-            $files->created_by = $user_id;
-            $files->save();
+            $checkExist = Files::where('company_id', $company_id)->where('file_no', $new_file_no)->where('is_deleted', 0)->first();
 
-            $remarks = $files->file_no . $audit_message;
-            $auditTrail = new AuditTrail();
-            $auditTrail->module = "COB File";
-            $auditTrail->remarks = $remarks;
-            $auditTrail->audit_by = $user_id;
-            $auditTrail->save();
+            if (empty($checkExist) {
+                $files->company_id = $company_id;
+                $files->file_no = $new_file_no;
+                $files->is_active = $is_active;
+                $files->status = $status;
+                $files->created_by = $user_id;
+                $files->save();
+    
+                $remarks = $files->file_no . $audit_message;
+                $auditTrail = new AuditTrail();
+                $auditTrail->module = "COB File";
+                $auditTrail->remarks = $remarks;
+                $auditTrail->audit_by = $user_id;
+                $auditTrail->save();
+            }
 
             $job->delete();
 

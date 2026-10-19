@@ -571,7 +571,7 @@ class AdminController extends BaseController
                 return "<a style='text-decoration:underline;' href='" . URL::action('AdminController@house', Helper::encode($model->id)) . "'>" . $model->file_no . "</a>";
             })
             ->addColumn('strata', function ($model) {
-                return ($model->strata_id ? $model->strata->name : '-');
+                return ($model->strata ? $model->strata->name : '-');
             })
             ->addColumn('year', function ($model) {
                 return ($model->strata && $model->strata->year != '0' ? $model->strata->year : '');
