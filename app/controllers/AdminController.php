@@ -9487,6 +9487,11 @@ class AdminController extends BaseController
 
     public function addDefect()
     {
+        // Defect creation is not available for MBSJ / MPKL - use the Complaint module instead.
+        if (Helper::isMBSJContext() || Helper::isMPKLContext()) {
+            return Redirect::to('defect');
+        }
+
         //get user permission
         $user_permission = AccessGroup::getAccessPermission(Auth::user()->id);
         if (!Auth::user()->getAdmin()) {
@@ -9521,6 +9526,11 @@ class AdminController extends BaseController
 
     public function submitAddDefect()
     {
+        // Defect creation is not available for MBSJ / MPKL - use the Complaint module instead.
+        if (Helper::isMBSJContext() || Helper::isMPKLContext()) {
+            return "false";
+        }
+
         $data = Input::all();
         if (Request::ajax()) {
 

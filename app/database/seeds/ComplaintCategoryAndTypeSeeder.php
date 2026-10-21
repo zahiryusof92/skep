@@ -236,12 +236,16 @@ class ComplaintCategoryAndTypeSeeder extends Seeder
             $types = isset($cat['types']) ? $cat['types'] : [];
             unset($cat['types']);
 
+            // Existing category set belongs to MPKL.
+            $cat['cob'] = 'MPKL';
+
             // Insert kategori
             $category = ComplaintCategory::create($cat);
 
             // Insert jenis aduan jika ada
             foreach ($types as $type) {
                 $type['complaint_category_id'] = $category->id;
+                $type['cob'] = 'MPKL';
                 ComplaintType::create($type);
             }
         }

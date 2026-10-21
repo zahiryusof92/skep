@@ -2899,7 +2899,13 @@ class ReportController extends BaseController
     {
         Helper::isAllow(0, 0, !AccessGroup::hasAccessModule('Complaint') || (!Helper::showMPKLModules() && !Helper::showMBSJModules()));
 
-        $categoryList = ComplaintCategory::with('types')->where('is_active', true)->orderBy('sort_no')->get();
+        $categoryQuery = ComplaintCategory::with('types')->where('is_active', true)->orderBy('sort_no');
+        if (Helper::isMBSJContext()) {
+            $categoryQuery->forCob('MBSJ');
+        } elseif (Helper::isMPKLContext()) {
+            $categoryQuery->forCob('MPKL');
+        }
+        $categoryList = $categoryQuery->get();
         $yearList = [];
         $request = Request::all();
 
@@ -2965,7 +2971,7 @@ class ReportController extends BaseController
                         ->join('files', 'complaints.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['complaints.*'])
+                        ->select(['complaints.*', 'company.short_name as cob'])
                         ->where('files.id', Auth::user()->file_id)
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_deleted', 0);
@@ -2974,7 +2980,7 @@ class ReportController extends BaseController
                         ->join('files', 'complaints.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['complaints.*'])
+                        ->select(['complaints.*', 'company.short_name as cob'])
                         ->where('files.company_id', Auth::user()->company_id)
                         ->where('files.is_deleted', 0);
                 }
@@ -2984,14 +2990,14 @@ class ReportController extends BaseController
                         ->join('files', 'complaints.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['complaints.*'])
+                        ->select(['complaints.*', 'company.short_name as cob'])
                         ->where('files.is_deleted', 0);
                 } else {
                     $complaints = Complaint::with(['category', 'type'])
                         ->join('files', 'complaints.file_id', '=', 'files.id')
                         ->join('company', 'files.company_id', '=', 'company.id')
                         ->join('strata', 'files.id', '=', 'strata.file_id')
-                        ->select(['complaints.*'])
+                        ->select(['complaints.*', 'company.short_name as cob'])
                         ->where('files.company_id', Session::get('admin_cob'))
                         ->where('files.is_deleted', 0);
                 }
@@ -3013,6 +3019,14 @@ class ReportController extends BaseController
                 $complaints = $complaints->where('complaints.file_id', $request['file_id']);
             }
 
+            if (!empty($request['planning_block'])) {
+                $complaints = $complaints->where('complaints.planning_block', $request['planning_block']);
+            }
+
+            if (!empty($request['cob'])) {
+                $complaints = $complaints->where('company.short_name', strtoupper($request['cob']));
+            }
+
             return Datatables::of($complaints)
                 ->editColumn('date_received', function ($model) {
                     return !empty($model->date_received) ? date('d-M-Y', strtotime($model->date_received)) : '-';
@@ -3022,6 +3036,20 @@ class ReportController extends BaseController
                 })
                 ->editColumn('complaint_type_id', function ($model) {
                     return $model->type ? $model->type->name : '-';
+                })
+                ->editColumn('planning_block', function ($model) {
+                    return !empty($model->planning_block) ? $model->planning_block : '-';
+                })
+                ->editColumn('mpp_zone', function ($model) {
+                    return !empty($model->mpp_zone) ? $model->mpp_zone : '-';
+                })
+                ->editColumn('cob', function ($model) {
+                    return !empty($model->cob) ? strtoupper($model->cob) : '-';
+                })
+                ->editColumn('resolution_method', function ($model) {
+                    return !empty($model->resolution_method)
+                        ? trans('app.forms.complaint.' . $model->resolution_method)
+                        : '-';
                 })
                 ->editColumn('status', function ($model) {
                     $status = trans('app.forms.complaint.under_investigation_1');

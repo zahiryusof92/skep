@@ -11,7 +11,8 @@
             overflow-wrap: break-word;
         }
 
-        #complaint_table td {
+        #complaint_table td,
+        #complaint_table th {
             white-space: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
@@ -110,7 +111,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>
                                                     {{ trans('app.forms.file_no') }}
@@ -127,6 +128,40 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        @if (\Helper\Helper::isAllCobContext())
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>
+                                                        {{ trans('app.forms.complaint.cob') }}
+                                                    </label>
+                                                    <select id="cob" name="cob" class="form-control select2">
+                                                        <option value="">
+                                                            {{ trans('app.forms.please_select') }}
+                                                        </option>
+                                                        <option value="MPKL">MPKL</option>
+                                                        <option value="MBSJ">MBSJ</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (\Helper\Helper::showMBSJModules())
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>
+                                                        {{ trans('app.forms.complaint.planning_block') }}
+                                                    </label>
+                                                    <select id="planning_block" name="planning_block"
+                                                        class="form-control select2">
+                                                        <option value="">
+                                                            {{ trans('app.forms.please_select') }}
+                                                        </option>
+                                                        @foreach (\Helper\Helper::mbsjPlanningBlocks() as $block)
+                                                            <option value="{{ $block }}">{{ $block }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     <div class="row">
@@ -147,23 +182,67 @@
                             <div class="col-lg-12">
                                 <div class="table-responsive">
 
+                                    <?php
+                                        // table-layout: fixed needs the column widths to add up to
+                                        // 100%. The COB / MBSJ columns push the total over 100%
+                                        // (MBSJ = 132%, All-COB = 140%) which overflows the table and
+                                        // breaks the header, so scale the weights to total 100%.
+                                        $thDate = 10;
+                                        $thCob = 8;
+                                        $thBlock = 10;
+                                        $thZone = 10;
+                                        $thResolution = 12;
+                                        $thCat = 25;
+                                        $thType = 25;
+                                        $thTitle = 30;
+                                        $thStatus = 10;
+
+                                        $thTotal = $thDate + $thCat + $thType + $thTitle + $thStatus;
+                                        if (\Helper\Helper::isAllCobContext()) {
+                                            $thTotal += $thCob;
+                                        }
+                                        if (\Helper\Helper::showMBSJModules()) {
+                                            $thTotal += $thBlock + $thZone + $thResolution;
+                                        }
+                                        $thScale = $thTotal > 0 ? 100 / $thTotal : 1;
+                                    ?>
                                     <table class="table table-hover nowrap table-own table-striped" id="complaint_table"
                                         style="table-layout: fixed; width: 100%;">
                                         <thead>
                                             <tr>
-                                                <th style="width:10%;">
+                                                <th style="width:{{ round($thDate * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.date_received') }}
                                                 </th>
-                                                <th style="width:25%;">
+                                                @if (\Helper\Helper::isAllCobContext())
+                                                    <th style="width:{{ round($thCob * $thScale, 2) }}%;">
+                                                        {{ trans('app.forms.complaint.cob') }}
+                                                    </th>
+                                                @endif
+                                                @if (\Helper\Helper::showMBSJModules())
+                                                    <th style="width:{{ round($thBlock * $thScale, 2) }}%;">
+                                                        {{ trans('app.forms.complaint.planning_block') }}
+                                                    </th>
+                                                    <th style="width:{{ round($thZone * $thScale, 2) }}%;">
+                                                        {{ trans('app.forms.complaint.mpp_zone') }}
+                                                    </th>
+                                                    <th style="width:{{ round($thResolution * $thScale, 2) }}%;">
+                                                        {{ trans('app.forms.complaint.resolution_method') }}
+                                                    </th>
+                                                @endif
+                                                <th style="width:{{ round($thCat * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.category') }}
                                                 </th>
-                                                <th style="width:25%;">
+                                                <th style="width:{{ round($thType * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.type') }}
                                                 </th>
-                                                <th style="width:30%;">
-                                                    {{ trans('app.forms.complaint.name') }}
+                                                <th style="width:{{ round($thTitle * $thScale, 2) }}%;">
+                                                    @if (\Helper\Helper::showMBSJModules())
+                                                        {{ trans('app.forms.complaint.title') }}
+                                                    @else
+                                                        {{ trans('app.forms.complaint.name') }}
+                                                    @endif
                                                 </th>
-                                                <th style="width:10%;">
+                                                <th style="width:{{ round($thStatus * $thScale, 2) }}%;">
                                                     {{ trans('app.forms.complaint.status') }}
                                                 </th>
                                             </tr>
@@ -205,12 +284,16 @@
                         var type = $('#type').val();
                         var year = $('#year').val();
                         var file_id = $('#file_id').val();
+                        var planning_block = $('#planning_block').val();
+                        var cob = $('#cob').val();
 
                         // Append to data
                         data.category = category;
                         data.type = type;
                         data.year = year;
                         data.file_id = file_id;
+                        data.planning_block = planning_block;
+                        data.cob = cob;
                     }
                 },
                 lengthMenu: [
@@ -226,6 +309,27 @@
                         data: 'date_received',
                         name: 'complaints.date_received'
                     },
+                    @if (\Helper\Helper::isAllCobContext())
+                        {
+                            data: 'cob',
+                            name: 'company.short_name'
+                        },
+                    @endif
+                    @if (\Helper\Helper::showMBSJModules())
+                        {
+                            data: 'planning_block',
+                            name: 'complaints.planning_block'
+                        },
+                        {
+                            data: 'mpp_zone',
+                            name: 'complaints.mpp_zone'
+                        },
+                        {
+                            data: 'resolution_method',
+                            name: 'complaints.resolution_method',
+                            searchable: false
+                        },
+                    @endif
                     {
                         data: 'complaint_category_id',
                         name: 'complaints.complaint_category_id'
@@ -327,7 +431,7 @@
                 $('#category').trigger('change');
             }
 
-            $('#year, #type, #file_id').on('change', function() {
+            $('#year, #type, #file_id, #planning_block, #cob').on('change', function() {
                 oTable.draw();
             });
         });

@@ -41,10 +41,13 @@
                                 style="table-layout: fixed; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th style="width:20%;">
+                                        <th style="width:18%;">
                                             {{ trans('app.forms.name') }}
                                         </th>
-                                        <th class="wrap-text" style="width:50%;">
+                                        <th style="width:8%;">
+                                            {{ trans('app.forms.complaint.cob') }}
+                                        </th>
+                                        <th class="wrap-text" style="width:44%;">
                                             {{ trans('app.forms.description') }}
                                         </th>
                                         <th style="width:10%;">
@@ -88,6 +91,10 @@
                 columns: [{
                         data: 'name',
                         name: 'name'
+                    },
+                    {
+                        data: 'cob',
+                        name: 'cob'
                     },
                     {
                         data: 'description',

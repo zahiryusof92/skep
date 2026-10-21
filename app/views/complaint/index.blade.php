@@ -8,12 +8,41 @@
             overflow-wrap: break-word;
         }
 
-        #complaint_table td {
+        #complaint_table td,
+        #complaint_table th {
             white-space: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
     </style>
+
+    <?php
+        // The table uses table-layout: fixed, so the column widths must add up to
+        // 100%. The extra COB / MBSJ / action columns push the total over 100%
+        // (MBSJ = 116%, All-COB = 124%) which overflows the table and breaks the
+        // header, so scale the weights to always total 100%.
+        $thDate = 10;
+        $thCob = 8;
+        $thBlock = 8;
+        $thZone = 8;
+        $thCat = 20;
+        $thType = 20;
+        $thTitle = 30;
+        $thStatus = 10;
+        $thAction = 10;
+
+        $thTotal = $thDate + $thCat + $thType + $thTitle + $thStatus;
+        if (\Helper\Helper::isAllCobContext()) {
+            $thTotal += $thCob;
+        }
+        if (\Helper\Helper::showMBSJModules()) {
+            $thTotal += $thBlock + $thZone;
+        }
+        if (AccessGroup::hasUpdateModule('Complaint')) {
+            $thTotal += $thAction;
+        }
+        $thScale = $thTotal > 0 ? 100 / $thTotal : 1;
+    ?>
 
     <div class="page-content-inner">
         <section class="panel panel-style">
@@ -52,7 +81,7 @@
                                                 class="form-control width-150 display-inline-block" placeholder="To" />
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label>{{ trans('app.forms.file_no') }}</label>
                                             <select id="file_id" name="file_id" class="form-control select2">
@@ -67,7 +96,39 @@
                                             </select>
                                         </div>
                                     </div>
+                                    @if (\Helper\Helper::showMBSJModules())
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label>{{ trans('app.forms.complaint.planning_block') }}</label>
+                                                <select id="planning_block" name="planning_block"
+                                                    class="form-control select2">
+                                                    <option value="">
+                                                        {{ trans('app.forms.please_select') }}
+                                                    </option>
+                                                    @foreach (\Helper\Helper::mbsjPlanningBlocks() as $block)
+                                                        <option value="{{ $block }}">{{ $block }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
+                                @if (\Helper\Helper::isAllCobContext())
+                                    <div class="row text-center">
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label>{{ trans('app.forms.complaint.cob') }}</label>
+                                                <select id="cob" name="cob" class="form-control select2">
+                                                    <option value="">
+                                                        {{ trans('app.forms.please_select') }}
+                                                    </option>
+                                                    <option value="MPKL">MPKL</option>
+                                                    <option value="MBSJ">MBSJ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="row">
                                     <div class="col-md-4 padding-bottom-10">
                                         <button type="button" class="btn btn-own" id="cancel_button"
@@ -85,23 +146,40 @@
                                 style="table-layout: fixed; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th style="width:10%;">
+                                        <th style="width:{{ round($thDate * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.date_received') }}
                                         </th>
-                                        <th style="width:20%;">
+                                        @if (\Helper\Helper::isAllCobContext())
+                                            <th style="width:{{ round($thCob * $thScale, 2) }}%;">
+                                                {{ trans('app.forms.complaint.cob') }}
+                                            </th>
+                                        @endif
+                                        @if (\Helper\Helper::showMBSJModules())
+                                            <th style="width:{{ round($thBlock * $thScale, 2) }}%;">
+                                                {{ trans('app.forms.complaint.planning_block') }}
+                                            </th>
+                                            <th style="width:{{ round($thZone * $thScale, 2) }}%;">
+                                                {{ trans('app.forms.complaint.mpp_zone') }}
+                                            </th>
+                                        @endif
+                                        <th style="width:{{ round($thCat * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.category') }}
                                         </th>
-                                        <th style="width:20%;">
+                                        <th style="width:{{ round($thType * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.type') }}
                                         </th>
-                                        <th style="width:30%;">
-                                            {{ trans('app.forms.complaint.name') }}
+                                        <th style="width:{{ round($thTitle * $thScale, 2) }}%;">
+                                            @if (\Helper\Helper::showMBSJModules())
+                                                {{ trans('app.forms.complaint.title') }}
+                                            @else
+                                                {{ trans('app.forms.complaint.name') }}
+                                            @endif
                                         </th>
-                                        <th style="width:10%;">
+                                        <th style="width:{{ round($thStatus * $thScale, 2) }}%;">
                                             {{ trans('app.forms.complaint.status') }}
                                         </th>
                                         @if (AccessGroup::hasUpdateModule('Complaint'))
-                                            <th style="width:10%;">
+                                            <th style="width:{{ round($thAction * $thScale, 2) }}%;">
                                                 {{ trans('app.forms.action') }}
                                             </th>
                                         @endif
@@ -129,6 +207,9 @@
     <!-- Page Scripts -->
     <script>
         var oTable;
+        // When the user cannot update complaints the action column is not
+        // rendered, so export every column instead of dropping the last one.
+        var hasActionColumn = {{ AccessGroup::hasUpdateModule('Complaint') ? 'true' : 'false' }};
 
         $(document).ready(function() {
             oTable = $('#complaint_table').DataTable({
@@ -140,11 +221,15 @@
                         var from_date = $('#start_date').val();
                         var to_date = $('#end_date').val();
                         var file_id = $('#file_id').val();
+                        var planning_block = $('#planning_block').val();
+                        var cob = $('#cob').val();
 
                         // Append to data
                         data.start_date = from_date;
                         data.end_date = to_date;
                         data.file_id = file_id;
+                        data.planning_block = planning_block;
+                        data.cob = cob;
                     }
                 },
                 lengthMenu: [
@@ -160,6 +245,22 @@
                         data: 'date_received',
                         name: 'complaints.date_received'
                     },
+                    @if (\Helper\Helper::isAllCobContext())
+                        {
+                            data: 'cob',
+                            name: 'company.short_name'
+                        },
+                    @endif
+                    @if (\Helper\Helper::showMBSJModules())
+                        {
+                            data: 'planning_block',
+                            name: 'complaints.planning_block'
+                        },
+                        {
+                            data: 'mpp_zone',
+                            name: 'complaints.mpp_zone'
+                        },
+                    @endif
                     {
                         data: 'complaint_category_id',
                         name: 'complaints.complaint_category_id'
@@ -176,13 +277,14 @@
                         data: 'status',
                         name: 'complaints.status',
                         searchable: false
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
+                    }@if (AccessGroup::hasUpdateModule('Complaint')),
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    @endif
                 ],
                 "dom": "<'row'<'col-md-12 margin-bottom-10'B>>" +
                     "<'row'<'col-md-6'l><'col-md-6'f>>" +
@@ -199,7 +301,7 @@
                             return 'Complaint_' + year + '-' + month + '-' + day;
                         },
                         exportOptions: {
-                            columns: ':not(:last-child)', // exclude the action column
+                            columns: hasActionColumn ? ':not(:last-child)' : ':visible',
                             modifier: {
                                 search: 'applied',
                                 order: 'applied'
@@ -217,7 +319,7 @@
                             return 'Complaint_' + year + '-' + month + '-' + day;
                         },
                         exportOptions: {
-                            columns: ':not(:last-child)', // exclude the action column
+                            columns: hasActionColumn ? ':not(:last-child)' : ':visible',
                             modifier: {
                                 search: 'applied',
                                 order: 'applied'
@@ -268,6 +370,14 @@
             });
 
             $("#file_id").on('change', function() {
+                oTable.draw();
+            });
+
+            $("#planning_block").on('change', function() {
+                oTable.draw();
+            });
+
+            $("#cob").on('change', function() {
                 oTable.draw();
             });
         });

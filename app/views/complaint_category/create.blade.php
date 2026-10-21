@@ -26,6 +26,36 @@
                                 </div>
 
                                 <div class="row">
+                                    <div class="col-lg-3">
+                                        <div class="form-group {{ $errors->has('cob') ? 'has-danger' : '' }}">
+                                            <label class="form-control-label">
+                                                <span style="color: red;">*</span>
+                                                {{ trans('app.forms.complaint.cob') }}
+                                            </label>
+                                            @if (\Helper\Helper::isAllCobContext())
+                                                <select id="cob" name="cob" class="form-control">
+                                                    <option value="">
+                                                        {{ trans('app.forms.please_select') }}
+                                                    </option>
+                                                    @foreach ($cobOptions as $cob)
+                                                        <option value="{{ $cob }}"
+                                                            {{ Input::old('cob', $defaultCob) == $cob ? 'selected' : '' }}>
+                                                            {{ $cob }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <input type="text" class="form-control"
+                                                    value="{{ $defaultCob }}" readonly>
+                                                <input type="hidden" id="cob" name="cob"
+                                                    value="{{ Input::old('cob', $defaultCob) }}">
+                                            @endif
+                                            @include('alert.feedback', ['field' => 'cob'])
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group {{ $errors->has('name') ? 'has-danger' : '' }}">
                                             <label class="form-control-label">

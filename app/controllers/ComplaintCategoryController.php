@@ -26,9 +26,18 @@ class ComplaintCategoryController extends \BaseController
 		if (Request::ajax()) {
 			$model = ComplaintCategory::query();
 
+			if (Helper::isMBSJContext()) {
+				$model->forCob('MBSJ');
+			} elseif (Helper::isMPKLContext()) {
+				$model->forCob('MPKL');
+			}
+
 			return Datatables::of($model)
 				->editColumn('name', function ($model) {
 					return "<a style='text-decoration:underline;' href='" . route('complaintCategory.complaintType.index', $this->encodeID($model->id)) . "'>" . $model->name . "</a>";
+				})
+				->editColumn('cob', function ($model) {
+					return !empty($model->cob) ? strtoupper($model->cob) : '-';
 				})
 				->editColumn('is_active', function ($model) {
 					if ($model->is_active) {
@@ -54,11 +63,12 @@ class ComplaintCategoryController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.master.complaint_category') . ' (MPKL)',
+			'title' => trans('app.menus.master.complaint_category') . ' (' . $this->getActiveCompanyLabel() . ')',
 			'panel_nav_active' => 'master_panel',
 			'main_nav_active' => 'master_main',
 			'sub_nav_active' => 'complaint_category_list',
 			'image' => '',
+			'cobOptions' => array('MPKL', 'MBSJ'),
 		);
 
 		return View::make('complaint_category.index', $viewData);
@@ -72,11 +82,13 @@ class ComplaintCategoryController extends \BaseController
 	public function create()
 	{
 		$viewData = array(
-			'title' => trans('app.menus.master.add_complaint_category') . ' (MPKL)',
+			'title' => trans('app.menus.master.add_complaint_category') . ' (' . $this->getActiveCompanyLabel() . ')',
 			'panel_nav_active' => 'master_panel',
 			'main_nav_active' => 'master_main',
 			'sub_nav_active' => 'complaint_category_list',
 			'image' => '',
+			'cobOptions' => array('MPKL', 'MBSJ'),
+			'defaultCob' => $this->getDefaultCob(),
 		);
 
 		return View::make('complaint_category.create', $viewData);
@@ -95,6 +107,7 @@ class ComplaintCategoryController extends \BaseController
 			'description' => 'required',
 			'color_code' => 'required',
 			'is_active' => 'required',
+			'cob' => 'required|in:MPKL,MBSJ',
 		];
 
 		$validator = Validator::make($input, $rules);
@@ -105,6 +118,7 @@ class ComplaintCategoryController extends \BaseController
 				'color_code' => $input['color_code'],
 				'sort_no' => (!empty($input['sort_no']) ? $input['sort_no'] : null),
 				'is_active' => $input['is_active'],
+				'cob' => strtoupper($input['cob']),
 			]);
 
 			return Redirect::route('complaintCategory.index')->with('success', trans('app.successes.saved_successfully'));
@@ -138,12 +152,14 @@ class ComplaintCategoryController extends \BaseController
 		}
 
 		$viewData = array(
-			'title' => trans('app.menus.master.edit_complaint_category') . ' (MPKL)',
+			'title' => trans('app.menus.master.edit_complaint_category') . ' (' . $this->getActiveCompanyLabel() . ')',
 			'panel_nav_active' => 'master_panel',
 			'main_nav_active' => 'master_main',
 			'sub_nav_active' => 'complaint_category_list',
 			'image' => '',
 			'model' => $model,
+			'cobOptions' => array('MPKL', 'MBSJ'),
+			'defaultCob' => $model->cob ?: $this->getDefaultCob(),
 		);
 
 		return View::make('complaint_category.edit', $viewData);
@@ -163,6 +179,7 @@ class ComplaintCategoryController extends \BaseController
 			'description' => 'required',
 			'color_code' => 'required',
 			'is_active' => 'required',
+			'cob' => 'required|in:MPKL,MBSJ',
 		];
 
 		$validator = Validator::make($input, $rules);
@@ -175,6 +192,7 @@ class ComplaintCategoryController extends \BaseController
 					'color_code' => $input['color_code'],
 					'sort_no' => (!empty($input['sort_no']) ? $input['sort_no'] : null),
 					'is_active' => $input['is_active'],
+					'cob' => strtoupper($input['cob']),
 				]);
 
 				return Redirect::to(route('complaintCategory.index'))->with('success', trans('app.successes.updated_successfully'));
@@ -202,6 +220,32 @@ class ComplaintCategoryController extends \BaseController
 		} else {
 			return Redirect::back()->with('error', trans('app.errors.occurred'));
 		}
+	}
+
+	private function getActiveCompanyLabel()
+	{
+		if (Helper::isMPKLContext()) {
+			return 'MPKL';
+		}
+
+		if (Helper::isMBSJContext()) {
+			return 'MBSJ';
+		}
+
+		return 'MPKL / MBSJ';
+	}
+
+	private function getDefaultCob()
+	{
+		if (Helper::isMPKLContext()) {
+			return 'MPKL';
+		}
+
+		if (Helper::isMBSJContext()) {
+			return 'MBSJ';
+		}
+
+		return '';
 	}
 
 	private function encodeID($id)

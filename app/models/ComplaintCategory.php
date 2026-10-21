@@ -14,6 +14,7 @@ class ComplaintCategory extends Eloquent
         'color_code',
         'sort_no',
         'is_active',
+        'cob',
     ];
 
     protected $dates = ['deleted_at'];
@@ -21,6 +22,18 @@ class ComplaintCategory extends Eloquent
     public function scopeActive()
     {
         return self::where('is_active', true);
+    }
+
+    /**
+     * Categories belonging to a COB (shared rows have a null cob).
+     */
+    public function scopeForCob($query, $cob)
+    {
+        $cob = strtoupper((string) $cob);
+
+        return $query->where(function ($q) use ($cob) {
+            $q->where('cob', $cob)->orWhereNull('cob');
+        });
     }
 
     public function types()

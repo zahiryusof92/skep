@@ -30,10 +30,16 @@ class Complaint extends Eloquent
         'complaint_status',
         'action_duration',
         'officer_review',
-        'status'
+        'status',
+        'planning_block',
+        'mpp_zone',
+        'date_minuted',
+        'complainant_name',
+        'action_date',
+        'resolution_method',
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date_minuted', 'action_date'];
 
     public function file()
     {
