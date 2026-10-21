@@ -103,6 +103,7 @@
                                                 @foreach ($files as $file_no)
                                                     <option value="{{ $file_no->id }}"
                                                         data-cob="{{ $file_no->company ? strtoupper($file_no->company->short_name) : '' }}"
+                                                        data-zone="{{ $file_no->strata && $file_no->strata->parks ? e($file_no->strata->parks->description) : '' }}"
                                                         {{ Input::old('file_id', $model->file_id) == $file_no->id ? 'selected' : '' }}>
                                                         {{ $file_no->strataName() }}
                                                     </option>
@@ -127,7 +128,6 @@
                                                 </option>
                                                 @foreach ($planningBlocks as $block)
                                                     <option value="{{ $block }}"
-                                                        data-zone="{{ isset($planningBlockZones[$block]) ? $planningBlockZones[$block] : '' }}"
                                                         {{ Input::old('planning_block', $model->planning_block) == $block ? 'selected' : '' }}>
                                                         {{ $block }}
                                                     </option>
@@ -138,7 +138,7 @@
                                     </div>
                                 </div>
 
-                                {{-- Zon MPP (auto filled) --}}
+                                {{-- Zon MPP (from the selected file's park) --}}
                                 <div class="row mbsj-only">
                                     <div class="col-lg-6">
                                         <div class="form-group {{ $errors->has('mpp_zone') ? 'has-danger' : '' }}">
@@ -146,8 +146,22 @@
                                                 <span class="req-mbsj" style="color: red;">*</span>
                                                 {{ trans('app.forms.complaint.mpp_zone') }}
                                             </label>
-                                            <input type="text" id="mpp_zone" name="mpp_zone" class="form-control"
-                                                value="{{ Input::old('mpp_zone', $model->mpp_zone) }}" readonly />
+                                            <select id="mpp_zone" name="mpp_zone" class="form-control">
+                                                <option value="">
+                                                    {{ trans('app.forms.please_select') }}
+                                                </option>
+                                                @foreach ($mppZones as $zone)
+                                                    <option value="{{ e($zone) }}"
+                                                        {{ Input::old('mpp_zone', $model->mpp_zone) == $zone ? 'selected' : '' }}>
+                                                        {{ e($zone) }}
+                                                    </option>
+                                                @endforeach
+                                                @if (Input::old('mpp_zone', $model->mpp_zone) && !in_array(Input::old('mpp_zone', $model->mpp_zone), $mppZones))
+                                                    <option value="{{ e(Input::old('mpp_zone', $model->mpp_zone)) }}" selected>
+                                                        {{ e(Input::old('mpp_zone', $model->mpp_zone)) }}
+                                                    </option>
+                                                @endif
+                                            </select>
                                             @include('alert.feedback', ['field' => 'mpp_zone'])
                                         </div>
                                     </div>
@@ -762,7 +776,8 @@
                     allFiles.push({
                         id: value,
                         name: $(this).text().trim(),
-                        cob: ($(this).data('cob') || '').toUpperCase()
+                        cob: ($(this).data('cob') || '').toUpperCase(),
+                        zone: $(this).data('zone') || ''
                     });
                 }
             });
@@ -775,8 +790,9 @@
                 if (cob) {
                     $.each(allFiles, function(index, file) {
                         if (file.cob === cob) {
-                            $file.append($('<option>').val(file.id).text(file.name).attr('data-cob', file
-                                .cob));
+                            $file.append($('<option>').val(file.id).text(file.name)
+                                .attr('data-cob', file.cob)
+                                .attr('data-zone', file.zone));
                         }
                     });
                 }
@@ -786,6 +802,21 @@
                 }
 
                 $file.trigger('change.select2');
+            }
+
+            // Zon MPP comes from the selected file's park (strata -> park).
+            // force = overwrite the current value; otherwise only fill it when empty.
+            function applyFileZone(force) {
+                var $zone = $('#mpp_zone');
+                if (!$zone.length) {
+                    return;
+                }
+                if (!force && $.trim(String($zone.val() || '')) !== '') {
+                    return;
+                }
+
+                var zone = $('#file_id option:selected').data('zone');
+                $zone.val(zone || '');
             }
 
             function applyCobUi(cob) {
@@ -831,6 +862,7 @@
                 var cob = ($(this).val() || '').toUpperCase();
                 if (isAllCob) {
                     populateFiles(cob);
+                    applyFileZone(true);
                     $('#complainant_type_mbsj').val('').trigger('change');
                     $('#complainant_type_mpkl').val('').trigger('change');
                 }
@@ -847,6 +879,9 @@
                     $('#submit_button').prop('disabled', false);
                 }
                 applyCobUi(cob);
+                if (cob === 'MBSJ') {
+                    applyFileZone(true);
+                }
             });
 
             // Initialise fields for the active COB.
@@ -862,6 +897,9 @@
                 $('#submit_button').prop('disabled', !initialCob);
             }
             applyCobUi(initialCob);
+            if (initialCob === 'MBSJ') {
+                applyFileZone(false);
+            }
 
             // Autopopulate semula selepas validation fail / nilai sedia ada
             var selectedCategoryId = "{{ Input::old('complaint_category_id', $model->complaint_category_id) }}";
@@ -911,11 +949,6 @@
             initDatePicker('date_received_temp', 'date_received');
             initDatePicker('date_minuted_temp', 'date_minuted');
             initDatePicker('action_date_temp', 'action_date');
-
-            $('#planning_block').on('change', function() {
-                var zone = $('#planning_block option:selected').data('zone');
-                $('#mpp_zone').val(zone || '');
-            });
 
             // ========================================
             // Client-side validation

@@ -158,7 +158,7 @@ class ComplaintController extends \BaseController
 			'files' => $files,
 			'complaintCategory' => $complaintCategory,
 			'planningBlocks' => Helper::mbsjPlanningBlocks(),
-			'planningBlockZones' => Helper::mbsjPlanningBlockZones(),
+			'mppZones' => Helper::mbsjMppZones(),
 			'resolutionMethods' => Helper::mbsjResolutionMethods(),
 			'mbsjComplainantTypes' => Helper::mbsjComplainantTypes(),
 			'isAllCob' => Helper::isAllCobContext(),
@@ -273,7 +273,7 @@ class ComplaintController extends \BaseController
 			'files' => $files,
 			'complaintCategory' => $complaintCategory,
 			'planningBlocks' => Helper::mbsjPlanningBlocks(),
-			'planningBlockZones' => Helper::mbsjPlanningBlockZones(),
+			'mppZones' => Helper::mbsjMppZones(),
 			'resolutionMethods' => Helper::mbsjResolutionMethods(),
 			'mbsjComplainantTypes' => Helper::mbsjComplainantTypes(),
 			'model' => $model,
@@ -527,7 +527,7 @@ class ComplaintController extends \BaseController
 			$data['status'] = ($model && !empty($model->status)) ? $model->status : 4;
 
 			$data['planning_block'] = $input['planning_block'];
-			$data['mpp_zone'] = !empty($input['mpp_zone']) ? $input['mpp_zone'] : Helper::mbsjZoneForBlock($input['planning_block']);
+			$data['mpp_zone'] = !empty($input['mpp_zone']) ? $input['mpp_zone'] : null;
 			$data['date_minuted'] = $input['date_minuted'];
 			$data['complainant_name'] = $input['complainant_name'];
 			$data['action_date'] = $input['action_date'];
@@ -648,7 +648,7 @@ class ComplaintController extends \BaseController
 	 */
 	private function getComplaintFileOptions()
 	{
-		$query = Files::with(['strata', 'company'])
+		$query = Files::with(['strata.parks', 'company'])
 			->join('company', 'files.company_id', '=', 'company.id')
 			->where('files.is_deleted', 0)
 			->where('company.is_deleted', 0)
