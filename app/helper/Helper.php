@@ -417,36 +417,36 @@ class Helper
     }
 
     /**
-     * MBSJ planning block to MPP zone mapping.
+     * MPP zones for MBSJ, taken from the parks assigned to MBSJ files
+     * (strata.park -> park.description).
      *
      * @return array
      */
-    public static function mbsjPlanningBlockZones()
+    public static function mbsjMppZones()
     {
-        return [
-            'BP1' => 'Zon 1',
-            // TODO: confirm the BP2 - BP7 zone mapping.
-            'BP2' => null,
-            'BP3' => null,
-            'BP4' => null,
-            'BP5' => null,
-            'BP6' => null,
-            'BP7' => null,
-        ];
-    }
+        $zones = \DB::table('park')
+            ->join('strata', 'strata.park', '=', 'park.id')
+            ->join('files', 'files.id', '=', 'strata.file_id')
+            ->join('company', 'company.id', '=', 'files.company_id')
+            ->where('company.short_name', 'MBSJ')
+            ->where('company.is_deleted', 0)
+            ->where('files.is_deleted', 0)
+            ->where('park.is_deleted', 0)
+            ->whereNotNull('park.description')
+            ->where('park.description', '<>', '')
+            ->groupBy('park.description')
+            ->lists('park.description');
 
-    /**
-     * Resolve the MPP zone for a planning block (null when not mapped yet).
-     *
-     * @param string $block
-     * @return string|null
-     */
-    public static function mbsjZoneForBlock($block)
-    {
-        $map = self::mbsjPlanningBlockZones();
-        $block = strtoupper(trim((string) $block));
+        // Drop the "- None -" / "None" placeholders that are not real zones.
+        $zones = array_filter($zones, function ($zone) {
+            $zone = trim($zone);
 
-        return (isset($map[$block]) && $map[$block] !== '') ? $map[$block] : null;
+            return $zone !== '' && strcasecmp($zone, 'none') !== 0 && strcasecmp($zone, '- none -') !== 0;
+        });
+
+        natcasesort($zones);
+
+        return array_values($zones);
     }
 
     /**
