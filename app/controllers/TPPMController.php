@@ -626,6 +626,14 @@ class TPPMController extends \BaseController
         }
 
         $user = Auth::user();
+
+        // File-scoped users are closed after the cutoff: audit every attempt, no eStrata call; the popup shows on /home.
+        if ($user->isTppmSsoClosed()) {
+            $this->addAudit($user->file_id, 'TPPM', 'TPPM SSO closed: ' . $user->username);
+
+            return Redirect::to('/home')->with('tppm_sso_closed', true);
+        }
+
         $payload = [
             'username' => trim($user->username),
             'email' => trim($user->email),

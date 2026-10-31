@@ -1840,6 +1840,11 @@ return array(
             'approval_remark_max' => 'Ulasan tidak boleh melebihi 1000 aksara.',
         ],
     ],
+    'tppm_sso' => [
+        'closed_heading' => 'Service unavailable',
+        'closed' => 'Service unavailable. TPPM applications have been closed.',
+        'back' => 'Back',
+    ],
     'strata_meeting_documents' => array(
         'list_estrata' => 'Upload of Minutes (MPKL)',
         'list_legacy' => 'Upload of Minutes',

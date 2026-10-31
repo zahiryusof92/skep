@@ -1846,6 +1846,11 @@ return array(
             'approval_remark_max' => 'Ulasan tidak boleh melebihi 1000 aksara.',
         ],
     ],
+    'tppm_sso' => [
+        'closed_heading' => 'Perkhidmatan tidak tersedia',
+        'closed' => 'Perkhidmatan tidak tersedia. Permohonan TPPM telah ditutup.',
+        'back' => 'Kembali',
+    ],
     'strata_meeting_documents' => array(
         'list_estrata' => 'Muat Naik Minit Mesyuarat (MPKL)',
         'list_legacy' => 'Muat Naik Minit Mesyuarat',

@@ -308,4 +308,34 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         return Auth::user()->isCOB() || Auth::user()->isJMB() || Auth::user()->isMC();
     }
+
+    /**
+     * True once the last day of file-scoped TPPM SSO (estrata_tppm_file_scoped_sso_until, inclusive) has passed.
+     * Empty or invalid date = never closes.
+     */
+    public static function tppmFileScopedSsoClosed()
+    {
+        $until = trim((string) Config::get('constant.third_party.estrata.tppm_file_scoped_sso_until'));
+
+        if ($until === '') {
+            return false;
+        }
+
+        try {
+            return \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($until)->endOfDay());
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * JMB / MC users (without COB role) are shut out of TPPM SSO after the cutoff.
+     * Same roles hasAccessTPPM() admits besides COB.
+     */
+    public function isTppmSsoClosed()
+    {
+        return self::tppmFileScopedSsoClosed()
+            && !$this->isCOB()
+            && ($this->isJMB() || $this->isMC());
+    }
 }
