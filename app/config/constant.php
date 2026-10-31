@@ -2079,6 +2079,8 @@ return [
             'api_secret' => getenv('estrata_api_secret'),
             'tppm_cobs' => getenv('estrata_tppm_cobs'),
             'tppm_usernames' => getenv('estrata_tppm_usernames'),
+            // Last day (Y-m-d, inclusive) JMB / MC may use TPPM SSO. Unset = 2026-10-31; empty string or invalid date = never closes
+            'tppm_file_scoped_sso_until' => getenv('estrata_tppm_file_scoped_sso_until') !== false ? getenv('estrata_tppm_file_scoped_sso_until') : '2026-10-31',
         ],
     ],
     'eai' => [

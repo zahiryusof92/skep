@@ -261,6 +261,13 @@ $pending = Cache::remember($pending_cache_key, 30, function() {
                 </ul>
             </li>
             @elseif (Auth::user()->hasAccessTPPM())
+            @if (Session::has('tppm_sso_closed'))
+            <script>
+                $(function () {
+                    swal({title: {{ json_encode(trans("app.tppm_sso.closed_heading"), JSON_HEX_TAG | JSON_HEX_APOS) }}, text: {{ json_encode(trans("app.tppm_sso.closed"), JSON_HEX_TAG | JSON_HEX_APOS) }}, type: "warning", confirmButtonText: {{ json_encode(trans("app.tppm_sso.back"), JSON_HEX_TAG | JSON_HEX_APOS) }}});
+                });
+            </script>
+            @endif
             <li class="left-menu-list-link" id="tppm_cob_list">
                 <a class="left-menu-link" href="{{ route('tppm.sso') }}">
                     <i class="left-menu-link-icon fa fa-trophy"></i>
